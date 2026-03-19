@@ -1,0 +1,194 @@
+//! `mirage-rs` binary entrypoint.
+
+#![allow(clippy::redundant_pub_crate)]
+
+use std::{fs, path::PathBuf, sync::Arc, time::Duration};
+
+use anyhow::Context;
+use clap::Parser;
+use mirage_rs::{
+    ClassificationConfig, DiffClassifier,
+    fork::{ForkState, HybridDB, MirageFork},
+    provider::UpstreamRpc,
+    replay::{FollowerConfig, TargetedFollower},
+    resources::{MirageMode, Profile, ResourceModel},
+    rpc::start_rpc_server,
+};
+use tokio::sync::broadcast;
+
+/// Command-line configuration for `mirage-rs`.
+#[derive(Debug, Clone, Parser)]
+#[command(author, version, about)]
+struct Cli {
+    /// Bind host.
+    #[arg(long, default_value = "127.0.0.1")]
+    host: String,
+    /// Bind port.
+    #[arg(long, default_value_t = 8545)]
+    port: u16,
+    /// Optional upstream HTTP RPC URL.
+    #[arg(long)]
+    rpc_url: Option<String>,
+    /// Optional upstream WebSocket URL.
+    #[arg(long)]
+    ws_url: Option<String>,
+    /// Upstream request budget per second.
+    #[arg(long, default_value_t = 100)]
+    upstream_rps: u32,
+    /// Upstream burst multiplier.
+    #[arg(long, default_value_t = 200)]
+    upstream_burst: u32,
+    /// Effective chain ID.
+    #[arg(long, default_value_t = 1)]
+    chain_id: u64,
+    /// Read-cache capacity.
+    #[arg(long, default_value_t = 10_000)]
+    cache_size: usize,
+    /// Read-cache TTL in seconds.
+    #[arg(long, default_value_t = 12)]
+    cache_ttl_secs: u64,
+    /// Resource profile.
+    #[arg(long, value_enum, default_value_t = ProfileArg::Standard)]
+    profile: ProfileArg,
+    /// Inactivity watchdog timeout in seconds.
+    #[arg(long)]
+    watchdog_timeout: Option<u64>,
+    /// Enforce strict nonce checks.
+    #[arg(long, default_value_t = false)]
+    strict_nonce: bool,
+    /// Enforce strict balance checks.
+    #[arg(long, default_value_t = false)]
+    strict_balance: bool,
+    /// Enable signature verification.
+    #[arg(long, default_value_t = false)]
+    verify_signatures: bool,
+}
+
+#[derive(Debug, Clone, Copy, clap::ValueEnum)]
+enum ProfileArg {
+    Micro,
+    Standard,
+    Power,
+}
+
+impl From<ProfileArg> for Profile {
+    fn from(value: ProfileArg) -> Self {
+        match value {
+            ProfileArg::Micro => Self::Micro,
+            ProfileArg::Standard => Self::Standard,
+            ProfileArg::Power => Self::Power,
+        }
+    }
+}
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt().with_env_filter("info").init();
+    let cli = Cli::parse();
+
+    let resource_model = ResourceModel::for_profile(
+        Profile::from(cli.profile),
+        Duration::from_secs(cli.cache_ttl_secs),
+    );
+    resource_model
+        .ensure_spawn_budget()
+        .context("resource budget check failed")?;
+
+    let upstream = Arc::new(UpstreamRpc::new_with_limits(
+        cli.rpc_url.clone(),
+        cli.ws_url.clone(),
+        cli.chain_id,
+        cli.upstream_rps,
+        cli.upstream_burst,
+    ));
+    let follower_upstream = Arc::clone(&upstream);
+    let head = upstream.health_check().unwrap_or(0);
+    let mut fork = ForkState::new(
+        HybridDB::new(
+            upstream,
+            cli.cache_size,
+            Duration::from_secs(cli.cache_ttl_secs),
+            resource_model.bytecode_cache_capacity(),
+            cli.chain_id,
+        ),
+        head,
+        cli.chain_id,
+    );
+    fork.strict_nonce = cli.strict_nonce;
+    fork.strict_balance = cli.strict_balance;
+    fork.verify_signatures = cli.verify_signatures;
+
+    let mirage = MirageFork::new(fork, resource_model, MirageMode::Live);
+    let (shutdown_tx, mut shutdown_rx) = broadcast::channel(8);
+    let bind = format!("{}:{}", cli.host, cli.port);
+    let (addr, handle) = start_rpc_server(&bind, mirage.clone(), shutdown_tx.clone())
+        .await
+        .with_context(|| format!("failed to bind {bind}"))?;
+
+    if cli.rpc_url.is_some() || cli.ws_url.is_some() {
+        let follower = TargetedFollower::new(
+            follower_upstream,
+            &mirage,
+            DiffClassifier::new(ClassificationConfig::default()),
+            FollowerConfig {
+                ws_url: cli.ws_url.clone().unwrap_or_default(),
+                http_url: cli.rpc_url.clone().unwrap_or_default(),
+                block_budget: Duration::from_secs(10),
+                filter_addresses: None,
+                filter_selectors: None,
+            },
+        );
+        let shutdown = shutdown_tx.subscribe();
+        tokio::spawn(async move {
+            if let Err(error) = follower.run(shutdown).await {
+                tracing::warn!("targeted follower exited with error: {error}");
+            }
+        });
+    }
+
+    write_artifacts(addr.port()).context("failed to write startup artifacts")?;
+    tracing::info!("mirage ready port={} chain={}", addr.port(), cli.chain_id);
+
+    if let Some(timeout_secs) = cli.watchdog_timeout {
+        let mirage = mirage.clone();
+        let shutdown = shutdown_tx.clone();
+        tokio::spawn(async move {
+            let timeout = Duration::from_secs(timeout_secs);
+            loop {
+                tokio::time::sleep(Duration::from_secs(1)).await;
+                let idle = mirage.idle_for();
+                if idle >= timeout {
+                    let _ = shutdown.send(());
+                    break;
+                }
+            }
+        });
+    }
+
+    tokio::select! {
+        _ = shutdown_rx.recv() => {}
+        _ = tokio::signal::ctrl_c() => {}
+    }
+
+    cleanup_artifacts(addr.port());
+    handle.stop().context("failed to stop RPC server")?;
+    Ok(())
+}
+
+fn write_artifacts(port: u16) -> anyhow::Result<()> {
+    let pid_path = PathBuf::from(format!("/tmp/mirage-{port}.pid"));
+    let status_path = PathBuf::from(format!("/tmp/mirage-{port}-status.json"));
+    fs::write(pid_path, std::process::id().to_string())?;
+    fs::write(
+        status_path,
+        serde_json::json!({"status": "ready", "port": port}).to_string(),
+    )?;
+    Ok(())
+}
+
+fn cleanup_artifacts(port: u16) {
+    let pid_path = PathBuf::from(format!("/tmp/mirage-{port}.pid"));
+    let status_path = PathBuf::from(format!("/tmp/mirage-{port}-status.json"));
+    let _ = fs::remove_file(pid_path);
+    let _ = fs::remove_file(status_path);
+}
