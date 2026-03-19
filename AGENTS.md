@@ -17,11 +17,18 @@ plans/          Implementation plans + cross-plan state.
     preflight-snapshot.md  Git log, compile status, test count. Generated before each plan.
     briefs/             Strategist execution briefs (one per plan).
     reviews/            Reviewer feedback and archived iterations.
-agents/         Agent role prompts. Read yours at session start.
+    tasks/              Task checklists ({num}-tasks.toml). Update status as you work.
+    docs/               Scribe documentation ({num}-docs.md).
 crates/         Rust workspace. All implementation code.
 docs/           mdbook documentation. Updated by each plan after code is written.
 tmp/            Scratch space. Not committed.
 ```
+
+## Your Role
+
+Your specific role (Strategist, Implementer, Architect, Auditor, Scribe, Critic, etc.) is
+defined in the **turn message** you receive at the start of your session. There are no
+per-role files to read — your instructions are the turn message itself. Follow them exactly.
 
 ## Universal Rules (All Agents)
 
