@@ -126,6 +126,10 @@ pub enum PlutchikEmotion {
 impl PlutchikEmotion {
     /// Classifies a PAD vector into a Plutchik octant.
     pub fn from_pad(pad: &PadVector) -> Self {
+        if pad.pleasure == 0.0 && pad.arousal == 0.0 && pad.dominance == 0.0 {
+            return Self::Anticipation;
+        }
+
         let positive_pleasure = pad.pleasure > 0.0;
         let positive_arousal = pad.arousal > 0.0;
         let positive_dominance = pad.dominance > 0.0;
@@ -451,6 +455,14 @@ mod tests {
             dominance: 1.0,
         });
         assert_eq!(emotion, PlutchikEmotion::Joy);
+    }
+
+    #[test]
+    fn pad_vector_plutchik_anticipation_for_zero_vector() {
+        assert_eq!(
+            PlutchikEmotion::from_pad(&PadVector::ZERO),
+            PlutchikEmotion::Anticipation
+        );
     }
 
     #[test]

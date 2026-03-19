@@ -1,50 +1,61 @@
 # golem-core
 
-`golem-core` is the Layer 0 foundation crate for Bardo. It defines the shared vocabulary every later crate imports: identity, configuration, error handling, taint labels, the lock-free cortical surface, the event fabric, the extension trait skeleton, HDC primitives, and the per-tick arena wrapper.
+`golem-core` is the Layer 0 foundation crate for Bardo. It provides the shared Rust vocabulary that every later crate depends on: identity, runtime configuration, the lock-free cortical surface, the typed event bus, the extension hook skeleton, taint markers, HDC primitives, and the per-tick arena allocator.
 
 ## Features
 
-- `GolemId`: UUID-backed runtime identity for in-process references
-- `GolemConfig`: TOML runtime schema with `GOLEM_*` and `BARDO_*` environment overrides
-- `CognitiveTier`: `T0`, `T1`, `T2` inference gate for cost-aware routing
-- `CorticalState`: cache-aligned atomic perception surface with writer helpers and snapshots
-- `EventFabric`: non-blocking broadcast bus with a bounded replay buffer
-- `Extension` and `ExtensionRegistry`: async hook trait plus dependency-validated dispatcher
-- `TaintLabel` and `TaintedString`: explicit information-flow markers
-- `HdcVector`: 10,240-bit hypervector primitive stub
-- `TickArena`: `bumpalo`-backed arena that resets at tick boundaries
-- `GolemError` and `Result`: crate-wide typed error surface
+- `GolemId` for ephemeral in-process process identity
+- `GolemConfig` for the canonical `golem.toml` schema with `GOLEM_*` and `BARDO_*` overrides
+- `CorticalState` and `CorticalSnapshot` for shared perception and state inspection
+- `EventFabric` for non-blocking event emission plus bounded replay
+- `Extension` and `ExtensionRegistry` for lifecycle hook orchestration
+- `TaintLabel` and `TaintedString` for explicit information-flow tracking
+- `CognitiveTier` for routing inference spend across `T0`, `T1`, and `T2`
+- `HdcVector` for 10,240-bit hypervector operations
+- `TickArena` for tick-scoped bump allocation
+- `GolemError` and `Result` as the crate-wide error surface
 
 ## Getting Started
 
-Import the crate root and use the re-exported types directly:
+Import the crate root and use the re-exports directly:
 
 ```rust
-use std::{path::Path, convert::TryFrom};
+use std::path::Path;
 
-use golem_core::{CognitiveTier, EventFabric, GolemConfig, GolemId};
+use golem_core::{
+    CognitiveTier, CorticalState, EventFabric, EventPayload, GolemConfig, GolemId, Subsystem,
+    TaintLabel, TaintedString, TickArena,
+};
 
-let id = GolemId::new();
+let golem_id = GolemId::new();
 let config = GolemConfig::from_file(Path::new("golem.toml"))?;
 let tier = CognitiveTier::try_from(1)?;
-let fabric = EventFabric::new(1_024);
 
-fabric.emit(
-    golem_core::Subsystem::Heartbeat,
+let cortical = CorticalState::new();
+cortical.write_affect(0.5, -0.3, 0.1, 7);
+let snapshot = cortical.snapshot();
+
+let events = EventFabric::new(1_024);
+events.emit(
+    Subsystem::Heartbeat,
     42,
-    golem_core::EventPayload::HeartbeatComplete {
+    EventPayload::HeartbeatComplete {
         tick: 42,
         duration_ms: 12,
         actions_taken: 3,
     },
 );
+
+let arena = TickArena::new();
+let secret = TaintedString::new("0xabc".to_owned(), TaintLabel::WalletSecret);
+let _ = arena.alloc(secret.value.clone());
 ```
 
-`golem-core` is designed to be imported from the crate root. The root re-exports the full public surface, so downstream crates can stay on the stable `golem_core::...` path instead of reaching into implementation modules.
+`golem-core` is designed for direct root-level imports. Downstream crates should prefer the re-exported API instead of reaching into implementation modules.
 
 ## Configuration
 
-`GolemConfig` is the canonical `golem.toml` schema. It includes the top-level sections that Bardo uses at runtime:
+`GolemConfig` is the canonical runtime schema loaded from `golem.toml`. The top-level sections are:
 
 - `golem`
 - `heartbeat`
@@ -59,18 +70,21 @@ fabric.emit(
 - `mortality`
 - `compute`
 
-Load configuration from a file or string, then apply the environment overlay:
+Environment overrides use the `GOLEM_*` and `BARDO_*` prefixes. Example:
 
 ```rust
-use std::path::Path;
-
 use golem_core::GolemConfig;
 
 let config = GolemConfig::from_file(Path::new("golem.toml"))?;
-let config = GolemConfig::from_str("[golem]\nname = \"oracle-3\"\n")?;
+let config = GolemConfig::from_str(
+    r#"
+    [golem]
+    name = "oracle-3"
+    "#,
+)?;
 ```
 
-`from_file` reads TOML from disk and then calls `with_env_overrides`. `from_str` parses TOML and applies the same environment lookup without file I/O. The canonical field names, defaults, and environment mappings live in `prd2/shared/config-reference.md`, while the operator-facing file layout and hot-reload guidance are documented in `prd2/01-golem/19-config-and-operator-model.md`.
+Useful runtime overrides include `GOLEM_NAME`, `GOLEM_TICK_INTERVAL`, `GOLEM_MODE`, `GOLEM_CUSTODY_MODE`, `GOLEM_INFERENCE_PAYMENT`, `GOLEM_INFERENCE_DAILY_BUDGET`, `GOLEM_SUCCESSION_AUTO`, `GOLEM_SUCCESSION_BUDGET`, `GOLEM_DAIMON_ENABLED`, `GOLEM_DREAMS_ENABLED`, `GOLEM_ORACLE_ENABLED`, `GOLEM_COMPUTE_TIER`, `BARDO_STYX_ENABLED`, `BARDO_STYX_HOST`, `BARDO_CLADE_ENABLED`, `BARDO_STYX_DAILY_BUDGET`, `BARDO_STYX_MONTHLY_BUDGET`, `BARDO_IMMORTAL`, `BARDO_MORTALITY_ENABLED`, and `BARDO_STOCHASTIC_SEED`.
 
 ## API
 
@@ -80,9 +94,11 @@ let config = GolemConfig::from_str("[golem]\nname = \"oracle-3\"\n")?;
 pub struct GolemId(uuid::Uuid);
 impl GolemId {
     pub fn new() -> Self;
-    pub fn from_uuid(uuid: uuid::Uuid) -> Self;
-    pub fn as_uuid(&self) -> &uuid::Uuid;
+    pub const fn from_uuid(uuid: uuid::Uuid) -> Self;
+    pub const fn as_uuid(&self) -> &uuid::Uuid;
 }
+
+pub type Result<T> = std::result::Result<T, GolemError>;
 
 #[derive(thiserror::Error, Debug)]
 pub enum GolemError {
@@ -91,15 +107,13 @@ pub enum GolemError {
     Extension { extension: String, source: anyhow::Error },
     EventFabric(String),
     CorticalState(String),
-    Io(std::io::Error),
-    TomlParse(toml::de::Error),
-    Serde(serde_json::Error),
+    Io(#[from] std::io::Error),
+    TomlParse(#[from] toml::de::Error),
+    Serde(#[from] serde_json::Error),
 }
-
-pub type Result<T> = std::result::Result<T, GolemError>;
 ```
 
-`GolemId` serializes transparently as a UUID. `GolemError::Extension` preserves the source error with `anyhow::Error` so hook failures keep their full context.
+`GolemId` serializes transparently as a UUID and implements `Display` with the hyphenated UUID form. `GolemError` is the crate-wide error type used by config parsing, runtime plumbing, and downstream callers that want a single foundation error surface.
 
 ### Configuration
 
@@ -124,17 +138,11 @@ impl GolemConfig {
     pub fn from_str(s: &str) -> Result<Self>;
     pub fn with_env_overrides(self) -> Result<Self>;
 }
-
-pub enum CognitiveTier {
-    T0 = 0,
-    T1 = 1,
-    T2 = 2,
-}
 ```
 
-Every config section derives `Serialize`, `Deserialize`, `Clone`, and `Debug`, and the optional sections use `Default` so minimal files parse cleanly.
+The configuration model is fully `serde`-driven and defaults missing sections so minimal files parse cleanly. The core schema is split into typed sections such as `GolemSection`, `HeartbeatConfig`, `InferenceConfig`, `SafetyConfig`, `CustodyConfig`, `StyxConfig`, `SuccessionConfig`, `DaimonConfig`, `DreamsConfig`, `OracleConfig`, `MortalityConfig`, and `ComputeConfig`.
 
-### Cortical Surface
+### Cortical State
 
 ```rust
 pub struct CorticalState;
@@ -154,13 +162,26 @@ impl CorticalState {
     pub fn write_derived(&self, momentum: f32);
 }
 
-pub struct CorticalSnapshot { /* all 32 signals */ }
-pub struct PadVector { pub pleasure: f64, pub arousal: f64, pub dominance: f64 }
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct CorticalSnapshot { /* point-in-time view of all signals */ }
+
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct PadVector {
+    pub pleasure: f64,
+    pub arousal: f64,
+    pub dominance: f64,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[repr(u8)]
 pub enum BehavioralPhase { Thriving, Stable, Conservation, Declining, Terminal }
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+#[repr(u8)]
 pub enum PlutchikEmotion { Joy, Trust, Fear, Surprise, Sadness, Disgust, Anger, Anticipation }
 ```
 
-`CorticalState` uses atomic loads and stores with Acquire/Release ordering. `PadVector::ZERO`, `PadVector::clamp`, `BehavioralPhase::from_u8`, and `PlutchikEmotion::from_pad` are all part of the public API. `snapshot()` reads all signals sequentially, so it is useful for rendering and context assembly, but it is not transactional across the full struct.
+`CorticalState` is cache-aligned, lock-free, and intended to be shared across runtime consumers. `snapshot()` is a sequential read of the current signals and is useful for rendering and context assembly.
 
 ### Event Fabric
 
@@ -173,6 +194,7 @@ impl EventFabric {
     pub fn replay_from(&self, after_seq: u64) -> Vec<GolemEvent>;
 }
 
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct GolemEvent {
     pub seq: u64,
     pub ts_millis: u64,
@@ -180,16 +202,16 @@ pub struct GolemEvent {
     pub subsystem: Subsystem,
     pub payload: EventPayload,
 }
+
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub enum Subsystem { Heartbeat, Perception, Daimon, Mortality, Grimoire, Dreams, Context, Inference, Tools, Risk, Coordination, Lifecycle, Engagement, Session, Creature, System }
 ```
 
-`EventFabric` combines a live `tokio::sync::broadcast` channel with a replay buffer capped at 10,000 events. `emit()` never blocks; it appends to the buffer and forwards the event to live subscribers. `GolemEvent::ts_millis` is a wall-clock timestamp in Unix epoch milliseconds.
+`EventFabric` combines a live `tokio::sync::broadcast` channel with a bounded replay buffer. New subscribers can join live traffic and still catch up from the replay window if they need older events.
 
-`EventPayload` covers the runtime event vocabulary across heartbeat, perception, daimon, mortality, grimoire, dreams, context, inference, tools, risk, coordination, lifecycle, engagement, session, creature, and system events. `Subsystem` identifies which part of the runtime emitted the event.
-
-### Extension System
+### Extension Hooks
 
 ```rust
-#[async_trait::async_trait]
 pub trait Extension: Send + Sync + 'static {
     fn name(&self) -> &str;
     fn layer(&self) -> u8;
@@ -230,28 +252,23 @@ impl ExtensionRegistry {
 }
 ```
 
-The registry validates dependency names and layer order, then computes a stable firing order. For tool calls, `Block` short-circuits and `Modify` can be refined by later hooks.
+The extension system gives later crates a typed hook surface without coupling them to one another. The registry validates dependency order before hooks fire.
 
-### Taint, HDC, and Allocator
+### Taint, HDC, and Allocation
 
 ```rust
-pub enum TaintLabel {
-    Clean,
-    Tainted,
-    WalletSecret,
-    LlmOutput,
-    UserInput,
-    ChainData,
-}
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
+pub enum TaintLabel { Clean, Tainted, WalletSecret, LlmOutput, UserInput, ChainData }
 
+#[derive(Clone, Debug, Eq, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct TaintedString {
     pub value: String,
     pub label: TaintLabel,
 }
 
-pub struct HdcVector { /* 10,240 bits */ }
+pub struct HdcVector;
 impl HdcVector {
-    pub fn zeros() -> Self;
+    pub const fn zeros() -> Self;
     pub fn random() -> Self;
     pub fn bind(&self, other: &Self) -> Self;
     pub fn bundle(vectors: &[&Self]) -> Self;
@@ -268,34 +285,30 @@ impl TickArena {
 }
 ```
 
-`TaintedString` does not dereference to `String`, which keeps the taint boundary explicit. `HdcVector::bundle` uses strict majority voting, ties fall back to `0`, and `similarity` returns normalized Hamming similarity. `TickArena` is a thin named wrapper around `bumpalo::Bump`.
+`TaintedString` keeps provenance visible at the type level. `HdcVector` is a simple 10,240-bit primitive for later HDC work, and `TickArena` gives the runtime a named arena allocator for tick-scoped temporary data.
 
 ## Architecture
 
-`golem-core` is the root of the workspace dependency graph. Later crates build on it, but it depends on no other workspace crates.
-
-```
-golem_core
-├── id
-├── error
-├── taint
-├── cognitive
-├── config
-├── cortical
-├── event
-├── extension
-├── hdc
-└── alloc
+```text
+golem-core
+├── identity: GolemId
+├── config: GolemConfig and runtime sections
+├── cortical: CorticalState, PadVector, BehavioralPhase, PlutchikEmotion
+├── event: EventFabric, GolemEvent, EventPayload, Subsystem
+├── extension: Extension trait, registry, hook contexts, hook actions
+├── taint: TaintLabel, TaintedString
+├── hdc: HdcVector
+└── alloc: TickArena
 ```
 
-The crate root re-exports the stable public API so downstream crates can import from `golem_core` directly. That keeps the shared vocabulary small and avoids dependency drift across later layers.
+Every later Rust crate imports `golem-core` either directly or through re-exports. That keeps foundational types centralized and prevents the workspace from growing a second copy of the same runtime vocabulary.
 
 ## References
 
-- `prd2/01-golem/00-overview.md` sections `The Golem Container`, `The CorticalState`, `Architecture: 7-Layer Dependency Hierarchy`, and `Key Architectural Decisions`
-- `prd2/01-golem/13a-runtime-extensions.md` sections `2. The Extension Trait: 20 Lifecycle Hooks` and `5. The Extension Registry`
-- `prd2/01-golem/13b-runtime-extensions.md` sections `8. Event Fabric: The Nervous System`, `9. CorticalState: Lock-Free Atomic Perception Surface`, and `10. Arena Allocator: Zero-GC Ticks`
-- `prd2/01-golem/18-cortical-state.md` sections `The struct`, `Reading and writing`, `Initialization`, and `Plutchik Emotion Labels`
-- `prd2/01-golem/19-config-and-operator-model.md` sections `Config Files Overview`, `golem.toml`, and `Environment Variable Substitution`
-- `prd2/shared/config-reference.md` sections `Config Resolution Order`, `Env Var Naming Convention`, `[golem]`, `[heartbeat]`, `[inference]`, `[safety]`, `[custody]`, `[styx]`, `[succession]`, `[daimon]`, `[dreams]`, `[oracle]`, `[mortality]`, and `[compute]`
-- `prd2/shared/glossary.md` entries for `Golem`, `CorticalState`, `Event Fabric`, `Extension`, `HDC`, `HyperVector`, and `TaintLabel`
+- `prd2/17-monorepo/00-packages.md` sections `Workspace Layout`, `Root Cargo.toml`, `Crate Inventory`, and `Dependency Rules`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure`, `Workspace Dependency Inheritance`, and `Workspace Lints`
+- `prd2/17-monorepo/03-conventions.md` sections `Rust Conventions` and `Workspace Dependency Inheritance`
+- `prd2/01-golem/18-cortical-state.md` for the lock-free cortical surface, PAD vectors, and emotion classification
+- `prd2/01-golem/19-config-and-operator-model.md` and `prd2/shared/config-reference.md` for the runtime configuration schema and environment overrides
+- `prd2/01-golem/13a-runtime-extensions.md` and `prd2/01-golem/13b-runtime-extensions.md` for the extension hook surface and event bus
+- `prd2/shared/glossary.md` for Bardo terminology used throughout the runtime vocabulary
