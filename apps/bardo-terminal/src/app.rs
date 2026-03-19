@@ -18,10 +18,10 @@ use ratatui::{
 
 use crate::{
     layout::{LayoutBreakpoint, compute_layout},
-    palette::{BG_MID, BG_RAISED, BORDER, BORDER_ACTIVE, BORDER_DREAM, ROSE, ROSE_DIM, TEXT_DIM},
+    palette::{BG_MID, BG_RAISED, BORDER_ACTIVE, BORDER_DREAM, ROSE, ROSE_DIM, TEXT_DIM},
     screen::{ScreenId, ScreenRegistry, StubScreen},
     screens::HomeScreen,
-    state::{AppAction, AppState},
+    state::{AppAction, AppState, format_duration},
 };
 
 const TARGET_FPS: u64 = 60;
@@ -69,7 +69,7 @@ impl App {
 
         loop {
             let frame_start = Instant::now();
-            let _dt = frame_start.duration_since(last_frame).as_secs_f64();
+            let dt = frame_start.duration_since(last_frame).as_secs_f64();
 
             let timeout = FRAME_DURATION.saturating_sub(last_frame.elapsed());
             if event::poll(timeout)? {
@@ -87,6 +87,8 @@ impl App {
             }
 
             self.state.tick_count = self.state.tick_count.wrapping_add(1);
+            self.state.atmosphere.tick(dt);
+            self.state.progress.tick(dt);
             terminal.draw(|frame| self.render(frame))?;
 
             last_frame = frame_start;
@@ -192,13 +194,18 @@ impl App {
         );
 
         if let Some(screen) = self.screens.get(&self.active_screen) {
+            let eta_str = if self.state.progress.is_complete() {
+                "done".to_string()
+            } else {
+                format_duration(self.state.progress.eta_remaining_secs())
+            };
             let header_text = format!(
-                " {}  •  {} / {}   tick {:06}   layout {}   {} ",
+                " {}  •  {} / {}   ETA {}   elapsed {}   {} ",
                 screen.title(),
                 self.active_screen.window_name(),
                 self.active_screen.tab_name(),
-                self.state.tick_count,
-                self.state.layout.label(),
+                eta_str,
+                format_duration(self.state.progress.wall_elapsed_secs()),
                 self.state.connection_status.label(),
             );
             frame.render_widget(
@@ -208,34 +215,21 @@ impl App {
                     .alignment(Alignment::Left),
                 header_area,
             );
-        }
 
-        let footer_text = format!(
-            " q=quit   Tab=next screen   Shift+Tab=previous screen   {}/{} screens   {} panels ",
-            self.screen_index(self.active_screen).unwrap_or(0) + 1,
-            ScreenId::all().len(),
-            self.state.layout.panel_count(),
-        );
-        frame.render_widget(
-            Paragraph::new(footer_text)
-                .block(Block::default().style(Style::default().bg(BG_MID)))
-                .style(Style::default().fg(ROSE_DIM)),
-            footer_area,
-        );
-
-        if let Some(screen) = self.screens.get(&self.active_screen) {
-            screen.render(frame, content_area, &self.state);
-        } else {
-            frame.render_widget(
-                Paragraph::new("Active screen missing")
-                    .block(
-                        Block::default()
-                            .borders(Borders::ALL)
-                            .border_style(Style::default().fg(BORDER)),
-                    )
-                    .style(Style::default().fg(TEXT_DIM)),
-                content_area,
+            let footer_text = format!(
+                " q=quit   Tab=next screen   Shift+Tab=previous screen   {}/{} screens   {} panels ",
+                self.screen_index(self.active_screen).unwrap_or(0) + 1,
+                ScreenId::all().len(),
+                self.state.layout.panel_count(),
             );
+            frame.render_widget(
+                Paragraph::new(footer_text)
+                    .block(Block::default().style(Style::default().bg(BG_MID)))
+                    .style(Style::default().fg(ROSE_DIM)),
+                footer_area,
+            );
+
+            screen.render(frame, content_area, &self.state);
         }
     }
 

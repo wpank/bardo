@@ -1,30 +1,30 @@
-//! Home screen placeholder for the terminal scaffold.
+//! Home screen with live progress bar, ETA countdown, and per-task timing.
 
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Modifier, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, Paragraph},
+    widgets::{Block, Borders, Paragraph},
 };
 
 use crate::{
     palette::{
-        BG_RAISED, BONE, BORDER, BORDER_ACTIVE, DANGER, ROSE, ROSE_DIM, SUCCESS, TEXT_DIM,
+        BONE, BORDER, BORDER_ACTIVE, DANGER, DREAM, ROSE, ROSE_BRIGHT, ROSE_DIM, SUCCESS, TEXT_DIM,
         TEXT_GHOST, TEXT_PRIMARY, WARNING,
     },
     screen::{Screen, ScreenId},
-    state::{AppAction, AppState, ConnectionStatus},
+    state::{AppAction, AppState, ConnectionStatus, TaskStatus, format_duration},
+    widgets::TotalProgressBar,
 };
 
-/// Placeholder home screen that renders a creature silhouette and status blocks.
+/// Home screen with creature silhouette, pipeline progress, and per-task ETA.
 pub(crate) struct HomeScreen {
     focused: bool,
 }
 
 impl HomeScreen {
-    /// Creates a new home screen placeholder.
     pub(crate) fn new() -> Self {
         Self { focused: false }
     }
@@ -45,6 +45,7 @@ impl Screen for HomeScreen {
             .constraints([Constraint::Percentage(30), Constraint::Percentage(70)])
             .split(area);
 
+        // ── Left: creature silhouette ────────────────────────────
         let creature_border = if self.focused && state.tick_count % 8 < 4 {
             BORDER_ACTIVE
         } else {
@@ -68,28 +69,35 @@ impl Screen for HomeScreen {
             creature_inner,
         );
 
+        // ── Right: progress + tasks ──────────────────────────────
         let data_chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
-                Constraint::Length(3),
-                Constraint::Length(3),
-                Constraint::Min(0),
+                Constraint::Length(5), // progress bar (inner: 3 rows)
+                Constraint::Length(3), // connection status
+                Constraint::Min(0),    // task list
             ])
             .split(chunks[1]);
 
-        let vitality_pct = (state.vitality.value.clamp(0.0, 1.0) * 100.0).round() as u16;
-        let vitality_block = Block::default()
+        // ── Progress bar ─────────────────────────────────────────
+        let progress_block = Block::default()
             .borders(Borders::ALL)
-            .title(Span::styled(" VITALITY ", Style::default().fg(BONE)))
+            .title(Span::styled(" PIPELINE ", Style::default().fg(BONE)))
             .border_style(Style::default().fg(BORDER));
+        let progress_inner = progress_block.inner(data_chunks[0]);
+        frame.render_widget(progress_block, data_chunks[0]);
         frame.render_widget(
-            Gauge::default()
-                .block(vitality_block)
-                .gauge_style(Style::default().fg(SUCCESS).bg(BG_RAISED))
-                .percent(vitality_pct),
-            data_chunks[0],
+            TotalProgressBar {
+                progress: state.progress.progress_fraction(),
+                eta_secs: state.progress.eta_remaining_secs(),
+                elapsed_secs: state.progress.wall_elapsed_secs(),
+                heartbeat: state.atmosphere.heartbeat(),
+                complete: state.progress.is_complete(),
+            },
+            progress_inner,
         );
 
+        // ── Connection status ────────────────────────────────────
         let (status_text, status_color) = match state.connection_status {
             ConnectionStatus::Connected => ("● CONNECTED", SUCCESS),
             ConnectionStatus::Connecting => ("◌ CONNECTING…", WARNING),
@@ -107,39 +115,102 @@ impl Screen for HomeScreen {
             data_chunks[1],
         );
 
-        let info_block = Block::default()
+        // ── Task list with per-task ETA and elapsed ──────────────
+        let task_block = Block::default()
             .borders(Borders::ALL)
+            .title(Span::styled(" PHASES ", Style::default().fg(BONE)))
             .border_style(Style::default().fg(if self.focused { BORDER_ACTIVE } else { BORDER }));
-        let info_inner = info_block.inner(data_chunks[2]);
-        frame.render_widget(info_block, data_chunks[2]);
-        frame.render_widget(
-            Paragraph::new(vec![
-                Line::from(vec![
-                    Span::styled("tick: ", Style::default().fg(TEXT_DIM)),
-                    Span::styled(
-                        state.tick_count.to_string(),
-                        Style::default().fg(ROSE).add_modifier(Modifier::BOLD),
-                    ),
-                ]),
-                Line::from(vec![
-                    Span::styled("wave: ", Style::default().fg(TEXT_DIM)),
-                    Span::styled(
-                        tick_waveform(state.tick_count, 18),
-                        Style::default().fg(ROSE_DIM),
-                    ),
-                ]),
-                Line::from(vec![
-                    Span::styled("layout: ", Style::default().fg(TEXT_DIM)),
-                    Span::styled(state.layout.label(), Style::default().fg(TEXT_PRIMARY)),
-                ]),
-                Line::from(""),
-                Line::from(Span::styled(
-                    "q=quit  Tab=next  Shift+Tab=prev",
+        let task_inner = task_block.inner(data_chunks[2]);
+        frame.render_widget(task_block, data_chunks[2]);
+
+        let mut lines: Vec<Line> = Vec::new();
+
+        for task in &state.progress.tasks {
+            let (icon_display, icon_style, name_style, time_str) = match task.status {
+                TaskStatus::Done => (
+                    "✓".to_string(),
+                    Style::default().fg(SUCCESS),
+                    Style::default().fg(TEXT_DIM),
+                    format_duration(task.elapsed_secs),
+                ),
+                TaskStatus::Active => {
+                    let spinner = state.atmosphere.spinner();
+                    let pulse = pulse_color(ROSE, state.atmosphere.heartbeat());
+                    let elapsed = format_duration(task.elapsed_secs);
+                    let remaining = (task.estimated_secs - task.elapsed_secs).max(0.0);
+                    let eta = format_duration(remaining);
+                    (
+                        format!("{spinner}"),
+                        Style::default().fg(pulse).add_modifier(Modifier::BOLD),
+                        Style::default()
+                            .fg(ROSE_BRIGHT)
+                            .add_modifier(Modifier::BOLD),
+                        format!(
+                            "{elapsed} / ~{}  ETA {eta}",
+                            format_duration(task.estimated_secs)
+                        ),
+                    )
+                }
+                TaskStatus::Pending => (
+                    "○".to_string(),
                     Style::default().fg(TEXT_GHOST),
-                )),
-            ]),
-            info_inner,
-        );
+                    Style::default().fg(TEXT_GHOST),
+                    format!("~{}", format_duration(task.estimated_secs)),
+                ),
+            };
+
+            lines.push(Line::from(vec![
+                Span::styled(format!(" {icon_display} "), icon_style),
+                Span::styled(format!("{:<14}", task.name), name_style),
+                Span::styled(
+                    format!(" {time_str}"),
+                    match task.status {
+                        TaskStatus::Active => Style::default().fg(DREAM),
+                        TaskStatus::Done => Style::default().fg(TEXT_DIM),
+                        TaskStatus::Pending => Style::default().fg(TEXT_GHOST),
+                    },
+                ),
+            ]));
+        }
+
+        // Summary line
+        lines.push(Line::from(""));
+        lines.push(Line::from(vec![
+            Span::styled(" elapsed: ", Style::default().fg(TEXT_DIM)),
+            Span::styled(
+                format_duration(state.progress.wall_elapsed_secs()),
+                Style::default().fg(TEXT_PRIMARY),
+            ),
+            Span::styled("   ETA: ", Style::default().fg(TEXT_DIM)),
+            Span::styled(
+                if state.progress.is_complete() {
+                    "done".to_string()
+                } else {
+                    format_duration(state.progress.eta_remaining_secs())
+                },
+                Style::default().fg(if state.progress.is_complete() {
+                    SUCCESS
+                } else {
+                    ROSE
+                }),
+            ),
+        ]));
+
+        // Waveform and help
+        lines.push(Line::from(""));
+        lines.push(Line::from(vec![
+            Span::styled(" wave: ", Style::default().fg(TEXT_DIM)),
+            Span::styled(
+                tick_waveform(state.tick_count, 18),
+                Style::default().fg(ROSE_DIM),
+            ),
+        ]));
+        lines.push(Line::from(Span::styled(
+            " q=quit  Tab=next  Shift+Tab=prev",
+            Style::default().fg(TEXT_GHOST),
+        )));
+
+        frame.render_widget(Paragraph::new(lines), task_inner);
     }
 
     fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
@@ -157,6 +228,21 @@ impl Screen for HomeScreen {
 
     fn on_blur(&mut self) {
         self.focused = false;
+    }
+}
+
+/// Modulate a color's brightness with the heartbeat oscillator.
+fn pulse_color(base: Color, heartbeat: f64) -> Color {
+    match base {
+        Color::Rgb(r, g, b) => {
+            let scale = heartbeat.clamp(0.9, 1.1);
+            Color::Rgb(
+                (r as f64 * scale).min(255.0) as u8,
+                (g as f64 * scale).min(255.0) as u8,
+                (b as f64 * scale).min(255.0) as u8,
+            )
+        }
+        other => other,
     }
 }
 
