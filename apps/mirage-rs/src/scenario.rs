@@ -223,7 +223,10 @@ pub(crate) fn rank_scenario_results(mut results: Vec<ScenarioResult>) -> Vec<Sce
             .pnl_wei
             .cmp(&left.pnl_wei)
             .then_with(|| left.gas_used.cmp(&right.gas_used))
-            .then_with(|| left.state_diff_storage_slots.cmp(&right.state_diff_storage_slots))
+            .then_with(|| {
+                left.state_diff_storage_slots
+                    .cmp(&right.state_diff_storage_slots)
+            })
             .then_with(|| left.state_diff_accounts.cmp(&right.state_diff_accounts))
             .then_with(|| left.wall_time_ms.cmp(&right.wall_time_ms))
     });

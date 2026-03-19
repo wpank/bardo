@@ -12,6 +12,15 @@ const STANDARD_MEMORY_BYTES: u64 = 512 * 1024 * 1024;
 const POWER_MEMORY_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 const SPAWN_HEADROOM_BYTES: u64 = 128 * 1024 * 1024;
 
+fn ensure_spawn_budget_from_available_memory(required: u64, available: u64) -> Result<()> {
+    if available == 0 || available < required {
+        return Err(MirageError::Unsupported(format!(
+            "insufficient memory: available={available} required={required}"
+        )));
+    }
+    Ok(())
+}
+
 /// Runtime operating mode for the fork.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -101,17 +110,12 @@ impl ResourceModel {
     pub fn ensure_spawn_budget(&self) -> Result<()> {
         let mut system = System::new();
         system.refresh_memory();
-        let available = system.available_memory();
-        if available == 0 {
-            return Ok(());
-        }
+        let available = std::env::var("BARDO_AVAILABLE_MEMORY_BYTES")
+            .ok()
+            .and_then(|value| value.parse::<u64>().ok())
+            .unwrap_or_else(|| system.available_memory());
         let required = self.max_memory_bytes.saturating_add(SPAWN_HEADROOM_BYTES);
-        if available < required {
-            return Err(MirageError::Unsupported(format!(
-                "insufficient memory: available={available} required={required}"
-            )));
-        }
-        Ok(())
+        ensure_spawn_budget_from_available_memory(required, available)
     }
 
     /// Captures the current process memory footprint.
@@ -330,5 +334,13 @@ mod tests {
         cache.insert_account(address!("0x1000000000000000000000000000000000000003"), info);
 
         assert_eq!(cache.entry_count(), 2);
+    }
+
+    #[test]
+    fn zero_available_memory_is_rejected() {
+        let err = super::ensure_spawn_budget_from_available_memory(640 * 1024 * 1024, 0)
+            .expect_err("zero available memory should fail");
+
+        assert!(err.to_string().contains("available=0"));
     }
 }

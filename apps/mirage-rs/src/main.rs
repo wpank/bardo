@@ -7,7 +7,7 @@ use std::{fs, path::PathBuf, sync::Arc, time::Duration};
 use anyhow::Context;
 use clap::Parser;
 use mirage_rs::{
-    ClassificationConfig, DiffClassifier,
+    ClassificationConfig, DiffClassifier, MirageError,
     fork::{ForkState, HybridDB, MirageFork},
     provider::UpstreamRpc,
     replay::{FollowerConfig, TargetedFollower},
@@ -82,8 +82,16 @@ impl From<ProfileArg> for Profile {
 }
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() {
     tracing_subscriber::fmt().with_env_filter("info").init();
+    if let Err(error) = run().await {
+        let exit_code = startup_exit_code(&error).unwrap_or(1);
+        tracing::error!(error = %error, exit_code, "mirage startup failed");
+        std::process::exit(exit_code);
+    }
+}
+
+async fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
     let resource_model = ResourceModel::for_profile(
@@ -102,7 +110,7 @@ async fn main() -> anyhow::Result<()> {
         cli.upstream_burst,
     ));
     let follower_upstream = Arc::clone(&upstream);
-    let head = upstream.health_check().unwrap_or(0);
+    let head = resolve_initial_head(&upstream, cli.rpc_url.is_some())?;
     let mut fork = ForkState::new(
         HybridDB::new(
             upstream,
@@ -175,6 +183,21 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+fn startup_exit_code(error: &anyhow::Error) -> Option<i32> {
+    error.chain().find_map(|cause| {
+        cause
+            .downcast_ref::<MirageError>()
+            .and_then(|mirage_error| match mirage_error {
+                MirageError::Unsupported(message)
+                    if message.starts_with("insufficient memory:") =>
+                {
+                    Some(2)
+                }
+                _ => None,
+            })
+    })
+}
+
 fn write_artifacts(port: u16) -> anyhow::Result<()> {
     let pid_path = PathBuf::from(format!("/tmp/mirage-{port}.pid"));
     let status_path = PathBuf::from(format!("/tmp/mirage-{port}-status.json"));
@@ -191,4 +214,45 @@ fn cleanup_artifacts(port: u16) {
     let status_path = PathBuf::from(format!("/tmp/mirage-{port}-status.json"));
     let _ = fs::remove_file(pid_path);
     let _ = fs::remove_file(status_path);
+}
+
+fn resolve_initial_head(upstream: &UpstreamRpc, require_probe: bool) -> anyhow::Result<u64> {
+    let health = upstream.health_check();
+    if require_probe {
+        return health.context("upstream RPC health check failed");
+    }
+    Ok(health.unwrap_or(0))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{UpstreamRpc, resolve_initial_head, startup_exit_code};
+    use crate::MirageError;
+
+    #[test]
+    fn initial_head_requires_probe_when_http_upstream_is_configured() {
+        let upstream =
+            UpstreamRpc::new_with_limits(Some("http://127.0.0.1:9".to_owned()), None, 1, 1, 1);
+
+        let error = resolve_initial_head(&upstream, true).expect_err("probe should fail");
+        let message = error.to_string();
+        assert!(message.contains("upstream RPC health check failed"));
+    }
+
+    #[test]
+    fn low_memory_startup_error_exits_with_code_two() {
+        let error = anyhow::Error::new(MirageError::Unsupported(
+            "insufficient memory: available=1 required=2".to_owned(),
+        ))
+        .context("resource budget check failed");
+
+        assert_eq!(startup_exit_code(&error), Some(2));
+    }
+
+    #[test]
+    fn unrelated_startup_errors_use_default_exit_code() {
+        let error = anyhow::Error::new(MirageError::BindFailed(8545)).context("failed to bind");
+
+        assert_eq!(startup_exit_code(&error), None);
+    }
 }

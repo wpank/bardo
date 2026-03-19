@@ -381,10 +381,9 @@ impl UpstreamRpc {
     pub async fn subscribe_new_heads(
         &self,
     ) -> Result<Pin<Box<dyn Stream<Item = Result<u64>> + Send>>> {
-        let ws_url = self
-            .ws_url
-            .as_ref()
-            .ok_or_else(|| MirageError::Upstream("no WebSocket upstream URL configured".to_owned()))?;
+        let ws_url = self.ws_url.as_ref().ok_or_else(|| {
+            MirageError::Upstream("no WebSocket upstream URL configured".to_owned())
+        })?;
         let (ws_stream, _) = connect_async(ws_url)
             .await
             .map_err(|error| MirageError::Upstream(format!("websocket connect failed: {error}")))?;
@@ -401,15 +400,18 @@ impl UpstreamRpc {
                 .into(),
             ))
             .await
-            .map_err(|error| MirageError::Upstream(format!("websocket subscribe failed: {error}")))?;
+            .map_err(|error| {
+                MirageError::Upstream(format!("websocket subscribe failed: {error}"))
+            })?;
 
         let mut subscription_id = None;
         while let Some(message) = read.next().await {
-            let message = message
-                .map_err(|error| MirageError::Upstream(format!("websocket read failed: {error}")))?;
-            let text = message
-                .to_text()
-                .map_err(|error| MirageError::Upstream(format!("websocket text frame failed: {error}")))?;
+            let message = message.map_err(|error| {
+                MirageError::Upstream(format!("websocket read failed: {error}"))
+            })?;
+            let text = message.to_text().map_err(|error| {
+                MirageError::Upstream(format!("websocket text frame failed: {error}"))
+            })?;
             let value: Value = serde_json::from_str(text)?;
             if let Some(result) = value.get("result") {
                 subscription_id = Some(result.clone());
@@ -420,44 +422,47 @@ impl UpstreamRpc {
         let subscription_id = subscription_id
             .ok_or_else(|| MirageError::Upstream("missing websocket subscription id".to_owned()))?;
 
-        let heads = stream::unfold((read, subscription_id), |(mut read, subscription_id)| async move {
-            while let Some(message) = read.next().await {
-                let message = match message {
-                    Ok(message) => message,
-                    Err(error) => {
-                        return Some((
-                            Err(MirageError::Upstream(format!(
-                                "websocket read failed: {error}"
-                            ))),
-                            (read, subscription_id),
-                        ));
+        let heads = stream::unfold(
+            (read, subscription_id),
+            |(mut read, subscription_id)| async move {
+                while let Some(message) = read.next().await {
+                    let message = match message {
+                        Ok(message) => message,
+                        Err(error) => {
+                            return Some((
+                                Err(MirageError::Upstream(format!(
+                                    "websocket read failed: {error}"
+                                ))),
+                                (read, subscription_id),
+                            ));
+                        }
+                    };
+                    let Ok(text) = message.to_text() else {
+                        continue;
+                    };
+                    let Ok(value) = serde_json::from_str::<Value>(text) else {
+                        continue;
+                    };
+                    let Some(params) = value.get("params") else {
+                        continue;
+                    };
+                    if params.get("subscription") != Some(&subscription_id) {
+                        continue;
                     }
-                };
-                let Ok(text) = message.to_text() else {
-                    continue;
-                };
-                let Ok(value) = serde_json::from_str::<Value>(text) else {
-                    continue;
-                };
-                let Some(params) = value.get("params") else {
-                    continue;
-                };
-                if params.get("subscription") != Some(&subscription_id) {
-                    continue;
+                    let Some(result) = params.get("result") else {
+                        continue;
+                    };
+                    let Some(number) = result.get("number") else {
+                        continue;
+                    };
+                    match parse_hex_u64(number) {
+                        Ok(number) => return Some((Ok(number), (read, subscription_id))),
+                        Err(error) => return Some((Err(error), (read, subscription_id))),
+                    }
                 }
-                let Some(result) = params.get("result") else {
-                    continue;
-                };
-                let Some(number) = result.get("number") else {
-                    continue;
-                };
-                match parse_hex_u64(number) {
-                    Ok(number) => return Some((Ok(number), (read, subscription_id))),
-                    Err(error) => return Some((Err(error), (read, subscription_id))),
-                }
-            }
-            None
-        });
+                None
+            },
+        );
 
         Ok(Box::pin(heads))
     }

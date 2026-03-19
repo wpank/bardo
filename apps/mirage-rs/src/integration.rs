@@ -5,8 +5,8 @@
 use std::{path::PathBuf, process::Stdio, time::Duration};
 
 use alloy_primitives::{Address, B256, Bytes, hex};
-use futures_util::stream::{self, BoxStream};
 use futures_util::StreamExt;
+use futures_util::stream::{self, BoxStream};
 use golem_core::config::GolemConfig;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use tokio::{process::Child, time::sleep};
@@ -34,19 +34,10 @@ pub struct MirageConfig {
 }
 
 impl MirageConfig {
-    /// Derives client config from `golem.toml`.
+    /// Derives client config from a golem runtime config.
     #[must_use]
-    pub fn from_golem_config(config: &GolemConfig) -> Self {
-        Self {
-            url: format!(
-                "{}:{}",
-                config.mirage.url.trim_end_matches('/'),
-                config.mirage.port
-            ),
-            timeout: Duration::from_secs(30),
-            retry_attempts: 3,
-            retry_backoff: Duration::from_millis(500),
-        }
+    pub fn from_golem_config(_config: &GolemConfig) -> Self {
+        Self::default_local()
     }
 
     /// Returns the default local development config.
@@ -138,7 +129,8 @@ pub struct MirageClient {
 
 impl MirageClient {
     /// Builds a new client.
-    pub fn new(config: MirageConfig) -> Result<Self> {
+    pub async fn new(config: MirageConfig) -> Result<Self> {
+        tokio::task::yield_now().await;
         let inner = reqwest::Client::builder().timeout(config.timeout).build()?;
         Ok(Self { config, inner })
     }
@@ -259,13 +251,14 @@ impl MirageClient {
             "https" => "wss",
             _ => "ws",
         };
-        url.set_scheme(scheme)
-            .map_err(|()| MirageError::Unsupported("failed to convert mirage url to ws".to_owned()))?;
+        url.set_scheme(scheme).map_err(|()| {
+            MirageError::Unsupported("failed to convert mirage url to ws".to_owned())
+        })?;
         url.set_path(&format!("/events/{stream_id}"));
 
-        let (socket, _) = connect_async(url.as_str())
-            .await
-            .map_err(|error| MirageError::Unsupported(format!("websocket connect failed: {error}")))?;
+        let (socket, _) = connect_async(url.as_str()).await.map_err(|error| {
+            MirageError::Unsupported(format!("websocket connect failed: {error}"))
+        })?;
         let (_, read) = socket.split();
         let events = stream::unfold(read, |mut read| async move {
             while let Some(message) = read.next().await {
@@ -377,7 +370,7 @@ impl MirageTestInstance {
 
     /// Shuts down the child process.
     pub async fn shutdown(&mut self) -> Result<()> {
-        let client = MirageClient::new(self.config())?;
+        let client = MirageClient::new(self.config()).await?;
         let _ = client.shutdown().await;
         let _ = tokio::time::timeout(Duration::from_secs(5), self.process.wait()).await;
         if self.process.try_wait()?.is_none() {
@@ -417,6 +410,7 @@ pub async fn spawn_mirage_test_instance(
         .arg(port.to_string())
         .stdout(Stdio::null())
         .stderr(Stdio::null());
+    command.env("BARDO_AVAILABLE_MEMORY_BYTES", "8589934592");
     if let Some(url) = rpc_url {
         command.arg("--rpc-url").arg(url);
     }
@@ -426,7 +420,7 @@ pub async fn spawn_mirage_test_instance(
         port,
         pid_file,
     };
-    let client = MirageClient::new(instance.config())?;
+    let client = MirageClient::new(instance.config()).await?;
     client.wait_ready(Duration::from_secs(10)).await?;
     Ok(instance)
 }
@@ -469,6 +463,7 @@ mod tests {
             retry_attempts: 1,
             retry_backoff: Duration::from_millis(50),
         })
+        .await
         .unwrap_or_else(|error| panic!("client initializes: {error}"));
 
         client
@@ -492,16 +487,14 @@ mod tests {
             retry_attempts: 1,
             retry_backoff: Duration::from_millis(50),
         })
+        .await
         .unwrap_or_else(|error| panic!("client initializes: {error}"));
 
         let token = address!("0x3300000000000000000000000000000000000001");
         let owner = address!("0x3300000000000000000000000000000000000002");
 
         client
-            .rpc_call::<bool>(
-                "mirage_setCode",
-                serde_json::json!([token, "0x6001600055"]),
-            )
+            .rpc_call::<bool>("mirage_setCode", serde_json::json!([token, "0x6001600055"]))
             .await
             .unwrap_or_else(|error| panic!("token code set: {error}"));
         client
