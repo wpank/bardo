@@ -1,16 +1,41 @@
 # golem-dreams
 
-`golem-dreams` implements sleep cycles for golems. When a golem is not actively trading — during low-activity windows or after a high-intensity session — it enters a sleep state that consolidates knowledge from episodic memory into more durable semantic and procedural forms.
+## What It Is
+
+`golem-dreams` is the Layer 2 boundary for sleep, replay, and consolidation behavior. The scaffold reserves the crate for dream scheduling and memory-processing work without exposing those systems yet.
 
 ## Features
 
-- NREM sleep: replay recent episodic memories and extract patterns for semantic storage
-- REM sleep: recombine memories in novel ways, generating candidate hypotheses and PLAYBOOK updates
-- Consolidation: write distilled knowledge back to the Grimoire's SQLite semantic store and PLAYBOOK.md
-- Configurable sleep schedule: trigger on time elapsed, activity thresholds, or explicit signals
+- Reserved Layer 2 crate for NREM, REM, and consolidation workflows
+- Crate root documents the intended role of the sleep subsystem
+- Inherits shared workspace toolchain, dependency, and lint settings
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-dreams
+```
+
+## Configuration
+
+The scaffold does not define crate-local configuration yet. Shared policy comes from the workspace root.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-dreams` is in Layer 2 (Cognition). It reads from and writes to `golem-grimoire`. The `golem-runtime` lifecycle FSM transitions the golem into a sleeping state, at which point the heartbeat pauses execution ticks and `golem-dreams` takes over. When consolidation completes, the FSM transitions back to active.
+`golem-dreams` occupies the cognition layer beside heartbeat, context, and memory. The scaffold keeps the crate boundary fixed so later sleep-cycle work can integrate cleanly with runtime and Grimoire crates.
 
-Sleep is not just idle time. The quality of a golem's decisions over its lifetime depends partly on how well it has consolidated past experience into the Grimoire. Golems that sleep regularly carry better-organized knowledge into each tick.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

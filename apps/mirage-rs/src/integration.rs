@@ -36,8 +36,18 @@ pub struct MirageConfig {
 impl MirageConfig {
     /// Derives client config from a golem runtime config.
     #[must_use]
-    pub fn from_golem_config(_config: &GolemConfig) -> Self {
-        Self::default_local()
+    pub fn from_golem_config(config: &GolemConfig) -> Self {
+        let url = config
+            .mirage
+            .url
+            .clone()
+            .unwrap_or_else(|| format!("http://{}:{}", config.mirage.host, config.mirage.port));
+        Self {
+            url,
+            timeout: Duration::from_millis(config.mirage.timeout_ms),
+            retry_attempts: config.mirage.retry_attempts,
+            retry_backoff: Duration::from_millis(config.mirage.retry_backoff_ms),
+        }
     }
 
     /// Returns the default local development config.
@@ -444,6 +454,7 @@ mod tests {
 
     use alloy_primitives::{Bytes, U256, address, hex};
     use futures_util::StreamExt;
+    use golem_core::config::GolemConfig;
 
     use crate::{
         TransactionRequest,
@@ -473,6 +484,26 @@ mod tests {
         handle
             .stop()
             .unwrap_or_else(|error| panic!("server stops cleanly: {error}"));
+    }
+
+    #[test]
+    fn mirage_config_from_golem_config_uses_mirage_section() {
+        let config = GolemConfig::from_str(
+            r#"
+                [mirage]
+                port = 18545
+                timeout_ms = 1500
+                retry_attempts = 5
+                retry_backoff_ms = 125
+            "#,
+        )
+        .unwrap_or_else(|error| panic!("config parses: {error}"));
+
+        let mirage = crate::integration::MirageConfig::from_golem_config(&config);
+        assert_eq!(mirage.url, "http://127.0.0.1:18545");
+        assert_eq!(mirage.timeout, Duration::from_millis(1_500));
+        assert_eq!(mirage.retry_attempts, 5);
+        assert_eq!(mirage.retry_backoff, Duration::from_millis(125));
     }
 
     #[tokio::test]

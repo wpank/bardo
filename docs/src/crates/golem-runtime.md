@@ -1,23 +1,41 @@
 # golem-runtime
 
-`golem-runtime` manages the golem lifecycle and the extension registry. It is the FSM that takes a golem from startup through active ticking, sleep, and death.
+## What It Is
+
+`golem-runtime` is the Layer 1 boundary for lifecycle orchestration in the Bardo workspace. At the scaffold stage it establishes the crate boundary, crate-level documentation, and workspace policy inheritance for the runtime layer without exposing runtime types yet.
 
 ## Features
 
-- Lifecycle FSM: states are `Initializing`, `Active`, `Sleeping`, `Dying`, `Dead`
-- Extension registry: register, order, and invoke extensions via `HookId` at defined lifecycle points
-- Tick loop: call `golem-heartbeat` once per tick interval, with backpressure if a tick runs long
-- Transition handling: route `golem-mortality` death signals to the Thanatopsis sequence
-- Graceful shutdown: complete in-flight ticks before transitioning to `Dying`
+- Reserved Layer 1 crate for lifecycle orchestration
+- Crate root declares the intended runtime scope: extension registry, hook dispatch, `GolemState`, lifecycle FSM, and shutdown handling
+- Inherits the workspace edition, rust-version, dependency policy, and lint configuration
+- No public modules, types, or functions are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-runtime
+```
+
+## Configuration
+
+`golem-runtime` currently has no crate-specific configuration surface. It inherits the shared workspace configuration from the root manifest and tooling files.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-runtime` is Layer 1 — the second crate above `golem-core`. Everything else in the golem stack is registered as an extension or called from within a tick. The runtime itself has no DeFi logic; it only drives the lifecycle.
+`golem-runtime` sits directly above `golem-core` in the dependency DAG. The scaffold keeps that layer boundary explicit from the beginning so later runtime work can land without changing workspace membership or layering rules.
 
-```
-Initializing → Active ↔ Sleeping → Dying → Dead
-```
+## References
 
-The transition from `Active` to `Sleeping` is triggered by the sleep scheduler in `golem-dreams`. The transition to `Dying` is triggered by any of the three mortality clocks in `golem-mortality`. The `Dead` state is terminal; the process exits cleanly after the legacy phase completes.
-
-Extensions register hooks at points like `on_tick_start`, `on_tick_end`, `on_sleep_enter`, `on_death`. The registry builds a topological execution order from declared dependencies, so extensions always run in the correct sequence regardless of registration order.
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` sections `Workspace Dependency Inheritance` and `Lint Config`

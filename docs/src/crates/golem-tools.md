@@ -1,24 +1,41 @@
 # golem-tools
 
-`golem-tools` provides the tool registry and sandboxed execution environment for golem-callable tools. Tools extend what a golem can do beyond its built-in inference and chain capabilities — fetching external data, running computations, calling APIs.
+## What It Is
+
+`golem-tools` is the Layer 4 boundary for tool registration and sandboxed execution. The scaffold reserves the crate for tool traits, registries, and sidecar integration without exposing those APIs yet.
 
 ## Features
 
-- Tool registry: register tools by name with typed input and output schemas
-- Wasmtime sandbox: run untrusted or third-party tools in a WebAssembly sandbox with resource limits
-- Capability gating: tools require declared capabilities; the registry checks against `golem-safety` before invocation
-- Tool manifest: a machine-readable description of available tools that is included in the LLM's context
-- Async execution: long-running tools run without blocking the heartbeat tick
+- Reserved Layer 4 crate for tool traits, registry, Wasmtime sandboxing, and JSON-RPC sidecars
+- Crate root documents the intended scope: `ToolDef`, `ToolContext`, `ToolResult`, and tool traits
+- Inherits shared workspace dependency and lint policy
+- No public Rust items are exported yet
 
-## Built-in Tools
+## Getting Started
 
-- `fetch_price`: get a current price quote from a configured oracle
-- `fetch_block`: retrieve block data from `golem-chain`
-- `read_grimoire`: query the Grimoire outside the normal retrieve step
-- `write_note`: append a free-form note to the PLAYBOOK
+```bash
+cargo check -p golem-tools
+```
+
+## Configuration
+
+The scaffold does not yet expose crate-local configuration. The related TypeScript sidecar uses `BARDO_SIDECAR_SOCKET` for its Unix-socket path.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-tools` is in Layer 4 (Infrastructure). The heartbeat's execute step may call tools as part of its action plan. Each tool call goes through the registry's capability check before dispatch. Wasm-sandboxed tools run in a Wasmtime instance with memory and CPU limits; they cannot access golem internals or the chain directly.
+`golem-tools` sits in the infrastructure layer so it can integrate with inference, safety, and chain-facing crates without living in any one of them. The scaffold preserves that integration boundary before the tool system is implemented.
 
-Third-party tools can be loaded from `.wasm` files at startup. They must declare their required capabilities in a manifest; the registry rejects tools that declare capabilities beyond what the golem's `PolicyCage` permits.
+## References
+
+- `prd2/17-monorepo/00-packages.md` sections `Crate Inventory` and `TypeScript Sidecar`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure`, `Crate Dependency DAG`, and `Key Dependencies`
+- `prd2/shared/dependencies.md` section `8. Rust Workspace Dependencies (bardo-golem-rs)`

@@ -1,19 +1,41 @@
 # golem-surfaces
 
-`golem-surfaces` publishes golem activity to external consumers. It is the outward-facing event layer: WebSocket streams, Server-Sent Events, and Telegram notifications.
+## What It Is
+
+`golem-surfaces` is the Layer 6 boundary for outward-facing transports. The scaffold reserves the crate for event publication and external notification surfaces without exposing those APIs yet.
 
 ## Features
 
-- WebSocket server: real-time stream of `GolemEvent` values for dashboards and bardo-terminal
-- SSE endpoint: HTTP-based event stream for clients that can't maintain WebSocket connections
-- Telegram integration: push notifications for significant events (death, major trade, achievement)
-- Configurable event filtering: subscribers can request only specific event types or subsystems
-- Replay on reconnect: new subscribers can request events from a sequence number via the `EventFabric` replay ring
+- Reserved Layer 6 crate for WebSocket, SSE, and push-notification transports
+- Crate root documents the intended scope: Axum handlers, fallback streams, and snapshots
+- Inherits shared workspace toolchain, dependency, and lint settings
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-surfaces
+```
+
+## Configuration
+
+The scaffold does not define crate-local configuration yet.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-surfaces` is in Layer 6 (Surfaces). It subscribes to the golem's `EventFabric` from `golem-core` and re-publishes events to external transports. It does not modify golem behavior; it only observes and relays.
+`golem-surfaces` lives in the surfaces layer alongside creature and engagement work. The scaffold keeps outward transport concerns separate from coordination, inference, and runtime layers.
 
-bardo-gateway routes external traffic to `golem-surfaces` endpoints. bardo-terminal consumes the same WebSocket stream directly when running locally.
+## References
 
-Telegram notifications are sent via the Bot API. Configure `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `GolemConfig` to enable them.
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

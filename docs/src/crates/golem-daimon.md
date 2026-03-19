@@ -1,17 +1,41 @@
 # golem-daimon
 
-`golem-daimon` is the affect engine for golems. It maps market events and environmental signals to PAD (Pleasure-Arousal-Dominance) vectors, which drive the golem's `BehavioralPhase` and influence how aggressively it acts during each tick.
+## What It Is
+
+`golem-daimon` is the Layer 2 boundary for affect and appraisal logic. The scaffold establishes the crate slot for PAD-based emotional state, mood processing, and related runtime hooks without exposing those types yet.
 
 ## Features
 
-- Map incoming `GolemEvent` values to PAD vector updates
-- Maintain running `CorticalState` with exponentially weighted affect
-- Classify the current `BehavioralPhase` from the PAD vector: calm, vigilant, aggressive, fearful
-- Emit `PlutchikEmotion` classifications for logging and downstream use
-- Thread-safe: `CorticalState` uses atomic operations for lock-free reads during the heartbeat
+- Reserved Layer 2 crate for PAD affect modeling
+- Crate root documents the intended scope: appraisal, somatic markers, mood, and contagion
+- Inherits workspace-wide edition, dependency, and lint settings
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-daimon
+```
+
+## Configuration
+
+The scaffold provides no crate-local configuration surface yet. Shared policy comes from the workspace root.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-daimon` is in Layer 2 (Cognition). It runs as a background task that consumes the event fabric stream and continuously updates `CorticalState`. The heartbeat reads a `CorticalSnapshot` at the start of each tick via `golem-context`. This snapshot influences the gate step: a golem in a fearful phase applies tighter capital limits and higher confidence thresholds before proceeding to execution.
+`golem-daimon` occupies the cognition layer next to the heartbeat, memory, and context crates. The scaffold exists so emotional-state work can land in a dedicated crate without changing the workspace DAG later.
 
-PAD vectors use `f64` at the API boundary but are stored as `f32` bit patterns inside `CorticalState` for atomic update semantics.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

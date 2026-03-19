@@ -1,16 +1,41 @@
 # golem-oneirography
 
-`golem-oneirography` provides dream interpretation and replay for golems. It bridges the raw memory consolidation that `golem-dreams` performs during sleep cycles and the structured knowledge that ends up in the Grimoire.
+## What It Is
+
+`golem-oneirography` is the Layer 4 boundary for dream interpretation, replay, and lineage recording. The scaffold reserves the crate for those capabilities without exposing any user-facing API yet.
 
 ## Features
 
-- Interpret the output of REM sleep: extract actionable insights from recombined memory fragments
-- Replay historical tick sequences against the current Grimoire to re-evaluate past decisions
-- Generate candidate PLAYBOOK amendments from dream-derived patterns
-- Score dream interpretations by plausibility before they are written to semantic memory
+- Reserved Layer 4 crate for dream-journal and lineage work
+- Crate root documents the intended scope: dream journaling, death masks, and lineage graph handling
+- Inherits shared workspace toolchain, dependency, and lint settings
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-oneirography
+```
+
+## Configuration
+
+`golem-oneirography` currently has no crate-specific configuration surface.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-oneirography` is in Layer 4 (Infrastructure). It depends on `golem-grimoire` for memory access and `golem-inference` for interpretation calls. During a REM sleep cycle, `golem-dreams` hands off dream fragments to `golem-oneirography`, which submits them to the inference layer for interpretation and then writes scored results back to the Grimoire.
+`golem-oneirography` stays in the infrastructure layer rather than the sleep layer so interpretation and lineage concerns can remain separate from raw memory consolidation. The scaffold fixes that crate boundary early.
 
-Replay uses mirage-rs to re-execute historical transactions against a forked state, letting the golem compare what it predicted would happen versus what the chain actually recorded.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

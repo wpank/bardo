@@ -1,16 +1,41 @@
 # golem-coordination
 
-`golem-coordination` handles communication between golems in the same clade. It implements the pheromone field — a shared signal space that lets sibling golems coordinate without direct peer-to-peer messaging — and manages the knowledge sync protocol with the bardo-styx relay.
+## What It Is
+
+`golem-coordination` is the Layer 5 boundary for clade synchronization and pheromone propagation. The scaffold reserves the crate for cross-golem coordination without exposing those systems yet.
 
 ## Features
 
-- Pheromone field: publish and read typed signals that decay over time
-- Clade sync: push compressed Grimoire knowledge to bardo-styx at death, pull inherited knowledge at startup
-- Peer awareness: track which sibling golems are currently alive and their last-known behavioral phases
-- Conflict avoidance: read pheromone signals before taking action to avoid duplicating what siblings are already doing
+- Reserved Layer 5 crate for clade sync and pheromone handling
+- Crate root documents the intended scope: field client, bloodstain ingestion, and propagation policy
+- Inherits shared workspace toolchain, dependency, and lint settings
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-coordination
+```
+
+## Configuration
+
+The scaffold does not define crate-local configuration yet.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-coordination` is Layer 5, directly above the infrastructure crates. It connects outward to bardo-styx over an HTTP or WebSocket connection. Inside the golem, it publishes pheromone reads as `GolemEvent` values into the event fabric so the heartbeat's observe step can factor clade state into decisions.
+`golem-coordination` sits above the infrastructure layer and below the outward-facing surfaces. The scaffold keeps that coordination boundary stable before any relay or sync protocol is introduced.
 
-The pheromone field is eventually consistent. Signals are written to bardo-styx, which broadcasts them to connected clade members. A golem that just started may not see very recent signals from siblings until the first sync completes.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

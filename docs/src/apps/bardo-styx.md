@@ -1,16 +1,49 @@
 # bardo-styx
 
-bardo-styx is the knowledge relay for golem clades. When a golem dies, it compresses its Grimoire and pushes the result to the clade. bardo-styx receives that push, stores it, and makes it available to successor golems so they can bootstrap from inherited knowledge rather than starting from scratch.
+## What It Is
+
+`bardo-styx` is an application workspace member reserved for the Styx relay process. Today it exposes a minimal Tokio entrypoint that initializes tracing, logs startup, and exits successfully.
 
 ## Features
 
-- Receive compressed Grimoire payloads from dying golems (Thanatopsis protocol)
-- Store and index clade knowledge across golem generations
-- Serve inherited knowledge to newly spawned golems during initialization
-- Relay pheromone signals between active sibling golems in the same clade
+- Binary target named `bardo-styx`
+- Async `main` function using Tokio
+- Initializes `tracing_subscriber` on startup
+- Reserved app boundary for the future clade relay and knowledge exchange service
+- Reserved scaffold port: `8443` for the future local Styx WebSocket listener
+
+## Getting Started
+
+```bash
+cargo run -p bardo-styx
+```
+
+## Configuration
+
+The current binary surface has no CLI flags or runtime configuration beyond standard process
+logging.
+
+The normative port map reserves port `8443` for the Styx relay's local TLS WebSocket surface.
+The current scaffold binary does not bind that port yet; it remains a reserved/default
+allocation for the later implementation.
+
+## API
+
+The binary exposes one entrypoint:
+
+```rust
+#[tokio::main]
+async fn main() -> anyhow::Result<()>
+```
+
+It initializes tracing with `tracing_subscriber::fmt::init()` and emits a startup banner.
 
 ## Architecture
 
-bardo-styx is a persistent relay process, separate from the golem fleet. Golems connect to it via `golem-coordination`. At death a golem pushes its compressed knowledge (at most 2048 entries) to Styx. New golems pull from Styx at startup, giving the clade cumulative knowledge that survives individual golem lifetimes.
+`bardo-styx` lives under `apps/` as a process boundary rather than a reusable library boundary. The scaffold keeps the executable target stable before relay, persistence, and sync logic are introduced.
 
-The pheromone field — a shared signal space that active golems use to coordinate without direct communication — also flows through Styx.
+## References
+
+- `prd2/17-monorepo/00-packages.md` sections `Workspace Layout` and `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` section `Workspace Structure`
+- `prd2/shared/port-allocation.md` section `Port Map (Normative)`

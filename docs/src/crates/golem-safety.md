@@ -1,18 +1,41 @@
 # golem-safety
 
-`golem-safety` enforces capability-based security and policy constraints on golem actions. Before a golem can execute a transaction or call an external service, the action must pass through the safety layer.
+## What It Is
+
+`golem-safety` is the Layer 3 boundary for capability and policy enforcement. The scaffold reserves the crate for safety controls without exposing permit or policy types yet.
 
 ## Features
 
-- `Capability<T>`: a typed token required to perform action `T`; capabilities are granted at startup and cannot be forged
-- `PolicyCage`: evaluates a set of configurable policies against a proposed action — position size limits, gas limits, allowed protocols, blocked addresses
-- Audit log: every action attempt is recorded with its capability token, policy decision, and outcome
-- Taint propagation: actions derived from tainted inputs (from `golem-core`'s `TaintedString`) require elevated capability to execute
+- Reserved Layer 3 crate for capabilities, permits, and policy evaluation
+- Crate root documents the intended safety scope
+- Inherits shared workspace toolchain, dependency, and lint policy
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-safety
+```
+
+## Configuration
+
+No crate-local configuration surface exists yet. Shared build and lint behavior comes from the workspace root.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-safety` is Layer 3 — it sits above cognition and below the infrastructure crates. This placement is intentional: safety checks run after the golem has decided what it wants to do but before any external side effect occurs.
+`golem-safety` forms the dedicated layer between cognition and infrastructure. The scaffold keeps that layer separate from the start so later enforcement logic can land without changing dependency boundaries.
 
-The `PolicyCage` is configured at startup from `GolemConfig`. Policies are evaluated in order; the first failing policy blocks the action. The audit log is append-only and written to SQLite.
+## References
 
-`golem-chain`'s Warden calls into `golem-safety` as its pre-submission check. Any transaction that the Warden would submit must hold the appropriate `Capability<ExecuteTransaction>` and pass all active policies.
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` sections `Workspace Dependency Inheritance` and `Lint Config`

@@ -35,6 +35,8 @@ pub struct GolemConfig {
     pub mortality: MortalityConfig,
     /// Compute-tier selection.
     pub compute: ComputeConfig,
+    /// mirage-rs sidecar connectivity settings.
+    pub mirage: MirageSection,
 }
 
 impl GolemConfig {
@@ -163,6 +165,24 @@ impl GolemConfig {
         }
         if let Some(value) = parse_lookup::<ComputeTier, _>(&mut lookup, "GOLEM_COMPUTE_TIER")? {
             self.compute.tier = value;
+        }
+        if let Some(value) = lookup("BARDO_MIRAGE_URL") {
+            self.mirage.url = Some(value);
+        }
+        if let Some(value) = lookup("BARDO_MIRAGE_HOST") {
+            self.mirage.host = value;
+        }
+        if let Some(value) = parse_lookup::<u16, _>(&mut lookup, "BARDO_MIRAGE_PORT")? {
+            self.mirage.port = value;
+        }
+        if let Some(value) = parse_lookup::<u64, _>(&mut lookup, "BARDO_MIRAGE_TIMEOUT_MS")? {
+            self.mirage.timeout_ms = value;
+        }
+        if let Some(value) = parse_lookup::<u32, _>(&mut lookup, "BARDO_MIRAGE_RETRY_ATTEMPTS")? {
+            self.mirage.retry_attempts = value;
+        }
+        if let Some(value) = parse_lookup::<u64, _>(&mut lookup, "BARDO_MIRAGE_RETRY_BACKOFF_MS")? {
+            self.mirage.retry_backoff_ms = value;
         }
         Ok(self)
     }
@@ -1600,6 +1620,37 @@ impl FromStr for ComputeTier {
     }
 }
 
+/// mirage-rs sidecar connectivity and retry settings.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
+pub struct MirageSection {
+    /// Optional fully qualified Mirage URL.
+    pub url: Option<String>,
+    /// Host used when `url` is omitted.
+    pub host: String,
+    /// Port used when `url` is omitted.
+    pub port: u16,
+    /// Per-request timeout in milliseconds.
+    pub timeout_ms: u64,
+    /// Retry attempts on transport failure.
+    pub retry_attempts: u32,
+    /// Initial retry backoff in milliseconds.
+    pub retry_backoff_ms: u64,
+}
+
+impl Default for MirageSection {
+    fn default() -> Self {
+        Self {
+            url: None,
+            host: "127.0.0.1".to_owned(),
+            port: 8545,
+            timeout_ms: 30_000,
+            retry_attempts: 3,
+            retry_backoff_ms: 500,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
@@ -1612,6 +1663,8 @@ mod tests {
         assert_eq!(config.heartbeat.base_interval_seconds, 15);
         assert_eq!(config.inference.daily_budget_usd, 5.0);
         assert_eq!(config.compute.tier, ComputeTier::Small);
+        assert_eq!(config.mirage.host, "127.0.0.1");
+        assert_eq!(config.mirage.port, 8545);
         assert!(!config.golem.name.is_empty());
     }
 
@@ -1635,5 +1688,47 @@ mod tests {
         assert_eq!(config.compute.mode, DeploymentMode::SelfHosted);
         assert!(config.mortality.immortal);
         assert_eq!(config.compute.tier, ComputeTier::Large);
+    }
+
+    #[test]
+    fn config_parses_mirage_section() {
+        let config = GolemConfig::from_str(
+            r#"
+                [mirage]
+                url = "http://127.0.0.1:18545"
+                port = 18545
+                timeout_ms = 45000
+                retry_attempts = 5
+                retry_backoff_ms = 750
+            "#,
+        )
+        .expect("parse mirage section");
+
+        assert_eq!(config.mirage.url.as_deref(), Some("http://127.0.0.1:18545"));
+        assert_eq!(config.mirage.port, 18_545);
+        assert_eq!(config.mirage.timeout_ms, 45_000);
+        assert_eq!(config.mirage.retry_attempts, 5);
+        assert_eq!(config.mirage.retry_backoff_ms, 750);
+    }
+
+    #[test]
+    fn config_env_override_updates_mirage_settings() {
+        let env = HashMap::from([
+            ("BARDO_MIRAGE_URL", "http://127.0.0.1:28545".to_owned()),
+            ("BARDO_MIRAGE_PORT", "28545".to_owned()),
+            ("BARDO_MIRAGE_TIMEOUT_MS", "1500".to_owned()),
+            ("BARDO_MIRAGE_RETRY_ATTEMPTS", "4".to_owned()),
+            ("BARDO_MIRAGE_RETRY_BACKOFF_MS", "125".to_owned()),
+        ]);
+
+        let config = GolemConfig::default()
+            .with_lookup(|key| env.get(key).cloned())
+            .expect("apply mirage overrides");
+
+        assert_eq!(config.mirage.url.as_deref(), Some("http://127.0.0.1:28545"));
+        assert_eq!(config.mirage.port, 28_545);
+        assert_eq!(config.mirage.timeout_ms, 1_500);
+        assert_eq!(config.mirage.retry_attempts, 4);
+        assert_eq!(config.mirage.retry_backoff_ms, 125);
     }
 }

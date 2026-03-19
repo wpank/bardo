@@ -472,14 +472,14 @@ impl TargetedFollower {
 
 /// Replay a transaction by hash.
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct TxReplay {
+pub struct TxReplay {
     /// Transaction hash to fetch and replay.
     pub tx_hash: B256,
 }
 
 impl TxReplay {
     /// Attempts to replay a specific transaction.
-    pub(crate) fn execute(
+    pub fn execute(
         &self,
         upstream: &UpstreamRpc,
         state: &mut ForkState,

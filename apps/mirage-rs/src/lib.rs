@@ -31,6 +31,7 @@ pub use integration::{
 pub use provider::{BlockTag, UpstreamRpc};
 pub use replay::{
     AccountDiff, FollowerConfig, LogEntry, SpeculativeExecutor, SpeculativeResult, StateDiff,
+    TargetedFollower, TxReplay,
 };
 pub use resources::{MirageMode, Profile, ResourceModel, ResourceUsage};
 pub use scenario::{
