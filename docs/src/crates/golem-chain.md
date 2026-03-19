@@ -1,18 +1,41 @@
 # golem-chain
 
-`golem-chain` handles all Ethereum interaction for golem processes. It wraps Alloy for RPC connectivity, integrates with `revm` for local execution, implements ERC-8004 for on-chain golem identity, and provides the Warden — a pre-flight transaction guard that enforces safety constraints before any transaction leaves the process.
+## What It Is
+
+`golem-chain` is the Layer 4 boundary for on-chain connectivity and transaction execution. The scaffold reserves the crate for Alloy-based providers, protocol bindings, and transaction policy integration without exposing those APIs yet.
 
 ## Features
 
-- Alloy-based HTTP and WebSocket RPC client with retry and backoff
-- Local transaction simulation via `revm` before mainnet submission
-- ERC-8004 contract interface for on-chain golem registration and death masks
-- Warden: pre-submission transaction guard that checks slippage, gas limits, and policy constraints
-- ABIs and typed bindings for common DeFi protocols (Uniswap V3, Aave V3)
-- Support for EIP-1559, EIP-2930, and EIP-4844 transaction envelopes
+- Reserved Layer 4 crate for chain providers, protocol bindings, and simulation helpers
+- Crate root documents the intended scope: Alloy, ERC-8004, Permit2, Warden, and `revm`
+- Inherits shared workspace toolchain, dependency, and lint policy
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-chain
+```
+
+## Configuration
+
+No crate-local configuration surface exists yet. Shared build and lint behavior comes from the workspace root.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-chain` is in Layer 4 (Infrastructure). It depends on `golem-safety` to enforce the Warden's policy checks and on `golem-core` for configuration and error types.
+`golem-chain` sits in the infrastructure layer beside inference, triage, tools, and chain-intelligence work. The scaffold keeps the chain boundary explicit before RPC clients or contract bindings are added.
 
-The typical flow for a golem executing a trade: the heartbeat's execute step constructs a transaction, passes it through the Warden for pre-flight checks, simulates it locally via `revm`, and only submits to mainnet if simulation succeeds and the Warden approves. The verify step then confirms the transaction landed and reads back the on-chain result.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure`, `Crate Dependency DAG`, and `Key Dependencies`
+- `prd2/shared/dependencies.md` section `8. Rust Workspace Dependencies (bardo-golem-rs)`

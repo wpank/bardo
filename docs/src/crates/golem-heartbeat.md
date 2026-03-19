@@ -1,31 +1,41 @@
 # golem-heartbeat
 
-`golem-heartbeat` implements the 9-step cognitive loop that runs once per tick. This is the golem's core decision cycle — the sequence of operations that takes raw market observations and produces (or declines to produce) an on-chain action.
+## What It Is
 
-## The 9-Step Pipeline
-
-Each tick executes these steps in order:
-
-1. **Observe** — collect new chain events, price updates, and pheromone signals from the environment
-2. **Retrieve** — query the Grimoire for episodic, semantic, and procedural knowledge relevant to the current observations
-3. **Analyze** — reason over the assembled `CognitiveWorkspace`: what is happening, and why?
-4. **Gate** — apply capital limits, confidence thresholds, and policy constraints; abort the tick if conditions are not met
-5. **Simulate** — run candidate actions through mirage-rs to estimate outcomes without committing
-6. **Validate** — verify simulation results against expectations; discard actions that don't pass
-7. **Execute** — submit the approved transaction through `golem-chain` and the Warden
-8. **Verify** — confirm the transaction landed on-chain and read back the result
-9. **Reflect** — update the Grimoire and cortical state based on what happened; adjust PLAYBOOK if warranted
+`golem-heartbeat` is the Layer 2 boundary for the golem's decision-cycle engine. At the scaffold stage it defines the crate slot for the heartbeat pipeline and its crate-level documentation, but it does not yet expose heartbeat types or execution logic.
 
 ## Features
 
-- Drives the full 9-step pipeline via `golem-runtime`'s tick loop
-- Assembles `CognitiveWorkspace` via `golem-context` at the start of each tick
-- Routes inference calls at the correct `CognitiveTier` (`T0`/`T1`/`T2`) based on cost budget
-- Emits `GolemEvent` values at each step for observability
-- Respects `golem-safety` capability checks before execution
+- Reserved Layer 2 crate for the 9-step heartbeat pipeline
+- Crate root documents the intended surface: `CoALA`, `DecisionCycleRecord`, and the heartbeat FSM
+- Inherits workspace-wide dependency, toolchain, and lint policy
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-heartbeat
+```
+
+## Configuration
+
+`golem-heartbeat` currently inherits all of its configuration from the workspace scaffold. There are no crate-local settings or environment variables yet.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-heartbeat` is in Layer 2 (Cognition). It orchestrates most of the other crates: context assembly, inference routing, tool execution, chain interaction, and Grimoire writes all happen inside the heartbeat pipeline. The runtime calls `heartbeat.tick()` and the heartbeat handles the rest.
+`golem-heartbeat` occupies the cognition layer in the workspace DAG. The scaffold preserves the crate boundary for the future tick engine without introducing premature dependencies or placeholder domain types.
 
-Each step is instrumented. If any step returns an error or the gate step aborts, the tick ends cleanly without side effects. A golem that aborts 100% of its ticks is wasting metabolic USDC on inference calls; the epistemic fitness clock will eventually fire if this continues.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` sections `Workspace Dependency Inheritance` and `Lint Config`

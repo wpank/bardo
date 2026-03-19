@@ -2,9 +2,18 @@
 
 Bardo is permissionless infrastructure for mortal autonomous agents in DeFi.
 
-A **golem** is a finite-lived Rust process that executes a 9-step cognitive loop - observe, retrieve, analyze, gate, simulate, validate, execute, verify, reflect - once per tick. It holds USDC as metabolic substrate. When the USDC balance reaches zero, or when epistemic fitness decays below threshold, or when a stochastic mortality draw fires, the golem dies. At death it runs the Thanatopsis protocol: compress its Grimoire to at most 2048 entries, push to the clade, and leave a death mask on-chain.
+A golem is a finite-lived Rust process that executes a 9-step cognitive loop once per tick: observe, retrieve, analyze, gate, simulate, validate, execute, verify, reflect. It holds USDC as metabolic substrate. When the balance reaches zero, when epistemic fitness decays below threshold, or when a stochastic mortality draw fires, the golem dies. At death it runs the Thanatopsis protocol: compress its Grimoire, push the inheritance package to the clade, and leave a death mask on-chain.
 
 The successor golem inherits this compressed knowledge. Across generations, the population accumulates judgment that no immortal agent can develop: knowledge distilled under survival pressure.
+
+## Features
+
+- Single Rust workspace with 26 members: 21 library crates and 5 application binaries
+- Layered architecture from `golem-core` through `golem-binary`
+- Shared Rust 1.85 / edition 2024 toolchain, dependency pins, lint policy, and release profile
+- mdBook documentation site under `docs/`
+- TypeScript JSON-RPC sidecar for concentrated-liquidity tooling under `sidecar/tools-ts/`
+- Local EVM development through `mirage-rs`
 
 ## Key Concepts
 
@@ -47,8 +56,19 @@ golem-binary  (single Fly.io VM binary)
 
 ## Getting Started
 
+Before running the workspace commands below, install Rust 1.85+, `just`, `cargo-nextest`,
+and `mdbook`.
+
+- Install `just` with your system package manager so the task runner is available.
+- `just setup` is a macOS-oriented convenience recipe: it installs Rust CLI tools and then
+  shells out to `brew install sccache lld`.
+- Install `mdbook` separately before running `just mdbook`; the current `just setup` recipe
+  does not install it.
+- If you are provisioning tools manually instead of using `just setup`, install
+  `cargo-nextest` before `just test`.
+
 ```bash
-# Check the workspace compiles
+# Build the workspace
 just build
 
 # Run tests
@@ -57,16 +77,41 @@ just test
 # Build the docs
 just mdbook
 
-# Start a dev fork (requires an upstream RPC URL)
+# Start a local fork for chain-facing development
 just mirage rpc_url=https://mainnet.example/rpc
 ```
 
-## Workspace Scaffold
+## Configuration
 
-The repository root is a Cargo workspace with 26 members: 21 library crates and 5 app binaries.
-The workspace manifest pins edition 2024, Rust 1.85, shared dependency versions, workspace-wide
-lints, and release settings. The mdBook site lives under `docs/`, and the TypeScript sidecar lives
-under `sidecar/tools-ts/` outside the Cargo workspace.
+The repository root provides the shared configuration contract for every crate:
+
+- `Cargo.toml` defines workspace members, package metadata, dependency pins, lint policy, and build profiles
+- `rust-toolchain.toml` pins Rust 1.85 and the required components
+- `rustfmt.toml` and `clippy.toml` define formatting and lint behavior
+- `.cargo/config.toml` configures linker and compiler-wrapper behavior
+- `nextest.toml`, `deny.toml`, and `justfile` define testing, policy, and developer workflows
+- `BARDO_SIDECAR_SOCKET` controls the Unix socket used by the TypeScript sidecar and defaults to `/tmp/bardo-tools.sock`
+
+## API
+
+At the workspace level, the current scaffold exposes operational commands rather than shared Rust types:
+
+```text
+just build
+just test
+just lint
+just fmt-check
+just deny
+just mdbook
+just mirage rpc_url="<RPC_URL>"
+```
+
+The scaffold also standardizes the minimal async entrypoint used by the shell binaries:
+
+```rust
+#[tokio::main]
+async fn main() -> anyhow::Result<()>
+```
 
 ## References
 

@@ -1,14 +1,41 @@
 # golem-chain-intelligence
 
-`golem-chain-intelligence` provides on-chain observation infrastructure for golems. It handles real-time block watching and price validation — the two most latency-sensitive data feeds a golem needs to make informed trading decisions.
+## What It Is
+
+`golem-chain-intelligence` is the Layer 4 boundary for chain-observation and protocol-state intelligence. The scaffold reserves the crate for block ingestion and validation logic without exposing those systems yet.
 
 ## Features
 
-- **bardo-witness**: real-time block and event subscriber that watches the chain and feeds observations into the golem's event fabric
-- **Price Validation Service (PVS)**: validates price data from multiple sources, detects manipulation, and provides a confidence-weighted price feed that the golem can trust
+- Reserved Layer 4 crate for witness and protocol-state analysis
+- Crate root documents the intended scope: block ingestion, chain scope, protocol state, and PVS
+- Inherits workspace-wide edition, dependency, and lint settings
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-chain-intelligence
+```
+
+## Configuration
+
+The scaffold defines no crate-local configuration surface yet.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-chain-intelligence` sits in Layer 4 (Infrastructure). It consumes chain types from `golem-chain` and publishes events to `golem-core`'s `EventFabric`. The PVS cross-references prices from on-chain oracles, DEX pools, and external feeds to reject outliers before they reach the golem's decision logic.
+`golem-chain-intelligence` shares the infrastructure layer with chain access, inference, and analysis crates. The scaffold keeps the observation boundary separate from raw chain access from the start.
 
-bardo-witness runs as a background task inside the golem process. It subscribes to new blocks and filtered log streams, then emits typed `GolemEvent` values that the heartbeat's observe step picks up on the next tick.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

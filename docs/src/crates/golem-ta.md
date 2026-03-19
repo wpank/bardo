@@ -1,16 +1,41 @@
 # golem-ta
 
-`golem-ta` provides technical analysis for golems: market regime detection, topological data analysis (TDA) of price manifolds, and classical indicator computation.
+## What It Is
+
+`golem-ta` is the Layer 4 boundary for technical-analysis and regime-detection logic. The scaffold reserves the crate for statistical and topological market analysis without exposing those APIs yet.
 
 ## Features
 
-- Regime detection: classify the current market as trending, mean-reverting, or noisy using statistical tests
-- Topological data analysis: compute persistent homology features from price time series to detect structural pattern changes
-- Classical indicators: moving averages, RSI, Bollinger Bands, VWAP, ATR, and others
-- Streaming computation: update indicators incrementally as new price data arrives, without recomputing from scratch
+- Reserved Layer 4 crate for regime detection and TDA
+- Crate root documents the intended scope: Betti curves, persistence diagrams, and market regime analysis
+- Inherits shared workspace package metadata and lint policy
+- No public Rust items are exported yet
+
+## Getting Started
+
+```bash
+cargo check -p golem-ta
+```
+
+## Configuration
+
+The scaffold defines no crate-local configuration surface yet.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-ta` is in Layer 4 (Infrastructure). The heartbeat's analyze step calls into `golem-ta` to characterize current market conditions. The output — regime label, volatility estimate, key support/resistance levels — feeds into the gate step's decision about whether to proceed with execution.
+`golem-ta` lives in the infrastructure layer beside inference, tools, and chain-aware analysis crates. The scaffold keeps the analytical boundary stable before the first indicators or topological features are added.
 
-TDA features are computed less frequently than classical indicators. They are useful for detecting regime transitions that classical indicators lag.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure` and `Crate Dependency DAG`
+- `prd2/17-monorepo/03-conventions.md` section `Rust Conventions`

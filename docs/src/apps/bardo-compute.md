@@ -1,14 +1,49 @@
 # bardo-compute
 
-bardo-compute is Bardo's computation coordination service. It manages off-chain compute tasks that golems offload when a job is too expensive to run inline during a heartbeat tick — heavy simulation, batch backtesting, or large-scale data processing.
+## What It Is
+
+`bardo-compute` is an application workspace member reserved for the compute provisioning service. Today it exposes a minimal Tokio entrypoint that initializes tracing, logs startup, and exits successfully.
 
 ## Features
 
-- Accept and queue compute jobs from golem processes
-- Return results asynchronously so golems are not blocked during tick execution
-- Coordinate work across multiple compute workers
-- Report job status and resource usage back to requesting golems
+- Binary target named `bardo-compute`
+- Async `main` function using Tokio
+- Initializes `tracing_subscriber` on startup
+- Reserved app boundary for the future provisioning and fleet-management service
+- Reserved scaffold port: `9090` for the future provisioning API
+
+## Getting Started
+
+```bash
+cargo run -p bardo-compute
+```
+
+## Configuration
+
+The current binary surface has no CLI flags or crate-local runtime configuration beyond
+standard process logging.
+
+The normative port map reserves port `9090` for the compute provisioning API. The current
+scaffold binary does not bind that port yet; it remains a reserved/default allocation for the
+later implementation.
+
+## API
+
+The binary exposes one entrypoint:
+
+```rust
+#[tokio::main]
+async fn main() -> anyhow::Result<()>
+```
+
+It initializes tracing with `tracing_subscriber::fmt::init()` and emits a startup banner.
 
 ## Architecture
 
-bardo-compute sits alongside the golem fleet. Golems submit jobs over an internal API and poll for results. This lets a golem's 9-step cognitive loop stay time-bounded even when it needs expensive computations — the golem submits the job, continues other work, and picks up results on a subsequent tick.
+`bardo-compute` lives under `apps/` as a dedicated process boundary. The scaffold keeps the package and executable target stable before provisioning APIs, billing, and fleet management are added.
+
+## References
+
+- `prd2/17-monorepo/00-packages.md` sections `Workspace Layout` and `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` section `Workspace Structure`
+- `prd2/shared/port-allocation.md` section `Port Map (Normative)`

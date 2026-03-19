@@ -1,27 +1,41 @@
 # golem-inference
 
-`golem-inference` handles all LLM calls for the golem. It routes requests to one of three cost tiers, pays for inference using x402 micropayments, and enforces the per-tick inference budget that keeps the golem's metabolic USDC spend predictable.
+## What It Is
+
+`golem-inference` is the Layer 4 boundary for model routing and provider integration. The scaffold reserves the crate for inference clients, tier routing, and budget enforcement without exposing those APIs yet.
 
 ## Features
 
-- Three-tier routing: `T0` (fast/cheap), `T1` (balanced), `T2` (powerful/expensive)
-- x402 micropayment integration: pay-per-call inference without subscriptions
-- Per-tick budget enforcement: gate tier upgrades when the budget is nearly exhausted
-- Response caching: avoid redundant calls for identical prompts within a tick
-- Streaming support for long-form T2 responses
+- Reserved Layer 4 crate for inference client abstractions and routing
+- Crate root documents the intended role: T0/T1/T2 routing, providers, x402, and SSE parsing
+- Inherits shared workspace policy for dependencies, lints, and toolchain
+- No public Rust items are exported yet
 
-## Tiers
+## Getting Started
 
-| Tier | Use | Cost |
-|---|---|---|
-| `T0` | Quick classifications, binary decisions, pattern matching | Low |
-| `T1` | Analysis, reasoning, strategy evaluation | Medium |
-| `T2` | Complex multi-step reasoning, PLAYBOOK updates | High |
+```bash
+cargo check -p golem-inference
+```
 
-The heartbeat's gate step uses `CognitiveTier` from `golem-core` to determine which tier is appropriate for each inference call in the current tick.
+## Configuration
+
+`golem-inference` currently has no crate-specific configuration surface.
+
+## API
+
+The crate does not expose a public Rust API yet.
+
+```rust
+#![deny(unsafe_code)]
+#![warn(missing_docs)]
+```
 
 ## Architecture
 
-`golem-inference` is in Layer 4 (Infrastructure). It is called from `golem-heartbeat` at the analyze, gate, simulate, and reflect steps. The x402 payment channel connects to an inference provider that accepts per-call USDC micropayments, keeping inference costs tied directly to the golem's metabolic balance.
+`golem-inference` lives in the infrastructure layer with chain access, tools, and higher-level analysis crates. The scaffold keeps the inference boundary explicit before provider integrations are added.
 
-The tier router selects an endpoint based on the requested `CognitiveTier` and the current per-tick budget. If the budget is exhausted, requests downgrade to `T0` or are rejected entirely.
+## References
+
+- `prd2/17-monorepo/00-packages.md` section `Crate Inventory`
+- `prd2/17-monorepo/01-rust-workspace.md` sections `Workspace Structure`, `Crate Dependency DAG`, and `Key Dependencies`
+- `prd2/shared/dependencies.md` section `8. Rust Workspace Dependencies (bardo-golem-rs)`
