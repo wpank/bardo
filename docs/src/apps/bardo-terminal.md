@@ -2,285 +2,193 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace’s full-screen terminal UI scaffold for the Golem control surface. It boots a raw-mode alternate-screen ratatui loop at frame pace, registers the 29-screen catalog, and renders a placeholder HEARTH home screen while live data paths are wired in future plans.
-
-The scaffold is aligned to the terminal spec goals:
-
-- `bardo-terminal` is the main full-screen TUI application (`bardo-terminal` in spec) [`03-tui.md`](../../../prd2/18-interfaces/03-tui.md).
-- Rendered surface follows the ROSEDUST palette and terminal aesthetic baseline [`00-design-system.md`](../../../prd2/18-interfaces/rendering/00-design-system.md).
-- Screen catalog follows the 29-screen ordered model (`HEARTH`, `MIND`, `SOMA`, `WORLD`, `FATE`, `COMMAND`) [`00-screen-catalog.md`](../../../prd2/18-interfaces/screens/00-screen-catalog.md).
+`bardo-terminal` is the workspace terminal binary and its crate-local widget library. The widgets are small `ratatui` renderers that screens compose directly into the frame buffer. They are deterministic for a given input struct and area, and the data-heavy widgets render through references so their backing collections do not have to move each frame.
 
 ## Features
 
-- Deterministic terminal lifecycle (setup → run → teardown) with panic-safe restoration.
-- 60 fps event/render frame pacing and frame budget handling.
-- Catalog-first screen system with 29 IDs and pluggable `Screen` implementations.
-- Placeholder home screen showing:
-  - animated creature panel
-  - vitality gauge (placeholder value)
-  - connection status label
-  - tick counter and waveform
-- Responsive frame layout with four breakpoints:
-  - `Compact` (`< 80` cols): single panel
-  - `Standard` (`80..=119`): two panels plus sprite sidebar
-  - `Wide` (`120..=179`): three panels plus wider sidebar
-  - `Ultra` (`>= 180`): four panels plus full sidebar width
-- Screen navigation:
-  - `q` quits
-  - `Tab` moves forward
-  - `Shift+Tab` moves backward
+- Dense braille sparklines for compact traces and PAD timelines
+- Phase-colored vitality gauges plus scalar confidence and accuracy gauges
+- Viridis-inspired pheromone heatmaps with layer tinting and pulse flashes
+- Tick-based timeline ribbons with event glyphs and severity coloring
+- Bounded event feeds with newest-first filtering
+- Horizontal tab strips, a reusable status bar widget, cursor-driven lists, and a floating help overlay
+- Crate-local widget surface accessed as `crate::widgets`
+- Designed to fit the 60 fps render loop used by the terminal app
 
-## Module Overview
+## Getting Started
 
-### `app`
-
-Owns the runtime loop and current navigation context:
-
-- initializes all screens from `ScreenId::all()`
-- pumps events (`crossterm::event::poll/read`)
-- applies actions (`Quit`, `NextScreen`, `PrevScreen`, `Resize`)
-- calls `render` each frame
-- advances a tick counter for placeholder animation
-
-### `screen`
-
-Defines a pluggable screen architecture:
-
-- `Screen` trait contract used by all screens
-- `ScreenId` enum with all 29 IDs in catalog order
-- `ScreenRegistry` for keyed screen storage and lookup
-- `StubScreen` for unimplemented tabs to keep navigation safe during scaffold
-
-### `state`
-
-Shared app state and transitions:
-
-- tick counter
-- connection status
-- placeholder vitality
-- layout breakpoint
-- app-level action enum
-
-### `layout`
-
-Responsive helpers:
-
-- `LayoutBreakpoint::from_cols`
-- `sprite_sidebar_cols`
-- `panel_count`
-- `compute_layout` for header/footer-safe content split
-
-### `palette`
-
-ROSEDUST token constants for colors and drawing characters, including the exact values from the design spec.
-
-### `screens::home`
-
-Home placeholder implementation of `Screen`, providing the initial user-facing content:
-
-- creature silhouette
-- vitality/probe panels
-- status and help footer text
-
-## Public API
-
-`bardo-terminal` is a binary crate, so the types are crate-local (`pub(crate)`), but the scaffold API is documented here for implementers:
-
-```rust
-pub(crate) struct App {
-    state: AppState,
-    screens: ScreenRegistry,
-    active_screen: ScreenId,
-    should_quit: bool,
-}
-
-impl App {
-    pub(crate) fn new() -> Self;
-    pub(crate) fn run(
-        &mut self,
-        terminal: &mut ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>,
-    ) -> anyhow::Result<()>;
-}
-```
-
-```rust
-pub(crate) trait Screen: Send + Sync {
-    fn id(&self) -> ScreenId;
-    fn title(&self) -> &str;
-    fn render(&self, frame: &mut ratatui::Frame<'_>, area: ratatui::layout::Rect, state: &AppState);
-    fn handle_key(&mut self, key: crossterm::event::KeyEvent) -> Option<AppAction>;
-    fn on_focus(&mut self) {}
-    fn on_blur(&mut self) {}
-}
-```
-
-```rust
-pub(crate) enum ScreenId {
-    HearthOverview,
-    HearthSignals,
-    HearthOperations,
-    HearthStatus,
-    MindPipeline,
-    MindGrimoire,
-    MindPlaybook,
-    MindDreams,
-    MindInference,
-    MindChainIntelligence,
-    MindTechnicalAnalysis,
-    SomaPortfolio,
-    SomaTrades,
-    SomaCustody,
-    SomaBudget,
-    SomaSanctum,
-    WorldSolaris,
-    WorldClade,
-    WorldLethe,
-    WorldBloodstains,
-    WorldBazaar,
-    FateMortality,
-    FateLineage,
-    FateAchievements,
-    FateGraveyard,
-    CommandSteer,
-    CommandConfig,
-    CommandEffects,
-    CommandHermes,
-}
-
-impl ScreenId {
-    pub(crate) fn all() -> &'static [Self];
-    pub(crate) const fn window_name(self) -> &'static str;
-    pub(crate) const fn tab_name(self) -> &'static str;
-}
-```
-
-```rust
-pub(crate) struct ScreenRegistry {
-    screens: std::collections::HashMap<ScreenId, Box<dyn Screen>>,
-}
-
-impl ScreenRegistry {
-    pub(crate) fn new() -> Self;
-    pub(crate) fn register(&mut self, screen: Box<dyn Screen>);
-    pub(crate) fn get(&self, id: &ScreenId) -> Option<&dyn Screen>;
-    pub(crate) fn get_mut(&mut self, id: &ScreenId) -> Option<&mut dyn Screen>;
-}
-```
-
-```rust
-pub(crate) enum AppAction {
-    Quit,
-    NextScreen,
-    PrevScreen,
-    Resize(u16, u16),
-}
-
-pub(crate) struct AppState {
-    pub(crate) tick_count: u64,
-    pub(crate) connection_status: ConnectionStatus,
-    pub(crate) vitality: MockVitality,
-    pub(crate) layout: LayoutBreakpoint,
-}
-
-pub(crate) enum ConnectionStatus {
-    Connected,
-    Disconnected,
-    Connecting,
-}
-
-pub(crate) struct MockVitality { pub(crate) value: f64; }
-
-pub(crate) enum LayoutBreakpoint {
-    Compact,
-    Standard,
-    Wide,
-    Ultra,
-}
-```
-
-```rust
-pub(crate) struct ColorPalette;
-
-pub(crate) const BG_VOID: ratatui::style::Color = ratatui::style::Color::Rgb(6, 6, 8);
-pub(crate) const BG_RAISED: ratatui::style::Color = ratatui::style::Color::Rgb(12, 10, 14);
-pub(crate) const BG_MID: ratatui::style::Color = ratatui::style::Color::Rgb(8, 8, 16);
-pub(crate) const BG_WARM: ratatui::style::Color = ratatui::style::Color::Rgb(10, 8, 8);
-pub(crate) const BORDER: ratatui::style::Color = ratatui::style::Color::Rgb(24, 20, 32);
-pub(crate) const BORDER_ACTIVE: ratatui::style::Color = ratatui::style::Color::Rgb(170, 112, 136);
-pub(crate) const BORDER_DREAM: ratatui::style::Color = ratatui::style::Color::Rgb(88, 88, 120);
-pub(crate) const ROSE: ratatui::style::Color = ratatui::style::Color::Rgb(170, 112, 136);
-pub(crate) const ROSE_BRIGHT: ratatui::style::Color = ratatui::style::Color::Rgb(204, 144, 168);
-pub(crate) const ROSE_DIM: ratatui::style::Color = ratatui::style::Color::Rgb(122, 80, 96);
-pub(crate) const ROSE_DEEP: ratatui::style::Color = ratatui::style::Color::Rgb(58, 32, 48);
-pub(crate) const ROSE_EMBER: ratatui::style::Color = ratatui::style::Color::Rgb(72, 40, 56);
-pub(crate) const BONE: ratatui::style::Color = ratatui::style::Color::Rgb(200, 184, 144);
-pub(crate) const BONE_DIM: ratatui::style::Color = ratatui::style::Color::Rgb(138, 122, 90);
-pub(crate) const TEXT_PRIMARY: ratatui::style::Color = ratatui::style::Color::Rgb(152, 128, 144);
-pub(crate) const TEXT_DIM: ratatui::style::Color = ratatui::style::Color::Rgb(88, 72, 88);
-pub(crate) const TEXT_GHOST: ratatui::style::Color = ratatui::style::Color::Rgb(48, 40, 48);
-pub(crate) const TEXT_PHANTOM: ratatui::style::Color = ratatui::style::Color::Rgb(32, 24, 32);
-pub(crate) const DREAM: ratatui::style::Color = ratatui::style::Color::Rgb(88, 88, 120);
-pub(crate) const DREAM_DIM: ratatui::style::Color = ratatui::style::Color::Rgb(56, 56, 88);
-pub(crate) const DREAM_DEEP: ratatui::style::Color = ratatui::style::Color::Rgb(40, 40, 72);
-pub(crate) const WARNING: ratatui::style::Color = ratatui::style::Color::Rgb(170, 136, 85);
-pub(crate) const SUCCESS: ratatui::style::Color = ratatui::style::Color::Rgb(112, 136, 122);
-pub(crate) const DANGER: ratatui::style::Color = ratatui::style::Color::Rgb(204, 144, 168);
-```
-
-## Usage Examples
-
-Run the scaffold:
+Run the terminal:
 
 ```bash
 cargo run -p bardo-terminal
 ```
 
-In an interactive frame loop, press:
+Run the widget tests:
 
-- `q` to exit cleanly
-- `Tab` to move forward through the ordered catalog
-- `Shift+Tab` to move backward
+```bash
+cargo test -p bardo-terminal -- widgets --nocapture
+```
 
-Resize the terminal to see `LayoutBreakpoint` changes reflected in the frame chrome.
-
-If you are integrating tests or future plans, the following instantiation pattern is what the scaffold uses:
+Use the widgets from a screen render implementation:
 
 ```rust
-let mut terminal = setup_terminal()?;
-let mut app = App::new();
-let result = app.run(&mut terminal);
-teardown_terminal(terminal)?;
+use crate::widgets::*;
+
+let sparkline = BrailleSparkline {
+    data: (0..40).map(|n| (n as f64).sin().abs()).collect(),
+    max_value: 1.0,
+    color: crate::palette::ROSE,
+    label: Some("activity".to_string()),
+};
+frame.render_widget(sparkline, chart_area);
 ```
 
 ## Configuration
 
-Runtime is controlled mostly by environment only through standard `tracing` initialization:
+There is no widget-specific configuration file or environment variable set. The widgets inherit the terminal app's runtime settings and capabilities:
 
-- `RUST_LOG` for startup/shutdown diagnostics
+- `RUST_LOG` controls process-level tracing
+- terminal size determines how much content each widget can render
+- Unicode and box-drawing support affect braille, glyph, and border rendering
+- color support affects the ROSEDUST palette and heatmap gradient fidelity
 
-Terminal behavior is intentionally fixed to scaffold mode for now:
+## API
 
-- raw-mode enable/disable around the run loop
-- fixed target fps (`60` via ~16.67ms frame duration)
-- no external config file layer in this plan
+The widget layer is internal to the binary crate, so the visible surface is `crate::widgets`. The module re-exports are crate-local and are intended for screen code inside `bardo-terminal`, not for a standalone library API.
+
+### Widget Surface
+
+| Widget | Ownership | What it renders |
+| --- | --- | --- |
+| `BrailleSparkline` | by value | Up to 80 samples as a compact braille trace. |
+| `VitalityGauge` | by value | Phase-colored vitality with a placeholder `MockPhase`. |
+| `ConfidenceGauge` | by value | Scalar 0..1 confidence with amber-to-green thresholds. |
+| `AccuracyGauge` | by value | Scalar 0..1 accuracy with the same threshold scheme. |
+| `PheromoneHeatmap` | by value | A Viridis-inspired grid with optional pulse flashes. |
+| `TimelineRibbon` | by value | A tick-based event ribbon with glyphs and severity. |
+| `EventFeed` | by reference | Bounded, newest-first log output with substring filtering. |
+| `TabBar` | by value | A horizontal tab strip with an active highlight. |
+| `StatusBar` | by value | A single-row footer-style status line for screens that want one. |
+| `ScrollableList` | by reference | A cursor-driven list with filtered item views. |
+| `KeyHelpOverlay` | by reference | A centered help box that disappears when hidden. |
+
+### Data Shapes
+
+| Type | Purpose |
+| --- | --- |
+| `MockPhase` | Placeholder vitality phase until live mortality state arrives. |
+| `PheromoneLayer` | Heatmap layer tag for `Threat`, `Opportunity`, or `Wisdom`. |
+| `RibbonEventType` | Timeline event category and glyph/color source. |
+| `FeedLevel` | Feed severity label and color source. |
+| `FeedEntry` | One log row with tick, level, and message text. |
+| `TimelineEvent` | One ribbon event with tick and severity. |
+| `KeyBinding` | One help row with a key chord and description. |
+
+### Rendering Patterns
+
+Use value-owned widgets when the screen can pass an owned data struct into `render_widget`:
+
+```rust
+let sparkline = BrailleSparkline {
+    data: samples,
+    max_value: 1.0,
+    color: crate::palette::ROSE,
+    label: Some("activity".to_string()),
+};
+frame.render_widget(sparkline, chart_area);
+```
+
+Use reference-owned widgets when the screen should keep the backing collection in place between frames:
+
+```rust
+frame.render_widget(&feed, feed_area);
+frame.render_widget(&list, list_area);
+frame.render_widget(&overlay, overlay_area);
+```
+
+`EventFeed`, `ScrollableList`, and `KeyHelpOverlay` implement `Widget` for references so the caller retains ownership of the underlying collections.
+
+## Usage Examples
+
+### Render a mixed dashboard row
+
+```rust
+let vitality = VitalityGauge {
+    value: 0.76,
+    label: "VITALITY".into(),
+    phase: MockPhase::Stable,
+};
+let confidence = ConfidenceGauge {
+    value: 0.64,
+    label: "CONF".into(),
+};
+let accuracy = AccuracyGauge {
+    value: 0.71,
+    label: "ACC".into(),
+};
+
+frame.render_widget(vitality, Rect::new(0, 0, 12, 2));
+frame.render_widget(confidence, Rect::new(12, 0, 12, 2));
+frame.render_widget(accuracy, Rect::new(24, 0, 12, 2));
+
+frame.render_widget(
+    PheromoneHeatmap {
+        grid: signal_grid,
+        width: 12,
+        height: 8,
+        layer: PheromoneLayer::Threat,
+        pulse_cells: vec![(1, 2)],
+    },
+    heatmap_area,
+);
+```
+
+### Render reference-owned widgets
+
+```rust
+let mut feed = EventFeed::new(1000);
+feed.push(FeedEntry {
+    tick: tick_count,
+    level: FeedLevel::Warn,
+    message: "trade delayed".into(),
+});
+frame.render_widget(&feed, feed_area);
+
+let mut list = ScrollableList::new(vec!["alpha".into(), "beta".into(), "gamma".into()]);
+list.filter = Some("a".into());
+frame.render_widget(&list, list_area);
+```
+
+### Show the help overlay
+
+```rust
+let overlay = KeyHelpOverlay {
+    bindings: vec![
+        KeyBinding {
+            key: "?".into(),
+            description: "toggle help".into(),
+        },
+        KeyBinding {
+            key: "q".into(),
+            description: "quit".into(),
+        },
+    ],
+    visible: show_help,
+};
+frame.render_widget(&overlay, frame.area());
+```
 
 ## Architecture
 
-The app lifecycle is:
+`bardo-terminal` keeps the widget layer private to the binary crate and routes screen rendering through `crate::widgets`. The implementation matches the 60 fps terminal model described in the product spec: screens assemble simple data structs, widgets render into the provided buffer, and the caller owns the app state.
 
-1. Install panic hook early (`std::panic::take_hook`)
-2. Set up terminal backend and alternate screen (`enable_raw_mode`, `EnterAlternateScreen`, `EnableMouseCapture`)
-3. Build `App` and register all `ScreenId` variants (`HomeScreen` + `StubScreen`s)
-4. Loop at frame cadence:
-   - event polling using remaining frame budget
-   - action dispatch (`Quit`/`Next`/`Prev`/`Resize`)
-   - tick increment
-   - draw via `terminal.draw`
-   - sleep until next frame when budget remains
-5. Teardown regardless of run result (`disable_raw_mode`, `LeaveAlternateScreen`, cursor show)
+- Pure render widgets consume `self` on render
+- Data-bearing widgets that should remain in place render through `&EventFeed`, `&ScrollableList`, and `&KeyHelpOverlay`
+- The sparkline, heatmap, and timeline widgets map directly to the custom widget categories in the Styx terminal spec
+- The tab strip and status bar are reusable chrome widgets designed for consistent screen chrome across the terminal app
 
-## Spec Notes
+## Spec References
 
-- `bardo-terminal` appears in the main interface spec as the 60 FPS TUI and terminal visual layer entry point [`03-tui.md`](../../../prd2/18-interfaces/03-tui.md).
-- ROSEDUST values and character constraints come from the design-system token tables and terminal-materiality guidance [`00-design-system.md`](../../../prd2/18-interfaces/rendering/00-design-system.md).
-- Screen names and ordering map to the 29-screen catalog [`00-screen-catalog.md`](../../../prd2/18-interfaces/screens/00-screen-catalog.md).
+- Custom widget catalogue and usage notes: [`prd2/20-styx/05-tui-experience.md` §5](../../../prd2/20-styx/05-tui-experience.md)
+- Braille sparkline, heatmap, and timeline widget requirements: [`prd2/20-styx/05-tui-experience.md`](../../../prd2/20-styx/05-tui-experience.md)
+- Ambient pulse and heartbeat-driven motion vocabulary: [`prd2/13-runtime/19-cinematic-system.md` §3.2](../../../prd2/13-runtime/19-cinematic-system.md)
