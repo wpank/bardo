@@ -8,7 +8,8 @@ mirage-rs is Bardo's local EVM fork sidecar. It forks Ethereum state from an ups
 - Serve standard `eth_*` JSON-RPC methods locally
 - Copy-on-write state branches for speculative execution without committing to the fork
 - Scenario runner for simulation and backtesting with TOML fixture assertions
-- Memory pressure management with automatic cache eviction and tiered throttling
+- Memory pressure management with automatic cache eviction, slot-only demotion, and tiered throttling
+- Fast-fail startup gating that exits with code `2` when available system memory is below the selected profile plus 128 MB of headroom
 - Hardhat/Anvil-compatible helpers for balance manipulation, code injection, impersonation, and time control
 - Live event subscriptions over WebSocket-backed `/events/:stream_id` streams
 - `mirage_*` custom methods for watchlists, minting, position queries, events, scenarios, and shutdown
@@ -28,6 +29,7 @@ cargo run -p mirage-rs
 ```
 
 The server listens on `http://127.0.0.1:8545` by default.
+If the host machine does not have enough free memory for the selected profile, mirage-rs exits before binding the port and returns exit code `2`.
 
 ### As a library
 
@@ -101,4 +103,4 @@ mirage-rs has three layers:
 
 **Events layer.** `mirage-rs` exposes live event streams over WebSocket. Clients register a filtered stream ID over JSON-RPC, then connect to `/events/:stream_id` to receive matching log events as they are produced.
 
-Memory pressure is monitored continuously. At warning tier the cache is trimmed. At throttle tier new scenario forks are blocked. Under emergency pressure the fork drops to `Proxy` mode and forwards requests directly to upstream.
+Memory pressure is monitored continuously. At warning tier the cache is trimmed. At throttle tier the cache is trimmed and newly classified contracts are demoted to slot-only reads while new scenario forks remain available. Under emergency pressure the fork drops to `Proxy` mode, the targeted follower stops replaying, and reads continue through upstream.

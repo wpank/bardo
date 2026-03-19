@@ -17,12 +17,12 @@ use alloy_primitives::{Address, B256, Bytes, U256, address, keccak256};
 use lru::LruCache;
 use parking_lot::{Mutex, RwLock};
 use serde::{Deserialize, Serialize};
-use tokio::sync::{Mutex as AsyncMutex, OwnedMutexGuard};
+use tokio::sync::{Mutex as AsyncMutex, OwnedMutexGuard, watch};
 
 use crate::{
     AccountInfo, Bytecode, ExecutionResult, MirageError, Result, TransactionRequest,
-    integration::{EventFilter, MirageEvent},
     cow::{BytecodeCache, SharedBytecodeCache},
+    integration::{EventFilter, MirageEvent},
     provider::{BlockTag, UpstreamRpc},
     replay::{AccountDiff, LogEntry, StateDiff},
     resources::{MirageMode, ResourceModel, ResourceUsage},
@@ -238,6 +238,8 @@ pub struct DirtyStore {
     pub unwatch_list: HashSet<Address>,
     /// Total number of dirty slots tracked locally.
     pub total_dirty_slots: u64,
+    /// When set, newly classified protocol contracts are demoted to slot-only reads.
+    pub(crate) demote_protocols_to_slot_only: bool,
     snapshots: HashMap<u64, Box<DirtyStoreSnapshot>>,
     next_snapshot_id: u64,
 }
@@ -402,6 +404,13 @@ impl DiffClassifier {
             if store.unwatch_list.contains(&address) {
                 continue;
             }
+            let classification = if store.demote_protocols_to_slot_only
+                && classification == Classification::Protocol
+            {
+                Classification::SlotOnly
+            } else {
+                classification
+            };
             if classification == Classification::Protocol {
                 if !store.watch_list.contains_key(&address)
                     && store.watch_list.len() >= self.config.max_watched_contracts
@@ -886,6 +895,8 @@ pub(crate) struct MirageState {
     pub fork: ForkState,
     pub resource_model: ResourceModel,
     pub mode: MirageMode,
+    /// Broadcasts runtime mode transitions so background tasks can stop on proxy demotion.
+    pub(crate) mode_change: watch::Sender<MirageMode>,
     pub scenarios: HashMap<String, ScenarioSet>,
     pub jobs: HashMap<String, ScenarioJob>,
     pub event_bus: tokio::sync::broadcast::Sender<MirageEvent>,
@@ -906,11 +917,13 @@ impl MirageFork {
     /// Creates a new in-process fork handle.
     #[must_use]
     pub fn new(fork: ForkState, resource_model: ResourceModel, mode: MirageMode) -> Self {
+        let (mode_change, _) = watch::channel(mode);
         Self {
             inner: Arc::new(RwLock::new(MirageState {
                 fork,
                 resource_model,
                 mode,
+                mode_change,
                 scenarios: HashMap::new(),
                 jobs: HashMap::new(),
                 event_bus: tokio::sync::broadcast::channel(1_024).0,
@@ -1870,6 +1883,37 @@ mod tests {
             .unwrap_or_else(|error| panic!("classifier apply succeeds: {error}"));
         assert!(!store.watch_list.contains_key(&address));
         assert!(matches!(WatchSource::Manual, WatchSource::Manual));
+    }
+
+    #[test]
+    fn diff_classifier_throttle_demotes_protocol_to_slot_only() {
+        let address = address!("0x7100000000000000000000000000000000000000");
+        let classifier = DiffClassifier::new(ClassificationConfig::default());
+        let mut diff = StateDiff::success(21_000, Bytes::default());
+        diff.accounts.insert(
+            address,
+            AccountDiff {
+                info_changed: true,
+                new_balance: None,
+                new_nonce: None,
+                new_code: None,
+                storage_written: [
+                    (U256::from(1), U256::from(1)),
+                    (U256::from(2), U256::from(2)),
+                    (U256::from(3), U256::from(3)),
+                ]
+                .into_iter()
+                .collect(),
+                storage_read: HashSet::default(),
+            },
+        );
+        let mut store = DirtyStore::default();
+        store.demote_protocols_to_slot_only = true;
+
+        classifier
+            .apply(&mut store, &diff, 1)
+            .unwrap_or_else(|error| panic!("classifier apply succeeds: {error}"));
+        assert!(!store.watch_list.contains_key(&address));
     }
 
     #[test]

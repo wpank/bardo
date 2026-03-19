@@ -37,9 +37,9 @@ use jsonrpsee::{
 };
 use k256::ecdsa::{RecoveryId, Signature, VerifyingKey};
 use parking_lot::RwLock;
-use tower_http::cors::CorsLayer;
 use tokio::sync::broadcast;
 use tower::Service;
+use tower_http::cors::CorsLayer;
 
 use crate::{
     Bytecode, MirageError, Result, TransactionRequest,
@@ -90,7 +90,8 @@ pub async fn start_rpc_server(
                 Ok(response) => Ok::<Response<Body>, Infallible>(response.map(Body::new)),
                 Err(error) => {
                     tracing::warn!("jsonrpsee rpc service failed: {error}");
-                    let mut response = Response::new(Body::from("internal server error".to_owned()));
+                    let mut response =
+                        Response::new(Body::from("internal server error".to_owned()));
                     *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
                     Ok(response)
                 }
@@ -874,25 +875,23 @@ fn apply_pressure_action(state: &mut MirageState, action: PressureAction) {
     match action {
         PressureAction::None => {
             state.reject_new_forks = false;
+            state.fork.db.dirty.demote_protocols_to_slot_only = false;
         }
         PressureAction::EvictCache => {
             state.reject_new_forks = false;
+            state.fork.db.dirty.demote_protocols_to_slot_only = false;
             let target_entries = state.resource_model.cache_capacity / 2;
             state.fork.db.evict_read_cache_to(target_entries);
         }
         PressureAction::Throttle => {
-            state.reject_new_forks = true;
+            state.reject_new_forks = false;
+            state.fork.db.dirty.demote_protocols_to_slot_only = true;
             let target_entries = state.resource_model.cache_capacity / 4;
             state.fork.db.evict_read_cache_to(target_entries);
-            state
-                .fork
-                .db
-                .dirty
-                .watch_list
-                .retain(|_, entry| matches!(entry.source, WatchSource::Manual));
         }
         PressureAction::DemoteToProxy => {
             state.reject_new_forks = true;
+            state.fork.db.dirty.demote_protocols_to_slot_only = true;
             state.fork.db.evict_read_cache_to(0);
             state
                 .fork
@@ -903,6 +902,7 @@ fn apply_pressure_action(state: &mut MirageState, action: PressureAction) {
             state.jobs.clear();
             state.scenarios.clear();
             state.mode = MirageMode::Proxy;
+            let _ = state.mode_change.send(state.mode);
         }
     }
 }
@@ -956,7 +956,11 @@ async fn unsubscribe_event_handler(
     Path(stream_id): Path<String>,
     State(state): State<Arc<RwLock<MirageState>>>,
 ) -> impl IntoResponse {
-    let removed = state.write().event_subscriptions.remove(&stream_id).is_some();
+    let removed = state
+        .write()
+        .event_subscriptions
+        .remove(&stream_id)
+        .is_some();
     axum::Json(removed)
 }
 
@@ -1622,7 +1626,10 @@ mod tests {
     };
     use crate::{
         TransactionRequest,
-        fork::{ForkState, HybridDB, MirageFork, WatchEntry, WatchSource, with_state_write},
+        fork::{
+            ClassificationConfig, DiffClassifier, ForkState, HybridDB, MirageFork, WatchEntry,
+            WatchSource, with_state_write,
+        },
         provider::UpstreamRpc,
         resources::{MirageMode, PressureAction, Profile, ResourceModel},
     };
@@ -1833,7 +1840,7 @@ mod tests {
     }
 
     #[test]
-    fn throttle_pressure_rejects_new_forks_and_keeps_manual_watches() {
+    fn throttle_pressure_demotes_new_contracts_to_slot_only() {
         let upstream = Arc::new(UpstreamRpc::mock(1));
         let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
         let fork = ForkState::new(db, 0, 1);
@@ -1865,12 +1872,45 @@ mod tests {
             },
         );
         state.reject_new_forks = false;
+        state.fork.db.dirty.demote_protocols_to_slot_only = false;
+
+        let classifier = DiffClassifier::new(ClassificationConfig::default());
+        let mut diff = crate::StateDiff::success(21_000, Bytes::default());
+        diff.accounts.insert(
+            address!("0x4100000000000000000000000000000000000004"),
+            crate::AccountDiff {
+                info_changed: true,
+                new_balance: None,
+                new_nonce: None,
+                new_code: None,
+                storage_written: [
+                    (U256::from(1), U256::from(1)),
+                    (U256::from(2), U256::from(2)),
+                    (U256::from(3), U256::from(3)),
+                ]
+                .into_iter()
+                .collect(),
+                storage_read: Default::default(),
+            },
+        );
 
         apply_pressure_action(&mut state, PressureAction::Throttle);
+        classifier
+            .apply(&mut state.fork.db.dirty, &diff, 1)
+            .unwrap_or_else(|error| panic!("classifier apply succeeds: {error}"));
 
-        assert!(state.reject_new_forks);
+        assert!(!state.reject_new_forks);
+        assert!(state.fork.db.dirty.demote_protocols_to_slot_only);
         assert!(state.fork.db.dirty.watch_list.contains_key(&manual));
-        assert!(!state.fork.db.dirty.watch_list.contains_key(&auto));
+        assert!(state.fork.db.dirty.watch_list.contains_key(&auto));
+        assert!(
+            !state
+                .fork
+                .db
+                .dirty
+                .watch_list
+                .contains_key(&address!("0x4100000000000000000000000000000000000004"))
+        );
         assert_eq!(state.mode, MirageMode::Live);
     }
 

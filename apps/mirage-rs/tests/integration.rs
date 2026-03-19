@@ -16,7 +16,9 @@ async fn integration_eth_transfer_state_diff() {
     let mut instance = spawn_mirage_test_instance(None, Some(18_545))
         .await
         .expect("spawn test instance");
-    let client = MirageClient::new(instance.config()).expect("construct client");
+    let client = MirageClient::new(instance.config())
+        .await
+        .expect("construct client");
     client
         .wait_ready(Duration::from_secs(5))
         .await
@@ -88,7 +90,9 @@ async fn integration_snapshot_revert() {
     let mut instance = spawn_mirage_test_instance(None, Some(18_546))
         .await
         .expect("spawn test instance");
-    let client = MirageClient::new(instance.config()).expect("construct client");
+    let client = MirageClient::new(instance.config())
+        .await
+        .expect("construct client");
     client
         .wait_ready(Duration::from_secs(5))
         .await
@@ -140,7 +144,9 @@ async fn integration_scenario_runner_cow_isolation() {
     let mut instance = spawn_mirage_test_instance(None, Some(18_547))
         .await
         .expect("spawn test instance");
-    let client = MirageClient::new(instance.config()).expect("construct client");
+    let client = MirageClient::new(instance.config())
+        .await
+        .expect("construct client");
     client
         .wait_ready(Duration::from_secs(5))
         .await

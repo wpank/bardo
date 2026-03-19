@@ -35,8 +35,6 @@ pub struct GolemConfig {
     pub mortality: MortalityConfig,
     /// Compute-tier selection.
     pub compute: ComputeConfig,
-    /// Mirage sidecar connectivity defaults.
-    pub mirage: MirageConfig,
 }
 
 impl GolemConfig {
@@ -166,13 +164,6 @@ impl GolemConfig {
         if let Some(value) = parse_lookup::<ComputeTier, _>(&mut lookup, "GOLEM_COMPUTE_TIER")? {
             self.compute.tier = value;
         }
-        if let Some(value) = lookup("BARDO_MIRAGE_URL") {
-            self.mirage.url = value;
-        }
-        if let Some(value) = parse_lookup::<u16, _>(&mut lookup, "BARDO_MIRAGE_PORT")? {
-            self.mirage.port = value;
-        }
-
         Ok(self)
     }
 }
@@ -1577,25 +1568,6 @@ impl Default for ComputeConfig {
         Self {
             mode: DeploymentMode::Hosted,
             tier: ComputeTier::Small,
-        }
-    }
-}
-
-/// Mirage sidecar connectivity defaults.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(default)]
-pub struct MirageConfig {
-    /// Base URL for the local mirage JSON-RPC server.
-    pub url: String,
-    /// Default local JSON-RPC port.
-    pub port: u16,
-}
-
-impl Default for MirageConfig {
-    fn default() -> Self {
-        Self {
-            url: "http://127.0.0.1".to_owned(),
-            port: 8545,
         }
     }
 }

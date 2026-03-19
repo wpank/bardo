@@ -4,6 +4,7 @@
 
 use std::{
     collections::{HashMap, HashSet},
+    pin::Pin,
     sync::Arc,
     time::{Duration, Instant},
 };
@@ -13,12 +14,16 @@ use futures_util::StreamExt;
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use tokio::sync::broadcast;
+use tokio::sync::{broadcast, watch};
 
 use crate::{
     Bytecode, ExecutionResult, MirageError, Result, TransactionRequest,
-    fork::{Classification, DiffClassifier, EvmExecutor, ForkState, MirageState, WatchEntry, WatchSource},
+    fork::{
+        Classification, DiffClassifier, EvmExecutor, ForkState, MirageState, WatchEntry,
+        WatchSource,
+    },
     provider::UpstreamRpc,
+    resources::MirageMode,
 };
 
 /// Canonical log entry captured in a state diff.
@@ -97,6 +102,13 @@ pub struct FollowerConfig {
     pub filter_selectors: Option<Vec<[u8; 4]>>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum WebsocketLoopOutcome {
+    Shutdown,
+    Proxy,
+    Reconnect,
+}
+
 /// Background follower that replays upstream heads into the local fork state.
 #[derive(Debug)]
 pub struct TargetedFollower {
@@ -128,32 +140,79 @@ impl TargetedFollower {
 
     /// Processes the next available upstream block.
     pub(crate) fn tick_once(&mut self) -> Result<()> {
-        let head = self.upstream.get_block_number()?;
-        self.replay_to_head(head);
-        Ok(())
+        self.catch_up_to_current_head()
     }
 
     /// Runs the follower until shutdown or upstream stream exhaustion.
-    /// Runs the follower until shutdown or upstream stream exhaustion.
-    pub async fn run(
-        mut self,
-        mut shutdown: broadcast::Receiver<()>,
-    ) -> Result<()> {
+    pub async fn run(mut self, mut shutdown: broadcast::Receiver<()>) -> Result<()> {
+        if self.is_proxy_mode() {
+            return Ok(());
+        }
         if self.upstream.has_ws() {
-            let mut heads = self.upstream.subscribe_new_heads().await?;
+            let proxy_mode = { self.state.read().mode_change.subscribe() };
+            let mut reconnect_delay = Duration::from_millis(250);
             loop {
+                if self.is_proxy_mode() {
+                    return Ok(());
+                }
+                let mut heads = match self.upstream.subscribe_new_heads().await {
+                    Ok(heads) => {
+                        reconnect_delay = Duration::from_millis(250);
+                        if let Err(error) = self.catch_up_to_current_head() {
+                            tracing::warn!("targeted follower catch-up failed: {error}");
+                            tokio::select! {
+                                _ = shutdown.recv() => return Ok(()),
+                                () = tokio::time::sleep(reconnect_delay) => {}
+                            }
+                            reconnect_delay = reconnect_delay
+                                .checked_mul(2)
+                                .unwrap_or(Duration::from_secs(5))
+                                .min(Duration::from_secs(5));
+                            continue;
+                        }
+                        heads
+                    }
+                    Err(error) => {
+                        tracing::warn!("targeted follower websocket connect failed: {error}");
+                        tokio::select! {
+                            _ = shutdown.recv() => return Ok(()),
+                            mode = self.wait_for_proxy_mode(&proxy_mode) => {
+                                if mode == MirageMode::Proxy {
+                                    return Ok(());
+                                }
+                            }
+                            () = tokio::time::sleep(reconnect_delay) => {}
+                        }
+                        reconnect_delay = reconnect_delay
+                            .checked_mul(2)
+                            .unwrap_or(Duration::from_secs(5))
+                            .min(Duration::from_secs(5));
+                        continue;
+                    }
+                };
+
+                match self
+                    .drive_websocket_stream(&mut heads, &mut shutdown, &proxy_mode)
+                    .await?
+                {
+                    WebsocketLoopOutcome::Shutdown | WebsocketLoopOutcome::Proxy => return Ok(()),
+                    WebsocketLoopOutcome::Reconnect => {}
+                }
+
                 tokio::select! {
-                    _ = shutdown.recv() => break,
-                    next_head = heads.next() => {
-                        match next_head {
-                            Some(Ok(head)) => self.replay_to_head(head),
-                            Some(Err(error)) => return Err(error),
-                            None => break,
+                    _ = shutdown.recv() => return Ok(()),
+                    mode = self.wait_for_proxy_mode(&proxy_mode) => {
+                        if mode == MirageMode::Proxy {
+                            return Ok(());
                         }
                     }
+                    () = tokio::time::sleep(reconnect_delay) => {}
                 }
+                reconnect_delay = reconnect_delay
+                    .checked_mul(2)
+                    .unwrap_or(Duration::from_secs(5))
+                    .min(Duration::from_secs(5));
             }
-            return Ok(());
         }
 
         loop {
@@ -161,7 +220,10 @@ impl TargetedFollower {
                 _ = shutdown.recv() => break,
                 result = std::future::ready(self.tick_once()) => {
                     result?;
-                    tokio::time::sleep(self.config.block_budget.min(Duration::from_secs(1))).await;
+                    if self.is_proxy_mode() {
+                        return Ok(());
+                    }
+                    tokio::time::sleep(Duration::from_secs(1)).await;
                 }
             }
         }
@@ -169,12 +231,62 @@ impl TargetedFollower {
         Ok(())
     }
 
+    async fn drive_websocket_stream(
+        &mut self,
+        heads: &mut Pin<Box<dyn futures_util::Stream<Item = Result<u64>> + Send>>,
+        shutdown: &mut broadcast::Receiver<()>,
+        proxy_mode: &watch::Receiver<MirageMode>,
+    ) -> Result<WebsocketLoopOutcome> {
+        let mut proxy_mode = proxy_mode.clone();
+        loop {
+            tokio::select! {
+                _ = shutdown.recv() => return Ok(WebsocketLoopOutcome::Shutdown),
+                _ = proxy_mode.changed() => {
+                    if *proxy_mode.borrow() == MirageMode::Proxy {
+                        return Ok(WebsocketLoopOutcome::Proxy);
+                    }
+                }
+                next_head = heads.next() => {
+                    match next_head {
+                        Some(Ok(head)) => self.replay_to_head(head),
+                        Some(Err(error)) => {
+                            tracing::warn!("targeted follower websocket stream failed: {error}");
+                            return Ok(WebsocketLoopOutcome::Reconnect);
+                        }
+                        None => {
+                            tracing::warn!("targeted follower websocket stream closed");
+                            return Ok(WebsocketLoopOutcome::Reconnect);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    async fn wait_for_proxy_mode(&self, proxy_mode: &watch::Receiver<MirageMode>) -> MirageMode {
+        let mut proxy_mode = proxy_mode.clone();
+        let _ = proxy_mode.changed().await;
+        *proxy_mode.borrow()
+    }
+
+    fn catch_up_to_current_head(&mut self) -> Result<()> {
+        if self.is_proxy_mode() {
+            return Ok(());
+        }
+        let head = self.upstream.get_block_number()?;
+        self.replay_to_head(head);
+        Ok(())
+    }
+
     fn replay_to_head(&mut self, head: u64) {
-        if head <= self.last_block_number {
+        if self.is_proxy_mode() || head <= self.last_block_number {
             return;
         }
 
         for number in self.last_block_number.saturating_add(1)..=head {
+            if self.is_proxy_mode() {
+                return;
+            }
             if let Err(error) = self.replay_block(number) {
                 tracing::warn!("targeted replay failed for block {number}: {error}");
             }
@@ -183,10 +295,14 @@ impl TargetedFollower {
     }
 
     fn replay_block(&self, number: u64) -> Result<()> {
+        if self.is_proxy_mode() {
+            return Ok(());
+        }
         let block = self
             .upstream
             .get_block_by_number(crate::provider::BlockTag::Number(number), true)?
             .ok_or_else(|| MirageError::Upstream(format!("missing upstream block {number}")))?;
+        let started = Instant::now();
         let transactions = block
             .get("transactions")
             .and_then(Value::as_array)
@@ -194,6 +310,18 @@ impl TargetedFollower {
             .unwrap_or_default();
 
         for tx_json in transactions {
+            if self.is_proxy_mode() {
+                return Ok(());
+            }
+            if started.elapsed() >= self.config.block_budget {
+                tracing::warn!(
+                    block = number,
+                    budget_ms =
+                        u64::try_from(self.config.block_budget.as_millis()).unwrap_or(u64::MAX),
+                    "targeted replay block budget exhausted"
+                );
+                break;
+            }
             if !self.matches_filters(&tx_json)? {
                 continue;
             }
@@ -219,7 +347,12 @@ impl TargetedFollower {
                 .get("to")
                 .and_then(|value| value.as_str())
                 .and_then(|value| value.parse::<Address>().ok())
-                .or_else(|| tx_json.get("from").and_then(|value| value.as_str()).and_then(|value| value.parse::<Address>().ok()));
+                .or_else(|| {
+                    tx_json
+                        .get("from")
+                        .and_then(|value| value.as_str())
+                        .and_then(|value| value.parse::<Address>().ok())
+                });
             self.apply_contagion_watchers(&mut fork, &diff, number, touched_parent)?;
             self.classifier.apply(&mut fork.db.dirty, &diff, number)?;
             {
@@ -269,6 +402,9 @@ impl TargetedFollower {
         block_number: u64,
         parent: Option<Address>,
     ) -> Result<()> {
+        if fork.db.dirty.demote_protocols_to_slot_only {
+            return Ok(());
+        }
         if !self.classifier.config().enable_contagion {
             return Ok(());
         }
@@ -276,6 +412,10 @@ impl TargetedFollower {
         let parent = parent.unwrap_or_default();
         for (address, classification) in self.classifier.classify(diff) {
             if classification != Classification::Protocol {
+                continue;
+            }
+            let parent_depth = Self::watch_depth(&fork.db.dirty.watch_list, parent);
+            if parent_depth.saturating_add(1) > self.classifier.config().max_contagion_depth {
                 continue;
             }
             if fork.db.dirty.unwatch_list.contains(&address)
@@ -304,6 +444,29 @@ impl TargetedFollower {
             );
         }
         Ok(())
+    }
+
+    fn watch_depth(watch_list: &HashMap<Address, WatchEntry>, address: Address) -> usize {
+        let mut depth = 0;
+        let mut current = address;
+        let mut seen = HashSet::new();
+        while seen.insert(current) {
+            let Some(entry) = watch_list.get(&current) else {
+                break;
+            };
+            match entry.source {
+                WatchSource::AutoClassified | WatchSource::Manual => return depth,
+                WatchSource::Contagion { parent } => {
+                    depth = depth.saturating_add(1);
+                    current = parent;
+                }
+            }
+        }
+        depth
+    }
+
+    fn is_proxy_mode(&self) -> bool {
+        self.state.read().mode == MirageMode::Proxy
     }
 }
 
@@ -402,7 +565,8 @@ impl SpeculativeExecutor {
 
     /// Clears speculative results for a specific block number.
     pub fn invalidate_for_block(&mut self, block_number: u64) {
-        self.cache.retain(|(_, cached_block), _| *cached_block != block_number);
+        self.cache
+            .retain(|(_, cached_block), _| *cached_block != block_number);
     }
 }
 
@@ -436,12 +600,16 @@ mod tests {
 
     use alloy_primitives::{Bytes, U256, address};
 
-    use super::{SpeculativeExecutor, StateDiff};
+    use super::{
+        AccountDiff, FollowerConfig, SpeculativeExecutor, StateDiff, TargetedFollower,
+        WebsocketLoopOutcome,
+    };
     use crate::{
         TransactionRequest,
         cow::{MultiVersionStore, VersionEntry},
-        fork::{ForkState, HybridDB},
+        fork::{ForkState, HybridDB, MirageFork, WatchEntry, WatchSource},
         provider::UpstreamRpc,
+        resources::{MirageMode, Profile, ResourceModel},
     };
 
     #[test]
@@ -524,5 +692,148 @@ mod tests {
 
         let materialized = store.materialize();
         assert_eq!(materialized.get(&(address, slot)), Some(&U256::from(9_u64)));
+    }
+
+    #[test]
+    fn contagion_depth_cap_blocks_grandchildren() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(
+            Arc::clone(&upstream),
+            32,
+            Duration::from_secs(12),
+            NonZeroUsize::MIN,
+            1,
+        );
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+        let classifier = crate::fork::DiffClassifier::new(crate::fork::ClassificationConfig {
+            protocol_slot_threshold: 3,
+            check_token_interface: true,
+            max_watched_contracts: 64,
+            enable_contagion: true,
+            max_contagion_depth: 1,
+        });
+        let follower = TargetedFollower::new(
+            Arc::clone(&upstream),
+            &mirage,
+            classifier,
+            FollowerConfig {
+                ws_url: "ws://127.0.0.1:8546".to_owned(),
+                http_url: "http://127.0.0.1:8545".to_owned(),
+                block_budget: Duration::from_secs(1),
+                filter_addresses: None,
+                filter_selectors: None,
+            },
+        );
+
+        let root = address!("0x1111111111111111111111111111111111111111");
+        let parent = address!("0x2222222222222222222222222222222222222222");
+        let grandchild = address!("0x3333333333333333333333333333333333333333");
+        {
+            let state_handle = mirage.state();
+            let mut state = state_handle.write();
+            state.fork.db.dirty.watch_list.insert(
+                root,
+                WatchEntry {
+                    source: WatchSource::Manual,
+                    added_at_block: 1,
+                    initial_slot_count: 0,
+                    replay_count: 0,
+                },
+            );
+            state.fork.db.dirty.watch_list.insert(
+                parent,
+                WatchEntry {
+                    source: WatchSource::Contagion { parent: root },
+                    added_at_block: 2,
+                    initial_slot_count: 0,
+                    replay_count: 0,
+                },
+            );
+        }
+
+        let mut diff = StateDiff::default();
+        diff.accounts.insert(
+            grandchild,
+            AccountDiff {
+                info_changed: false,
+                new_balance: None,
+                new_nonce: None,
+                new_code: None,
+                storage_written: std::iter::once((U256::from(21_u64), U256::from(1_u64)))
+                    .chain(std::iter::once((U256::from(22_u64), U256::from(2_u64))))
+                    .chain(std::iter::once((U256::from(23_u64), U256::from(3_u64))))
+                    .collect(),
+                storage_read: HashSet::new(),
+            },
+        );
+
+        let mut fork_state = mirage.state().read().fork.clone();
+        follower
+            .apply_contagion_watchers(&mut fork_state, &diff, 3, Some(parent))
+            .expect("contagion application succeeds");
+
+        assert!(!fork_state.db.dirty.watch_list.contains_key(&grandchild));
+    }
+
+    #[tokio::test]
+    async fn follower_exits_when_runtime_enters_proxy_mode() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(
+            upstream.clone(),
+            32,
+            Duration::from_secs(12),
+            NonZeroUsize::MIN,
+            1,
+        );
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Proxy,
+        );
+        let follower = TargetedFollower::new(
+            upstream,
+            &mirage,
+            crate::fork::DiffClassifier::new(crate::fork::ClassificationConfig::default()),
+            FollowerConfig {
+                ws_url: "ws://127.0.0.1:8546".to_owned(),
+                http_url: "http://127.0.0.1:8545".to_owned(),
+                block_budget: Duration::from_secs(1),
+                filter_addresses: None,
+                filter_selectors: None,
+            },
+        );
+        let (_shutdown_tx, mut shutdown_rx) = tokio::sync::broadcast::channel(1);
+        let proxy_mode = { mirage.state().read().mode_change.subscribe() };
+        let mut heads: std::pin::Pin<
+            Box<dyn futures_util::Stream<Item = crate::Result<u64>> + Send>,
+        > = Box::pin(futures_util::stream::pending::<crate::Result<u64>>());
+
+        let run = tokio::spawn(async move {
+            let mut follower = follower;
+            follower
+                .drive_websocket_stream(&mut heads, &mut shutdown_rx, &proxy_mode)
+                .await
+        });
+
+        tokio::task::yield_now().await;
+        {
+            let state_handle = mirage.state();
+            let mut state = state_handle.write();
+            state.mode = MirageMode::Proxy;
+            let _ = state.mode_change.send(MirageMode::Proxy);
+        }
+
+        let outcome = tokio::time::timeout(Duration::from_secs(1), run)
+            .await
+            .expect("follower should stop after proxy demotion")
+            .expect("join should succeed")
+            .expect("stream drive should succeed");
+        assert_eq!(outcome, WebsocketLoopOutcome::Proxy);
     }
 }
