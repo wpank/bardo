@@ -2,41 +2,44 @@
 
 ## What It Is
 
-The navigation layer is the terminal's typed keyboard router. It receives raw `crossterm::event::KeyEvent` values, resolves them through the global and per-screen keybinding maps, and then routes the result into the command palette, modal stack, vim mode state machine, or active screen.
+`bardo-terminal` routes every terminal keypress through a typed navigation layer before any screen-specific handler runs. This layer translates raw `crossterm::event::KeyEvent` values into `AppAction` variants, manages modal overlays, drives the `/` command palette, and optionally enables vim-style navigation semantics.
 
-This is the part of the terminal that makes the 29-screen runtime catalog feel like a single application instead of a set of unrelated views. The protocol views chapter documents the next dashboard surface separately.
+The implementation backs the persistent chrome and keyboard-first navigation model described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`, plus `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`.
 
 ## Features
 
-- Global and per-screen keybindings backed by a TOML config file
-- Direct screen jumps and window jumps from a single typed action surface
-- `Tab` and `Shift+Tab` cycle across the full 29-screen runtime catalog
-- `/` command palette with fuzzy search and keyboard navigation
-- Stack-based modals for confirm, input, and alert flows
+- A single typed `AppAction` surface for quitting, screen changes, overlays, scrolling, and vim commands
+- Global keybindings plus per-screen overrides loaded from `~/.bardo/keybindings.toml`
+- Direct window jumps with `1`-`6` and `F1`-`F6`
+- Direct screen jumps with sidebar letters such as `h`, `b`, `m`, `f`, `v`, `w`, and `x`
+- `/` command palette with LCS-based fuzzy filtering and keyboard selection
+- Stack-based confirm, input, and alert modals
 - Optional vim mode with `Normal`, `Insert`, and `Command` states
-- Consistent `Esc` behavior that closes the topmost overlay first
-- Help overlay integration so the current binding set is always discoverable
+- Layered `Esc` handling that closes the top-most transient surface first
+- Help overlay hints that document the active navigation vocabulary in the running terminal
 
 ## Getting Started
 
-The default bindings work out of the box:
+Run the terminal:
 
 ```bash
 cargo run -p bardo-terminal
 ```
 
-Useful starting keys:
+Default navigation keys:
 
+- `q` or `Ctrl+C` quits
+- `Tab` and `Shift+Tab` cycle through the 29 registered screens
+- `1`-`6` or `F1`-`F6` jump to the root screen for each top-level window
 - `?` toggles the help overlay
 - `/` opens the command palette
-- `Esc` closes the topmost modal or overlay
-- `Tab` and `Shift+Tab` cycle through the full runtime screen catalog
-- `1` through `6` jump to the six logical windows
-- `:` enters vim command mode when vim mode is enabled
+- `Esc` closes the current modal, palette, help overlay, or vim command buffer in that order
+
+Vim mode is present in the codebase but disabled by default in `App::new()`. Once enabled, `hjkl`, `gg`, `G`, `i`, and `:` route through `VimModeState`.
 
 ## Configuration
 
-The navigation layer loads overrides from `~/.bardo/keybindings.toml` and falls back to the built-in defaults when the file is missing.
+Keybinding overrides load from `~/.bardo/keybindings.toml`. The loader uses the user's home directory from `HOME`, `USERPROFILE`, or `HOMEDRIVE` + `HOMEPATH`, then falls back to the built-in defaults if the file is missing or unreadable.
 
 ```toml
 # ~/.bardo/keybindings.toml
@@ -46,47 +49,36 @@ The navigation layer loads overrides from `~/.bardo/keybindings.toml` and falls 
 "backtab" = "PrevScreen"
 "?" = "ShowHelp"
 "/" = "OpenCommandPalette"
-"F1" = "GotoWindow:Hearth"
+"f1" = "GotoWindow:Hearth"
 
 [screen.HearthOverview]
 "r" = "ScrollTop"
-"g" = "ScrollBottom"
 ```
 
-Supported key strings are case-insensitive. The parser accepts:
+Supported key syntax:
 
-- Modifier prefixes: `ctrl+`, `shift+`, and `alt+`
-- Special keys: `tab`, `backtab`, `esc`, `enter`, `backspace`, `up`, `down`, `left`, and `right`
-- Function keys: `F1` through `F12`
+- Modifiers: `ctrl+`, `shift+`, `alt+`
+- Special keys: `tab`, `backtab`, `esc`, `enter`, `backspace`, `up`, `down`, `left`, `right`
+- Function keys: `f1` through `f12`
 - Single-character keys
 
-Action strings deserialize into `AppAction` variants. Unknown actions are ignored instead of failing config loading, which keeps a partially valid override file usable.
+Unknown action strings are skipped with a warning instead of aborting the entire file load. That keeps partial overrides usable.
+
+## Module Overview
+
+- `navigation::keybindings` owns the default binding table, TOML merge logic, and string parsing for keys and actions
+- `navigation::palette` owns the floating command palette state, fuzzy filtering, and overlay rendering
+- `navigation::modal` owns the modal stack, input routing, and dialog rendering helpers
+- `navigation::vim` owns the vim state machine and `gg` or `:q` style command handling
+- `app` integrates the navigation layer into the event loop and applies the resulting `AppAction` values
 
 ## API
 
-### Typed Actions
+### Typed Actions And Navigation Enums
 
 ```rust
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum WindowId {
-    Hearth,
-    Mind,
-    Soma,
-    World,
-    Fate,
-    Command,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum VimDirection {
-    Up,
-    Down,
-    Left,
-    Right,
-}
-
-#[derive(Debug, Clone)]
-pub enum AppAction {
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum AppAction {
     Quit,
     NextScreen,
     PrevScreen,
@@ -115,7 +107,27 @@ pub enum AppAction {
     ScrollTop,
     ScrollBottom,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub(crate) enum WindowId {
+    Hearth,
+    Mind,
+    Soma,
+    World,
+    Fate,
+    Command,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum VimDirection {
+    Up,
+    Down,
+    Left,
+    Right,
+}
 ```
+
+This action surface is the contract between keyboard input and the rest of the terminal runtime.
 
 ### Keybinding Map
 
@@ -131,7 +143,7 @@ pub struct KeybindingMap {
 
 impl KeybindingMap {
     pub fn default_bindings() -> Self;
-    pub fn load_from_toml(path: &std::path::Path) -> color_eyre::Result<Self>;
+    pub fn load_from_toml(path: &std::path::Path) -> anyhow::Result<Self>;
     pub fn resolve(
         &self,
         key: crossterm::event::KeyEvent,
@@ -139,15 +151,15 @@ impl KeybindingMap {
     ) -> Option<AppAction>;
 }
 
-pub fn parse_key_str(s: &str) -> Option<crossterm::event::KeyEvent>;
+pub(crate) fn parse_key_str(input: &str) -> Option<crossterm::event::KeyEvent>;
 ```
 
-`resolve` checks per-screen bindings before global bindings. `parse_key_str` is the shared helper used by the default table and the TOML loader.
+`resolve()` checks per-screen overrides before global bindings. The implementation builds and compares `KeyEvent` values with `KeyEvent::new(...)`, and `App::handle_key()` drops non-`Press` events before resolution.
 
 ### Command Palette
 
 ```rust
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Command {
     pub name: String,
     pub description: String,
@@ -155,6 +167,7 @@ pub struct Command {
     pub keybinding: Option<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CommandPalette {
     pub visible: bool,
     pub query: String,
@@ -169,15 +182,19 @@ impl CommandPalette {
         &mut self,
         key: crossterm::event::KeyEvent,
     ) -> Option<AppAction>;
-    pub fn render(&self, frame: &mut ratatui::Frame<'_>, area: ratatui::layout::Rect);
+    pub fn render(
+        &self,
+        frame: &mut ratatui::Frame<'_>,
+        area: ratatui::layout::Rect,
+    );
 }
 
 pub fn default_commands() -> Vec<Command>;
 ```
 
-The palette filters commands by the length of the longest common subsequence between the query and the command name. Commands with a zero score are hidden, and the selected row is clamped to the filtered list length after every update.
+Filtering is based on the longest common subsequence between the lowercased query and command name. Empty queries show the full command list in declaration order.
 
-### Modal Manager
+### Modal Stack
 
 ```rust
 pub enum Modal {
@@ -199,6 +216,7 @@ pub enum Modal {
     },
 }
 
+#[derive(Default)]
 pub struct ModalManager {
     pub stack: Vec<Modal>,
 }
@@ -212,11 +230,15 @@ impl ModalManager {
         &mut self,
         key: crossterm::event::KeyEvent,
     ) -> Option<AppAction>;
-    pub fn render(&self, frame: &mut ratatui::Frame<'_>, area: ratatui::layout::Rect);
+    pub fn render(
+        &self,
+        frame: &mut ratatui::Frame<'_>,
+        area: ratatui::layout::Rect,
+    );
 }
 ```
 
-`Confirm` maps `Enter` or `y` to the confirm action and `Esc` or `n` to the cancel action. `Input` collects text until `Enter` submits or `Esc` cancels. `Alert` closes on `Enter`, `Esc`, or space.
+`Confirm` accepts `Enter` or `y` and cancels on `Esc` or `n`. `Input` pops the modal before running `on_submit`, which avoids borrowing the stack while executing the callback. `Alert` closes on `Enter`, `Esc`, or space.
 
 ### Vim Mode
 
@@ -228,6 +250,7 @@ pub enum VimMode {
     Command,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VimModeState {
     pub mode: VimMode,
     pub command_buffer: String,
@@ -246,62 +269,114 @@ impl VimModeState {
 }
 ```
 
-`Normal` mode handles `hjkl`, `gg`, `G`, `:`, and `i`. `Insert` mode only reacts to `Esc`. `Command` mode accumulates text until `Enter` converts the buffer into `AppAction::VimCommand`.
+`Normal` handles `hjkl`, `gg`, `G`, `i`, `:`, and `Esc`. `Insert` only consumes `Esc`. `Command` buffers `:...` input and returns `AppAction::VimCommand` on `Enter`.
 
 ## Usage Examples
 
-Load custom bindings with the default fallback:
-
-```rust
-use std::path::Path;
-
-use crate::navigation::KeybindingMap;
-
-fn load_bindings() -> KeybindingMap {
-    KeybindingMap::load_from_toml(Path::new("/home/will/.bardo/keybindings.toml"))
-        .unwrap_or_else(|_| KeybindingMap::default_bindings())
-}
-```
-
-Dispatch a palette command:
+Resolve a configured key against the current screen:
 
 ```rust
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-use crate::navigation::CommandPalette;
+
+use crate::{
+    navigation::KeybindingMap,
+    screen::ScreenId,
+    state::{AppAction, WindowId},
+};
+
+let bindings = KeybindingMap::default_bindings();
+let action = bindings.resolve(
+    KeyEvent::new(KeyCode::F(1), KeyModifiers::NONE),
+    ScreenId::HearthOverview,
+);
+
+assert_eq!(action, Some(AppAction::GotoWindow(WindowId::Hearth)));
+```
+
+Filter the palette and execute the selected command:
+
+```rust
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+
+use crate::navigation::palette::{CommandPalette, default_commands};
 
 let mut palette = CommandPalette {
     visible: true,
-    query: String::new(),
-    commands: crate::navigation::default_commands(),
+    query: "qui".into(),
+    commands: default_commands(),
     filtered: Vec::new(),
     selected: 0,
 };
 
-palette.handle_key(KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE));
-palette.handle_key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+palette.update_filter();
+let action = palette.handle_key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+assert!(action.is_some());
 ```
 
-React to vim commands:
+Submit an input modal:
 
 ```rust
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-use crate::navigation::VimModeState;
+
+use crate::{
+    navigation::{Modal, ModalManager},
+    state::AppAction,
+};
+
+let mut modals = ModalManager::new();
+modals.push(Modal::Input {
+    title: "Name".into(),
+    placeholder: "enter value".into(),
+    buffer: "spectre".into(),
+    on_submit: Box::new(AppAction::VimCommand),
+});
+
+let action = modals.handle_key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+assert_eq!(action, Some(AppAction::VimCommand("spectre".into())));
+```
+
+Process a vim command:
+
+```rust
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+
+use crate::{
+    navigation::VimModeState,
+    state::AppAction,
+};
 
 let mut vim = VimModeState::new(true);
 vim.process_key(KeyEvent::new(KeyCode::Char(':'), KeyModifiers::NONE));
 vim.process_key(KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE));
+
 let action = vim.process_key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
-assert!(matches!(action, Some(crate::state::AppAction::VimCommand(_))));
+assert_eq!(action, Some(AppAction::VimCommand("q".into())));
 ```
 
 ## Architecture
 
-The navigation pipeline runs in this order:
+The implemented input pipeline in `App::handle_key()` is:
 
-1. Vim mode gets first crack at input when it is enabled.
-2. If a modal is open, the modal stack handles `Enter`, `Esc`, text entry, and backspace.
-3. If the command palette is visible, it consumes query and selection keys.
-4. The keybinding map resolves per-screen and global bindings.
-5. The active screen receives any key that is still unhandled.
+1. Ignore non-`Press` key events.
+2. Normalize the incoming `KeyEvent` so `kind` and `state` do not affect equality.
+3. Let vim mode intercept keys when enabled and in an intercepting state.
+4. Route keys to the modal stack if a modal is open.
+5. Route keys to the command palette if it is visible.
+6. Resolve per-screen and global keybindings.
+7. Forward any remaining key to the active screen.
 
-That flow matches the terminal interaction model described in [prd2/18-interfaces/01-cli.md](../../../prd2/18-interfaces/01-cli.md) sections `TUI (Interactive Mode)` and `Screen navigation`, and [prd2/20-styx/05-tui-experience.md](../../../prd2/20-styx/05-tui-experience.md) sections `Persistent Chrome` and `The Screen System (11 Views)`.
+The render stack is similarly ordered:
+
+1. Base screen content
+2. Status bar
+3. Top-most modal
+4. Command palette
+5. Help overlay
+
+That matches the keyboard-first terminal interaction model in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `5.1 Persistent chrome` and `5.2 Screen map`, and `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`.
+
+## References
+
+- `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`
+- `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`
+- `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`

@@ -4,7 +4,7 @@
 
 `bardo-terminal` is the workspace's interactive Rust TUI binary. It owns terminal setup and teardown, a 60 fps render loop, the 29-screen catalog, responsive layout, shared application state, live system metrics, and the crate-local widget layer that the later screens compose.
 
-The current implementation follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, `Screen navigation`, and `Render loop`, plus `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`. The color system is anchored in `prd2/18-interfaces/rendering/00-design-system.md`.
+The current implementation follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, and `The 15-screen system`, plus `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `4. Render loop`, and `5. The 15-screen system`, and `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`.
 
 ## Features
 
@@ -17,6 +17,7 @@ The current implementation follows the terminal architecture described in `prd2/
 - Responsive sidebar/content split driven by terminal width
 - ROSEDUST palette tokens and CRT-style box-drawing glyphs
 - Reusable widgets for sparklines, gauges, feeds, tabs, progress bars, timelines, and help overlays
+- Typed navigation layer with keybinding config loading, command palette, modal stack, and optional vim mode
 
 ## Getting Started
 
@@ -37,6 +38,8 @@ Useful live controls:
 - `q` quits
 - `Tab` moves to the next screen in `ScreenId::all()`
 - `Shift+Tab` moves to the previous screen
+- `/` opens the command palette
+- `?` toggles the help overlay
 - Resizing the terminal recomputes `LayoutBreakpoint`
 
 Enable tracing with the standard Rust logging environment:
@@ -47,13 +50,16 @@ RUST_LOG=info cargo run -p bardo-terminal
 
 ## Configuration
 
-The binary currently relies on runtime environment and terminal capabilities rather than a dedicated application config file.
+The binary still relies primarily on runtime environment and terminal capabilities, but the navigation layer now also looks for `~/.bardo/keybindings.toml` to override built-in keyboard defaults.
 
 | Input | Effect |
 | --- | --- |
 | `RUST_LOG` | Controls `tracing_subscriber` filtering |
+| `~/.bardo/keybindings.toml` | Overrides global and per-screen keybindings |
 | Terminal width | Selects `Compact`, `Standard`, `Wide`, or `Ultra` layout |
 | Terminal color and Unicode support | Affects palette fidelity, box drawing, braille sparklines, and block-glyph gauges |
+
+The config path resolves from `HOME`, `USERPROFILE`, or `HOMEDRIVE` + `HOMEPATH`, then appends `.bardo/keybindings.toml`.
 
 ## Module Overview
 
@@ -62,6 +68,7 @@ The binary currently relies on runtime environment and terminal capabilities rat
 - `screen` defines `Screen`, `ScreenId`, `ScreenRegistry`, and `StubScreen`
 - `state` defines `AppState`, `AppAction`, placeholder vitality, connection status, atmosphere animation, progress tracking, and live `SysMetrics`
 - `layout` computes `LayoutBreakpoint` and the sidebar/content split
+- `navigation` owns keybindings, the command palette, modal overlays, and vim-mode routing
 - `palette` defines the terminal color constants, style modifiers, and box-drawing glyphs
 - `screens::home` provides the concrete home dashboard
 - `sys_stats` samples CPU, memory, network, and disk metrics into `SysMetrics`
@@ -196,12 +203,35 @@ pub(crate) struct AppState {
     pub(crate) sys: SysMetrics,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum AppAction {
     Quit,
     NextScreen,
     PrevScreen,
     Resize(u16, u16),
+    GotoScreen(ScreenId),
+    GotoWindow(WindowId),
+    OpenCommandPalette,
+    CloseCommandPalette,
+    ExecuteCommand(usize),
+    PaletteInput(char),
+    PaletteBackspace,
+    PaletteSelectNext,
+    PaletteSelectPrev,
+    ShowHelp,
+    HideHelp,
+    CloseModal,
+    ConfirmModal,
+    ModalInput(char),
+    ModalBackspace,
+    EnterVimMode,
+    ExitVimMode,
+    VimNavigate(VimDirection),
+    VimCommand(String),
+    ScrollUp,
+    ScrollDown,
+    ScrollTop,
+    ScrollBottom,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -226,6 +256,43 @@ pub(crate) fn compute_layout(
 
 pub(crate) fn format_duration(secs: f64) -> String;
 ```
+
+### Navigation Layer
+
+```rust
+pub struct KeybindingMap {
+    pub global: std::collections::HashMap<crossterm::event::KeyEvent, AppAction>,
+    pub per_screen: std::collections::HashMap<
+        ScreenId,
+        std::collections::HashMap<crossterm::event::KeyEvent, AppAction>,
+    >,
+    pub vim_mode: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CommandPalette {
+    pub visible: bool,
+    pub query: String,
+    pub commands: Vec<Command>,
+    pub filtered: Vec<usize>,
+    pub selected: usize,
+}
+
+#[derive(Default)]
+pub struct ModalManager {
+    pub stack: Vec<Modal>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VimModeState {
+    pub mode: VimMode,
+    pub command_buffer: String,
+    pub sequence_buffer: Vec<char>,
+    pub enabled: bool,
+}
+```
+
+These types are wired into `App::handle_key()` so raw key events become typed actions before screen-local handlers run.
 
 ### Palette Tokens
 
@@ -265,7 +332,7 @@ The home screen shows the live scaffold state:
 The responsive layout reacts to terminal width:
 
 ```rust
-let breakpoint = bardo_terminal::layout::LayoutBreakpoint::from_cols(width);
+let breakpoint = crate::layout::LayoutBreakpoint::from_cols(width);
 let panel_count = breakpoint.panel_count();
 let sidebar_cols = breakpoint.sprite_sidebar_cols();
 ```
@@ -303,23 +370,6 @@ screens::home
 
 ## References
 
-- `prd2/18-interfaces/01-cli.md`
-  - `TUI (Interactive Mode)`
-  - `Architecture`
-  - `Entry points`
-  - `Screen navigation`
-  - `Render loop`
-- `prd2/18-interfaces/rendering/00-design-system.md`
-  - `The ROSEDUST palette`
-  - `The 7 rendering laws`
-  - `Character vocabulary`
-- `prd2/18-interfaces/screens/00-screen-catalog.md`
-  - `29-Screen Summary`
-  - `Navigation Model`
-- `prd2/20-styx/05-tui-experience.md`
-  - `1. Architecture`
-  - `4. The Screen System (11 Views)`
-  - `5. Custom Widgets`
-- `prd2/13-runtime/19-cinematic-system.md`
-  - `Design philosophy`
-  - `Time is the primary rendering dimension`
+- `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, and `The 15-screen system`
+- `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `4. Render loop`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`
+- `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`

@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::KeyEvent;
 use ratatui::{
     Frame,
     layout::Rect,
@@ -219,13 +219,8 @@ impl Screen for StubScreen {
         );
     }
 
-    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
-        match key.code {
-            KeyCode::Char('q') | KeyCode::Char('Q') => Some(AppAction::Quit),
-            KeyCode::Tab => Some(AppAction::NextScreen),
-            KeyCode::BackTab => Some(AppAction::PrevScreen),
-            _ => None,
-        }
+    fn handle_key(&mut self, _key: KeyEvent) -> Option<AppAction> {
+        None
     }
 }
 
@@ -376,7 +371,7 @@ mod tests {
     }
 
     #[test]
-    fn stub_screen_renders_fallback_message_and_handles_global_navigation_keys() {
+    fn stub_screen_renders_fallback_message_and_defers_global_navigation_keys() {
         let screen = StubScreen::new(ScreenId::MindPipeline, "MIND / Pipeline");
         let backend = TestBackend::new(48, 5);
         let mut terminal = Terminal::new(backend).expect("test terminal should initialize");
@@ -390,16 +385,16 @@ mod tests {
 
         let mut screen = screen;
         assert_eq!(
-            screen.handle_key(KeyEvent::from(KeyCode::Tab)),
-            Some(AppAction::NextScreen)
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Tab)),
+            None
         );
         assert_eq!(
-            screen.handle_key(KeyEvent::from(KeyCode::BackTab)),
-            Some(AppAction::PrevScreen)
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::BackTab)),
+            None
         );
         assert_eq!(
-            screen.handle_key(KeyEvent::from(KeyCode::Char('q'))),
-            Some(AppAction::Quit)
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Char('q'))),
+            None
         );
     }
 }

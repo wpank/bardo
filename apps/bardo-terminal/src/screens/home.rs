@@ -1,6 +1,6 @@
 //! Home screen with live progress bar, ETA countdown, and per-task timing.
 
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::KeyEvent;
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
@@ -217,13 +217,8 @@ impl Screen for HomeScreen {
         render_sys_panel(frame, data_chunks[3], state);
     }
 
-    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
-        match key.code {
-            KeyCode::Char('q') | KeyCode::Char('Q') => Some(AppAction::Quit),
-            KeyCode::Tab => Some(AppAction::NextScreen),
-            KeyCode::BackTab => Some(AppAction::PrevScreen),
-            _ => None,
-        }
+    fn handle_key(&mut self, _key: KeyEvent) -> Option<AppAction> {
+        None
     }
 
     fn on_focus(&mut self) {
@@ -495,8 +490,7 @@ fn tick_waveform(tick_count: u64, width: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::state::{AppAction, ConnectionStatus, MockVitality};
-    use crossterm::event::KeyModifiers;
+    use crate::state::{ConnectionStatus, MockVitality};
 
     #[test]
     fn home_screen_defaults_to_unfocused() {
@@ -504,20 +498,20 @@ mod tests {
     }
 
     #[test]
-    fn home_screen_handles_global_keys() {
+    fn home_screen_defers_global_keys_to_the_app() {
         let mut screen = HomeScreen::new();
 
         assert_eq!(
-            screen.handle_key(KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE)),
-            Some(AppAction::Quit)
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Char('q'))),
+            None
         );
         assert_eq!(
-            screen.handle_key(KeyEvent::new(KeyCode::Tab, KeyModifiers::NONE)),
-            Some(AppAction::NextScreen)
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Tab)),
+            None
         );
         assert_eq!(
-            screen.handle_key(KeyEvent::new(KeyCode::BackTab, KeyModifiers::NONE)),
-            Some(AppAction::PrevScreen)
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::BackTab)),
+            None
         );
     }
 

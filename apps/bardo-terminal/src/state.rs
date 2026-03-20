@@ -2,7 +2,7 @@
 
 use std::time::Instant;
 
-use crate::layout::LayoutBreakpoint;
+use crate::{layout::LayoutBreakpoint, screen::ScreenId};
 
 const DEFAULT_VITALITY_VALUE: f64 = 0.75;
 const MAX_SCAFFOLD_TICK_DT_SECS: f64 = 0.1;
@@ -384,7 +384,7 @@ impl Default for AppState {
 }
 
 /// Action emitted by screens and consumed by the app loop.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum AppAction {
     /// Exit the application.
     Quit,
@@ -394,15 +394,82 @@ pub(crate) enum AppAction {
     PrevScreen,
     /// Update layout state after a resize.
     Resize(u16, u16),
+    /// Jump directly to a screen by identifier.
+    GotoScreen(ScreenId),
+    /// Jump to the first tab of a named window.
+    GotoWindow(WindowId),
+    /// Open the command palette.
+    OpenCommandPalette,
+    /// Close the command palette without executing.
+    CloseCommandPalette,
+    /// Execute a palette entry by filtered index.
+    ExecuteCommand(usize),
+    /// Forward a character to the palette query.
+    PaletteInput(char),
+    /// Delete the previous character from the palette query.
+    PaletteBackspace,
+    /// Move the palette selection downward.
+    PaletteSelectNext,
+    /// Move the palette selection upward.
+    PaletteSelectPrev,
+    /// Show the contextual help overlay.
+    ShowHelp,
+    /// Hide the contextual help overlay.
+    HideHelp,
+    /// Close the top-most modal.
+    CloseModal,
+    /// Confirm the top-most modal.
+    ConfirmModal,
+    /// Forward a character to the active input modal.
+    ModalInput(char),
+    /// Delete the previous character from the active input modal.
+    ModalBackspace,
+    /// Enter vim normal mode.
+    EnterVimMode,
+    /// Exit vim mode and return to standard input handling.
+    ExitVimMode,
+    /// Navigate using vim-style directional input.
+    VimNavigate(VimDirection),
+    /// Execute a colon command from vim mode.
+    VimCommand(String),
+    /// Scroll the active pane upward.
+    ScrollUp,
+    /// Scroll the active pane downward.
+    ScrollDown,
+    /// Jump to the top of the active pane.
+    ScrollTop,
+    /// Jump to the bottom of the active pane.
+    ScrollBottom,
+}
+
+/// Named window identifiers for top-level terminal navigation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub(crate) enum WindowId {
+    Hearth,
+    Mind,
+    Soma,
+    World,
+    Fate,
+    Command,
+}
+
+/// Vim directional navigation commands.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum VimDirection {
+    Up,
+    Down,
+    Left,
+    Right,
 }
 
 #[cfg(test)]
 mod tests {
     use super::{
         AppAction, AppState, Atmosphere, ConnectionStatus, DEFAULT_VITALITY_VALUE,
-        MAX_SCAFFOLD_TICK_DT_SECS, MockVitality, SysMetrics, TaskStatus, format_duration,
+        MAX_SCAFFOLD_TICK_DT_SECS, MockVitality, SysMetrics, TaskStatus, VimDirection, WindowId,
+        format_duration,
     };
-    use crate::layout::LayoutBreakpoint;
+    use crate::{layout::LayoutBreakpoint, screen::ScreenId};
 
     #[test]
     fn default_state_uses_expected_placeholders() {
@@ -429,7 +496,81 @@ mod tests {
     #[test]
     fn action_variants_compile() {
         assert_eq!(AppAction::Quit, AppAction::Quit);
+        assert_eq!(
+            AppAction::GotoScreen(ScreenId::HearthOverview),
+            AppAction::GotoScreen(ScreenId::HearthOverview)
+        );
+        assert_eq!(
+            AppAction::GotoWindow(WindowId::Hearth),
+            AppAction::GotoWindow(WindowId::Hearth)
+        );
+        assert_eq!(
+            AppAction::VimNavigate(VimDirection::Up),
+            AppAction::VimNavigate(VimDirection::Up)
+        );
+        assert_eq!(
+            AppAction::VimCommand("quit".to_string()),
+            AppAction::VimCommand("quit".to_string())
+        );
         assert_eq!(ConnectionStatus::Connected.label(), "CONNECTED");
+    }
+
+    #[test]
+    fn navigation_enums_expose_expected_variants() {
+        let windows = [
+            WindowId::Hearth,
+            WindowId::Mind,
+            WindowId::Soma,
+            WindowId::World,
+            WindowId::Fate,
+            WindowId::Command,
+        ];
+        let directions = [
+            VimDirection::Up,
+            VimDirection::Down,
+            VimDirection::Left,
+            VimDirection::Right,
+        ];
+
+        assert_eq!(windows.len(), 6);
+        assert_eq!(directions.len(), 4);
+        assert_eq!(WindowId::Hearth, WindowId::Hearth);
+        assert_eq!(VimDirection::Left, VimDirection::Left);
+    }
+
+    #[test]
+    fn app_action_covers_navigation_surface() {
+        let actions = vec![
+            AppAction::Quit,
+            AppAction::NextScreen,
+            AppAction::PrevScreen,
+            AppAction::Resize(120, 40),
+            AppAction::GotoScreen(ScreenId::CommandSteer),
+            AppAction::GotoWindow(WindowId::Command),
+            AppAction::OpenCommandPalette,
+            AppAction::CloseCommandPalette,
+            AppAction::ExecuteCommand(3),
+            AppAction::PaletteInput('/'),
+            AppAction::PaletteBackspace,
+            AppAction::PaletteSelectNext,
+            AppAction::PaletteSelectPrev,
+            AppAction::ShowHelp,
+            AppAction::HideHelp,
+            AppAction::CloseModal,
+            AppAction::ConfirmModal,
+            AppAction::ModalInput('y'),
+            AppAction::ModalBackspace,
+            AppAction::EnterVimMode,
+            AppAction::ExitVimMode,
+            AppAction::VimNavigate(VimDirection::Down),
+            AppAction::VimCommand("wq".to_string()),
+            AppAction::ScrollUp,
+            AppAction::ScrollDown,
+            AppAction::ScrollTop,
+            AppAction::ScrollBottom,
+        ];
+
+        assert_eq!(actions.len(), 27);
     }
 
     #[test]

@@ -4,6 +4,7 @@
 
 mod app;
 mod layout;
+mod navigation;
 mod palette;
 mod screen;
 mod screens;
