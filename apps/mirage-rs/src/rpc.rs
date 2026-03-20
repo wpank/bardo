@@ -834,6 +834,7 @@ fn register_mirage_methods(
         Ok::<_, ErrorObjectOwned>(true)
     })?;
     module.register_async_method("mirage_shutdown", |_params, ctx, _| async move {
+        tracing::warn!("mirage_shutdown RPC called — initiating shutdown");
         let _ = ctx.shutdown.send(());
         Ok::<_, ErrorObjectOwned>(true)
     })?;

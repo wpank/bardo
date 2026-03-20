@@ -13,7 +13,7 @@ use serde::de::DeserializeOwned;
 
 #[tokio::test]
 async fn integration_eth_transfer_state_diff() {
-    let mut instance = spawn_mirage_test_instance(None, Some(18_545))
+    let mut instance = spawn_mirage_test_instance(None, Some(18_548))
         .await
         .expect("spawn test instance");
     let client = MirageClient::new(instance.config())

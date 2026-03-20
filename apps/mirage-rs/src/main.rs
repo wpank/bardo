@@ -190,6 +190,11 @@ async fn run(cli: Cli, upstream: Arc<UpstreamRpc>) -> anyhow::Result<()> {
                 tokio::time::sleep(Duration::from_secs(1)).await;
                 let idle = mirage.idle_for();
                 if idle >= timeout {
+                    tracing::warn!(
+                        idle_secs = idle.as_secs(),
+                        timeout_secs,
+                        "watchdog idle timeout reached — initiating shutdown"
+                    );
                     let _ = shutdown.send(());
                     break;
                 }
@@ -206,12 +211,12 @@ async fn run(cli: Cli, upstream: Arc<UpstreamRpc>) -> anyhow::Result<()> {
     tokio::select! {
         result = shutdown_rx.recv() => {
             match result {
-                Ok(()) => tracing::info!("mirage shutdown signal received"),
+                Ok(()) => tracing::warn!("mirage shutdown signal received — exiting"),
                 Err(broadcast::error::RecvError::Closed) => {
-                    tracing::warn!("mirage shutdown channel closed (all senders dropped)");
+                    tracing::error!("mirage shutdown channel closed unexpectedly (all senders dropped) — exiting");
                 }
                 Err(broadcast::error::RecvError::Lagged(n)) => {
-                    tracing::info!("mirage shutdown receiver lagged by {n} messages");
+                    tracing::warn!("mirage shutdown receiver lagged by {n} messages — exiting");
                 }
             }
         }
