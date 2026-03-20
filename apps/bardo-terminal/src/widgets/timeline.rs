@@ -124,12 +124,91 @@ mod tests {
     #[test]
     fn ribbon_event_type_uses_expected_glyphs() {
         assert_eq!(RibbonEventType::TradeExecuted.glyph(), '▲');
+        assert_eq!(RibbonEventType::DreamStarted.glyph(), '◌');
+        assert_eq!(RibbonEventType::PhaseChange.glyph(), '◆');
+        assert_eq!(RibbonEventType::Anomaly.glyph(), '!');
         assert_eq!(RibbonEventType::Death.glyph(), '✕');
     }
 
     #[test]
     fn ribbon_event_type_uses_expected_colors() {
+        assert_eq!(RibbonEventType::TradeExecuted.color(), SUCCESS);
         assert_eq!(RibbonEventType::DreamStarted.color(), DREAM);
+        assert_eq!(RibbonEventType::PhaseChange.color(), BONE);
         assert_eq!(RibbonEventType::Anomaly.color(), WARNING);
+        assert_eq!(RibbonEventType::Death.color(), ROSE_BRIGHT);
+    }
+
+    #[test]
+    fn timeline_ribbon_renders_events_with_severity_break_ties() {
+        use ratatui::buffer::Buffer;
+
+        let mut buf = Buffer::empty(ratatui::layout::Rect {
+            x: 0,
+            y: 0,
+            width: 10,
+            height: 1,
+        });
+
+        let ribbon = TimelineRibbon {
+            events: vec![
+                TimelineEvent {
+                    tick: 5,
+                    event_type: RibbonEventType::TradeExecuted,
+                    severity: 10,
+                },
+                TimelineEvent {
+                    tick: 5,
+                    event_type: RibbonEventType::Death,
+                    severity: 255, // Higher severity should win
+                },
+            ],
+            window_ticks: 100,
+            current_tick: 100,
+        };
+
+        let area = ratatui::layout::Rect {
+            x: 0,
+            y: 0,
+            width: 10,
+            height: 1,
+        };
+
+        ribbon.render(area, &mut buf);
+
+        // The cell containing tick 5 should show Death glyph (higher severity)
+        let cell = buf.get(0, 0);
+        assert_eq!(cell.symbol(), "✕"); // Death glyph
+    }
+
+    #[test]
+    fn timeline_ribbon_renders_current_tick_marker() {
+        use ratatui::buffer::Buffer;
+
+        let mut buf = Buffer::empty(ratatui::layout::Rect {
+            x: 0,
+            y: 0,
+            width: 5,
+            height: 1,
+        });
+
+        let ribbon = TimelineRibbon {
+            events: vec![],
+            window_ticks: 100,
+            current_tick: 100,
+        };
+
+        let area = ratatui::layout::Rect {
+            x: 0,
+            y: 0,
+            width: 5,
+            height: 1,
+        };
+
+        ribbon.render(area, &mut buf);
+
+        // Rightmost cell should show '┤' for current tick
+        let rightmost_cell = buf.get(4, 0);
+        assert_eq!(rightmost_cell.symbol(), "┤");
     }
 }

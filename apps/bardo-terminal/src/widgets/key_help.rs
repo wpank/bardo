@@ -116,7 +116,7 @@ impl Widget for &KeyHelpOverlay {
             buf.set_stringn(
                 separator_x,
                 y,
-                " - ",
+                " — ",
                 3,
                 Style::default().fg(TEXT_DIM).bg(BG_RAISED),
             );
@@ -164,5 +164,75 @@ mod tests {
         (&overlay).render(Rect::new(0, 0, 30, 10), &mut buffer);
 
         assert!(buffer.content().iter().all(|cell| cell.symbol() == " "));
+    }
+
+    #[test]
+    fn small_area_early_return() {
+        let overlay = KeyHelpOverlay {
+            bindings: vec![KeyBinding {
+                key: "?".to_string(),
+                description: "toggle help".to_string(),
+            }],
+            visible: true,
+        };
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 19, 10));
+        (&overlay).render(Rect::new(0, 0, 19, 10), &mut buffer);
+
+        // Should return early due to width < 20
+        assert!(buffer.content().iter().all(|cell| cell.symbol() == " "));
+    }
+
+    #[test]
+    fn visible_overlay_renders_box() {
+        let overlay = KeyHelpOverlay {
+            bindings: vec![
+                KeyBinding {
+                    key: "?".to_string(),
+                    description: "toggle help".to_string(),
+                },
+                KeyBinding {
+                    key: "q".to_string(),
+                    description: "quit".to_string(),
+                },
+            ],
+            visible: true,
+        };
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 50, 20));
+        (&overlay).render(Rect::new(0, 0, 50, 20), &mut buffer);
+
+        // The box should be centered, so we need to find where it was rendered
+        // For simplicity, just check that something was rendered (not all spaces)
+        let has_content = buffer
+            .content()
+            .iter()
+            .any(|cell| cell.symbol() != " " && cell.symbol() != "");
+        assert!(has_content, "Overlay should render content when visible");
+    }
+
+    #[test]
+    fn key_binding_structure() {
+        let binding = KeyBinding {
+            key: "Ctrl+C".to_string(),
+            description: "Copy".to_string(),
+        };
+        assert_eq!(binding.key, "Ctrl+C");
+        assert_eq!(binding.description, "Copy");
+    }
+
+    #[test]
+    fn overlay_with_empty_bindings() {
+        let overlay = KeyHelpOverlay {
+            bindings: vec![],
+            visible: true,
+        };
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 50, 20));
+        (&overlay).render(Rect::new(0, 0, 50, 20), &mut buffer);
+
+        // Should still render box borders even with no bindings
+        let has_content = buffer
+            .content()
+            .iter()
+            .any(|cell| cell.symbol() != " " && cell.symbol() != "");
+        assert!(has_content, "Empty overlay should still render box");
     }
 }
