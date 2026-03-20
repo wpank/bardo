@@ -6,6 +6,8 @@
 
 The current implementation follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, and `The 15-screen system`, plus `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `4. Render loop`, and `5. The 15-screen system`, and `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`.
 
+Those PRD sections sometimes count **screens** or **views** at a coarser grain (for example fifteen grouped destinations or eleven product views). The **authoritative tab list** for this binary is `prd2/18-interfaces/21-screen-catalog.md`: **six** top-level windows and **29** distinct `ScreenId` values. Treat the older figures as grouping language, not a different product surface than the 29-tab registry.
+
 ## Features
 
 - Raw-mode and alternate-screen lifecycle management with panic-hook recovery
@@ -329,13 +331,7 @@ The home screen shows the live scaffold state:
 - connection status and per-task timing
 - a four-column system panel for CPU, memory, network, and disk
 
-The responsive layout reacts to terminal width:
-
-```rust
-let breakpoint = crate::layout::LayoutBreakpoint::from_cols(width);
-let panel_count = breakpoint.panel_count();
-let sidebar_cols = breakpoint.sprite_sidebar_cols();
-```
+The responsive layout reacts to terminal width: given the terminal width in columns, the app selects a `LayoutBreakpoint` with `LayoutBreakpoint::from_cols(width)`, then reads `panel_count()` and `sprite_sidebar_cols()` for chrome and sidebar geometry. (Those types live in the binary crate; there is no published `bardo_terminal` library path to import from another package yet.)
 
 `Tab` and `Shift+Tab` cycle through the screen catalog in the exact order returned by `ScreenId::all()`.
 
@@ -370,6 +366,7 @@ screens::home
 
 ## References
 
+- `prd2/18-interfaces/21-screen-catalog.md` — six windows, 29 tabs (canonical registry for `ScreenId::all()`)
 - `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, and `The 15-screen system`
 - `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `4. Render loop`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`
 - `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`

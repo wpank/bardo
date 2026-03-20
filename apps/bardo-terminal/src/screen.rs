@@ -315,7 +315,28 @@ mod tests {
     }
 
     #[test]
+    fn screen_trait_is_send_sync_and_default_lifecycle_is_no_op() {
+        let mut screen = TestScreen;
+        screen.on_focus();
+        screen.on_blur();
+
+        let _boxed: Box<dyn Screen> = Box::new(TestScreen);
+    }
+
+    #[test]
+    fn screen_id_supports_hashing_as_map_key() {
+        use std::collections::HashMap;
+
+        let mut m = HashMap::new();
+        m.insert(ScreenId::HearthOverview, 1u8);
+        m.insert(ScreenId::CommandHermes, 2u8);
+        assert_eq!(m.get(&ScreenId::HearthOverview), Some(&1));
+        assert_eq!(m.get(&ScreenId::CommandHermes), Some(&2));
+    }
+
+    #[test]
     fn screen_catalog_has_the_expected_size_and_order() {
+        assert_eq!(ScreenId::all().len(), 29);
         let expected = [
             ScreenId::HearthOverview,
             ScreenId::HearthSignals,

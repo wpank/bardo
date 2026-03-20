@@ -6,6 +6,8 @@
 
 The implementation backs the persistent chrome and keyboard-first navigation model described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`, plus `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`.
 
+The **29** `ScreenId` tabs registered in this binary follow `prd2/18-interfaces/21-screen-catalog.md`. Older PRD language (“15-screen system”, “11 views”) describes coarser groupings or an earlier surface area; it does not override the six-window / 29-tab catalog the code implements.
+
 ## Features
 
 - A single typed `AppAction` surface for quitting, screen changes, overlays, scrolling, and vim commands
@@ -273,11 +275,14 @@ impl VimModeState {
 
 ## Usage Examples
 
+The Rust snippets below use `crate::` because they mirror how the **bardo-terminal binary** wires modules together. They are not copy-pastable into another crate unless you add a `lib.rs` or change paths; they document behavior, not a public dependency API.
+
 Resolve a configured key against the current screen:
 
 ```rust
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
+// `crate::` = root of the bardo-terminal binary crate
 use crate::{
     navigation::KeybindingMap,
     screen::ScreenId,
@@ -298,7 +303,7 @@ Filter the palette and execute the selected command:
 ```rust
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
-use crate::navigation::palette::{CommandPalette, default_commands};
+use crate::navigation::palette::{CommandPalette, default_commands}; // binary crate root
 
 let mut palette = CommandPalette {
     visible: true,
@@ -373,10 +378,11 @@ The render stack is similarly ordered:
 4. Command palette
 5. Help overlay
 
-That matches the keyboard-first terminal interaction model in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `5.1 Persistent chrome` and `5.2 Screen map`, and `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`.
+That matches the keyboard-first terminal interaction model in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `5.1 Persistent chrome` and `5.2 Screen map`, and `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`. The live tab registry remains the **29** entries in `prd2/18-interfaces/21-screen-catalog.md`.
 
 ## References
 
+- `prd2/18-interfaces/21-screen-catalog.md` — six windows, 29 tabs (matches `ScreenId::all()`)
 - `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`
 - `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`
 - `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`

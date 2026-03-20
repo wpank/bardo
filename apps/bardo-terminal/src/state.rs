@@ -350,6 +350,10 @@ pub(crate) fn format_duration(total_secs: f64) -> String {
 // ── AppState ────────────────────────────────────────────────────────
 
 /// Global application state shared by all screens.
+///
+/// The terminal scaffold tracks at minimum: `tick_count`, `connection_status`,
+/// `vitality`, and `layout`. Additional fields support animation, progress, and
+/// system metrics.
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub(crate) struct AppState {
@@ -384,6 +388,9 @@ impl Default for AppState {
 }
 
 /// Action emitted by screens and consumed by the app loop.
+///
+/// Core scaffold actions are `Quit`, `NextScreen`, `PrevScreen`, and `Resize`.
+/// Additional variants support command palette, modals, vim-style navigation, and scrolling.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum AppAction {
     /// Exit the application.
@@ -392,7 +399,7 @@ pub(crate) enum AppAction {
     NextScreen,
     /// Move to the previous screen.
     PrevScreen,
-    /// Update layout state after a resize.
+    /// Update layout state after a resize (terminal columns, rows).
     Resize(u16, u16),
     /// Jump directly to a screen by identifier.
     GotoScreen(ScreenId),
@@ -470,6 +477,28 @@ mod tests {
         format_duration,
     };
     use crate::{layout::LayoutBreakpoint, screen::ScreenId};
+
+    /// Plan 04 T5: scaffold `AppState` fields, defaults, `ConnectionStatus`, `MockVitality`,
+    /// and core `AppAction` variants.
+    #[test]
+    fn plan04_t5_scaffold_state_and_actions() {
+        let state = AppState::default();
+
+        assert_eq!(state.tick_count, 0);
+        assert_eq!(state.connection_status, ConnectionStatus::Disconnected);
+        assert_eq!(state.vitality.value, DEFAULT_VITALITY_VALUE);
+        assert!((0.0..=1.0).contains(&state.vitality.value));
+        assert_eq!(state.layout, LayoutBreakpoint::Standard);
+
+        let _ = ConnectionStatus::Connected;
+        let _ = ConnectionStatus::Disconnected;
+        let _ = ConnectionStatus::Connecting;
+
+        assert_eq!(AppAction::Quit, AppAction::Quit);
+        assert_eq!(AppAction::NextScreen, AppAction::NextScreen);
+        assert_eq!(AppAction::PrevScreen, AppAction::PrevScreen);
+        assert_eq!(AppAction::Resize(80, 24), AppAction::Resize(80, 24));
+    }
 
     #[test]
     fn default_state_uses_expected_placeholders() {

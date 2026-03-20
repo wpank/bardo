@@ -1,6 +1,9 @@
 #![allow(dead_code)]
 
 //! ROSEDUST palette tokens and chrome glyphs.
+//!
+//! `Color::Rgb` triples match `prd2/18-interfaces/04-design-system.md` §2 (solid RGB; where the
+//! design doc lists borders with opacity, the TUI uses the same RGB components).
 
 use ratatui::style::{Color, Modifier};
 
@@ -177,28 +180,83 @@ mod tests {
         assert!(r > 0 || g > 0 || b > 0);
     }
 
+    /// Every `Color::Rgb` value matches design-system §2 / plan 04 Quick Reference.
     #[test]
-    fn key_tokens_match_the_spec_values() {
-        let _palette = ColorPalette;
+    fn rosedust_rgb_tokens_match_spec() {
+        assert_eq!(BG_VOID, Color::Rgb(6, 6, 8));
+        assert_eq!(BG_RAISED, Color::Rgb(12, 10, 14));
+        assert_eq!(BG_MID, Color::Rgb(8, 8, 16));
+        assert_eq!(BG_WARM, Color::Rgb(10, 8, 8));
+        assert_eq!(BORDER, Color::Rgb(24, 20, 32));
+        assert_eq!(BORDER_ACTIVE, Color::Rgb(170, 112, 136));
+        assert_eq!(BORDER_DREAM, Color::Rgb(88, 88, 120));
 
         assert_eq!(ROSE, Color::Rgb(170, 112, 136));
         assert_eq!(ROSE_BRIGHT, Color::Rgb(204, 144, 168));
+        assert_eq!(ROSE_DIM, Color::Rgb(122, 80, 96));
+        assert_eq!(ROSE_DEEP, Color::Rgb(58, 32, 48));
+        assert_eq!(ROSE_EMBER, Color::Rgb(72, 40, 56));
+
         assert_eq!(BONE, Color::Rgb(200, 184, 144));
+        assert_eq!(BONE_DIM, Color::Rgb(138, 122, 90));
+
+        assert_eq!(TEXT_PRIMARY, Color::Rgb(152, 128, 144));
+        assert_eq!(TEXT_DIM, Color::Rgb(88, 72, 88));
+        assert_eq!(TEXT_GHOST, Color::Rgb(48, 40, 48));
+        assert_eq!(TEXT_PHANTOM, Color::Rgb(32, 24, 32));
+
+        assert_eq!(DREAM, Color::Rgb(88, 88, 120));
+        assert_eq!(DREAM_DIM, Color::Rgb(56, 56, 88));
+        assert_eq!(DREAM_DEEP, Color::Rgb(40, 40, 72));
         assert_eq!(WARNING, Color::Rgb(170, 136, 85));
         assert_eq!(SUCCESS, Color::Rgb(112, 136, 122));
         assert_eq!(DANGER, ROSE_BRIGHT);
+
+        assert_eq!(SCANLINE_DARK, Color::Rgb(5, 5, 7));
+        assert_eq!(PHOSPHOR_RES, Color::Rgb(26, 16, 24));
+        assert_eq!(NOISE_WARM, Color::Rgb(42, 24, 32));
+        assert_eq!(NOISE_COOL, Color::Rgb(32, 24, 40));
+    }
+
+    #[test]
+    fn box_drawing_and_block_glyphs_match_spec() {
+        assert_eq!(BOX_TOP_LEFT, '┌');
+        assert_eq!(BOX_TOP_RIGHT, '┐');
+        assert_eq!(BOX_BOTTOM_LEFT, '└');
+        assert_eq!(BOX_BOTTOM_RIGHT, '┘');
+        assert_eq!(BOX_HORIZONTAL, '─');
+        assert_eq!(BOX_VERTICAL, '│');
+        assert_eq!(BOX_T_DOWN, '┬');
+        assert_eq!(BOX_T_UP, '┴');
+        assert_eq!(BOX_T_RIGHT, '├');
+        assert_eq!(BOX_T_LEFT, '┤');
+        assert_eq!(BOX_CROSS, '┼');
         assert_eq!(FRAME_OPEN, '⌈');
+        assert_eq!(FRAME_CLOSE, '⌋');
         assert_eq!(BLOCK_FULL, '█');
+        assert_eq!(BLOCK_DARK, '▓');
+        assert_eq!(BLOCK_MED, '▒');
+        assert_eq!(BLOCK_LIGHT, '░');
+    }
+
+    #[test]
+    fn style_modifiers_match_ratatui_spec() {
+        assert_eq!(STYLE_BOLD, Modifier::BOLD);
+        assert_eq!(STYLE_DIM, Modifier::DIM);
+        assert_eq!(STYLE_ITALIC, Modifier::ITALIC);
     }
 
     #[test]
     fn namespace_marker_re_exports_palette_tokens() {
-        let _palette = ColorPalette;
-
         assert_eq!(ColorPalette::BG_VOID, BG_VOID);
+        assert_eq!(ColorPalette::BORDER_DREAM, BORDER_DREAM);
+        assert_eq!(ColorPalette::ROSE_EMBER, ROSE_EMBER);
+        assert_eq!(ColorPalette::TEXT_PHANTOM, TEXT_PHANTOM);
+        assert_eq!(ColorPalette::DREAM_DEEP, DREAM_DEEP);
+        assert_eq!(ColorPalette::NOISE_COOL, NOISE_COOL);
         assert_eq!(ColorPalette::DANGER, ROSE_BRIGHT);
-        assert_eq!(ColorPalette::STYLE_BOLD, Modifier::BOLD);
-        assert_eq!(ColorPalette::BOX_HORIZONTAL, '─');
-        assert_eq!(ColorPalette::FRAME_CLOSE, '⌋');
+        assert_eq!(ColorPalette::STYLE_ITALIC, Modifier::ITALIC);
+        assert_eq!(ColorPalette::BOX_CROSS, '┼');
+        assert_eq!(ColorPalette::BLOCK_LIGHT, '░');
     }
 }
