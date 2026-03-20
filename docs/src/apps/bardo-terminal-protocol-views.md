@@ -43,6 +43,8 @@ The four protocol panels are driven by placeholder records so the terminal can s
 
 The mock layer is intentionally explicit. Instead of a generic `Default` implementation, each record exposes a `mock_default()` constructor with plausible values for demos, smoke tests, and local development. That makes the fake-data path obvious when reading the API surface or scanning the screen output.
 
+The fields that will become live inputs are tagged with `TODO(plan-70a)` so the later chain-intelligence and bridge integration passes can replace them one by one without guessing which values are still synthetic.
+
 The replacement path is staged: live protocol-state connectors arrive first, then the bridge and route monitors, and finally the remaining snapshot helpers are removed once the real data sources cover the full screen.
 
 ## Module Overview
@@ -50,6 +52,8 @@ The replacement path is staged: live protocol-state connectors arrive first, the
 - `mock::protocol_data` defines the placeholder DeFi records that feed every protocol widget
 - `widgets::protocol` contains the pool, lending, vault, and bridge widget implementations
 - `screens::protocol_views` composes the widgets into the screen shown in the terminal
+
+The screen is registered as `ScreenId::ProtocolViews` and sits at the end of the terminal's tab-cycling order.
 
 ## API
 
