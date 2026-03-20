@@ -10,6 +10,13 @@ use ratatui::{
 use crate::palette::{BG_RAISED, BG_VOID, BONE, TEXT_PRIMARY};
 
 /// Cursor-driven scrollable list with optional substring filtering.
+///
+/// # Parent Responsibility
+///
+/// When the `filter` field changes, the parent screen must reset `cursor` to 0
+/// (or clamp it to the new filtered item count) to prevent the cursor from
+/// pointing to an out-of-bounds index. The `filtered_items()` method does not
+/// automatically adjust `cursor` when the filter changes.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct ScrollableList {
     /// Available items.

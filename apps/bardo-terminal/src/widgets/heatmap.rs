@@ -136,4 +136,39 @@ mod tests {
             Color::Rgb(50, 80, 100)
         );
     }
+
+    #[test]
+    fn wisdom_layer_blends_toward_indigo_at_low_values() {
+        let base = Color::Rgb(100, 100, 100);
+        let tinted = layer_tint(base, PheromoneLayer::Wisdom, 0.0);
+        // At value 0.0, should blend 50% toward (88, 88, 120)
+        // (100 * 0.5 + 88 * 0.5, 100 * 0.5 + 88 * 0.5, 100 * 0.5 + 120 * 0.5)
+        // = (94, 94, 110)
+        assert_eq!(tinted, Color::Rgb(94, 94, 110));
+    }
+
+    #[test]
+    fn opportunity_layer_passes_through_unchanged() {
+        let base = Color::Rgb(100, 150, 200);
+        let tinted = layer_tint(base, PheromoneLayer::Opportunity, 0.5);
+        assert_eq!(tinted, base);
+    }
+
+    #[test]
+    fn viridis_interpolates_midpoint() {
+        // At 0.5, should be between VIRIDIS[3] and VIRIDIS[4]
+        // VIRIDIS[3] = (49, 126, 157), VIRIDIS[4] = (53, 183, 121)
+        // At t=0.0: (49, 126, 157), at t=1.0: (53, 183, 121)
+        // At 0.5: scaled = 3.0, index = 3, t = 0.0, so should be VIRIDIS[3]
+        let color = viridis_color(0.5);
+        // Actually, let's check: value 0.5 * 6.0 = 3.0, floor = 3, t = 0.0
+        // So it should be exactly VIRIDIS[3]
+        assert_eq!(color, Color::Rgb(49, 126, 157));
+    }
+
+    #[test]
+    fn viridis_handles_out_of_bounds() {
+        assert_eq!(viridis_color(-1.0), Color::Rgb(68, 1, 84)); // clamped to 0.0
+        assert_eq!(viridis_color(2.0), Color::Rgb(253, 231, 37)); // clamped to 1.0
+    }
 }

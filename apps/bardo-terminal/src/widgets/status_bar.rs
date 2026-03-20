@@ -12,15 +12,15 @@ use crate::palette::{BG_MID, BONE, TEXT_DIM};
 /// Single-line bottom status bar.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct StatusBar<'a> {
-    /// Phase label.
+    /// Phase label. TODO Plan 70a: from AppState
     pub(crate) phase: &'a str,
     /// Current tick.
     pub(crate) tick: u64,
-    /// PAD summary text.
+    /// PAD summary text. TODO Plan 70a: from AppState
     pub(crate) pad_summary: &'a str,
-    /// Credit balance text.
+    /// Credit balance text. TODO Plan 70a: from AppState
     pub(crate) credit_balance: &'a str,
-    /// Optional projected days remaining.
+    /// Optional projected days remaining. TODO Plan 70a: from AppState
     pub(crate) projected_days: Option<f64>,
 }
 
