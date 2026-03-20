@@ -27,6 +27,8 @@ use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Panic hook must run before raw mode / alternate screen so a mid-render panic
+    // cannot strand the user's shell.
     install_panic_hook();
 
     tracing_subscriber::fmt()
@@ -35,7 +37,11 @@ async fn main() -> Result<()> {
 
     let mut terminal = setup_terminal()?;
     let mut app = App::new();
-    let run_result = app.run(&mut terminal);
+
+    // `App::run` blocks on crossterm I/O and timing; keep it off the async scheduler's
+    // cooperative path while preserving a Tokio runtime for future async work.
+    let run_result = tokio::task::block_in_place(|| app.run(&mut terminal));
+
     let teardown_result = teardown_terminal(&mut terminal);
 
     match (run_result, teardown_result) {
@@ -81,6 +87,7 @@ impl TerminalCleanup for CrosstermCleanup<'_> {
 fn install_panic_hook() {
     let original_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |panic_info| {
+        // Best-effort: mirror `restore_terminal` so the shell is usable after a panic.
         let _ = disable_raw_mode();
         let _ = execute!(stdout(), LeaveAlternateScreen, DisableMouseCapture, Show);
         original_hook(panic_info);
@@ -230,5 +237,23 @@ mod tests {
                 "show_cursor",
             ]
         );
+    }
+
+    #[test]
+    fn restore_terminal_collects_all_error_messages() {
+        let mut cleanup = FakeCleanup {
+            fail_disable_raw_mode: true,
+            fail_leave_alternate_screen: true,
+            fail_disable_mouse_capture: true,
+            fail_show_cursor: true,
+            ..FakeCleanup::default()
+        };
+
+        let error = restore_terminal(&mut cleanup).expect_err("expected combined errors");
+        let text = error.to_string();
+        assert!(text.contains("disable raw mode"));
+        assert!(text.contains("leave alternate screen"));
+        assert!(text.contains("disable mouse capture"));
+        assert!(text.contains("show cursor"));
     }
 }
