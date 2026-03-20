@@ -2,19 +2,21 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace's Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the 29-screen catalog, responsive layout, the ROSEDUST palette, live system metrics, and the chrome around the active screen.
+`bardo-terminal` is the workspace's Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the 29-screen catalog, responsive layout, the ROSEDUST palette, live system metrics, and the navigation layer that turns raw `crossterm::event::KeyEvent` values into typed `AppAction`s before they reach a screen.
 
-Keyboard handling in the current scaffold is screen-local: the active screen decides when to emit `AppAction` values such as `Quit`, `NextScreen`, `PrevScreen`, or `Resize`, and `App` applies those actions to the shared shell state.
+The navigation layer centralizes global keybindings, command palette input, modal routing, vim mode, and help overlays so screens only need to handle screen-local behavior.
 
 ## Features
 
 - 60 fps frame loop with raw-mode and alternate-screen management
 - 29-screen catalog grouped into six logical windows
 - Header, sidebar, and footer chrome that show the active screen, window name, tab name, ETA, elapsed time, and layout state
+- Global and per-screen keyboard routing through typed actions
+- TOML-backed keybinding overrides with sane defaults
+- Command palette, modal stack, and optional vim mode for global interaction
 - Responsive layout breakpoints for compact, standard, wide, and ultra terminals
 - Home screen with a placeholder creature, pipeline progress, task list, and live system metrics
 - Reusable widget layer for sparklines, progress bars, feeds, tabs, status bars, and the centered keybinding help overlay
-- Screen-local keyboard routing through `Screen::handle_key`
 
 ## Getting Started
 
@@ -30,12 +32,16 @@ Run the crate tests:
 cargo test -p bardo-terminal
 ```
 
-Useful controls in the current scaffold:
+Useful controls:
 
-- `q` quits from the active screen when that screen emits `AppAction::Quit`
+- `q` or `Ctrl+C` quits
 - `Tab` moves to the next screen
 - `Shift+Tab` moves to the previous screen
-- resizing the terminal updates the layout breakpoint on the next frame
+- `1` through `6` jump directly to a named window
+- `?` opens the help overlay
+- `/` opens the command palette
+- `Esc` closes the topmost modal or overlay
+- `hjkl`, `gg`, and `:command` are available when vim mode is enabled
 
 Tracing follows the standard Rust logging environment:
 
@@ -45,22 +51,26 @@ RUST_LOG=info cargo run -p bardo-terminal
 
 ## Configuration
 
-`bardo-terminal` does not currently read its own config file. Its behavior comes from the terminal, the environment, and the built-in app state defaults.
+`bardo-terminal` reads its keyboard configuration from `~/.bardo/keybindings.toml` when the file exists. Missing files fall back to the built-in default bindings.
 
 | Input | Effect |
 | --- | --- |
 | `RUST_LOG` | Controls `tracing_subscriber` filtering |
+| `~/.bardo/keybindings.toml` | Overrides global and per-screen keybindings |
 | Terminal width | Selects the responsive breakpoint and sidebar width |
 | Terminal color and Unicode support | Affects palette fidelity, box-drawing, and braille rendering |
 
-The crate does not currently load `~/.bardo/keybindings.toml` or any other app-specific override file.
+Supported key strings are case-insensitive and accept `ctrl+`, `shift+`, and `alt+` prefixes. Special key names include `tab`, `backtab`, `esc`, `enter`, `backspace`, `up`, `down`, `left`, `right`, and `F1` through `F12`.
+
+Action strings map to `AppAction` variants such as `Quit`, `NextScreen`, `GotoWindow:Hearth`, `ShowHelp`, and `ScrollTop`. Unknown actions are skipped rather than failing config loading.
 
 ## Module Overview
 
 - `main` boots raw mode, alternate-screen mode, tracing, and the app loop
-- `app` owns the runtime state machine, screen switching, and top/bottom chrome
+- `app` owns the runtime state machine, key dispatch, screen switching, and chrome rendering
+- `navigation` contains the keybinding map, command palette, modal manager, and vim mode state
 - `screen` defines the `Screen` trait, the `ScreenId` catalog, and the screen registry
-- `state` holds the shared application state, progress tracking, system metrics, and app actions
+- `state` holds the shared application state, progress tracking, system metrics, and typed app actions
 - `layout` computes responsive breakpoints and the sidebar/content split
 - `palette` defines the ROSEDUST colors and box-drawing glyphs used by the terminal
 - `widgets` contains reusable ratatui widgets, including the floating keybinding help overlay
@@ -226,7 +236,7 @@ pub(crate) struct Atmosphere {
 pub(crate) struct SysMetrics { /* live CPU, memory, network, and disk snapshots */ }
 ```
 
-`ProgressState` tracks per-task and aggregate timing. `format_duration()` is used by the chrome and the home screen to present elapsed time and ETA values.
+`ProgressState` tracks per-task and aggregate timing. `format_duration()` is used by the chrome and the home screen to present elapsed time and ETA values. The navigation chapter documents the expanded action families used for window jumps, palette routing, modal interaction, help overlays, and vim mode.
 
 ### Responsive Layout
 
@@ -257,6 +267,45 @@ The breakpoint thresholds are:
 - `Standard`: 80 to 119 columns
 - `Wide`: 120 to 179 columns
 - `Ultra`: 180 columns and above
+
+### Navigation Guide
+
+For the full typed keybinding, palette, modal, and vim API, see [bardo-terminal navigation](bardo-terminal-navigation.md).
+
+## Usage Examples
+
+Launch the terminal and enable verbose tracing:
+
+```bash
+RUST_LOG=info cargo run -p bardo-terminal
+```
+
+Add a simple keybinding override:
+
+```toml
+# ~/.bardo/keybindings.toml
+[global]
+"ctrl+c" = "Quit"
+"tab" = "NextScreen"
+"F1" = "GotoWindow:Hearth"
+
+[screen.HearthOverview]
+"r" = "ScrollTop"
+```
+
+The navigation chapter shows the typed action families used for `GotoWindow`, command palette routing, modal prompts, and vim commands.
+
+## Architecture
+
+The terminal uses a simple input pipeline:
+
+1. Raw `KeyEvent` values arrive from `crossterm`.
+2. The navigation layer resolves them into `AppAction` values when a global binding, palette, modal, or vim sequence matches.
+3. The active screen receives only the keys that were not consumed globally.
+4. `App` applies the action to shared state, screen focus, or overlay visibility.
+5. Rendering happens in z-order: base screen, then help overlay, then modal, then command palette.
+
+The design aligns with [prd2/18-interfaces/01-cli.md](../../../prd2/18-interfaces/01-cli.md) sections `Overview`, `Entry points`, and `Screen navigation`, and [prd2/20-styx/05-tui-experience.md](../../../prd2/20-styx/05-tui-experience.md) sections `Architecture`, `Persistent Chrome`, and `The Screen System (11 Views)`.
 
 ### Widget Surface
 
