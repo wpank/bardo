@@ -37,6 +37,14 @@ The protocol views screen does not have a separate configuration file. It inheri
 
 The mock values shown in the widgets come from constructor defaults, so the screen renders consistently even before live chain data is connected.
 
+## Mock Data Strategy
+
+The four protocol panels are driven by placeholder records so the terminal can show meaningful DeFi surfaces before any live integrations exist. Each record mirrors the shape of the data that the later chain, bridge, or vault subsystems will provide, and the fields that will eventually be replaced carry `TODO(...)` notes in the implementation.
+
+The mock layer is intentionally explicit. Instead of a generic `Default` implementation, each record exposes a `mock_default()` constructor with plausible values for demos, smoke tests, and local development. That makes the fake-data path obvious when reading the API surface or scanning the screen output.
+
+The replacement path is staged: live protocol-state connectors arrive first, then the bridge and route monitors, and finally the remaining snapshot helpers are removed once the real data sources cover the full screen.
+
 ## Module Overview
 
 - `mock::protocol_data` defines the placeholder DeFi records that feed every protocol widget

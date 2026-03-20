@@ -70,14 +70,14 @@ Action strings map to `AppAction` variants such as `Quit`, `NextScreen`, `GotoWi
 - `main` boots raw mode, alternate-screen mode, tracing, and the app loop
 - `app` owns the runtime state machine, key dispatch, screen switching, and chrome rendering
 - `navigation` contains the keybinding map, command palette, modal manager, and vim mode state
-- `mock` defines placeholder protocol data types used by the protocol views screen
+- `mock` defines placeholder protocol data types used by the protocol views dashboard
 - `screen` defines the `Screen` trait, the `ScreenId` catalog, and the screen registry
 - `state` holds the shared application state, progress tracking, system metrics, and typed app actions
 - `layout` computes responsive breakpoints and the sidebar/content split
 - `palette` defines the ROSEDUST colors and box-drawing glyphs used by the terminal
 - `widgets` contains reusable ratatui widgets, including the floating keybinding help overlay
 - `widgets/protocol` contains the DeFi protocol widgets used by the protocol views screen
-- `screens` contains concrete screen implementations, currently led by `HomeScreen` and `ProtocolViewsScreen`
+- `screens` contains concrete screen implementations, currently led by `HomeScreen` and the protocol views screen
 - `screens/protocol_views` composes the protocol widgets into a 2×2 grid screen
 - `sys_stats` samples live CPU, memory, network, and disk metrics for `AppState`
 
