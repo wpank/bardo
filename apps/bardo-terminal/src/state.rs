@@ -4,6 +4,13 @@ use std::time::Instant;
 
 use crate::layout::LayoutBreakpoint;
 
+const DEFAULT_VITALITY_VALUE: f64 = 0.75;
+const MAX_SCAFFOLD_TICK_DT_SECS: f64 = 0.1;
+
+fn clamp_scaffold_dt(dt: f64) -> f64 {
+    dt.clamp(0.0, MAX_SCAFFOLD_TICK_DT_SECS)
+}
+
 // ── System metrics ───────────────────────────────────────────────────
 
 /// Number of samples kept in each history ring for sparklines.
@@ -13,7 +20,7 @@ pub(crate) const SYS_HISTORY_LEN: usize = 60;
 ///
 /// History vecs are ordered oldest-to-newest and hold at most
 /// [`SYS_HISTORY_LEN`] entries.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub(crate) struct SysMetrics {
     /// CPU utilisation 0..100.
     pub(crate) cpu_pct: f32,
@@ -45,6 +52,28 @@ pub(crate) struct SysMetrics {
     pub(crate) disk_used_bytes: u64,
     /// Total bytes across all mounted disks.
     pub(crate) disk_total_bytes: u64,
+}
+
+impl Default for SysMetrics {
+    fn default() -> Self {
+        Self {
+            cpu_pct: 0.0,
+            cpu_history: Vec::new(),
+            mem_used_bytes: 0,
+            mem_total_bytes: 0,
+            mem_history: Vec::new(),
+            net_rx_bps: 0.0,
+            net_tx_bps: 0.0,
+            net_rx_history: Vec::new(),
+            net_tx_history: Vec::new(),
+            disk_read_bps: 0.0,
+            disk_write_bps: 0.0,
+            disk_read_history: Vec::new(),
+            disk_write_history: Vec::new(),
+            disk_used_bytes: 0,
+            disk_total_bytes: 0,
+        }
+    }
 }
 
 /// Current connection status for the scaffold.
@@ -85,7 +114,9 @@ pub(crate) struct MockVitality {
 
 impl Default for MockVitality {
     fn default() -> Self {
-        Self { value: 0.75 }
+        Self {
+            value: DEFAULT_VITALITY_VALUE,
+        }
     }
 }
 
@@ -143,7 +174,7 @@ impl Atmosphere {
 
     /// Advance animation state by dt seconds.
     pub(crate) fn tick(&mut self, dt: f64) {
-        let dt = dt.min(0.1); // clamp to prevent huge jumps on lag
+        let dt = clamp_scaffold_dt(dt);
         self.dt = dt;
         self.elapsed_secs += dt;
         self.frame_count = self.frame_count.wrapping_add(1);
@@ -235,7 +266,7 @@ impl Default for ProgressState {
 impl ProgressState {
     /// Advance the active task by dt seconds. Auto-promotes to next task on completion.
     pub(crate) fn tick(&mut self, dt: f64) {
-        let dt = dt.min(0.1);
+        let dt = clamp_scaffold_dt(dt);
         if let Some(idx) = self
             .tasks
             .iter()
@@ -299,7 +330,11 @@ impl ProgressState {
 
 /// Format seconds as a human-readable duration string.
 pub(crate) fn format_duration(total_secs: f64) -> String {
-    let secs = total_secs.ceil() as u64;
+    let secs = if total_secs.is_finite() {
+        total_secs.max(0.0).ceil() as u64
+    } else {
+        0
+    };
     let hours = secs / 3600;
     let minutes = (secs % 3600) / 60;
     let seconds = secs % 60;
@@ -363,7 +398,10 @@ pub(crate) enum AppAction {
 
 #[cfg(test)]
 mod tests {
-    use super::{AppAction, AppState, ConnectionStatus, MockVitality, TaskStatus, format_duration};
+    use super::{
+        AppAction, AppState, Atmosphere, ConnectionStatus, DEFAULT_VITALITY_VALUE,
+        MAX_SCAFFOLD_TICK_DT_SECS, MockVitality, SysMetrics, TaskStatus, format_duration,
+    };
     use crate::layout::LayoutBreakpoint;
 
     #[test]
@@ -372,14 +410,40 @@ mod tests {
 
         assert_eq!(state.tick_count, 0);
         assert_eq!(state.connection_status, ConnectionStatus::Disconnected);
-        assert_eq!(state.vitality, MockVitality { value: 0.75 });
+        assert_eq!(
+            state.vitality,
+            MockVitality {
+                value: DEFAULT_VITALITY_VALUE,
+            }
+        );
         assert_eq!(state.layout, LayoutBreakpoint::Standard);
+        assert_eq!(state.atmosphere.elapsed_secs, 0.0);
+        assert_eq!(state.atmosphere.dt, 0.0);
+        assert!(!state.progress.tasks.is_empty());
+        assert!(state.sys.cpu_history.is_empty());
+        assert!(state.sys.mem_history.is_empty());
+        assert_eq!(state.sys.cpu_pct, 0.0);
+        assert_eq!(state.sys.mem_total_bytes, 0);
     }
 
     #[test]
     fn action_variants_compile() {
         assert_eq!(AppAction::Quit, AppAction::Quit);
         assert_eq!(ConnectionStatus::Connected.label(), "CONNECTED");
+    }
+
+    #[test]
+    fn sys_metrics_default_starts_empty() {
+        let metrics = SysMetrics::default();
+
+        assert_eq!(metrics.cpu_pct, 0.0);
+        assert!(metrics.cpu_history.is_empty());
+        assert!(metrics.mem_history.is_empty());
+        assert!(metrics.net_rx_history.is_empty());
+        assert!(metrics.net_tx_history.is_empty());
+        assert!(metrics.disk_read_history.is_empty());
+        assert!(metrics.disk_write_history.is_empty());
+        assert_eq!(metrics.disk_total_bytes, 0);
     }
 
     #[test]
@@ -396,6 +460,10 @@ mod tests {
         let initial_elapsed = state.progress.tasks[0].elapsed_secs;
         state.progress.tick(1.0);
         assert!(state.progress.tasks[0].elapsed_secs > initial_elapsed);
+        assert_eq!(
+            state.progress.tasks[0].elapsed_secs,
+            MAX_SCAFFOLD_TICK_DT_SECS
+        );
     }
 
     #[test]
@@ -410,9 +478,27 @@ mod tests {
     }
 
     #[test]
+    fn atmosphere_tick_clamps_large_dt_without_rewinding() {
+        let mut atmosphere = Atmosphere::default();
+
+        atmosphere.tick(0.5);
+        assert_eq!(atmosphere.dt, MAX_SCAFFOLD_TICK_DT_SECS);
+        assert_eq!(atmosphere.elapsed_secs, MAX_SCAFFOLD_TICK_DT_SECS);
+        assert_eq!(atmosphere.frame(), 1);
+
+        atmosphere.tick(-1.0);
+        assert_eq!(atmosphere.dt, 0.0);
+        assert_eq!(atmosphere.elapsed_secs, MAX_SCAFFOLD_TICK_DT_SECS);
+        assert_eq!(atmosphere.frame(), 2);
+    }
+
+    #[test]
     fn format_duration_produces_expected_output() {
         assert_eq!(format_duration(42.0), "42s");
         assert_eq!(format_duration(125.0), "2m05s");
         assert_eq!(format_duration(3723.0), "1h02m03s");
+        assert_eq!(format_duration(60.01), "1m01s");
+        assert_eq!(format_duration(-5.0), "0s");
+        assert_eq!(format_duration(f64::NAN), "0s");
     }
 }

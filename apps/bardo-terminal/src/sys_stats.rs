@@ -31,6 +31,8 @@ pub(crate) struct SysStats {
     disk_write_history: VecDeque<f64>,
     /// Accumulated dt waiting for the next refresh window.
     pending_secs: f64,
+    /// Elapsed wall time since the last emitted snapshot.
+    elapsed_since_refresh_secs: f64,
 }
 
 impl SysStats {
@@ -53,6 +55,7 @@ impl SysStats {
             disk_read_history: VecDeque::with_capacity(SYS_HISTORY_LEN),
             disk_write_history: VecDeque::with_capacity(SYS_HISTORY_LEN),
             pending_secs: 0.0,
+            elapsed_since_refresh_secs: 0.0,
         }
     }
 
@@ -62,14 +65,21 @@ impl SysStats {
     /// `None` on all other frames. The caller should update `AppState::sys`
     /// on `Some`.
     pub(crate) fn tick(&mut self, dt: f64) -> Option<SysMetrics> {
-        self.pending_secs += dt;
-        if self.pending_secs >= REFRESH_SECS {
-            let interval = self.pending_secs;
-            self.pending_secs = 0.0;
-            Some(self.refresh(interval))
-        } else {
-            None
+        if !dt.is_finite() || dt <= 0.0 {
+            return None;
         }
+
+        self.pending_secs += dt;
+        self.elapsed_since_refresh_secs += dt;
+        if self.pending_secs < REFRESH_SECS {
+            return None;
+        }
+
+        let interval = self.elapsed_since_refresh_secs;
+        self.pending_secs %= REFRESH_SECS;
+        self.elapsed_since_refresh_secs = 0.0;
+
+        Some(self.refresh(interval))
     }
 
     fn refresh(&mut self, interval: f64) -> SysMetrics {
@@ -146,4 +156,48 @@ fn push(history: &mut VecDeque<f64>, value: f64) {
         history.pop_front();
     }
     history.push_back(value);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tick_refreshes_once_per_second_without_dropping_remainder() {
+        let mut stats = SysStats::new();
+
+        assert!(stats.tick(0.75).is_none());
+        assert!(stats.tick(0.75).is_some());
+        assert!(stats.tick(0.5).is_some());
+    }
+
+    #[test]
+    fn tick_ignores_non_positive_or_non_finite_durations() {
+        let mut stats = SysStats::new();
+
+        assert!(stats.tick(0.0).is_none());
+        assert!(stats.tick(-1.0).is_none());
+        assert!(stats.tick(f64::NAN).is_none());
+        assert!(stats.tick(f64::INFINITY).is_none());
+        assert!(stats.tick(1.0).is_some());
+    }
+
+    #[test]
+    fn history_buffers_stay_bounded_to_sys_history_len() {
+        let mut stats = SysStats::new();
+        let mut latest = None;
+
+        for _ in 0..(SYS_HISTORY_LEN + 8) {
+            latest = stats.tick(1.0);
+        }
+
+        let metrics = latest.expect("expected a metrics snapshot after repeated refreshes");
+
+        assert_eq!(metrics.cpu_history.len(), SYS_HISTORY_LEN);
+        assert_eq!(metrics.mem_history.len(), SYS_HISTORY_LEN);
+        assert_eq!(metrics.net_rx_history.len(), SYS_HISTORY_LEN);
+        assert_eq!(metrics.net_tx_history.len(), SYS_HISTORY_LEN);
+        assert_eq!(metrics.disk_read_history.len(), SYS_HISTORY_LEN);
+        assert_eq!(metrics.disk_write_history.len(), SYS_HISTORY_LEN);
+    }
 }

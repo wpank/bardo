@@ -8,6 +8,63 @@ use ratatui::style::{Color, Modifier};
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct ColorPalette;
 
+impl ColorPalette {
+    pub(crate) const BG_VOID: Color = crate::palette::BG_VOID;
+    pub(crate) const BG_RAISED: Color = crate::palette::BG_RAISED;
+    pub(crate) const BG_MID: Color = crate::palette::BG_MID;
+    pub(crate) const BG_WARM: Color = crate::palette::BG_WARM;
+    pub(crate) const BORDER: Color = crate::palette::BORDER;
+    pub(crate) const BORDER_ACTIVE: Color = crate::palette::BORDER_ACTIVE;
+    pub(crate) const BORDER_DREAM: Color = crate::palette::BORDER_DREAM;
+
+    pub(crate) const ROSE: Color = crate::palette::ROSE;
+    pub(crate) const ROSE_BRIGHT: Color = crate::palette::ROSE_BRIGHT;
+    pub(crate) const ROSE_DIM: Color = crate::palette::ROSE_DIM;
+    pub(crate) const ROSE_DEEP: Color = crate::palette::ROSE_DEEP;
+    pub(crate) const ROSE_EMBER: Color = crate::palette::ROSE_EMBER;
+    pub(crate) const BONE: Color = crate::palette::BONE;
+    pub(crate) const BONE_DIM: Color = crate::palette::BONE_DIM;
+
+    pub(crate) const TEXT_PRIMARY: Color = crate::palette::TEXT_PRIMARY;
+    pub(crate) const TEXT_DIM: Color = crate::palette::TEXT_DIM;
+    pub(crate) const TEXT_GHOST: Color = crate::palette::TEXT_GHOST;
+    pub(crate) const TEXT_PHANTOM: Color = crate::palette::TEXT_PHANTOM;
+
+    pub(crate) const DREAM: Color = crate::palette::DREAM;
+    pub(crate) const DREAM_DIM: Color = crate::palette::DREAM_DIM;
+    pub(crate) const DREAM_DEEP: Color = crate::palette::DREAM_DEEP;
+    pub(crate) const WARNING: Color = crate::palette::WARNING;
+    pub(crate) const SUCCESS: Color = crate::palette::SUCCESS;
+    pub(crate) const DANGER: Color = crate::palette::DANGER;
+
+    pub(crate) const SCANLINE_DARK: Color = crate::palette::SCANLINE_DARK;
+    pub(crate) const PHOSPHOR_RES: Color = crate::palette::PHOSPHOR_RES;
+    pub(crate) const NOISE_WARM: Color = crate::palette::NOISE_WARM;
+    pub(crate) const NOISE_COOL: Color = crate::palette::NOISE_COOL;
+
+    pub(crate) const STYLE_BOLD: Modifier = crate::palette::STYLE_BOLD;
+    pub(crate) const STYLE_DIM: Modifier = crate::palette::STYLE_DIM;
+    pub(crate) const STYLE_ITALIC: Modifier = crate::palette::STYLE_ITALIC;
+
+    pub(crate) const BOX_TOP_LEFT: char = crate::palette::BOX_TOP_LEFT;
+    pub(crate) const BOX_TOP_RIGHT: char = crate::palette::BOX_TOP_RIGHT;
+    pub(crate) const BOX_BOTTOM_LEFT: char = crate::palette::BOX_BOTTOM_LEFT;
+    pub(crate) const BOX_BOTTOM_RIGHT: char = crate::palette::BOX_BOTTOM_RIGHT;
+    pub(crate) const BOX_HORIZONTAL: char = crate::palette::BOX_HORIZONTAL;
+    pub(crate) const BOX_VERTICAL: char = crate::palette::BOX_VERTICAL;
+    pub(crate) const BOX_T_DOWN: char = crate::palette::BOX_T_DOWN;
+    pub(crate) const BOX_T_UP: char = crate::palette::BOX_T_UP;
+    pub(crate) const BOX_T_RIGHT: char = crate::palette::BOX_T_RIGHT;
+    pub(crate) const BOX_T_LEFT: char = crate::palette::BOX_T_LEFT;
+    pub(crate) const BOX_CROSS: char = crate::palette::BOX_CROSS;
+    pub(crate) const FRAME_OPEN: char = crate::palette::FRAME_OPEN;
+    pub(crate) const FRAME_CLOSE: char = crate::palette::FRAME_CLOSE;
+    pub(crate) const BLOCK_FULL: char = crate::palette::BLOCK_FULL;
+    pub(crate) const BLOCK_DARK: char = crate::palette::BLOCK_DARK;
+    pub(crate) const BLOCK_MED: char = crate::palette::BLOCK_MED;
+    pub(crate) const BLOCK_LIGHT: char = crate::palette::BLOCK_LIGHT;
+}
+
 /// Deep background void color.
 pub(crate) const BG_VOID: Color = Color::Rgb(6, 6, 8);
 /// Raised panel background color.
@@ -132,5 +189,16 @@ mod tests {
         assert_eq!(DANGER, ROSE_BRIGHT);
         assert_eq!(FRAME_OPEN, '⌈');
         assert_eq!(BLOCK_FULL, '█');
+    }
+
+    #[test]
+    fn namespace_marker_re_exports_palette_tokens() {
+        let _palette = ColorPalette;
+
+        assert_eq!(ColorPalette::BG_VOID, BG_VOID);
+        assert_eq!(ColorPalette::DANGER, ROSE_BRIGHT);
+        assert_eq!(ColorPalette::STYLE_BOLD, Modifier::BOLD);
+        assert_eq!(ColorPalette::BOX_HORIZONTAL, '─');
+        assert_eq!(ColorPalette::FRAME_CLOSE, '⌋');
     }
 }

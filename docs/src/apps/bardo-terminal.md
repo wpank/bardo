@@ -2,20 +2,21 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace's interactive Rust TUI binary. It owns terminal setup and teardown, a 60 fps render loop, a 29-screen catalog grouped into six logical windows, responsive layout, shared application state, live system metrics, and a reusable widget layer for gauges, sparklines, feeds, tabs, progress bars, and overlays.
+`bardo-terminal` is the workspace's interactive Rust TUI binary. It owns terminal setup and teardown, a 60 fps render loop, the 29-screen catalog, responsive layout, shared application state, live system metrics, and the crate-local widget layer that the later screens compose.
 
-The application follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, `Screen navigation`, and `Render loop`, plus `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`.
+The current implementation follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, `Screen navigation`, and `Render loop`, plus `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`. The color system is anchored in `prd2/18-interfaces/rendering/00-design-system.md`.
 
 ## Features
 
-- Raw-mode and alternate-screen lifecycle management
-- 60 fps frame loop with bounded input polling
+- Raw-mode and alternate-screen lifecycle management with panic-hook recovery
+- 60 fps frame loop with bounded input polling and frame skipping on overruns
 - 29-screen catalog grouped into six logical windows
-- Shared `AppState` with layout breakpoint, progress state, atmosphere animation, and system metrics
-- A home dashboard with pipeline progress, task timing, connection status, and system resource panels
-- Reusable widgets for sparklines, gauges, feeds, tabs, progress bars, timelines, and keybinding overlays
-- Responsive sidebar and content split driven by terminal width
-- Stable `Tab` and `Shift+Tab` screen cycling across the screen catalog
+- Stable `Tab` and `Shift+Tab` screen cycling across the catalog
+- Shared `AppState` with layout breakpoint, atmosphere animation, progress tracking, placeholder vitality, and live system metrics
+- Home dashboard with creature silhouette, pipeline progress, per-task timing, connection status, and system resource panels
+- Responsive sidebar/content split driven by terminal width
+- ROSEDUST palette tokens and CRT-style box-drawing glyphs
+- Reusable widgets for sparklines, gauges, feeds, tabs, progress bars, timelines, and help overlays
 
 ## Getting Started
 
@@ -38,7 +39,7 @@ Useful live controls:
 - `Shift+Tab` moves to the previous screen
 - Resizing the terminal recomputes `LayoutBreakpoint`
 
-Tracing uses the standard Rust logging environment:
+Enable tracing with the standard Rust logging environment:
 
 ```bash
 RUST_LOG=info cargo run -p bardo-terminal
@@ -59,11 +60,12 @@ The binary currently relies on runtime environment and terminal capabilities rat
 - `main` boots tracing, installs the panic hook, enters raw mode and alternate-screen mode, and runs the app loop
 - `app` owns `AppState`, `ScreenRegistry`, screen switching, chrome rendering, and the frame loop
 - `screen` defines `Screen`, `ScreenId`, `ScreenRegistry`, and `StubScreen`
-- `state` defines `AppState`, `AppAction`, progress tracking, atmosphere animation, and live `SysMetrics`
+- `state` defines `AppState`, `AppAction`, placeholder vitality, connection status, atmosphere animation, progress tracking, and live `SysMetrics`
 - `layout` computes `LayoutBreakpoint` and the sidebar/content split
-- `palette` defines the terminal color constants and glyphs
+- `palette` defines the terminal color constants, style modifiers, and box-drawing glyphs
 - `screens::home` provides the concrete home dashboard
-- `widgets` contains reusable ratatui widgets such as `BrailleSparkline`, `VitalityGauge`, `ConfidenceGauge`, `TabBar`, `EventFeed`, and `KeyHelpOverlay`
+- `sys_stats` samples CPU, memory, network, and disk metrics into `SysMetrics`
+- `widgets` contains reusable ratatui widgets such as `BrailleSparkline`, `TotalProgressBar`, `TabBar`, `EventFeed`, and `KeyHelpOverlay`
 
 ## API
 
@@ -225,118 +227,99 @@ pub(crate) fn compute_layout(
 pub(crate) fn format_duration(secs: f64) -> String;
 ```
 
-### Reusable Widgets
+### Palette Tokens
 
 ```rust
-pub(crate) struct BrailleSparkline {
-    pub(crate) data: Vec<f64>,
-    pub(crate) max_value: f64,
-    pub(crate) color: ratatui::style::Color,
-    pub(crate) label: Option<String>,
-}
+pub(crate) struct ColorPalette;
 
-pub(crate) enum MockPhase {
-    Thriving,
-    Stable,
-    Conservation,
-    Declining,
-    Terminal,
-}
-
-pub(crate) struct VitalityGauge {
-    pub(crate) value: f64,
-    pub(crate) label: String,
-    pub(crate) phase: MockPhase,
-}
-
-pub(crate) struct ConfidenceGauge {
-    pub(crate) value: f64,
-    pub(crate) label: String,
-}
-
-pub(crate) struct AccuracyGauge {
-    pub(crate) value: f64,
-    pub(crate) label: String,
-}
-
-pub(crate) struct KeyBinding {
-    pub(crate) key: String,
-    pub(crate) description: String,
-}
-
-pub(crate) struct KeyHelpOverlay {
-    pub(crate) bindings: Vec<KeyBinding>,
-    pub(crate) visible: bool,
-}
+pub(crate) const BG_VOID: ratatui::style::Color;
+pub(crate) const BG_RAISED: ratatui::style::Color;
+pub(crate) const BG_MID: ratatui::style::Color;
+pub(crate) const BORDER: ratatui::style::Color;
+pub(crate) const BORDER_ACTIVE: ratatui::style::Color;
+pub(crate) const ROSE: ratatui::style::Color;
+pub(crate) const ROSE_BRIGHT: ratatui::style::Color;
+pub(crate) const BONE: ratatui::style::Color;
+pub(crate) const TEXT_PRIMARY: ratatui::style::Color;
+pub(crate) const DREAM: ratatui::style::Color;
+pub(crate) const WARNING: ratatui::style::Color;
+pub(crate) const SUCCESS: ratatui::style::Color;
+pub(crate) const DANGER: ratatui::style::Color;
 ```
 
 ## Usage Examples
 
-Register a custom placeholder screen:
+Start the binary and navigate between screens:
 
-```rust
-use crate::screen::{ScreenId, ScreenRegistry, StubScreen};
-
-fn build_registry() -> ScreenRegistry {
-    let mut registry = ScreenRegistry::new();
-    registry.register(Box::new(StubScreen::new(
-        ScreenId::WorldSolaris,
-        "WORLD / Solaris",
-    )));
-    registry
-}
+```bash
+cargo run -p bardo-terminal
 ```
 
-Select a layout breakpoint from the terminal width:
+The home screen shows the live scaffold state:
+
+- a creature silhouette in the left panel
+- a pipeline progress bar with ETA in the right panel
+- connection status and per-task timing
+- a four-column system panel for CPU, memory, network, and disk
+
+The responsive layout reacts to terminal width:
 
 ```rust
-use crate::layout::LayoutBreakpoint;
-
-fn choose_layout(cols: u16) -> LayoutBreakpoint {
-    LayoutBreakpoint::from_cols(cols)
-}
+let breakpoint = bardo_terminal::layout::LayoutBreakpoint::from_cols(width);
+let panel_count = breakpoint.panel_count();
+let sidebar_cols = breakpoint.sprite_sidebar_cols();
 ```
 
-Render a compact sparkline:
-
-```rust
-use ratatui::{backend::TestBackend, style::Color, Terminal};
-
-use crate::widgets::BrailleSparkline;
-
-fn render_trace() {
-    let backend = TestBackend::new(24, 2);
-    let mut terminal = Terminal::new(backend).expect("terminal");
-
-    terminal
-        .draw(|frame| {
-            frame.render_widget(
-                BrailleSparkline {
-                    data: vec![0.2, 0.3, 0.5, 0.8, 0.6, 0.4],
-                    max_value: 1.0,
-                    color: Color::Cyan,
-                    label: Some("cpu".into()),
-                },
-                frame.size(),
-            );
-        })
-        .expect("draw");
-}
-```
+`Tab` and `Shift+Tab` cycle through the screen catalog in the exact order returned by `ScreenId::all()`.
 
 ## Architecture
 
-The runtime is organized around a small set of stable layers:
+```
+main
+├── install panic hook
+├── setup terminal
+├── App::new()
+├── App::run()
+│   ├── poll input
+│   ├── tick state
+│   ├── sample system metrics
+│   ├── render chrome + active screen
+│   └── sleep to maintain 60 fps
+└── teardown terminal
 
-1. `main` owns terminal lifecycle, tracing setup, and panic-safe teardown.
-2. `App` owns shared state, the render loop, and screen navigation.
-3. `ScreenRegistry` stores the active screen set behind the `Screen` trait.
-4. `compute_layout` partitions the frame into chrome and content regions.
-5. Reusable widgets render compact summaries inside each screen.
+app
+├── screen registry
+├── screen switching
+├── responsive chrome
+└── content rendering
 
-This structure follows the TUI architecture and custom-widget guidance in `prd2/18-interfaces/01-cli.md` and `prd2/20-styx/05-tui-experience.md`.
+screens::home
+├── creature placeholder
+├── progress bar
+├── connection state
+├── task timing
+└── system resources
+```
 
 ## References
 
-- `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, `Screen navigation`, and `Render loop`
-- `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, `Persistent Chrome`, `Responsive Layout`, and `5. Custom Widgets`
+- `prd2/18-interfaces/01-cli.md`
+  - `TUI (Interactive Mode)`
+  - `Architecture`
+  - `Entry points`
+  - `Screen navigation`
+  - `Render loop`
+- `prd2/18-interfaces/rendering/00-design-system.md`
+  - `The ROSEDUST palette`
+  - `The 7 rendering laws`
+  - `Character vocabulary`
+- `prd2/18-interfaces/screens/00-screen-catalog.md`
+  - `29-Screen Summary`
+  - `Navigation Model`
+- `prd2/20-styx/05-tui-experience.md`
+  - `1. Architecture`
+  - `4. The Screen System (11 Views)`
+  - `5. Custom Widgets`
+- `prd2/13-runtime/19-cinematic-system.md`
+  - `Design philosophy`
+  - `Time is the primary rendering dimension`

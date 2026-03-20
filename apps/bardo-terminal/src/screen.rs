@@ -73,7 +73,7 @@ pub(crate) enum ScreenId {
 impl ScreenId {
     /// Ordered screen catalog used for tab cycling.
     pub(crate) fn all() -> &'static [Self] {
-        &ALL_SCREENS
+        &SCREEN_CATALOG
     }
 
     /// Returns the window name for this screen.
@@ -147,7 +147,7 @@ impl ScreenId {
     }
 }
 
-static ALL_SCREENS: [ScreenId; 29] = [
+const SCREEN_CATALOG: [ScreenId; 29] = [
     ScreenId::HearthOverview,
     ScreenId::HearthSignals,
     ScreenId::HearthOperations,
@@ -205,13 +205,14 @@ impl Screen for StubScreen {
     }
 
     fn render(&self, frame: &mut Frame<'_>, area: Rect, _state: &AppState) {
+        let message = format!("[ {} - not yet implemented ]", self.title);
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(Style::default().fg(BORDER));
         let inner = block.inner(area);
         frame.render_widget(block, area);
         frame.render_widget(
-            Paragraph::new(format!("[ {} ]", self.title))
+            Paragraph::new(message)
                 .style(Style::default().fg(ROSE_DIM).add_modifier(Modifier::BOLD))
                 .alignment(ratatui::layout::Alignment::Center),
             inner,
@@ -265,7 +266,11 @@ impl ScreenRegistry {
 mod tests {
     use super::*;
 
+    use ratatui::{Terminal, backend::TestBackend};
+
     struct TestScreen;
+
+    struct ReplacementScreen;
 
     impl Screen for TestScreen {
         fn id(&self) -> ScreenId {
@@ -283,11 +288,72 @@ mod tests {
         }
     }
 
+    impl Screen for ReplacementScreen {
+        fn id(&self) -> ScreenId {
+            ScreenId::HearthOverview
+        }
+
+        fn title(&self) -> &str {
+            "REPLACED"
+        }
+
+        fn render(&self, _frame: &mut Frame<'_>, _area: Rect, _state: &AppState) {}
+
+        fn handle_key(&mut self, _key: KeyEvent) -> Option<AppAction> {
+            None
+        }
+    }
+
+    fn buffer_text(terminal: &Terminal<TestBackend>) -> String {
+        let buffer = terminal.backend().buffer();
+        let area = buffer.area();
+        let mut text = String::new();
+
+        for y in 0..area.height {
+            for x in 0..area.width {
+                text.push_str(buffer.get(x, y).symbol());
+            }
+            text.push('\n');
+        }
+
+        text
+    }
+
     #[test]
     fn screen_catalog_has_the_expected_size_and_order() {
-        assert_eq!(ScreenId::all().len(), 29);
-        assert_eq!(ScreenId::all()[0], ScreenId::HearthOverview);
-        assert_eq!(ScreenId::all()[28], ScreenId::CommandHermes);
+        let expected = [
+            ScreenId::HearthOverview,
+            ScreenId::HearthSignals,
+            ScreenId::HearthOperations,
+            ScreenId::HearthStatus,
+            ScreenId::MindPipeline,
+            ScreenId::MindGrimoire,
+            ScreenId::MindPlaybook,
+            ScreenId::MindDreams,
+            ScreenId::MindInference,
+            ScreenId::MindChainIntelligence,
+            ScreenId::MindTechnicalAnalysis,
+            ScreenId::SomaPortfolio,
+            ScreenId::SomaTrades,
+            ScreenId::SomaCustody,
+            ScreenId::SomaBudget,
+            ScreenId::SomaSanctum,
+            ScreenId::WorldSolaris,
+            ScreenId::WorldClade,
+            ScreenId::WorldLethe,
+            ScreenId::WorldBloodstains,
+            ScreenId::WorldBazaar,
+            ScreenId::FateMortality,
+            ScreenId::FateLineage,
+            ScreenId::FateAchievements,
+            ScreenId::FateGraveyard,
+            ScreenId::CommandSteer,
+            ScreenId::CommandConfig,
+            ScreenId::CommandEffects,
+            ScreenId::CommandHermes,
+        ];
+
+        assert_eq!(ScreenId::all(), &expected);
         assert_eq!(ScreenId::MindTechnicalAnalysis.window_name(), "MIND");
         assert_eq!(
             ScreenId::MindTechnicalAnalysis.tab_name(),
@@ -296,14 +362,44 @@ mod tests {
     }
 
     #[test]
-    fn registry_stores_and_returns_screens() {
+    fn registry_stores_replaces_and_returns_screens() {
         let mut registry = ScreenRegistry::new();
         registry.register(Box::new(TestScreen));
+        registry.register(Box::new(ReplacementScreen));
 
         assert_eq!(
             registry.get(&ScreenId::HearthOverview).map(Screen::title),
-            Some("HEARTH")
+            Some("REPLACED")
         );
         assert!(registry.get_mut(&ScreenId::HearthOverview).is_some());
+        assert!(registry.get(&ScreenId::CommandHermes).is_none());
+    }
+
+    #[test]
+    fn stub_screen_renders_fallback_message_and_handles_global_navigation_keys() {
+        let screen = StubScreen::new(ScreenId::MindPipeline, "MIND / Pipeline");
+        let backend = TestBackend::new(48, 5);
+        let mut terminal = Terminal::new(backend).expect("test terminal should initialize");
+
+        terminal
+            .draw(|frame| screen.render(frame, frame.size(), &AppState::default()))
+            .expect("stub screen should render into a test backend");
+
+        let rendered = buffer_text(&terminal);
+        assert!(rendered.contains("MIND / Pipeline - not yet implemented"));
+
+        let mut screen = screen;
+        assert_eq!(
+            screen.handle_key(KeyEvent::from(KeyCode::Tab)),
+            Some(AppAction::NextScreen)
+        );
+        assert_eq!(
+            screen.handle_key(KeyEvent::from(KeyCode::BackTab)),
+            Some(AppAction::PrevScreen)
+        );
+        assert_eq!(
+            screen.handle_key(KeyEvent::from(KeyCode::Char('q'))),
+            Some(AppAction::Quit)
+        );
     }
 }

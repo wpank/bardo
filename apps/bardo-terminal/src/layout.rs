@@ -2,6 +2,13 @@
 
 use ratatui::layout::{Constraint, Direction, Layout, Rect};
 
+const COMPACT_MAX_COLS: u16 = 79;
+const STANDARD_MAX_COLS: u16 = 119;
+const WIDE_MAX_COLS: u16 = 179;
+const TOP_CHROME_ROWS: u16 = 1;
+const BOTTOM_CHROME_ROWS: u16 = 1;
+const RESERVED_CHROME_ROWS: u16 = TOP_CHROME_ROWS + BOTTOM_CHROME_ROWS;
+
 /// Responsive breakpoint for the scaffold layout.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum LayoutBreakpoint {
@@ -19,9 +26,9 @@ impl LayoutBreakpoint {
     /// Returns the breakpoint for a given terminal width.
     pub(crate) const fn from_cols(cols: u16) -> Self {
         match cols {
-            0..=79 => Self::Compact,
-            80..=119 => Self::Standard,
-            120..=179 => Self::Wide,
+            0..=COMPACT_MAX_COLS => Self::Compact,
+            80..=STANDARD_MAX_COLS => Self::Standard,
+            120..=WIDE_MAX_COLS => Self::Wide,
             _ => Self::Ultra,
         }
     }
@@ -62,9 +69,9 @@ pub(crate) fn compute_layout(frame_size: Rect, bp: LayoutBreakpoint) -> (Rect, R
     let sidebar_cols = bp.sprite_sidebar_cols();
     let inner = Rect {
         x: frame_size.x,
-        y: frame_size.y.saturating_add(1),
+        y: frame_size.y.saturating_add(TOP_CHROME_ROWS),
         width: frame_size.width,
-        height: frame_size.height.saturating_sub(2),
+        height: frame_size.height.saturating_sub(RESERVED_CHROME_ROWS),
     };
 
     if sidebar_cols == 0 {
@@ -107,16 +114,28 @@ mod tests {
         assert_eq!(LayoutBreakpoint::Standard.panel_count(), 2);
         assert_eq!(LayoutBreakpoint::Wide.panel_count(), 3);
         assert_eq!(LayoutBreakpoint::Ultra.panel_count(), 4);
+
+        assert_eq!(LayoutBreakpoint::Compact.label(), "Compact");
+        assert_eq!(LayoutBreakpoint::Standard.label(), "Standard");
+        assert_eq!(LayoutBreakpoint::Wide.label(), "Wide");
+        assert_eq!(LayoutBreakpoint::Ultra.label(), "Ultra");
     }
 
     #[test]
-    fn compute_layout_reserves_chrome_rows() {
-        let frame = Rect::new(0, 0, 100, 40);
+    fn compute_layout_reserves_chrome_rows_and_sidebar_width() {
+        let frame = Rect::new(3, 5, 100, 40);
         let (sidebar, content) = compute_layout(frame, LayoutBreakpoint::Standard);
 
-        assert_eq!(sidebar.width, 6);
-        assert_eq!(content.x, 6);
-        assert_eq!(content.y, 1);
-        assert_eq!(content.height, 38);
+        assert_eq!(sidebar, Rect::new(3, 6, 6, 38));
+        assert_eq!(content, Rect::new(9, 6, 94, 38));
+    }
+
+    #[test]
+    fn compute_layout_suppresses_sidebar_for_compact() {
+        let frame = Rect::new(2, 4, 79, 12);
+        let (sidebar, content) = compute_layout(frame, LayoutBreakpoint::Compact);
+
+        assert_eq!(sidebar, Rect::default());
+        assert_eq!(content, Rect::new(2, 5, 79, 10));
     }
 }
