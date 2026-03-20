@@ -2,22 +2,22 @@
 
 ## What It Is
 
-`golem-core` is the Layer 0 foundation crate for Bardo. It defines the shared runtime vocabulary that every later crate imports: identity, `golem.toml` configuration, the lock-free cortical surface, the typed event fabric, the extension hook skeleton, taint labels, hyperdimensional primitives, and the per-tick arena allocator.
+`golem-core` is the Layer 0 foundation crate for Bardo. It holds the shared vocabulary that later crates build on: runtime identity, `golem.toml` configuration, the lock-free cortical surface, the typed event fabric, the extension hook system, taint labels, hyperdimensional primitives, and the tick-scoped arena allocator.
 
-`GolemId` is the ephemeral in-process runtime identifier. It is distinct from the later chain-facing identity types and is safe to use for cross-crate references inside one running process.
+The crate is intentionally zero-dependency on other workspace crates. That keeps the shared types stable and prevents the lower layers from depending on implementation details from higher ones.
 
 ## Features
 
 - `GolemId` for UUID-backed runtime identity
-- `GolemConfig` for the canonical `golem.toml` schema, including `mirage`
-- `GolemError` and `Result` as the crate-wide typed error surface
+- `GolemConfig` for the canonical `golem.toml` schema, including the live `mirage` sidecar section
+- `GolemError` and `Result` as the typed error surface
 - `CorticalState`, `CorticalSnapshot`, `PadVector`, `BehavioralPhase`, and `PlutchikEmotion` for zero-latency shared perception
-- `EventFabric`, `GolemEvent`, `EventPayload`, and `Subsystem` for non-blocking broadcast plus bounded replay
-- `Extension`, `ExtensionRegistry`, hook contexts, and hook action types for runtime lifecycle orchestration
+- `EventFabric`, `GolemEvent`, `EventPayload`, and `Subsystem` for non-blocking broadcast with bounded replay
+- `Extension`, `ExtensionRegistry`, `HookId`, and hook context/action types for lifecycle orchestration
 - `TaintLabel` and `TaintedString` for explicit information-flow tracking
-- `CognitiveTier` for routing inference spend across `T0`, `T1`, and `T2`
+- `CognitiveTier` for inference routing across `T0`, `T1`, and `T2`
 - `HdcVector` for 10,240-bit hypervector operations
-- `TickArena` for tick-scoped bump allocation
+- `TickArena` for per-tick bump allocation
 
 ## Getting Started
 
@@ -34,7 +34,6 @@ use golem_core::{
 fn example() -> golem_core::Result<()> {
     let golem_id = GolemId::new();
     let tier = CognitiveTier::try_from(1)?;
-
     let config = GolemConfig::from_file(Path::new("golem.toml"))?;
 
     let cortical = CorticalState::new();
@@ -61,11 +60,27 @@ fn example() -> golem_core::Result<()> {
 }
 ```
 
-Downstream crates should prefer the root re-exports instead of reaching into implementation modules unless they need a specific module path for documentation or organization.
+For extensions, register a `dyn Extension`, call `build()`, and then fire the hooks you need:
+
+```rust
+use std::sync::Arc;
+
+use golem_core::{AfterTurnCtx, Extension, ExtensionRegistry};
+
+async fn run_hook(registry: &ExtensionRegistry) -> anyhow::Result<()> {
+    let mut ctx = AfterTurnCtx::default();
+    registry.fire_after_turn(&mut ctx).await
+}
+
+fn wire_extension(registry: &mut ExtensionRegistry, ext: Arc<dyn Extension>) {
+    registry.register(ext);
+    registry.build();
+}
+```
 
 ## Configuration
 
-`GolemConfig` is the canonical runtime schema loaded from `golem.toml`. It follows the shared schema reference in `prd2/shared/config-reference.md`, and the live crate also carries the `mirage` sidecar section used by `mirage-rs`. All top-level sections have defaults, so an empty input string parses into a complete configuration. The current schema includes:
+`GolemConfig` is the canonical runtime schema loaded from `golem.toml`. The implementation includes the sections used by the workspace today:
 
 - `golem`
 - `heartbeat`
@@ -81,21 +96,32 @@ Downstream crates should prefer the root re-exports instead of reaching into imp
 - `compute`
 - `mirage`
 
-Environment overrides use the `GOLEM_*` and `BARDO_*` prefixes. The most common runtime overrides include:
+All top-level sections derive defaults, so an empty input string parses into a complete configuration. `GolemConfig::from_file`, `GolemConfig::from_str`, and `GolemConfig::with_env_overrides` share the same override behavior.
+
+Environment overrides use `GOLEM_*` for per-golem runtime settings and `BARDO_*` for platform services. The crate currently resolves the following overrides:
 
 - `GOLEM_NAME`
-- `GOLEM_TICK_INTERVAL`
+- `GOLEM_STRATEGY_CATEGORY`
+- `GOLEM_NETWORK`
 - `GOLEM_MODE`
+- `GOLEM_FUNDING`
 - `GOLEM_CUSTODY_MODE`
+- `GOLEM_TRANSFER_RESTRICTION`
+- `GOLEM_TICK_INTERVAL`
+- `GOLEM_DELIBERATION_THRESHOLD`
+- `GOLEM_MAX_DAILY_COST`
 - `GOLEM_INFERENCE_PAYMENT`
 - `GOLEM_INFERENCE_DAILY_BUDGET`
 - `GOLEM_SPEND_LIMIT_TX`
 - `GOLEM_SPEND_LIMIT_DAILY`
 - `GOLEM_SUCCESSION_AUTO`
 - `GOLEM_SUCCESSION_BUDGET`
-- `GOLEM_DAIMON_ENABLED`
-- `GOLEM_DREAMS_ENABLED`
 - `GOLEM_ORACLE_ENABLED`
+- `GOLEM_DAIMON_ENABLED`
+- `GOLEM_APPRAISAL_MODEL`
+- `GOLEM_DREAMS_ENABLED`
+- `GOLEM_DREAM_SCHEDULE`
+- `GOLEM_DREAM_INFERENCE_PROVIDER`
 - `GOLEM_COMPUTE_TIER`
 - `BARDO_STYX_ENABLED`
 - `BARDO_STYX_HOST`
@@ -103,6 +129,8 @@ Environment overrides use the `GOLEM_*` and `BARDO_*` prefixes. The most common 
 - `BARDO_STYX_DAILY_BUDGET`
 - `BARDO_STYX_MONTHLY_BUDGET`
 - `BARDO_IMMORTAL`
+- `BARDO_MORTALITY_ENABLED`
+- `BARDO_STOCHASTIC_SEED`
 - `BARDO_MIRAGE_URL`
 - `BARDO_MIRAGE_HOST`
 - `BARDO_MIRAGE_PORT`
@@ -110,13 +138,13 @@ Environment overrides use the `GOLEM_*` and `BARDO_*` prefixes. The most common 
 - `BARDO_MIRAGE_RETRY_ATTEMPTS`
 - `BARDO_MIRAGE_RETRY_BACKOFF_MS`
 
-```rust
-use std::path::Path;
+`GOLEM_MODE` also synchronizes `compute.mode` so the compute tier and top-level deployment mode stay aligned.
 
-use golem_core::GolemConfig;
+```rust
+use golem_core::{ComputeTier, DeploymentMode, GolemConfig};
 
 fn load_configs() -> golem_core::Result<()> {
-    let from_file = GolemConfig::from_file(Path::new("golem.toml"))?;
+    let from_file = GolemConfig::from_file(std::path::Path::new("golem.toml"))?;
     let from_str = GolemConfig::from_str(
         r#"
         [golem]
@@ -127,9 +155,21 @@ fn load_configs() -> golem_core::Result<()> {
     let _ = (from_file, from_str);
     Ok(())
 }
+
+fn env_example(config: GolemConfig) -> golem_core::Result<GolemConfig> {
+    let config = config.with_env_overrides()?;
+    let tier = match config.compute.tier {
+        ComputeTier::Micro | ComputeTier::Small | ComputeTier::Medium | ComputeTier::Large => {
+            config.compute.tier
+        }
+    };
+    let _mode: DeploymentMode = config.compute.mode;
+    let _ = tier;
+    Ok(config)
+}
 ```
 
-`GolemConfig::from_file`, `GolemConfig::from_str`, and `GolemConfig::with_env_overrides` all preserve the same schema and override behavior. Secrets are not stored in the config struct; they are loaded separately at runtime from the environment or a keystore. The full field table and environment-variable matrix live in `prd2/shared/config-reference.md`.
+Secrets are not stored in the config struct. API keys, wallet keys, and similar material are expected from the environment or a keystore, not from `golem.toml`.
 
 ## API
 
@@ -184,19 +224,7 @@ impl GolemConfig {
 }
 ```
 
-The main config enums and supporting sections are:
-
-- `StrategyCategory`
-- `Network`
-- `DeploymentMode`
-- `CustodyMode`
-- `TransferRestriction`
-- `InferencePayment`
-- `ProviderType`
-- `AppraisalModel`
-- `DreamSchedule`
-- `ComputeTier`
-- `MirageSection`
+The config module also exports the nested enums and sections used by downstream crates, including `StrategyCategory`, `Network`, `DeploymentMode`, `CustodyMode`, `TransferRestriction`, `InferencePayment`, `ProviderType`, `AppraisalModel`, `DreamSchedule`, `ComputeTier`, and the nested `Styx*`, `Oracle*`, `Mortality*`, and `MirageSection` structs.
 
 ### Cortical State
 
@@ -290,9 +318,7 @@ pub enum Subsystem {
 pub enum EventPayload { /* 50+ typed variants across 16 subsystems */ }
 ```
 
-`emit` is non-blocking, `subscribe` attaches a live receiver, and `replay_from` returns buffered events with `seq >= after_seq`.
-
-The live broadcast channel capacity is caller-supplied, while the replay ring buffer is fixed at 10,000 events.
+`emit` is non-blocking, `subscribe` attaches a live receiver, and `replay_from` returns buffered events with `seq >= after_seq`. The live broadcast channel capacity is caller-supplied, while the replay ring buffer is fixed at 10,000 events.
 
 ### Extension Hooks
 
@@ -423,9 +449,11 @@ impl core::convert::TryFrom<u8> for CognitiveTier {
 impl From<CognitiveTier> for u8;
 ```
 
+`TryFrom<u8>` returns `GolemError::Config` for values outside the `0..=2` range.
+
 ### Root Re-Exports
 
-The crate root re-exports the documented public surface from each module, including the hook context types and action types used by later runtime crates:
+The crate root re-exports the public surface used by later crates, including:
 
 - `GolemConfig`
 - `GolemError`
@@ -446,7 +474,7 @@ The crate root re-exports the documented public surface from each module, includ
 
 ## Architecture
 
-`golem-core` is the only crate in the workspace that other crates are expected to import freely without creating a dependency-layer violation. Its job is to keep foundational concepts centralized:
+`golem-core` centralizes the concepts that must remain consistent across the workspace:
 
 - configuration stays in one schema
 - events stay typed and replayable
@@ -454,6 +482,14 @@ The crate root re-exports the documented public surface from each module, includ
 - runtime hooks stay on one extension trait
 - taint and allocation contracts stay explicit
 
-The design and terminology come from `prd2/01-golem/00-overview.md`, `prd2/01-golem/13a-runtime-extensions.md`, `prd2/01-golem/13b-runtime-extensions.md`, `prd2/01-golem/18-cortical-state.md`, `prd2/01-golem/19-config-and-operator-model.md`, and the shared reference files under `prd2/shared/`.
+The crate’s design is aligned with `prd2/01-golem/00-overview.md`, `prd2/01-golem/13a-runtime-extensions.md`, `prd2/01-golem/13b-runtime-extensions.md`, `prd2/01-golem/18-cortical-state.md`, `prd2/01-golem/19-config-and-operator-model.md`, `prd2/shared/config-reference.md`, and `prd2/shared/glossary.md`.
 
-That keeps the rest of the workspace from re-defining the same concepts in incompatible ways.
+## References
+
+- `prd2/01-golem/00-overview.md`
+- `prd2/01-golem/13a-runtime-extensions.md`
+- `prd2/01-golem/13b-runtime-extensions.md`
+- `prd2/01-golem/18-cortical-state.md`
+- `prd2/01-golem/19-config-and-operator-model.md`
+- `prd2/shared/config-reference.md`
+- `prd2/shared/glossary.md`

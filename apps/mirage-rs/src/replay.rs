@@ -378,10 +378,13 @@ impl TargetedFollower {
         }
 
         // Advance the fork's block number regardless of whether any watched
-        // transactions were found in this block.
+        // transactions were found in this block.  Also touch last_request_at
+        // so the watchdog does not mistake a quiescent-but-following node for
+        // an idle one: every block advance counts as activity.
         {
             let mut state = self.state.write();
             state.fork.local_block_number = number;
+            state.last_request_at = std::time::Instant::now();
         }
 
         Ok(())
