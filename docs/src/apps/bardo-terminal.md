@@ -2,20 +2,21 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace's Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the 29-screen catalog, responsive layout, the ROSEDUST palette, live system metrics, and the navigation layer that turns raw `crossterm::event::KeyEvent` values into typed `AppAction`s before they reach a screen.
+`bardo-terminal` is the workspace's Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the 30-screen catalog, responsive layout, the ROSEDUST palette, live system metrics, and the navigation layer that turns raw `crossterm::event::KeyEvent` values into typed `AppAction`s before they reach a screen.
 
 The navigation layer centralizes global keybindings, command palette input, modal routing, vim mode, and help overlays so screens only need to handle screen-local behavior.
 
 ## Features
 
 - 60 fps frame loop with raw-mode and alternate-screen management
-- 29-screen catalog grouped into six logical windows
+- 30-screen catalog grouped into six logical windows
 - Header, sidebar, and footer chrome that show the active screen, window name, tab name, ETA, elapsed time, and layout state
 - Global and per-screen keyboard routing through typed actions
 - TOML-backed keybinding overrides with sane defaults
 - Command palette, modal stack, and optional vim mode for global interaction
 - Responsive layout breakpoints for compact, standard, wide, and ultra terminals
 - Home screen with a placeholder creature, pipeline progress, task list, and live system metrics
+- Protocol views screen with mock DeFi panels for Uniswap pools, lending markets, vaults, and bridge routes
 - Reusable widget layer for sparklines, progress bars, feeds, tabs, status bars, and the centered keybinding help overlay
 
 ## Getting Started
@@ -69,12 +70,15 @@ Action strings map to `AppAction` variants such as `Quit`, `NextScreen`, `GotoWi
 - `main` boots raw mode, alternate-screen mode, tracing, and the app loop
 - `app` owns the runtime state machine, key dispatch, screen switching, and chrome rendering
 - `navigation` contains the keybinding map, command palette, modal manager, and vim mode state
+- `mock` defines placeholder protocol data types used by the protocol views screen
 - `screen` defines the `Screen` trait, the `ScreenId` catalog, and the screen registry
 - `state` holds the shared application state, progress tracking, system metrics, and typed app actions
 - `layout` computes responsive breakpoints and the sidebar/content split
 - `palette` defines the ROSEDUST colors and box-drawing glyphs used by the terminal
 - `widgets` contains reusable ratatui widgets, including the floating keybinding help overlay
-- `screens` contains concrete screen implementations, currently led by `HomeScreen`
+- `widgets/protocol` contains the DeFi protocol widgets used by the protocol views screen
+- `screens` contains concrete screen implementations, currently led by `HomeScreen` and `ProtocolViewsScreen`
+- `screens/protocol_views` composes the protocol widgets into a 2×2 grid screen
 - `sys_stats` samples live CPU, memory, network, and disk metrics for `AppState`
 
 ## API
@@ -150,6 +154,7 @@ pub(crate) enum ScreenId {
     CommandConfig,
     CommandEffects,
     CommandHermes,
+    ProtocolViews,
 }
 
 impl ScreenId {
@@ -177,7 +182,7 @@ impl HomeScreen {
 }
 ```
 
-`ScreenId::all()` returns the stable 29-screen order used for tab cycling. `window_name()` and `tab_name()` supply the chrome labels shown in the header and sidebar.
+`ScreenId::all()` returns the stable 30-screen order used for tab cycling. `window_name()` and `tab_name()` supply the chrome labels shown in the header and sidebar.
 
 ### State And Actions
 
@@ -237,6 +242,8 @@ pub(crate) struct SysMetrics { /* live CPU, memory, network, and disk snapshots 
 ```
 
 `ProgressState` tracks per-task and aggregate timing. `format_duration()` is used by the chrome and the home screen to present elapsed time and ETA values. The navigation chapter documents the expanded action families used for window jumps, palette routing, modal interaction, help overlays, and vim mode.
+
+The protocol views screen family is documented in [bardo-terminal protocol views](bardo-terminal-protocol-views.md).
 
 ### Responsive Layout
 
@@ -349,7 +356,7 @@ fn build_registry() {
         visible: true,
     };
 
-    assert_eq!(ScreenId::all().len(), 29);
+    assert_eq!(ScreenId::all().len(), 30);
     assert_eq!(tab.code, KeyCode::Tab);
     assert!(registry.get(&ScreenId::MindPipeline).is_some());
     assert!(overlay.visible);
@@ -363,6 +370,7 @@ main
 └── App
     ├── ScreenRegistry
     │   ├── HomeScreen
+    │   ├── ProtocolViewsScreen
     │   └── StubScreen (28 placeholders)
     ├── AppState
     │   ├── ProgressState
@@ -380,7 +388,7 @@ main
 
 The app loop polls terminal input, updates the shared state, and draws the current frame. The active screen owns its own input response through `Screen::handle_key`, while `App` owns focus changes, layout state, and the chrome that wraps the screen content.
 
-The visual structure matches the terminal model described in the PRD: a persistent chrome shell, a 29-screen catalog, and a six-window navigation hierarchy. The current crate implementation keeps the rendering path and screen catalog in one place so the terminal can stay responsive without requiring each screen to know about the rest of the app.
+The visual structure matches the terminal model described in the PRD: a persistent chrome shell, a 30-screen catalog, and a six-window navigation hierarchy. The current crate implementation keeps the rendering path and screen catalog in one place so the terminal can stay responsive without requiring each screen to know about the rest of the app.
 
 ## References
 

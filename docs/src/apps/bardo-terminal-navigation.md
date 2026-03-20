@@ -4,7 +4,7 @@
 
 The navigation layer is the terminal's typed keyboard router. It receives raw `crossterm::event::KeyEvent` values, resolves them through the global and per-screen keybinding maps, and then routes the result into the command palette, modal stack, vim mode state machine, or active screen.
 
-This is the part of the terminal that makes the 29-screen interface feel like a single application instead of a set of unrelated views.
+This is the part of the terminal that makes the 30-screen interface feel like a single application instead of a set of unrelated views.
 
 ## Features
 
