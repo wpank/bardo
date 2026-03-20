@@ -4,13 +4,13 @@
 
 The navigation layer is the terminal's typed keyboard router. It receives raw `crossterm::event::KeyEvent` values, resolves them through the global and per-screen keybinding maps, and then routes the result into the command palette, modal stack, vim mode state machine, or active screen.
 
-This is the part of the terminal that makes the 30-screen interface feel like a single application instead of a set of unrelated views.
+This is the part of the terminal that makes the 29-screen runtime catalog feel like a single application instead of a set of unrelated views. The protocol views chapter documents the next dashboard surface separately.
 
 ## Features
 
 - Global and per-screen keybindings backed by a TOML config file
 - Direct screen jumps and window jumps from a single typed action surface
-- `Tab` and `Shift+Tab` cycle across the full 30-screen catalog, including the protocol views dashboard
+- `Tab` and `Shift+Tab` cycle across the full 29-screen runtime catalog
 - `/` command palette with fuzzy search and keyboard navigation
 - Stack-based modals for confirm, input, and alert flows
 - Optional vim mode with `Normal`, `Insert`, and `Command` states
@@ -30,7 +30,7 @@ Useful starting keys:
 - `?` toggles the help overlay
 - `/` opens the command palette
 - `Esc` closes the topmost modal or overlay
-- `Tab` and `Shift+Tab` cycle through the full screen catalog
+- `Tab` and `Shift+Tab` cycle through the full runtime screen catalog
 - `1` through `6` jump to the six logical windows
 - `:` enters vim command mode when vim mode is enabled
 

@@ -1,5 +1,9 @@
 //! Periodic system-resource collection backed by sysinfo.
 //!
+//! DEPRECATED: Enhanced sys_metrics have been consolidated into bardo-ctl
+//! (tmp/bardo-ctl/src/sys_metrics.rs). This module remains for bardo-terminal's
+//! standalone monitoring use case but should not be extended further.
+//!
 //! [`SysStats`] owns the sysinfo collectors and rolls history ring-buffers.
 //! It is intentionally not `Clone` or `Debug` because the underlying
 //! sysinfo types don't implement those traits. Only the derived

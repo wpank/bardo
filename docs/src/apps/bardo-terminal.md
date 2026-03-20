@@ -2,22 +2,20 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace's Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the 30-screen catalog, responsive layout, the ROSEDUST palette, live system metrics, and the navigation layer that turns raw `crossterm::event::KeyEvent` values into typed `AppAction`s before they reach a screen.
+`bardo-terminal` is the workspace's interactive Rust TUI binary. It owns terminal setup and teardown, a 60 fps render loop, a 29-screen catalog grouped into six logical windows, responsive layout, shared application state, live system metrics, and a reusable widget layer for gauges, sparklines, feeds, tabs, progress bars, and overlays.
 
-The navigation layer centralizes global keybindings, command palette input, modal routing, vim mode, and help overlays so screens only need to handle screen-local behavior.
+The application follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, `Screen navigation`, and `Render loop`, plus `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`.
 
 ## Features
 
-- 60 fps frame loop with raw-mode and alternate-screen management
-- 30-screen catalog grouped into six logical windows
-- Header, sidebar, and footer chrome that show the active screen, window name, tab name, ETA, elapsed time, and layout state
-- Global and per-screen keyboard routing through typed actions
-- TOML-backed keybinding overrides with sane defaults
-- Command palette, modal stack, and optional vim mode for global interaction
-- Responsive layout breakpoints for compact, standard, wide, and ultra terminals
-- Home screen with a placeholder creature, pipeline progress, task list, and live system metrics
-- Protocol views screen with mock DeFi panels for Uniswap pools, lending markets, vaults, and bridge routes
-- Reusable widget layer for sparklines, progress bars, feeds, tabs, status bars, and the centered keybinding help overlay
+- Raw-mode and alternate-screen lifecycle management
+- 60 fps frame loop with bounded input polling
+- 29-screen catalog grouped into six logical windows
+- Shared `AppState` with layout breakpoint, progress state, atmosphere animation, and system metrics
+- A home dashboard with pipeline progress, task timing, connection status, and system resource panels
+- Reusable widgets for sparklines, gauges, feeds, tabs, progress bars, timelines, and keybinding overlays
+- Responsive sidebar and content split driven by terminal width
+- Stable `Tab` and `Shift+Tab` screen cycling across the screen catalog
 
 ## Getting Started
 
@@ -33,18 +31,14 @@ Run the crate tests:
 cargo test -p bardo-terminal
 ```
 
-Useful controls:
+Useful live controls:
 
-- `q` or `Ctrl+C` quits
-- `Tab` moves to the next screen
+- `q` quits
+- `Tab` moves to the next screen in `ScreenId::all()`
 - `Shift+Tab` moves to the previous screen
-- `1` through `6` jump directly to a named window
-- `?` opens the help overlay
-- `/` opens the command palette
-- `Esc` closes the topmost modal or overlay
-- `hjkl`, `gg`, and `:command` are available when vim mode is enabled
+- Resizing the terminal recomputes `LayoutBreakpoint`
 
-Tracing follows the standard Rust logging environment:
+Tracing uses the standard Rust logging environment:
 
 ```bash
 RUST_LOG=info cargo run -p bardo-terminal
@@ -52,44 +46,35 @@ RUST_LOG=info cargo run -p bardo-terminal
 
 ## Configuration
 
-`bardo-terminal` reads its keyboard configuration from `~/.bardo/keybindings.toml` when the file exists. Missing files fall back to the built-in default bindings.
+The binary currently relies on runtime environment and terminal capabilities rather than a dedicated application config file.
 
 | Input | Effect |
 | --- | --- |
 | `RUST_LOG` | Controls `tracing_subscriber` filtering |
-| `~/.bardo/keybindings.toml` | Overrides global and per-screen keybindings |
-| Terminal width | Selects the responsive breakpoint and sidebar width |
-| Terminal color and Unicode support | Affects palette fidelity, box-drawing, and braille rendering |
-
-Supported key strings are case-insensitive and accept `ctrl+`, `shift+`, and `alt+` prefixes. Special key names include `tab`, `backtab`, `esc`, `enter`, `backspace`, `up`, `down`, `left`, `right`, and `F1` through `F12`.
-
-Action strings map to `AppAction` variants such as `Quit`, `NextScreen`, `GotoWindow:Hearth`, `ShowHelp`, and `ScrollTop`. Unknown actions are skipped rather than failing config loading.
+| Terminal width | Selects `Compact`, `Standard`, `Wide`, or `Ultra` layout |
+| Terminal color and Unicode support | Affects palette fidelity, box drawing, braille sparklines, and block-glyph gauges |
 
 ## Module Overview
 
-- `main` boots raw mode, alternate-screen mode, tracing, and the app loop
-- `app` owns the runtime state machine, key dispatch, screen switching, and chrome rendering
-- `navigation` contains the keybinding map, command palette, modal manager, and vim mode state
-- `mock` defines placeholder protocol data types used by the protocol views dashboard
-- `screen` defines the `Screen` trait, the `ScreenId` catalog, and the screen registry
-- `state` holds the shared application state, progress tracking, system metrics, and typed app actions
-- `layout` computes responsive breakpoints and the sidebar/content split
-- `palette` defines the ROSEDUST colors and box-drawing glyphs used by the terminal
-- `widgets` contains reusable ratatui widgets, including the floating keybinding help overlay
-- `widgets/protocol` contains the DeFi protocol widgets used by the protocol views screen
-- `screens` contains concrete screen implementations, currently led by `HomeScreen` and the protocol views screen
-- `screens/protocol_views` composes the protocol widgets into a 2×2 grid screen
-- `sys_stats` samples live CPU, memory, network, and disk metrics for `AppState`
+- `main` boots tracing, installs the panic hook, enters raw mode and alternate-screen mode, and runs the app loop
+- `app` owns `AppState`, `ScreenRegistry`, screen switching, chrome rendering, and the frame loop
+- `screen` defines `Screen`, `ScreenId`, `ScreenRegistry`, and `StubScreen`
+- `state` defines `AppState`, `AppAction`, progress tracking, atmosphere animation, and live `SysMetrics`
+- `layout` computes `LayoutBreakpoint` and the sidebar/content split
+- `palette` defines the terminal color constants and glyphs
+- `screens::home` provides the concrete home dashboard
+- `widgets` contains reusable ratatui widgets such as `BrailleSparkline`, `VitalityGauge`, `ConfidenceGauge`, `TabBar`, `EventFeed`, and `KeyHelpOverlay`
 
 ## API
 
 ### Binary Entry Point
 
 ```rust
+#[tokio::main]
 async fn main() -> anyhow::Result<()>
 ```
 
-The entrypoint installs the panic hook, initializes tracing, enters raw mode and the alternate screen, runs the app loop, and restores the terminal on exit.
+The entrypoint installs the panic hook, initializes tracing, sets up the terminal, runs `App::run`, and restores terminal state on exit.
 
 ### Runtime Scaffold
 
@@ -109,7 +94,7 @@ impl App {
 }
 ```
 
-`App::run` drives the 60 fps loop. Each frame polls input with the remaining frame budget, advances shared state, refreshes system metrics when the one-second window elapses, and renders the active screen plus chrome.
+`App::new()` registers `HomeScreen` and fills the remaining screen catalog with `StubScreen` placeholders. `App::run()` polls `crossterm` events, advances shared state, refreshes system metrics, and renders the current frame.
 
 ### Screen System
 
@@ -117,7 +102,12 @@ impl App {
 pub(crate) trait Screen: Send + Sync {
     fn id(&self) -> ScreenId;
     fn title(&self) -> &str;
-    fn render(&self, frame: &mut ratatui::Frame<'_>, area: ratatui::layout::Rect, state: &AppState);
+    fn render(
+        &self,
+        frame: &mut ratatui::Frame<'_>,
+        area: ratatui::layout::Rect,
+        state: &AppState,
+    );
     fn handle_key(&mut self, key: crossterm::event::KeyEvent) -> Option<AppAction>;
     fn on_focus(&mut self) {}
     fn on_blur(&mut self) {}
@@ -154,7 +144,6 @@ pub(crate) enum ScreenId {
     CommandConfig,
     CommandEffects,
     CommandHermes,
-    ProtocolViews,
 }
 
 impl ScreenId {
@@ -163,7 +152,10 @@ impl ScreenId {
     pub(crate) const fn tab_name(self) -> &'static str;
 }
 
-pub(crate) struct ScreenRegistry { /* ... */ }
+pub(crate) struct ScreenRegistry {
+    /* private fields omitted */
+}
+
 impl ScreenRegistry {
     pub(crate) fn new() -> Self;
     pub(crate) fn register(&mut self, screen: Box<dyn Screen>);
@@ -171,22 +163,27 @@ impl ScreenRegistry {
     pub(crate) fn get_mut(&mut self, id: &ScreenId) -> Option<&mut dyn Screen>;
 }
 
-pub(crate) struct StubScreen { /* ... */ }
+pub(crate) struct StubScreen {
+    /* private fields omitted */
+}
+
 impl StubScreen {
     pub(crate) fn new(id: ScreenId, title: impl Into<String>) -> Self;
 }
 
-pub(crate) struct HomeScreen { /* ... */ }
+pub(crate) struct HomeScreen {
+    /* private fields omitted */
+}
+
 impl HomeScreen {
     pub(crate) fn new() -> Self;
 }
 ```
 
-`ScreenId::all()` returns the stable 30-screen order used for tab cycling. `window_name()` and `tab_name()` supply the chrome labels shown in the header and sidebar.
-
-### State And Actions
+### Shared State And Layout
 
 ```rust
+#[derive(Debug, Clone)]
 pub(crate) struct AppState {
     pub(crate) tick_count: u64,
     pub(crate) connection_status: ConnectionStatus,
@@ -205,49 +202,7 @@ pub(crate) enum AppAction {
     Resize(u16, u16),
 }
 
-pub(crate) enum ConnectionStatus {
-    Connected,
-    Disconnected,
-    Connecting,
-}
-
-pub(crate) struct MockVitality {
-    pub(crate) value: f64,
-}
-
-pub(crate) enum TaskStatus {
-    Pending,
-    Active,
-    Done,
-}
-
-pub(crate) struct TaskEntry {
-    pub(crate) name: String,
-    pub(crate) status: TaskStatus,
-    pub(crate) estimated_secs: f64,
-    pub(crate) elapsed_secs: f64,
-}
-
-pub(crate) struct ProgressState {
-    pub(crate) tasks: Vec<TaskEntry>,
-    pub(crate) start_time: std::time::Instant,
-}
-
-pub(crate) struct Atmosphere {
-    pub(crate) elapsed_secs: f64,
-    pub(crate) dt: f64,
-}
-
-pub(crate) struct SysMetrics { /* live CPU, memory, network, and disk snapshots */ }
-```
-
-`ProgressState` tracks per-task and aggregate timing. `format_duration()` is used by the chrome and the home screen to present elapsed time and ETA values. The navigation chapter documents the expanded action families used for window jumps, palette routing, modal interaction, help overlays, and vim mode.
-
-The protocol views screen family is documented in [bardo-terminal protocol views](bardo-terminal-protocol-views.md).
-
-### Responsive Layout
-
-```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum LayoutBreakpoint {
     Compact,
     Standard,
@@ -266,57 +221,44 @@ pub(crate) fn compute_layout(
     frame_size: ratatui::layout::Rect,
     bp: LayoutBreakpoint,
 ) -> (ratatui::layout::Rect, ratatui::layout::Rect);
+
+pub(crate) fn format_duration(secs: f64) -> String;
 ```
 
-The breakpoint thresholds are:
-
-- `Compact`: fewer than 80 columns
-- `Standard`: 80 to 119 columns
-- `Wide`: 120 to 179 columns
-- `Ultra`: 180 columns and above
-
-### Navigation Guide
-
-For the full typed keybinding, palette, modal, and vim API, see [bardo-terminal navigation](bardo-terminal-navigation.md).
-
-## Usage Examples
-
-Launch the terminal and enable verbose tracing:
-
-```bash
-RUST_LOG=info cargo run -p bardo-terminal
-```
-
-Add a simple keybinding override:
-
-```toml
-# ~/.bardo/keybindings.toml
-[global]
-"ctrl+c" = "Quit"
-"tab" = "NextScreen"
-"F1" = "GotoWindow:Hearth"
-
-[screen.HearthOverview]
-"r" = "ScrollTop"
-```
-
-The navigation chapter shows the typed action families used for `GotoWindow`, command palette routing, modal prompts, and vim commands.
-
-## Architecture
-
-The terminal uses a simple input pipeline:
-
-1. Raw `KeyEvent` values arrive from `crossterm`.
-2. The navigation layer resolves them into `AppAction` values when a global binding, palette, modal, or vim sequence matches.
-3. The active screen receives only the keys that were not consumed globally.
-4. `App` applies the action to shared state, screen focus, or overlay visibility.
-5. Rendering happens in z-order: base screen, then help overlay, then modal, then command palette.
-
-The design aligns with [prd2/18-interfaces/01-cli.md](../../../prd2/18-interfaces/01-cli.md) sections `Overview`, `Entry points`, and `Screen navigation`, and [prd2/20-styx/05-tui-experience.md](../../../prd2/20-styx/05-tui-experience.md) sections `Architecture`, `Persistent Chrome`, and `The Screen System (11 Views)`.
-
-### Widget Surface
+### Reusable Widgets
 
 ```rust
+pub(crate) struct BrailleSparkline {
+    pub(crate) data: Vec<f64>,
+    pub(crate) max_value: f64,
+    pub(crate) color: ratatui::style::Color,
+    pub(crate) label: Option<String>,
+}
+
+pub(crate) enum MockPhase {
+    Thriving,
+    Stable,
+    Conservation,
+    Declining,
+    Terminal,
+}
+
+pub(crate) struct VitalityGauge {
+    pub(crate) value: f64,
+    pub(crate) label: String,
+    pub(crate) phase: MockPhase,
+}
+
+pub(crate) struct ConfidenceGauge {
+    pub(crate) value: f64,
+    pub(crate) label: String,
+}
+
+pub(crate) struct AccuracyGauge {
+    pub(crate) value: f64,
+    pub(crate) label: String,
+}
+
 pub(crate) struct KeyBinding {
     pub(crate) key: String,
     pub(crate) description: String,
@@ -326,71 +268,75 @@ pub(crate) struct KeyHelpOverlay {
     pub(crate) bindings: Vec<KeyBinding>,
     pub(crate) visible: bool,
 }
-
-impl ratatui::widgets::Widget for &KeyHelpOverlay;
 ```
 
-`KeyHelpOverlay` is the reusable floating help widget for keybinding hints. It renders as a centered overlay from a `Vec<KeyBinding>` and uses a `visible` flag so screens can keep the widget mounted without drawing it.
+## Usage Examples
 
-## Usage Example
+Register a custom placeholder screen:
 
 ```rust
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-
 use crate::screen::{ScreenId, ScreenRegistry, StubScreen};
-use crate::widgets::{KeyBinding, KeyHelpOverlay};
 
-fn build_registry() {
+fn build_registry() -> ScreenRegistry {
     let mut registry = ScreenRegistry::new();
     registry.register(Box::new(StubScreen::new(
-        ScreenId::MindPipeline,
-        "MIND / Pipeline",
+        ScreenId::WorldSolaris,
+        "WORLD / Solaris",
     )));
+    registry
+}
+```
 
-    let tab = KeyEvent::new(KeyCode::Tab, KeyModifiers::NONE);
-    let overlay = KeyHelpOverlay {
-        bindings: vec![KeyBinding {
-            key: "?".to_string(),
-            description: "toggle help".to_string(),
-        }],
-        visible: true,
-    };
+Select a layout breakpoint from the terminal width:
 
-    assert_eq!(ScreenId::all().len(), 30);
-    assert_eq!(tab.code, KeyCode::Tab);
-    assert!(registry.get(&ScreenId::MindPipeline).is_some());
-    assert!(overlay.visible);
+```rust
+use crate::layout::LayoutBreakpoint;
+
+fn choose_layout(cols: u16) -> LayoutBreakpoint {
+    LayoutBreakpoint::from_cols(cols)
+}
+```
+
+Render a compact sparkline:
+
+```rust
+use ratatui::{backend::TestBackend, style::Color, Terminal};
+
+use crate::widgets::BrailleSparkline;
+
+fn render_trace() {
+    let backend = TestBackend::new(24, 2);
+    let mut terminal = Terminal::new(backend).expect("terminal");
+
+    terminal
+        .draw(|frame| {
+            frame.render_widget(
+                BrailleSparkline {
+                    data: vec![0.2, 0.3, 0.5, 0.8, 0.6, 0.4],
+                    max_value: 1.0,
+                    color: Color::Cyan,
+                    label: Some("cpu".into()),
+                },
+                frame.size(),
+            );
+        })
+        .expect("draw");
 }
 ```
 
 ## Architecture
 
-```
-main
-└── App
-    ├── ScreenRegistry
-    │   ├── HomeScreen
-    │   ├── ProtocolViewsScreen
-    │   └── StubScreen (28 placeholders)
-    ├── AppState
-    │   ├── ProgressState
-    │   ├── Atmosphere
-    │   └── SysMetrics
-    ├── layout::compute_layout
-    ├── palette tokens and glyphs
-    └── widgets
-        ├── KeyHelpOverlay
-        ├── TabBar
-        ├── EventFeed
-        ├── VitalityGauge
-        └── other reusable ratatui widgets
-```
+The runtime is organized around a small set of stable layers:
 
-The app loop polls terminal input, updates the shared state, and draws the current frame. The active screen owns its own input response through `Screen::handle_key`, while `App` owns focus changes, layout state, and the chrome that wraps the screen content.
+1. `main` owns terminal lifecycle, tracing setup, and panic-safe teardown.
+2. `App` owns shared state, the render loop, and screen navigation.
+3. `ScreenRegistry` stores the active screen set behind the `Screen` trait.
+4. `compute_layout` partitions the frame into chrome and content regions.
+5. Reusable widgets render compact summaries inside each screen.
 
-The visual structure matches the terminal model described in the PRD: a persistent chrome shell, a 30-screen catalog, and a six-window navigation hierarchy. The current crate implementation keeps the rendering path and screen catalog in one place so the terminal can stay responsive without requiring each screen to know about the rest of the app.
+This structure follows the TUI architecture and custom-widget guidance in `prd2/18-interfaces/01-cli.md` and `prd2/20-styx/05-tui-experience.md`.
 
 ## References
 
-- `prd2/18-interfaces/01-cli.md` sections `Overview`, `Entry points`, and `Screen navigation`
-- `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, `Persistent Chrome`, and `5. Custom Widgets`
+- `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, `Screen navigation`, and `Render loop`
+- `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, `Persistent Chrome`, `Responsive Layout`, and `5. Custom Widgets`
