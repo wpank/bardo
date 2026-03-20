@@ -1,6 +1,22 @@
 # Workspace Overview
 
-Bardo is organized as a single Cargo workspace plus a small TypeScript sidecar. The workspace root is the operational contract for the repository: it fixes crate membership, dependency versions, lint policy, build profiles, local toolchain behavior, and the mdBook chapter structure that later crate documentation fills in.
+Bardo is organized as a single Cargo workspace plus a small TypeScript sidecar. The workspace
+root is the operational contract for the repository: it fixes crate membership, dependency
+versions, lint policy, build profiles, local toolchain behavior, and the mdBook chapter
+structure that later crate documentation fills in.
+
+## Module Overview
+
+The workspace root is not a library module, but it behaves like the top-level package surface
+for the repository. Its key files are:
+
+- `Cargo.toml` for membership, shared dependency pins, package metadata, lint policy, and
+  release/dev profiles
+- `rust-toolchain.toml`, `rustfmt.toml`, and `clippy.toml` for toolchain and formatting rules
+- `.cargo/config.toml` for linker and wrapper behavior
+- `nextest.toml`, `deny.toml`, and `justfile` for test, policy, and developer workflows
+- `docs/book.toml` and `docs/src/` for the public mdBook site
+- `sidecar/tools-ts/` for the JSON-RPC TypeScript sidecar that lives outside Cargo
 
 ## Features
 

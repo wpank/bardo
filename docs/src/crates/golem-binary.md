@@ -4,6 +4,12 @@
 
 `golem-binary` is the Layer 7 binary entrypoint package for the workspace. Today it exposes a minimal Tokio startup surface that initializes tracing, emits a startup log line, and exits successfully.
 
+## Module Overview
+
+The crate is the workspace's shipped executable package. Its manifest declares the
+`bardo-golem` binary target at `src/main.rs`, and the current implementation is still a shell
+that only sets up process logging.
+
 ## Features
 
 - Binary crate with the `bardo-golem` executable target
@@ -15,6 +21,10 @@
 
 ```bash
 cargo run -p golem-binary
+```
+
+```bash
+cargo run -p golem-binary --bin bardo-golem
 ```
 
 ## Configuration
@@ -34,7 +44,9 @@ It initializes tracing with `tracing_subscriber::fmt::init()` and emits a startu
 
 ## Architecture
 
-`golem-binary` sits at the top of the workspace DAG above every library crate. The scaffold keeps the shipped executable target and package name stable before the full runtime startup sequence is introduced.
+`golem-binary` sits at the top of the workspace DAG above every library crate. The scaffold
+keeps the shipped executable target and package name stable before the full runtime startup
+sequence is introduced.
 
 ## References
 

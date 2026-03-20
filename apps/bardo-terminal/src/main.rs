@@ -8,6 +8,7 @@ mod palette;
 mod screen;
 mod screens;
 mod state;
+mod sys_stats;
 mod widgets;
 
 use std::io::stdout;

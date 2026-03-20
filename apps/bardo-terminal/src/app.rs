@@ -22,6 +22,7 @@ use crate::{
     screen::{ScreenId, ScreenRegistry, StubScreen},
     screens::HomeScreen,
     state::{AppAction, AppState, format_duration},
+    sys_stats::SysStats,
 };
 
 const TARGET_FPS: u64 = 60;
@@ -33,6 +34,7 @@ pub(crate) struct App {
     screens: ScreenRegistry,
     active_screen: ScreenId,
     should_quit: bool,
+    sys_stats: SysStats,
 }
 
 impl App {
@@ -55,6 +57,7 @@ impl App {
             screens,
             active_screen: ScreenId::HearthOverview,
             should_quit: false,
+            sys_stats: SysStats::new(),
         };
         app.focus_active_screen();
         app
@@ -89,6 +92,9 @@ impl App {
             self.state.tick_count = self.state.tick_count.wrapping_add(1);
             self.state.atmosphere.tick(dt);
             self.state.progress.tick(dt);
+            if let Some(sys) = self.sys_stats.tick(dt) {
+                self.state.sys = sys;
+            }
             terminal.draw(|frame| self.render(frame))?;
 
             last_frame = frame_start;

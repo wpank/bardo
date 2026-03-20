@@ -81,27 +81,26 @@ impl From<ProfileArg> for Profile {
     }
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
     tracing_subscriber::fmt().with_env_filter("info").init();
-    if let Err(error) = run().await {
-        let exit_code = startup_exit_code(&error).unwrap_or(1);
-        tracing::error!(error = %error, exit_code, "mirage startup failed");
-        std::process::exit(exit_code);
-    }
-}
-
-async fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
     let resource_model = ResourceModel::for_profile(
         Profile::from(cli.profile),
         Duration::from_secs(cli.cache_ttl_secs),
     );
-    resource_model
+    if let Err(error) = resource_model
         .ensure_spawn_budget()
-        .context("resource budget check failed")?;
+        .context("resource budget check failed")
+    {
+        let exit_code = startup_exit_code(&error).unwrap_or(1);
+        tracing::error!(error = %error, exit_code, "mirage startup failed");
+        std::process::exit(exit_code);
+    }
 
+    // reqwest::blocking::Client::new() panics when called from inside a Tokio
+    // async context, so build the upstream (and its blocking HTTP client) here
+    // in sync context before starting the runtime.
     let upstream = Arc::new(UpstreamRpc::new_with_limits(
         cli.rpc_url.clone(),
         cli.ws_url.clone(),
@@ -109,8 +108,32 @@ async fn run() -> anyhow::Result<()> {
         cli.upstream_rps,
         cli.upstream_burst,
     ));
+
+    let rt = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .expect("failed to build Tokio runtime");
+
+    if let Err(error) = rt.block_on(run(cli, upstream)) {
+        let exit_code = startup_exit_code(&error).unwrap_or(1);
+        tracing::error!(error = %error, exit_code, "mirage startup failed");
+        std::process::exit(exit_code);
+    }
+}
+
+async fn run(cli: Cli, upstream: Arc<UpstreamRpc>) -> anyhow::Result<()> {
     let follower_upstream = Arc::clone(&upstream);
-    let head = resolve_initial_head(&upstream, cli.rpc_url.is_some())?;
+    let resource_model = ResourceModel::for_profile(
+        Profile::from(cli.profile),
+        Duration::from_secs(cli.cache_ttl_secs),
+    );
+    let head = {
+        let upstream = Arc::clone(&upstream);
+        let require_probe = cli.rpc_url.is_some();
+        tokio::task::spawn_blocking(move || resolve_initial_head(&upstream, require_probe))
+            .await
+            .context("health check task panicked")??
+    };
     let mut fork = ForkState::new(
         HybridDB::new(
             upstream,
@@ -145,6 +168,7 @@ async fn run() -> anyhow::Result<()> {
                 filter_addresses: None,
                 filter_selectors: None,
             },
+            head,
         );
         let shutdown = shutdown_tx.subscribe();
         tokio::spawn(async move {
@@ -173,10 +197,29 @@ async fn run() -> anyhow::Result<()> {
         });
     }
 
+    tracing::info!("mirage event loop ready");
+    // Hold shutdown_tx alive through the select so the broadcast channel
+    // stays open until an explicit signal or Ctrl+C.  Without this, Rust may
+    // drop shutdown_tx early (last syntactic use is subscribe() above), which
+    // closes the channel and causes recv() to return Err(Closed) immediately.
+    let shutdown_guard = shutdown_tx;
     tokio::select! {
-        _ = shutdown_rx.recv() => {}
-        _ = tokio::signal::ctrl_c() => {}
+        result = shutdown_rx.recv() => {
+            match result {
+                Ok(()) => tracing::info!("mirage shutdown signal received"),
+                Err(broadcast::error::RecvError::Closed) => {
+                    tracing::warn!("mirage shutdown channel closed (all senders dropped)");
+                }
+                Err(broadcast::error::RecvError::Lagged(n)) => {
+                    tracing::info!("mirage shutdown receiver lagged by {n} messages");
+                }
+            }
+        }
+        _ = tokio::signal::ctrl_c() => {
+            tracing::info!("mirage ctrl+c received");
+        }
     }
+    drop(shutdown_guard);
 
     cleanup_artifacts(addr.port());
     handle.stop().context("failed to stop RPC server")?;

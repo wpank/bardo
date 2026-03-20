@@ -26,6 +26,20 @@ use crate::{
     resources::MirageMode,
 };
 
+/// Runs a blocking closure. On a multi-thread Tokio scheduler (i.e. a
+/// `tokio::spawn` task), wraps in `block_in_place` so that reqwest's
+/// debug-mode runtime check does not panic when it creates and drops an
+/// internal Tokio runtime.  On any other context (blocking threads, no
+/// runtime, single-thread scheduler) calls the closure directly.
+fn run_blocking<F: FnOnce() -> R, R>(f: F) -> R {
+    match tokio::runtime::Handle::try_current() {
+        Ok(h) if h.runtime_flavor() == tokio::runtime::RuntimeFlavor::MultiThread => {
+            tokio::task::block_in_place(f)
+        }
+        _ => f(),
+    }
+}
+
 /// Canonical log entry captured in a state diff.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -120,21 +134,21 @@ pub struct TargetedFollower {
 }
 
 impl TargetedFollower {
-    /// Creates a new targeted follower.
+    /// Creates a new targeted follower starting from `initial_block`.
     #[must_use]
     pub fn new(
         upstream: Arc<UpstreamRpc>,
         mirage: &crate::fork::MirageFork,
         classifier: DiffClassifier,
         config: FollowerConfig,
+        initial_block: u64,
     ) -> Self {
-        let last_block_number = upstream.get_block_number().unwrap_or_default();
         Self {
             upstream,
             state: mirage.state(),
             classifier,
             config,
-            last_block_number,
+            last_block_number: initial_block,
         }
     }
 
@@ -158,7 +172,7 @@ impl TargetedFollower {
                 let mut heads = match self.upstream.subscribe_new_heads().await {
                     Ok(heads) => {
                         reconnect_delay = Duration::from_millis(250);
-                        if let Err(error) = self.catch_up_to_current_head() {
+                        if let Err(error) = run_blocking(|| self.catch_up_to_current_head()) {
                             tracing::warn!("targeted follower catch-up failed: {error}");
                             tokio::select! {
                                 _ = shutdown.recv() => return Ok(()),
@@ -218,7 +232,7 @@ impl TargetedFollower {
         loop {
             tokio::select! {
                 _ = shutdown.recv() => break,
-                result = std::future::ready(self.tick_once()) => {
+                result = std::future::ready(run_blocking(|| self.tick_once())) => {
                     result?;
                     if self.is_proxy_mode() {
                         return Ok(());
@@ -248,7 +262,7 @@ impl TargetedFollower {
                 }
                 next_head = heads.next() => {
                     match next_head {
-                        Some(Ok(head)) => self.replay_to_head(head),
+                        Some(Ok(head)) => run_blocking(|| self.replay_to_head(head)),
                         Some(Err(error)) => {
                             tracing::warn!("targeted follower websocket stream failed: {error}");
                             return Ok(WebsocketLoopOutcome::Reconnect);
@@ -292,6 +306,7 @@ impl TargetedFollower {
             }
         }
         self.last_block_number = head;
+        tracing::info!(head, "block head advanced");
     }
 
     fn replay_block(&self, number: u64) -> Result<()> {
@@ -360,6 +375,13 @@ impl TargetedFollower {
                 state.fork.adopt_executed_branch(fork);
                 state.last_request_at = Instant::now();
             }
+        }
+
+        // Advance the fork's block number regardless of whether any watched
+        // transactions were found in this block.
+        {
+            let mut state = self.state.write();
+            state.fork.local_block_number = number;
         }
 
         Ok(())
@@ -728,6 +750,7 @@ mod tests {
                 filter_addresses: None,
                 filter_selectors: None,
             },
+            0,
         );
 
         let root = address!("0x1111111111111111111111111111111111111111");
@@ -807,6 +830,7 @@ mod tests {
                 filter_addresses: None,
                 filter_selectors: None,
             },
+            0,
         );
         let (_shutdown_tx, mut shutdown_rx) = tokio::sync::broadcast::channel(1);
         let proxy_mode = { mirage.state().read().mode_change.subscribe() };

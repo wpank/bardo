@@ -114,6 +114,13 @@ impl ResourceModel {
             .ok()
             .and_then(|value| value.parse::<u64>().ok())
             .unwrap_or_else(|| system.available_memory());
+        // sysinfo returns 0 when it cannot read available memory (e.g. on macOS
+        // when the Mach host_statistics64 call fails).  Treat 0 as unknown and
+        // skip the check rather than blocking startup on a machine with plenty
+        // of RAM.
+        if available == 0 {
+            return Ok(());
+        }
         let required = self.max_memory_bytes.saturating_add(SPAWN_HEADROOM_BYTES);
         ensure_spawn_budget_from_available_memory(required, available)
     }

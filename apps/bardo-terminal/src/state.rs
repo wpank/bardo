@@ -4,6 +4,49 @@ use std::time::Instant;
 
 use crate::layout::LayoutBreakpoint;
 
+// ── System metrics ───────────────────────────────────────────────────
+
+/// Number of samples kept in each history ring for sparklines.
+pub(crate) const SYS_HISTORY_LEN: usize = 60;
+
+/// Snapshot of live system resource metrics, updated once per second.
+///
+/// History vecs are ordered oldest-to-newest and hold at most
+/// [`SYS_HISTORY_LEN`] entries.
+#[derive(Debug, Clone, Default)]
+pub(crate) struct SysMetrics {
+    /// CPU utilisation 0..100.
+    pub(crate) cpu_pct: f32,
+    /// Rolling CPU utilisation history (fraction 0.0..100.0).
+    pub(crate) cpu_history: Vec<f64>,
+    /// Bytes of RAM currently in use.
+    pub(crate) mem_used_bytes: u64,
+    /// Total installed RAM in bytes.
+    pub(crate) mem_total_bytes: u64,
+    /// Rolling memory utilisation history (fraction 0.0..1.0).
+    pub(crate) mem_history: Vec<f64>,
+    /// Network bytes received per second (all interfaces summed).
+    pub(crate) net_rx_bps: f64,
+    /// Network bytes transmitted per second (all interfaces summed).
+    pub(crate) net_tx_bps: f64,
+    /// Rolling rx rate history (bytes/sec).
+    pub(crate) net_rx_history: Vec<f64>,
+    /// Rolling tx rate history (bytes/sec).
+    pub(crate) net_tx_history: Vec<f64>,
+    /// Disk bytes read per second (all disks summed).
+    pub(crate) disk_read_bps: f64,
+    /// Disk bytes written per second (all disks summed).
+    pub(crate) disk_write_bps: f64,
+    /// Rolling disk-read rate history (bytes/sec).
+    pub(crate) disk_read_history: Vec<f64>,
+    /// Rolling disk-write rate history (bytes/sec).
+    pub(crate) disk_write_history: Vec<f64>,
+    /// Total bytes used across all mounted disks.
+    pub(crate) disk_used_bytes: u64,
+    /// Total bytes across all mounted disks.
+    pub(crate) disk_total_bytes: u64,
+}
+
 /// Current connection status for the scaffold.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -287,6 +330,8 @@ pub(crate) struct AppState {
     pub(crate) atmosphere: Atmosphere,
     /// Pipeline progress and ETA tracking.
     pub(crate) progress: ProgressState,
+    /// Live system resource metrics (updated once per second).
+    pub(crate) sys: SysMetrics,
 }
 
 impl Default for AppState {
@@ -298,6 +343,7 @@ impl Default for AppState {
             layout: LayoutBreakpoint::Standard,
             atmosphere: Atmosphere::default(),
             progress: ProgressState::default(),
+            sys: SysMetrics::default(),
         }
     }
 }
