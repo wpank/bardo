@@ -11,7 +11,7 @@ use std::{
 };
 
 use parking_lot::RwLock;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use tokio::sync::broadcast;
 
 const REPLAY_CAPACITY: usize = 10_000;
@@ -25,7 +25,7 @@ fn current_ts_millis() -> u64 {
 }
 
 /// Subsystem that produced an event.
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Subsystem {
     /// Heartbeat subsystem.
@@ -63,7 +63,7 @@ pub enum Subsystem {
 }
 
 /// Sequenced event emitted by the runtime.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GolemEvent {
     /// Monotonic event sequence.
@@ -80,7 +80,7 @@ pub struct GolemEvent {
 
 /// Typed event payloads emitted by the runtime.
 #[allow(missing_docs)]
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub enum EventPayload {
     HeartbeatTick {

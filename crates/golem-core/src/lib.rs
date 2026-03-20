@@ -1,7 +1,5 @@
 //! `golem-core` - the Layer 0 shared type vocabulary for the Bardo workspace.
 //!
-//! **Implemented by:** Plan 02
-//!
 //! This crate defines the zero-dependency foundations used by every later
 //! layer: identity, configuration, event fabric, cortical state, taint labels,
 //! the extension trait skeleton, HDC primitives, and the tick arena wrapper.
