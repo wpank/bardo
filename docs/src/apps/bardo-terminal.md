@@ -2,21 +2,30 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace's primary Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the screen registry, responsive layout, the ROSEDUST palette, and the crate-local widgets used by terminal screens. The live branch is binary-first: there is no library target, and the application keeps its own state, screen catalog, and live system metrics in process.
+`bardo-terminal` is the workspace's primary Rust TUI binary. It owns terminal setup and teardown, the 60 fps render loop, the screen registry, responsive layout, the ROSEDUST palette, live system metrics, and the reusable widget layer used by terminal screens.
 
-The current scaffold renders the `HEARTH > Overview` home screen plus stub panels for the rest of the 29-screen catalog, so the navigation model is present even while most runtime data remains placeholder-driven.
+The current scaffold renders the `HEARTH > Overview` home screen and keeps the rest of the 29-screen catalog registered as navigable placeholders. Keyboard input still routes through the active screen layer today, so the crate behaves like a stable terminal scaffold rather than a fully centralized navigation shell.
+
+## Module Overview
+
+- `main` bootstraps alternate-screen mode, tracing, the app loop, and teardown
+- `app` owns the runtime state machine, screen switching, and top/bottom chrome
+- `screen` defines the `Screen` contract, the `ScreenId` catalog, and the registry
+- `state` holds app state, progress tracking, system metrics, and the current action vocabulary
+- `widgets` contains reusable rendering primitives, including the floating keybinding help overlay
+- `screens` provides concrete screen implementations, currently led by `HomeScreen`
 
 ## Features
 
 - Alternate-screen startup and shutdown with panic-hook cleanup
 - 60 fps frame loop with frame-budgeted input polling
-- Stable 29-screen catalog with `Tab` and `Shift+Tab` navigation
-- Screen focus/blur hooks for later stateful views
+- Stable 29-screen catalog with `Tab` and `Shift+Tab` cycling
+- Screen focus and blur hooks for stateful views
 - Responsive breakpoints for compact, standard, wide, and ultra layouts
 - ROSEDUST palette tokens and CRT-style glyph constants
 - Home screen placeholder with a creature silhouette, progress bar, connection status, task list, and live system metrics
-- Crate-local widgets for sparklines, progress bars, feeds, gauges, tabs, status bars, heatmaps, and help overlays
-- `golem-core` dependency wiring already present through the optional `EventFabric` import
+- Reusable floating keybinding help overlay
+- Crate-local widget surface for sparklines, progress bars, feeds, gauges, tabs, status bars, heatmaps, and overlays
 
 ## Getting Started
 
@@ -66,7 +75,7 @@ The responsive layout helper uses these breakpoint thresholds:
 
 ## API
 
-The crate is a binary application, so the documented surface is crate-local. The public-facing model is still useful for understanding how the terminal is assembled.
+The crate is a binary application, so the documented surface is crate-local. The types below are the core runtime model used by the terminal.
 
 ### Binary Entry Point
 
@@ -99,7 +108,7 @@ impl App {
 }
 ```
 
-`App::run` drives the 60 fps loop. Each frame polls input with the remaining frame budget, advances the tick counter, updates atmosphere and progress state, refreshes system metrics once per second, and renders the active screen.
+`App::run` drives the 60 fps loop. Each frame polls input with the remaining frame budget, advances the tick counter, updates animation state, refreshes system metrics when the one-second window elapses, and renders the active screen.
 
 ### Screen System
 
@@ -163,9 +172,9 @@ pub(crate) struct HomeScreen { /* ... */ }
 pub(crate) struct StubScreen { /* ... */ }
 ```
 
-`HomeScreen` implements the active `HEARTH` view. The other 28 screens are registered as `StubScreen` placeholders so tab cycling works across the whole catalog without panicking.
+`HomeScreen` implements the active `HEARTH` view. The other 28 screens are registered as `StubScreen` placeholders so tab cycling works across the entire catalog without panicking.
 
-### State And Layout
+### State And Actions
 
 ```rust
 pub(crate) struct AppState {
@@ -238,49 +247,25 @@ impl ProgressState {
 pub(crate) fn format_duration(total_secs: f64) -> String;
 ```
 
-### Visual Tokens And Widgets
+### Navigation Help
 
 ```rust
-pub(crate) struct ColorPalette;
+pub(crate) struct KeyBinding {
+    pub(crate) key: String,
+    pub(crate) description: String,
+}
 
-pub(crate) const BG_VOID: ratatui::style::Color;
-pub(crate) const BG_RAISED: ratatui::style::Color;
-pub(crate) const BG_MID: ratatui::style::Color;
-pub(crate) const BORDER: ratatui::style::Color;
-pub(crate) const BORDER_ACTIVE: ratatui::style::Color;
-pub(crate) const BORDER_DREAM: ratatui::style::Color;
-pub(crate) const ROSE: ratatui::style::Color;
-pub(crate) const ROSE_BRIGHT: ratatui::style::Color;
-pub(crate) const BONE: ratatui::style::Color;
-pub(crate) const TEXT_PRIMARY: ratatui::style::Color;
-pub(crate) const DREAM: ratatui::style::Color;
-pub(crate) const WARNING: ratatui::style::Color;
-pub(crate) const SUCCESS: ratatui::style::Color;
-pub(crate) const DANGER: ratatui::style::Color;
+pub(crate) struct KeyHelpOverlay {
+    pub(crate) bindings: Vec<KeyBinding>,
+    pub(crate) visible: bool,
+}
 
-pub(crate) const BOX_TOP_LEFT: char;
-pub(crate) const BOX_HORIZONTAL: char;
-pub(crate) const FRAME_OPEN: char;
-pub(crate) const BLOCK_FULL: char;
-pub(crate) const STYLE_BOLD: ratatui::style::Modifier;
+impl ratatui::widgets::Widget for &KeyHelpOverlay
 ```
 
-The crate-local widget layer is re-exported from `crate::widgets` and is used directly by the terminal screens. The most visible widgets are:
+The help overlay is a floating widget that renders a centered keybinding panel over whatever is already on screen. Screens or higher-level UI code can keep a static list of `KeyBinding` rows and toggle `visible` when the operator opens the help surface.
 
-- `BrailleSparkline`
-- `TotalProgressBar`
-- `StatusBar`
-- `TabBar`
-- `EventFeed`
-- `PheromoneHeatmap`
-- `KeyHelpOverlay`
-- `VitalityGauge`
-- `ConfidenceGauge`
-- `AccuracyGauge`
-- `ScrollableList`
-- `TimelineRibbon`
-
-### Usage Examples
+## Usage Examples
 
 Render the active home-screen progress bar the same way the scaffold does it:
 
@@ -299,20 +284,29 @@ frame.render_widget(
 );
 ```
 
-Compose a compact sparkline from live system history:
+Build and render a floating keybinding cheat sheet:
 
 ```rust
-use crate::widgets::BrailleSparkline;
+use crate::widgets::{KeyBinding, KeyHelpOverlay};
 
-frame.render_widget(
-    BrailleSparkline {
-        data: state.sys.cpu_history.clone(),
-        max_value: 100.0,
-        color: crate::palette::ROSE,
-        label: Some("cpu".to_string()),
-    },
-    sparkline_area,
-);
+let overlay = KeyHelpOverlay {
+    bindings: vec![
+        KeyBinding { key: "q".into(), description: "quit".into() },
+        KeyBinding { key: "Tab".into(), description: "next screen".into() },
+        KeyBinding { key: "Shift+Tab".into(), description: "previous screen".into() },
+    ],
+    visible: true,
+};
+
+frame.render_widget(&overlay, help_area);
+```
+
+Use the screen catalog helpers when composing chrome:
+
+```rust
+let window = active_screen.window_name();
+let tab = active_screen.tab_name();
+let header = format!("{window} / {tab}");
 ```
 
 ## Architecture
@@ -328,11 +322,14 @@ The binary follows a straightforward TUI lifecycle:
 7. `HomeScreen` renders the current placeholder HEARTH surface, while the remaining screens stay stubbed but navigable.
 8. Teardown always restores the terminal, disables raw mode, leaves the alternate screen, and shows the cursor again.
 
+The live input path is still screen-local: the active screen gets first crack at `KeyEvent` values, which is why the home screen currently handles `q`, `Tab`, and `Shift+Tab` directly. The reusable key-help widget is ready for a centralized navigation layer once that wiring is introduced.
+
 The visual language matches the ROSEDUST design system: rose-dominant color, bone as the single emphasized highlight, never pure black, and box-drawing borders with CRT-style motion. The home screen's pulsing border, waveform, and animated progress bar are the current scaffold's implementation of that motion vocabulary.
 
 ## References
 
+- `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Entry points`, `Screen navigation`, and `Render loop`
+- `prd2/20-styx/05-tui-experience.md` sections `Architecture`, `Persistent Chrome`, `The Screen System (11 Views)`, and `Responsive Layout`
 - `prd2/18-interfaces/rendering/00-design-system.md` sections `The ROSEDUST palette`, `The 7 rendering laws`, and `Character vocabulary`
 - `prd2/18-interfaces/screens/00-screen-catalog.md` sections `29-Screen Summary` and `Navigation Model`
-- `prd2/20-styx/05-tui-experience.md` sections `Architecture`, `The Screen System (11 Views)`, and `Responsive Layout`
 - `prd2/13-runtime/19-cinematic-system.md` sections `Design philosophy` and `Time is the primary rendering dimension`
