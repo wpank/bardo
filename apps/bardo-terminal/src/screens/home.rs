@@ -1,19 +1,22 @@
 //! Home screen with creature silhouette, vitality gauge, connection status, and tick counter.
 
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crossterm::event::KeyEvent;
 use ratatui::{
     Frame,
     layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
 };
 
 use crate::{
-    palette::{BORDER, BORDER_ACTIVE, DANGER, ROSE, ROSE_DIM, SUCCESS, TEXT_DIM, TEXT_GHOST, WARNING},
+    palette::{
+        BONE, BONE_DIM, BORDER, BORDER_ACTIVE, DANGER, DREAM, DREAM_DIM, ROSE, ROSE_DIM, SUCCESS,
+        TEXT_DIM, TEXT_GHOST, WARNING,
+    },
     screen::{Screen, ScreenId},
     state::{AppAction, AppState, ConnectionStatus},
-    widgets::{MockPhase, VitalityGauge},
+    widgets::{BrailleSparkline, VitalityGauge, vitality_to_phase},
 };
 
 /// Home screen with creature silhouette, pipeline progress, and per-task ETA.
@@ -119,10 +122,7 @@ impl Screen for HomeScreen {
             Paragraph::new(vec![
                 Line::from(vec![
                     Span::styled(" tick: ", Style::default().fg(TEXT_DIM)),
-                    Span::styled(
-                        state.tick_count.to_string(),
-                        Style::default().fg(ROSE),
-                    ),
+                    Span::styled(state.tick_count.to_string(), Style::default().fg(ROSE)),
                 ]),
                 Line::from(""),
                 Line::from(Span::styled(
@@ -135,16 +135,8 @@ impl Screen for HomeScreen {
         );
     }
 
-    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
-        match key.code {
-            KeyCode::Char('q') => Some(AppAction::Quit),
-            KeyCode::Tab if key.modifiers.contains(KeyModifiers::SHIFT) => {
-                Some(AppAction::PrevScreen)
-            }
-            KeyCode::Tab => Some(AppAction::NextScreen),
-            KeyCode::BackTab => Some(AppAction::PrevScreen),
-            _ => None,
-        }
+    fn handle_key(&mut self, _key: KeyEvent) -> Option<AppAction> {
+        None
     }
 
     fn on_focus(&mut self) {

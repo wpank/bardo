@@ -31,6 +31,17 @@ pub(crate) enum MockPhase {
     Terminal,
 }
 
+/// Maps a normalized vitality scalar to the scaffold [`MockPhase`] band.
+pub(crate) fn vitality_to_phase(value: f64) -> MockPhase {
+    match value.clamp(0.0, 1.0) {
+        v if v >= 0.85 => MockPhase::Thriving,
+        v if v >= 0.65 => MockPhase::Stable,
+        v if v >= 0.45 => MockPhase::Conservation,
+        v if v >= 0.20 => MockPhase::Declining,
+        _ => MockPhase::Terminal,
+    }
+}
+
 impl MockPhase {
     /// Returns the phase-specific gauge fill color.
     pub(crate) const fn gauge_color(self) -> Color {
@@ -175,6 +186,17 @@ mod tests {
     fn test_vitality_gauge_colors() {
         assert_eq!(MockPhase::Thriving.gauge_color(), SUCCESS);
         assert_eq!(MockPhase::Terminal.gauge_color(), ROSE_BRIGHT);
+    }
+
+    #[test]
+    fn vitality_to_phase_thresholds() {
+        assert_eq!(vitality_to_phase(0.9), MockPhase::Thriving);
+        assert_eq!(vitality_to_phase(0.7), MockPhase::Stable);
+        assert_eq!(vitality_to_phase(0.5), MockPhase::Conservation);
+        assert_eq!(vitality_to_phase(0.25), MockPhase::Declining);
+        assert_eq!(vitality_to_phase(0.0), MockPhase::Terminal);
+        assert_eq!(vitality_to_phase(2.0), MockPhase::Thriving);
+        assert_eq!(vitality_to_phase(-1.0), MockPhase::Terminal);
     }
 
     #[test]

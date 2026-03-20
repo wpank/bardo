@@ -54,7 +54,7 @@ impl Modal {
     pub fn render(&self, frame: &mut Frame<'_>, area: Rect) {
         match self {
             Self::Alert { title, message } => {
-                render_dialog(frame, area, title, message, &["[Enter/Esc] OK"]);
+                render_dialog(frame, area, title, message, &["[Enter/Esc/Space] OK"]);
             }
             Self::Confirm { title, message, .. } => {
                 render_dialog(
@@ -157,9 +157,9 @@ impl ModalManager {
                 Some(action)
             }
             KeyCode::Esc | KeyCode::Char('n') | KeyCode::Char('N') => {
-                let action = on_cancel.clone();
+                let action = on_cancel.as_ref().cloned().unwrap_or(AppAction::CloseModal);
                 self.stack.pop();
-                action
+                Some(action)
             }
             _ => None,
         }
@@ -365,5 +365,113 @@ mod tests {
             Some(Modal::Alert { title, .. }) if title == "Bottom"
         ));
         assert!(!manager.has_modal());
+    }
+
+    #[test]
+    fn modal_confirm_esc_close_modal_when_no_cancel_action() {
+        let mut manager = ModalManager::new();
+        manager.push(Modal::Confirm {
+            title: "Test".into(),
+            message: "Sure?".into(),
+            on_confirm: AppAction::Quit,
+            on_cancel: None,
+        });
+
+        let action = manager.handle_key(key(KeyCode::Esc));
+
+        assert_eq!(action, Some(AppAction::CloseModal));
+        assert!(!manager.has_modal());
+    }
+
+    #[test]
+    fn modal_confirm_char_n_cancels() {
+        let mut manager = ModalManager::new();
+        manager.push(Modal::Confirm {
+            title: "Test".into(),
+            message: "Sure?".into(),
+            on_confirm: AppAction::Quit,
+            on_cancel: Some(AppAction::HideHelp),
+        });
+
+        let action = manager.handle_key(key(KeyCode::Char('n')));
+
+        assert_eq!(action, Some(AppAction::HideHelp));
+        assert!(!manager.has_modal());
+    }
+
+    #[test]
+    fn modal_input_esc_pops_and_close_modal() {
+        let mut manager = ModalManager::new();
+        manager.push(Modal::Input {
+            title: "Name".into(),
+            placeholder: "x".into(),
+            buffer: "abc".into(),
+            on_submit: Box::new(|_| AppAction::Quit),
+        });
+
+        let action = manager.handle_key(key(KeyCode::Esc));
+
+        assert_eq!(action, Some(AppAction::CloseModal));
+        assert!(!manager.has_modal());
+    }
+
+    #[test]
+    fn modal_input_backspace_and_chars() {
+        let mut manager = ModalManager::new();
+        manager.push(Modal::Input {
+            title: "Name".into(),
+            placeholder: "x".into(),
+            buffer: "ab".into(),
+            on_submit: Box::new(|_| AppAction::Quit),
+        });
+
+        assert!(manager.handle_key(key(KeyCode::Backspace)).is_none());
+        let Modal::Input { buffer, .. } = manager.stack.last().expect("modal") else {
+            panic!("expected Input");
+        };
+        assert_eq!(buffer, "a");
+
+        assert!(
+            manager
+                .handle_key(KeyEvent::new(KeyCode::Char('Z'), KeyModifiers::SHIFT))
+                .is_none()
+        );
+        let Modal::Input { buffer, .. } = manager.stack.last().expect("modal") else {
+            panic!("expected Input");
+        };
+        assert_eq!(buffer, "aZ");
+
+        assert!(
+            manager
+                .handle_key(KeyEvent::new(KeyCode::Char('x'), KeyModifiers::CONTROL))
+                .is_none()
+        );
+        let Modal::Input { buffer, .. } = manager.stack.last().expect("modal") else {
+            panic!("expected Input");
+        };
+        assert_eq!(buffer, "aZ");
+    }
+
+    #[test]
+    fn modal_key_routes_to_top_of_stack_only() {
+        let mut manager = ModalManager::new();
+        manager.push(Modal::Alert {
+            title: "Bottom".into(),
+            message: "First".into(),
+        });
+        manager.push(Modal::Confirm {
+            title: "Top".into(),
+            message: "Second".into(),
+            on_confirm: AppAction::Quit,
+            on_cancel: None,
+        });
+
+        let action = manager.handle_key(key(KeyCode::Enter));
+        assert_eq!(action, Some(AppAction::Quit));
+        assert!(manager.has_modal());
+        assert!(matches!(
+            manager.stack.last(),
+            Some(Modal::Alert { title, .. }) if title == "Bottom"
+        ));
     }
 }

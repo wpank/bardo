@@ -15,7 +15,9 @@ pub(crate) mod tabs;
 pub(crate) mod timeline;
 
 pub(crate) use feed::{EventFeed, FeedEntry, FeedLevel};
-pub(crate) use gauge::{AccuracyGauge, ConfidenceGauge, MockPhase, VitalityGauge};
+pub(crate) use gauge::{
+    AccuracyGauge, ConfidenceGauge, MockPhase, VitalityGauge, vitality_to_phase,
+};
 pub(crate) use heatmap::{PheromoneHeatmap, PheromoneLayer};
 pub(crate) use key_help::{KeyBinding, KeyHelpOverlay};
 pub(crate) use progress_bar::TotalProgressBar;
