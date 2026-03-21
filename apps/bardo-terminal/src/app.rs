@@ -113,7 +113,7 @@ impl App {
             self.state.tick_count = self.state.tick_count.wrapping_add(1);
             self.state.atmosphere.tick(dt);
             self.state.progress.tick(dt);
-            if let Some(sys) = self.sys_stats.tick(dt) {
+            if let Some(sys) = self.sys_stats.tick() {
                 self.state.sys = sys;
             }
             terminal.draw(|frame| self.render(frame))?;
