@@ -29,7 +29,7 @@ use crate::{
         TEXT_DIM, TEXT_PRIMARY, WARNING,
     },
     screen::{ScreenId, ScreenRegistry, StubScreen},
-    screens::HomeScreen,
+    screens::{HomeScreen, ProtocolViewsScreen},
     state::{AppAction, AppState, VimDirection, WindowId, format_duration},
     sys_stats::SysStats,
     widgets::{KeyBinding, KeyHelpOverlay},
@@ -60,6 +60,7 @@ impl App {
         for &screen_id in ScreenId::all() {
             match screen_id {
                 ScreenId::HearthOverview => screens.register(Box::new(HomeScreen::new())),
+                ScreenId::ProtocolViews => screens.register(Box::new(ProtocolViewsScreen::new())),
                 other => screens.register(Box::new(StubScreen::new(
                     other,
                     format!("{} / {}", other.window_name(), other.tab_name()),

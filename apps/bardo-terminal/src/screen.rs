@@ -68,6 +68,8 @@ pub(crate) enum ScreenId {
     CommandConfig,
     CommandEffects,
     CommandHermes,
+    /// DeFi protocol overview (Uniswap, lending, vault, bridge widgets).
+    ProtocolViews,
 }
 
 impl ScreenId {
@@ -108,6 +110,7 @@ impl ScreenId {
             | Self::CommandConfig
             | Self::CommandEffects
             | Self::CommandHermes => "COMMAND",
+            Self::ProtocolViews => "PROTOCOLS",
         }
     }
 
@@ -143,11 +146,12 @@ impl ScreenId {
             Self::CommandConfig => "Config",
             Self::CommandEffects => "Effects",
             Self::CommandHermes => "Hermes",
+            Self::ProtocolViews => "Protocols",
         }
     }
 }
 
-const SCREEN_CATALOG: [ScreenId; 29] = [
+const SCREEN_CATALOG: [ScreenId; 30] = [
     ScreenId::HearthOverview,
     ScreenId::HearthSignals,
     ScreenId::HearthOperations,
@@ -177,6 +181,7 @@ const SCREEN_CATALOG: [ScreenId; 29] = [
     ScreenId::CommandConfig,
     ScreenId::CommandEffects,
     ScreenId::CommandHermes,
+    ScreenId::ProtocolViews,
 ];
 
 /// Generic placeholder for screens not yet implemented.
@@ -336,7 +341,7 @@ mod tests {
 
     #[test]
     fn screen_catalog_has_the_expected_size_and_order() {
-        assert_eq!(ScreenId::all().len(), 29);
+        assert_eq!(ScreenId::all().len(), 30);
         let expected = [
             ScreenId::HearthOverview,
             ScreenId::HearthSignals,
@@ -367,6 +372,7 @@ mod tests {
             ScreenId::CommandConfig,
             ScreenId::CommandEffects,
             ScreenId::CommandHermes,
+            ScreenId::ProtocolViews,
         ];
 
         assert_eq!(ScreenId::all(), &expected);

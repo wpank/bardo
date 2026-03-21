@@ -13,6 +13,7 @@ pub(crate) mod gauge;
 pub(crate) mod heatmap;
 pub(crate) mod key_help;
 pub(crate) mod progress_bar;
+pub(crate) mod protocol;
 pub(crate) mod scrolllist;
 pub(crate) mod sparkline;
 pub(crate) mod status_bar;

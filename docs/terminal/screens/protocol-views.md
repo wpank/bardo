@@ -14,7 +14,7 @@ The Protocol Views screen displays a 2×2 grid of DeFi protocol widgets, providi
 
 ## Getting Started
 
-Navigate to the Protocol Views screen using `Tab` or `Shift+Tab` to cycle through screens. Once on the screen:
+Navigate to the Protocol Views screen using `Tab` or `Shift+Tab` to cycle through screens, or jump directly with `7` or `F7` (the PROTOCOLS window). Once on the screen:
 
 - Use arrow keys or `h`/`j`/`k`/`l` to move focus between the four cells
 - The focused cell displays with an active border color
@@ -267,3 +267,43 @@ ProtocolViewsScreen
 ```
 
 The screen is registered in the `ScreenId` enum as `ProtocolViews` and appears in the screen catalog accessible via `Tab` navigation.
+
+## Testing
+
+### Automated tests
+
+Run the full test suite:
+
+```sh
+cargo test -p bardo-terminal --all
+```
+
+Unit tests in `src/screens/protocol_views.rs` cover:
+
+- Screen ID and title match (`ProtocolViews`, `"PROTOCOLS"`)
+- Rendering at 80x24 (standard) and 50x24 (compact) without panic
+- Tab returns `NextScreen`, BackTab returns `PrevScreen`, q returns `Quit`
+- Right-arrow focus cycle: 0 -> 1 -> 2 -> 3 -> 0
+- Left-arrow wrap: 0 -> 3 -> 2 -> ...
+- Down/Up in grid mode moves by 2 (0 <-> 2, 1 <-> 3)
+- Down/Up in compact mode moves by 1
+- Vim keys (h/j/k/l) map to the same navigation as arrow keys
+- `on_focus()` resets focused cell to 0
+- Unknown keys return `None`
+- Mock data fields match expected defaults (ETH/USDC, Aave V3, Beefy, Across)
+
+Integration tests in `tests/integration_protocol_views.rs` verify the binary builds and starts without panicking.
+
+### Manual smoke test
+
+1. `cargo run -p bardo-terminal`
+2. Tab/BackTab to the PROTOCOLS screen
+3. Confirm the 2x2 grid at 80x24: pool (top-left), lending (top-right), vault (bottom-left), bridge (bottom-right)
+4. Verify mock data: pool shows ETH/USDC, lending shows Aave V3, vault shows Beefy, bridge shows Across
+5. Arrow keys move focus (active border highlight changes between cells)
+6. Focus cycles: Right 0->1->2->3->0, Left 0->3->2->1->0, Down/Up 0<->2 and 1<->3
+7. Resize terminal below 60 columns: layout collapses to 1x4 vertical stack
+8. Down key in compact mode navigates 1-by-1
+9. Tab advances to next screen, BackTab goes back, q exits cleanly
+10. No panic on any key or resize
+11. Palette colors (BORDER_ACTIVE, SUCCESS, DANGER, WARNING) are visible on your terminal
