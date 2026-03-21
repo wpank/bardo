@@ -296,7 +296,7 @@ while true; do
 
     # Run bardo-ctl, capturing stderr
     set +e
-    RUST_BACKTRACE=1 $BARDO_CTL_CMD "$@" 2> >(tee "$STDERR_LOG" >&2) &
+    RUST_BACKTRACE=1 $BARDO_CTL_CMD "$@" </dev/tty 2> >(tee "$STDERR_LOG" >&2) &
     child_pid=$!
     wait "$child_pid"
     exit_code=$?
