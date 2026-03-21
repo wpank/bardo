@@ -110,7 +110,7 @@ impl ScreenId {
             | Self::CommandConfig
             | Self::CommandEffects
             | Self::CommandHermes => "COMMAND",
-            Self::ProtocolViews => "PROTOCOLS",
+            Self::ProtocolViews => "PROTOCOL",
         }
     }
 
@@ -146,7 +146,7 @@ impl ScreenId {
             Self::CommandConfig => "Config",
             Self::CommandEffects => "Effects",
             Self::CommandHermes => "Hermes",
-            Self::ProtocolViews => "Protocols",
+            Self::ProtocolViews => "Views",
         }
     }
 }
@@ -381,6 +381,8 @@ mod tests {
             ScreenId::MindTechnicalAnalysis.tab_name(),
             "Technical Analysis"
         );
+        assert_eq!(ScreenId::ProtocolViews.window_name(), "PROTOCOL");
+        assert_eq!(ScreenId::ProtocolViews.tab_name(), "Views");
     }
 
     #[test]

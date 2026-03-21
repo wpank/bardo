@@ -160,6 +160,14 @@ impl App {
             return palette_action_for_key(&self.command_palette, key);
         }
 
+        // Protocol Views uses hjkl and arrows for cell focus. Global bindings include
+        // `h` → Hearth overview and arrow keys → scroll actions; handle local navigation
+        // first so the screen keeps those keys when vim mode is off.
+        if self.active_screen == ScreenId::ProtocolViews && protocol_views_local_navigation_key(key)
+        {
+            return self.forward_key_to_active_screen(key);
+        }
+
         if let Some(action) = self
             .keybindings
             .resolve(key, self.active_screen)
@@ -594,6 +602,24 @@ fn normalize_key_event(key: KeyEvent) -> KeyEvent {
     KeyEvent::new(key.code, key.modifiers)
 }
 
+/// Keys used for focused-cell navigation on the Protocol Views screen.
+fn protocol_views_local_navigation_key(key: KeyEvent) -> bool {
+    if key.modifiers != KeyModifiers::NONE {
+        return false;
+    }
+    matches!(
+        key.code,
+        KeyCode::Left
+            | KeyCode::Right
+            | KeyCode::Up
+            | KeyCode::Down
+            | KeyCode::Char('h')
+            | KeyCode::Char('j')
+            | KeyCode::Char('k')
+            | KeyCode::Char('l')
+    )
+}
+
 fn normalize_modal_action(action: Option<AppAction>) -> Option<AppAction> {
     match action {
         Some(AppAction::CloseModal) => None,
@@ -670,7 +696,7 @@ fn help_bindings() -> Vec<KeyBinding> {
             description: "cycle screens".into(),
         },
         KeyBinding {
-            key: "1-6 / F1-F6".into(),
+            key: "1-7 / F1-F7".into(),
             description: "jump windows".into(),
         },
         KeyBinding {
@@ -708,6 +734,7 @@ const fn screen_for_window(window_id: WindowId) -> ScreenId {
         WindowId::World => ScreenId::WorldSolaris,
         WindowId::Fate => ScreenId::FateMortality,
         WindowId::Command => ScreenId::CommandSteer,
+        WindowId::Protocol => ScreenId::ProtocolViews,
     }
 }
 
@@ -820,6 +847,39 @@ mod tests {
         app.apply_action(AppAction::GotoWindow(WindowId::Command));
 
         assert_eq!(app.active_screen, ScreenId::CommandSteer);
+    }
+
+    #[test]
+    fn app_goto_protocol_window_maps_to_protocol_views() {
+        let mut app = App::new();
+
+        app.apply_action(AppAction::GotoWindow(WindowId::Protocol));
+
+        assert_eq!(app.active_screen, ScreenId::ProtocolViews);
+    }
+
+    #[test]
+    fn app_protocol_views_h_does_not_jump_to_hearth() {
+        let mut app = App::new();
+        app.apply_action(AppAction::GotoWindow(WindowId::Protocol));
+
+        assert_eq!(
+            app.handle_key(KeyEvent::new(KeyCode::Char('h'), KeyModifiers::NONE)),
+            None,
+        );
+        assert_eq!(app.active_screen, ScreenId::ProtocolViews);
+    }
+
+    #[test]
+    fn app_protocol_views_arrow_keys_stay_on_screen() {
+        let mut app = App::new();
+        app.apply_action(AppAction::GotoWindow(WindowId::Protocol));
+
+        assert_eq!(
+            app.handle_key(KeyEvent::new(KeyCode::Down, KeyModifiers::NONE)),
+            None,
+        );
+        assert_eq!(app.active_screen, ScreenId::ProtocolViews);
     }
 
     #[test]

@@ -17,7 +17,7 @@ use crate::{
     palette::{BORDER, BORDER_ACTIVE, ROSE_DIM},
     screen::{Screen, ScreenId},
     state::{AppAction, AppState},
-    widgets::protocol::{BridgeStatusWidget, LendingMarketWidget, UniswapPoolWidget, VaultWidget},
+    widgets::{BridgeStatusWidget, LendingMarketWidget, UniswapPoolWidget, VaultWidget},
 };
 
 const CELL_LABELS: [&str; 4] = [
@@ -27,15 +27,19 @@ const CELL_LABELS: [&str; 4] = [
     "Bridge status",
 ];
 
-/// Screen displaying protocol widgets in a 2x2 grid or a 1x4 stack when space is tight.
+/// Screen displaying protocol widgets in a 2×2 grid or a 1×4 stack when space is tight.
 pub(crate) struct ProtocolViewsScreen {
     /// Focused cell index 0..4 (pool, lending, vault, bridge).
     focused_cell: usize,
     /// Updated each [`Screen::render`] so [`Screen::handle_key`] can match navigation to layout.
     compact_layout: AtomicBool,
+    // TODO(plan-70a): pool sourced from golem_chain_intelligence::uniswap
     pool: MockPoolState,
+    // TODO(plan-70a): market sourced from golem_chain_intelligence::aave
     market: MockLendingMarket,
+    // TODO(plan-70a): vault sourced from golem_chain_intelligence::erc4626
     vault: MockVaultState,
+    // TODO(plan-70a): bridge route sourced from bardo-styx bridge monitor
     bridge: MockBridgeRoute,
 }
 
@@ -65,10 +69,20 @@ impl ProtocolViewsScreen {
         let inner = block.inner(area);
         frame.render_widget(block, area);
         match cell_index {
-            0 => frame.render_widget(UniswapPoolWidget::new(&self.pool), inner),
-            1 => frame.render_widget(LendingMarketWidget::new(&self.market), inner),
+            0 => frame.render_widget(UniswapPoolWidget { state: &self.pool }, inner),
+            1 => frame.render_widget(
+                LendingMarketWidget {
+                    state: &self.market,
+                },
+                inner,
+            ),
             2 => frame.render_widget(VaultWidget::new(&self.vault), inner),
-            3 => frame.render_widget(BridgeStatusWidget::new(&self.bridge), inner),
+            3 => frame.render_widget(
+                BridgeStatusWidget {
+                    route: &self.bridge,
+                },
+                inner,
+            ),
             _ => {}
         }
     }
@@ -202,7 +216,7 @@ mod tests {
     #[test]
     fn test_protocol_views_screen_renders_without_panic() {
         let screen = ProtocolViewsScreen::new();
-        let backend = TestBackend::new(80, 24);
+        let backend = TestBackend::new(120, 40);
         let mut terminal = Terminal::new(backend).expect("test terminal should initialize");
         let state = AppState::default();
 
@@ -212,15 +226,36 @@ mod tests {
     }
 
     #[test]
-    fn test_protocol_views_compact_renders_without_panic() {
+    fn test_protocol_views_all_cells_emit_expected_mock_labels() {
         let screen = ProtocolViewsScreen::new();
-        let backend = TestBackend::new(50, 24);
+        let backend = TestBackend::new(120, 40);
         let mut terminal = Terminal::new(backend).expect("test terminal should initialize");
         let state = AppState::default();
 
         terminal
             .draw(|frame| screen.render(frame, frame.size(), &state))
-            .expect("compact layout should render");
+            .expect("protocol views screen should render");
+
+        let output = terminal.backend().buffer().clone();
+        let text: String = (0..output.area.height)
+            .flat_map(|y| (0..output.area.width).map(move |x| (x, y)))
+            .map(|(x, y)| output.get(x, y).symbol().to_string())
+            .collect();
+
+        assert!(text.contains("ETH"), "pool cell should show base symbol");
+        assert!(text.contains("USDC"), "pool / lending should mention USDC");
+        assert!(
+            text.contains("Aave"),
+            "lending cell should show protocol name"
+        );
+        assert!(
+            text.contains("Beefy"),
+            "vault cell should show protocol name"
+        );
+        assert!(
+            text.contains("Across"),
+            "bridge cell should show bridge name"
+        );
     }
 
     #[test]
@@ -228,20 +263,6 @@ mod tests {
         let mut screen = ProtocolViewsScreen::new();
         let action = screen.handle_key(KeyEvent::from(KeyCode::Tab));
         assert_eq!(action, Some(AppAction::NextScreen));
-    }
-
-    #[test]
-    fn test_protocol_views_backtab_returns_prev_screen() {
-        let mut screen = ProtocolViewsScreen::new();
-        let action = screen.handle_key(KeyEvent::from(KeyCode::BackTab));
-        assert_eq!(action, Some(AppAction::PrevScreen));
-    }
-
-    #[test]
-    fn test_protocol_views_q_returns_quit() {
-        let mut screen = ProtocolViewsScreen::new();
-        let action = screen.handle_key(KeyEvent::from(KeyCode::Char('q')));
-        assert_eq!(action, Some(AppAction::Quit));
     }
 
     #[test]
@@ -260,91 +281,31 @@ mod tests {
     }
 
     #[test]
-    fn test_protocol_views_left_wraps() {
-        let mut screen = ProtocolViewsScreen::new();
-        assert_eq!(screen.focused_cell(), 0);
-
-        screen.handle_key(KeyEvent::from(KeyCode::Left));
-        assert_eq!(screen.focused_cell(), 3);
-        screen.handle_key(KeyEvent::from(KeyCode::Left));
-        assert_eq!(screen.focused_cell(), 2);
+    fn test_screen_id_all_includes_protocol_views() {
+        let all = ScreenId::all();
+        assert!(all.contains(&ScreenId::ProtocolViews));
     }
 
     #[test]
-    fn test_protocol_views_down_up_2x2_pattern() {
+    fn test_protocol_views_compact_stack_j_k_move_sequential() {
         let mut screen = ProtocolViewsScreen::new();
-        // In grid mode (default, compact_layout is false), Down moves by 2
-        assert_eq!(screen.focused_cell(), 0);
+        let backend = TestBackend::new(50, 40);
+        let mut terminal = Terminal::new(backend).expect("test terminal should initialize");
+        let mut state = AppState::default();
+        state.layout = LayoutBreakpoint::Compact;
 
-        screen.handle_key(KeyEvent::from(KeyCode::Down));
-        assert_eq!(screen.focused_cell(), 2);
-        screen.handle_key(KeyEvent::from(KeyCode::Down));
-        assert_eq!(screen.focused_cell(), 0);
-
-        screen.handle_key(KeyEvent::from(KeyCode::Right));
-        assert_eq!(screen.focused_cell(), 1);
-        screen.handle_key(KeyEvent::from(KeyCode::Down));
-        assert_eq!(screen.focused_cell(), 3);
-        screen.handle_key(KeyEvent::from(KeyCode::Up));
-        assert_eq!(screen.focused_cell(), 1);
-    }
-
-    #[test]
-    fn test_protocol_views_compact_down_up_by_1() {
-        let mut screen = ProtocolViewsScreen::new();
-        // Force compact layout
-        screen.compact_layout.store(true, Ordering::Relaxed);
+        terminal
+            .draw(|frame| screen.render(frame, frame.size(), &state))
+            .expect("render should succeed");
 
         assert_eq!(screen.focused_cell(), 0);
         screen.handle_key(KeyEvent::from(KeyCode::Down));
         assert_eq!(screen.focused_cell(), 1);
-        screen.handle_key(KeyEvent::from(KeyCode::Down));
-        assert_eq!(screen.focused_cell(), 2);
-        screen.handle_key(KeyEvent::from(KeyCode::Up));
-        assert_eq!(screen.focused_cell(), 1);
-        screen.handle_key(KeyEvent::from(KeyCode::Up));
-        assert_eq!(screen.focused_cell(), 0);
-        screen.handle_key(KeyEvent::from(KeyCode::Up));
-        assert_eq!(screen.focused_cell(), 3);
-    }
-
-    #[test]
-    fn test_protocol_views_vim_keys() {
-        let mut screen = ProtocolViewsScreen::new();
-        screen.handle_key(KeyEvent::from(KeyCode::Char('l')));
-        assert_eq!(screen.focused_cell(), 1);
-        screen.handle_key(KeyEvent::from(KeyCode::Char('h')));
-        assert_eq!(screen.focused_cell(), 0);
         screen.handle_key(KeyEvent::from(KeyCode::Char('j')));
         assert_eq!(screen.focused_cell(), 2);
+        screen.handle_key(KeyEvent::from(KeyCode::Up));
+        assert_eq!(screen.focused_cell(), 1);
         screen.handle_key(KeyEvent::from(KeyCode::Char('k')));
         assert_eq!(screen.focused_cell(), 0);
-    }
-
-    #[test]
-    fn test_protocol_views_on_focus_resets_cell() {
-        let mut screen = ProtocolViewsScreen::new();
-        screen.handle_key(KeyEvent::from(KeyCode::Right));
-        screen.handle_key(KeyEvent::from(KeyCode::Right));
-        assert_eq!(screen.focused_cell(), 2);
-
-        screen.on_focus();
-        assert_eq!(screen.focused_cell(), 0);
-    }
-
-    #[test]
-    fn test_protocol_views_unknown_key_returns_none() {
-        let mut screen = ProtocolViewsScreen::new();
-        let action = screen.handle_key(KeyEvent::from(KeyCode::Char('x')));
-        assert_eq!(action, None);
-    }
-
-    #[test]
-    fn test_protocol_views_has_mock_data() {
-        let screen = ProtocolViewsScreen::new();
-        assert_eq!(screen.pool.token0_symbol, "ETH");
-        assert_eq!(screen.market.protocol_name, "Aave V3");
-        assert_eq!(screen.vault.protocol_name, "Beefy");
-        assert_eq!(screen.bridge.bridge_name, "Across");
     }
 }

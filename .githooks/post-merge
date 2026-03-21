@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# After a merge, remove any stale circular symlinks for plans/ and prd2/
+# that worktree branches occasionally reintroduce, and ensure the real
+# directories exist on disk.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+for dir in plans prd2; do
+  target="$REPO_ROOT/$dir"
+  if [[ -L "$target" ]]; then
+    rm "$target"
+    mkdir -p "$target"
+    echo "bardo: removed circular symlink $dir/ and restored real directory"
+  fi
+  # Drop from index if tracked (no-op if already untracked)
+  git rm --cached --quiet "$dir" 2>/dev/null || true
+done

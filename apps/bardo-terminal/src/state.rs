@@ -458,6 +458,8 @@ pub(crate) enum WindowId {
     World,
     Fate,
     Command,
+    /// DeFi protocol overview (matches `ScreenId::ProtocolViews` / PROTOCOL chrome).
+    Protocol,
 }
 
 /// Vim directional navigation commands.
@@ -553,6 +555,7 @@ mod tests {
             WindowId::World,
             WindowId::Fate,
             WindowId::Command,
+            WindowId::Protocol,
         ];
         let directions = [
             VimDirection::Up,
@@ -561,7 +564,7 @@ mod tests {
             VimDirection::Right,
         ];
 
-        assert_eq!(windows.len(), 6);
+        assert_eq!(windows.len(), 7);
         assert_eq!(directions.len(), 4);
         assert_eq!(WindowId::Hearth, WindowId::Hearth);
         assert_eq!(VimDirection::Left, VimDirection::Left);

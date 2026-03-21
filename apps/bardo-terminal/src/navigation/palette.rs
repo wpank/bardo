@@ -281,6 +281,12 @@ pub fn default_commands() -> Vec<Command> {
             keybinding: Some("F6".into()),
         },
         Command {
+            name: "PROTOCOL".into(),
+            description: "Go to PROTOCOL window (protocol views)".into(),
+            action: AppAction::GotoWindow(WindowId::Protocol),
+            keybinding: Some("F7".into()),
+        },
+        Command {
             name: "Toggle Help".into(),
             description: "Show/hide keybinding hints".into(),
             action: AppAction::ShowHelp,
@@ -381,6 +387,11 @@ mod tests {
             commands
                 .iter()
                 .any(|command| command.action == AppAction::GotoWindow(WindowId::Command))
+        );
+        assert!(
+            commands
+                .iter()
+                .any(|command| command.action == AppAction::GotoWindow(WindowId::Protocol))
         );
         assert!(
             commands

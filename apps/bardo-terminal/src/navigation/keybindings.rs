@@ -98,6 +98,12 @@ impl KeybindingMap {
         );
         bind(
             &mut global,
+            KeyCode::Char('7'),
+            KeyModifiers::NONE,
+            AppAction::GotoWindow(WindowId::Protocol),
+        );
+        bind(
+            &mut global,
             KeyCode::Char('h'),
             KeyModifiers::NONE,
             AppAction::GotoScreen(ScreenId::HearthOverview),
@@ -194,6 +200,12 @@ impl KeybindingMap {
         );
         bind(
             &mut global,
+            KeyCode::F(7),
+            KeyModifiers::NONE,
+            AppAction::GotoWindow(WindowId::Protocol),
+        );
+        bind(
+            &mut global,
             KeyCode::Up,
             KeyModifiers::NONE,
             AppAction::ScrollUp,
@@ -244,9 +256,25 @@ impl KeybindingMap {
         self.per_screen
             .get(&screen)
             .and_then(|bindings| bindings.get(&key))
-            .or_else(|| self.global.get(&key))
+            .or_else(|| {
+                if global_binding_suppressed_for_screen(screen, &key) {
+                    return None;
+                }
+                self.global.get(&key)
+            })
             .cloned()
     }
+}
+
+/// Returns true when a global shortcut must not fire so the active screen can handle the key.
+///
+/// [`ScreenId::ProtocolViews`] uses vim-style `h` for moving focus; the default global map also binds
+/// plain `h` to jump HEARTH, which would otherwise win in [`KeybindingMap::resolve`] and never reach
+/// [`crate::screens::protocol_views::ProtocolViewsScreen`].
+fn global_binding_suppressed_for_screen(screen: ScreenId, key: &KeyEvent) -> bool {
+    screen == ScreenId::ProtocolViews
+        && key.modifiers == KeyModifiers::NONE
+        && matches!(key.code, KeyCode::Char('h'))
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -407,6 +435,7 @@ fn parse_window_id(input: &str) -> Option<WindowId> {
         "world" => Some(WindowId::World),
         "fate" => Some(WindowId::Fate),
         "command" => Some(WindowId::Command),
+        "protocol" => Some(WindowId::Protocol),
         _ => None,
     }
 }
@@ -472,6 +501,32 @@ mod tests {
                 ScreenId::HearthOverview
             ),
             Some(AppAction::GotoWindow(WindowId::Hearth))
+        );
+        assert_eq!(
+            bindings.resolve(
+                KeyEvent::new(KeyCode::F(7), KeyModifiers::NONE),
+                ScreenId::HearthOverview
+            ),
+            Some(AppAction::GotoWindow(WindowId::Protocol))
+        );
+        assert_eq!(
+            bindings.resolve(
+                KeyEvent::new(KeyCode::Char('7'), KeyModifiers::NONE),
+                ScreenId::MindPipeline
+            ),
+            Some(AppAction::GotoWindow(WindowId::Protocol))
+        );
+    }
+
+    #[test]
+    fn keybinding_protocol_views_skips_global_h_jump_to_hearth() {
+        let bindings = KeybindingMap::default_bindings();
+        let h = KeyEvent::new(KeyCode::Char('h'), KeyModifiers::NONE);
+
+        assert_eq!(bindings.resolve(h, ScreenId::ProtocolViews), None);
+        assert_eq!(
+            bindings.resolve(h, ScreenId::MindPipeline),
+            Some(AppAction::GotoScreen(ScreenId::HearthOverview))
         );
     }
 
