@@ -3,16 +3,16 @@
 ## Recent Commits
 
 ```
+7e39376 chore: update Cargo.lock from release build
+072af27 fix(terminal): remove invalid dt argument from sys_stats.tick() call
+9578168 docs: agent pre-warming & gate-review overlap implementation summary
+b0d2af4 plan(02): 02-core-types
 56fcb1c update crates claude files
 3238e34 update gitignore
 cd31186 add bardo supervisor
 91ddd01 Merge branch 'codex/batch/20260321' into codex/plan/07-terminal-protocol-views
 3bde28c plan(07): 07-terminal-protocol-views
 e9ce770 remove circular symlinks plans and prd2 (again)
-dbe8a63 plan(04): 04-terminal-scaffold
-cf35ecf remove circular self-referencing symlinks for plans and prd2
-61ba8fd plan(07): 07-terminal-protocol-views
-f8201ba Merge branch 'codex/batch/20260321' into codex/plan/06-terminal-navigation
 
 ```
 
@@ -20,11 +20,6 @@ f8201ba Merge branch 'codex/batch/20260321' into codex/plan/06-terminal-navigati
 
 ```
  M AGENTS.md
- M Cargo.toml
- M apps/bardo-terminal/src/app.rs
-?? WARMING_IMPLEMENTATION_SUMMARY.md
-?? WARMING_NEXT_STEPS.md
-?? WARMING_VERIFICATION.md
 
 ```
 

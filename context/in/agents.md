@@ -1,49 +1,60 @@
 # Bardo — Agent Instructions
 
-> Every agent session starts cold. Files on disk are the only memory. Write context files as if the reader has amnesia.
+> Every agent session starts cold. The files on disk are the only memory. Write context files as if the reader has amnesia.
 
 ---
 
 ## Repository Layout
 
 ```
-prd2/           Read-only product spec. NEVER modify.
+prd2/           Read-only product spec (334 files, ~230K lines). NEVER modify.
 plans/          Implementation plans + cross-plan state.
-  CONTEXT.md      Cross-plan registry: types, boundaries, decisions.
+  CONTEXT.md      Cross-plan registry: types, crate boundaries, decisions. Read first, append at end.
   context/
-    tasks/{num}-tasks.toml              Task checklists with acceptance criteria
-    briefs/{num}-brief.md               Execution brief per plan
-    workspace-map.md                    Pre-generated file tree (use instead of find/ls)
-    preflight-snapshot.md               Git log, compile status, test baseline
-    prd2-extracts/{num}-prd2.md         Pre-extracted PRD2 sections
-    reviews/                            Reviewer feedback and archived iterations
+    last-completed.md       Summary from previous plan. Overwritten by each plan.
+    ignored-tests.md        Ledger of #[ignore] tests. Check on entry, update on exit.
+    workspace-map.md        Pre-generated file tree. Read instead of running find/ls.
+    preflight-snapshot.md   Git log, compile status, test count. Generated before each plan.
+    prd2-extracts/          Pre-extracted, budget-allocated PRD2 sections per plan ({num}-prd2.md).
+    decompositions/         Pre-generated step-by-step breakdowns per plan ({num}-decomposition.md).
+    verify-chains/          Executable invariant test scripts per plan ({num}-verify.sh), when generated.
+    briefs/                 Execution briefs per plan ({num}-brief.md), written by the Strategist in bardo-ctl (not by bardo-enrich.sh).
+    tasks/                  Task checklists: {num}-tasks.toml, {num}-verify-tasks.toml, plus {num}-review-tasks.toml / {num}-scribe-tasks.toml when generated.
+    reviews/                Reviewer feedback and archived iterations.
+    docs/                   Scribe documentation ({num}-docs.md).
 crates/         Rust workspace. All implementation code.
-docs/           mdbook documentation.
+docs/           mdbook documentation. Updated by each plan after code is written.
 tmp/            Scratch space. Not committed.
 ```
 
+### Context enrichment (scripts in this repo)
+
+From the repository root:
+
+- **`./bardo-enrich.sh`** — Runs [`plans/context/prompts/enhance-toml.sh`](plans/context/prompts/enhance-toml.sh) for each selected plan that already has `plans/context/tasks/NN-tasks.toml`. Pass **`--enhance-plan`** to also run [`enhance-plan.sh`](plans/context/prompts/enhance-plan.sh) (only useful when optional inputs exist under `plans/context/`, e.g. decompositions, verification drafts). Supports `--all`, `--range START-END`, `--parallel N`, `--dry-run`. Defaults: `BACKEND=cursor`, `MODEL_CURSOR=composer-2-fast`.
+- **`bash plans/context/prompts/enhance-toml.sh NN`** — Enrich a single `NN-tasks.toml`.
+- **`bash plans/context/prompts/enhance-plan.sh NN`** — LLM pass over `plans/NN-*.md` using whatever generated context files are present.
+- **`bash plans/context/prompts/crate-claude-md.sh <crate>`** — Regenerate `crates/<crate>/CLAUDE.md`.
+- **`./scripts/bardo-sync-context.sh`** — Regenerate `plans/context/workspace-map.md` and `plans/context/preflight-snapshot.md` (optional: `SKIP_CARGO_CHECK=1` for git-only). Invoked from `./bardo-ctl.sh` before the TUI starts unless the script is missing.
+- **`bash plans/context/prompts/retrofit-tomls.sh`** — Deterministic sync of plan `## Verification` INV blocks into `test_invariants` on `NN-tasks.toml` / `NN-verify-tasks.toml` (no LLM). Use `--all` or pass plan numbers; optional `--parallel N`.
+- **`bash plans/context/prompts/context-distiller.sh`** — Write `plans/context/bundles/NN-bundle.md` per plan (`--all` or plan nums).
+- **`bash plans/context/prompts/golden-path-index.sh`** — Write `plans/context/golden-path-index.json` from crate `CLAUDE.md` files.
+- **`bash plans/context/prompts/plan-readiness-check.sh NN`** — Print `MISSING:` lines for expected context artifacts.
+- **`bash plans/context/prompts/sync-last-completed.sh`** — Refresh `last-completed.md` from the newest `plans/context/completion/*.md`.
+- **`bash plans/context/prompts/review-context-builder.sh`** — Write `plans/context/review-context/NN-review-context.md` (CONTEXT + review/verify TOMLs + prior reviews + verify-chain) for Architect/Auditor. `--all`, `--parallel N`. Plan keys match primary `NN-tasks.toml` only (not `*-review-tasks` / `*-scribe-tasks`).
+- **`bash plans/context/prompts/generate-briefs.sh`** — Write `plans/context/briefs/NN-brief.md` for each primary plan (no LLM): pulls Prerequisites, Imports, Quick Reference, Verification excerpts from the plan file plus pointers to PRD2/decomposition/tasks. `--all`, `--parallel N`. Replace or refine with a Strategist/LLM pass when you need deeper dependency proofs.
+
+`bardo-enrich.sh` does **not** generate PRD2 extracts, decompositions, or verify-chain shell scripts; those live under `plans/context/` only if you create them by other means.
+
+### Worktrees
+
+Each worktree receives **physical copies** of `plans/`, `prd2/`, and `AGENTS.md` at creation time. There are no symlinks. Context artifacts (briefs, decompositions, prd2-extracts, verify-chains) are readable within the worktree but writes do not propagate back to main until the branch merges.
+
 ## Your Role
 
-Your role (Implementer, Architect, Auditor, Scribe, etc.) is defined in the **turn message**. Follow it exactly.
-
----
-
-## Reviewer Contract (Read Before You Start)
-
-**The reviewer will check all of these.** Fail any one → REVISE → iteration cycle.
-
-1. `cargo check --workspace` — **zero errors**. If this fails, do not check any other criterion — fix compilation first.
-2. `cargo test -p <crates>` — all new tests pass
-3. Every export in the plan's Exports table exists in source
-4. Every Cargo.toml entry in "Cargo Dependencies" matches exactly
-5. Every config file the plan specifies matches the plan's exact content
-6. Every Quick Reference struct/fn/enum matches verbatim
-7. Every INV-NNN has a `test_fn` that exists and passes
-8. Every Gitbook Documentation page in the plan exists in `docs/src/`
-
-If you pass all eight before finishing, you will not be asked to revise.
-
----
+Your specific role (Implementer, Architect, Auditor, Scribe, Critic, etc.) is
+defined in the **turn message** you receive at the start of your session. There are no
+per-role files to read — your instructions are the turn message itself. Follow them exactly.
 
 ## Universal Rules (All Agents)
 
@@ -54,38 +65,38 @@ If you pass all eight before finishing, you will not be asked to revise.
 5. **Read preflight-snapshot.md for ambient state.** It tells you git history, compile status, and test count. Don't re-run those commands to discover information already there.
 6. **Write for amnesia.** Every context file you produce must be self-contained. The next session has zero memory of yours.
 
-## Authority Chain
+## Git Branch Awareness
 
-When context files conflict, this is the precedence order. Higher items win:
+You are running on branch `codex/plan/NN-name`, created by `run-plans.sh` before your session. When you finish, the shell will commit your work, merge into the batch branch, tag it, and delete the plan branch. You never see any of this — just write files and stop.
 
-1. **Turn message** — your role instructions. Always.
-2. **Quick Reference** (`#### Quick Reference` in each plan unit) — authoritative for Rust types, struct shapes, field names, function signatures, enum variants. If a plan QR says `pub fn foo(&self) -> Bar`, implement exactly that.
-3. **`plans/context/tasks/NN-tasks.toml`** — authoritative for what to implement, in what order, and what acceptance criteria to verify.
-4. **Plan file** (`plans/NN-*.md`) prose — authoritative for intent, rationale, and implementation notes. Read it for context; follow QR and TOML for specifics.
-5. **PRD2 spec** — authoritative for business logic, domain formulas, threshold values, and behavioral semantics NOT specified in the QR or plan prose. If the plan QR and PRD2 disagree on a field name, follow QR. If they disagree on a formula constant, follow PRD2.
-6. **Brief, decomposition, bundles** — orientation documents. They summarize the above; they do not override them. When a brief or decomposition contradicts the plan or TOML, the plan/TOML wins.
-
-Any deviation from the plan's Quick Reference must be documented in your completion report.
-
+---
 
 # Implementer Protocol
 
 When given a task like "Implement the plan at plans/NN-name.md", follow this protocol exactly.
 
-## Phase 0: Orient (Read Before You Touch Anything)
+## Implementer Mindset
 
-**Mandatory — read these FIRST, in this order:**
+You have one pass. Implement all units, write all tests, write all docs — then compile. Do not stop mid-implementation to recheck, re-read, or reconsider. If something is slightly off mid-way, adjust and keep moving. Make the simplest reasonable choice on ambiguity, document it, and continue.
 
-1. **`tmp/agent-messages.md`** — If non-empty, read FIRST. Conductor steering that supersedes other instructions.
-2. **`plans/context/briefs/NN-brief.md`** — Single entry point. Contains: Quick Reference signatures, task order, prerequisites, risk flags, INV tests.
-3. **`plans/context/tasks/NN-tasks.toml`** — Authoritative for what to implement and acceptance criteria.
-4. The **plan file** (`plans/NN-*.md`) — Full spec. Quick Reference sections are your implementation spec.
-5. **`plans/CONTEXT.md`** — Cross-plan state: existing types, deviations, decisions.
+**Speed and first-pass correctness are your only goals.** Review cycles are expensive. Every mid-implementation `cargo check`, every re-read of a file you already skimmed, every pause to reconsider a design — that is time you are not shipping code. Commit to the plan. Ship the code. Compile once at the end.
 
-Also use (when needed):
-- `plans/context/workspace-map.md` — Use instead of `find`/`ls`.
-- `plans/context/preflight-snapshot.md` — Use instead of running `git log`/`cargo check`.
-- `plans/context/prd2-extracts/NN-prd2.md` — Pre-extracted PRD2 sections.
+## Phase 0: Orient (Skim Before You Code)
+
+Read these four files before writing any code. Read them once. Do not re-read them during implementation unless you hit a concrete blocker.
+
+1. **`plans/context/workspace-map.md`** — File tree by crate. This is your `find`/`ls`. Do not run file discovery commands.
+2. **`plans/context/briefs/NN-brief.md`** — Execution brief. Your most important pre-read. Dependencies, patterns, risks, and conflict scan. If the brief flags a missing type or pattern mismatch, address it proactively in your implementation — do not stop mid-way to investigate.
+3. **The plan file** — Cover to cover. The Quick Reference sections are your implementation spec.
+4. **`plans/context/tasks/NN-tasks.toml`** — Authoritative task list: parallel groups, file assignments, acceptance criteria.
+
+If you need cross-plan state, check `plans/CONTEXT.md`. If you need PRD2 context beyond what the brief covers, check `plans/context/prd2-extracts/NN-prd2.md`. Check `tmp/agent-messages.md` if it exists. Read these only when the brief or plan points you there — do not pre-read them.
+
+**After reading, verify (quickly):**
+- Prerequisites listed in the plan are marked complete in CONTEXT.md.
+- No files your plan creates already exist (brief's conflict scan covers this).
+
+Then start coding immediately.
 
 ## Phase 1: Implement Each Unit of Work (In Order)
 
@@ -106,44 +117,30 @@ Before writing, understand what exists:
 - **Match existing workspace patterns.** The brief's Pattern Alignment section tells you what those are. If the brief says "error types follow `thiserror` enums in `golem-core/src/error.rs`", match that exactly.
 - Use `pub(crate)` by default. Only `pub` for cross-crate API specified in the plan's Exports section.
 - Every public item gets a doc comment.
-
-#### Config Literal Check (after each unit)
-If this unit writes or modifies any non-Rust file (Cargo.toml, .cargo/config.toml, rustfmt.toml, justfile, build.rs, etc.):
-- Re-read the written file immediately after writing it
-- Compare line-by-line against the plan's spec for that file
-- Do not rely on memory — open both and diff them
-
-Common literal misses:
-- `optional = true` omitted from a Cargo dependency
-- `rustc-wrapper` or other dev keys left uncommented when the plan says to comment them
-- Missing CLI flags in justfile recipes (e.g. `--follow`, `--rpc-url`)
-- Missing fields in rustfmt.toml (e.g. `imports_granularity`, `group_imports`)
+- **Do not run `cargo check` between units.** If you hit a compilation question mid-implementation, make your best judgment and keep moving — you will compile the whole workspace at the end.
 
 ### 1d. Write Tests
 - Unit tests: `#[cfg(test)]` module in the same file.
 - Integration tests: `tests/` directory in the crate.
 - If a test depends on a future plan, mark it `#[ignore]` with `// TODO(plan-NN): requires <system>`.
 - Add ignored tests to `plans/context/ignored-tests.md`.
-- **Actually run your tests.** Do not just write them and assume they pass.
 - **Check `plans/context/verify-chains/NN-verify.sh`** — each `INV-NNN` block in the plan has an expected test function name listed there. Implement exactly those test functions. The Auditor runs this script; if your tests aren't there or fail, you will get `[S-N]` blocking issues.
 
-### 1e. Compilation Gate
-Run `cargo check --workspace` after each unit. **Do not proceed with a broken workspace.** Fix the error, even if it means adjusting your code to match what actually exists rather than what the plan assumed.
-
-### 1f. Test Gate
-Run `cargo test -p <your-crate>`. Fix failures in your code. If failures are in pre-existing tests you didn't modify, note them but continue.
-
-### 1g. Write Documentation
+### 1e. Write Documentation
 Write mdbook pages per the plan's Gitbook Documentation section. Place in `docs/`. **Document what you ACTUALLY built, not what the plan intended.** If you deviated, the docs reflect reality.
 
-### 1h. Checkpoint
+### 1f. Checkpoint
 Call `update_plan` after each unit with a brief status note. This is your safety net against context compaction.
 
 ## Phase 2: Completion
 
 After all units are done:
 
-### 2a. Append to `plans/CONTEXT.md`
+### 2a. Compile and Test Gate (First and Only)
+
+Run `cargo check --workspace`. This is your first compile — you haven't run it yet, and that's correct. Fix errors. Then run `cargo test -p <your-crate>`. Fix failures in your code. If failures are in pre-existing tests you didn't modify, note them and continue.
+
+### 2b. Append to `plans/CONTEXT.md`
 
 ```markdown
 ## Plan NN: [Name] — Completed [YYYY-MM-DD]
@@ -166,7 +163,7 @@ After all units are done:
 - cargo test: N pass, N fail, N ignored
 ```
 
-### 2b. Overwrite `plans/context/last-completed.md`
+### 2c. Overwrite `plans/context/last-completed.md`
 
 ```markdown
 # Last Completed: Plan NN — [Name]
@@ -194,57 +191,28 @@ After all units are done:
 - Un-ignored tests: [list]
 ```
 
-### 2c. Update `plans/context/ignored-tests.md`
+### 2d. Update `plans/context/ignored-tests.md`
 - Add entries for new `#[ignore]` tests: `test_name | crate | reason | unblock_plan`
 - Remove entries for tests you un-ignored.
 
-### 2d. Final Verification
+### 2e. Final Verification
 Run `cargo test --workspace`. Record pass/fail/ignore counts in both CONTEXT.md and last-completed.md. This is the number reviewers will check against.
-
-Then verify:
-
-9e. **Cargo literal check:** For each entry in the plan's "Cargo Dependencies" section, read the actual Cargo.toml and verify: package name, `optional`, `features`, `workspace = true`. Write `cargo_toml_verified = true/false` in selfcheck.toml.
-
-9f. **Config file literal check:** For each non-Rust file the plan specifies, read the file and verify content matches plan spec. Write `config_files_verified = true/false` in selfcheck.toml.
-
-9g. **Quick Reference literal check:** For each type/function/constant in plan's Quick Reference, verify field names, signatures, and enum variants match verbatim. Write `qr_verified = true/false` in selfcheck.toml.
-
-### 2e. Internal Iteration — Do Not Declare Done Until Clean
-
-You are the first reviewer of your own work. Do not hand off to the reviewer until you can answer YES to every check below. If any check fails, fix it and repeat the loop.
-
-**The iteration loop:**
-
-1. Run `cargo check --workspace` — must be zero errors. If fails: fix and restart from step 1.
-2. Run `cargo test -p <crate>` for each affected crate — all new tests pass. If fails: fix and restart from step 1.
-3. Write selfcheck.toml. All fields must be `true`. If any false: fix the failing check and restart from step 1.
-4. For each task in NN-tasks.toml — verify each acceptance criterion is met. If any unmet: implement it and restart from step 1.
-5. If `plans/context/verify-chains/NN-verify.sh` exists — run it; all checks must pass. If fails: fix and restart from step 1.
-
-**You are done when:**
-- selfcheck.toml shows: `compilation = true`, `tests = true`, `exports_verified = true`, `doc_pages_exist = true`, `cargo_toml_verified = true`, `config_files_verified = true`, `qr_verified = true`
-- Every task in NN-tasks.toml has all acceptance criteria met
-- Verify chain script passes (or doesn't exist)
-- `plans/CONTEXT.md` has been appended with completion info
-- `plans/context/last-completed.md` has been overwritten with handoff summary
-- `plans/context/ignored-tests.md` has been updated
-
-Only then write your completion report and end your turn. Do not declare done with a failing selfcheck or incomplete tasks.
 
 ---
 
 # Fix Cycle Protocol (Iteration 2+)
 
-When your task prompt contains `FIX CYCLE — ITERATION N`, you are NOT re-implementing the plan. You are surgically fixing blocking issues raised by reviewers.
+When your task prompt contains `FIX CYCLE — ITERATION N`, you are NOT re-implementing the plan. You are surgically fixing blocking issues. Go straight to the code. Each fix is traceable to a specific issue ID and should take minutes, not hours. Do not re-read the entire plan. Do not re-orient from scratch. The reviews tell you exactly what's broken — open those files and fix them.
 
 ## Scope Rules
 
 1. **Read the reviews first.** Open `plans/context/reviews/NN-arch-review.md` and `NN-spec-review.md`. Items marked `- [ ]` (unchecked) are unresolved.
 2. **Read the updated brief.** Open `plans/context/briefs/NN-brief.md` section 6. It summarizes each unresolved issue with a concrete remediation action.
-3. **Fix ONLY blocking issues.** Read the issue's `fix_hint` first. If present, follow it literally — do not redesign. If absent, use the issue's `file` and `line` fields to locate exactly where to change. Do not widen scope beyond what the issue describes.
+3. **Fix ONLY blocking issues.** Each fix should be traceable to a specific `[B-N]` or `[S-N]` issue ID.
 4. **Do not refactor unrelated code.** Do not "improve" things that weren't flagged. Do not reorganize modules. Do not add features.
 5. **Do not re-run the entire plan.** You are patching, not rebuilding.
-6. **After fixes:** Update the completion report in CONTEXT.md (amend the existing report, don't create a duplicate). Update last-completed.md. Run `cargo check --workspace` and `cargo test -p <crate>`.
+6. **Do not re-read for orientation.** You already have context. Open the specific files mentioned in the reviews and fix the specific conditions described. Re-reading everything from scratch wastes time and triggers the same over-thinking loop.
+7. **After fixes:** Update the completion report in CONTEXT.md (amend the existing report, don't create a duplicate). Update last-completed.md. Run `cargo check --workspace` and `cargo test -p <crate>`.
 
 ## What Counts as "Fixed"
 
@@ -311,35 +279,112 @@ If your context fills up mid-plan (you've processed many units and have extensiv
 
 ---
 
+# Multi-Agent Orchestration
+
+## Pipeline
+
+```
+┌──────────┐   ┌──────────────┐   ┌─────────────┐   ┌──────────────┐
+│Strategist│──▶│ Implementer  │──▶│Arch Reviewer │──▶│ Spec Auditor │
+│  (brief) │   │ (code+tests) │   │  (quality)   │   │  (fidelity)  │
+└──────────┘   └──────────────┘   └──────┬───────┘   └──────┬───────┘
+                                         │                    │
+                                    Both APPROVE? ────────────┘
+                                     │         │
+                                    YES        NO
+                                     │         │
+                                  commit    archive reviews
+                                             ↓
+                                    ┌──────────┐
+                                    │Strategist│ (integrate feedback)
+                                    │  re-run  │
+                                    └────┬─────┘
+                                         ↓
+                                    Implementer fix cycle
+                                         ↓
+                                    Both reviewers re-run
+                                         ↓
+                                    (repeat up to MAX_REVIEW_ITERATIONS)
+```
+
+## Agent Roles
+
+| Agent | Runs | Reads | Writes | Checks |
+|-------|------|-------|--------|--------|
+| **Strategist** | Before implementation | Plan, CONTEXT.md, workspace-map, preflight, prior reviews | `briefs/NN-brief.md` | Dependencies exist, patterns match, risks identified, review feedback integrated |
+| **Implementer** | After strategist | Brief, plan, CONTEXT.md, workspace-map (iter 2+: reviews) | Code, tests, docs, CONTEXT.md, last-completed.md | Code compiles, tests pass, docs written |
+| **Architect** | After implementation | Diff, full modified files, brief, CONTEXT.md | `reviews/NN-arch-review.md` | Compilation, clippy, layering, API surface, patterns, correctness |
+| **Spec Auditor** | After implementation | Diff, prd2 sources, plan, CONTEXT.md | `reviews/NN-spec-review.md` | Type contracts, behavioral completeness, missing pieces, deviations, prd2 intent |
+
+## Non-Overlapping Concerns
+
+To prevent redundant checks and conflicting feedback:
+
+- **Architect** owns: compilation, clippy, `pub` visibility, error handling style, module structure, test organization, race conditions, panicking paths, doc comments existence.
+- **Spec Auditor** owns: type field correctness, formula accuracy, behavioral rule coverage, missing implementations, export contracts, prd2 alignment, deviation documentation.
+- **Neither reviews the other's domain.** If the Spec Auditor notices a code quality issue, it notes it under "Notes" (non-blocking) and trusts the Architect to catch it. Vice versa.
+
+## Iteration Protocol
+
+1. Both APPROVE → compilation gate → test gate → git commit → next plan.
+2. Either REVISE → current reviews archived as `NN-{role}-iterN.md` → strategist re-runs with history → implementer fix cycle → both reviewers re-run.
+3. Maximum `MAX_REVIEW_ITERATIONS` (default 3). If exceeded → halt report written → exit 1 → human intervention required.
+4. Only **blocking issues** (`[B-N]`, `[S-N]`) trigger a REVISE verdict. Recommendations are noted but never block.
+5. `--no-review` skips the entire orchestration loop. Use for Plan 01 or trivial plans.
+6. `--max-iterations N` overrides the default cap.
+
+## Severity Calibration
+
+An issue is **blocking** only if at least one of these is true:
+- `cargo check` or `cargo test` fails because of it.
+- A downstream plan's import will break (wrong type signature, missing export, wrong visibility).
+- A type, trait, or formula deviates from the plan's Quick Reference without documentation.
+- A test specified in the plan's Verification section was not written.
+- A doc page specified in the plan was not created.
+
+An issue is a **recommendation** if:
+- It's a style preference (naming, comment wording, module organization) that doesn't break anything.
+- It's an optimization that isn't required for correctness.
+- It's a suggestion for a future plan, not this one.
+
+## Context File Lifecycle
+
+```
+plans/context/
+├── workspace-map.md              # Regenerated by shell before each plan
+├── preflight-snapshot.md         # Regenerated by shell before each plan
+├── last-completed.md             # Overwritten by implementer at plan completion
+├── ignored-tests.md              # Append/remove by implementer
+├── briefs/
+│   └── NN-brief.md               # Written by strategist (overwritten each iteration)
+└── reviews/
+    ├── NN-arch-review.md          # Current architect review (overwritten each iteration)
+    ├── NN-arch-review-iterN.md    # Archived before overwrite
+    ├── NN-spec-review.md          # Current spec review (overwritten each iteration)
+    ├── NN-spec-review-iterN.md    # Archived before overwrite
+    └── NN-halt-report.md          # Written only if max iterations exceeded
+```
+
 ---
 
-## Architect Role
+# Documentation Policy
 
-You review implementations for code quality and architectural correctness.
+Write `docs/src/` pages as external-facing GitBook documentation for users who don't know the codebase.
 
-**You own:** Compilation (`cargo check`/`cargo clippy`), error handling patterns, `pub` visibility boundaries, module structure, test organization, race conditions, panicking paths, path leakage (no `/Users/` or `/home/` in files), no upward dependencies.
+## Structure (per page)
 
-**You only block on:**
-- `cargo check --workspace` fails
-- `cargo clippy` catches real bugs (not style)
-- Broken downstream imports (wrong type signature, missing export, wrong visibility)
-- Missing required tests from the plan's Verification section
+1. **What It Is** — one paragraph, user-facing, no plan numbers
+2. **Features** — bullet list of capabilities from a user's perspective
+3. **Getting Started** — prerequisites, how to run it
+4. **Configuration** — flags and environment variables
+5. **API** — RPC methods or public interface (if applicable)
+6. **Architecture** — high-level diagram or prose only
 
-**Output:** Write `plans/context/reviews/{num}-arch.md` with structured TOML block at the end including `[review]` with `verdict`, `tests_passed`, `tests_failed`, `[[issue]]` entries for each `[B-N]` block.
+## Rules
 
----
-
-## Auditor Role
-
-You verify implementations match the specification (prd2 spec + plan Quick Reference).
-
-**You own:** Type field correctness, formula accuracy, behavioral rule coverage, export contracts, INV-NNN test coverage, **Cargo.toml entries** (optional flags, features, workspace = true), **config file content exact match** (.cargo/config.toml, rustfmt.toml, justfile recipes).
-
-**You only block on:**
-- Required export missing or has wrong visibility/signature
-- Formula constant deviates from prd2 in a way that affects correctness
-- Behavioral invariant not implemented
-- INV-NNN test missing
-- Downstream plan's import will break
-
-**Output:** Write `plans/context/reviews/{num}-audit.md` with structured TOML block at the end including `[review]` with `verdict`, `tests_passed`, `tests_failed`, `[[issue]]` entries for each `[B-N]` block.
+- DO: explain what it does, how to use it, what to configure
+- DO NOT: mention plan numbers, implementation status, deviations, internal file paths
+- DO NOT: write "Plan 03 is partially complete" or "Current Deviations" sections
+- DO NOT: list internal source file paths like `apps/mirage-rs/src/fork.rs`
+- Replace "What Exists" sections with "Features"
+- Tone: GitHub README / GitBook style. Confident, present tense.

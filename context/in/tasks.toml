@@ -1,316 +1,137 @@
 [meta]
-plan = "02-core-types"
+plan = "01-workspace-scaffold"
 iteration = 1
-total = 18
+total = 7
 done = 0
+max_parallel = 3
+estimated_total_minutes = 35
 
 [[task]]
 id = "T1"
-title = "Foundation Types: GolemId, GolemError, TaintLabel, CognitiveTier"
+title = "Workspace Root & Toolchain"
 status = "pending"
 files = [
-  "crates/golem-core/src/id.rs",
-  "crates/golem-core/src/error.rs",
-  "crates/golem-core/src/taint.rs",
-  "crates/golem-core/src/cognitive.rs"
+  "Cargo.toml",
+  "rust-toolchain.toml",
+  ".cargo/config.toml",
 ]
 acceptance = [
-  "GolemId wraps uuid::Uuid with Display, Serialize, Deserialize",
-  "GolemId: new() generates unique UUID; from_uuid() and as_uuid() methods implemented (Steps 1-3)",
-  "GolemError is thiserror enum with Config, Init, Extension, EventFabric, CorticalState, Io, TomlParse, Serde variants",
-  "TaintLabel enum has 6 variants (Clean, Tainted, WalletSecret, LlmOutput, UserInput, ChainData)",
-  "TaintedString has value: String and label: TaintLabel; clean() and new() constructors; is_tainted() returns bool",
-  "CognitiveTier is #[repr(u8)] enum (T0=0, T1=1, T2=2) with TryFrom<u8> returning Err on invalid values",
-  "All types derive Clone, Copy (where applicable), Debug, PartialEq, Eq, Serialize, Deserialize",
-  "cargo check -p golem-core passes (Steps 1-7 checkpoints)",
-  "Unit tests pass: test_golem_id_new, test_golem_id_uuid_roundtrip, test_golem_id_display, test_golem_id_serialize_deserialize, test_error_display_config, test_error_from_io, test_tainted_string_clean, test_tainted_string_is_tainted_true, test_tainted_string_is_tainted_false, test_cognitive_tier_try_from, test_cognitive_tier_try_from_invalid"
+  "Root Cargo.toml with [workspace] resolver=\"2\", exactly 26 member paths, [workspace.dependencies] covering all crates required by decomposition Step 1 and later workspace crates, plus [workspace.package], [workspace.lints], and [profile.release]/[profile.dev] per Step 1",
+  "rust-toolchain.toml with [toolchain] channel=\"1.85\", components=[rustfmt,clippy,llvm-tools-preview], targets=[x86_64-unknown-linux-musl,aarch64-unknown-linux-musl] per Step 2",
+  ".cargo/config.toml with clang linker and mold flags for x86_64 and aarch64 Linux musl targets per Step 3",
+  "Checkpoint: cargo metadata --no-deps --format-version 1 shows workspace_members.len()==26"
 ]
 depends_on = []
 parallel_group = "A"
 exclusive_files = true
+estimated_seconds = 600
 
 [[task]]
 id = "T2"
-title = "GolemConfig: Full TOML schema with 11 sections and env var overrides"
+title = "Library Crate Shells (21 crates)"
 status = "pending"
-files = ["crates/golem-core/src/config.rs"]
+files = [
+  "crates/golem-core/Cargo.toml",
+  "crates/golem-core/src/lib.rs",
+  "crates/golem-runtime/Cargo.toml",
+  "crates/golem-runtime/src/lib.rs",
+]
 acceptance = [
-  "GolemConfig has 11 sections: golem, heartbeat, inference, safety, custody, styx, succession, daimon, dreams, oracle, mortality, compute",
-  "10 enum types defined: StrategyCategory, Network, DeploymentMode, CustodyMode, TransferRestriction, InferencePayment, ProviderType, DreamSchedule, AppraisalModel, ComputeTier (Steps 12)",
-  "All config structs derive Serialize, Deserialize, Debug, Clone with #[serde(default)]",
-  "GolemConfig::from_file() reads TOML, deserializes, calls with_env_overrides() (Step 14)",
-  "GolemConfig::from_str() parses TOML string and returns Result<Self> (Step 14)",
-  "with_env_overrides() reads GOLEM_* and BARDO_* env vars (20+ supported per Step 15); returns Result<Self>",
-  "All Default impls match config-reference.md defaults: RegimeMultipliers, ProbeThresholds, HeartbeatConfig, InferenceConfig, SafetyConfig, CustodyConfig, StyxConfig, SuccessionConfig, DaimonConfig, DreamsConfig, OracleConfig, MortalityConfig, ComputeConfig (Step 13)",
-  "Secrets (API keys) are NOT fields — loaded from env vars at runtime only",
-  "cargo check -p golem-core passes (Steps 11-15 checkpoints)",
-  "Unit tests pass: test_config_from_str_minimal, test_config_default, test_config_with_env_override"
+  "All 21 library crate directories exist (golem-core through golem-binary) per decomposition Steps 7-8",
+  "Each Cargo.toml: [package] name=\"golem-{name}\", version=\"0.1.0\", [lints] workspace=true, empty [dependencies] except golem-binary per Steps 7-8",
+  "golem-binary Cargo.toml has [[bin]] and depends on anyhow, tokio, tracing, tracing-subscriber from workspace per Step 8",
+  "Each of 20 library crates has src/lib.rs with #![deny(unsafe_code)]; golem-binary has src/main.rs with #[tokio::main], anyhow::Result, and a tracing call (e.g. tracing::info) per Steps 10-11",
+  "Checkpoint: cargo check -p golem-core -p golem-runtime -p golem-heartbeat -p golem-coordination -p golem-binary --workspace finishes successfully"
 ]
 depends_on = ["T1"]
 parallel_group = "B"
 exclusive_files = true
+estimated_seconds = 900
 
 [[task]]
 id = "T3"
-title = "CorticalState: 32 atomic signals with cache-line alignment"
+title = "App Binary Shells (5 apps)"
 status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
+files = [
+  "apps/bardo-gateway/Cargo.toml",
+  "apps/bardo-gateway/src/main.rs",
+  "apps/bardo-terminal/Cargo.toml",
+  "apps/bardo-terminal/src/main.rs",
+]
 acceptance = [
-  "CorticalState is #[repr(C, align(64))] with 32 atomic signals",
-  "Signals: pleasure, arousal, dominance, primary_emotion, aggregate_accuracy, accuracy_trend, category_accuracies[16], surprise_rate, pending_predictions, universe_size, active_count, watched_count, regime, regime_confidence, gas_gwei, economic_vitality, epistemic_vitality, stochastic_vitality, behavioral_phase, inference_budget_remaining, current_tier, creative_mode, fragments_captured, last_novel_prediction_tick(_hi), compounding_momentum (Step 16)",
-  "All f32 values use AtomicU32 with f32::to_bits()/from_bits()",
-  "Write helpers use Ordering::Release, read helpers use Ordering::Acquire (Step 18)",
-  "Eight write_* methods: write_affect(), write_prediction(), write_attention(), write_environment(), write_mortality(), write_inference(), write_creative(), write_derived() (Step 18)",
-  "category_accuracies: [AtomicU32; 16] initialized via array::from_fn (Step 16)",
-  "CorticalState::new() returns Arc<Self> with primary_emotion=7 (Anticipation) (Step 17)",
-  "pad(), prediction_accuracy(), phase() accessor methods with Acquire ordering (Step 17)",
-  "snapshot() reads all 32 signals sequentially, returns CorticalSnapshot (Step 19)",
-  "PadVector: pleasure, arousal, dominance (f64); ZERO constant; clamp(min, max) method (Step 20-21)",
-  "BehavioralPhase enum: Thriving=0, Stable=1, Conservation=2, Declining=3, Terminal=4; from_u8() implementation (Step 20-21)",
-  "PlutchikEmotion enum: Joy=0, Trust=1, Fear=2, Surprise=3, Sadness=4, Disgust=5, Anger=6, Anticipation=7; from_pad() classifies octants (Step 20-21)",
-  "Compile-time assertions: align_of=64, size_of<=256 (Step 16)",
-  "cargo check -p golem-core passes (Steps 16-21 checkpoints)",
-  "Unit tests pass: test_cortical_state_alignment, test_cortical_state_size_and_alignment, test_cortical_state_write_read_affect, test_cortical_state_snapshot, test_pad_vector_clamp, test_behavioral_phase_from_u8, test_plutchik_emotion_from_pad_joy"
+  "All 5 app directories exist: bardo-gateway, bardo-terminal, bardo-styx, bardo-compute, mirage-rs per Step 9",
+  "Each app Cargo.toml: workspace inheritance, [[bin]] with correct name/path, [lints] workspace=true; anyhow, tokio, tracing, tracing-subscriber from workspace; app-specific dependencies per Step 9 as required for each binary to compile",
+  "Each app src/main.rs: #[tokio::main], anyhow::Result, and tracing usage that compiles (e.g. tracing::info) per Step 12",
+  "Checkpoint: cargo check -p bardo-gateway -p bardo-terminal -p bardo-styx -p bardo-compute -p mirage-rs succeeds"
 ]
 depends_on = ["T1"]
 parallel_group = "B"
 exclusive_files = true
+estimated_seconds = 600
 
 [[task]]
 id = "T4"
-title = "EventFabric: Non-blocking broadcast bus with 10K ring buffer"
+title = "Build Tooling & Dev Setup"
 status = "pending"
-files = ["crates/golem-core/src/event.rs"]
+files = [
+  "justfile",
+  ".config/nextest.toml",
+]
 acceptance = [
-  "EventFabric uses tokio::sync::broadcast::channel(10_000) and parking_lot::RwLock<VecDeque> (Step 24)",
-  "emit() increments seq with Ordering::Relaxed, pushes to buffer (pop front if len >= 10_000), broadcasts via tx (Step 25)",
-  "subscribe() returns tx.subscribe() for new subscribers (Step 25)",
-  "replay_from(after_seq) returns Vec<GolemEvent> with seq >= after_seq in order (Step 25)",
-  "GolemEvent: seq (u64), ts (Instant), tick (u64), subsystem (Subsystem), payload (EventPayload); derives Clone, Debug, Serialize (Step 22)",
-  "EventPayload enum has 50+ variants across 16 subsystems: Heartbeat(2), Perception(1), Daimon(2), Mortality(3), Grimoire(7), Dreams(7), Context(2), Inference(3), Tools(3), Risk(3), Coordination(6), Lifecycle(4), Engagement(2), Session(2), Creature(3), System(2) (Step 23)",
-  "Subsystem enum: Heartbeat, Perception, Daimon, Mortality, Grimoire, Dreams, Context, Inference, Tools, Risk, Coordination, Lifecycle, Engagement, Session, Creature, System (16 variants); derives Clone, Debug, PartialEq, Eq, Hash, Serialize (Step 22)",
-  "cargo check -p golem-core passes (Steps 22-25 checkpoints)",
-  "Unit tests pass: test_event_fabric_new, test_event_emit_and_subscribe, test_event_replay_from, test_event_ring_buffer_overflow"
+  "justfile defines a `ci` recipe (and supporting recipes it invokes) per Step 13; `just ci` completes successfully",
+  ".config/nextest.toml with [profile.default] (test-threads=num-cpus, slow-timeout.period=60s, slow-timeout.terminate-after=3, fail-fast=false) and [profile.ci] (fail-fast=true, slow-timeout.period=120s, slow-timeout.terminate-after=2) per Step 13"
+]
+depends_on = ["T2", "T3"]
+parallel_group = "C"
+exclusive_files = true
+estimated_seconds = 480
+
+[[task]]
+id = "T5"
+title = "mdbook Scaffold"
+status = "pending"
+files = [
+  "docs/book.toml",
+  "docs/src/SUMMARY.md",
+]
+acceptance = [
+  "Checkpoint: (cd docs && mdbook build) completes without errors"
+]
+depends_on = ["T2"]
+parallel_group = "C"
+exclusive_files = true
+estimated_seconds = 600
+
+[[task]]
+id = "T6"
+title = "TypeScript Sidecar Stub"
+status = "pending"
+files = [
+  "ts-sidecar/package.json",
+  "ts-sidecar/tsconfig.json",
+  "ts-sidecar/src/index.ts",
+]
+acceptance = [
+  "sidecar/tools-ts/package.json exists per decomposition Step 16 with name=\"bardo-tools-ts\", version=\"0.1.0\", main=\"dist/index.js\", scripts {build: tsc, dev: tsc --watch}, devDependencies {typescript: ^5.0}",
+  "sidecar/tools-ts/tsconfig.json exists; sidecar/tools-ts/src/index.ts and src/types.ts exist; ToolRequest (id, method, params) and ToolResponse (id, result?, error?) per Step 16",
+  "Checkpoint: cd sidecar/tools-ts && tsc --noEmit succeeds with zero errors"
 ]
 depends_on = ["T1"]
 parallel_group = "B"
 exclusive_files = true
-
-[[task]]
-id = "T5"
-title = "Extension Trait System: 20 hooks with ExtensionRegistry"
-status = "pending"
-files = ["crates/golem-core/src/extension.rs"]
-acceptance = [
-  "Extension trait uses #[async_trait::async_trait] with 20+ async hook methods (Step 26)",
-  "Hook methods: on_session, on_input, on_before_agent_start, on_agent_start, on_turn_start, on_context, on_before_provider_request, on_tool_call, on_tool_execution_start/update/end, on_tool_result, on_turn_end, on_agent_end, on_after_turn, on_system_prompt, on_steer, on_send_message, on_debug, on_error, on_end (Step 26)",
-  "All hooks have default no-op implementations returning Ok(()) or default action (Step 26)",
-  "Required methods: name(), layer(), depends_on() (default returns &[]) (Step 26)",
-  "18 context struct types (empty public structs): SessionCtx, InputCtx, AgentStartCtx, TurnStartCtx, ContextCtx, ProviderReqCtx, ToolCallCtx, ToolExecCtx, ToolResultCtx, TurnEndCtx, AgentEndCtx, AfterTurnCtx, PromptCtx, SteerCtx, MsgCtx, DebugCtx, ErrorCtx, EndCtx (Step 27)",
-  "Message/action types: InputMessage, InputAction, ToolCall, ToolAction, ToolResult, AgentMessage, SteerMessage, OutboundMessage (Step 27)",
-  "HookId enum with 21 variants (Session, Input, BeforeAgentStart, AgentStart, TurnStart, Context, BeforeProviderRequest, ToolCall, ToolExecutionStart, ToolExecutionUpdate, ToolExecutionEnd, ToolResult, TurnEnd, AgentEnd, AfterTurn, SystemPrompt, Steer, SendMessage, Debug, Error, End) (Step 27)",
-  "ExtensionRegistry: register(Arc<dyn Extension>), build() (topological sort by layer, DAG validation, panic on cycles/missing deps) (Step 28)",
-  "fire_tool_call() returns most restrictive action (Block short-circuits, Modify overrides Allow) (Step 28)",
-  "fire_after_turn(), fire_session(), fire_end() methods with correct ordering (Step 28)",
-  "cargo check -p golem-core passes (Steps 26-28 checkpoints)",
-  "Unit tests pass: test_extension_registry_new, test_extension_registry_register, test_extension_registry_topological_sort, test_extension_registry_missing_dep_panics"
-]
-depends_on = ["T1", "T4"]
-parallel_group = "C"
-exclusive_files = true
-
-[[task]]
-id = "T6"
-title = "HDC Primitives: 10240-bit sparse distributed representation stubs"
-status = "pending"
-files = ["crates/golem-core/src/hdc.rs"]
-acceptance = [
-  "HdcVector stores [u64; 160] (10240 bits); derives Clone, Copy (Step 8)",
-  "zeros() returns all-zero vector (const fn) (Step 9)",
-  "random() fills from Uuid::new_v4().as_u128() seed using LCG per word (Step 9)",
-  "bind() performs element-wise XOR; involution property: v.bind(v) = zeros (Step 9)",
-  "bundle(vectors: &[&Self]) performs majority-vote bundling with threshold = (n+1)/2 (Step 9)",
-  "permute(n) rotates bits left by n % 10240 positions with wraparound (Step 9)",
-  "similarity() computes normalized Hamming distance: 1.0 - (popcount(a XOR b) / 10240.0); range [0.0, 1.0] (Step 9)",
-  "cargo check -p golem-core passes (Steps 8-9 checkpoints)",
-  "Unit tests pass: test_hdc_zeros, test_hdc_bind, test_hdc_bind_involution, test_hdc_similarity_self, test_hdc_similarity_different"
-]
-depends_on = []
-parallel_group = "A"
-exclusive_files = true
+estimated_seconds = 360
 
 [[task]]
 id = "T7"
-title = "Per-Tick Allocator: Thin bumpalo wrapper"
+title = "Legacy Plan Cleanup Review (Verification Only)"
 status = "pending"
-files = ["crates/golem-core/src/alloc.rs"]
+files = []
 acceptance = [
-  "TickArena wraps bumpalo::Bump; derives Default (Step 10)",
-  "new() returns Self { inner: Bump::new() } (Step 10)",
-  "reset(&mut self) calls self.inner.reset() (Step 10)",
-  "alloc<T>(&self, val: T) -> &T delegates to inner.alloc(val) (Step 10)",
-  "alloc_slice_copy<T: Copy>(&self, slice: &[T]) -> &[T] delegates to inner.alloc_slice_copy(slice) (Step 10)",
-  "cargo check -p golem-core passes (Step 10 checkpoint)",
-  "Unit tests pass: test_tick_arena_new, test_tick_arena_reset, test_tick_arena_alloc"
+  "cargo check --workspace --all-features completes successfully",
+  "Every path listed in plan 01 Exports exists (configs, 21 crates, 5 apps, docs trio, sidecar/tools-ts files, tests/*/.gitkeep)",
+  "bash plans/context/verify-chains/01-verify.sh exits 0"
 ]
-depends_on = []
-parallel_group = "A"
-exclusive_files = true
-
-[[task]]
-id = "T8"
-title = "lib.rs: Re-export all public items"
-status = "pending"
-files = ["crates/golem-core/src/lib.rs"]
-acceptance = [
-  "All 10 modules declared and public: mod alloc, cognitive, config, cortical, error, event, extension, hdc, id, taint (Step 29)",
-  "Public re-exports include: TickArena, CognitiveTier, GolemConfig + all config enums/structs, BehavioralPhase, CorticalSnapshot, CorticalState, PadVector, PlutchikEmotion, GolemError, Result, EventFabric, EventPayload, GolemEvent, Subsystem, Extension + all context types, HookId, InputAction, ToolAction, ToolMessage variants, HdcVector, GolemId, TaintLabel, TaintedString (Step 29)",
-  "cargo check -p golem-core passes (Step 29 checkpoint)",
-  "cargo clippy -p golem-core -- -D warnings passes (Step 32 checkpoint)",
-  "cargo test -p golem-core: all 20+ unit tests pass (Steps 30-31 unit tests)",
-  "No compiler warnings or clippy violations"
-]
-depends_on = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
+depends_on = ["T4", "T5", "T6"]
 parallel_group = "D"
-exclusive_files = true
-
-[[task]]
-id = "V1"
-title = "Verification: PAD Vector Bounds (proptest)"
-status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
-acceptance = [
-  "test_pad_vector_bounds (proptest) generates pleasure, arousal, dominance in range [-2.0..3.0]",
-  "All clamped values satisfy: -1.0 ≤ pleasure ≤ 1.0; -1.0 ≤ arousal ≤ 1.0; -1.0 ≤ dominance ≤ 1.0",
-  "PAD constraint enforcement verified per INV-012"
-]
-depends_on = ["T3"]
-parallel_group = "E"
 exclusive_files = false
-
-[[task]]
-id = "V2"
-title = "Verification: Plutchik Emotion Classification (proptest)"
-status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
-acceptance = [
-  "test_plutchik_emotion_classification (proptest) generates PAD vectors across [-1, 1]³ space",
-  "All 8 emotions (Joy, Trust, Fear, Surprise, Sadness, Disgust, Anger, Anticipation) reachable from PAD space",
-  "Classification is deterministic and stable within emotion neighborhoods per INV-013"
-]
-depends_on = ["T3"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V3"
-title = "Verification: Behavioral Phase Thresholds (proptest)"
-status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
-acceptance = [
-  "test_behavioral_phase_thresholds (proptest) validates phase transitions at composite vitality thresholds",
-  "Threshold verification: Thriving (>0.7), Stable (0.5-0.7), Conservation (0.3-0.5), Declining (0.1-0.3), Terminal (<0.1)",
-  "Phase decreases monotonically with decreasing vitality per INV-010"
-]
-depends_on = ["T3"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V4"
-title = "Verification: Regime Tag Transitions"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_regime_tag_transitions (unit) validates regime assignment for market conditions",
-  "Regimes: Calm, Trending, Volatile, Crisis assigned based on price volatility, volume change, and gas price",
-  "Regime transitions valid and monotonically enforced per INV-014"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V5"
-title = "Verification: Regime Multipliers Complete Coverage"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_regime_multipliers_complete (unit) confirms all 5 regimes have configured multipliers",
-  "Multipliers present: TrendingUp=1.0, TrendingDown=0.5, Volatile=0.3, RangeBound=2.0, Unknown=0.8",
-  "RegimeMultipliers struct has all required fields with correct defaults per INV-016"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V6"
-title = "Verification: Probe Threshold Ordering"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_probe_threshold_ordering (unit) validates threshold pair ordering and relationships",
-  "Price delta: low_bps (50) < high_bps (200); Health factor: low (1.5) > high (1.2); Drift: low (0.10) < high (0.25)",
-  "ProbeThresholds enforces domain-specific ordering semantics per INV-017"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V7"
-title = "Verification: Inheritance Confidence Cap"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_inheritance_confidence_cap (unit) validates hard cap at 0.7 per protocol invariant",
-  "Default inheritance_confidence is 0.4; maximum allowable is 0.7",
-  "All inherited knowledge confidence values clamped to <= 0.7 per INV-015"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V8"
-title = "Verification: Subsystem Enum Completeness"
-status = "pending"
-files = ["crates/golem-core/src/event.rs"]
-acceptance = [
-  "test_subsystem_enum_completeness (unit) confirms exactly 16 distinct Subsystem variants",
-  "Subsystems present: Heartbeat, Perception, Daimon, Mortality, Grimoire, Dreams, Context, Inference, Tools, Risk, Coordination, Lifecycle, Engagement, Session, Creature, System",
-  "No duplicate subsystem values; complete domain coverage per INV-023"
-]
-depends_on = ["T4"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V9"
-title = "Verification: EventPayload Variant Count and Distribution"
-status = "pending"
-files = ["crates/golem-core/src/event.rs"]
-acceptance = [
-  "test_event_payload_variant_count (unit) confirms 50+ EventPayload enum variants",
-  "Distribution per subsystem: Heartbeat(2), Perception(1), Daimon(2), Mortality(3), Grimoire(7), Dreams(7), Context(2), Inference(3), Tools(3), Risk(3), Coordination(6), Lifecycle(4), Engagement(2), Session(2), Creature(3), System(2)",
-  "All variants reachable and serializable; total count >= 50 per INV-024"
-]
-depends_on = ["T4"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V10"
-title = "Verification: Extension Hook Fire Order (Integration)"
-status = "pending"
-files = ["crates/golem-core/src/extension.rs"]
-acceptance = [
-  "test_extension_hook_fire_order (integration) with mock extensions validates sequential hook execution",
-  "Fire order: session → input → before_agent_start → agent_start → turn_start → context → before_provider_request → tool_call → tool_exec_start → tool_exec_update → tool_exec_end → tool_result → turn_end → agent_end → after_turn → system_prompt → steer → send_message → debug → error → end",
-  "ExtensionRegistry.build() correctly topologically sorts by layer; firing_orders map populated per hook; fire_* methods execute in order",
-  "DAG validation prevents cycles and missing dependency violations; recorded timestamps confirm sequential execution per INV-020"
-]
-depends_on = ["T5"]
-parallel_group = "E"
-exclusive_files = false
+estimated_seconds = 300

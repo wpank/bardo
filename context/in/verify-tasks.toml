@@ -1,328 +1,463 @@
 [meta]
-plan = "02-core-types"
+plan = "01-workspace-scaffold"
 role = "verifier"
-crates = ["golem-core", "golem-mortality"]
-total = 36
+crates = ["golem-core", "golem-mortality", "golem-grimoire", "golem-daimon", "golem-dreams"]
+total_tasks = 40
 
-# Compile gates (blocking, must pass first)
+# Phase 1: Compile Gates (blocking)
+
 [[task]]
 id = "CG1"
-title = "Compile check: golem-core"
+title = "Compile: golem-core"
 type = "compile"
+crate = "golem-core"
 command = "cargo check -p golem-core"
 blocking = true
 status = "pending"
 
 [[task]]
 id = "CG2"
-title = "Compile check: golem-mortality"
+title = "Compile: golem-mortality"
 type = "compile"
+crate = "golem-mortality"
 command = "cargo check -p golem-mortality"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
-# Invariant unit tests - golem-mortality (stochastic/epistemic/economic)
 [[task]]
-id = "INV1"
-title = "INV-001: Gompertz-Makeham Hazard Monotonicity"
+id = "CG3"
+title = "Compile: golem-grimoire"
+type = "compile"
+crate = "golem-grimoire"
+command = "cargo check -p golem-grimoire"
+blocking = true
+status = "pending"
+test_invariants = ["test_ebbinghaus_decay_monotonic_proptest"]
+
+[[task]]
+id = "CG4"
+title = "Compile: golem-daimon"
+type = "compile"
+crate = "golem-daimon"
+command = "cargo check -p golem-daimon"
+blocking = true
+status = "pending"
+test_invariants = ["test_pad_vector_component_clamps", "test_plutchik_octant_coverage_proptest", "test_mood_ema_convergence_from_cold_start"]
+
+[[task]]
+id = "CG5"
+title = "Compile: golem-dreams"
+type = "compile"
+crate = "golem-dreams"
+command = "cargo check -p golem-dreams"
+blocking = true
+status = "pending"
+test_invariants = ["test_dream_replay_prioritizes_by_utility"]
+
+[[task]]
+id = "CG6"
+title = "Compile: Full Workspace"
+type = "compile"
+crate = "workspace"
+command = "cargo check --workspace --all-features"
+blocking = true
+status = "pending"
+
+# Phase 2: Unit Tests - golem-mortality (blocking)
+
+[[task]]
+id = "UT1"
+title = "INV-001: Epistemic Fitness Range Constraint"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_hazard_monotonic_with_age"
-test_fns = ["test_hazard_monotonic_with_age"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_epistemic_fitness_clamp_range"
+test_fns = ["test_epistemic_fitness_clamp_range"]
+invariant = "INV-001"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV2"
-title = "INV-002: Gompertz Hazard Rate Cap"
+id = "UT2"
+title = "INV-002: EMA Fitness Convergence"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_hazard_rate_within_bounds"
-test_fns = ["test_hazard_rate_within_bounds"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality --release -- test_ema_convergence_to_constant"
+test_fns = ["test_ema_convergence_to_constant"]
+invariant = "INV-002"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV3"
-title = "INV-003: Epistemic Frailty Multiplier Range"
+id = "UT3"
+title = "INV-003: Domain-Specific Alpha Values"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_epistemic_frailty_multiplier_bounds"
-test_fns = ["test_epistemic_frailty_multiplier_bounds"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_domain_alpha_half_life_calibration"
+test_fns = ["test_domain_alpha_half_life_calibration"]
+invariant = "INV-003"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV4"
-title = "INV-004: Survival Probability Monotonic Decrease"
+id = "UT4"
+title = "INV-004: Dimension Weights Sum"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_survival_probability_decreasing"
-test_fns = ["test_survival_probability_decreasing"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_dimension_weights_sum_to_one"
+test_fns = ["test_dimension_weights_sum_to_one"]
+invariant = "INV-004"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV5"
-title = "INV-005: Ebbinghaus Epistemic Decay Curve"
+id = "UT5"
+title = "INV-005: Tick Accuracy Binary Match"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_ebbinghaus_decay_halflife"
-test_fns = ["test_ebbinghaus_decay_halflife"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality --release -- test_tick_accuracy_range_proptest"
+test_fns = ["test_tick_accuracy_range_proptest"]
+invariant = "INV-005"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV6"
-title = "INV-006: Domain Decay Multipliers Variance"
+id = "UT6"
+title = "INV-006: Senescence Threshold Hysteresis"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_domain_multipliers_ordering"
-test_fns = ["test_domain_multipliers_ordering"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_senescence_hysteresis_offset"
+test_fns = ["test_senescence_hysteresis_offset"]
+invariant = "INV-006"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV7"
-title = "INV-007: Knowledge Type Weight Hierarchy"
+id = "UT7"
+title = "INV-007: Senescence Grace Period Ticks"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_type_weight_ordering"
-test_fns = ["test_type_weight_ordering"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_senescence_grace_period_constant"
+test_fns = ["test_senescence_grace_period_constant"]
+invariant = "INV-007"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV8"
-title = "INV-008: Epistemic Fitness R-squared Bounds"
+id = "UT8"
+title = "INV-008: Fitness Trend First Derivative"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_epistemic_fitness_rsquared_bounds"
-test_fns = ["test_epistemic_fitness_rsquared_bounds"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_fitness_trend_range"
+test_fns = ["test_fitness_trend_range"]
+invariant = "INV-008"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV9"
-title = "INV-009: Senescence Threshold Hysteresis"
+id = "UT9"
+title = "INV-009: Prediction Log Window Size"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_senescence_stage_transitions"
-test_fns = ["test_senescence_stage_transitions"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_prediction_log_fifo_eviction"
+test_fns = ["test_prediction_log_fifo_eviction"]
+invariant = "INV-009"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV18"
-title = "INV-018: Economic Mortality Vitality EMA"
+id = "UT10"
+title = "INV-010: VitalityState Multiplicative Composition"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_burn_rate_ema_convergence"
-test_fns = ["test_burn_rate_ema_convergence"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality --release -- test_composite_vitality_multiplicative_proptest"
+test_fns = ["test_composite_vitality_multiplicative_proptest"]
+invariant = "INV-010"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV21"
-title = "INV-021: DeathCause Exhaustiveness"
+id = "UT11"
+title = "INV-011: Golem Lifespan is Not Hayflick-Bounded"
 type = "unit_test"
-command = "cargo test -p golem-mortality test_death_cause_exhaustiveness"
-test_fns = ["test_death_cause_exhaustiveness"]
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_no_hardcoded_lifespan_ceiling"
+test_fns = ["test_no_hardcoded_lifespan_ceiling"]
+invariant = "INV-011"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
-# Invariant unit tests - golem-core (cortical/config/event)
 [[task]]
-id = "INV10"
-title = "INV-010: Behavioral Phase Thresholds"
+id = "UT12"
+title = "INV-012: Senescence Stage Enum Transitions"
 type = "unit_test"
-command = "cargo test -p golem-core test_behavioral_phase_thresholds"
-test_fns = ["test_behavioral_phase_thresholds"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_senescence_stage_valid_transitions"
+test_fns = ["test_senescence_stage_valid_transitions"]
+invariant = "INV-012"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV11"
-title = "INV-011: CorticalState Cache Line Alignment"
+id = "UT13"
+title = "INV-014: Gompertz Hazard Monotonicity"
 type = "unit_test"
-command = "cargo test -p golem-core test_cortical_state_size_and_alignment"
-test_fns = ["test_cortical_state_size_and_alignment"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality --release -- test_gompertz_hazard_monotonic_proptest"
+test_fns = ["test_gompertz_hazard_monotonic_proptest"]
+invariant = "INV-014"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV12"
-title = "INV-012: PAD Vector Bounds"
+id = "UT14"
+title = "INV-019: Genomic Bottleneck Compression Ratio"
 type = "unit_test"
-command = "cargo test -p golem-core test_pad_vector_bounds"
-test_fns = ["test_pad_vector_bounds"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_genomic_bottleneck_compression_bound"
+test_fns = ["test_genomic_bottleneck_compression_bound"]
+invariant = "INV-019"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV13"
-title = "INV-013: Plutchik Emotion Mapping from PAD"
+id = "UT15"
+title = "INV-020: Baldwin Effect Transgenerational Confidence Decay"
 type = "unit_test"
-command = "cargo test -p golem-core test_plutchik_emotion_classification"
-test_fns = ["test_plutchik_emotion_classification"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality --release -- test_baldwin_effect_generational_decay_proptest"
+test_fns = ["test_baldwin_effect_generational_decay_proptest"]
+invariant = "INV-020"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV14"
-title = "INV-014: Regime Tag Correctness"
+id = "UT16"
+title = "INV-021: Hayflick Limit Replicant Max Tick Cap"
 type = "unit_test"
-command = "cargo test -p golem-core test_regime_tag_transitions"
-test_fns = ["test_regime_tag_transitions"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_hayflick_replicant_ceiling_enforced"
+test_fns = ["test_hayflick_replicant_ceiling_enforced"]
+invariant = "INV-021"
 blocking = true
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
-id = "INV15"
-title = "INV-015: Inheritance Confidence Cap"
+id = "UT17"
+title = "INV-023: Kelly Criterion Optimal Bet Sizing"
 type = "unit_test"
-command = "cargo test -p golem-core test_inheritance_confidence_cap"
-test_fns = ["test_inheritance_confidence_cap"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality --release -- test_kelly_criterion_bounds_proptest"
+test_fns = ["test_kelly_criterion_bounds_proptest"]
+invariant = "INV-023"
 blocking = true
 status = "pending"
 
+# Phase 3: Unit Tests - golem-grimoire (blocking)
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
+
 [[task]]
-id = "INV16"
-title = "INV-016: Regime Multiplier Coverage"
+id = "UT18"
+title = "INV-013: Ebbinghaus Decay Application in Grimoire"
 type = "unit_test"
-command = "cargo test -p golem-core test_regime_multipliers_complete"
-test_fns = ["test_regime_multipliers_complete"]
-crate = "golem-core"
+crate = "golem-grimoire"
+command = "cargo test -p golem-grimoire --release -- test_ebbinghaus_decay_monotonic_proptest"
+test_fns = ["test_ebbinghaus_decay_monotonic_proptest"]
+invariant = "INV-013"
 blocking = true
 status = "pending"
 
+# Phase 4: Unit Tests - golem-daimon (blocking)
+test_invariants = ["test_ebbinghaus_decay_monotonic_proptest"]
+
 [[task]]
-id = "INV17"
-title = "INV-017: Probe Threshold Ordering"
+id = "UT19"
+title = "INV-015: PAD Vector Components Range"
 type = "unit_test"
-command = "cargo test -p golem-core test_probe_threshold_ordering"
-test_fns = ["test_probe_threshold_ordering"]
-crate = "golem-core"
+crate = "golem-daimon"
+command = "cargo test -p golem-daimon -- test_pad_vector_component_clamps"
+test_fns = ["test_pad_vector_component_clamps"]
+invariant = "INV-015"
 blocking = true
 status = "pending"
+test_invariants = ["test_pad_vector_component_clamps", "test_plutchik_octant_coverage_proptest", "test_mood_ema_convergence_from_cold_start"]
 
 [[task]]
-id = "INV22"
-title = "INV-022: EventFabric Ring Buffer Capacity"
+id = "UT20"
+title = "INV-016: Plutchik Octant Mapping from PAD"
 type = "unit_test"
-command = "cargo test -p golem-core test_event_fabric_ring_buffer_capacity"
-test_fns = ["test_event_fabric_ring_buffer_capacity"]
-crate = "golem-core"
+crate = "golem-daimon"
+command = "cargo test -p golem-daimon --release -- test_plutchik_octant_coverage_proptest"
+test_fns = ["test_plutchik_octant_coverage_proptest"]
+invariant = "INV-016"
 blocking = true
 status = "pending"
+test_invariants = ["test_pad_vector_component_clamps", "test_plutchik_octant_coverage_proptest", "test_mood_ema_convergence_from_cold_start"]
 
 [[task]]
-id = "INV23"
-title = "INV-023: Subsystem Coverage"
+id = "UT21"
+title = "INV-017: Mood EMA Convergence (Affective)"
 type = "unit_test"
-command = "cargo test -p golem-core test_subsystem_enum_completeness"
-test_fns = ["test_subsystem_enum_completeness"]
-crate = "golem-core"
+crate = "golem-daimon"
+command = "cargo test -p golem-daimon -- test_mood_ema_convergence_from_cold_start"
+test_fns = ["test_mood_ema_convergence_from_cold_start"]
+invariant = "INV-017"
 blocking = true
 status = "pending"
 
-[[task]]
-id = "INV24"
-title = "INV-024: EventPayload Variant Count"
-type = "unit_test"
-command = "cargo test -p golem-core test_event_payload_variant_count"
-test_fns = ["test_event_payload_variant_count"]
-crate = "golem-core"
-blocking = true
-status = "pending"
+# Phase 5: Integration Tests (non-blocking)
+test_invariants = ["test_pad_vector_component_clamps", "test_plutchik_octant_coverage_proptest", "test_mood_ema_convergence_from_cold_start"]
 
-# Integration tests (complex contract validation)
 [[task]]
-id = "INV19"
-title = "INV-019: Death Clock Coupling Paths"
+id = "IT1"
+title = "INV-018: Dream Materialization via Mattar-Daw Replay"
 type = "integration_test"
-command = "cargo test -p golem-mortality test_mortality_coupling_completeness"
-contracts = ["INV-019"]
+crate = "golem-dreams"
+command = "cargo test -p golem-dreams -- test_dream_replay_prioritizes_by_utility"
+test_fns = ["test_dream_replay_prioritizes_by_utility"]
+invariant = "INV-018"
+contracts = ["dream_replay_contract"]
+blocking = false
+status = "pending"
+test_invariants = ["test_dream_replay_prioritizes_by_utility"]
+
+[[task]]
+id = "IT2"
+title = "INV-022: Thanatopsis Four-Phase Death Protocol"
+type = "integration_test"
 crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- test_thanatopsis_phase_ordering"
+test_fns = ["test_thanatopsis_phase_ordering"]
+invariant = "INV-022"
+contracts = ["death_protocol_fsm_contract"]
 blocking = false
 status = "pending"
 
+# Phase 6: Cross-Crate Contracts (non-blocking)
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
+
 [[task]]
-id = "INV20"
-title = "INV-020: Extension Hook Fire Order"
+id = "CT1"
+title = "Cross-Crate: grimoire → mortality prediction log"
 type = "integration_test"
-command = "cargo test -p golem-core test_extension_hook_fire_order"
-contracts = ["INV-020"]
-crate = "golem-core"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- contract_prediction_log"
+contracts = ["prediction_log_append_contract", "fifo_eviction_contract"]
+blocking = false
+status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
+
+[[task]]
+id = "CT2"
+title = "Cross-Crate: core → daimon PAD vector"
+type = "integration_test"
+crate = "golem-daimon"
+command = "cargo test -p golem-daimon -- contract_pad_clamping"
+contracts = ["pad_clamping_contract", "regime_tagging_contract"]
+blocking = false
+status = "pending"
+test_invariants = ["test_pad_vector_component_clamps", "test_plutchik_octant_coverage_proptest", "test_mood_ema_convergence_from_cold_start"]
+
+[[task]]
+id = "CT3"
+title = "Cross-Crate: daimon mood → grimoire bias"
+type = "integration_test"
+crate = "golem-grimoire"
+command = "cargo test -p golem-grimoire -- contract_mood_bias"
+contracts = ["mood_bias_contract"]
+blocking = false
+status = "pending"
+test_invariants = ["test_ebbinghaus_decay_monotonic_proptest"]
+
+[[task]]
+id = "CT4"
+title = "Cross-Crate: heartbeat → mortality tick update"
+type = "integration_test"
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- contract_fitness_update"
+contracts = ["fitness_update_contract", "senescence_cascade_contract", "death_event_contract"]
 blocking = false
 status = "pending"
 
-# Code quality gates
-[[task]]
-id = "CL1"
-title = "Clippy lints: golem-core"
-type = "compile"
-command = "cargo clippy -p golem-core -- -D warnings"
-blocking = true
-status = "pending"
+# Phase 7: Lifecycle Scenarios (non-blocking)
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
-[[task]]
-id = "CL2"
-title = "Clippy lints: golem-mortality"
-type = "compile"
-command = "cargo clippy -p golem-mortality -- -D warnings"
-blocking = true
-status = "pending"
-
-# Event sequence and lifecycle scenarios
 [[task]]
 id = "LS1"
-title = "Economic Death Sequence"
+title = "Scenario: Complete Death Cascade"
 type = "lifecycle"
-command = "cargo test -p golem-core -- test_economic_death_sequence"
-scenarios = ["HeartbeatTick → VitalityUpdate(economic=0) → DeathClockAlarm → DeathInitiated → SuccessorSpawned"]
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- scenario_death_cascade"
+scenarios = ["epistemic_threshold_breach", "senescence_stage1", "grace_period_timeout", "senescence_stage2", "senescence_stage3", "golem_death_event", "lifecycle_terminal", "thanatopsis_all_phases", "lifecycle_dead"]
 blocking = false
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
 id = "LS2"
-title = "Epistemic Senescence Sequence"
+title = "Scenario: Senescence Recovery via Hysteresis"
 type = "lifecycle"
-command = "cargo test -p golem-core -- test_epistemic_senescence_sequence"
-scenarios = ["MarketObservation → OutcomeVerification → VitalityUpdate(epistemic<threshold) → DeathClockAlarm → PhaseTransition → DeathInitiated"]
+crate = "golem-mortality"
+command = "cargo test -p golem-mortality -- scenario_senescence_recovery"
+scenarios = ["stage1_entry", "recovery_above_threshold", "recovery_event", "stage_none_exit"]
 blocking = false
 status = "pending"
+test_invariants = ["test_epistemic_fitness_clamp_range", "test_ema_convergence_to_constant", "test_domain_alpha_half_life_calibration", "test_dimension_weights_sum_to_one", "test_tick_accuracy_range_proptest", "test_senescence_hysteresis_offset", "test_senescence_grace_period_constant", "test_fitness_trend_range", "test_prediction_log_fifo_eviction", "test_composite_vitality_multiplicative_proptest", "test_no_hardcoded_lifespan_ceiling", "test_senescence_stage_valid_transitions", "test_gompertz_hazard_monotonic_proptest", "test_genomic_bottleneck_compression_bound", "test_baldwin_effect_generational_decay_proptest", "test_hayflick_replicant_ceiling_enforced", "test_thanatopsis_phase_ordering", "test_kelly_criterion_bounds_proptest"]
 
 [[task]]
 id = "LS3"
-title = "Stochastic Death Sequence"
+title = "Scenario: Dream Consolidation Replay"
 type = "lifecycle"
-command = "cargo test -p golem-core -- test_stochastic_death_sequence"
-scenarios = ["HeartbeatTick → hazard_roll → VitalityUpdate(stochastic=0) → DeathInitiated → SuccessorSpawned"]
+crate = "golem-dreams"
+command = "cargo test -p golem-dreams -- scenario_consolidation"
+scenarios = ["dream_initiated", "prioritized_replay", "playbook_update", "dream_completed"]
+blocking = false
+status = "pending"
+
+# Phase 8: Full Regression Suite
+test_invariants = ["test_dream_replay_prioritizes_by_utility"]
+
+[[task]]
+id = "REG1"
+title = "Regression: All Invariants via verify-chain"
+type = "integration_test"
+crate = "workspace"
+command = "bash plans/context/verify-chains/01-verify.sh all"
+blocking = false
+status = "pending"
+
+# Phase 9: Documentation & Coverage
+
+[[task]]
+id = "DOC1"
+title = "Documentation: mdbook build"
+type = "integration_test"
+crate = "workspace"
+command = "mdbook build docs"
 blocking = false
 status = "pending"
 
 [[task]]
-id = "LS4"
-title = "Behavioral Phase Cascade"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_behavioral_phase_cascade"
-scenarios = ["VitalityUpdate(composite=0.8→0.6→0.4→0.2) → PhaseTransition at each threshold"]
-blocking = false
-status = "pending"
-
-[[task]]
-id = "LS5"
-title = "Extension Hook Execution Sequence"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_extension_hook_sequence"
-scenarios = ["on_session → on_heartbeat_start → on_lifespan_tick → on_daimon_update → on_memory_validate → on_risk_check → on_dream_trigger → on_cyber_reflect → on_clade_sync → on_telemetry_emit"]
+id = "COV1"
+title = "Code Coverage: tarpaulin report"
+type = "integration_test"
+crate = "workspace"
+command = "cargo tarpaulin --workspace --out Html --exclude-files tests/ --timeout 300"
 blocking = false
 status = "pending"
