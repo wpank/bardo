@@ -1,1736 +1,1485 @@
-# Plan 01: Workspace Scaffold & mdbook
+# Plan 04: Terminal Scaffold & Render Loop
 
 ## Context
 
-This plan creates the physical skeleton of the entire Cargo workspace. Nothing else can compile until it exists. Specifically it implements:
+`bardo-terminal` is the Golem's primary interactive surface: a full-screen TUI written in Rust, rendered at 60fps via ratatui and crossterm. This plan builds the application skeleton — terminal initialization, the render loop, the screen abstraction layer, the ROSEDUST color palette, and the responsive layout engine — without connecting any runtime data. Placeholder types stub out vitality, PAD, and heartbeat stats so the scaffold compiles and runs in isolation. Plans 70a-70c wire the real connections.
 
-- `prd2/17-monorepo/00-packages.md` §§ Workspace Layout, Root Cargo.toml, Crate Inventory, Dependency Rules
-- `prd2/17-monorepo/01-rust-workspace.md` §§ Workspace Structure, Key Dependencies, DX Tooling
-- `prd2/17-monorepo/02-build.md` §§ Rust Workspace (rustfmt, clippy, justfile tasks)
-- `prd2/17-monorepo/03-conventions.md` §§ Rust Conventions, Workspace Dependency Inheritance, Lint Config
-- `prd2/shared/dependencies.md` §8 Rust Workspace Dependencies (version pins)
-
-This plan does NOT implement any crate logic. It creates shell files only — enough for `cargo check --workspace` to succeed with zero compile errors.
-
----
+The design target is `prd2/18-interfaces/rendering/00-design-system.md`: rose on violet-black, CRT materiality, nothing ever at rest. Even this placeholder scaffold should feel alive: a sine-wave tick counter and a pulsing border are enough to demonstrate the perpetual motion principle.
 
 ## Previous Plan
 
-First plan — no predecessor.
-
----
+Plan 03 created `apps/mirage-rs/`: in-process revm fork with lazy-latest RPC, CoW state layers, JSON-RPC compat, and a scenario runner. mirage-rs is the EVM testing backbone for all subsequent on-chain simulation.
 
 ## Prerequisites
 
-None. This is the foundation everything else builds on.
+- **Plan 01** — workspace scaffold; `apps/bardo-terminal/` must exist as a workspace member with its `Cargo.toml` included in the root `[workspace.members]`
+- **Plan 02** — `golem-core` crate compiled; `EventFabric` is imported optionally (unused until Plan 70a, but the import confirms the dependency compiles)
 
----
+## Imports
 
-## Imports (from earlier plans)
+```rust
+// In app.rs — optional import to confirm golem-core dependency resolves
+#[allow(unused_imports)]
+use golem_core::event::EventFabric;
+```
 
-None.
+The dependency is declared in `Cargo.toml` but not used at runtime until Plans 70a-70c. The `#[allow(unused_imports)]` suppresses the warning without removing the import.
 
----
+## Exports
 
-## Exports (for later plans)
-
-Every subsequent plan depends on this plan's output:
-
-**Workspace root:**
-- `Cargo.toml` — workspace manifest with all 26 members, all `[workspace.dependencies]`, all `[workspace.package]`, all `[workspace.lints]`, release profile
-- `rust-toolchain.toml` — Rust 1.85, edition 2024
-- `rustfmt.toml` — edition 2024, max_width 100, imports_granularity Crate
-- `clippy.toml` — pedantic warn, selective allows
-- `.cargo/config.toml` — mold linker on Linux, sccache wrapper
-- `nextest.toml` — test runner config
-- `deny.toml` — license allowlist stub
-- `justfile` — all task aliases
-
-**Library crate shells (each has `Cargo.toml` + `src/lib.rs`):**
-- `crates/golem-core/`
-- `crates/golem-runtime/`
-- `crates/golem-heartbeat/`
-- `crates/golem-grimoire/`
-- `crates/golem-daimon/`
-- `crates/golem-mortality/`
-- `crates/golem-dreams/`
-- `crates/golem-context/`
-- `crates/golem-safety/`
-- `crates/golem-inference/`
-- `crates/golem-chain/`
-- `crates/golem-chain-intelligence/`
-- `crates/golem-triage/`
-- `crates/golem-ta/`
-- `crates/golem-oneirography/`
-- `crates/golem-tools/`
-- `crates/golem-coordination/`
-- `crates/golem-surfaces/`
-- `crates/golem-creature/`
-- `crates/golem-engagement/`
-- `crates/golem-binary/`
-
-**App binary shells (each has `Cargo.toml` + `src/main.rs`):**
-- `apps/bardo-gateway/`
-- `apps/bardo-terminal/`
-- `apps/bardo-styx/`
-- `apps/bardo-compute/`
-- `apps/mirage-rs/`
-
-**Documentation scaffold:**
-- `docs/book.toml`
-- `docs/src/SUMMARY.md`
-- `docs/src/introduction/what-is-bardo.md`
-
-**TypeScript sidecar stub:**
-- `sidecar/tools-ts/package.json`
-- `sidecar/tools-ts/tsconfig.json`
-- `sidecar/tools-ts/src/index.ts`
-- `sidecar/tools-ts/src/types.ts`
-
-**Test directory stubs:**
-- `tests/conformance/.gitkeep`
-- `tests/adversarial/.gitkeep`
-- `tests/property/.gitkeep`
-- `tests/integration/.gitkeep`
-
----
+| Type | Module | Purpose |
+|------|--------|---------|
+| `Screen` | `bardo_terminal::screen` | Pluggable screen trait — all 29 screens implement this |
+| `ScreenId` | `bardo_terminal::screen` | Enum identifying each of the 29 screens |
+| `ScreenRegistry` | `bardo_terminal::screen` | `HashMap<ScreenId, Box<dyn Screen>>` |
+| `App` | `bardo_terminal::app` | Application struct — owns terminal, screens, state, event channel |
+| `AppState` | `bardo_terminal::state` | Global app state (tick count, connection status, vitality placeholder, layout) |
+| `AppAction` | `bardo_terminal::state` | Enum of actions that can mutate app state (Quit, NextScreen, PrevScreen, Resize) |
+| `ColorPalette` | `bardo_terminal::palette` | ROSEDUST palette constants as `ratatui::style::Color::Rgb` values |
+| `LayoutBreakpoint` | `bardo_terminal::layout` | Responsive breakpoint enum (Compact / Standard / Wide / Ultra) |
+| `MockVitality` | `bardo_terminal::state` | Placeholder vitality struct until Plan 70a |
+| `ConnectionStatus` | `bardo_terminal::state` | Enum: Connected / Disconnected / Connecting |
+| `HomeScreen` | `bardo_terminal::screens::home` | Home screen placeholder (implements `Screen`) |
 
 ## Cargo Dependencies
 
-The complete workspace dependency catalog, used verbatim in the root `Cargo.toml`:
-
 ```toml
-[workspace.dependencies]
-# Async runtime
-tokio = { version = "1.50", features = ["full"] }
-futures = "0.3"
+# apps/bardo-terminal/Cargo.toml
+[package]
+name = "bardo-terminal"
+version = "0.1.0"
+edition = "2021"
 
-# Serialization
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1"
-toml = "0.8"
+[[bin]]
+name = "bardo-terminal"
+path = "src/main.rs"
 
-# Error handling
-thiserror = "2.0"
-anyhow = "1.0"
-
-# Logging / tracing
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-
-# HTTP / Web
-axum = { version = "0.8", features = ["ws"] }
-reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
-tower = "0.5"
-tower-http = { version = "0.6", features = ["cors", "trace"] }
-
-# Ethereum
-alloy = { version = "1.7", features = ["full"] }
-alloy-primitives = "1"
-alloy-sol-types = "1"
-revm = { version = "36.0", features = ["std"] }
-
-# Database
-rusqlite = { version = "0.32", features = ["bundled"] }
-sled = "0.34"
-
-# Serialization (binary)
-bincode = "1"
-
-# Vector DB / Embeddings (for Grimoire)
-lancedb = "0.27"
-fastembed = "5.13"
-
-# TUI
-ratatui = "0.30"
-crossterm = "0.28"
-
-# Caching
-moka = { version = "0.12", features = ["future"] }
-
-# Audio (optional)
-rodio = { version = "0.22", optional = true }
-
-# Full-text search (Grimoire BM25 hybrid retrieval, Plan 69)
-tantivy = "0.22"
-
-# Observability (Plans 39c, 63b)
-opentelemetry = { version = "0.27", features = ["metrics"] }
-opentelemetry-otlp = { version = "0.27", features = ["grpc-tonic"] }
-tracing-opentelemetry = "0.28"
-
-# Testing
-proptest = "1.10"
-
-# Utilities
-uuid = { version = "1", features = ["v4", "serde"] }
-chrono = { version = "0.4", features = ["serde"] }
-rand = "0.8"
-bytes = "1"
-dashmap = "6"
-parking_lot = "0.12"
-clap = { version = "4", features = ["derive"] }
-zeroize = { version = "1", features = ["derive"] }
-sha2 = "0.10"
-p256 = "0.13"
-wasmtime = "26"
-bumpalo = "3"
-tokio-tungstenite = "0.26"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+color-eyre = "0.6"
+golem-core = { path = "../../crates/golem-core" }
 ```
 
----
+Notes:
+- `ratatui = { workspace = true }` — workspace pins `"0.30"`; an earlier draft referenced `"0.29"` but the workspace is authoritative
+- `crossterm = { workspace = true }` — workspace pins `"0.28"`
+- No `tokio-tungstenite`, `redb`, or `rodio` yet — those arrive with WebSocket connectivity in later plans
+- `golem-core` path dependency confirms Plan 02 output is reachable
 
 ## Source Files
 
-| File | Sections Used |
-|------|--------------|
-| `prd2/17-monorepo/00-packages.md` | Workspace Layout, Root Cargo.toml, Crate Inventory (all layers), TypeScript Sidecar, Dependency Rules |
-| `prd2/17-monorepo/01-rust-workspace.md` | Workspace Structure, Crate Dependency DAG, Key Dependencies, DX Tooling (rust-toolchain.toml, Linker Configuration, sccache, Task Runner, bacon, lefthook), Rust Coding Conventions, Workspace Dependency Inheritance, Workspace Lints, CI Pipeline, Release Profile |
-| `prd2/17-monorepo/02-build.md` | Rust Workspace: Build, Testing (nextest.toml), Linting (clippy.toml), Formatting (rustfmt.toml), Coverage |
-| `prd2/17-monorepo/03-conventions.md` | Rust Conventions (Error Handling, Async, Serialization, Testing, Workspace Dependency Inheritance, Lint Config, Naming, Visibility) |
-| `prd2/shared/glossary.md` | All Bardo-specific terminology used in doc comments |
-| `prd2/shared/branding.md` | Product names, crate names table, color palette (ROSEDUST), no-emojis rule |
-| `prd2/shared/dependencies.md` | §8 Rust Workspace Dependencies (version pins per dep) |
-| `prd2/shared/doc-standards.md` | doc-comment standards for `//!` crate-level docs |
-| `prd2/shared/port-allocation.md` | Full port map — include in Quick Reference |
-| `prd2/15-dev/05-tooling.md` | justfile tasks, clippy/rustfmt invocations, mirage-rs CLI flags |
-
----
+```
+apps/bardo-terminal/
+├── Cargo.toml
+└── src/
+    ├── main.rs          — tokio main, terminal init, panic hook, run loop, clean shutdown
+    ├── app.rs           — App struct, run() method, render loop, event pump
+    ├── screen.rs        — Screen trait, ScreenId enum (all 29 as stubs), ScreenRegistry
+    ├── state.rs         — AppState, AppAction enum, MockVitality, ConnectionStatus
+    ├── layout.rs        — LayoutBreakpoint, responsive layout helpers
+    ├── palette.rs       — ROSEDUST color palette constants
+    └── screens/
+        ├── mod.rs
+        └── home.rs      — HomeScreen (placeholder: ASCII box + connection status + tick counter)
+```
 
 ## Implementation Details
 
 ---
 
-### Unit 1: Workspace Root & Toolchain
+### Unit 1: Terminal Init & Render Loop
 
-**Quick Reference**
+**Files:** `src/main.rs`, `src/app.rs`
 
-Complete root `Cargo.toml`:
+#### Quick Reference
 
-```toml
-[workspace]
-resolver = "2"
-members = [
-    # Layer 0
-    "crates/golem-core",
-    # Layer 1
-    "crates/golem-runtime",
-    # Layer 2
-    "crates/golem-heartbeat",
-    "crates/golem-grimoire",
-    "crates/golem-daimon",
-    "crates/golem-mortality",
-    "crates/golem-dreams",
-    "crates/golem-context",
-    # Layer 3
-    "crates/golem-safety",
-    # Layer 4
-    "crates/golem-inference",
-    "crates/golem-chain",
-    "crates/golem-chain-intelligence",
-    "crates/golem-triage",
-    "crates/golem-ta",
-    "crates/golem-oneirography",
-    "crates/golem-tools",
-    # Layer 5
-    "crates/golem-coordination",
-    # Layer 6
-    "crates/golem-surfaces",
-    "crates/golem-creature",
-    "crates/golem-engagement",
-    # Layer 7
-    "crates/golem-binary",
-    # Apps
-    "apps/bardo-gateway",
-    "apps/bardo-terminal",
-    "apps/bardo-styx",
-    "apps/bardo-compute",
-    "apps/mirage-rs",
-]
-
-[workspace.package]
-edition = "2024"
-rust-version = "1.85"
-license = "Proprietary"
-authors = ["Bardo <engineering@bardo.run>"]
-
-[workspace.dependencies]
-# Async runtime
-tokio = { version = "1.50", features = ["full"] }
-futures = "0.3"
-
-# Serialization
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1"
-toml = "0.8"
-
-# Error handling
-thiserror = "2.0"
-anyhow = "1.0"
-
-# Logging / tracing
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-
-# HTTP / Web
-axum = { version = "0.8", features = ["ws"] }
-reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
-tower = "0.5"
-tower-http = { version = "0.6", features = ["cors", "trace"] }
-
-# Ethereum
-alloy = { version = "1.7", features = ["full"] }
-alloy-primitives = "1"
-alloy-sol-types = "1"
-revm = { version = "36.0", features = ["std"] }
-
-# Database
-rusqlite = { version = "0.32", features = ["bundled"] }
-sled = "0.34"
-
-# Serialization (binary)
-bincode = "1"
-
-# Vector DB / Embeddings
-lancedb = "0.27"
-fastembed = "5.13"
-
-# TUI
-ratatui = "0.30"
-crossterm = "0.28"
-
-# Caching
-moka = { version = "0.12", features = ["future"] }
-
-# Audio (optional feature)
-rodio = { version = "0.22", optional = true }
-
-# Full-text search (Grimoire BM25, Plan 69)
-tantivy = "0.22"
-
-# Observability (Plans 39c, 63b)
-opentelemetry = { version = "0.27", features = ["metrics"] }
-opentelemetry-otlp = { version = "0.27", features = ["grpc-tonic"] }
-tracing-opentelemetry = "0.28"
-
-# Testing
-proptest = "1.10"
-
-# Utilities
-uuid = { version = "1", features = ["v4", "serde"] }
-chrono = { version = "0.4", features = ["serde"] }
-rand = "0.8"
-bytes = "1"
-dashmap = "6"
-parking_lot = "0.12"
-clap = { version = "4", features = ["derive"] }
-zeroize = { version = "1", features = ["derive"] }
-sha2 = "0.10"
-p256 = "0.13"
-wasmtime = "26"
-bumpalo = "3"
-tokio-tungstenite = "0.26"
-
-[workspace.lints.rust]
-unsafe_code = "deny"
-missing_docs = "warn"
-
-[workspace.lints.clippy]
-pedantic = { level = "warn", priority = -1 }
-nursery = { level = "warn", priority = -1 }
-# Selective allows for high-noise pedantic rules
-module_name_repetitions = "allow"
-must_use_candidate = "allow"
-missing_errors_doc = "allow"
-unwrap_used = "deny"
-expect_used = "warn"
-
-[profile.release]
-lto = "thin"
-codegen-units = 1
-strip = true
-panic = "abort"
-
-[profile.dev]
-debug = true
-```
-
-`rust-toolchain.toml`:
-
-```toml
-[toolchain]
-channel = "1.85"
-components = ["rustfmt", "clippy", "llvm-tools-preview"]
-targets = ["x86_64-unknown-linux-musl", "aarch64-unknown-linux-musl"]
-```
-
-`rustfmt.toml`:
-
-```toml
-edition = "2024"
-max_width = 100
-imports_granularity = "Crate"
-group_imports = "StdExternalCrate"
-```
-
-`clippy.toml`:
-
-```toml
-# Pedantic rules are enforced at workspace level via [workspace.lints.clippy].
-# This file holds any per-tool configuration; currently empty.
-```
-
-`.cargo/config.toml`:
-
-```toml
-[target.x86_64-unknown-linux-gnu]
-linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=mold"]
-
-[target.aarch64-unknown-linux-gnu]
-linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=mold"]
-
-# macOS uses default Apple linker — no mold entry needed
-
-[build]
-# Uncomment if sccache is installed: rustc-wrapper = "sccache"
-```
-
-`nextest.toml`:
-
-```toml
-[profile.default]
-test-threads = "num-cpus"
-slow-timeout = { period = "60s", terminate-after = 3 }
-fail-fast = false
-
-[profile.ci]
-fail-fast = true
-slow-timeout = { period = "120s", terminate-after = 2 }
-```
-
-`deny.toml`:
-
-```toml
-[licenses]
-allow = ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-3.0"]
-deny = ["GPL-2.0", "GPL-3.0", "AGPL-3.0"]
-
-[advisories]
-db-path = "~/.cargo/advisory-db"
-db-urls = ["https://github.com/rustsec/advisory-db"]
-vulnerability = "deny"
-unmaintained = "warn"
-yanked = "warn"
-notice = "warn"
-
-[bans]
-multiple-versions = "warn"
-wildcards = "deny"
-
-[sources]
-unknown-registry = "deny"
-unknown-git = "deny"
-allow-registry = ["https://github.com/rust-lang/crates.io-index"]
-```
-
-Port allocation reference (from `prd2/shared/port-allocation.md`):
-
-| Port  | Service                          | Owner                  |
-|-------|----------------------------------|------------------------|
-| 3000  | Vault debug UI                   | `packages/vault/ui`    |
-| 3001  | Dev debug UI                     | `packages/dev/ui`      |
-| 3002  | Portal local server              | `packages/portal`      |
-| 3003  | Dev browser SPA                  | `packages/dev/browser` |
-| 5100  | Otterscan block explorer         | Docker (external)      |
-| 8080  | Vault tool server (HTTP+SSE)     | `packages/vault`       |
-| 8081  | Vault tool server (WebSocket)    | `packages/vault`       |
-| 8443  | Local Styx WebSocket (dev TLS)   | `bardo-styx`           |
-| 8545  | Anvil RPC                        | `packages/dev`         |
-| 8546  | mirage-rs JSON-RPC (default)     | `apps/mirage-rs`       |
-| 9090  | bardo-compute provisioning API   | `apps/bardo-compute`   |
-| 42069 | Ponder indexer                   | `packages/dev`         |
-| 42070 | Indexer translation proxy        | `packages/dev`         |
-
-**Source Files:** `prd2/17-monorepo/00-packages.md`, `prd2/17-monorepo/01-rust-workspace.md`, `prd2/17-monorepo/02-build.md`, `prd2/17-monorepo/03-conventions.md`, `prd2/shared/dependencies.md`, `prd2/shared/port-allocation.md`
-
-**Crate Location:** N/A — workspace root files
-
-**Implementation Notes:**
-
-1. Create the files exactly as shown in Quick Reference. Do not add extra workspace features or profile settings beyond what is listed.
-2. The `rodio` dep has `optional = true` because audio is a feature flag, not a hard dependency. Individual crates opt in.
-3. Edition is `2024`. This requires Rust 1.85+. The toolchain is pinned accordingly.
-4. Do NOT add `workspace-hack` (cargo-hakari) yet — that requires `cargo hakari generate` which modifies many files. Skip in this plan.
-5. The `.cargo/config.toml` `rustc-wrapper` line is commented out. Uncomment locally if `sccache` is installed. CI sets it via environment variable.
-6. The `deny.toml` is a minimal stub. The full advisory configuration is fleshed out when CI is wired.
-7. After creating all files, verify: `cargo metadata --no-deps --format-version 1 | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d['workspace_members']))"` should print `25` (21 library crates + 4 app binaries).
-
-**Gitbook Documentation:** N/A for this unit (docs scaffold created in Unit 5).
-
-**Verification:**
-```bash
-# Check workspace member count
-cargo metadata --no-deps --format-version 1 | python3 -c \
-  "import sys,json; d=json.load(sys.stdin); print('members:', len(d['workspace_members']))"
-# Expected output: members: 25
-
-# Workspace check (will fail until crates exist — run after Unit 2 and 3)
-cargo check --workspace 2>&1 | tail -5
-```
-
----
-
-### Unit 2: Library Crate Shells (21 crates)
-
-**Quick Reference**
-
-Layer→crate mapping with one-line description and implementing plan:
-
-| Layer | Crate | Description | Implemented By |
-|-------|-------|-------------|----------------|
-| 0 | `golem-core` | Shared types, config, GolemId, PADVector, MarketRegime, CognitiveTier, GolemConfig, CorticalState, EventFabric, TaintLabel, bump allocator | Plan 02 |
-| 1 | `golem-runtime` | Extension registry, hook dispatch, GolemState, lifecycle FSM (Provisioning→Active→Dreaming→Terminal→Dead), shutdown handler | Plans 02, 14b |
-| 2 | `golem-heartbeat` | 9-step CoALA pipeline (observe→retrieve→analyze→gate→simulate→validate→execute→verify→reflect), DecisionCycleRecord, heartbeat FSM | Plan 15 |
-| 2 | `golem-grimoire` | LanceDB episodic store, SQLite semantic store (5 entry types), PLAYBOOK.md, four-factor retrieval, curator | Plan 12 |
-| 2 | `golem-daimon` | ALMA emotion model, PAD vectors, OCC/Scherer appraisal, somatic markers, mood EMA, clade emotional contagion | Plan 14a |
-| 2 | `golem-mortality` | Three death clocks (economic, epistemic, stochastic), VitalityState, behavioral phases, thanatopsis (4-phase death protocol) | Plans 13a, 13b |
-| 2 | `golem-dreams` | Dream scheduler, NREM replay, REM imagination, consolidation, PLAYBOOK.md evolution | Plan 21+ |
-| 2 | `golem-context` | CognitiveWorkspace assembly, ContextPolicy, per-category token allocation, background fiber, typed interventions | Plan 15+ |
-| 3 | `golem-safety` | Capability<T> tokens, TaintedString, PolicyCage, merkle audit log, LoopGuard, ActionPermit lifecycle | Plan 10 |
-| 4 | `golem-inference` | T0/T1/T2 tier routing, five provider integrations, x402 micropayment, SSE parser, cost cap | Plan 11 |
-| 4 | `golem-chain` | Alloy provider, ERC-8004, Permit2, Warden, revm_sim, block/log types | Plan 09 |
-| 4 | `golem-chain-intelligence` | bardo-witness block ingestion, chain scope, protocol state, PVS | Plans 17, 18 |
-| 4 | `golem-triage` | Bayesian surprise triage, HDC/BSC fingerprints, KL divergence | Plan 19 |
-| 4 | `golem-ta` | TaCorticalExtension, TDA (Betti curves, persistence diagrams), regime detection | Plan 75a+ |
-| 4 | `golem-oneirography` | Dream journal, death mask minting, SuperRare integration, lineage graph | Plan 72+ |
-| 4 | `golem-tools` | ToolDef, ToolContext, ToolResult, three tool traits (ReadTool/WriteTool/PrivilegedTool), registry, Wasmtime sandbox, JSON-RPC sidecar client | Plans 26-35 |
-| 5 | `golem-coordination` | Pheromone field client (THREAT/OPPORTUNITY/WISDOM), clade sync, bloodstain ingestion, PropagationPolicy | Plan 40+ |
-| 6 | `golem-surfaces` | Axum WebSocket handler, SSE fallback, Telegram push, GolemSnapshot | Plan 63+ |
-| 6 | `golem-creature` | Creature visual state, evolution forms (Egg→Hatchling→Mature→Weathered→Transcendent), PAD→expression mapping | Plan 43+ |
-| 6 | `golem-engagement` | Achievement engine, death recap, graveyard, toast/notification events | Plan 64+ |
-| 7 | `golem-binary` | Single binary entry point, CLI args (--config, --data-dir, --phenotype), signal handlers, extension registration | Plan 41+ |
-
-**Crate `Cargo.toml` pattern** (same for all 21):
-
-```toml
-[package]
-name = "golem-CRATE"
-version = "0.1.0"
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-authors.workspace = true
-
-[lints]
-workspace = true
-
-[dependencies]
-# No workspace deps in the shell — each plan adds what it needs
-```
-
-**Crate `src/lib.rs` pattern**:
+**Crossterm raw mode setup/teardown pattern:**
 
 ```rust
-//! `golem-CRATE` — ONE_LINE_DESCRIPTION_FROM_TABLE_ABOVE
-//!
-//! **Implemented by:** Plan NN
-//! **Depends on:** [list from DAG in prd2/17-monorepo/01-rust-workspace.md]
-//!
-//! This crate is a shell. Plan NN implements the actual content.
+// Setup (main.rs before run loop)
+crossterm::terminal::enable_raw_mode()?;
+let mut stdout = std::io::stdout();
+crossterm::execute!(stdout,
+    crossterm::terminal::EnterAlternateScreen,
+    crossterm::event::EnableMouseCapture,
+)?;
+let backend = ratatui::backend::CrosstermBackend::new(stdout);
+let mut terminal = ratatui::Terminal::new(backend)?;
 
-#![deny(unsafe_code)]
-#![warn(missing_docs)]
+// Teardown (main.rs after run loop, or in cleanup function)
+crossterm::terminal::disable_raw_mode()?;
+crossterm::execute!(
+    terminal.backend_mut(),
+    crossterm::terminal::LeaveAlternateScreen,
+    crossterm::event::DisableMouseCapture,
+)?;
+terminal.show_cursor()?;
 ```
 
-**Source Files:** `prd2/17-monorepo/00-packages.md` §Crate Inventory, `prd2/17-monorepo/01-rust-workspace.md` §Crate Dependency DAG
+**Panic hook to restore terminal on crash:**
 
-**Crate Location:** `crates/<name>/Cargo.toml` and `crates/<name>/src/lib.rs` for each of the 21 crates listed above.
+Install this before anything else in `main()`. If the process panics mid-render, the terminal must be restored or the user's shell is left in raw mode with no cursor.
 
-**Implementation Notes:**
+```rust
+let original_hook = std::panic::take_hook();
+std::panic::set_hook(Box::new(move |panic_info| {
+    // Best-effort teardown — ignore errors, we're already panicking
+    let _ = crossterm::terminal::disable_raw_mode();
+    let _ = crossterm::execute!(
+        std::io::stdout(),
+        crossterm::terminal::LeaveAlternateScreen,
+        crossterm::event::DisableMouseCapture,
+    );
+    original_hook(panic_info);
+}));
+```
 
-1. Create all 21 directories. Each gets exactly two files: `Cargo.toml` and `src/lib.rs`.
-2. The `[dependencies]` section in each shell Cargo.toml is intentionally empty. Later plans add `dep.workspace = true` entries as they implement the crate.
-3. The `[lints]` table MUST be present in every crate Cargo.toml so workspace lint config is inherited.
-4. `golem-binary` is a library crate at the workspace level even though it contains a binary. Its `src/lib.rs` exports the top-level orchestration. The actual binary target is in `apps/` — see Unit 3. Wait: per `prd2/17-monorepo/00-packages.md`, `golem-binary` is listed under `crates/` as the binary that ships. Create it as a binary crate: `src/main.rs` not `src/lib.rs`, with `[[bin]]` in its Cargo.toml. Plan 41 fills in the actual `main()`.
+**60fps tick — 16.67ms deadline, frame skipping on overrun:**
 
-    `crates/golem-binary/Cargo.toml`:
-    ```toml
-    [package]
-    name = "golem-binary"
-    version = "0.1.0"
-    edition.workspace = true
-    rust-version.workspace = true
-    license.workspace = true
-    authors.workspace = true
+```rust
+const TARGET_FPS: u64 = 60;
+const FRAME_DURATION: std::time::Duration =
+    std::time::Duration::from_micros(1_000_000 / TARGET_FPS); // 16,666µs
 
-    [[bin]]
-    name = "bardo-golem"
-    path = "src/main.rs"
+// In run loop:
+let frame_start = std::time::Instant::now();
 
-    [lints]
-    workspace = true
+// ... poll events, tick state, render ...
 
-    [dependencies]
-    anyhow = { workspace = true }
-    tokio = { workspace = true }
-    tracing = { workspace = true }
-    tracing-subscriber = { workspace = true }
-    ```
+let elapsed = frame_start.elapsed();
+if elapsed < FRAME_DURATION {
+    std::thread::sleep(FRAME_DURATION - elapsed);
+}
+// If elapsed > FRAME_DURATION, we overran. Skip sleep, go straight to next frame.
+// Frame skip is implicit — no explicit tracking needed at this scaffold stage.
+```
 
-    `crates/golem-binary/src/main.rs`:
-    ```rust
-    //! `golem-binary` — Single binary entry point for the Golem runtime.
-    //!
-    //! **Implemented by:** Plan 41+
-    //! **Depends on:** All other golem-* crates
-    //!
-    //! This is a shell. Plan 41 implements the actual startup sequence.
+**Clean shutdown sequence:**
 
-    #[tokio::main]
-    async fn main() -> anyhow::Result<()> {
-        tracing_subscriber::fmt::init();
-        tracing::info!("bardo-golem starting — not yet implemented");
-        Ok(())
+`should_quit` is a bool on `App`. When `q` is pressed, `handle_key` sets `should_quit = true`. The run loop exits, `main.rs` calls the teardown sequence above, flushes any remaining events, and returns.
+
+```rust
+// In app.rs run():
+pub fn run(
+    &mut self,
+    terminal: &mut ratatui::Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>,
+) -> color_eyre::Result<()> {
+    let mut last_frame = std::time::Instant::now();
+
+    loop {
+        let frame_start = std::time::Instant::now();
+        let dt = frame_start.duration_since(last_frame).as_secs_f64();
+
+        // 1. Poll input (non-blocking, up to remaining frame budget)
+        let timeout = FRAME_DURATION.saturating_sub(last_frame.elapsed());
+        if crossterm::event::poll(timeout)? {
+            match crossterm::event::read()? {
+                crossterm::event::Event::Key(key) => {
+                    if let Some(action) = self.handle_key(key) {
+                        self.apply_action(action);
+                    }
+                }
+                crossterm::event::Event::Resize(w, h) => {
+                    self.state.layout = LayoutBreakpoint::from_cols(w);
+                    let _ = h; // height unused at scaffold stage
+                }
+                _ => {}
+            }
+        }
+
+        // 2. Tick state
+        self.state.tick_count = self.state.tick_count.wrapping_add(1);
+
+        // 3. Render
+        terminal.draw(|frame| self.render(frame))?;
+
+        last_frame = frame_start;
+
+        if self.should_quit {
+            break;
+        }
+
+        // 4. Sleep remainder
+        let elapsed = frame_start.elapsed();
+        if elapsed < FRAME_DURATION {
+            std::thread::sleep(FRAME_DURATION - elapsed);
+        }
     }
-    ```
-
-5. All other 20 crates use `src/lib.rs` (not `src/main.rs`). They are pure libraries.
-6. One-line descriptions for the `//!` doc comments come from the table in Quick Reference above. Copy them verbatim. Accuracy matters because later plans `grep` these comments.
-
-**Gitbook Documentation:** N/A for shells — each crate's implementing plan writes the gitbook page.
-
-**Verification:**
-```bash
-# Each crate must check cleanly
-for crate in golem-core golem-runtime golem-heartbeat golem-grimoire golem-daimon \
-             golem-mortality golem-dreams golem-context golem-safety golem-inference \
-             golem-chain golem-chain-intelligence golem-triage golem-ta \
-             golem-oneirography golem-tools golem-coordination golem-surfaces \
-             golem-creature golem-engagement golem-binary; do
-    cargo check -p "$crate" 2>&1 | grep -E "(error|warning)" | grep -v "missing_docs" | head -3
-done
-```
-
----
-
-### Unit 3: App Binary Shells (5 apps)
-
-**Quick Reference**
-
-| Binary | Path | Description | Port | Implemented By |
-|--------|------|-------------|------|----------------|
-| `bardo-gateway` | `apps/bardo-gateway/` | Inference gateway: x402 USDC payment verification + provider routing (5 providers) | 8080/8081 | Plans 11, 36-39c |
-| `bardo-terminal` | `apps/bardo-terminal/` | Standalone ratatui TUI that connects to a running golem via WebSocket | (none, connects to golem) | Plans 04-08d, 70a-70c |
-| `bardo-styx` | `apps/bardo-styx/` | Styx relay server: clade knowledge sync, pheromone field, Lethe (formerly Commons) | 8443 (TLS) | Plan 40 |
-| `bardo-compute` | `apps/bardo-compute/` | Compute provisioning service: Fly.io warm pool, x402 per-hour billing, fleet management | 9090 | Plan 67 |
-| `mirage-rs` | `apps/mirage-rs/` | In-process revm fork simulator with JSON-RPC compat layer, state CoW layers | 8546 | Plan 03 |
-
-**App `Cargo.toml` pattern**:
-
-```toml
-[package]
-name = "bardo-APP"
-version = "0.1.0"
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-authors.workspace = true
-
-[[bin]]
-name = "bardo-APP"
-path = "src/main.rs"
-
-[lints]
-workspace = true
-
-[dependencies]
-anyhow = { workspace = true }
-tokio = { workspace = true }
-tracing = { workspace = true }
-tracing-subscriber = { workspace = true }
-```
-
-**App `src/main.rs` pattern**:
-
-```rust
-//! `bardo-APP` — ONE_LINE_DESCRIPTION
-//!
-//! **Implemented by:** Plan NN
-//!
-//! This is a shell. Plan NN implements the actual binary.
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    tracing_subscriber::fmt::init();
-    tracing::info!("bardo-APP starting — not yet implemented");
     Ok(())
 }
 ```
 
-**`apps/mirage-rs/` note:** Per `prd2/15-dev/05-tooling.md`, mirage-rs exposes a CLI with flags (`--rpc-url`, `--fork-block`, `--follow`, `--port`, etc.). The shell binary name is `mirage-rs`. Its Cargo.toml:
+**`main.rs` structure:**
 
-```toml
-[package]
-name = "mirage-rs"
-version = "0.1.0"
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-authors.workspace = true
+```rust
+#[tokio::main]
+async fn main() -> color_eyre::Result<()> {
+    color_eyre::install()?;
+    tracing_subscriber::fmt()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .init();
 
-[[bin]]
-name = "mirage-rs"
-path = "src/main.rs"
+    // Install panic hook before touching terminal
+    install_panic_hook();
 
-[lints]
-workspace = true
+    // Setup terminal
+    let mut terminal = setup_terminal()?;
 
-[dependencies]
-anyhow = { workspace = true }
-tokio = { workspace = true }
-tracing = { workspace = true }
-tracing-subscriber = { workspace = true }
-clap = { workspace = true }
-```
+    // Build app
+    let mut app = App::new();
 
-**Source Files:** `prd2/17-monorepo/00-packages.md` §Apps, `prd2/17-monorepo/01-rust-workspace.md` §Workspace Structure, `prd2/15-dev/05-tooling.md`
+    // Run
+    let result = app.run(&mut terminal);
 
-**Crate Location:** `apps/bardo-gateway/`, `apps/bardo-terminal/`, `apps/bardo-styx/`, `apps/bardo-compute/`, `apps/mirage-rs/`
+    // Always teardown, even on error
+    teardown_terminal(terminal)?;
 
-**Implementation Notes:**
-
-1. Apps are workspace members. They appear in `[workspace] members` in root Cargo.toml.
-2. Apps MUST NOT be depended on by any `crates/` workspace member (see Dependency Rules in `prd2/17-monorepo/00-packages.md`).
-3. `apps/mirage-rs/` resolves Q-01 from CONTEXT.md: apps are in `[workspace] members`. This is confirmed by the workspace layout in `prd2/17-monorepo/01-rust-workspace.md` which shows `apps/` inside the workspace.
-4. The sidecar at `sidecar/tools-ts/` is NOT a Cargo workspace member — it is a TypeScript project. Do not add it to `[workspace] members`.
-
-**Gitbook Documentation:** N/A for shells.
-
-**Verification:**
-```bash
-cargo check -p bardo-gateway
-cargo check -p bardo-terminal
-cargo check -p bardo-styx
-cargo check -p bardo-compute
-cargo check -p mirage-rs
+    result
+}
 ```
 
 ---
 
-### Unit 4: Build Tooling & Dev Setup
+### Unit 2: Screen System
 
-**Quick Reference**
+**Files:** `src/screen.rs`, `src/screens/mod.rs`, `src/screens/home.rs`
 
-Complete `justfile` at workspace root:
+#### Quick Reference
 
-```just
-# Build all crates (debug)
-build:
-    cargo build --workspace
+**Full Screen trait definition:**
 
-# Build release binary
-build-release:
-    cargo build --release -p golem-binary
+```rust
+use ratatui::{Frame, layout::Rect, widgets::*};
+use crossterm::event::KeyEvent;
+use crate::state::{AppState, AppAction};
 
-# Run all tests with nextest
-test:
-    cargo nextest run --workspace
-
-# Run tests in CI mode (fail-fast)
-test-ci:
-    cargo nextest run --workspace --profile ci
-
-# Run clippy on all crates
-lint:
-    cargo clippy --workspace --all-features -- -D warnings
-
-# Format all crates in-place
-fmt:
-    cargo fmt --all
-
-# Check formatting (CI)
-fmt-check:
-    cargo fmt --all -- --check
-
-# Run cargo-deny checks (license + advisory)
-deny:
-    cargo deny check
-
-# Generate coverage report
-coverage:
-    cargo llvm-cov nextest --workspace --html
-
-# Build docs
-docs:
-    cargo doc --workspace --no-deps --open
-
-# Build mdbook docs
-mdbook:
-    cd docs && mdbook build
-
-# Watch mode (requires bacon)
-watch:
-    bacon clippy
-
-# Release builds for deployment targets
-release-linux-amd64:
-    cargo build --release --target x86_64-unknown-linux-musl -p golem-binary
-
-release-linux-arm64:
-    cargo build --release --target aarch64-unknown-linux-musl -p golem-binary
-
-# Run mirage-rs dev fork
-mirage rpc_url="":
-    cargo run -p mirage-rs -- --rpc-url {{rpc_url}} --follow
-
-# Full CI check sequence
-ci: fmt-check lint test deny
-    @echo "CI passed"
-```
-
-**Source Files:** `prd2/17-monorepo/01-rust-workspace.md` §Task Runner, `prd2/15-dev/05-tooling.md` §justfile
-
-**Crate Location:** `justfile` at workspace root, `.cargo/config.toml` (created in Unit 1)
-
-**Implementation Notes:**
-
-1. The `justfile` uses just's recipe syntax. Recipes are tab-indented (spaces in the Quick Reference above — use tabs in the actual file).
-2. `just build` is the canonical check-everything command. Plans that add features use it as their verification step.
-3. `just ci` chains `fmt-check lint test deny` — this is the PR gate.
-4. The `mirage` recipe takes an optional `rpc_url` parameter.
-5. No additional files beyond `justfile` are needed for this unit — `.cargo/config.toml` was handled in Unit 1.
-
-**Gitbook Documentation:** N/A.
-
-**Verification:**
-```bash
-just build 2>&1 | tail -3
-# Expected: Finished `dev` profile target(s)
-
-just fmt-check 2>&1 | tail -3
-# Expected: silent (all files are freshly formatted) or minor warns
-```
-
----
-
-### Unit 5: mdbook Scaffold
-
-**Quick Reference**
-
-`docs/book.toml`:
-
-```toml
-[book]
-title = "Bardo"
-description = "Permissionless infrastructure for mortal autonomous agents in DeFi"
-authors = ["Bardo Engineering"]
-language = "en"
-multilingual = false
-src = "src"
-
-[build]
-build-dir = "book"
-create-missing = true
-
-[output.html]
-site-url = "/docs/"
-git-repository-url = "https://github.com/bardo-run/bardo"
-edit-url-template = "https://github.com/bardo-run/bardo/edit/main/docs/{path}"
-```
-
-`docs/src/SUMMARY.md` (minimal — chapters added as plans complete):
-
-```markdown
-# Summary
-
-[Introduction](introduction/what-is-bardo.md)
-
----
-
-# Architecture
-
-- [Workspace Overview](architecture/workspace.md)
-
----
-
-# Crates
-
-- [golem-core](crates/golem-core.md)
-- [golem-runtime](crates/golem-runtime.md)
-- [golem-heartbeat](crates/golem-heartbeat.md)
-- [golem-grimoire](crates/golem-grimoire.md)
-- [golem-daimon](crates/golem-daimon.md)
-- [golem-mortality](crates/golem-mortality.md)
-- [golem-dreams](crates/golem-dreams.md)
-- [golem-context](crates/golem-context.md)
-- [golem-safety](crates/golem-safety.md)
-- [golem-inference](crates/golem-inference.md)
-- [golem-chain](crates/golem-chain.md)
-- [golem-chain-intelligence](crates/golem-chain-intelligence.md)
-- [golem-triage](crates/golem-triage.md)
-- [golem-ta](crates/golem-ta.md)
-- [golem-oneirography](crates/golem-oneirography.md)
-- [golem-tools](crates/golem-tools.md)
-- [golem-coordination](crates/golem-coordination.md)
-- [golem-surfaces](crates/golem-surfaces.md)
-- [golem-creature](crates/golem-creature.md)
-- [golem-engagement](crates/golem-engagement.md)
-- [golem-binary](crates/golem-binary.md)
-
----
-
-# Apps
-
-- [bardo-gateway](apps/bardo-gateway.md)
-- [bardo-terminal](apps/bardo-terminal.md)
-- [bardo-styx](apps/bardo-styx.md)
-- [bardo-compute](apps/bardo-compute.md)
-- [mirage-rs](apps/mirage-rs.md)
-```
-
-`docs/src/introduction/what-is-bardo.md`:
-
-```markdown
-# What Is Bardo?
-
-Bardo is permissionless infrastructure for mortal autonomous agents in DeFi.
-
-A **golem** is a finite-lived Rust process that executes a 9-step cognitive
-loop — observe, retrieve, analyze, gate, simulate, validate, execute, verify,
-reflect — once per tick. It holds USDC as metabolic substrate. When the USDC
-balance reaches zero, or when epistemic fitness decays below threshold, or when
-a stochastic mortality draw fires, the golem dies. At death it runs the
-Thanatopsis protocol: compress its Grimoire (knowledge store) to at most 2048
-entries, push to the clade, and leave a death mask on-chain.
-
-The successor golem inherits this compressed knowledge. Across generations,
-the population accumulates judgment that no immortal agent can develop:
-knowledge that has been distilled under survival pressure.
-
-## Crate Architecture
-
-```
-golem-binary  (single Fly.io VM binary)
-  └── golem-runtime  (extension registry, lifecycle FSM)
-        ├── golem-heartbeat  (9-step tick pipeline)
-        │     ├── golem-context  (CognitiveWorkspace assembly)
-        │     │     ├── golem-grimoire  (LanceDB + SQLite + PLAYBOOK.md)
-        │     │     ├── golem-daimon  (PAD affect engine)
-        │     │     └── golem-core  [foundation]
-        │     ├── golem-safety  (Capability<T>, PolicyCage, audit log)
-        │     ├── golem-tools  (tool registry, Wasmtime sandbox)
-        │     ├── golem-inference  (T0/T1/T2 routing, x402)
-        │     └── golem-core
-        ├── golem-mortality  (three clocks, thanatopsis)
-        ├── golem-dreams  (NREM/REM/consolidation)
-        ├── golem-coordination  (pheromone field, clade sync)
-        ├── golem-chain  (Alloy, ERC-8004, Warden, revm)
-        ├── golem-chain-intelligence  (bardo-witness, PVS)
-        ├── golem-triage  (Bayesian surprise)
-        ├── golem-ta  (TDA, regime detection)
-        ├── golem-surfaces  (WebSocket, SSE, Telegram)
-        ├── golem-creature  (visual identity engine)
-        ├── golem-engagement  (achievements, graveyard)
-        └── golem-core  [zero workspace deps]
-```
-
-## Getting Started
-
-```bash
-# Clone and check the workspace compiles
-git clone https://github.com/bardo-run/bardo
-cd bardo
-just build
-
-# Run tests
-just test
-
-# Start a dev fork (requires RPC URL)
-just mirage $RPC_URL
-```
-
-## Key Concepts
-
-| Term | Definition |
-|------|-----------|
-| Golem | A mortal autonomous DeFi agent compiled as a single Rust binary |
-| Grimoire | Persistent knowledge store (LanceDB episodic + SQLite semantic + PLAYBOOK.md procedural) |
-| Heartbeat | The 9-step autonomous decision cycle (CoALA pipeline) |
-| Clade | A fleet of sibling golems sharing knowledge via the Styx relay |
-| Daimon | The affect/emotion engine that maps market events to PAD vectors |
-| Thanatopsis | The four-phase death protocol: Acceptance, Settlement, Reflection, Legacy |
-| Bardo | The transitional state between death and rebirth — the system's philosophical framework |
-```
-
-Stub pages for crates and apps (created with `create-missing = true` in book.toml, but Codex
-should create explicit stubs to avoid mdbook errors):
-
-For each crate page (`docs/src/crates/golem-CRATE.md`) and app page (`docs/src/apps/bardo-APP.md`):
-
-```markdown
-# golem-CRATE
-
-**Implemented by:** Plan NN
-
-*Documentation forthcoming. This page is updated when Plan NN completes.*
-```
-
-Also create:
-
-`docs/src/architecture/workspace.md`:
-
-```markdown
-# Workspace Overview
-
-The Bardo workspace is a Cargo workspace with 21 library crates and 4 app binaries.
-
-See `prd2/17-monorepo/00-packages.md` for the authoritative crate inventory.
-
-**Workspace members:** 25 total (21 library crates + 4 app binaries).
-
-**Dependency layers:**
-
-| Layer | Crates |
-|-------|--------|
-| 0 — Foundation | golem-core |
-| 1 — Runtime | golem-runtime |
-| 2 — Cognition | golem-heartbeat, golem-grimoire, golem-daimon, golem-mortality, golem-dreams, golem-context |
-| 3 — Safety | golem-safety |
-| 4 — Infrastructure | golem-inference, golem-chain, golem-chain-intelligence, golem-triage, golem-ta, golem-oneirography, golem-tools |
-| 5 — Coordination | golem-coordination |
-| 6 — Surfaces | golem-surfaces, golem-creature, golem-engagement |
-| 7 — Binary | golem-binary |
-```
-
-**Source Files:** `prd2/17-monorepo/00-packages.md`, `prd2/17-monorepo/01-rust-workspace.md`, `prd2/shared/branding.md`
-
-**Crate Location:** `docs/` directory
-
-**Implementation Notes:**
-
-1. Install mdbook before running this unit: `cargo install mdbook`.
-2. `create-missing = true` in book.toml causes mdbook to create empty files for entries in SUMMARY.md that don't exist. However, Codex should create all stub pages explicitly so they have meaningful placeholder content.
-3. The crate architecture ASCII diagram in `what-is-bardo.md` uses backtick code blocks — ensure it renders correctly by keeping the inner triple-backtick on its own line.
-4. All 21 crate pages and 4 app pages are stubs. The implementing plan for each crate fills in the actual documentation.
-5. The `docs/` directory is not a workspace member. It has no Cargo.toml.
-
-**Gitbook Documentation:** This unit creates the docs scaffold itself.
-
-**Verification:**
-```bash
-# mdbook must be installed first
-command -v mdbook || cargo install mdbook
-cd /path/to/bardo/docs && mdbook build 2>&1 | tail -5
-# Expected: Finished in X.XXs
-ls book/index.html
-```
-
----
-
-### Unit 6: TypeScript Sidecar Stub
-
-**Quick Reference**
-
-The sidecar lives at `sidecar/tools-ts/`. It is NOT a Cargo workspace member. It is a separate npm project spawned by `golem-tools` at runtime over a Unix domain socket using JSON-RPC 2.0.
-
-`sidecar/tools-ts/package.json`:
-
-```json
-{
-  "name": "@bardo/tools-ts-sidecar",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "start": "node dist/index.js"
-  },
-  "dependencies": {
-    "@uniswap/v3-sdk": "^3.14.0",
-    "@uniswap/v4-sdk": "^1.0.0",
-    "@uniswap/smart-order-router": "^3.38.0",
-    "jsbi": "^4.3.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.8.0"
-  }
+pub trait Screen: Send + Sync {
+    fn id(&self) -> ScreenId;
+    fn title(&self) -> &str;
+    fn render(&self, frame: &mut Frame, area: Rect, state: &AppState);
+    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction>;
+    fn on_focus(&mut self) {}   // called when screen becomes active
+    fn on_blur(&mut self) {}    // called when navigating away
 }
 ```
 
-`sidecar/tools-ts/tsconfig.json`:
+**ScreenRegistry:**
 
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "esModuleInterop": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-```
+```rust
+use std::collections::HashMap;
 
-`sidecar/tools-ts/src/types.ts`:
-
-```typescript
-// JSON-RPC 2.0 types for the Bardo tools-ts sidecar.
-// The Rust golem-tools crate connects to this over a Unix domain socket.
-
-export interface JsonRpcRequest {
-  jsonrpc: "2.0";
-  id: number | string;
-  method: string;
-  params: unknown;
+pub struct ScreenRegistry {
+    screens: HashMap<ScreenId, Box<dyn Screen>>,
 }
 
-export interface JsonRpcResponse<T = unknown> {
-  jsonrpc: "2.0";
-  id: number | string;
-  result?: T;
-  error?: JsonRpcError;
-}
-
-export interface JsonRpcError {
-  code: number;
-  message: string;
-  data?: unknown;
-}
-
-// Method registry — filled in by Plan 26+ (golem-tools implementation)
-export type SidecarMethod =
-  | "uniswap_v3_quote"
-  | "uniswap_v3_position_amounts"
-  | "uniswap_v4_quote"
-  | "uniswap_route_optimal";
-```
-
-`sidecar/tools-ts/src/index.ts`:
-
-```typescript
-// Bardo tools-ts sidecar — JSON-RPC 2.0 server over Unix domain socket.
-//
-// Spawned by golem-tools at startup. Provides Uniswap V3/V4 concentrated
-// liquidity math that has no mature Rust equivalent.
-//
-// Implemented by: Plan 26+ (golem-tools integration)
-// This file is a stub. Plan 26 implements the actual tool handlers.
-
-import * as net from "node:net";
-import * as fs from "node:fs";
-import type { JsonRpcRequest, JsonRpcResponse } from "./types.js";
-
-const SOCKET_PATH = process.env["BARDO_SIDECAR_SOCKET"] ?? "/tmp/bardo-tools.sock";
-
-// Remove stale socket file from a previous run
-if (fs.existsSync(SOCKET_PATH)) {
-  fs.unlinkSync(SOCKET_PATH);
-}
-
-const server = net.createServer((socket) => {
-  let buffer = "";
-
-  socket.on("data", (chunk) => {
-    buffer += chunk.toString();
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      try {
-        const request = JSON.parse(line) as JsonRpcRequest;
-        const response = handleRequest(request);
-        socket.write(JSON.stringify(response) + "\n");
-      } catch (err) {
-        const errorResponse: JsonRpcResponse = {
-          jsonrpc: "2.0",
-          id: "unknown",
-          error: { code: -32700, message: "Parse error" },
-        };
-        socket.write(JSON.stringify(errorResponse) + "\n");
-      }
+impl ScreenRegistry {
+    pub fn new() -> Self {
+        Self { screens: HashMap::new() }
     }
-  });
 
-  socket.on("error", (err) => {
-    console.error("Socket error:", err.message);
-  });
-});
+    pub fn register(&mut self, screen: Box<dyn Screen>) {
+        self.screens.insert(screen.id(), screen);
+    }
 
-function handleRequest(request: JsonRpcRequest): JsonRpcResponse {
-  // Stub: all methods return "not implemented" until Plan 26
-  return {
-    jsonrpc: "2.0",
-    id: request.id,
-    error: {
-      code: -32601,
-      message: `Method not found: ${request.method} (sidecar not yet implemented — see Plan 26)`,
-    },
-  };
+    pub fn get(&self, id: &ScreenId) -> Option<&dyn Screen> {
+        self.screens.get(id).map(|s| s.as_ref())
+    }
+
+    pub fn get_mut(&mut self, id: &ScreenId) -> Option<&mut dyn Screen> {
+        self.screens.get_mut(id).map(|s| s.as_mut())
+    }
 }
-
-server.listen(SOCKET_PATH, () => {
-  console.log(`Bardo tools-ts sidecar listening on ${SOCKET_PATH}`);
-});
-
-process.on("SIGTERM", () => {
-  server.close(() => process.exit(0));
-});
-
-process.on("SIGINT", () => {
-  server.close(() => process.exit(0));
-});
 ```
 
-**Source Files:** `prd2/17-monorepo/00-packages.md` §TypeScript Sidecar
+**Tab/screen switching:**
 
-**Crate Location:** `sidecar/tools-ts/`
+`App.active_screen: ScreenId` holds the current screen. `AppAction::NextScreen` / `AppAction::PrevScreen` cycle through `ScreenId::all()`. On switch: call `on_blur()` on old screen, update `active_screen`, call `on_focus()` on new screen.
 
-**Implementation Notes:**
+**ScreenId enum — all 29 screens as stubs, Home implemented:**
 
-1. Do NOT run `npm install` in this plan. The sidecar is built separately. This plan only creates the stub files.
-2. The socket path is controlled by `BARDO_SIDECAR_SOCKET` env var with `/tmp/bardo-tools.sock` as default.
-3. The JSON-RPC protocol uses newline-delimited JSON (one request per line, one response per line). Round-trip latency target is 1–5ms per `prd2/17-monorepo/00-packages.md`.
-4. Add `sidecar/tools-ts/node_modules/` and `sidecar/tools-ts/dist/` to `.gitignore`.
+Map the 29 screens from `prd2/18-interfaces/screens/00-screen-catalog.md` exactly:
 
-**Gitbook Documentation:** N/A for this stub — Plan 26 documents the sidecar API.
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ScreenId {
+    // HEARTH window (4 tabs)
+    HearthOverview,
+    HearthSignals,
+    HearthOperations,
+    HearthStatus,
+    // MIND window (7 tabs)
+    MindPipeline,
+    MindGrimoire,
+    MindPlaybook,
+    MindDreams,
+    MindInference,
+    MindChainIntelligence,
+    MindTechnicalAnalysis,
+    // SOMA window (5 tabs)
+    SomaPortfolio,
+    SomaTrades,
+    SomaCustody,
+    SomaBudget,
+    SomaSanctum,
+    // WORLD window (5 tabs)
+    WorldSolaris,
+    WorldClade,
+    WorldLethe,
+    WorldBloodstains,
+    WorldBazaar,
+    // FATE window (4 tabs)
+    FateMortality,
+    FateLineage,
+    FateAchievements,
+    FateGraveyard,
+    // COMMAND window (4 tabs)
+    CommandSteer,
+    CommandConfig,
+    CommandEffects,
+    CommandHermes,
+}
 
-**Verification:**
-```bash
-ls sidecar/tools-ts/
-# Expected: package.json  tsconfig.json  src/
+impl ScreenId {
+    /// Ordered list for tab cycling. Matches window order from spec.
+    pub fn all() -> &'static [ScreenId] {
+        &[
+            ScreenId::HearthOverview,
+            ScreenId::HearthSignals,
+            ScreenId::HearthOperations,
+            ScreenId::HearthStatus,
+            ScreenId::MindPipeline,
+            ScreenId::MindGrimoire,
+            ScreenId::MindPlaybook,
+            ScreenId::MindDreams,
+            ScreenId::MindInference,
+            ScreenId::MindChainIntelligence,
+            ScreenId::MindTechnicalAnalysis,
+            ScreenId::SomaPortfolio,
+            ScreenId::SomaTrades,
+            ScreenId::SomaCustody,
+            ScreenId::SomaBudget,
+            ScreenId::SomaSanctum,
+            ScreenId::WorldSolaris,
+            ScreenId::WorldClade,
+            ScreenId::WorldLethe,
+            ScreenId::WorldBloodstains,
+            ScreenId::WorldBazaar,
+            ScreenId::FateMortality,
+            ScreenId::FateLineage,
+            ScreenId::FateAchievements,
+            ScreenId::FateGraveyard,
+            ScreenId::CommandSteer,
+            ScreenId::CommandConfig,
+            ScreenId::CommandEffects,
+            ScreenId::CommandHermes,
+        ]
+    }
+}
+```
 
-ls sidecar/tools-ts/src/
-# Expected: index.ts  types.ts
+Only `HearthOverview` (mapped to `HomeScreen`) is implemented in this plan. All others get a `StubScreen` that renders their name centered on screen.
+
+---
+
+### Unit 3: Color Palette & Design Tokens
+
+**File:** `src/palette.rs`
+
+#### Quick Reference
+
+All colors extracted verbatim from `prd2/18-interfaces/rendering/00-design-system.md` section 2.
+
+**Base and void:**
+
+```rust
+use ratatui::style::Color;
+
+// Base and void
+pub const BG_VOID:       Color = Color::Rgb(6,   6,   8);    // #060608 — deepest bg, violet-black
+pub const BG_RAISED:     Color = Color::Rgb(12,  10,  14);   // #0C0A0E — panels, containers
+pub const BG_MID:        Color = Color::Rgb(8,   8,   16);   // #080810 — headers, status bars
+pub const BG_WARM:       Color = Color::Rgb(10,  8,   8);    // #0A0808 — conservation/terminal state
+pub const BORDER:        Color = Color::Rgb(24,  20,  32);   // #181420 — panel borders
+pub const BORDER_ACTIVE: Color = Color::Rgb(170, 112, 136);  // #AA7088 — active panel (rose)
+pub const BORDER_DREAM:  Color = Color::Rgb(88,  88,  120);  // #585878 — dream state (indigo)
+```
+
+**Rose spectrum (primary color family):**
+
+```rust
+pub const ROSE:       Color = Color::Rgb(170, 112, 136); // #AA7088 — primary text, active data
+pub const ROSE_BRIGHT:Color = Color::Rgb(204, 144, 168); // #CC90A8 — alerts, danger, T2 glow
+pub const ROSE_DIM:   Color = Color::Rgb(122, 80,  96);  // #7A5060 — secondary labels
+pub const ROSE_DEEP:  Color = Color::Rgb(58,  32,  48);  // #3A2030 — ghost text, noise floor
+pub const ROSE_EMBER: Color = Color::Rgb(72,  40,  56);  // #482838 — phosphor residue
+```
+
+**Bone (the one important number per screen):**
+
+```rust
+pub const BONE:     Color = Color::Rgb(200, 184, 144); // #C8B890 — THE most important element
+pub const BONE_DIM: Color = Color::Rgb(138, 122, 90);  // #8A7A5A — secondary emphasis in bone context
+```
+
+**Text hierarchy:**
+
+```rust
+pub const TEXT_PRIMARY: Color = Color::Rgb(152, 128, 144); // #988090 — standard readable text
+pub const TEXT_DIM:     Color = Color::Rgb(88,  72,  88);  // #584858 — secondary text, labels
+pub const TEXT_GHOST:   Color = Color::Rgb(48,  40,  48);  // #302830 — barely visible
+pub const TEXT_PHANTOM: Color = Color::Rgb(32,  24,  32);  // #201820 — subliminal, display artifacts
+```
+
+**Semantic colors:**
+
+```rust
+pub const DREAM:      Color = Color::Rgb(88,  88,  120); // #585878 — dream state, altered consciousness
+pub const DREAM_DIM:  Color = Color::Rgb(56,  56,  88);  // #383858 — dimmed dream
+pub const DREAM_DEEP: Color = Color::Rgb(40,  40,  72);  // #282848 — deepest dream bg noise
+pub const WARNING:    Color = Color::Rgb(170, 136, 85);  // #AA8855 — amber, mortality warnings
+pub const SUCCESS:    Color = Color::Rgb(112, 136, 122); // #70887A — muted sage, healthy/nominal
+// DANGER alias:
+pub const DANGER:     Color = ROSE_BRIGHT;               // same as rose_bright per spec
+```
+
+**CRT materiality:**
+
+```rust
+pub const SCANLINE_DARK: Color = Color::Rgb(5,   5,   7);   // #050507 — darkened scanline rows
+pub const PHOSPHOR_RES:  Color = Color::Rgb(26,  16,  24);  // #1A1018 — phosphor ghost
+pub const NOISE_WARM:    Color = Color::Rgb(42,  24,  32);  // #2A1820 — degraded state noise
+pub const NOISE_COOL:    Color = Color::Rgb(32,  24,  40);  // #201828 — dream state noise
+```
+
+**Text styles (ratatui Modifier shortcuts):**
+
+```rust
+use ratatui::style::Modifier;
+
+pub const STYLE_BOLD:   Modifier = Modifier::BOLD;
+pub const STYLE_DIM:    Modifier = Modifier::DIM;
+pub const STYLE_ITALIC: Modifier = Modifier::ITALIC;
+```
+
+**Box drawing characters used in TUI:**
+
+```rust
+// Per spec: "Panel borders are sharp, single-character-width lines using box-drawing characters"
+pub const BOX_TOP_LEFT:     char = '┌';
+pub const BOX_TOP_RIGHT:    char = '┐';
+pub const BOX_BOTTOM_LEFT:  char = '└';
+pub const BOX_BOTTOM_RIGHT: char = '┘';
+pub const BOX_HORIZONTAL:   char = '─';
+pub const BOX_VERTICAL:     char = '│';
+pub const BOX_T_DOWN:        char = '┬';
+pub const BOX_T_UP:          char = '┴';
+pub const BOX_T_RIGHT:       char = '├';
+pub const BOX_T_LEFT:        char = '┤';
+pub const BOX_CROSS:         char = '┼';
+// Active frame bracket (used in tab bar per spec)
+pub const FRAME_OPEN:        char = '⌈';
+pub const FRAME_CLOSE:       char = '⌋';
+// Block fill characters for gauges
+pub const BLOCK_FULL:        char = '█';
+pub const BLOCK_DARK:        char = '▓';
+pub const BLOCK_MED:         char = '▒';
+pub const BLOCK_LIGHT:       char = '░';
 ```
 
 ---
 
-### Unit 7: Old Plan Cleanup (Verification Only)
+### Unit 4: Responsive Layout Engine
 
-**Quick Reference**
+**File:** `src/layout.rs`
 
-These old plan files were deleted by the plan generator before Codex runs. This unit verifies they are gone. If any remain, delete them.
+#### Quick Reference
 
-Files that MUST NOT exist:
+**LayoutBreakpoint enum with column thresholds (from task specification):**
 
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LayoutBreakpoint {
+    /// < 80 columns: single panel, minimal chrome, sprite sidebar suppressed
+    Compact,
+    /// 80-119 columns: two-panel layout, 6-col mini sprite sidebar
+    Standard,
+    /// 120-179 columns: three-panel layout, 10-col sprite sidebar
+    Wide,
+    /// 180+ columns: four-panel layout with sidebar, full 14-col sprite sidebar
+    Ultra,
+}
+
+impl LayoutBreakpoint {
+    pub fn from_cols(cols: u16) -> Self {
+        match cols {
+            0..=79   => LayoutBreakpoint::Compact,
+            80..=119 => LayoutBreakpoint::Standard,
+            120..=179 => LayoutBreakpoint::Wide,
+            _         => LayoutBreakpoint::Ultra,
+        }
+    }
+
+    /// Width of the sprite sidebar in columns for this breakpoint.
+    /// 0 = sidebar suppressed (Compact).
+    pub fn sprite_sidebar_cols(&self) -> u16 {
+        match self {
+            LayoutBreakpoint::Compact  => 0,
+            LayoutBreakpoint::Standard => 6,
+            LayoutBreakpoint::Wide     => 10,
+            LayoutBreakpoint::Ultra    => 14,
+        }
+    }
+
+    /// Number of content panels to show.
+    pub fn panel_count(&self) -> u8 {
+        match self {
+            LayoutBreakpoint::Compact  => 1,
+            LayoutBreakpoint::Standard => 2,
+            LayoutBreakpoint::Wide     => 3,
+            LayoutBreakpoint::Ultra    => 4,
+        }
+    }
+}
 ```
-plans/00-architecture-patterns.md
-plans/01-foundation.md  (or any plans/NN-*.md files from the old batch system)
-plans/README.md
-plans/BRANCHES.md
+
+**Layout computation from terminal size:**
+
+```rust
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
+
+/// Compute the primary content area, excluding sidebar and chrome rows.
+/// Returns (sidebar_area, content_area).
+/// On Compact, sidebar_area is zero-width and content_area is full width.
+pub fn compute_layout(frame_size: Rect, bp: LayoutBreakpoint) -> (Rect, Rect) {
+    let sidebar_cols = bp.sprite_sidebar_cols();
+    // Reserve 1 row top (tab bar) + 1 row bottom (status bar)
+    let chrome_rows = 2u16;
+    let inner = Rect {
+        x: 0,
+        y: 1, // below tab bar
+        width: frame_size.width,
+        height: frame_size.height.saturating_sub(chrome_rows),
+    };
+
+    if sidebar_cols == 0 {
+        return (Rect::default(), inner);
+    }
+
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Length(sidebar_cols),
+            Constraint::Min(0),
+        ])
+        .split(inner);
+
+    (chunks[0], chunks[1])
+}
 ```
 
-Directories that MUST remain:
+**Panel allocation per breakpoint:**
 
+At scaffold stage, content area is not further subdivided — `HomeScreen` takes the full content rect. Later plans (05+) add panel splitting within the content area.
+
+---
+
+### Unit 5: Home Screen Placeholder
+
+**Files:** `src/screens/mod.rs`, `src/screens/home.rs`
+
+#### Quick Reference
+
+**HomeScreen struct:**
+
+```rust
+use crate::screen::{Screen, ScreenId};
+use crate::state::{AppAction, AppState};
+use ratatui::{Frame, layout::Rect};
+use crossterm::event::{KeyCode, KeyEvent};
+
+pub struct HomeScreen {
+    focused: bool,
+}
+
+impl HomeScreen {
+    pub fn new() -> Self {
+        Self { focused: false }
+    }
+}
 ```
-plans/CONTEXT.md          (keep — this is the cross-plan state tracker)
-plans/completed/          (keep — completed plan archives)
-plans/context/            (keep — context snapshots)
+
+**Render: creature placeholder, vitality gauge, connection status, tick counter:**
+
+```rust
+impl Screen for HomeScreen {
+    fn id(&self) -> ScreenId { ScreenId::HearthOverview }
+    fn title(&self) -> &str { "HEARTH" }
+
+    fn render(&self, frame: &mut Frame, area: Rect, state: &AppState) {
+        use ratatui::{
+            style::{Color, Style, Modifier},
+            widgets::{Block, Borders, Paragraph, Gauge},
+            text::{Line, Span},
+            layout::{Layout, Direction, Constraint},
+        };
+        use crate::palette::*;
+
+        // Split content into: creature panel (left ~30%) + data panel (right ~70%)
+        let chunks = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Percentage(30), Constraint::Percentage(70)])
+            .split(area);
+
+        // --- Creature placeholder (left panel) ---
+        let creature_art = vec![
+            Line::from(Span::styled("  ◉ ◉  ", Style::default().fg(ROSE))),
+            Line::from(Span::styled(" ░░░░░ ", Style::default().fg(ROSE_DIM))),
+            Line::from(Span::styled(" ░   ░ ", Style::default().fg(ROSE_DIM))),
+            Line::from(Span::styled("  ─ ─  ", Style::default().fg(ROSE_DIM))),
+        ];
+        let creature_block = Block::default()
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(BORDER_ACTIVE))
+            .title(Span::styled(" SPECTRE ", Style::default().fg(ROSE)));
+        let creature_inner = creature_block.inner(chunks[0]);
+        frame.render_widget(creature_block, chunks[0]);
+        frame.render_widget(
+            Paragraph::new(creature_art).alignment(ratatui::layout::Alignment::Center),
+            creature_inner,
+        );
+
+        // --- Data panel (right) ---
+        let data_chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([
+                Constraint::Length(3),  // vitality gauge
+                Constraint::Length(3),  // connection status
+                Constraint::Min(0),     // tick counter + help
+            ])
+            .split(chunks[1]);
+
+        // Vitality gauge (placeholder — value from MockVitality)
+        let vitality_pct = (state.vitality.value * 100.0) as u16;
+        let gauge = Gauge::default()
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(Span::styled(" VITALITY ", Style::default().fg(BONE)))
+                    .border_style(Style::default().fg(BORDER))
+            )
+            .gauge_style(Style::default().fg(SUCCESS).bg(BG_RAISED))
+            .percent(vitality_pct.min(100));
+        frame.render_widget(gauge, data_chunks[0]);
+
+        // Connection status
+        let (status_text, status_color) = match state.connection_status {
+            crate::state::ConnectionStatus::Connected    => ("● CONNECTED",    SUCCESS),
+            crate::state::ConnectionStatus::Connecting   => ("◌ CONNECTING…",  WARNING),
+            crate::state::ConnectionStatus::Disconnected => ("○ DISCONNECTED", DANGER),
+        };
+        let status_para = Paragraph::new(status_text)
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(BORDER))
+            )
+            .style(Style::default().fg(status_color));
+        frame.render_widget(status_para, data_chunks[1]);
+
+        // Tick counter + help text
+        let tick_line = Line::from(vec![
+            Span::styled("tick: ", Style::default().fg(TEXT_DIM)),
+            Span::styled(
+                format!("{}", state.tick_count),
+                Style::default().fg(ROSE).add_modifier(Modifier::BOLD),
+            ),
+        ]);
+        let help_line = Line::from(Span::styled(
+            "  q=quit  Tab=next screen",
+            Style::default().fg(TEXT_GHOST),
+        ));
+        let info_para = Paragraph::new(vec![tick_line, Line::from(""), help_line])
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(BORDER))
+            );
+        frame.render_widget(info_para, data_chunks[2]);
+    }
+
+    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
+        match key.code {
+            KeyCode::Char('q') | KeyCode::Char('Q') => Some(AppAction::Quit),
+            KeyCode::Tab => Some(AppAction::NextScreen),
+            KeyCode::BackTab => Some(AppAction::PrevScreen),
+            _ => None,
+        }
+    }
+
+    fn on_focus(&mut self)  { self.focused = true; }
+    fn on_blur(&mut self)   { self.focused = false; }
+}
 ```
 
-**Source Files:** None — this is a verification step.
+**AppState and placeholder types (src/state.rs):**
 
-**Crate Location:** N/A
+```rust
+use crate::layout::LayoutBreakpoint;
 
-**Implementation Notes:**
+pub struct AppState {
+    pub tick_count: u64,
+    pub connection_status: ConnectionStatus,
+    pub vitality: MockVitality,      // TODO: connect to golem-mortality in Plan 70a
+    pub layout: LayoutBreakpoint,
+}
 
-1. Run `ls plans/` and confirm only `CONTEXT.md`, `completed/`, and `context/` (and the current plan file `01-workspace-scaffold.md`) are present.
-2. If any old `NN-*.md` plan files exist beyond `01-workspace-scaffold.md`, delete them with `rm plans/NN-*.md`.
-3. Do NOT delete `plans/CONTEXT.md` — it is the cross-plan state file that all plans share.
+/// Placeholder vitality. Real type comes from golem-mortality (Plans 13a, 13b).
+pub struct MockVitality {
+    pub value: f64,  // 0.0 = dead, 1.0 = full health
+}
 
-**Gitbook Documentation:** N/A.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ConnectionStatus {
+    Connected,
+    Disconnected,
+    Connecting,
+}
 
-**Verification:**
-```bash
-ls plans/
-# Expected: 01-workspace-scaffold.md  CONTEXT.md  completed/  context/
+#[derive(Debug, Clone)]
+pub enum AppAction {
+    Quit,
+    NextScreen,
+    PrevScreen,
+    Resize(u16, u16),
+}
+
+impl Default for AppState {
+    fn default() -> Self {
+        Self {
+            tick_count: 0,
+            connection_status: ConnectionStatus::Disconnected,
+            vitality: MockVitality { value: 0.75 },
+            layout: LayoutBreakpoint::Standard,
+        }
+    }
+}
+```
+
+**StubScreen for unimplemented screens (src/screen.rs):**
+
+Register one `StubScreen` per unimplemented `ScreenId` so that `Tab` cycling works across all 29 screens without panicking.
+
+```rust
+/// Generic stub for screens not yet implemented.
+pub struct StubScreen {
+    id: ScreenId,
+    title: String,
+}
+
+impl StubScreen {
+    pub fn new(id: ScreenId, title: &str) -> Self {
+        Self { id, title: title.to_string() }
+    }
+}
+
+impl Screen for StubScreen {
+    fn id(&self) -> ScreenId { self.id }
+    fn title(&self) -> &str { &self.title }
+
+    fn render(&self, frame: &mut Frame, area: Rect, _state: &AppState) {
+        use ratatui::{style::Style, widgets::{Block, Borders, Paragraph}};
+        use crate::palette::{BORDER, ROSE_DIM};
+        let msg = format!("[ {} — not yet implemented ]", self.title);
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(BORDER));
+        let inner = block.inner(area);
+        frame.render_widget(block, area);
+        frame.render_widget(
+            Paragraph::new(msg)
+                .style(Style::default().fg(ROSE_DIM))
+                .alignment(ratatui::layout::Alignment::Center),
+            inner,
+        );
+    }
+
+    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
+        match key.code {
+            KeyCode::Char('q') => Some(AppAction::Quit),
+            KeyCode::Tab => Some(AppAction::NextScreen),
+            KeyCode::BackTab => Some(AppAction::PrevScreen),
+            _ => None,
+        }
+    }
+}
 ```
 
 ---
 
 ## Failure Recovery
 
-**Missing crate in workspace:** Open `Cargo.toml` at workspace root and add the crate path to `[workspace] members`. Run `cargo check --workspace` again.
+**`cargo check` fails with unresolved `golem-core` import:**
+- Verify `crates/golem-core` compiled in Plan 02
+- Check `Cargo.toml` path: `golem-core = { path = "../../crates/golem-core" }`
+- Run `cargo check -p golem-core` first to isolate the failure
 
-**Dependency version not found on crates.io:** Use the most recent published version. Record the substitution in the Completion Report with the reason (e.g., "used lancedb 0.26 — 0.27 not yet published"). The operator verifies against crates.io before merge.
+**`ratatui` version:**
+- Use `ratatui = { workspace = true }`. Workspace pins `"0.30"`. Do not add a version override — the workspace is the single source of truth.
 
-**`rodio` build error on Linux (missing ALSA):** `rodio` is marked `optional = true` in workspace deps. Individual crates that actually use audio add it with `rodio = { workspace = true, optional = true }`. No crate in this plan uses rodio, so this should not trigger. If it does, check that no crate accidentally added `rodio` as a non-optional dep.
+**Terminal not restoring on crash during development:**
+- Confirm the panic hook is installed before any `crossterm` calls
+- If shell is stuck in raw mode: `reset` or `stty sane` in the terminal
+- If cursor is invisible: `tput cnorm`
 
-**`fastembed` or `lancedb` native build failure:** These crates have native components. If they fail to build from source, the shell crates don't depend on them — they are workspace dep declarations only. The shells have empty `[dependencies]` sections, so no crate in this plan pulls fastembed or lancedb transitively. If cargo still tries to compile them, check that no shell Cargo.toml accidentally listed them.
+**`crossterm::event::poll` returns `Err` on some terminals:**
+- Wrap in `color_eyre::Result` and propagate through `?`. The teardown path in `main.rs` will restore the terminal even on propagated errors.
 
-**`wasmtime` build failure:** Same pattern as fastembed/lancedb — workspace dep declaration only, no shell uses it. Should not trigger.
+**Compilation error: `Screen` not object-safe:**
+- `fn on_focus(&mut self) {}` and `fn on_blur(&mut self) {}` have default implementations — this is fine for object safety as long as they take `&mut self` (not `Self`). If the compiler complains, confirm no method returns `Self` or uses `Self` as a parameter.
 
-**`alloy` feature flag error:** The `"full"` feature on alloy 1.7 enables everything. If 1.7 is not published, try 1.6 and note in Completion Report.
-
-**mdbook not installed:** `cargo install mdbook`. This requires internet. Do it during the setup phase (codex-setup.sh), not during Codex execution.
-
-**TypeScript sidecar npm deps:** `package.json` specifies deps but `npm install` is NOT run by this plan. The sidecar builds separately. If someone runs `npm install` inside `sidecar/tools-ts/`, fine — but this plan does not require it.
-
-**`cargo check --workspace` shows edition 2024 errors:** Rust 1.85 is required. If the installed toolchain is older, `rustup update 1.85` or ensure `rust-toolchain.toml` is being read (`rustup toolchain list` should show 1.85 active in this directory).
-
-**Q-01 from CONTEXT.md (apps in workspace members):** Resolved by this plan. Apps are in `[workspace] members`. Decision recorded as D-04 in CONTEXT.md update below.
+**Render loop blocks (poll timeout too long):**
+- Confirm `event::poll(timeout)` uses `FRAME_DURATION.saturating_sub(last_frame.elapsed())` as the timeout, not a fixed large value. On the first iteration, `last_frame.elapsed()` is near zero, so timeout is the full frame budget.
 
 ---
 
 ## Testing Checkpoint
 
-Run these in order after all units complete:
-
 ```bash
-# 1. Workspace member count
-cargo metadata --no-deps --format-version 1 | python3 -c \
-  "import sys,json; d=json.load(sys.stdin); print('workspace members:', len(d['workspace_members']))"
-# Expected: workspace members: 25
+# Must pass before marking this plan complete
+cargo check -p bardo-terminal
 
-# 2. Full workspace check (no compile errors)
-cargo check --workspace 2>&1 | grep -c "^error"
-# Expected: 0
+# Unit tests
+cargo test -p bardo-terminal -- --nocapture
 
-# 3. Library crate checks
-cargo check -p golem-core -p golem-runtime -p golem-heartbeat -p golem-grimoire \
-    -p golem-daimon -p golem-mortality -p golem-dreams -p golem-context \
-    -p golem-safety -p golem-inference -p golem-chain -p golem-chain-intelligence \
-    -p golem-triage -p golem-ta -p golem-oneirography -p golem-tools \
-    -p golem-coordination -p golem-surfaces -p golem-creature -p golem-engagement
-# Expected: no errors
-
-# 4. Binary shells
-cargo check -p golem-binary -p bardo-gateway -p bardo-terminal -p bardo-styx -p bardo-compute -p mirage-rs
-# Expected: no errors
-
-# 5. Test suite (zero tests yet)
-cargo test --workspace 2>&1 | grep -E "^test result"
-# Expected: test result: ok. 0 passed; 0 failed (one line per crate)
-
-# 6. just build
-just build 2>&1 | tail -3
-# Expected: Finished `dev` profile target(s)
-
-# 7. mdbook build
-cd docs && mdbook build 2>&1 | tail -3
-# Expected: Finished in X.XXs
-
-# 8. Sidecar stubs exist
-ls sidecar/tools-ts/src/
-# Expected: index.ts  types.ts
-
-# 9. Old plan files gone
-ls plans/*.md 2>/dev/null | grep -v "01-workspace-scaffold.md" | grep -v "CONTEXT.md"
-# Expected: (empty — no other plan files)
+# Manual smoke test: open TUI, verify home screen renders, q quits cleanly
+cargo run -p bardo-terminal
 ```
 
-Expected overall: `cargo check --workspace` exits 0 with no errors. Warnings about `missing_docs` on empty shell crates are expected and acceptable at this stage.
+**What to verify in the manual test:**
+1. Terminal enters full-screen mode (alternate screen)
+2. Home screen renders: left creature placeholder, right vitality gauge + connection status + tick counter
+3. Tick counter increments visibly (~60 ticks/second — may appear as fast flicker; that's correct)
+4. `Tab` cycles to the next screen (StubScreen showing screen name)
+5. `q` exits and restores the terminal (cursor visible, shell prompt returns, no stray raw mode)
+6. Resize the terminal window while running — layout should adapt (breakpoint may change)
+7. Crash test: `kill -SIGSEGV <pid>` in another terminal — shell should still be usable after (panic hook fired)
+
+**Expected output of `cargo test`:**
+
+At scaffold stage, tests are minimal — palette constant sanity checks and LayoutBreakpoint boundary tests:
+
+```rust
+#[test]
+fn test_layout_breakpoints() {
+    assert_eq!(LayoutBreakpoint::from_cols(0),   LayoutBreakpoint::Compact);
+    assert_eq!(LayoutBreakpoint::from_cols(79),  LayoutBreakpoint::Compact);
+    assert_eq!(LayoutBreakpoint::from_cols(80),  LayoutBreakpoint::Standard);
+    assert_eq!(LayoutBreakpoint::from_cols(119), LayoutBreakpoint::Standard);
+    assert_eq!(LayoutBreakpoint::from_cols(120), LayoutBreakpoint::Wide);
+    assert_eq!(LayoutBreakpoint::from_cols(179), LayoutBreakpoint::Wide);
+    assert_eq!(LayoutBreakpoint::from_cols(180), LayoutBreakpoint::Ultra);
+    assert_eq!(LayoutBreakpoint::from_cols(400), LayoutBreakpoint::Ultra);
+}
+
+#[test]
+fn test_screen_id_count() {
+    assert_eq!(ScreenId::all().len(), 29);
+}
+
+#[test]
+fn test_palette_void_not_pure_black() {
+    // Per spec: "The background is never pure black (#000000)"
+    if let ratatui::style::Color::Rgb(r, g, b) = palette::BG_VOID {
+        assert!(r > 0 || g > 0 || b > 0, "BG_VOID must not be pure black");
+    }
+}
+```
 
 ---
 
 ## Completion Report
 
-*(Filled by Codex after implementation)*
-
-**Date completed:**
-
-**Actual workspace member count:**
-
-**Cargo check result:**
-
-**mdbook build result:**
-
-**Deviations from plan:**
-
-**Version substitutions (if any dep versions were unavailable):**
-
-**Q-01 resolution:** Confirmed — apps in `apps/` are workspace members (or note any deviation).
-
-**CONTEXT.md updates applied:** (list the D-NN entries added)
+*(Codex fills this in after implementation. Include: actual ratatui/crossterm versions used, any deviations from plan, compilation errors encountered and resolved, manual test results.)*
 
 ## Verification
 
 ### Invariants
 
-<!-- INV-001: Epistemic Fitness Range Constraint -->
+<!-- INV-001: Frame duration constant -->
 - **type**: numeric_range
-- **module**: golem_mortality::epistemic_fitness
-- **property**: Epistemic fitness score stays within valid [0.0, 1.0] range
-- **formula**: `fitness = 0.0 (random) .. 1.0 (perfect prediction)`
-- **constraint**: `0.0 ≤ fitness ≤ 1.0` at all times
-- **test_fn**: `test_epistemic_fitness_clamp_range`
+- **module**: bardo_terminal::app
+- **property**: Target frame duration matches 60 FPS deadline
+- **formula**: FRAME_DURATION = Duration::from_micros(1_000_000 / 60)
+- **constraint**: FRAME_DURATION == 16_666µs (±1µs for floating-point tolerance)
+- **test_fn**: `test_frame_duration_60fps`
 - **strategy**: unit
-- **inputs**: `{"new_accuracy": [0.0, 0.5, 1.0, -0.1, 1.5], "alpha": [0.001, 0.05], "current_fitness": [0.0, 0.5, 1.0]}`
-- **oracle**: `clamp(fitness_value, 0.0, 1.0)`
+- **inputs**: `{ TARGET_FPS: 60 }`
+- **oracle**: 1_000_000 / 60 = 16_666.666... → 16_666µs
 - **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Epistemic Fitness Score
+- **source**: plan Quick Reference, Unit 1
 
-<!-- INV-002: EMA Fitness Convergence -->
-- **type**: convergence
-- **module**: golem_mortality::epistemic_fitness
-- **property**: Exponential moving average converges to constant input within 1e-6
-- **formula**: `fitness_new = alpha * accuracy + (1 - alpha) * fitness_old`; default `alpha = 0.01`
-- **constraint**: After 1000 ticks of constant input `accuracy = c`, `|fitness(t) - c| < 1e-6`
-- **test_fn**: `test_ema_convergence_to_constant`
+<!-- INV-002: Layout breakpoint from_cols boundary 0-79 -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Column range 0-79 maps to Compact layout
+- **formula**: from_cols(cols) → LayoutBreakpoint::Compact iff 0 ≤ cols ≤ 79
+- **constraint**: ∀ cols ∈ [0, 79]: from_cols(cols) == Compact
+- **test_fn**: `test_layout_breakpoint_compact`
 - **strategy**: proptest
-- **inputs**: `{"constant_accuracy": [0.0, 0.25, 0.5, 0.75, 1.0], "alpha": [0.001, 0.005, 0.01, 0.05], "ticks": 1000}`
-- **oracle**: `abs(fitness - constant_accuracy) < 1e-6` after 1/alpha ≈ 100 time-constant multiplied by log(1e-6) ≈ 13.8 time-constants ≈ 1380 ticks
-- **severity**: code
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Rolling Fitness via EMA
-
-<!-- INV-003: Domain-Specific Alpha Values -->
-- **type**: numeric_range
-- **module**: golem_mortality::domain_alpha_config
-- **property**: Domain alpha values produce correct half-life timescales
-- **formula**: `alpha_values = {price_direction: 0.02, volatility_regime: 0.005, yield_trend: 0.003, gas_pattern: 0.05, protocol_behavior: 0.001}`
-- **constraint**: `Ticks to 50% = 0.693 / alpha` matches published half-lives: gas ~14 ticks, price ~35 ticks, volatility ~139 ticks, yield ~231 ticks, protocol ~693 ticks
-- **test_fn**: `test_domain_alpha_half_life_calibration`
-- **strategy**: unit
-- **inputs**: `{"alphas": {"price": 0.02, "volatility": 0.005, "yield": 0.003, "gas": 0.05, "protocol": 0.001}}`
-- **oracle**: `ticks_to_50_percent = 0.693 / alpha`; gas=14, price=35, volatility=139, yield=231, protocol=693
+- **inputs**: `{ cols: 0u16..=79u16 }`
+- **oracle**: "Compact"
 - **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Why These Specific Alphas
+- **source**: plan Unit 4, Quick Reference
 
-<!-- INV-004: Dimension Weights Sum -->
-- **type**: sum_constraint
-- **module**: golem_mortality::dimension_weights
-- **property**: Accuracy dimension weights must sum to exactly 1.0
-- **formula**: `weights = {price_direction: 0.35, volatility_regime: 0.25, yield_trend: 0.20, gas_condition: 0.10, protocol_state: 0.10}`
-- **constraint**: `sum(weights) = 1.0` (conservation of probability)
-- **test_fn**: `test_dimension_weights_sum_to_one`
-- **strategy**: unit
-- **inputs**: `{}`
-- **oracle**: `0.35 + 0.25 + 0.20 + 0.10 + 0.10 = 1.0`
-- **severity**: code
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Per-Tick Accuracy Computation
-
-<!-- INV-005: Tick Accuracy Binary Match -->
+<!-- INV-003: Layout breakpoint from_cols boundary 80-119 -->
 - **type**: numeric_range
-- **module**: golem_mortality::tick_accuracy
-- **property**: Per-dimension match is binary (0.0 or 1.0), composite is weighted sum
-- **formula**: `accuracy = sum(weights[i] * (prediction[i] == outcome[i] ? 1.0 : 0.0))`
-- **constraint**: `0.0 ≤ accuracy ≤ 1.0` always; each component is binary, output is weighted sum
-- **test_fn**: `test_tick_accuracy_range_proptest`
+- **module**: bardo_terminal::layout
+- **property**: Column range 80-119 maps to Standard layout
+- **formula**: from_cols(cols) → LayoutBreakpoint::Standard iff 80 ≤ cols ≤ 119
+- **constraint**: ∀ cols ∈ [80, 119]: from_cols(cols) == Standard
+- **test_fn**: `test_layout_breakpoint_standard`
 - **strategy**: proptest
-- **inputs**: `{"dimensions": 5, "match_pattern": [all_match, all_miss, alternating, random]}`
-- **oracle**: All matching = 1.0; all missing = 0.0; mixed = weighted sum in [0.0, 1.0]
-- **severity**: code
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Per-Tick Accuracy Computation
-
-<!-- INV-006: Senescence Threshold Hysteresis -->
-- **type**: numeric_range
-- **module**: golem_mortality::senescence_cascade
-- **property**: Hysteresis threshold is threshold + 0.10 (recovery requires larger margin than entry)
-- **formula**: `senescence_threshold = 0.35, recovery_threshold = 0.45`
-- **constraint**: `recovery_threshold = senescence_threshold + 0.10` to prevent chatter; recovery > entry
-- **test_fn**: `test_senescence_hysteresis_offset`
-- **strategy**: unit
-- **inputs**: `{}`
-- **oracle**: `0.45 = 0.35 + 0.10`
+- **inputs**: `{ cols: 80u16..=119u16 }`
+- **oracle**: "Standard"
 - **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Senescence Cascade
+- **source**: plan Unit 4, Quick Reference
 
-<!-- INV-007: Senescence Grace Period Ticks -->
+<!-- INV-004: Layout breakpoint from_cols boundary 120-179 -->
 - **type**: numeric_range
-- **module**: golem_mortality::senescence_cascade
-- **property**: Grace period duration in ticks matches documented value
-- **formula**: `recovery_grace_period = 500 ticks ≈ 5.8 hours (at 40s/tick)`
-- **constraint**: `recovery_grace_period = 500` in default config
-- **test_fn**: `test_senescence_grace_period_constant`
-- **strategy**: unit
-- **inputs**: `{}`
-- **oracle**: `500 ticks / (3600 s/hr / 40 s/tick) ≈ 5.8 hours`
-- **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Senescence Cascade
-
-<!-- INV-008: Fitness Trend First Derivative -->
-- **type**: numeric_range
-- **module**: golem_mortality::epistemic_fitness_state
-- **property**: Fitness trend is bounded by [-1.0, 1.0] (maximum rate of change per 100 ticks)
-- **formula**: `fitness_trend = fitness(t) - fitness(t - 100 ticks)`
-- **constraint**: `-1.0 ≤ fitness_trend ≤ 1.0` (fitness can move at most from 0→1 or 1→0 in 100 ticks)
-- **test_fn**: `test_fitness_trend_range`
-- **strategy**: unit
-- **inputs**: `{"previous_fitness": [0.0, 0.5, 1.0], "current_fitness": [0.0, 0.5, 1.0]}`
-- **oracle**: `clamp(current - previous, -1.0, 1.0)`
-- **severity**: code
-- **source**: prd2/02-mortality/02-epistemic-decay.md §EpistemicFitnessState Struct
-
-<!-- INV-009: Prediction Log Window Size -->
-- **type**: numeric_range
-- **module**: golem_mortality::epistemic_fitness_state
-- **property**: Prediction log rolling window capacity is 2000 ticks
-- **formula**: `prediction_log: VecDeque with capacity 2000`
-- **constraint**: Window size = 2000 ticks (~23 hours at 40s/tick); older entries evicted FIFO
-- **test_fn**: `test_prediction_log_fifo_eviction`
-- **strategy**: unit
-- **inputs**: `{"predictions_to_insert": 2500}`
-- **oracle**: After insert 2500 predictions, VecDeque.len() = 2000; first 500 evicted
-- **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md §EpistemicFitnessState Struct
-
-<!-- INV-010: VitalityState Multiplicative Composition -->
-- **type**: numeric_range
-- **module**: golem_mortality::vitality
-- **property**: Composite vitality is product of three independent death clocks (economic, epistemic, stochastic)
-- **formula**: `composite_vitality = economic_vitality × epistemic_vitality × stochastic_vitality`
-- **constraint**: `0.0 ≤ composite_vitality ≤ 1.0`; any clock at 0.0 → composite at 0.0; all at 1.0 → composite at 1.0
-- **test_fn**: `test_composite_vitality_multiplicative_proptest`
+- **module**: bardo_terminal::layout
+- **property**: Column range 120-179 maps to Wide layout
+- **formula**: from_cols(cols) → LayoutBreakpoint::Wide iff 120 ≤ cols ≤ 179
+- **constraint**: ∀ cols ∈ [120, 179]: from_cols(cols) == Wide
+- **test_fn**: `test_layout_breakpoint_wide`
 - **strategy**: proptest
-- **inputs**: `{"economic": [0.0, 0.1, 0.5, 1.0], "epistemic": [0.0, 0.1, 0.5, 1.0], "stochastic": [0.0, 0.1, 0.5, 1.0]}`
-- **oracle**: `e * ep * s ∈ [0.0, 1.0]`; min(inputs)=0 → output=0; all=1 → output=1
+- **inputs**: `{ cols: 120u16..=179u16 }`
+- **oracle**: "Wide"
 - **severity**: spec
-- **source**: prd2/02-mortality/01-architecture.md §VitalityState
+- **source**: plan Unit 4, Quick Reference
 
-<!-- INV-011: Golem Lifespan is Not Hayflick-Bounded -->
+<!-- INV-005: Layout breakpoint from_cols boundary 180+ -->
 - **type**: numeric_range
-- **module**: golem_mortality::lifespan
-- **property**: No fixed maximum tick ceiling; lifespan emerges from environment coupling, not configuration
-- **formula**: Epistemic death triggered when `epistemic_fitness < 0.35` for `recovery_grace_period` ticks; no `tick_max` field
-- **constraint**: No upward bound on tick count in VitalityState struct; death is event-driven not timeout-driven
-- **test_fn**: `test_no_hardcoded_lifespan_ceiling`
+- **module**: bardo_terminal::layout
+- **property**: Column range 180+ maps to Ultra layout
+- **formula**: from_cols(cols) → LayoutBreakpoint::Ultra iff cols ≥ 180
+- **constraint**: ∀ cols ≥ 180: from_cols(cols) == Ultra
+- **test_fn**: `test_layout_breakpoint_ultra`
+- **strategy**: proptest
+- **inputs**: `{ cols: 180u16..65535u16 }`
+- **oracle**: "Ultra"
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-006: Sprite sidebar width for Compact -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Compact layout has zero-width sprite sidebar
+- **formula**: sprite_sidebar_cols(Compact) = 0
+- **constraint**: Compact.sprite_sidebar_cols() == 0
+- **test_fn**: `test_sprite_sidebar_compact_zero`
 - **strategy**: unit
 - **inputs**: `{}`
-- **oracle**: VitalityState.tick_count is u64 unbounded; death decision made via fitness, not tick count
+- **oracle**: 0
 - **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md §What Epistemic Decay Gets Right
+- **source**: plan Unit 4, Quick Reference
 
-<!-- INV-012: Senescence Stage Enum Transitions -->
+<!-- INV-007: Sprite sidebar width for Standard -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Standard layout has 6-column sprite sidebar
+- **formula**: sprite_sidebar_cols(Standard) = 6
+- **constraint**: Standard.sprite_sidebar_cols() == 6
+- **test_fn**: `test_sprite_sidebar_standard_6col`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 6
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-008: Sprite sidebar width for Wide -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Wide layout has 10-column sprite sidebar
+- **formula**: sprite_sidebar_cols(Wide) = 10
+- **constraint**: Wide.sprite_sidebar_cols() == 10
+- **test_fn**: `test_sprite_sidebar_wide_10col`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 10
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-009: Sprite sidebar width for Ultra -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Ultra layout has 14-column sprite sidebar
+- **formula**: sprite_sidebar_cols(Ultra) = 14
+- **constraint**: Ultra.sprite_sidebar_cols() == 14
+- **test_fn**: `test_sprite_sidebar_ultra_14col`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 14
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-010: Panel count for Compact -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Compact layout shows 1 content panel
+- **formula**: panel_count(Compact) = 1
+- **constraint**: Compact.panel_count() == 1
+- **test_fn**: `test_panel_count_compact`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 1
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-011: Panel count for Standard -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Standard layout shows 2 content panels
+- **formula**: panel_count(Standard) = 2
+- **constraint**: Standard.panel_count() == 2
+- **test_fn**: `test_panel_count_standard`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 2
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-012: Panel count for Wide -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Wide layout shows 3 content panels
+- **formula**: panel_count(Wide) = 3
+- **constraint**: Wide.panel_count() == 3
+- **test_fn**: `test_panel_count_wide`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 3
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-013: Panel count for Ultra -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Ultra layout shows 4 content panels
+- **formula**: panel_count(Ultra) = 4
+- **constraint**: Ultra.panel_count() == 4
+- **test_fn**: `test_panel_count_ultra`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 4
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-014: Screen count -->
+- **type**: numeric_range
+- **module**: bardo_terminal::screen
+- **property**: ScreenId catalog contains exactly 29 screens
+- **formula**: ScreenId::all().len() = 29
+- **constraint**: all().len() == 29
+- **test_fn**: `test_screen_id_count_29`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: 29
+- **severity**: spec
+- **source**: plan Unit 2, Quick Reference
+
+<!-- INV-015: Screen cycling wraps -->
 - **type**: state_machine
-- **module**: golem_mortality::senescence_stage
-- **property**: Valid state transitions for SenescenceStage enum
-- **formula**: States: None → Stage1 (entry), Stage1 → Stage2 (confirmed), Stage2 → Stage3 (protocol), Stage1/2/3 → None (recovery). Invalid: Stage3 → Stage1, Stage2 → None without passing Stage3
-- **constraint**: `None → Stage1` (fitness < threshold), `Stage1 → Stage2` (timeout), `Stage2 → Stage3` (vitality critical), `*→ None` (recovery above hysteresis threshold)
-- **test_fn**: `test_senescence_stage_valid_transitions`
+- **module**: bardo_terminal::app
+- **property**: Tab navigation cycles through all 29 screens in order; after last screen, returns to first
+- **formula**: NextScreen at screen[28] → screen[0]; NextScreen at screen[n] → screen[n+1] for n < 28
+- **constraint**: ∀n ∈ [0, 28]: next_screen(screen[n]) == screen[(n+1) % 29]
+- **test_fn**: `test_screen_cycling_wraps_at_end`
+- **strategy**: integration
+- **inputs**: `{ current_screen: all screens in order }`
+- **oracle**: see formula
+- **severity**: spec
+- **source**: plan Unit 2
+
+<!-- INV-016: Screen order matches ScreenId::all -->
+- **type**: capacity
+- **module**: bardo_terminal::screen
+- **property**: ScreenId::all() returns screens in canonical order: HEARTH (4) → MIND (7) → SOMA (5) → WORLD (5) → FATE (4) → COMMAND (4)
+- **formula**: all() = [HearthOverview, HearthSignals, HearthOperations, HearthStatus, MindPipeline, ..., CommandHermes]
+- **constraint**: First 4 elements are HEARTH window screens; next 7 are MIND; etc.
+- **test_fn**: `test_screen_order_matches_windows`
 - **strategy**: unit
 - **inputs**: `{}`
-- **oracle**: Valid paths only; all others panic/error
-- **severity**: code
-- **source**: prd2/02-mortality/02-epistemic-decay.md §Senescence Cascade
-
-<!-- INV-013: Ebbinghaus Decay Application in Grimoire -->
-- **type**: monotonic
-- **module**: golem_grimoire::ebbinghaus_decay
-- **property**: Entry confidence decays monotonically over time following Ebbinghaus curve
-- **formula**: Knowledge decay formula based on [EBBINGHAUS-1885]: `R(t) = e^(-t/S)` or `Q(t) = 1.84 / ((log t)^1.25 + 1.84)`
-- **constraint**: `R(t+1) < R(t)` for all t ≥ 0; R(0) = 1.0; R(∞) = 0.0
-- **test_fn**: `test_ebbinghaus_decay_monotonic_proptest`
-- **strategy**: proptest
-- **inputs**: `{"time_ticks": range(0, 10000), "memory_strength_s": [10, 50, 100, 500, 1000]}`
-- **oracle**: `R(t) > R(t+1)` for all consecutive pairs
+- **oracle**: HEARTH ⇒ MIND ⇒ SOMA ⇒ WORLD ⇒ FATE ⇒ COMMAND
 - **severity**: spec
-- **source**: prd2/02-mortality/02-epistemic-decay.md references [EBBINGHAUS-1885]
+- **source**: plan Unit 2, Quick Reference
 
-<!-- INV-014: Gompertz Hazard Monotonicity -->
-- **type**: monotonic
-- **module**: golem_mortality::stochastic_mortality
-- **property**: Gompertz hazard function h(t) increases monotonically with age t
-- **formula**: `h(t) = α × e^(β×t)` [GOMPERTZ-1825]; α > 0, β > 0
-- **constraint**: `dh/dt > 0` for all t ≥ 0; h(t) is strictly increasing
-- **test_fn**: `test_gompertz_hazard_monotonic_proptest`
-- **strategy**: proptest
-- **inputs**: `{"alpha": [0.0001, 0.001, 0.01], "beta": [0.0001, 0.001, 0.01], "age_ticks": range(0, 200_000)}`
-- **oracle**: `h(t+1) > h(t)` for all consecutive ticks
+<!-- INV-017: BG_VOID not pure black -->
+- **type**: numeric_range
+- **module**: bardo_terminal::palette
+- **property**: BG_VOID background is never pure black per design system spec
+- **formula**: BG_VOID = Color::Rgb(6, 6, 8) = #060608
+- **constraint**: ∀(r, g, b) in BG_VOID: (r > 0 ∨ g > 0 ∨ b > 0)
+- **test_fn**: `test_palette_void_not_pure_black`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: (6 > 0) ∨ (6 > 0) ∨ (8 > 0) = true
 - **severity**: spec
-- **source**: prd2/02-mortality/03-stochastic-mortality.md
+- **source**: plan Unit 3, Quick Reference
 
-<!-- INV-015: PAD Vector Components Range -->
+<!-- INV-018: ROSE color constant -->
 - **type**: numeric_range
-- **module**: golem_daimon::pad_vector
-- **property**: PAD emotion vector components (Pleasure, Arousal, Dominance) each in [-1.0, 1.0]
-- **formula**: `PADVector { pleasure: f64, arousal: f64, dominance: f64 }` per [MEHRABIAN-1974]
-- **constraint**: `-1.0 ≤ pleasure, arousal, dominance ≤ 1.0`
-- **test_fn**: `test_pad_vector_component_clamps`
+- **module**: bardo_terminal::palette
+- **property**: Primary rose color is #AA7088 (RGB 170, 112, 136)
+- **formula**: ROSE = Color::Rgb(170, 112, 136)
+- **constraint**: r == 170 ∧ g == 112 ∧ b == 136
+- **test_fn**: `test_palette_rose_value`
 - **strategy**: unit
-- **inputs**: `{"p": [-1.5, -1.0, 0.0, 1.0, 1.5], "a": [-1.5, -1.0, 0.0, 1.0, 1.5], "d": [-1.5, -1.0, 0.0, 1.0, 1.5]}`
-- **oracle**: `clamp_each(-1.0, 1.0)`
-- **severity**: code
-- **source**: prd2/03-daimon/01-appraisal.md §PAD Emotional Model
+- **inputs**: `{}`
+- **oracle**: #AA7088
+- **severity**: spec
+- **source**: plan Unit 3, Quick Reference, prd2/18-interfaces/03-tui.md
 
-<!-- INV-016: Plutchik Octant Mapping from PAD -->
+<!-- INV-019: BONE color constant -->
 - **type**: numeric_range
-- **module**: golem_daimon::plutchik_label
-- **property**: 8 primary Plutchik emotions map uniquely to octants of PAD space
-- **formula**: 8 emotions {anger, fear, sadness, disgust, surprise, anticipation, trust, joy} correspond to 8 octants of [-1,1]³ space per [PLUTCHIK-1980]
-- **constraint**: Each emotion's octant is non-overlapping; coverage is complete across [−1, 1]³
-- **test_fn**: `test_plutchik_octant_coverage_proptest`
+- **module**: bardo_terminal::palette
+- **property**: BONE color (most important element) is #C8B890 (RGB 200, 184, 144)
+- **formula**: BONE = Color::Rgb(200, 184, 144)
+- **constraint**: r == 200 ∧ g == 184 ∧ b == 144
+- **test_fn**: `test_palette_bone_value`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: #C8B890
+- **severity**: spec
+- **source**: plan Unit 3, Quick Reference
+
+<!-- INV-020: BORDER_ACTIVE equals ROSE -->
+- **type**: numeric_range
+- **module**: bardo_terminal::palette
+- **property**: Active panel border color equals primary rose color
+- **formula**: BORDER_ACTIVE == ROSE = #AA7088
+- **constraint**: BORDER_ACTIVE.rgb() == ROSE.rgb()
+- **test_fn**: `test_border_active_equals_rose`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: (170, 112, 136)
+- **severity**: spec
+- **source**: plan Unit 3, Quick Reference
+
+<!-- INV-021: Text PRIMARY hierarchy -->
+- **type**: numeric_range
+- **module**: bardo_terminal::palette
+- **property**: TEXT_PRIMARY is readable baseline text color #988090
+- **formula**: TEXT_PRIMARY = Color::Rgb(152, 128, 144)
+- **constraint**: r == 152 ∧ g == 128 ∧ b == 144
+- **test_fn**: `test_palette_text_primary`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: #988090
+- **severity**: spec
+- **source**: plan Unit 3, Quick Reference
+
+<!-- INV-022: Chrome rows overhead -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Layout computation reserves 2 rows for chrome (tab bar + status bar)
+- **formula**: chrome_rows = 2
+- **constraint**: inner.height = frame_size.height - 2
+- **test_fn**: `test_chrome_rows_2`
+- **strategy**: unit
+- **inputs**: `{ frame_size: Rect { width: 80, height: 24 } }`
+- **oracle**: inner.height == 22
+- **severity**: spec
+- **source**: plan Unit 4, Quick Reference
+
+<!-- INV-023: Tick count wraps without panic -->
+- **type**: monotonic
+- **module**: bardo_terminal::state
+- **property**: Tick count increments via wrapping_add and never overflows
+- **formula**: tick_count(t+1) = tick_count(t).wrapping_add(1)
+- **constraint**: ∀tick ∈ [0, u64::MAX]: tick.wrapping_add(1) is well-defined
+- **test_fn**: `test_tick_count_wrapping`
 - **strategy**: proptest
-- **inputs**: `{"pad_samples": 10000, "random_distribution": "uniform"}`
-- **oracle**: Every PAD vector maps to exactly one Plutchik octant/emotion
+- **inputs**: `{ tick_count: 0u64..u64::MAX }`
+- **oracle**: (u64::MAX).wrapping_add(1) == 0
 - **severity**: code
-- **source**: prd2/03-daimon/01-appraisal.md §Plutchik Emotion Wheel
+- **source**: plan Unit 1, app.rs run loop (line 196)
 
-<!-- INV-017: Mood EMA Convergence (Affective) -->
-- **type**: convergence
-- **module**: golem_daimon::mood_ema
-- **property**: Mood EMA over emotional states converges from cold start
-- **formula**: `mood_new = alpha_mood × emotion + (1 - alpha_mood) × mood_old`; default `alpha_mood ≈ 0.001` (hours-scale)
-- **constraint**: After 10 observations, mood ≠ 0.5 (default); after 1000 observations in stable emotion, |mood - emotion| < 0.01
-- **test_fn**: `test_mood_ema_convergence_from_cold_start`
+<!-- INV-024: MockVitality range [0, 1] -->
+- **type**: numeric_range
+- **module**: bardo_terminal::state
+- **property**: Vitality placeholder value is clamped to [0.0, 1.0]
+- **formula**: MockVitality.value ∈ [0.0, 1.0]
+- **constraint**: 0.0 ≤ value ≤ 1.0
+- **test_fn**: `test_vitality_value_range`
 - **strategy**: unit
-- **inputs**: `{"stable_emotion": [0.0, 0.25, 0.5, 0.75, 1.0], "observations": [10, 100, 1000]}`
-- **oracle**: Cold start converges by 1000 observations; fast enough for meaningful affect signal
+- **inputs**: `{ value: 0.75 (default from AppState::default) }`
+- **oracle**: 0.0 ≤ 0.75 ≤ 1.0
 - **severity**: code
-- **source**: prd2/03-daimon/02-emotion-memory.md
+- **source**: plan Unit 5, state.rs (line 766)
 
-<!-- INV-018: Dream Materialization via Mattar-Daw Replay -->
+<!-- INV-025: Vitality gauge percent clamping -->
+- **type**: numeric_range
+- **module**: bardo_terminal::screens::home
+- **property**: Vitality gauge percentage clamped to [0, 100] before rendering
+- **formula**: gauge_percent = (vitality.value * 100.0).as_u16().min(100)
+- **constraint**: 0 ≤ gauge_percent ≤ 100
+- **test_fn**: `test_vitality_gauge_clamped`
+- **strategy**: proptest
+- **inputs**: `{ vitality_value: 0.0f64..=1.0f64 }`
+- **oracle**: (value * 100.0).min(100.0) ∈ [0.0, 100.0]
+- **severity**: code
+- **source**: plan Unit 5, home.rs (line 676)
+
+<!-- INV-026: Terminal setup sequence -->
 - **type**: event_sequence
-- **module**: golem_dreams::replay
-- **property**: NREM replay sequences prioritized episodes per Mattar-Daw utility weighting
-- **formula**: Prioritized replay based on [MATTAR-DAW-2018]: episodes with higher utility-to-frequency ratio are re-experienced earlier in consolidation phase
-- **constraint**: Replay ordering must match utility sort; no arbitrary permutation
-- **test_fn**: `test_dream_replay_prioritizes_by_utility`
-- **strategy**: integration
-- **inputs**: `{"episodes": [{"utility": 0.9, "freq": 1}, {"utility": 0.1, "freq": 100}]}`
-- **oracle**: High-utility, low-frequency episode replayed before low-utility, high-frequency
-- **severity**: spec
-- **source**: prd2/05-dreams/02-replay.md references [MATTAR-DAW-2018]
-
-<!-- INV-019: Genomic Bottleneck Compression Ratio -->
-- **type**: numeric_range
-- **module**: golem_mortality::genomic_bottleneck
-- **property**: Knowledge compression at death reduces Grimoire entries to ≤ 2048
-- **formula**: `compressed_knowledge.len() ≤ 2048` at death; compression ratio = full_grimoire / 2048
-- **constraint**: Upper bound enforced; compression loss is information-theoretic (pruning + quantization)
-- **test_fn**: `test_genomic_bottleneck_compression_bound`
-- **strategy**: unit
-- **inputs**: `{"grimoire_sizes": [1024, 2048, 5000, 10000, 100000]}`
-- **oracle**: All outputs ≤ 2048
-- **severity**: spec
-- **source**: prd2/02-mortality/01-architecture.md §Genomic Bottleneck
-
-<!-- INV-020: Baldwin Effect Transgenerational Confidence Decay -->
-- **type**: numeric_range
-- **module**: golem_mortality::transgenerational_knowledge
-- **property**: Inherited heuristics start at `confidence × 0.85^generation`
-- **formula**: `inherited_confidence = ancestor_confidence × (0.85 ^ generation_distance)`
-- **constraint**: `0.0 ≤ inherited_confidence ≤ ancestor_confidence`; monotonic decay per generation
-- **test_fn**: `test_baldwin_effect_generational_decay_proptest`
-- **strategy**: proptest
-- **inputs**: `{"ancestor_confidence": [0.5, 0.9, 1.0], "generation": [1, 2, 3, 5, 10, 50]}`
-- **oracle**: `conf_n = ancestor_conf × 0.85^n`; all outputs ≤ ancestor_conf; decreasing in generation
-- **severity**: spec
-- **source**: prd2/02-mortality/01-architecture.md references [BALDWIN-1896]
-
-<!-- INV-021: Hayflick Limit Replicant Max Tick Cap -->
-- **type**: numeric_range
-- **module**: golem_mortality::replicant_lifecycle
-- **property**: Maximum tick count for Replicants follows Hayflick limit model (biological inspiration)
-- **formula**: `max_replicant_ticks` is configured value; default drawn from [HAYFLICK-1965] literature (exponential growth ceiling)
-- **constraint**: `tick_count ≤ max_replicant_ticks` enforced; Replicant creation blocked if age > 80% of max
-- **test_fn**: `test_hayflick_replicant_ceiling_enforced`
-- **strategy**: unit
-- **inputs**: `{"max_ticks": [100_000, 200_000, 500_000]}`
-- **oracle**: Replicants respect ceiling; creation denied if ancestor age > 0.8 × max
-- **severity**: spec
-- **source**: prd2/02-mortality/01-architecture.md references [HAYFLICK-1965]
-
-<!-- INV-022: Thanatopsis Four-Phase Death Protocol -->
-- **type**: state_machine
-- **module**: golem_mortality::thanatopsis
-- **property**: Death protocol FSM with four ordered phases: Acceptance → Settlement → Reflection → Legacy
-- **formula**: Phase transitions: (1) Acceptance sets `is_dying = true`, (2) Settlement writes Vault uploads, (3) Reflection broadcasts final reflection, (4) Legacy seals genealogy
-- **constraint**: Phases must execute in order; no skipping; each phase < 30 seconds (Fly.io SIGTERM budget)
-- **test_fn**: `test_thanatopsis_phase_ordering`
+- **module**: bardo_terminal::main
+- **property**: Terminal enters raw mode, alternate screen, mouse capture in order
+- **formula**: enable_raw_mode() → EnterAlternateScreen → EnableMouseCapture
+- **constraint**: Raw mode must be enabled before alternate screen; both before mouse capture
+- **test_fn**: `test_terminal_setup_sequence`
 - **strategy**: integration
 - **inputs**: `{}`
-- **oracle**: Phase counters strictly increase; all four executed before process shutdown
-- **severity**: code
-- **source**: prd2/02-mortality/06-thanatopsis.md
-
-<!-- INV-023: Kelly Criterion Optimal Bet Sizing (Risk Engine) -->
-- **type**: numeric_range
-- **module**: golem_mortality::risk_engine
-- **property**: Position sizing follows Kelly criterion [KELLY-1956] for DeFi trading
-- **formula**: `f* = (bp - q) / b` where b = odds, p = win probability, q = 1 - p
-- **constraint**: `0 < f* < 1` for valid Kelly bets; f* = 0 signals no edge; fractional Kelly (e.g. 0.25×f*) for production stability
-- **test_fn**: `test_kelly_criterion_bounds_proptest`
-- **strategy**: proptest
-- **inputs**: `{"b": [1.0, 2.0, 5.0, 10.0], "p": [0.1, 0.5, 0.9, 1.0, 2.0]}`
-- **oracle**: `f_star = (b*p - (1-p)) / b`; 0 < f_star < 1 for p ∈ (0.5, 1); f_star ≤ 0 for p ≤ 0.5
+- **oracle**: all three succeed in order without error
 - **severity**: spec
-- **source**: prd2/01-golem/16-risk-engine.md references [KELLY-1956]
+- **source**: plan Unit 1, Quick Reference (lines 105-110)
+
+<!-- INV-027: Terminal teardown sequence -->
+- **type**: event_sequence
+- **module**: bardo_terminal::main
+- **property**: Terminal disables raw mode, leaves alternate screen, disables mouse in order
+- **formula**: disable_raw_mode() → LeaveAlternateScreen → DisableMouseCapture → show_cursor()
+- **constraint**: Raw mode must be disabled first; cursor shown last
+- **test_fn**: `test_terminal_teardown_sequence`
+- **strategy**: integration
+- **inputs**: `{}`
+- **oracle**: all four succeed in order without error
+- **severity**: spec
+- **source**: plan Unit 1, Quick Reference (lines 115-121)
+
+<!-- INV-028: Panic hook restores terminal -->
+- **type**: event_sequence
+- **module**: bardo_terminal::main
+- **property**: Panic handler disables raw mode and leaves alternate screen even on panic
+- **formula**: panic → [disable_raw_mode, LeaveAlternateScreen, DisableMouseCapture], then call original_hook
+- **constraint**: Terminal restoration must not error even if panic is mid-render
+- **test_fn**: `test_panic_hook_teardown`
+- **strategy**: integration
+- **inputs**: `{}`
+- **oracle**: after simulated panic, terminal is usable (not in raw mode)
+- **severity**: spec
+- **source**: plan Unit 1, Quick Reference (lines 129-139)
+
+<!-- INV-029: Frame sleep calculates correctly -->
+- **type**: numeric_range
+- **module**: bardo_terminal::app
+- **property**: Sleep duration = max(0, FRAME_DURATION - elapsed)
+- **formula**: sleep_duration = FRAME_DURATION.saturating_sub(elapsed)
+- **constraint**: 0 ≤ sleep_duration ≤ FRAME_DURATION
+- **test_fn**: `test_frame_sleep_duration`
+- **strategy**: proptest
+- **inputs**: `{ elapsed: 0us..=50000us }`
+- **oracle**: FRAME_DURATION.saturating_sub(elapsed) is well-defined
+- **severity**: code
+- **source**: plan Unit 1, app.rs (lines 208-210)
+
+<!-- INV-030: ConnectionStatus enum completeness -->
+- **type**: state_machine
+- **module**: bardo_terminal::state
+- **property**: ConnectionStatus has exactly three variants: Connected, Disconnected, Connecting
+- **formula**: ConnectionStatus ∈ {Connected, Disconnected, Connecting}
+- **constraint**: No other variants exist
+- **test_fn**: `test_connection_status_variants`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: exactly 3
+- **severity**: code
+- **source**: plan Unit 5, state.rs (lines 747-751)
+
+<!-- INV-031: Default AppState initialization -->
+- **type**: numeric_range
+- **module**: bardo_terminal::state
+- **property**: AppState::default initializes with tick=0, disconnected, vitality=0.75, layout=Standard
+- **formula**: AppState::default() = { tick_count: 0, connection_status: Disconnected, vitality: 0.75, layout: Standard }
+- **constraint**: All four fields match spec
+- **test_fn**: `test_app_state_default`
+- **strategy**: unit
+- **inputs**: `{}`
+- **oracle**: see formula
+- **severity**: code
+- **source**: plan Unit 5, state.rs (lines 761-770)
+
+<!-- INV-032: HomeScreen key bindings -->
+- **type**: state_machine
+- **module**: bardo_terminal::screens::home
+- **property**: HomeScreen handle_key returns: q/Q → Quit, Tab → NextScreen, Shift+Tab → PrevScreen, others → None
+- **formula**: handle_key(KeyEvent) → Option<AppAction>
+- **constraint**: Only three keys (q, Tab, Shift+Tab) produce actions
+- **test_fn**: `test_home_screen_key_bindings`
+- **strategy**: unit
+- **inputs**: `{ key: KeyCode::Char('q'), KeyCode::Tab, KeyCode::BackTab, KeyCode::Other }`
+- **oracle**: Some(Quit), Some(NextScreen), Some(PrevScreen), None
+- **severity**: spec
+- **source**: plan Unit 5, home.rs (lines 715-722)
+
+<!-- INV-033: StubScreen key bindings -->
+- **type**: state_machine
+- **module**: bardo_terminal::screen
+- **property**: StubScreen handle_key returns: q → Quit, Tab → NextScreen, Shift+Tab → PrevScreen, others → None
+- **formula**: handle_key(KeyEvent) → Option<AppAction>
+- **constraint**: Same three keys as HomeScreen
+- **test_fn**: `test_stub_screen_key_bindings`
+- **strategy**: unit
+- **inputs**: `{ key: KeyCode::Char('q'), KeyCode::Tab, KeyCode::BackTab, KeyCode::Other }`
+- **oracle**: Some(Quit), Some(NextScreen), Some(PrevScreen), None
+- **severity**: spec
+- **source**: plan Unit 5, screen.rs (lines 811-818)
+
+<!-- INV-034: Layout inner rect excludes top row -->
+- **type**: numeric_range
+- **module**: bardo_terminal::layout
+- **property**: Inner content rect starts at y=1 (below tab bar)
+- **formula**: inner.y = 1
+- **constraint**: y == 1
+- **test_fn**: `test_layout_inner_y_offset`
+- **strategy**: unit
+- **inputs**: `{ frame_size: Rect { width: 80, height: 24, x: 0, y: 0 } }`
+- **oracle**: inner.y == 1
+- **severity**: code
+- **source**: plan Unit 4, layout.rs (line 564)
+
+<!-- INV-035: Creature panel left split percentage -->
+- **type**: numeric_range
+- **module**: bardo_terminal::screens::home
+- **property**: HomeScreen splits creature left panel at 30% of content width
+- **formula**: creature_constraint = Constraint::Percentage(30)
+- **constraint**: First split chunk width ≈ 0.30 × area.width
+- **test_fn**: `test_home_creature_panel_width`
+- **strategy**: unit
+- **inputs**: `{ area: Rect { width: 100, height: 20 } }`
+- **oracle**: chunks[0].width ≈ 30
+- **severity**: code
+- **source**: plan Unit 5, home.rs (lines 633-635)
+
+<!-- INV-036: Data panel right split percentage -->
+- **type**: numeric_range
+- **module**: bardo_terminal::screens::home
+- **property**: HomeScreen splits data right panel at 70% of content width
+- **formula**: data_constraint = Constraint::Percentage(70)
+- **constraint**: Second split chunk width ≈ 0.70 × area.width
+- **test_fn**: `test_home_data_panel_width`
+- **strategy**: unit
+- **inputs**: `{ area: Rect { width: 100, height: 20 } }`
+- **oracle**: chunks[1].width ≈ 70
+- **severity**: code
+- **source**: plan Unit 5, home.rs (line 635)
+
+<!-- INV-037: Data panel vertical splits -->
+- **type**: numeric_range
+- **module**: bardo_terminal::screens::home
+- **property**: Data panel has 3 vertical regions: vitality (3 rows), connection (3 rows), info (remaining)
+- **formula**: [Constraint::Length(3), Constraint::Length(3), Constraint::Min(0)]
+- **constraint**: data_chunks[0].height == 3, data_chunks[1].height == 3, data_chunks[2].height >= 0
+- **test_fn**: `test_home_data_vertical_layout`
+- **strategy**: unit
+- **inputs**: `{ area: Rect { width: 70, height: 20 } }`
+- **oracle**: chunks have heights 3, 3, remainder
+- **severity**: code
+- **source**: plan Unit 5, home.rs (lines 657-664)
 
 ### Regression Anchors
 
-- `test_epistemic_fitness_clamp_range`
-- `test_ema_convergence_to_constant`
-- `test_domain_alpha_half_life_calibration`
-- `test_dimension_weights_sum_to_one`
-- `test_tick_accuracy_range_proptest`
-- `test_senescence_hysteresis_offset`
-- `test_senescence_grace_period_constant`
-- `test_fitness_trend_range`
-- `test_prediction_log_fifo_eviction`
-- `test_composite_vitality_multiplicative_proptest`
-- `test_no_hardcoded_lifespan_ceiling`
-- `test_senescence_stage_valid_transitions`
-- `test_ebbinghaus_decay_monotonic_proptest`
-- `test_gompertz_hazard_monotonic_proptest`
-- `test_pad_vector_component_clamps`
-- `test_plutchik_octant_coverage_proptest`
-- `test_mood_ema_convergence_from_cold_start`
-- `test_dream_replay_prioritizes_by_utility`
-- `test_genomic_bottleneck_compression_bound`
-- `test_baldwin_effect_generational_decay_proptest`
-- `test_hayflick_replicant_ceiling_enforced`
-- `test_thanatopsis_phase_ordering`
-- `test_kelly_criterion_bounds_proptest`
+`test_frame_duration_60fps`
+`test_layout_breakpoint_compact`
+`test_layout_breakpoint_standard`
+`test_layout_breakpoint_wide`
+`test_layout_breakpoint_ultra`
+`test_sprite_sidebar_compact_zero`
+`test_sprite_sidebar_standard_6col`
+`test_sprite_sidebar_wide_10col`
+`test_sprite_sidebar_ultra_14col`
+`test_panel_count_compact`
+`test_panel_count_standard`
+`test_panel_count_wide`
+`test_panel_count_ultra`
+`test_screen_id_count_29`
+`test_screen_cycling_wraps_at_end`
+`test_screen_order_matches_windows`
+`test_palette_void_not_pure_black`
+`test_palette_rose_value`
+`test_palette_bone_value`
+`test_border_active_equals_rose`
+`test_palette_text_primary`
+`test_chrome_rows_2`
+`test_tick_count_wrapping`
+`test_vitality_value_range`
+`test_vitality_gauge_clamped`
+`test_terminal_setup_sequence`
+`test_terminal_teardown_sequence`
+`test_panic_hook_teardown`
+`test_frame_sleep_duration`
+`test_connection_status_variants`
+`test_app_state_default`
+`test_home_screen_key_bindings`
+`test_stub_screen_key_bindings`
+`test_layout_inner_y_offset`
+`test_home_creature_panel_width`
+`test_home_data_panel_width`
+`test_home_data_vertical_layout`
 
 ### Cross-Crate Contracts
 
 | Upstream | Input Condition | Expected Behavior |
 |----------|----------------|-------------------|
-| `golem-grimoire` (episodic store) → `golem-mortality` | Prediction logged with outcome | `EpistemicFitnessState.prediction_log` appends PredictionOutcomePair; evicts oldest if len > 2000 |
-| `golem-core` (MarketRegime, PADVector) → `golem-daimon` | Regime context + somatic marker pair | PADVector clamped to [-1.0, 1.0] per dimension; regime tag stored for mood computation |
-| `golem-daimon` (mood EMA) → `golem-grimoire` | Retrieval request during gate phase | Mood-congruent bias applied: matching valence entries boosted by ±20%, opposing entries penalized |
-| `golem-heartbeat` (CoALA observe/retrieve) → `golem-grimoire` | Query for episode retrieval | Four-factor scoring: `recency × importance × relevance × affect`; affect bias ∝ mood EMA |
-| `golem-heartbeat` → `golem-mortality` | Tick complete with prediction outcome | `update_fitness()` called; senescence stage updated if fitness crosses thresholds; death event emitted if composite vitality → 0 |
-| `golem-mortality` → `golem-runtime` (lifecycle FSM) | Death triggered (any clock) | Lifecycle transitions to `Terminal` → `Dead`; `thanatopsis` phase begins (4-phase protocol) |
-| `golem-mortality` → `golem-coordination` (Styx Vault) | Golem dying, knowledge distillation | Grimoire compressed to ≤ 2048 entries; uploaded to Vault with Baldwin confidence decay = `0.85^generation` |
+| `golem-core::event::EventFabric` | Import present in app.rs | Compiles without error (imported but unused until Plan 70a) |
+| `ratatui` workspace | dependency specified as `{ workspace = true }` | Resolves to workspace pinned version (0.30) |
+| `crossterm` workspace | dependency specified as `{ workspace = true }` | Resolves to workspace pinned version (0.28) |
 
 ### Event Sequence Assertions
 
-**Death Cascade (in order, no skipping)**:
-1. `EpistemicFitnessEvent { fitness_below_threshold: true }` emitted when `fitness < 0.35`
-2. `SenescenceStageEvent { stage: Stage1 }` emitted; grace period starts
-3. (Optional) `SenescenceRecoveryEvent { recovered: true }` if fitness > 0.45 before grace timeout
-4. (Or) `SenescenceStageEvent { stage: Stage2 }` if grace period expires
-5. `SenescenceStageEvent { stage: Stage3 }` when vitality composite < 0.01
-6. `GolemDeathEvent { cause: DeathCause::{Economic|Epistemic|Stochastic} }` emitted
-7. `LifecycleTransitionEvent { from: Active, to: Terminal }`
-8. `ThanatsisPhaseEvent { phase: Acceptance }`
-9. `ThanatsisPhaseEvent { phase: Settlement }`
-10. `ThanatsisPhaseEvent { phase: Reflection }`
-11. `ThanatsisPhaseEvent { phase: Legacy }`
-12. `LifecycleTransitionEvent { from: Terminal, to: Dead }`
+**Terminal initialization sequence:**
+1. Install panic hook
+2. Enable raw mode
+3. Enter alternate screen
+4. Enable mouse capture
+5. Create ratatui Terminal
+6. Enter run loop
 
-**Dream Consolidation (Mattar-Daw Replay)**:
-1. `DreamInitiatedEvent { trigger: "consolidation" }` emitted
-2. Prioritized episode list built via utility-weighted replay algorithm
-3. `ReplayStartEvent { episode_id, utility }` emitted per episode
-4. `PlaybookEvolutionEvent { heuristics_updated }` after replay
-5. `DreamCompletedEvent { consolidated_entries }` emitted
+**Terminal shutdown sequence:**
+1. Exit run loop (should_quit == true)
+2. Disable raw mode
+3. Leave alternate screen
+4. Disable mouse capture
+5. Show cursor
+6. Return control to shell
+
+**Run loop per frame:**
+1. Record frame_start time
+2. Poll crossterm events (with timeout = remaining budget)
+3. If event: call handle_key → apply_action
+4. Increment tick_count
+5. Call render()
+6. Calculate elapsed
+7. Sleep remainder (saturating subtraction)
+8. Check should_quit
+
+**Screen navigation sequence:**
+1. Poll Tab or Shift+Tab key
+2. Call on_blur() on current screen
+3. Update active_screen
+4. Call on_focus() on new screen
+5. Next render includes new screen
 
 ### Academic References Verified
 
-| Reference | Formula/Constant | PRD2 Match | Web-Verified |
-|-----------|-----------------|------------|--------------|
-| [GOMPERTZ-1825] | Hazard: `h(t) = α·e^(β·t)` exponential mortality | Yes, stochastic-mortality.md implements | ✓ Wikipedia, PMC, actuarial literature confirm original 1825 publication |
-| [EBBINGHAUS-1885] | Forgetting: `Q(t) = 1.84/((log t)^1.25 + 1.84)` or `R = e^(-t/S)` | Yes, grimoire demurrage in memory docs | ✓ Verified 1885 publication; formula matches modern replication studies |
-| [MEHRABIAN-1974] | PAD circumplex: Pleasure, Arousal, Dominance each ∈ [-1,1] | Yes, daimon appraisal 01 | ✓ Confirmed in Wikipedia, psychological literature, ISO 9001 emotion standard |
-| [PLUTCHIK-1980] | 8 primary emotions + octant mapping | Yes, daimon 03-behavior.md | ✓ Verified wheel model, 8 basic emotions, octant structure in multiple sources |
-| [MATTAR-DAW-2018] | Prioritized memory replay utility weighting | Yes, dreams 02-replay.md | ✓ Published in Nature Neuroscience Nov 2018; code at Princeton/GitHub |
-| [KELLY-1956] | Optimal bet sizing: `f* = (bp - q)/b` | Yes, risk-engine 16 references | ✓ Bell Labs original; information theory connection verified |
-| [HAYFLICK-1965] | Replicative senescence limit (~50 divisions) | Yes, immortal-control 11 references | ✓ Foundational cell biology; model applied as inspiration for Replicant max-ticks |
-| [BALDWIN-1896] | Learned traits become structural across generations | Yes, mortality 01-architecture §Baldwin Effect | ✓ Verified; referenced in modern evolutionary computation literature |
-| [VELA-2022] | 91% of ML models degrade temporally | Yes, epistemic-decay 02 §The Evidence | ✓ Scientific Reports 2022; cited in concept drift literature |
-| [ARBESMAN-2012] | Knowledge half-lives: medical 45y, IT < 2y | Yes, epistemic-decay 02 §Knowledge Half-Life | ✓ Arbesman publications on knowledge decay; cited in domain-specific alpha calibration |
+| Reference | Formula/Constant | PRD2 Match | Notes |
+|-----------|-----------------|------------|-------|
+| 60 FPS target | FRAME_DURATION = 16.67ms | plan::Quick Reference | Standard modern monitor refresh rate; no academic citation needed |
+| Layout breakpoints | 4 breakpoints at 0, 80, 120, 180 cols | plan Unit 4 | UI/UX responsive design best practice; thresholds chosen for readability |
+| ROSEDUST palette | RGB(170, 112, 136) primary | plan Unit 3 | Referenced from prd2/18-interfaces/03-tui.md, no academic source needed (design system constant) |
+| CRT materiality | Scanline/phosphor colors | plan Unit 3 | Design aesthetic choice, not scientifically grounded |
 

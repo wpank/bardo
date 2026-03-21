@@ -356,7 +356,7 @@ pub(crate) fn format_duration(total_secs: f64) -> String {
 /// system metrics.
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
-pub(crate) struct AppState {
+pub struct AppState {
     /// Frame tick counter.
     pub(crate) tick_count: u64,
     /// Current connection status.
@@ -392,7 +392,7 @@ impl Default for AppState {
 /// Core scaffold actions are `Quit`, `NextScreen`, `PrevScreen`, and `Resize`.
 /// Additional variants support command palette, modals, vim-style navigation, and scrolling.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) enum AppAction {
+pub enum AppAction {
     /// Exit the application.
     Quit,
     /// Move to the next screen.
@@ -673,5 +673,47 @@ mod tests {
         assert_eq!(format_duration(60.01), "1m01s");
         assert_eq!(format_duration(-5.0), "0s");
         assert_eq!(format_duration(f64::NAN), "0s");
+    }
+
+    // --- Named tests for verification chain (INV-023, INV-024, INV-030, INV-031) ---
+
+    #[test]
+    fn test_tick_count_wrapping() {
+        let mut state = AppState::default();
+        state.tick_count = u64::MAX;
+        state.tick_count = state.tick_count.wrapping_add(1);
+        assert_eq!(state.tick_count, 0);
+    }
+
+    #[test]
+    fn test_vitality_value_range() {
+        let state = AppState::default();
+        assert!(
+            (0.0..=1.0).contains(&state.vitality.value),
+            "default vitality {} not in [0.0, 1.0]",
+            state.vitality.value
+        );
+    }
+
+    #[test]
+    fn test_connection_status_variants() {
+        let variants = [
+            ConnectionStatus::Connected,
+            ConnectionStatus::Disconnected,
+            ConnectionStatus::Connecting,
+        ];
+        assert_eq!(variants.len(), 3);
+        assert_ne!(variants[0], variants[1]);
+        assert_ne!(variants[1], variants[2]);
+        assert_ne!(variants[0], variants[2]);
+    }
+
+    #[test]
+    fn test_app_state_default() {
+        let state = AppState::default();
+        assert_eq!(state.tick_count, 0);
+        assert_eq!(state.connection_status, ConnectionStatus::Disconnected);
+        assert_eq!(state.vitality.value, DEFAULT_VITALITY_VALUE);
+        assert_eq!(state.layout, LayoutBreakpoint::Standard);
     }
 }

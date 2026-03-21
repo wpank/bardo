@@ -445,4 +445,36 @@ mod tests {
         assert_eq!(ConnectionStatus::Disconnected.label(), "DISCONNECTED");
         assert_eq!(MockVitality::default(), MockVitality { value: 0.75 });
     }
+
+    /// INV-025: VitalityGauge clamps out-of-range values to [0.0, 1.0].
+    #[test]
+    fn test_vitality_gauge_clamped() {
+        use ratatui::{Terminal, backend::TestBackend};
+
+        let gauge = VitalityGauge {
+            value: 1.5,
+            label: "TEST".to_string(),
+            phase: vitality_to_phase(1.5),
+        };
+
+        let backend = TestBackend::new(40, 3);
+        let mut terminal = Terminal::new(backend).unwrap();
+        terminal
+            .draw(|frame| frame.render_widget(gauge, frame.size()))
+            .unwrap();
+
+        let gauge_neg = VitalityGauge {
+            value: -0.5,
+            label: "TEST".to_string(),
+            phase: vitality_to_phase(-0.5),
+        };
+
+        terminal
+            .draw(|frame| frame.render_widget(gauge_neg, frame.size()))
+            .unwrap();
+
+        // Values outside [0,1] should be clamped, not panic
+        assert_eq!(vitality_to_phase(1.5), vitality_to_phase(1.0));
+        assert_eq!(vitality_to_phase(-0.5), vitality_to_phase(0.0));
+    }
 }

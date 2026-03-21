@@ -39,7 +39,7 @@ const TARGET_FPS: u64 = 60;
 const FRAME_DURATION: Duration = Duration::from_micros(1_000_000 / TARGET_FPS);
 
 /// Application scaffold that owns terminal state and screen navigation.
-pub(crate) struct App {
+pub struct App {
     state: AppState,
     screens: ScreenRegistry,
     active_screen: ScreenId,
@@ -1056,5 +1056,14 @@ mod tests {
         assert_eq!(vim_indicator_color(VimMode::Normal), BONE);
         assert_eq!(vim_indicator_color(VimMode::Insert), ROSE_BRIGHT);
         assert_eq!(vim_indicator_color(VimMode::Command), WARNING);
+    }
+
+    /// INV-001: Frame duration constant matches 60 FPS target.
+    #[test]
+    fn test_frame_duration_60fps() {
+        assert_eq!(TARGET_FPS, 60);
+        assert_eq!(FRAME_DURATION, Duration::from_micros(1_000_000 / 60));
+        // 16,666 microseconds per frame
+        assert_eq!(FRAME_DURATION.as_micros(), 16_666);
     }
 }

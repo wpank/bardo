@@ -16,7 +16,10 @@ mod widgets;
 use std::io::stdout;
 
 use anyhow::{Result, anyhow};
-use app::App;
+pub use app::App;
+pub use screen::{Screen, ScreenId};
+pub use state::{AppAction, AppState};
+
 use crossterm::{
     cursor::Show,
     event::{DisableMouseCapture, EnableMouseCapture},

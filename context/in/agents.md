@@ -75,28 +75,28 @@ You are running on branch `codex/plan/NN-name`, created by `run-plans.sh` before
 
 When given a task like "Implement the plan at plans/NN-name.md", follow this protocol exactly.
 
-## Implementer Mindset
+## Phase 0: Orient (Read Before You Touch Anything)
 
-You have one pass. Implement all units, write all tests, write all docs — then compile. Do not stop mid-implementation to recheck, re-read, or reconsider. If something is slightly off mid-way, adjust and keep moving. Make the simplest reasonable choice on ambiguity, document it, and continue.
+Read these files in this order. Do not write a single line of code until you've read all of them:
 
-**Speed and first-pass correctness are your only goals.** Review cycles are expensive. Every mid-implementation `cargo check`, every re-read of a file you already skimmed, every pause to reconsider a design — that is time you are not shipping code. Commit to the plan. Ship the code. Compile once at the end.
+1. **`plans/context/workspace-map.md`** — Every `.rs` file grouped by crate. This IS your `find` / `ls`. Do not run file discovery commands.
+2. **`plans/context/preflight-snapshot.md`** — Git log, compile status, test baseline. This IS your `git log` and ambient state check.
+3. **`plans/context/briefs/NN-brief.md`** — Pre-generated execution brief. It tells you what dependencies exist, what patterns to follow, what risks to watch. **This is your most important pre-read.** If the brief flags a missing type or a pattern mismatch, address it proactively.
+4. **`plans/context/prd2-extracts/NN-prd2.md`** — Pre-extracted, budget-allocated PRD2 sections for this plan. Read this instead of browsing `prd2/` manually. If you need more context than what's here, go to `prd2/` directly — but this extract is the curated baseline.
+5. **`plans/context/decompositions/NN-decomposition.md`** — Pre-generated step-by-step breakdown. Use this as your implementation order. Each step already has acceptance criteria and Cargo check checkpoints.
+6. **`plans/context/tasks/NN-tasks.toml`** — Task checklist with parallel groups, file assignments, and acceptance criteria. The TOML is authoritative for what to implement and in what order.
+7. **`plans/context/last-completed.md`** — What the previous plan built, what it left behind, what you should watch for.
+8. **The plan file** — Read it cover to cover. The Quick Reference sections are your implementation spec.
+9. **`plans/CONTEXT.md`** — Cross-plan state. Types, crate boundaries, decisions, deviations.
+10. **`plans/context/ignored-tests.md`** — If your plan unblocks any tests, un-ignore them.
+11. **Supervisor / conductor messages**: If `tmp/agent-messages.md` exists and is non-empty, read it **before** other plan-specific files (right after workspace-map and preflight if you prefer). Treat it as operator or Conductor steering appended in chronological order. **Do not** delete, truncate, or edit this file — the orchestrator appends lines and may rotate it between runs. If you must acknowledge a message, do so in your own notes or commit messages, not by modifying `tmp/agent-messages.md`.
 
-## Phase 0: Orient (Skim Before You Code)
+**Optional digest:** When present, `plans/context/bundles/NN-bundle.md` summarizes key artifacts for a plan (from `plans/context/prompts/context-distiller.sh`). It does not replace reading the plan and task TOML.
 
-Read these four files before writing any code. Read them once. Do not re-read them during implementation unless you hit a concrete blocker.
-
-1. **`plans/context/workspace-map.md`** — File tree by crate. This is your `find`/`ls`. Do not run file discovery commands.
-2. **`plans/context/briefs/NN-brief.md`** — Execution brief. Your most important pre-read. Dependencies, patterns, risks, and conflict scan. If the brief flags a missing type or pattern mismatch, address it proactively in your implementation — do not stop mid-way to investigate.
-3. **The plan file** — Cover to cover. The Quick Reference sections are your implementation spec.
-4. **`plans/context/tasks/NN-tasks.toml`** — Authoritative task list: parallel groups, file assignments, acceptance criteria.
-
-If you need cross-plan state, check `plans/CONTEXT.md`. If you need PRD2 context beyond what the brief covers, check `plans/context/prd2-extracts/NN-prd2.md`. Check `tmp/agent-messages.md` if it exists. Read these only when the brief or plan points you there — do not pre-read them.
-
-**After reading, verify (quickly):**
+**After reading, verify:**
 - Prerequisites listed in the plan are marked complete in CONTEXT.md.
-- No files your plan creates already exist (brief's conflict scan covers this).
-
-Then start coding immediately.
+- Imports listed in the plan exist in the workspace (the brief should confirm this, but double-check with `rg` if uncertain).
+- No files your plan will create already exist (the brief's conflict scan covers this).
 
 ## Phase 1: Implement Each Unit of Work (In Order)
 
@@ -117,30 +117,32 @@ Before writing, understand what exists:
 - **Match existing workspace patterns.** The brief's Pattern Alignment section tells you what those are. If the brief says "error types follow `thiserror` enums in `golem-core/src/error.rs`", match that exactly.
 - Use `pub(crate)` by default. Only `pub` for cross-crate API specified in the plan's Exports section.
 - Every public item gets a doc comment.
-- **Do not run `cargo check` between units.** If you hit a compilation question mid-implementation, make your best judgment and keep moving — you will compile the whole workspace at the end.
 
 ### 1d. Write Tests
 - Unit tests: `#[cfg(test)]` module in the same file.
 - Integration tests: `tests/` directory in the crate.
 - If a test depends on a future plan, mark it `#[ignore]` with `// TODO(plan-NN): requires <system>`.
 - Add ignored tests to `plans/context/ignored-tests.md`.
+- **Actually run your tests.** Do not just write them and assume they pass.
 - **Check `plans/context/verify-chains/NN-verify.sh`** — each `INV-NNN` block in the plan has an expected test function name listed there. Implement exactly those test functions. The Auditor runs this script; if your tests aren't there or fail, you will get `[S-N]` blocking issues.
 
-### 1e. Write Documentation
+### 1e. Compilation Gate
+Run `cargo check --workspace` after each unit. **Do not proceed with a broken workspace.** Fix the error, even if it means adjusting your code to match what actually exists rather than what the plan assumed.
+
+### 1f. Test Gate
+Run `cargo test -p <your-crate>`. Fix failures in your code. If failures are in pre-existing tests you didn't modify, note them but continue.
+
+### 1g. Write Documentation
 Write mdbook pages per the plan's Gitbook Documentation section. Place in `docs/`. **Document what you ACTUALLY built, not what the plan intended.** If you deviated, the docs reflect reality.
 
-### 1f. Checkpoint
+### 1h. Checkpoint
 Call `update_plan` after each unit with a brief status note. This is your safety net against context compaction.
 
 ## Phase 2: Completion
 
 After all units are done:
 
-### 2a. Compile and Test Gate (First and Only)
-
-Run `cargo check --workspace`. This is your first compile — you haven't run it yet, and that's correct. Fix errors. Then run `cargo test -p <your-crate>`. Fix failures in your code. If failures are in pre-existing tests you didn't modify, note them and continue.
-
-### 2b. Append to `plans/CONTEXT.md`
+### 2a. Append to `plans/CONTEXT.md`
 
 ```markdown
 ## Plan NN: [Name] — Completed [YYYY-MM-DD]
@@ -163,7 +165,7 @@ Run `cargo check --workspace`. This is your first compile — you haven't run it
 - cargo test: N pass, N fail, N ignored
 ```
 
-### 2c. Overwrite `plans/context/last-completed.md`
+### 2b. Overwrite `plans/context/last-completed.md`
 
 ```markdown
 # Last Completed: Plan NN — [Name]
@@ -191,18 +193,18 @@ Run `cargo check --workspace`. This is your first compile — you haven't run it
 - Un-ignored tests: [list]
 ```
 
-### 2d. Update `plans/context/ignored-tests.md`
+### 2c. Update `plans/context/ignored-tests.md`
 - Add entries for new `#[ignore]` tests: `test_name | crate | reason | unblock_plan`
 - Remove entries for tests you un-ignored.
 
-### 2e. Final Verification
+### 2d. Final Verification
 Run `cargo test --workspace`. Record pass/fail/ignore counts in both CONTEXT.md and last-completed.md. This is the number reviewers will check against.
 
 ---
 
 # Fix Cycle Protocol (Iteration 2+)
 
-When your task prompt contains `FIX CYCLE — ITERATION N`, you are NOT re-implementing the plan. You are surgically fixing blocking issues. Go straight to the code. Each fix is traceable to a specific issue ID and should take minutes, not hours. Do not re-read the entire plan. Do not re-orient from scratch. The reviews tell you exactly what's broken — open those files and fix them.
+When your task prompt contains `FIX CYCLE — ITERATION N`, you are NOT re-implementing the plan. You are surgically fixing blocking issues raised by reviewers.
 
 ## Scope Rules
 
@@ -211,8 +213,7 @@ When your task prompt contains `FIX CYCLE — ITERATION N`, you are NOT re-imple
 3. **Fix ONLY blocking issues.** Each fix should be traceable to a specific `[B-N]` or `[S-N]` issue ID.
 4. **Do not refactor unrelated code.** Do not "improve" things that weren't flagged. Do not reorganize modules. Do not add features.
 5. **Do not re-run the entire plan.** You are patching, not rebuilding.
-6. **Do not re-read for orientation.** You already have context. Open the specific files mentioned in the reviews and fix the specific conditions described. Re-reading everything from scratch wastes time and triggers the same over-thinking loop.
-7. **After fixes:** Update the completion report in CONTEXT.md (amend the existing report, don't create a duplicate). Update last-completed.md. Run `cargo check --workspace` and `cargo test -p <crate>`.
+6. **After fixes:** Update the completion report in CONTEXT.md (amend the existing report, don't create a duplicate). Update last-completed.md. Run `cargo check --workspace` and `cargo test -p <crate>`.
 
 ## What Counts as "Fixed"
 

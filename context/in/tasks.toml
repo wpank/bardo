@@ -1,137 +1,145 @@
 [meta]
-plan = "01-workspace-scaffold"
+plan = "04-terminal-scaffold"
 iteration = 1
-total = 7
+total = 10
 done = 0
-max_parallel = 3
-estimated_total_minutes = 35
 
 [[task]]
 id = "T1"
-title = "Workspace Root & Toolchain"
+title = "Update Cargo.toml with dependencies"
 status = "pending"
-files = [
-  "Cargo.toml",
-  "rust-toolchain.toml",
-  ".cargo/config.toml",
-]
+files = ["apps/bardo-terminal/Cargo.toml"]
 acceptance = [
-  "Root Cargo.toml with [workspace] resolver=\"2\", exactly 26 member paths, [workspace.dependencies] covering all crates required by decomposition Step 1 and later workspace crates, plus [workspace.package], [workspace.lints], and [profile.release]/[profile.dev] per Step 1",
-  "rust-toolchain.toml with [toolchain] channel=\"1.85\", components=[rustfmt,clippy,llvm-tools-preview], targets=[x86_64-unknown-linux-musl,aarch64-unknown-linux-musl] per Step 2",
-  ".cargo/config.toml with clang linker and mold flags for x86_64 and aarch64 Linux musl targets per Step 3",
-  "Checkpoint: cargo metadata --no-deps --format-version 1 shows workspace_members.len()==26"
+    "[dependencies] and [[bin]] (name = \"bardo-terminal\", path = \"src/main.rs\") match plan Quick Reference",
+    "cargo check -p bardo-terminal succeeds with zero errors"
 ]
 depends_on = []
 parallel_group = "A"
 exclusive_files = true
-estimated_seconds = 600
 
 [[task]]
 id = "T2"
-title = "Library Crate Shells (21 crates)"
+title = "Create palette.rs with ROSEDUST color constants"
 status = "pending"
-files = [
-  "crates/golem-core/Cargo.toml",
-  "crates/golem-core/src/lib.rs",
-  "crates/golem-runtime/Cargo.toml",
-  "crates/golem-runtime/src/lib.rs",
-]
+files = ["apps/bardo-terminal/src/palette.rs"]
 acceptance = [
-  "All 21 library crate directories exist (golem-core through golem-binary) per decomposition Steps 7-8",
-  "Each Cargo.toml: [package] name=\"golem-{name}\", version=\"0.1.0\", [lints] workspace=true, empty [dependencies] except golem-binary per Steps 7-8",
-  "golem-binary Cargo.toml has [[bin]] and depends on anyhow, tokio, tracing, tracing-subscriber from workspace per Step 8",
-  "Each of 20 library crates has src/lib.rs with #![deny(unsafe_code)]; golem-binary has src/main.rs with #[tokio::main], anyhow::Result, and a tracing call (e.g. tracing::info) per Steps 10-11",
-  "Checkpoint: cargo check -p golem-core -p golem-runtime -p golem-heartbeat -p golem-coordination -p golem-binary --workspace finishes successfully"
+    "INV-017 through INV-021 palette tests pass",
+    "cargo check -p bardo-terminal compiles palette.rs without errors"
 ]
-depends_on = ["T1"]
-parallel_group = "B"
+depends_on = []
+parallel_group = "A"
 exclusive_files = true
-estimated_seconds = 900
 
 [[task]]
 id = "T3"
-title = "App Binary Shells (5 apps)"
+title = "Create layout.rs with responsive breakpoint system"
 status = "pending"
-files = [
-  "apps/bardo-gateway/Cargo.toml",
-  "apps/bardo-gateway/src/main.rs",
-  "apps/bardo-terminal/Cargo.toml",
-  "apps/bardo-terminal/src/main.rs",
-]
+files = ["apps/bardo-terminal/src/layout.rs"]
 acceptance = [
-  "All 5 app directories exist: bardo-gateway, bardo-terminal, bardo-styx, bardo-compute, mirage-rs per Step 9",
-  "Each app Cargo.toml: workspace inheritance, [[bin]] with correct name/path, [lints] workspace=true; anyhow, tokio, tracing, tracing-subscriber from workspace; app-specific dependencies per Step 9 as required for each binary to compile",
-  "Each app src/main.rs: #[tokio::main], anyhow::Result, and tracing usage that compiles (e.g. tracing::info) per Step 12",
-  "Checkpoint: cargo check -p bardo-gateway -p bardo-terminal -p bardo-styx -p bardo-compute -p mirage-rs succeeds"
+    "LayoutBreakpoint, from_cols boundaries, sprite_sidebar_cols, panel_count, label, compute_layout (2 chrome rows) match plan Quick Reference",
+    "INV-002 through INV-013, INV-022, INV-034 layout tests pass",
+    "cargo check -p bardo-terminal compiles layout.rs without errors"
 ]
-depends_on = ["T1"]
+depends_on = ["T2"]
 parallel_group = "B"
 exclusive_files = true
-estimated_seconds = 600
 
 [[task]]
 id = "T4"
-title = "Build Tooling & Dev Setup"
+title = "Create state.rs with AppState, AppAction, and placeholder types"
 status = "pending"
-files = [
-  "justfile",
-  ".config/nextest.toml",
-]
+files = ["apps/bardo-terminal/src/state.rs"]
 acceptance = [
-  "justfile defines a `ci` recipe (and supporting recipes it invokes) per Step 13; `just ci` completes successfully",
-  ".config/nextest.toml with [profile.default] (test-threads=num-cpus, slow-timeout.period=60s, slow-timeout.terminate-after=3, fail-fast=false) and [profile.ci] (fail-fast=true, slow-timeout.period=120s, slow-timeout.terminate-after=2) per Step 13"
+    "ConnectionStatus, MockVitality, AppState, AppAction; ConnectionStatus::label() strings; AppState::default() field values per Quick Reference",
+    "INV-023, INV-024, INV-030, INV-031 state tests pass",
+    "cargo check -p bardo-terminal compiles state.rs without errors"
 ]
-depends_on = ["T2", "T3"]
+depends_on = ["T3"]
 parallel_group = "C"
 exclusive_files = true
-estimated_seconds = 480
 
 [[task]]
 id = "T5"
-title = "mdbook Scaffold"
+title = "Create screen.rs with Screen trait, ScreenId enum, and ScreenRegistry"
 status = "pending"
-files = [
-  "docs/book.toml",
-  "docs/src/SUMMARY.md",
-]
+files = ["apps/bardo-terminal/src/screen.rs"]
 acceptance = [
-  "Checkpoint: (cd docs && mdbook build) completes without errors"
+    "Screen (Send + Sync), ScreenId (29 variants, ScreenId::all() order), ScreenRegistry, StubScreen key bindings per Quick Reference",
+    "INV-014, INV-015, INV-016, INV-033 screen tests pass",
+    "cargo check -p bardo-terminal compiles screen.rs without errors"
 ]
-depends_on = ["T2"]
-parallel_group = "C"
+depends_on = ["T4"]
+parallel_group = "D"
 exclusive_files = true
-estimated_seconds = 600
 
 [[task]]
 id = "T6"
-title = "TypeScript Sidecar Stub"
+title = "Create screens/mod.rs module"
 status = "pending"
-files = [
-  "ts-sidecar/package.json",
-  "ts-sidecar/tsconfig.json",
-  "ts-sidecar/src/index.ts",
-]
+files = ["apps/bardo-terminal/src/screens/mod.rs"]
 acceptance = [
-  "sidecar/tools-ts/package.json exists per decomposition Step 16 with name=\"bardo-tools-ts\", version=\"0.1.0\", main=\"dist/index.js\", scripts {build: tsc, dev: tsc --watch}, devDependencies {typescript: ^5.0}",
-  "sidecar/tools-ts/tsconfig.json exists; sidecar/tools-ts/src/index.ts and src/types.ts exist; ToolRequest (id, method, params) and ToolResponse (id, result?, error?) per Step 16",
-  "Checkpoint: cd sidecar/tools-ts && tsc --noEmit succeeds with zero errors"
+    "Declares home submodule and exports HomeScreen",
+    "cargo check -p bardo-terminal compiles screens/mod.rs"
 ]
-depends_on = ["T1"]
-parallel_group = "B"
+depends_on = ["T5"]
+parallel_group = "E"
 exclusive_files = true
-estimated_seconds = 360
 
 [[task]]
 id = "T7"
-title = "Legacy Plan Cleanup Review (Verification Only)"
+title = "Create screens/home.rs with HomeScreen implementation"
 status = "pending"
-files = []
+files = ["apps/bardo-terminal/src/screens/home.rs"]
 acceptance = [
-  "cargo check --workspace --all-features completes successfully",
-  "Every path listed in plan 01 Exports exists (configs, 21 crates, 5 apps, docs trio, sidecar/tools-ts files, tests/*/.gitkeep)",
-  "bash plans/context/verify-chains/01-verify.sh exits 0"
+    "HomeScreen + Screen impl + key handling per Quick Reference",
+    "INV-032, INV-025, INV-035, INV-036, INV-037 home tests pass",
+    "cargo check -p bardo-terminal compiles home.rs without errors"
 ]
-depends_on = ["T4", "T5", "T6"]
-parallel_group = "D"
+depends_on = ["T5", "T2", "T3", "T4"]
+parallel_group = "E"
+exclusive_files = true
+
+[[task]]
+id = "T8"
+title = "Create app.rs with App struct and 60fps render loop"
+status = "pending"
+files = ["apps/bardo-terminal/src/app.rs"]
+acceptance = [
+    "TARGET_FPS = 60; FRAME_DURATION = Duration::from_micros(1_000_000 / 60); App fields per Quick Reference",
+    "App::new(): ScreenRegistry with HomeScreen + StubScreen for every ScreenId except HearthOverview",
+    "App::run: frame-budget poll, key→apply_action, resize→from_cols, tick wrap, draw, sleep remainder, quit, active-screen render, focus transitions per Quick Reference",
+    "INV-001, INV-029 pass; cargo check -p bardo-terminal compiles app.rs without errors"
+]
+depends_on = ["T5", "T4", "T3"]
+parallel_group = "E"
+exclusive_files = true
+
+[[task]]
+id = "T9"
+title = "Replace main.rs with terminal init, panic hook, and run loop"
+status = "pending"
+files = ["apps/bardo-terminal/src/main.rs"]
+acceptance = [
+    "mod app, screen, state, layout, palette, screens; pub use app::App; pub use screen::{Screen, ScreenId}; pub use state::{AppState, AppAction}",
+    "install_panic_hook, setup_terminal, teardown_terminal behavior per Quick Reference (raw mode, alternate screen, mouse, cursor)",
+    "tokio main: color_eyre, tracing_subscriber, hook, setup, App::new/run, teardown on all paths; INV-026, INV-027, INV-028 pass",
+    "cargo check -p bardo-terminal compiles main.rs without errors"
+]
+depends_on = ["T8"]
+parallel_group = "F"
+exclusive_files = true
+
+[[task]]
+id = "T10"
+title = "Final verification: tests, compilation, and manual smoke test"
+status = "pending"
+files = ["apps/bardo-terminal/src/**/*.rs"]
+acceptance = [
+    "cargo check --workspace succeeds with zero errors",
+    "cargo test -p bardo-terminal --lib passes with no failures",
+    "bash plans/context/verify-chains/04-verify.sh exits 0 (all plan INV-* test gates)",
+    "Every symbol in plan 04 Exports table exists with the visibility implied by the table (public API contract)"
+]
+depends_on = ["T9"]
+parallel_group = "G"
 exclusive_files = false
-estimated_seconds = 300

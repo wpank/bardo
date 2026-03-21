@@ -240,6 +240,31 @@ mod tests {
     }
 
     #[test]
+    fn test_palette_void_not_pure_black() {
+        assert_ne!(BG_VOID, Color::Rgb(0, 0, 0));
+    }
+
+    #[test]
+    fn test_palette_rose_value() {
+        assert_eq!(ROSE, Color::Rgb(0xAA, 0x70, 0x88));
+    }
+
+    #[test]
+    fn test_palette_bone_value() {
+        assert_eq!(BONE, Color::Rgb(0xC8, 0xB8, 0x90));
+    }
+
+    #[test]
+    fn test_border_active_equals_rose() {
+        assert_eq!(BORDER_ACTIVE, ROSE);
+    }
+
+    #[test]
+    fn test_palette_text_primary() {
+        assert_eq!(TEXT_PRIMARY, Color::Rgb(0x98, 0x80, 0x90));
+    }
+
+    #[test]
     fn style_modifiers_match_ratatui_spec() {
         assert_eq!(STYLE_BOLD, Modifier::BOLD);
         assert_eq!(STYLE_DIM, Modifier::DIM);

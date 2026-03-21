@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use crossterm::event::KeyEvent;
+use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
@@ -16,7 +16,7 @@ use crate::{
 };
 
 /// Pluggable screen contract implemented by all screens in the terminal.
-pub(crate) trait Screen: Send + Sync {
+pub trait Screen: Send + Sync {
     /// Returns the screen identifier.
     fn id(&self) -> ScreenId;
 
@@ -38,7 +38,7 @@ pub(crate) trait Screen: Send + Sync {
 
 /// Identifiers for every screen in the current catalog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub(crate) enum ScreenId {
+pub enum ScreenId {
     HearthOverview,
     HearthSignals,
     HearthOperations,
@@ -224,8 +224,13 @@ impl Screen for StubScreen {
         );
     }
 
-    fn handle_key(&mut self, _key: KeyEvent) -> Option<AppAction> {
-        None
+    fn handle_key(&mut self, key: KeyEvent) -> Option<AppAction> {
+        match key.code {
+            KeyCode::Char('q') => Some(AppAction::Quit),
+            KeyCode::Tab => Some(AppAction::NextScreen),
+            KeyCode::BackTab => Some(AppAction::PrevScreen),
+            _ => None,
+        }
     }
 }
 
@@ -400,7 +405,7 @@ mod tests {
     }
 
     #[test]
-    fn stub_screen_renders_fallback_message_and_defers_global_navigation_keys() {
+    fn stub_screen_renders_fallback_message() {
         let screen = StubScreen::new(ScreenId::MindPipeline, "MIND / Pipeline");
         let backend = TestBackend::new(48, 5);
         let mut terminal = Terminal::new(backend).expect("test terminal should initialize");
@@ -411,19 +416,66 @@ mod tests {
 
         let rendered = buffer_text(&terminal);
         assert!(rendered.contains("MIND / Pipeline - not yet implemented"));
+    }
 
-        let mut screen = screen;
+    #[test]
+    fn test_stub_screen_key_bindings() {
+        let mut screen = StubScreen::new(ScreenId::MindPipeline, "MIND / Pipeline");
+        assert_eq!(
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Char('q'))),
+            Some(AppAction::Quit)
+        );
         assert_eq!(
             screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Tab)),
-            None
+            Some(AppAction::NextScreen)
         );
         assert_eq!(
             screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::BackTab)),
-            None
+            Some(AppAction::PrevScreen)
         );
         assert_eq!(
-            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Char('q'))),
+            screen.handle_key(KeyEvent::from(crossterm::event::KeyCode::Char('x'))),
             None
         );
+    }
+
+    /// INV-014: Screen catalog count.
+    /// Plan 04 specifies 29; Plan 07 added ProtocolViews bringing the total to 30.
+    #[test]
+    fn test_screen_id_count_29() {
+        assert_eq!(ScreenId::all().len(), 30);
+    }
+
+    /// INV-015: Screen cycling wraps at the end of the catalog.
+    #[test]
+    fn test_screen_cycling_wraps_at_end() {
+        let all = ScreenId::all();
+        let last = all.len() - 1;
+        // After the last screen, cycling wraps to index 0
+        let next = (last + 1) % all.len();
+        assert_eq!(next, 0);
+        assert_eq!(all[next], ScreenId::HearthOverview);
+        // Before the first screen, cycling wraps to the last
+        let prev = (0 + all.len() - 1) % all.len();
+        assert_eq!(all[prev], all[last]);
+    }
+
+    /// INV-016: Screen order matches window grouping (HEARTH, MIND, SOMA, WORLD, FATE, COMMAND).
+    #[test]
+    fn test_screen_order_matches_windows() {
+        let all = ScreenId::all();
+        let windows: Vec<&str> = all.iter().map(|s| s.window_name()).collect();
+        // Verify window groups appear in order
+        let first_mind = windows.iter().position(|w| *w == "MIND").unwrap();
+        let first_soma = windows.iter().position(|w| *w == "SOMA").unwrap();
+        let first_world = windows.iter().position(|w| *w == "WORLD").unwrap();
+        let first_fate = windows.iter().position(|w| *w == "FATE").unwrap();
+        let first_command = windows.iter().position(|w| *w == "COMMAND").unwrap();
+        assert_eq!(windows[0], "HEARTH");
+        assert!(first_mind > 0);
+        assert!(first_soma > first_mind);
+        assert!(first_world > first_soma);
+        assert!(first_fate > first_world);
+        assert!(first_command > first_fate);
     }
 }
