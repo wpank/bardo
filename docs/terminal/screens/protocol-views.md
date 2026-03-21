@@ -14,7 +14,7 @@ The Protocol Views screen displays a 2×2 grid of DeFi protocol widgets, providi
 
 ## Getting Started
 
-Navigate to the Protocol Views screen using `Tab` or `Shift+Tab` to cycle through screens. Once on the screen:
+Navigate to the Protocol Views screen with `7` or `F7` (jump to the **PROTOCOL** window), or using `Tab` / `Shift+Tab` to cycle through the catalog. Once on the screen:
 
 - Use arrow keys or `h`/`j`/`k`/`l` to move focus between the four cells
 - The focused cell displays with an active border color
@@ -35,7 +35,7 @@ The mock types include:
 
 - `MockPoolState` — Uniswap V3/V4 pool data (price, ticks, liquidity, fees)
 - `MockLendingMarket` — Aave/Morpho/Compound market data (utilization, APYs, liquidity)
-- `MockVaultState` — ERC-4626 vault data (NAV, TVL, share price, 24h change)
+- `MockVaultState` — ERC-4626 vault data (vault/protocol names, NAV, TVL, APY, 24h share-price change)
 - `MockBridgeRoute` — Bridge route data (chains, token, amount, fee, ETA, status)
 
 All mock types use the `mock_default()` naming convention to make it explicit that the data is placeholder. This prevents accidental use of uninitialized data and signals to developers that these values are temporary.
@@ -125,11 +125,13 @@ The Vault widget displays information about an ERC-4626 vault from protocols lik
 
 The widget renders as a labeled data table within a bordered block:
 
-1. **Header** — Vault name and chain (e.g., " Beefy USDC/ETH · Base ")
-2. **NAV per share** — Net asset value per share with asset symbol (e.g., "1.0842 USDC")
-3. **TVL** — Total value locked in compact USD format
-4. **APY** — Annual percentage yield
+1. **Header** — Vault name and chain when the cell is at least 24 columns wide; otherwise the asset symbol and protocol (e.g., `USDC · Beefy`) so the title still fits narrow panes
+2. **NAV per share** — Net asset value per share with asset symbol (e.g., "1.0842 USDC"), emphasized in bone
+3. **TVL** — Total value locked in compact USD format (label dimmed, value in rose)
+4. **APY** — Annual percentage yield in green when the cell is tall enough for a dedicated row
 5. **24h change** — 24-hour change in share price with sign and color coding
+
+When the inner area is shorter than six text rows, TVL and APY share one line so NAV and 24h change still fit.
 
 ### NAV Formatting
 
@@ -266,4 +268,4 @@ ProtocolViewsScreen
 └── keyboard event handling
 ```
 
-The screen is registered in the `ScreenId` enum as `ProtocolViews` and appears in the screen catalog accessible via `Tab` navigation.
+The screen is registered under **`ScreenId::ProtocolViews`** (window **PROTOCOL**, tab **Views**, title **PROTOCOLS**) and is reachable via `Tab` navigation like any other tab—it is the last entry in the screen catalog.

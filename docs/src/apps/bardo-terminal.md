@@ -2,18 +2,18 @@
 
 ## What It Is
 
-`bardo-terminal` is the workspace's interactive Rust TUI binary. It owns terminal setup and teardown, a 60 fps render loop, the 29-screen catalog, responsive layout, shared application state, live system metrics, and the crate-local widget layer that the later screens compose.
+`bardo-terminal` is the workspace's interactive Rust TUI binary. It owns terminal setup and teardown, a 60 fps render loop, the 30-screen catalog, responsive layout, shared application state, live system metrics, and the crate-local widget layer that the later screens compose.
 
 The current implementation follows the terminal architecture described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, and `The 15-screen system`, plus `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `4. Render loop`, and `5. The 15-screen system`, and `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`.
 
-Those PRD sections sometimes count **screens** or **views** at a coarser grain (for example fifteen grouped destinations or eleven product views). The **authoritative tab list** for this binary is `prd2/18-interfaces/21-screen-catalog.md`: **six** top-level windows and **29** distinct `ScreenId` values. Treat the older figures as grouping language, not a different product surface than the 29-tab registry.
+Those PRD sections sometimes count **screens** or **views** at a coarser grain (for example fifteen grouped destinations or eleven product views). Window grouping follows `prd2/18-interfaces/21-screen-catalog.md` (**six** top-level windows). The **exact tab order and count** are whatever `ScreenId::all()` returns in this binary (currently **30** entries, including **PROTOCOL / Views** for mock protocol panels). Treat older PRD figures as grouping language when they disagree with the live registry.
 
 ## Features
 
 - Raw-mode and alternate-screen lifecycle management with panic-hook recovery
 - 60 fps frame loop with bounded input polling and frame skipping on overruns
-- 29-screen catalog grouped into six logical windows
-- Stable `Tab` and `Shift+Tab` screen cycling across the catalog
+- 30-screen catalog with stable `Tab` and `Shift+Tab` cycling in `ScreenId::all()` order
+- **PROTOCOL / Views** — four mock DeFi panels (pool, lending, vault, bridge); see [bardo-terminal protocol views](bardo-terminal-protocol-views.md)
 - Shared `AppState` with layout breakpoint, atmosphere animation, progress tracking, placeholder vitality, and live system metrics
 - Home dashboard with creature silhouette, pipeline progress, per-task timing, connection status, and system resource panels
 - Responsive sidebar/content split driven by terminal width
@@ -73,6 +73,7 @@ The config path resolves from `HOME`, `USERPROFILE`, or `HOMEDRIVE` + `HOMEPATH`
 - `navigation` owns keybindings, the command palette, modal overlays, and vim-mode routing
 - `palette` defines the terminal color constants, style modifiers, and box-drawing glyphs
 - `screens::home` provides the concrete home dashboard
+- `screens::protocol_views` provides the **PROTOCOLS** / Protocol Views grid
 - `sys_stats` samples CPU, memory, network, and disk metrics into `SysMetrics`
 - `widgets` contains reusable ratatui widgets such as `BrailleSparkline`, `TotalProgressBar`, `TabBar`, `EventFeed`, and `KeyHelpOverlay`
 
@@ -105,7 +106,7 @@ impl App {
 }
 ```
 
-`App::new()` registers `HomeScreen` and fills the remaining screen catalog with `StubScreen` placeholders. `App::run()` polls `crossterm` events, advances shared state, refreshes system metrics, and renders the current frame.
+`App::new()` registers `HomeScreen`, `ProtocolViewsScreen`, and `StubScreen` placeholders for every other `ScreenId`. `App::run()` polls `crossterm` events, advances shared state, refreshes system metrics, and renders the current frame.
 
 ### Screen System
 
@@ -155,6 +156,7 @@ pub(crate) enum ScreenId {
     CommandConfig,
     CommandEffects,
     CommandHermes,
+    ProtocolViews,
 }
 
 impl ScreenId {
@@ -362,11 +364,16 @@ screens::home
 ├── connection state
 ├── task timing
 └── system resources
+
+screens::protocol_views
+├── four protocol cells (mock data)
+└── focused-cell borders and grid/stack layout
 ```
 
 ## References
 
-- `prd2/18-interfaces/21-screen-catalog.md` — six windows, 29 tabs (canonical registry for `ScreenId::all()`)
+- `prd2/18-interfaces/21-screen-catalog.md` — six-window grouping (tab order and count: `ScreenId::all()` in code, currently 30)
+- [bardo-terminal protocol views](bardo-terminal-protocol-views.md) — Protocol Views screen behavior and layout
 - `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)`, `Architecture`, `Entry points`, and `The 15-screen system`
 - `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `4. Render loop`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`
 - `prd2/20-styx/05-tui-experience.md` sections `1. Architecture`, `4. The Screen System (11 Views)`, and `5. Custom Widgets`

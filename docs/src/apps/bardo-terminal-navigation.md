@@ -6,13 +6,13 @@
 
 The implementation backs the persistent chrome and keyboard-first navigation model described in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`, plus `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`.
 
-The **29** `ScreenId` tabs registered in this binary follow `prd2/18-interfaces/21-screen-catalog.md`. Older PRD language (“15-screen system”, “11 views”) describes coarser groupings or an earlier surface area; it does not override the six-window / 29-tab catalog the code implements.
+The **30** `ScreenId` tabs registered in this binary are ordered by `ScreenId::all()`. Older PRD language (“15-screen system”, “11 views”) describes coarser groupings. Window names in chrome follow the spirit of `prd2/18-interfaces/21-screen-catalog.md`, with an additional **PROTOCOL** window for the Protocol Views screen; when in doubt, trust the live registry, not a static tab count in prose.
 
 ## Features
 
 - A single typed `AppAction` surface for quitting, screen changes, overlays, scrolling, and vim commands
 - Global keybindings plus per-screen overrides loaded from `~/.bardo/keybindings.toml`
-- Direct window jumps with `1`-`6` and `F1`-`F6`
+- Direct window jumps with `1`-`7` and `F1`-`F7`
 - Direct screen jumps with sidebar letters such as `h`, `b`, `m`, `f`, `v`, `w`, and `x`
 - `/` command palette with LCS-based fuzzy filtering and keyboard selection
 - Stack-based confirm, input, and alert modals
@@ -31,8 +31,8 @@ cargo run -p bardo-terminal
 Default navigation keys:
 
 - `q` or `Ctrl+C` quits
-- `Tab` and `Shift+Tab` cycle through the 29 registered screens
-- `1`-`6` or `F1`-`F6` jump to the root screen for each top-level window
+- `Tab` and `Shift+Tab` cycle through the 30 registered screens
+- `1`-`7` or `F1`-`F7` jump to the root screen for each top-level window
 - `?` toggles the help overlay
 - `/` opens the command palette
 - `Esc` closes the current modal, palette, help overlay, or vim command buffer in that order
@@ -118,6 +118,7 @@ pub(crate) enum WindowId {
     World,
     Fate,
     Command,
+    Protocol,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -378,11 +379,12 @@ The render stack is similarly ordered:
 4. Command palette
 5. Help overlay
 
-That matches the keyboard-first terminal interaction model in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `5.1 Persistent chrome` and `5.2 Screen map`, and `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`. The live tab registry remains the **29** entries in `prd2/18-interfaces/21-screen-catalog.md`.
+That matches the keyboard-first terminal interaction model in `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`, `prd2/18-interfaces/03-tui.md` sections `5.1 Persistent chrome` and `5.2 Screen map`, and `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`. The live tab registry is **`ScreenId::all()`** in the binary (currently **30** screens).
 
 ## References
 
-- `prd2/18-interfaces/21-screen-catalog.md` — six windows, 29 tabs (matches `ScreenId::all()`)
+- `prd2/18-interfaces/21-screen-catalog.md` — six-window grouping in the PRD; the binary exposes **PROTOCOL** as a seventh `WindowId` for jumps (`7` / `F7`) and `GotoWindow:protocol` in TOML. Use `ScreenId::all()` for the authoritative tab list.
+- [bardo-terminal protocol views](bardo-terminal-protocol-views.md) — focused-cell navigation on the Protocol Views screen
 - `prd2/18-interfaces/01-cli.md` sections `TUI (Interactive Mode)` and `The 15-screen system`
 - `prd2/18-interfaces/03-tui.md` sections `3. Crate architecture`, `5.1 Persistent chrome`, `5.2 Screen map`, and `5.3 Screen details`
 - `prd2/20-styx/05-tui-experience.md` section `4. The Screen System (11 Views)`
