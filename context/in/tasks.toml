@@ -1,17 +1,24 @@
 [meta]
-plan = "04-terminal-scaffold"
+plan = "02-core-types"
 iteration = 1
-total = 10
+total = 18
 done = 0
 
 [[task]]
 id = "T1"
-title = "Update Cargo.toml with dependencies"
+title = "Foundation Types: GolemId, GolemError, TaintLabel, CognitiveTier"
 status = "pending"
-files = ["apps/bardo-terminal/Cargo.toml"]
+files = [
+  "crates/golem-core/src/id.rs",
+  "crates/golem-core/src/error.rs",
+  "crates/golem-core/src/taint.rs",
+  "crates/golem-core/src/cognitive.rs"
+]
 acceptance = [
-    "[dependencies] and [[bin]] (name = \"bardo-terminal\", path = \"src/main.rs\") match plan Quick Reference",
-    "cargo check -p bardo-terminal succeeds with zero errors"
+  "GolemId: new(), from_uuid(), and as_uuid() implemented per plan Exports/Quick Reference",
+  "GolemError is thiserror enum with Config, Init, Extension, EventFabric, CorticalState, Io, TomlParse, Serde variants",
+  "CognitiveTier is #[repr(u8)] enum (T0=0, T1=1, T2=2) with TryFrom<u8> returning Err on invalid values",
+  "cargo test -p golem-core passes for T1 files (see testing-backlog-02.md for enumerated test names)"
 ]
 depends_on = []
 parallel_group = "A"
@@ -19,127 +26,225 @@ exclusive_files = true
 
 [[task]]
 id = "T2"
-title = "Create palette.rs with ROSEDUST color constants"
+title = "GolemConfig: Full TOML schema with 11 sections and env var overrides"
 status = "pending"
-files = ["apps/bardo-terminal/src/palette.rs"]
+files = ["crates/golem-core/src/config.rs"]
 acceptance = [
-    "INV-017 through INV-021 palette tests pass",
-    "cargo check -p bardo-terminal compiles palette.rs without errors"
+  "GolemConfig exposes top-level sections per plan Exports: golem, heartbeat, inference, safety, custody, styx, succession, daimon, dreams, oracle, mortality, compute",
+  "GolemConfig::from_file(Path) -> Result<Self, GolemError> reads and deserializes TOML",
+  "GolemConfig::from_str(&str) -> Result<Self, GolemError>",
+  "with_env_overrides(self) -> Result<Self, GolemError> applies GOLEM_* and BARDO_* env vars"
+]
+depends_on = ["T1"]
+parallel_group = "B"
+exclusive_files = true
+
+[[task]]
+id = "T3"
+title = "CorticalState: 32 atomic signals with cache-line alignment"
+status = "pending"
+files = ["crates/golem-core/src/cortical.rs"]
+acceptance = [
+  "CorticalState is #[repr(C, align(64))] with 32 atomic signals",
+  "All f32 values use AtomicU32 with f32::to_bits()/from_bits()",
+  "Write helpers use Ordering::Release, read helpers use Ordering::Acquire",
+  "cargo test -p golem-core passes for cortical.rs unit tests (see testing-backlog-02.md for names)"
+]
+depends_on = ["T1"]
+parallel_group = "B"
+exclusive_files = true
+
+[[task]]
+id = "T4"
+title = "EventFabric: Non-blocking broadcast bus with 10K ring buffer"
+status = "pending"
+files = ["crates/golem-core/src/event.rs"]
+acceptance = [
+  "EventFabric uses broadcast capacity 10_000 and a lock-protected VecDeque ring for durable replay",
+  "emit() assigns monotonic seq, enforces 10_000 cap with pop-front eviction, and publishes to subscribers",
+  "replay_from(after_seq) returns ordered events with seq >= after_seq",
+  "cargo test -p golem-core passes for event.rs unit tests (see testing-backlog-02.md for names)"
+]
+depends_on = ["T1"]
+parallel_group = "B"
+exclusive_files = true
+
+[[task]]
+id = "T5"
+title = "Extension Trait System: 20 hooks with ExtensionRegistry"
+status = "pending"
+files = ["crates/golem-core/src/extension.rs"]
+acceptance = [
+  "Extension trait is async (async_trait) with at least 20 hook methods per plan",
+  "ExtensionRegistry supports register and build() with layer-based topological ordering and DAG validation (cycles/missing deps rejected)",
+  "fire_tool_call() returns the most restrictive action: Block short-circuits; otherwise Modify overrides Allow",
+  "cargo test -p golem-core passes for extension registry tests (see testing-backlog-02.md for names)"
+]
+depends_on = ["T1", "T4"]
+parallel_group = "C"
+exclusive_files = true
+
+[[task]]
+id = "T6"
+title = "HDC Primitives: 10240-bit sparse distributed representation stubs"
+status = "pending"
+files = ["crates/golem-core/src/hdc.rs"]
+acceptance = [
+  "HdcVector stores [u64; 160] (10240 bits) and is Clone + Copy",
+  "zeros() is const fn and returns the zero vector",
+  "bind() is element-wise XOR with involution property bind(v,v)==zeros",
+  "cargo test -p golem-core passes for hdc.rs tests (see testing-backlog-02.md for names)"
 ]
 depends_on = []
 parallel_group = "A"
 exclusive_files = true
 
 [[task]]
-id = "T3"
-title = "Create layout.rs with responsive breakpoint system"
-status = "pending"
-files = ["apps/bardo-terminal/src/layout.rs"]
-acceptance = [
-    "LayoutBreakpoint, from_cols boundaries, sprite_sidebar_cols, panel_count, label, compute_layout (2 chrome rows) match plan Quick Reference",
-    "INV-002 through INV-013, INV-022, INV-034 layout tests pass",
-    "cargo check -p bardo-terminal compiles layout.rs without errors"
-]
-depends_on = ["T2"]
-parallel_group = "B"
-exclusive_files = true
-
-[[task]]
-id = "T4"
-title = "Create state.rs with AppState, AppAction, and placeholder types"
-status = "pending"
-files = ["apps/bardo-terminal/src/state.rs"]
-acceptance = [
-    "ConnectionStatus, MockVitality, AppState, AppAction; ConnectionStatus::label() strings; AppState::default() field values per Quick Reference",
-    "INV-023, INV-024, INV-030, INV-031 state tests pass",
-    "cargo check -p bardo-terminal compiles state.rs without errors"
-]
-depends_on = ["T3"]
-parallel_group = "C"
-exclusive_files = true
-
-[[task]]
-id = "T5"
-title = "Create screen.rs with Screen trait, ScreenId enum, and ScreenRegistry"
-status = "pending"
-files = ["apps/bardo-terminal/src/screen.rs"]
-acceptance = [
-    "Screen (Send + Sync), ScreenId (29 variants, ScreenId::all() order), ScreenRegistry, StubScreen key bindings per Quick Reference",
-    "INV-014, INV-015, INV-016, INV-033 screen tests pass",
-    "cargo check -p bardo-terminal compiles screen.rs without errors"
-]
-depends_on = ["T4"]
-parallel_group = "D"
-exclusive_files = true
-
-[[task]]
-id = "T6"
-title = "Create screens/mod.rs module"
-status = "pending"
-files = ["apps/bardo-terminal/src/screens/mod.rs"]
-acceptance = [
-    "Declares home submodule and exports HomeScreen",
-    "cargo check -p bardo-terminal compiles screens/mod.rs"
-]
-depends_on = ["T5"]
-parallel_group = "E"
-exclusive_files = true
-
-[[task]]
 id = "T7"
-title = "Create screens/home.rs with HomeScreen implementation"
+title = "Per-Tick Allocator: Thin bumpalo wrapper"
 status = "pending"
-files = ["apps/bardo-terminal/src/screens/home.rs"]
+files = ["crates/golem-core/src/alloc.rs"]
 acceptance = [
-    "HomeScreen + Screen impl + key handling per Quick Reference",
-    "INV-032, INV-025, INV-035, INV-036, INV-037 home tests pass",
-    "cargo check -p bardo-terminal compiles home.rs without errors"
+  "reset(&mut self) calls self.inner.reset() (Step 10)",
+  "alloc<T>(&self, val: T) -> &T delegates to inner.alloc(val) (Step 10)",
+  "alloc_slice_copy<T: Copy>(&self, slice: &[T]) -> &[T] delegates to inner.alloc_slice_copy(slice) (Step 10)",
+  "cargo test -p golem-core passes for alloc.rs tests (see testing-backlog-02.md for names)"
 ]
-depends_on = ["T5", "T2", "T3", "T4"]
-parallel_group = "E"
+depends_on = []
+parallel_group = "A"
 exclusive_files = true
 
 [[task]]
 id = "T8"
-title = "Create app.rs with App struct and 60fps render loop"
+title = "lib.rs: Re-export all public items"
 status = "pending"
-files = ["apps/bardo-terminal/src/app.rs"]
+files = ["crates/golem-core/src/lib.rs"]
 acceptance = [
-    "TARGET_FPS = 60; FRAME_DURATION = Duration::from_micros(1_000_000 / 60); App fields per Quick Reference",
-    "App::new(): ScreenRegistry with HomeScreen + StubScreen for every ScreenId except HearthOverview",
-    "App::run: frame-budget poll, key→apply_action, resize→from_cols, tick wrap, draw, sleep remainder, quit, active-screen render, focus transitions per Quick Reference",
-    "INV-001, INV-029 pass; cargo check -p bardo-terminal compiles app.rs without errors"
+  "All 10 modules declared and public: mod alloc, cognitive, config, cortical, error, event, extension, hdc, id, taint (Step 29)",
+  "Public re-exports cover every symbol in Plan 02 Exports required for downstream crates",
+  "cargo check -p golem-core passes (Step 29 checkpoint)",
+  "cargo test -p golem-core passes with zero failures"
 ]
-depends_on = ["T5", "T4", "T3"]
+depends_on = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
+parallel_group = "D"
+exclusive_files = true
+
+[[task]]
+id = "V1"
+title = "Verification: PAD Vector Bounds (proptest)"
+status = "pending"
+files = ["crates/golem-core/src/cortical.rs"]
+acceptance = [
+  "test_pad_vector_bounds passes via `cargo test -p golem-core` / `02-verify.sh` inv-012 (INV-012)"
+]
+depends_on = ["T3"]
 parallel_group = "E"
-exclusive_files = true
+exclusive_files = false
 
 [[task]]
-id = "T9"
-title = "Replace main.rs with terminal init, panic hook, and run loop"
+id = "V2"
+title = "Verification: Plutchik Emotion Classification (proptest)"
 status = "pending"
-files = ["apps/bardo-terminal/src/main.rs"]
+files = ["crates/golem-core/src/cortical.rs"]
 acceptance = [
-    "mod app, screen, state, layout, palette, screens; pub use app::App; pub use screen::{Screen, ScreenId}; pub use state::{AppState, AppAction}",
-    "install_panic_hook, setup_terminal, teardown_terminal behavior per Quick Reference (raw mode, alternate screen, mouse, cursor)",
-    "tokio main: color_eyre, tracing_subscriber, hook, setup, App::new/run, teardown on all paths; INV-026, INV-027, INV-028 pass",
-    "cargo check -p bardo-terminal compiles main.rs without errors"
+  "test_plutchik_emotion_classification passes via `cargo test -p golem-core` / `02-verify.sh` inv-013 (INV-013)"
 ]
-depends_on = ["T8"]
-parallel_group = "F"
-exclusive_files = true
+depends_on = ["T3"]
+parallel_group = "E"
+exclusive_files = false
 
 [[task]]
-id = "T10"
-title = "Final verification: tests, compilation, and manual smoke test"
+id = "V3"
+title = "Verification: Behavioral Phase Thresholds (proptest)"
 status = "pending"
-files = ["apps/bardo-terminal/src/**/*.rs"]
+files = ["crates/golem-core/src/cortical.rs"]
 acceptance = [
-    "cargo check --workspace succeeds with zero errors",
-    "cargo test -p bardo-terminal --lib passes with no failures",
-    "bash plans/context/verify-chains/04-verify.sh exits 0 (all plan INV-* test gates)",
-    "Every symbol in plan 04 Exports table exists with the visibility implied by the table (public API contract)"
+  "test_behavioral_phase_thresholds passes via `cargo test -p golem-core` / `02-verify.sh` inv-010 (INV-010)"
 ]
-depends_on = ["T9"]
-parallel_group = "G"
+depends_on = ["T3"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V4"
+title = "Verification: Regime Tag Transitions"
+status = "pending"
+files = ["crates/golem-core/src/config.rs"]
+acceptance = [
+  "test_regime_tag_transitions passes via `cargo test -p golem-core` / `02-verify.sh` inv-014 (INV-014)"
+]
+depends_on = ["T2"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V5"
+title = "Verification: Regime Multipliers Complete Coverage"
+status = "pending"
+files = ["crates/golem-core/src/config.rs"]
+acceptance = [
+  "test_regime_multipliers_complete passes via `cargo test -p golem-core` / `02-verify.sh` inv-016 (INV-016)"
+]
+depends_on = ["T2"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V6"
+title = "Verification: Probe Threshold Ordering"
+status = "pending"
+files = ["crates/golem-core/src/config.rs"]
+acceptance = [
+  "test_probe_threshold_ordering passes via `cargo test -p golem-core` / `02-verify.sh` inv-017 (INV-017)"
+]
+depends_on = ["T2"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V7"
+title = "Verification: Inheritance Confidence Cap"
+status = "pending"
+files = ["crates/golem-core/src/config.rs"]
+acceptance = [
+  "test_inheritance_confidence_cap passes via `cargo test -p golem-core` / `02-verify.sh` inv-015 (INV-015)"
+]
+depends_on = ["T2"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V8"
+title = "Verification: Subsystem Enum Completeness"
+status = "pending"
+files = ["crates/golem-core/src/event.rs"]
+acceptance = [
+  "test_subsystem_enum_completeness passes via `cargo test -p golem-core` / `02-verify.sh` inv-023 (INV-023)"
+]
+depends_on = ["T4"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V9"
+title = "Verification: EventPayload Variant Count and Distribution"
+status = "pending"
+files = ["crates/golem-core/src/event.rs"]
+acceptance = [
+  "test_event_payload_variant_count passes via `cargo test -p golem-core` / `02-verify.sh` inv-024 (INV-024)"
+]
+depends_on = ["T4"]
+parallel_group = "E"
+exclusive_files = false
+
+[[task]]
+id = "V10"
+title = "Verification: Extension Hook Fire Order (Integration)"
+status = "pending"
+files = ["crates/golem-core/src/extension.rs"]
+acceptance = [
+  "test_extension_hook_fire_order passes via `cargo test -p golem-core` / `02-verify.sh` inv-020 (INV-020)"
+]
+depends_on = ["T5"]
+parallel_group = "E"
 exclusive_files = false
