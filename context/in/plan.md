@@ -1,1650 +1,1515 @@
-# Plan 03: mirage-rs — Full Implementation
+# Plan 05: Terminal Widget Library
 
 ## Context
 
-mirage-rs is the in-process EVM fork that replaces Anvil entirely as the testing backbone for the Bardo project. It is intentionally early in the plan sequence: every subsequent plan that touches on-chain simulation verifies against mirage-rs rather than Anvil or a live node.
+Plan 05 builds `apps/bardo-terminal/src/widgets/` — the reusable ratatui widget library that all 29 screens will consume. Every widget is self-contained: it takes a struct of data, implements `ratatui::widgets::Widget`, and renders into the buffer it's given. No widget holds async state or network handles. Live data arrives through `AppState` and MockData structs; the TODO comments mark every connection point for Plans 70a-70c.
 
-The core insight of v2 is **inversion**: instead of replaying every block locally, lazy-latest reads pull live state from mainnet on demand. Only locally-modified slots are tracked. Only mainnet transactions touching watched contracts get replayed. The result is a local EVM that stays synchronized with mainnet at minimal compute cost.
+The widgets must work at 60fps. That means no heap allocation in the hot render path, no format strings longer than necessary, and no `.collect()` calls that can be pre-computed. The braille encoding is computed in-place per frame. The heatmap gradient uses a lookup table, not per-cell f64 arithmetic.
 
-mirage-rs ships as both a standalone binary (golem sidecar) and an optional library crate for embedding directly into test processes. The JSON-RPC interface is Anvil/Hardhat-compatible, so all existing tooling (`cast`, `viem`, `wagmi`) works without changes.
-
-Port: **8545** by default (inheriting the Anvil slot from `prd2/shared/port-allocation.md`). Override with `--port`. In test harnesses that run alongside a live Anvil, use `--port 18545`.
+Design target: `prd2/20-styx/05-tui-experience.md` §5 (custom widgets) and `prd2/13-runtime/19-cinematic-system.md` §3 (transition tier vocabulary, Tier 1 ambient pulse behavior). ROSEDUST palette from Plan 04.
 
 ## Previous Plan
 
-Plan 02 created `golem-core` with:
-- `GolemConfig` — full TOML runtime config schema at `golem_core::config`
-- `EventFabric` — tokio broadcast bus + 10K ring buffer at `golem_core::event`
-- `CorticalState` — 32-signal lock-free perception surface at `golem_core::cortical`
-- `Extension` trait — 20-hook async trait at `golem_core::extension`
-
-mirage-rs imports `GolemConfig` for integration and emits `resource_pressure` values that feed into `CorticalState`.
+Plan 04 created `apps/bardo-terminal/`: the application skeleton — terminal initialization, 60fps render loop, `Screen` trait, `ScreenId` enum (all 29 screens), `ScreenRegistry`, `AppState`, `MockVitality`, `ConnectionStatus`, `ColorPalette` (ROSEDUST constants), and `LayoutBreakpoint`. The `HomeScreen` is the only implemented screen. All others are `StubScreen`.
 
 ## Prerequisites
 
-- **Plan 01** — workspace scaffold; `apps/mirage-rs/` directory must exist as a workspace member
-- **Plan 02** — `golem-core` crate must be compiled; `GolemConfig` import used in `integration.rs`
+- **Plan 04** — `bardo_terminal::screen::Screen` trait, `bardo_terminal::state::AppState`, `bardo_terminal::palette::*` color constants, `LayoutBreakpoint`, `App` struct
+- `ratatui 0.30` and `crossterm 0.28` already declared in `apps/bardo-terminal/Cargo.toml`
+- No new crate-level dependencies beyond what Plan 04 declared
 
 ## Imports
 
+All widget modules import from the parent crate:
+
 ```rust
-// In integration.rs
-use golem_core::config::GolemConfig;
+use bardo_terminal::palette::*;       // ROSEDUST color constants
+use bardo_terminal::state::AppState;  // read-only state access
+use ratatui::{
+    buffer::Buffer,
+    layout::Rect,
+    style::{Color, Style, Modifier},
+    text::{Line, Span},
+    widgets::Widget,
+};
+use std::collections::VecDeque;       // feed.rs only
 ```
+
+Widget modules live inside `bardo-terminal` itself (`src/widgets/`), so the imports are `crate::palette::*` and `crate::state::AppState`.
 
 ## Exports
 
-All public types live in `mirage-rs` as a library crate (feature-gated) and are also accessible via the JSON-RPC server. The primary exports for downstream plans:
+All re-exported from `bardo_terminal::widgets` via `src/widgets/mod.rs`.
 
 | Type | Module | Purpose |
 |------|--------|---------|
-| `MirageClient` | `integration` | Async client for golem components to connect to mirage-rs |
-| `MirageConfig` | `integration` | Connection config: url, timeout, retry policy |
-| `MirageFork` | `fork` | The main in-process revm fork handle (library mode) |
-| `ForkState` | `fork` | Current EVM state: HybridDB + block context |
-| `HybridDB` | `fork` | Three-tier database: DirtyStore → ReadCache → upstream RPC |
-| `DirtyStore` | `fork` | Write layer for local mutations and watch list |
-| `CowState` | `cow` | Copy-on-write state overlay for speculative/scenario execution |
-| `SpeculativeExecutor` | `replay` | Execute a tx without broadcasting, return state diff |
-| `StateDiff` | `replay` | What changed: AccountDiff, storage writes, logs |
-| `ScenarioRunner` | `scenario` | Load → fork → replay → verify |
-| `ScenarioResult` | `scenario` | Pass/fail with balances, gas, logs |
-| `ResourceUsage` | `resources` | Memory/CPU metrics snapshot |
+| `BrailleSparkline` | `widgets::sparkline` | 2x4 braille dot sparkline, up to 80 data points in 40 cols |
+| `VitalityGauge` | `widgets::gauge` | Phase-colored health bar with `MockPhase` |
+| `ConfidenceGauge` | `widgets::gauge` | Confidence 0..1 bar, amber→green thresholds |
+| `AccuracyGauge` | `widgets::gauge` | Prediction accuracy 0..1, same threshold scheme |
+| `MockPhase` | `widgets::gauge` | Placeholder for `BehavioralPhase` (Plan 13a) |
+| `PheromoneHeatmap` | `widgets::heatmap` | Animated Viridis-like 2D signal strength grid |
+| `PheromoneLayer` | `widgets::heatmap` | `Threat` / `Opportunity` / `Wisdom` layer tag |
+| `TimelineRibbon` | `widgets::timeline` | Horizontal phase/event ribbon |
+| `TimelineEvent` | `widgets::timeline` | Single event on the ribbon |
+| `RibbonEventType` | `widgets::timeline` | `TradeExecuted` / `DreamStarted` / `PhaseChange` / `Anomaly` / `Death` |
+| `EventFeed` | `widgets::feed` | Scrollback log with filter |
+| `FeedEntry` | `widgets::feed` | Single log line (tick, level, message) |
+| `FeedLevel` | `widgets::feed` | `Info` / `Warn` / `Error` / `Debug` |
+| `TabBar` | `widgets::tabs` | Window tab strip with active highlight |
+| `StatusBar` | `widgets::status_bar` | Fixed bottom-of-screen status line |
+| `ScrollableList` | `widgets::scrolllist` | Cursor-driven list with substring filter |
+| `KeyHelpOverlay` | `widgets::key_help` | Floating keybinding hint box |
+| `KeyBinding` | `widgets::key_help` | `key: String`, `description: String` |
 
 ## Cargo Dependencies
 
+No new entries in `apps/bardo-terminal/Cargo.toml`. All dependencies were declared in Plan 04:
+
 ```toml
-[dependencies]
-# EVM execution
-revm = { version = "36", features = ["std", "serde"] }
-revm-database = "12"
-
-# Ethereum types and RPC
-alloy = { version = "1.7", features = [
-    "full",
-    "rpc-types",
-    "provider-http",
-    "provider-ws",
-    "transport-http",
-    "transport-ws",
-    "signer-local",
-] }
-
-# JSON-RPC server (Anvil-compatible)
-jsonrpsee = { version = "0.26", features = ["server", "http-client"] }
-
-# Async runtime
-tokio = { version = "1", features = ["full"] }
-
-# HTTP server for SSE + REST endpoints
-axum = { version = "0.8", features = ["ws"] }
-tower-http = { version = "0.6", features = ["cors"] }
-
-# Serialization
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-toml = "0.8"
-
-# Caching
-lru = "0.12"
-dashmap = "6"
-
-# Concurrency
-parking_lot = "0.12"
-
-# CLI
-clap = { version = "4.5", features = ["derive"] }
-
-# Logging
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
-
-# Futures / streams
-futures = "0.3"
-futures-util = "0.3"
-
-# HTTP client (for upstream RPC proxy)
-reqwest = { version = "0.12", features = ["json"] }
-
-# Shared workspace types
-golem-core = { path = "../../crates/golem-core" }
-
-[features]
-default = ["binary"]
-binary = ["tokio/full"]   # JSON-RPC server + binary entrypoint
-library = []              # API-only, no server; for embedding in tests
-sim-gas = []              # Optional sine-wave gas price simulator
+ratatui = { workspace = true }
+crossterm = { workspace = true }
 ```
+
+`VecDeque` is from `std`. No external crates for gradient math — values are computed with integer arithmetic or a small inline lookup table.
 
 ## Source Files
 
 ```
-apps/mirage-rs/
-├── Cargo.toml
-└── src/
-    ├── main.rs          — HTTP/WS server entry point; CLI parsing; startup sequence
-    ├── fork.rs          — HybridDB, DirtyStore, ForkState, DiffClassifier, EvmExecutor
-    ├── provider.rs      — UpstreamRpc (alloy HTTP+WS provider with retry/rate-limit)
-    ├── cow.rs           — CowState, BytecodeCache, MultiVersionStore (Block-STM)
-    ├── rpc.rs           — JSON-RPC handler: eth_*, evm_*, hardhat_*, anvil_*, mirage_*
-    ├── replay.rs        — TargetedFollower, SpeculativeExecutor, TxReplay, StateDiff
-    ├── scenario.rs      — ScenarioSet, ScenarioRunner, ScenarioResult, ScenarioJob
-    ├── integration.rs   — MirageClient, MirageConfig (golem sidecar client library)
-    └── resources.rs     — ResourceModel, ResourceUsage, pressure tiers, eviction
+apps/bardo-terminal/src/
+├── widgets/
+│   ├── mod.rs           — pub mod declarations + pub use re-exports for all widget types
+│   ├── sparkline.rs     — BrailleSparkline
+│   ├── gauge.rs         — VitalityGauge, ConfidenceGauge, AccuracyGauge, MockPhase
+│   ├── heatmap.rs       — PheromoneHeatmap, PheromoneLayer
+│   ├── timeline.rs      — TimelineRibbon, TimelineEvent, RibbonEventType
+│   ├── feed.rs          — EventFeed, FeedEntry, FeedLevel
+│   ├── tabs.rs          — TabBar
+│   ├── status_bar.rs    — StatusBar
+│   ├── scrolllist.rs    — ScrollableList
+│   └── key_help.rs      — KeyHelpOverlay, KeyBinding
+└── lib.rs               — add `pub mod widgets;` (if bardo-terminal exposes a lib target)
+                           OR add `mod widgets;` in main.rs and pub-use from app.rs
 ```
 
----
+Because `bardo-terminal` is a binary crate (no `src/lib.rs`), all widget modules are declared in `src/main.rs` as `mod widgets;` or pulled in via a `widgets` re-export module accessible from screen implementations. The simplest approach: declare `mod widgets;` in `main.rs`, make widget types `pub`, and import them in screen files as `use crate::widgets::*;`.
 
 ## Implementation Details
 
-### Unit 1: Fork Engine & Lazy Provider
+---
 
-**Files:** `fork.rs`, `provider.rs`
-**~350 lines**
+### Unit 1: Braille Sparkline & Gauges
+
+**Files:** `src/widgets/sparkline.rs`, `src/widgets/gauge.rs`
 
 #### Quick Reference
 
-**HybridDB** — three-tier database implementing revm's `Database` trait. Read priority: DirtyStore → ReadCache → upstream RPC at `latest`.
+**Braille dot encoding:**
+
+Unicode braille block starts at U+2800. Each character encodes an 8-dot 2x4 grid (2 columns, 4 rows). The bit positions for the 8 dots are:
+
+```
+Dot layout (column, row):     Bit value:
+col0,row0 = dot 1            bit 0  (0x01)
+col0,row1 = dot 2            bit 1  (0x02)
+col0,row2 = dot 3            bit 2  (0x04)
+col0,row3 = dot 4 (bottom)   bit 3  (0x08)  — note: not bit 6
+col1,row0 = dot 5            bit 4  (0x10)
+col1,row1 = dot 6            bit 5  (0x20)
+col1,row2 = dot 7            bit 6  (0x40)
+col1,row3 = dot 8 (bottom)   bit 7  (0x80)
+
+Unicode mapping: U+2800 + bit_flags
+```
+
+Important detail: Unicode braille uses bit positions 0–7 for dots 1–8, but the standard dot numbering is not top-to-bottom in both columns simultaneously. The left column uses dots 1,2,3,7 (bits 0,1,2,6) and the right uses dots 4,5,6,8 (bits 3,4,5,7) in some typefaces — but for rendering purposes, use the layout above which matches the visual appearance in terminals.
+
+The correct bit mapping for a sparkline (filling from the bottom of the cell upward):
 
 ```rust
-use alloy_primitives::{Address, B256, U256};
-use revm::primitives::{AccountInfo, Bytecode};
-use revm::Database;
-use parking_lot::RwLock;
-use std::collections::{HashMap, HashSet};
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+// Left column (col 0): bits for rows 3,2,1,0 from bottom:
+const LEFT_COL_BITS:  [u8; 4] = [0x40, 0x04, 0x02, 0x01]; // rows 3→0
+// Right column (col 1): bits for rows 3,2,1,0 from bottom:
+const RIGHT_COL_BITS: [u8; 4] = [0x80, 0x20, 0x10, 0x08]; // rows 3→0
 
-pub struct HybridDB {
-    pub dirty: DirtyStore,
-    pub read_cache: ReadCache,
-    pub bytecode_cache: Arc<parking_lot::Mutex<BytecodeCache>>,
-    pub upstream: Arc<UpstreamRpc>,
-    pub pinned_block: Option<u64>,
-    pub cache_ttl: Duration,         // default: 12s (one block)
-    pub chain_id: u64,
+// To fill n_dots from bottom in left column:
+fn left_bits(n_dots: usize) -> u8 {
+    LEFT_COL_BITS[4_usize.saturating_sub(n_dots)..]
+        .iter()
+        .fold(0u8, |acc, &b| acc | b)
+}
+fn right_bits(n_dots: usize) -> u8 {
+    RIGHT_COL_BITS[4_usize.saturating_sub(n_dots)..]
+        .iter()
+        .fold(0u8, |acc, &b| acc | b)
+}
+```
+
+**BrailleSparkline struct and render logic:**
+
+```rust
+pub struct BrailleSparkline {
+    pub data: Vec<f64>,       // up to 80 data points; extra points are ignored
+    pub max_value: f64,       // scale ceiling; 0.0 → auto-scale from data.max()
+    pub color: Color,
+    pub label: Option<String>,
 }
 
-impl Database for HybridDB {
-    type Error = MirageError;
+impl Widget for BrailleSparkline {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        if area.width == 0 || area.height == 0 { return; }
 
-    fn basic(&mut self, address: Address) -> Result<Option<AccountInfo>, MirageError> {
-        // 1. DirtyStore: partial override — merge dirty fields with upstream
-        if let Some(dirty) = self.dirty.accounts.get(&address) {
-            let needs_upstream = dirty.balance.is_none()
-                || dirty.nonce.is_none()
-                || dirty.code.is_none();
-            let base = if needs_upstream {
-                self.fetch_account_info(address)?.unwrap_or_default()
-            } else {
-                AccountInfo::default()
-            };
-            return Ok(Some(AccountInfo {
-                balance: dirty.balance.unwrap_or(base.balance),
-                nonce: dirty.nonce.unwrap_or(base.nonce),
-                code_hash: dirty.code_hash.unwrap_or(base.code_hash),
-                code: dirty.code.clone().or(base.code),
-            }));
-        }
-        // 2. ReadCache
-        if let Some(info) = self.read_cache.get_account(&address) {
-            return Ok(Some(info));
-        }
-        // 3. Upstream fetch + cache
-        let info = self.fetch_account_info(address)?;
-        if let Some(ref i) = info {
-            self.read_cache.insert_account(address, i.clone(), self.resolve_block());
-        }
-        Ok(info)
-    }
+        // Each terminal cell holds 2 data points (left and right braille column)
+        // Each cell is 4 dots tall
+        let cell_count = area.width as usize;
+        let data_capacity = cell_count * 2;  // 2 cols per cell → up to 80 pts in 40 cols
 
-    fn storage(&mut self, address: Address, index: U256) -> Result<U256, MirageError> {
-        // 1. DirtyStore slot
-        if let Some(dirty) = self.dirty.accounts.get(&address) {
-            if let Some(&val) = dirty.storage.get(&index) {
-                return Ok(val);
+        // Scale
+        let max = if self.max_value > 0.0 {
+            self.max_value
+        } else {
+            self.data.iter().cloned().fold(f64::NEG_INFINITY, f64::max).max(1.0)
+        };
+
+        // Map each data point to dot count (0..=4 per column, one column per point)
+        let dot_height = area.height as usize * 4;  // total dots available (4 per cell row)
+        // We render into a single row of braille cells. height is expected to be 1.
+        // If height > 1, render from top row down using the same data window.
+
+        let n = self.data.len().min(data_capacity);
+        let offset = self.data.len().saturating_sub(data_capacity); // newest points at right
+
+        let y = area.y;
+        for cell_idx in 0..cell_count {
+            let x = area.x + cell_idx as u16;
+            let left_data_idx  = offset + cell_idx * 2;
+            let right_data_idx = left_data_idx + 1;
+
+            let left_val  = self.data.get(left_data_idx).cloned().unwrap_or(0.0);
+            let right_val = self.data.get(right_data_idx).cloned().unwrap_or(0.0);
+
+            let left_dots  = ((left_val  / max) * 4.0).round().clamp(0.0, 4.0) as usize;
+            let right_dots = ((right_val / max) * 4.0).round().clamp(0.0, 4.0) as usize;
+
+            let bits = left_bits(left_dots) | right_bits(right_dots);
+            let ch = char::from_u32(0x2800 + bits as u32).unwrap_or(' ');
+
+            if let Some(cell) = buf.cell_mut((x, y)) {
+                cell.set_char(ch);
+                cell.set_style(Style::default().fg(self.color));
             }
         }
-        // 2. ReadCache
-        if let Some(val) = self.read_cache.get_storage(&address, &index) {
-            return Ok(val);
+
+        // Optional label in dim text above/below (if height >= 2)
+        if area.height >= 2 {
+            if let Some(label) = self.label {
+                let label_y = area.y + area.height - 1;
+                let truncated: String = label.chars().take(area.width as usize).collect();
+                buf.set_string(area.x, label_y, &truncated,
+                    Style::default().fg(crate::palette::TEXT_DIM));
+            }
         }
-        // 3. Upstream
-        let block = self.resolve_block();
-        let val = self.upstream.get_storage_at(address, index, block)?;
-        self.read_cache.insert_storage(address, index, val, block);
-        Ok(val)
+    }
+}
+```
+
+**VitalityGauge:**
+
+```rust
+/// Placeholder phase. TODO Plan 70a: replace with golem_mortality::BehavioralPhase
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MockPhase {
+    Thriving,
+    Stable,
+    Conservation,
+    Declining,
+    Terminal,
+}
+
+impl MockPhase {
+    pub fn gauge_color(&self) -> Color {
+        use crate::palette::*;
+        match self {
+            MockPhase::Thriving     => SUCCESS,     // muted sage/green
+            MockPhase::Stable       => Color::Rgb(88, 160, 170),  // cyan
+            MockPhase::Conservation => WARNING,     // amber
+            MockPhase::Declining    => Color::Rgb(180, 100, 60),  // orange
+            MockPhase::Terminal     => ROSE_BRIGHT, // red-rose
+        }
     }
 
-    fn code_by_hash(&mut self, code_hash: B256) -> Result<Bytecode, MirageError> {
-        if let Some(bc) = self.bytecode_cache.lock().get(&code_hash) {
-            return Ok(bc);
+    pub fn label(&self) -> &'static str {
+        match self {
+            MockPhase::Thriving     => "THRIVING",
+            MockPhase::Stable       => "STABLE",
+            MockPhase::Conservation => "CONSERVATION",
+            MockPhase::Declining    => "DECLINING",
+            MockPhase::Terminal     => "TERMINAL",
         }
-        for dirty in self.dirty.accounts.values() {
-            if dirty.code_hash == Some(code_hash) {
-                if let Some(ref code) = dirty.code {
-                    self.bytecode_cache.lock().insert(code_hash, code.clone());
-                    return Ok(code.clone());
+    }
+}
+
+pub struct VitalityGauge {
+    pub value: f64,      // 0.0 to 1.0
+    pub label: String,
+    pub phase: MockPhase,  // TODO Plan 70a: replace with real BehavioralPhase
+}
+
+impl Widget for VitalityGauge {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
+
+        if area.width < 4 { return; }
+        let fill_width = ((self.value.clamp(0.0, 1.0)) * area.width as f64) as u16;
+        let phase_color = self.phase.gauge_color();
+
+        // Label row (top if height >= 2, else skip)
+        let gauge_y = if area.height >= 2 {
+            let label = format!(" {} {:.0}% ", self.label, self.value * 100.0);
+            buf.set_string(area.x, area.y,
+                &label.chars().take(area.width as usize).collect::<String>(),
+                Style::default().fg(BONE).add_modifier(Modifier::BOLD));
+            area.y + 1
+        } else {
+            area.y
+        };
+
+        // Bar row
+        for x in area.x..(area.x + area.width) {
+            if let Some(cell) = buf.cell_mut((x, gauge_y)) {
+                if x < area.x + fill_width {
+                    cell.set_char(crate::palette::BLOCK_FULL);
+                    cell.set_style(Style::default().fg(phase_color).bg(BG_RAISED));
+                } else {
+                    cell.set_char(crate::palette::BLOCK_LIGHT);
+                    cell.set_style(Style::default().fg(BORDER).bg(BG_RAISED));
                 }
             }
         }
-        let bc = self.upstream.get_code_by_hash(code_hash, self.resolve_block())?;
-        self.bytecode_cache.lock().insert(code_hash, bc.clone());
-        Ok(bc)
+    }
+}
+```
+
+**ConfidenceGauge and AccuracyGauge:**
+
+Both share the same rendering logic as `VitalityGauge` but with different color thresholds:
+
+```rust
+fn confidence_color(value: f64) -> Color {
+    use crate::palette::*;
+    if value >= 0.75 { SUCCESS }
+    else if value >= 0.50 { Color::Rgb(88, 160, 170) }  // cyan
+    else if value >= 0.25 { WARNING }
+    else { ROSE_DIM }
+}
+
+fn accuracy_color(value: f64) -> Color {
+    // Same thresholds as confidence
+    confidence_color(value)
+}
+
+pub struct ConfidenceGauge { pub value: f64, pub label: String }
+pub struct AccuracyGauge   { pub value: f64, pub label: String }
+```
+
+Implement `Widget` for both by delegating to the shared fill logic with their respective color functions. No `MockPhase` needed — confidence and accuracy are pure scalars.
+
+**Tests (in `src/widgets/sparkline.rs` and `gauge.rs`):**
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_braille_sparkline_encodes_correctly() {
+        // Empty braille char for all-zero data
+        assert_eq!(left_bits(0), 0x00);
+        assert_eq!(left_bits(4), 0x01 | 0x02 | 0x04 | 0x40);
+        // All 8 dots lit = U+28FF
+        let all_bits = left_bits(4) | right_bits(4);
+        assert_eq!(all_bits, 0xFF);
+        let ch = char::from_u32(0x2800 + all_bits as u32).unwrap();
+        assert_eq!(ch, '\u{28FF}');
     }
 
-    fn block_hash(&mut self, number: u64) -> Result<B256, MirageError> {
-        if let Some(h) = self.read_cache.block_hashes.get(&number) {
-            return Ok(*h);
+    #[test]
+    fn test_vitality_gauge_colors() {
+        assert_eq!(MockPhase::Thriving.gauge_color(),     crate::palette::SUCCESS);
+        assert_eq!(MockPhase::Terminal.gauge_color(),     crate::palette::ROSE_BRIGHT);
+    }
+
+    #[test]
+    fn test_confidence_color_thresholds() {
+        assert_eq!(confidence_color(0.80), crate::palette::SUCCESS);
+        assert_eq!(confidence_color(0.60), Color::Rgb(88, 160, 170));
+        assert_eq!(confidence_color(0.30), crate::palette::WARNING);
+        assert_eq!(confidence_color(0.10), crate::palette::ROSE_DIM);
+    }
+}
+```
+
+---
+
+### Unit 2: Pheromone Heatmap & Timeline Ribbon
+
+**Files:** `src/widgets/heatmap.rs`, `src/widgets/timeline.rs`
+
+#### Quick Reference
+
+**Viridis-inspired gradient (7-stop lookup table):**
+
+The Viridis colormap runs from dark purple (low) through blue, cyan, green, yellow-green to yellow (high). For terminal rendering, map each cell's `f64` signal strength (0.0..=1.0) to one of 7 colors:
+
+```rust
+const VIRIDIS: [(u8, u8, u8); 7] = [
+    (68,  1,   84),   // 0.0 — dark purple
+    (72,  40,  120),  // 0.17 — purple
+    (62,  83,  160),  // 0.33 — blue
+    (49,  126, 157),  // 0.50 — teal/cyan
+    (53,  183, 121),  // 0.67 — green
+    (149, 216, 64),   // 0.83 — yellow-green
+    (253, 231, 37),   // 1.0 — yellow
+];
+
+fn viridis_color(value: f64) -> Color {
+    let v = value.clamp(0.0, 1.0);
+    let idx_f = v * 6.0;
+    let idx = idx_f.floor() as usize;
+    let t = idx_f - idx as f64;
+
+    let (r0, g0, b0) = VIRIDIS[idx.min(6)];
+    let (r1, g1, b1) = VIRIDIS[(idx + 1).min(6)];
+
+    let lerp = |a: u8, b: u8, t: f64| -> u8 {
+        (a as f64 + (b as f64 - a as f64) * t).round() as u8
+    };
+    Color::Rgb(lerp(r0, r1, t), lerp(g0, g1, t), lerp(b0, b1, t))
+}
+```
+
+**PheromoneLayer-specific overlay:**
+
+Each layer tints the base Viridis color with a layer-specific hue modifier:
+- `Threat`: shift toward rose — add red component bias
+- `Opportunity`: use Viridis as-is (the warm yellow end signals opportunity)
+- `Wisdom`: shift toward dream indigo — blend with (88, 88, 120) at low values
+
+```rust
+fn layer_tint(base: Color, layer: PheromoneLayer, value: f64) -> Color {
+    match (base, layer) {
+        (Color::Rgb(r, g, b), PheromoneLayer::Threat) => {
+            Color::Rgb(r.saturating_add(40), g.saturating_sub(20), b.saturating_sub(20))
         }
-        let h = self.upstream.get_block_hash(number)?;
-        self.read_cache.block_hashes.put(number, h);
-        Ok(h)
+        (Color::Rgb(r, g, b), PheromoneLayer::Wisdom) => {
+            // blend toward dream indigo at low values
+            let t = (1.0 - value).clamp(0.0, 0.5) as f32;
+            let r2 = (r as f32 * (1.0 - t) + 88.0 * t) as u8;
+            let g2 = (g as f32 * (1.0 - t) + 88.0 * t) as u8;
+            let b2 = (b as f32 * (1.0 - t) + 120.0 * t) as u8;
+            Color::Rgb(r2, g2, b2)
+        }
+        _ => base,
+    }
+}
+```
+
+**PheromoneHeatmap struct:**
+
+```rust
+pub struct PheromoneHeatmap {
+    pub grid: Vec<Vec<f64>>,  // grid[row][col], values 0.0..=1.0
+    pub width: u16,           // number of grid columns
+    pub height: u16,          // number of grid rows
+    pub layer: PheromoneLayer,
+    /// TODO Plan 70a: replace with live pheromone field from golem-coordination
+    pub pulse_cells: Vec<(usize, usize)>,  // cells currently pulsing (bright flash)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PheromoneLayer { Threat, Opportunity, Wisdom }
+```
+
+**Render:**
+
+Each grid cell maps to one terminal cell. The cell character is `BLOCK_FULL` (`█`) with a background and foreground both set to the Viridis color (solid fill). Pulsing cells use `Color::Rgb(255, 255, 255)` as a brief override — at 60fps a pulse_cell list refreshed each tick with a 30-frame (500ms) TTL creates the flash effect.
+
+```rust
+impl Widget for PheromoneHeatmap {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        let rows = self.grid.len().min(area.height as usize);
+        let cols = if rows > 0 { self.grid[0].len().min(area.width as usize) } else { 0 };
+
+        for row in 0..rows {
+            for col in 0..cols {
+                let x = area.x + col as u16;
+                let y = area.y + row as u16;
+                let value = self.grid[row].get(col).cloned().unwrap_or(0.0);
+                let is_pulsing = self.pulse_cells.contains(&(row, col));
+
+                let base = viridis_color(value);
+                let color = if is_pulsing {
+                    Color::Rgb(255, 255, 255)  // pulse flash
+                } else {
+                    layer_tint(base, self.layer, value)
+                };
+
+                if let Some(cell) = buf.cell_mut((x, y)) {
+                    cell.set_char('█');
+                    cell.set_style(Style::default().fg(color).bg(color));
+                }
+            }
+        }
+    }
+}
+```
+
+**TimelineRibbon:**
+
+The ribbon is a single horizontal row. Each pixel (terminal cell) represents `window_ticks / area.width` ticks. Events at tick positions mark that cell with an event-type glyph and color. Cells between events are colored by the phase active at that point — use the MockPhase color or a dim neutral if no phase data is present.
+
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RibbonEventType {
+    TradeExecuted,
+    DreamStarted,
+    PhaseChange,
+    Anomaly,
+    Death,
+}
+
+pub struct TimelineEvent {
+    pub tick: u64,
+    pub event_type: RibbonEventType,
+    pub severity: u8,  // 0-255, modulates brightness
+}
+
+pub struct TimelineRibbon {
+    pub events: Vec<TimelineEvent>,   // TODO Plan 70a: connect to GolemEvent stream
+    pub window_ticks: u64,            // how many ticks the ribbon covers
+    pub current_tick: u64,            // rightmost tick
+}
+
+impl RibbonEventType {
+    fn glyph(&self) -> char {
+        match self {
+            RibbonEventType::TradeExecuted => '▲',
+            RibbonEventType::DreamStarted  => '◌',
+            RibbonEventType::PhaseChange   => '◆',
+            RibbonEventType::Anomaly       => '!',
+            RibbonEventType::Death         => '✕',
+        }
+    }
+
+    fn color(&self) -> Color {
+        use crate::palette::*;
+        match self {
+            RibbonEventType::TradeExecuted => SUCCESS,
+            RibbonEventType::DreamStarted  => DREAM,
+            RibbonEventType::PhaseChange   => BONE,
+            RibbonEventType::Anomaly       => WARNING,
+            RibbonEventType::Death         => ROSE_BRIGHT,
+        }
     }
 }
 
-/// resolve_block() returns pinned_block if set (historical mode), else "latest"
-impl HybridDB {
-    fn resolve_block(&self) -> BlockTag { ... }
+impl Widget for TimelineRibbon {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
+
+        if area.width == 0 { return; }
+        let w = area.width as u64;
+        let ticks_per_cell = self.window_ticks.max(1) / w.max(1);
+        let start_tick = self.current_tick.saturating_sub(self.window_ticks);
+
+        for col in 0..area.width {
+            let cell_start_tick = start_tick + col as u64 * ticks_per_cell;
+            let is_current = col == area.width - 1; // rightmost = now
+
+            let x = area.x + col;
+            let y = area.y;
+
+            // Find events in this cell's tick range
+            let event_in_cell = self.events.iter()
+                .filter(|e| e.tick >= cell_start_tick
+                    && e.tick < cell_start_tick + ticks_per_cell.max(1))
+                .max_by_key(|e| e.severity);
+
+            if let Some(event) = event_in_cell {
+                if let Some(cell) = buf.cell_mut((x, y)) {
+                    cell.set_char(event.event_type.glyph());
+                    cell.set_style(Style::default().fg(event.event_type.color())
+                        .add_modifier(Modifier::BOLD));
+                }
+            } else {
+                if let Some(cell) = buf.cell_mut((x, y)) {
+                    // Background track: dim horizontal line
+                    cell.set_char(if is_current { '┤' } else { '─' });
+                    cell.set_style(Style::default().fg(
+                        if is_current { BONE_DIM } else { BORDER }
+                    ));
+                }
+            }
+        }
+    }
 }
-```
-
-**DirtyStore** — the write layer. Holds local mutations and the watch list.
-
-```rust
-pub struct DirtyStore {
-    pub accounts: HashMap<Address, DirtyAccount>,
-    pub watch_list: HashMap<Address, WatchEntry>,
-    pub unwatch_list: HashSet<Address>,
-    pub total_dirty_slots: u64,
-    snapshots: HashMap<u64, Box<DirtyStoreSnapshot>>,
-    next_snapshot_id: u64,
-}
-
-pub struct DirtyAccount {
-    pub balance: Option<U256>,
-    pub nonce: Option<u64>,
-    pub code: Option<Bytecode>,
-    pub code_hash: Option<B256>,
-    pub storage: HashMap<U256, U256>,
-}
-
-pub struct WatchEntry {
-    pub source: WatchSource,
-    pub added_at_block: u64,
-    pub initial_slot_count: usize,
-    pub replay_count: u64,
-}
-
-pub enum WatchSource {
-    AutoClassified,
-    Contagion { parent: Address },
-    Manual,
-}
-
-// Snapshot/revert: snapshot consumed on revert (single-use).
-// Later snapshots are invalidated when reverting to an earlier one.
-impl DirtyStore {
-    pub fn snapshot(&mut self, block_number: u64, tx_index: u64) -> u64 { ... }
-    pub fn revert(&mut self, id: u64) -> Result<(u64, u64), MirageError> { ... }
-}
-```
-
-**DiffClassifier** — classifies state diffs into Protocol / SlotOnly / ReadOnly.
-
-```rust
-pub struct ClassificationConfig {
-    pub protocol_slot_threshold: usize,  // default: 3
-    pub check_token_interface: bool,
-    pub max_watched_contracts: usize,    // default: 64
-    pub enable_contagion: bool,
-    pub max_contagion_depth: usize,      // default: 2
-}
-
-pub enum Classification { Protocol, SlotOnly, ReadOnly }
-
-// Token heuristic: all written slots are high-entropy keccak mapping entries
-// AND no low-numbered state slots (< 20) exist → classify as SlotOnly.
-// Catches rebasing tokens (stETH, aTokens) that write 3+ mapping slots.
-
-pub struct StateDiff {
-    pub accounts: HashMap<Address, AccountDiff>,
-}
-
-pub struct AccountDiff {
-    pub info_changed: bool,
-    pub new_balance: Option<U256>,
-    pub new_nonce: Option<u64>,
-    pub new_code: Option<Bytecode>,
-    pub storage_written: HashMap<U256, U256>,
-    pub storage_read: HashSet<U256>,
-}
-```
-
-**EvmExecutor** — creates and runs the revm EVM instance.
-
-```rust
-pub struct EvmExecutor;
-
-impl EvmExecutor {
-    // Read-only: never commits to DirtyStore
-    pub fn call(state: &ForkState, from: Address, to: Address,
-                data: Bytes, value: U256, gas_limit: u64)
-        -> Result<ExecutionResult, MirageError>;
-
-    // Writes to DirtyStore, triggers DiffClassifier
-    pub fn transact(state: &mut ForkState, from: Address, to: Option<Address>,
-                    data: Bytes, value: U256, gas_limit: u64)
-        -> Result<(ExecutionResult, StateDiff), MirageError>;
-}
-
-// revm 36.x construction pattern:
-// let mut evm = Context::mainnet()
-//     .with_db(db)
-//     .with_block(block_env)
-//     .with_cfg(cfg_env)
-//     .build_mainnet();
-// let result = evm.transact_commit(tx_env)?;
-// cfg: Cancun spec, nonce/balance checks disabled by default
-
-// std::mem::replace dance: Context takes ownership of DB.
-// After execution, extract modified DB from evm.ctx.journaled_state.database.
-```
-
-**UpstreamRpc** (in `provider.rs`) — alloy HTTP+WS provider with rate limiting.
-
-```rust
-pub struct UpstreamRpc {
-    http: Arc<dyn alloy::providers::Provider>,
-    ws:   Option<Arc<dyn alloy::providers::Provider>>,
-    rps_limiter: tokio::sync::Semaphore,  // --upstream-rps, default 100
-    burst: u32,                            // --upstream-burst, default 200
-}
-
-// Construction:
-// let http = ProviderBuilder::new().on_http(rpc_url.parse()?);
-// let ws   = ProviderBuilder::new().on_ws(connect_pubsub(ws_url).await?).await?;
-//
-// All fetch methods retry with exponential backoff (max 3 attempts).
-// On all retries exhausted: MirageError::UpstreamError(-32099).
-```
-
-**Local transaction pipeline** (in `fork.rs`):
-1. Execute via `EvmExecutor::transact`
-2. Run `DiffClassifier::classify` on the state diff
-3. Apply account changes + storage overrides to `DirtyStore`
-4. Update watch list with newly classified protocol contracts
-5. Generate tx hash, store receipt, advance local block counter
-
----
-
-### Unit 2: JSON-RPC Compatibility Layer
-
-**Files:** `rpc.rs`, `main.rs`
-**~400 lines**
-
-#### Quick Reference
-
-**Supported eth_* methods:**
-
-| Method | Behavior |
-|--------|----------|
-| `eth_blockNumber` | Local block counter (starts at mainnet head, increments per local tx) |
-| `eth_chainId` | Configured chain ID |
-| `eth_getBalance` | DirtyStore → upstream |
-| `eth_getStorageAt` | DirtyStore → upstream |
-| `eth_getCode` | DirtyStore → BytecodeCache → upstream |
-| `eth_getTransactionCount` | DirtyStore nonce → upstream |
-| `eth_call` | EvmExecutor::call, no state mutation |
-| `eth_sendTransaction` | EvmExecutor::transact, triggers DiffClassifier |
-| `eth_sendRawTransaction` | Decode EIP-2718 (types 0-3), then same path |
-| `eth_getTransactionReceipt` | Local receipt store |
-| `eth_getTransactionByHash` | Local tx store |
-| `eth_getLogs` | Local logs only (not proxied to mainnet) |
-| `eth_getBlockByNumber` | Synthetic local block |
-| `eth_getBlockByHash` | Synthetic local block by hash |
-| `eth_estimateGas` | Execute against temp snapshot, return gas + 20% buffer |
-| `eth_gasPrice` | `0x1` (or sine-wave with `--sim-gas`) |
-| `eth_feeHistory` | Constant synthetic values (or sine-wave) |
-| `eth_maxPriorityFeePerGas` | `0x0` (or simulated) |
-| `net_version` | Chain ID as decimal string |
-| `web3_clientVersion` | `"mirage-rs/2.0.0"` |
-
-**Hardhat/Anvil compatibility methods** (both prefixes work identically):
-
-| Method | Effect |
-|--------|--------|
-| `hardhat_impersonateAccount` / `anvil_impersonateAccount` | Allow `from` without signature |
-| `hardhat_stopImpersonatingAccount` / `anvil_stopImpersonatingAccount` | Remove from impersonation list |
-| `hardhat_setBalance` / `anvil_setBalance` | Write balance to DirtyStore |
-| `hardhat_setCode` / `anvil_setCode` | Write bytecode to DirtyStore |
-| `hardhat_setStorageAt` / `anvil_setStorageAt` | Write slot to DirtyStore |
-| `hardhat_mine` / `anvil_mine` | Advance local block counter (N blocks, configurable interval) |
-| `hardhat_reset` / `anvil_reset` | Destructive reset: clear DirtyStore, ReadCache, watch list |
-| `hardhat_setNextBlockBaseFeePerGas` / `anvil_setNextBlockBaseFeePerGas` | Set next block base fee |
-| `anvil_setNonce` | Write nonce to DirtyStore |
-| `hardhat_setCoinbase` / `anvil_setCoinbase` | Set coinbase for subsequent blocks |
-| `anvil_setPrevRandao` | Set PREVRANDAO for next block |
-
-**evm_* test utilities:**
-
-| Method | Effect |
-|--------|--------|
-| `evm_snapshot` | Capture DirtyStore → returns snapshot ID |
-| `evm_revert` | Restore to snapshot (single-use; `-32001` on second call) |
-| `evm_mine` | Mine N empty blocks |
-| `evm_increaseTime` | Add seconds to current timestamp |
-| `evm_setNextBlockTimestamp` | Set exact timestamp for next block |
-
-**mirage_* extensions** (state manipulation):
-
-| Method | Effect |
-|--------|--------|
-| `mirage_setBalance` | Write balance to DirtyStore |
-| `mirage_setCode` | Override bytecode at address |
-| `mirage_setStorageAt` | Write slot to DirtyStore |
-| `mirage_mintERC20` | Auto-detect balance slot, mint tokens atomically |
-| `mirage_prefetchSlots` | Pre-warm ReadCache for specific slots |
-| `mirage_prefetchAccount` | Pre-warm account info |
-| `mirage_computeDomainSeparator` | Call contract, return EIP-712 domain separator |
-| `mirage_cleanup` | Prune stale PID files and artifacts |
-
-**mirage_* watch list:**
-
-| Method | Effect |
-|--------|--------|
-| `mirage_watchContract` | Add to watch list (manual) |
-| `mirage_unwatchContract` | Remove + add to unwatch list |
-| `mirage_getWatchList` | Return watch list with metadata |
-| `mirage_getDirtySlots` | Return dirty storage for an address |
-| `mirage_status` | Full instance status snapshot |
-
-**mirage_* resource management:**
-
-| Method | Effect |
-|--------|--------|
-| `mirage_getResourceUsage` | Memory, cache hit rate, pressure, upstream call counts |
-| `mirage_setResourceLimits` | Adjust limits at runtime |
-
-**mirage_* position helpers:**
-
-| Method | Effect |
-|--------|--------|
-| `mirage_getPosition` | Token balances + protocol-specific position state (uniswap-v3-position, aave-v3-account, raw-balances) |
-| `mirage_subscribeEvents` | SSE or WebSocket event stream filtered by address/topics |
-
-**mirage_* scenario runner:**
-
-| Method | Effect |
-|--------|--------|
-| `mirage_beginScenarioSet` | Create scenario set from baseline state |
-| `mirage_defineScenario` | Add scenario to set (tx list + tracked addresses) |
-| `mirage_runScenarioSet` | Execute set (sequential or parallel) → job ID |
-| `mirage_getScenarioResults` | Poll job status and results |
-| `mirage_compareScenarios` | Ranked comparison by pnl / gas / state_diff |
-
-**Error codes:**
-
-| Code | Name | Trigger |
-|------|------|---------|
-| -32700 | PARSE_ERROR | Invalid JSON |
-| -32600 | INVALID_REQUEST | Not valid JSON-RPC 2.0 |
-| -32601 | METHOD_NOT_FOUND | Unknown method |
-| -32602 | INVALID_PARAMS | Bad param types or values |
-| -32603 | INTERNAL_ERROR | Internal panic/bug |
-| -32001 | SNAPSHOT_NOT_FOUND | `evm_revert` with unknown ID |
-| -32003 | NONCE_TOO_LOW | With `--strict-nonce` |
-| -32004 | NONCE_TOO_HIGH | With `--strict-nonce` |
-| -32010 | INVALID_FROM | Not impersonated, no private key |
-| -32015 | EXECUTION_REVERTED | EVM reverted (includes revert reason) |
-| -32020 | SLOT_DETECTION_FAILED | `mirage_mintERC20` can't find slot |
-| -32030 | WATCH_LIST_FULL | Watch list at `max_watched_contracts` |
-| -32040 | UNKNOWN_PROTOCOL_TYPE | `mirage_getPosition` unknown type string |
-| -32050 | SET_NOT_FOUND | Scenario set ID missing |
-| -32051 | SET_ALREADY_RUNNING | Scenario already executing |
-| -32052 | SET_HAS_NO_SCENARIOS | Empty scenario set |
-| -32053 | PARALLEL_UNAVAILABLE | Parallel mode not available |
-| -32054 | JOB_NOT_FOUND | Scenario job ID missing |
-| -32055 | JOB_NOT_COMPLETE | Results requested before done |
-| -32099 | UPSTREAM_ERROR | Upstream RPC failure after retries |
-
-**Server setup** (axum + jsonrpsee in `main.rs`):
-
-```rust
-// JSON-RPC via jsonrpsee
-let server = ServerBuilder::default()
-    .build(format!("{}:{}", config.host, config.port))
-    .await?;
-
-// SSE/REST endpoints via axum (events, health, cleanup)
-let app = Router::new()
-    .route("/events/:stream_id", get(sse_handler))
-    .route("/events/:stream_id", delete(unsubscribe_handler))
-    .route("/health", get(health_handler))
-    .layer(CorsLayer::permissive());
-
-// Startup sequence:
-// 1. Bind port, write /tmp/mirage-${port}.pid
-// 2. Verify upstream connectivity via eth_blockNumber
-// 3. Write /tmp/mirage-${port}-status.json
-// 4. Emit: tracing::info!("mirage ready port={} chain={}", port, chain_id)
-
-// Watchdog: if --watchdog-timeout elapses with no inbound request, exit(0)
-```
-
-**Transaction format handling** (EIP-2718 types 0-3):
-- Type 0: legacy RLP, `v`/`r`/`s` with optional EIP-155 replay protection
-- Type 1: EIP-2930 access list (`0x01 || RLP(...)`)
-- Type 2: EIP-1559 fee market (`0x02 || RLP(...)`)
-- Type 3: EIP-4844 blob transactions (`0x03 || RLP(...)`) — blob data ignored unless `--validate-blobs`
-- Signature verification skipped by default; enabled with `--verify-signatures`
-- Impersonation bypasses signature check regardless of `--verify-signatures`
-
----
-
-### Unit 3: Transaction Replay & Speculative Execution
-
-**Files:** `replay.rs`
-**~300 lines**
-
-#### Quick Reference
-
-**TargetedFollower** — subscribes to mainnet blocks via WebSocket, replays only transactions touching watched contracts.
-
-```rust
-pub struct TargetedFollower {
-    upstream: Arc<UpstreamRpc>,
-    state: Arc<parking_lot::RwLock<MirageState>>,
-    classifier: DiffClassifier,
-    config: FollowerConfig,
-}
-
-pub struct FollowerConfig {
-    pub ws_url: String,
-    pub http_url: String,
-    pub block_budget: Duration,   // max replay time per block, default: 10s
-    pub filter_addresses: Option<Vec<Address>>,   // manual address filter
-    pub filter_selectors: Option<Vec<[u8; 4]>>,   // manual selector filter
-}
-
-// Main loop:
-// 1. Subscribe to newHeads via alloy WS provider
-// 2. For each block: fetch tx list
-// 3. Filter: tx.to ∈ watch_list (HashSet lookup, ~1µs per tx)
-// 4. Replay matched txs in block order via EvmExecutor::transact_detached
-// 5. Apply resulting StateDiff to DirtyStore
-// 6. Run DiffClassifier for contagion (depth-capped at max_contagion_depth)
-// 7. Log reverted replays; do not corrupt state
-```
-
-**TxReplay** — fetch and replay a specific tx by hash.
-
-```rust
-pub struct TxReplay {
-    pub tx_hash: B256,
-}
-
-impl TxReplay {
-    pub async fn execute(
-        &self,
-        upstream: &UpstreamRpc,
-        state: &mut ForkState,
-    ) -> Result<(ExecutionResult, StateDiff), MirageError>;
-    // Fetches tx from upstream, reconstructs TxEnv,
-    // runs EvmExecutor::transact, returns result + diff
-}
-```
-
-**SpeculativeExecutor** — execute a tx against a CoW fork of current state. Does NOT broadcast or commit to DirtyStore.
-
-```rust
-pub struct SpeculativeExecutor {
-    /// (pending_tx_hash, base_state_block) → result
-    cache: HashMap<(B256, u64), SpeculativeResult>,
-}
-
-pub struct SpeculativeResult {
-    pub result: ExecutionResult,
-    pub state_diff: StateDiff,
-    pub read_set: HashSet<(Address, U256)>,  // for cache invalidation
-    pub computed_at: Instant,
-}
-
-// Invalidation triggers:
-// 1. tx included on-chain (speculation resolved)
-// 2. new block writes to any slot in read_set
-// 3. block number or timestamp deviated from assumed values
-
-// Memory cost per pending tx: ~12 KB (CoW overlay, 200 slots)
-// Compute cost: single revm transact() call, typically <1ms for cached state
-```
-
-**StateDiff** — what changed after executing a transaction.
-
-```rust
-pub struct StateDiff {
-    pub accounts: HashMap<Address, AccountDiff>,
-    pub logs: Vec<LogEntry>,
-    pub gas_used: u64,
-    pub success: bool,
-    pub output: Bytes,
-}
-
-pub struct AccountDiff {
-    pub info_changed: bool,
-    pub new_balance: Option<U256>,
-    pub new_nonce: Option<u64>,
-    pub new_code: Option<Bytecode>,
-    pub storage_written: HashMap<U256, U256>,   // slot → new value
-    pub storage_read: HashSet<U256>,             // slots read (for speculation)
-}
-
-pub struct LogEntry {
-    pub address: Address,
-    pub topics: Vec<B256>,
-    pub data: Bytes,
-    pub log_index: u32,
-}
-```
-
-**Gas profiling** — captured from revm's execution result.
-
-```rust
-// revm returns ExecutionResult with:
-//   gas_used: u64
-//   gas_refunded: u64
-//   output: Output (bytes or deployment address)
-//
-// For per-opcode profiling, use revm's Inspector trait:
-//   impl Inspector<DB> for GasProfiler {
-//       fn step(&mut self, interp: &mut Interpreter, ctx: &mut EvmContext<DB>) {
-//           self.record(interp.current_opcode(), interp.gas.remaining());
-//       }
-//   }
-// GasProfiler is opt-in (perf overhead); not enabled by default.
-```
-
-**Block-STM parallel execution** (for historical replay mode only):
-
-```rust
-pub struct MultiVersionStore {
-    // DashMap for concurrent access during parallel block execution
-    versions: dashmap::DashMap<(Address, U256), Vec<VersionEntry>>,
-}
-
-pub struct VersionEntry {
-    pub tx_index: usize,
-    pub value: U256,
-    pub incarnation: u32,  // incremented on re-execution after conflict
-}
-
-// Algorithm:
-// 1. Execute all txs in block optimistically in parallel (rayon threadpool)
-// 2. Track read/write sets in MultiVersionStore
-// 3. Detect conflicts: tx_i reads slot that tx_j < tx_i already wrote
-// 4. Re-execute conflicting txs sequentially
-// 5. Typical DeFi blocks: <5% conflict rate (Saraph & Herlihy, 2019)
-// Block-STM only used in --mode historical; live mode replays 5-15 txs/block
 ```
 
 ---
 
-### Unit 4: Scenario System
+### Unit 3: Event Feed & Status Bar
 
-**Files:** `scenario.rs`
-**~350 lines**
-
-#### Quick Reference
-
-**Scenario definition** (JSON via RPC; TOML file format for built-ins):
-
-```toml
-# tests/scenarios/uniswap_v3_entry.toml
-[scenario]
-name = "uniswap_v3_lp_entry"
-description = "Add concentrated liquidity to WETH/USDC 0.05% pool"
-
-[[transactions]]
-from = "0x1234...golem"
-to   = "0x88e6...pool_manager"
-data = "0x..."    # NonfungiblePositionManager.mint() calldata
-value = "0x0"
-gas   = "0x7a120"
-
-[assertions]
-# Verify pool entered watch list after tx
-watch_list_contains = ["0x88e6...pool"]
-# Verify position NFT minted
-token_balance_gte = { token = "0x...nft", address = "0x...golem", amount = "1" }
-
-[track]
-addresses = ["0x88e6...pool", "0x...weth", "0x...usdc"]
-```
-
-**Built-in scenarios:**
-
-| Scenario | File | Description |
-|----------|------|-------------|
-| ETH price crash | `tests/scenarios/eth_crash.toml` | 20-40 directional WETH→USDC swaps, 10-90% drop |
-| Volume spike | `tests/scenarios/volume_spike.toml` | 100 two-directional swaps, 2/3 buy 1/3 sell |
-| Uniswap V3 LP entry | `tests/scenarios/uniswap_v3_entry.toml` | Mint concentrated liquidity position |
-| Aave liquidation | `tests/scenarios/aave_liquidation.toml` | Drop ETH oracle 20%, liquidate a position |
-| New pool bootstrap | `tests/scenarios/new_pool.toml` | Deploy token, create V3 pool, add liquidity |
-
-**ScenarioSet and ScenarioRunner:**
-
-```rust
-pub struct ScenarioSet {
-    pub id: String,
-    pub baseline_snapshot_id: u64,  // evm_snapshot taken at set creation
-    pub scenarios: Vec<Scenario>,
-    pub status: ScenarioSetStatus,
-}
-
-pub struct Scenario {
-    pub id: String,
-    pub name: String,
-    pub transactions: Vec<TransactionRequest>,
-    pub track_addresses: Vec<Address>,
-    pub max_gas: Option<u64>,
-    pub timeout: Duration,
-}
-
-pub struct ScenarioRunner {
-    state: Arc<parking_lot::RwLock<MirageState>>,
-}
-
-impl ScenarioRunner {
-    // Sequential: run each scenario branch from baseline, revert after each
-    pub async fn run_sequential(&self, set: &ScenarioSet) -> Vec<ScenarioResult>;
-
-    // Parallel: each scenario gets a CowState branch from baseline
-    // Branches are independent; no locking needed between them
-    pub async fn run_parallel(&self, set: &ScenarioSet) -> Vec<ScenarioResult>;
-}
-
-pub struct ScenarioResult {
-    pub scenario_id: String,
-    pub name: String,
-    pub status: ScenarioStatus,      // Success | Reverted | Timeout | GasExceeded | Error
-    pub gas_used: u64,
-    pub wall_time_ms: u64,
-    pub peak_memory_bytes: u64,
-    pub final_balances: HashMap<Address, U256>,
-    pub position_state: serde_json::Value,
-    pub logs: Vec<LogEntry>,
-    pub revert_reason: Option<String>,
-}
-
-pub enum ScenarioStatus {
-    Success,
-    Reverted,
-    Timeout,
-    GasExceeded,
-    Error(String),
-}
-```
-
-**Scenario composition** — snapshot branching:
-
-```rust
-// Sequential pattern:
-// 1. baseline_snapshot_id = evm_snapshot()
-// 2. For each scenario:
-//    a. Run transactions
-//    b. Collect results
-//    c. evm_revert(baseline_snapshot_id)  -- restores state
-//    d. Take new snapshot for next branch (snapshot is single-use)
-
-// CoW parallel pattern:
-// 1. Freeze baseline as Arc<HashMap> from current DirtyStore
-// 2. Each scenario gets CowState::branch(&baseline)
-// 3. Run in parallel (rayon or tokio tasks)
-// 4. No revert needed; branches are discarded after result collection
-```
-
-**ScenarioJob** (async execution tracking):
-
-```rust
-pub struct ScenarioJob {
-    pub job_id: String,
-    pub set_id: String,
-    pub status: JobStatus,   // Running | Complete | Failed
-    pub results: Option<Vec<ScenarioResult>>,
-    pub total_wall_time_ms: Option<u64>,
-}
-
-// Jobs run in background tokio tasks
-// Poll via mirage_getScenarioResults until status != Running
-// Results include comparison data for mirage_compareScenarios (pnl/gas/state_diff metrics)
-```
-
-**Scenario file paths:**
-
-```
-tests/
-└── scenarios/
-    ├── eth_crash.toml
-    ├── volume_spike.toml
-    ├── uniswap_v3_entry.toml
-    ├── aave_liquidation.toml
-    └── new_pool.toml
-```
-
----
-
-### Unit 5: Bardo Integration
-
-**Files:** `integration.rs`, `resources.rs`
-**~250 lines**
+**Files:** `src/widgets/feed.rs`, `src/widgets/status_bar.rs`
 
 #### Quick Reference
 
-**MirageClient** — async client for golem components connecting to mirage-rs over local JSON-RPC.
+**EventFeed ring buffer:**
+
+`VecDeque` with a maximum capacity. When a new entry arrives and `len() == max_entries`, `pop_front()` before `push_back()`. Scroll offset tracks how far back the user has scrolled from the most recent entry. A `filter: Option<String>` field holds a substring to match against messages (case-insensitive).
 
 ```rust
-use golem_core::config::GolemConfig;
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FeedLevel { Info, Warn, Error, Debug }
 
-pub struct MirageConfig {
-    pub url: String,          // e.g., "http://127.0.0.1:8545"
-    pub timeout: Duration,    // per-request timeout, default: 30s
-    pub retry_attempts: u32,  // on connection error, default: 3
-    pub retry_backoff: Duration,  // initial backoff, default: 500ms
+impl FeedLevel {
+    fn color(&self) -> Color {
+        use crate::palette::*;
+        match self {
+            FeedLevel::Info  => TEXT_PRIMARY,
+            FeedLevel::Warn  => WARNING,
+            FeedLevel::Error => ROSE_BRIGHT,
+            FeedLevel::Debug => TEXT_DIM,
+        }
+    }
+
+    fn label(&self) -> &'static str {
+        match self {
+            FeedLevel::Info  => "INFO ",
+            FeedLevel::Warn  => "WARN ",
+            FeedLevel::Error => "ERROR",
+            FeedLevel::Debug => "DBG  ",
+        }
+    }
 }
 
-impl MirageConfig {
-    /// Derive from GolemConfig (reads mirage.url, mirage.port from TOML)
-    pub fn from_golem_config(config: &GolemConfig) -> Self { ... }
+pub struct FeedEntry {
+    pub tick: u64,
+    pub level: FeedLevel,
+    pub message: String,
+}
 
-    pub fn default_local() -> Self {
+pub struct EventFeed {
+    pub entries: VecDeque<FeedEntry>,
+    pub max_entries: usize,   // default 1000
+    pub scroll_offset: usize, // 0 = show newest, N = scrolled N lines back
+    pub filter: Option<String>,
+}
+
+impl EventFeed {
+    pub fn new(max_entries: usize) -> Self {
         Self {
-            url: "http://127.0.0.1:8545".to_string(),
-            timeout: Duration::from_secs(30),
-            retry_attempts: 3,
-            retry_backoff: Duration::from_millis(500),
+            entries: VecDeque::with_capacity(max_entries.min(1000)),
+            max_entries,
+            scroll_offset: 0,
+            filter: None,
+        }
+    }
+
+    pub fn push(&mut self, entry: FeedEntry) {
+        if self.entries.len() >= self.max_entries {
+            self.entries.pop_front();
+        }
+        self.entries.push_back(entry);
+    }
+
+    /// Returns filtered entries, newest first.
+    fn visible_entries(&self) -> Vec<&FeedEntry> {
+        let filter_lower = self.filter.as_deref()
+            .map(|f| f.to_lowercase());
+        self.entries.iter()
+            .filter(|e| {
+                filter_lower.as_deref()
+                    .map(|f| e.message.to_lowercase().contains(f))
+                    .unwrap_or(true)
+            })
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .collect()
+    }
+}
+```
+
+**EventFeed render:**
+
+```rust
+impl Widget for &EventFeed {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
+
+        let visible = self.visible_entries();
+        let total = visible.len();
+        let display_rows = area.height as usize;
+
+        // Apply scroll: offset from the newest entry
+        let start_idx = self.scroll_offset.min(total.saturating_sub(display_rows));
+
+        for (row, entry) in visible.iter()
+            .skip(start_idx)
+            .take(display_rows)
+            .enumerate()
+        {
+            let y = area.y + row as u16;
+
+            // Tick number in dim
+            let tick_str = format!("{:>6} ", entry.tick);
+            let level_str = entry.level.label();
+            let msg_max = area.width.saturating_sub(
+                tick_str.len() as u16 + level_str.len() as u16 + 1
+            ) as usize;
+            let msg: String = entry.message.chars().take(msg_max).collect();
+
+            let mut x = area.x;
+            buf.set_string(x, y, &tick_str, Style::default().fg(TEXT_GHOST));
+            x += tick_str.len() as u16;
+            buf.set_string(x, y, level_str,
+                Style::default().fg(entry.level.color()).add_modifier(Modifier::BOLD));
+            x += level_str.len() as u16;
+            buf.set_string(x, y, " ", Style::default());
+            x += 1;
+            buf.set_string(x, y, &msg, Style::default().fg(entry.level.color()));
         }
     }
 }
-
-pub struct MirageClient {
-    config: MirageConfig,
-    inner: reqwest::Client,
-}
-
-impl MirageClient {
-    pub async fn new(config: MirageConfig) -> Result<Self, MirageError>;
-
-    // Core operations used by golem components
-    pub async fn eth_call(&self, req: TransactionRequest) -> Result<Bytes, MirageError>;
-    pub async fn eth_send_transaction(&self, req: TransactionRequest) -> Result<B256, MirageError>;
-    pub async fn evm_snapshot(&self) -> Result<u64, MirageError>;
-    pub async fn evm_revert(&self, id: u64) -> Result<bool, MirageError>;
-    pub async fn mirage_watch_contract(&self, addr: Address) -> Result<(), MirageError>;
-    pub async fn mirage_get_position(&self, req: PositionRequest) -> Result<PositionSnapshot, MirageError>;
-    pub async fn mirage_status(&self) -> Result<MirageStatus, MirageError>;
-    pub async fn mirage_get_resource_usage(&self) -> Result<ResourceUsage, MirageError>;
-    pub async fn mirage_begin_scenario_set(&self, baseline: &str) -> Result<String, MirageError>;
-    pub async fn mirage_define_scenario(&self, set_id: &str, scenario: &Scenario) -> Result<String, MirageError>;
-    pub async fn mirage_run_scenario_set(&self, set_id: &str, mode: RunMode) -> Result<String, MirageError>;
-    pub async fn mirage_get_scenario_results(&self, job_id: &str) -> Result<ScenarioJob, MirageError>;
-
-    // Start/stop for test harnesses
-    pub async fn wait_ready(&self, timeout: Duration) -> Result<(), MirageError>;
-    // Polls mirage_status every 500ms until status == "ready" or timeout
-}
-
-pub enum RunMode { Sequential, Parallel }
 ```
 
-**Golem-chain integration** (Plan 09 will use MirageClient as its test backend):
+Note `Widget for &EventFeed` (reference) because `EventFeed` holds a `VecDeque` and we don't want to move it on render.
+
+**StatusBar:**
+
+The status bar is a single-row widget pinned to the bottom of the screen. `App` renders it after all other widgets.
 
 ```rust
-// In golem-chain tests: instead of connecting to live RPC,
-// tests spawn mirage-rs and pass MirageClient as the provider.
-//
-// Pattern:
-// let mirage = spawn_mirage_test_instance().await?;
-// let client = MirageClient::new(mirage.config()).await?;
-// // Run test txs against mirage, assert state, tear down
-// mirage.shutdown().await;
-
-pub struct MirageTestInstance {
-    process: tokio::process::Child,
-    port: u16,
-    pid_file: PathBuf,
+pub struct StatusBar<'a> {
+    pub phase: &'a str,           // e.g. "STABLE" — TODO Plan 70a: from AppState
+    pub tick: u64,
+    pub pad_summary: &'a str,     // e.g. "P:0.3 A:0.1 D:0.4" — TODO Plan 70a
+    pub credit_balance: &'a str,  // e.g. "$142.50" — TODO Plan 70a
+    pub projected_days: Option<f64>,  // remaining lifespan estimate — TODO Plan 70a
 }
 
-impl MirageTestInstance {
-    pub fn config(&self) -> MirageConfig { ... }
-    pub async fn shutdown(&mut self) -> Result<(), MirageError>;
-    // Sends mirage_shutdown, waits 5s, then SIGTERM
-}
+impl<'a> Widget for StatusBar<'a> {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
 
-pub async fn spawn_mirage_test_instance(
-    rpc_url: Option<&str>,
-    port: Option<u16>,
-) -> Result<MirageTestInstance, MirageError>;
-// Spawns mirage-rs binary, polls mirage_status until ready
-// port defaults to 18545 to avoid conflicting with dev instance on 8545
-```
+        // Fill background
+        for x in area.x..(area.x + area.width) {
+            if let Some(cell) = buf.cell_mut((x, area.y)) {
+                cell.set_char(' ');
+                cell.set_style(Style::default().bg(BG_MID));
+            }
+        }
 
-**Heartbeat integration** (Plan 15 uses MirageClient for tick execution):
+        // Left section: phase + tick
+        let left = format!(" {} #{}", self.phase, self.tick);
+        buf.set_string(area.x, area.y, &left,
+            Style::default().fg(BONE).bg(BG_MID).add_modifier(Modifier::BOLD));
 
-```rust
-// Heartbeat polls mirage_get_position on each gamma tick (~250ms)
-// Events from mirage_subscribe_events trigger immediate range checks
-// resource_pressure from mirage_get_resource_usage feeds into CorticalState
+        // Center section: PAD summary
+        let center_x = area.x + area.width / 3;
+        buf.set_string(center_x, area.y, self.pad_summary,
+            Style::default().fg(TEXT_DIM).bg(BG_MID));
 
-// MirageClient::subscribe_events returns a tokio Stream:
-pub async fn subscribe_events(
-    &self,
-    filter: EventFilter,
-) -> Result<impl futures::Stream<Item = MirageEvent>, MirageError>;
-// Uses SSE transport internally
-
-pub struct EventFilter {
-    pub addresses: Option<Vec<Address>>,
-    pub topics: Option<Vec<B256>>,
-}
-
-pub struct MirageEvent {
-    pub block_number: u64,
-    pub tx_hash: B256,
-    pub log_index: u32,
-    pub contract: Address,
-    pub topics: Vec<B256>,
-    pub data: Bytes,
-    pub source: EventSource,  // LocalTx | FollowerReplay
-    pub decoded: Option<serde_json::Value>,
+        // Right section: credit + days remaining
+        let right = if let Some(days) = self.projected_days {
+            format!("{} | {:.0}d remaining ", self.credit_balance, days)
+        } else {
+            format!("{} ", self.credit_balance)
+        };
+        let right_x = area.x + area.width.saturating_sub(right.len() as u16);
+        buf.set_string(right_x, area.y, &right,
+            Style::default().fg(TEXT_DIM).bg(BG_MID));
+    }
 }
 ```
 
-**ResourceModel** (in `resources.rs`):
+**EventFeed tests:**
 
 ```rust
-pub struct ResourceModel {
-    pub profile: Profile,
-    pub max_memory_bytes: u64,
-    pub max_watched_contracts: usize,
-    pub cache_capacity: usize,
-    pub cache_ttl: Duration,
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_event_feed_scroll() {
+        let mut feed = EventFeed::new(5);
+        for i in 0..10u64 {
+            feed.push(FeedEntry { tick: i, level: FeedLevel::Info,
+                message: format!("msg {}", i) });
+        }
+        // max_entries=5, so only entries 5..9 remain (newest)
+        assert_eq!(feed.entries.len(), 5);
+        assert_eq!(feed.entries.back().unwrap().tick, 9);
+
+        // Filter test
+        feed.filter = Some("msg 6".to_string());
+        let vis = feed.visible_entries();
+        assert_eq!(vis.len(), 1);
+        assert_eq!(vis[0].tick, 6);
+    }
+}
+```
+
+---
+
+### Unit 4: Tab Bar, Scrollable List & Key Help Overlay
+
+**Files:** `src/widgets/tabs.rs`, `src/widgets/scrolllist.rs`, `src/widgets/key_help.rs`
+
+#### Quick Reference
+
+**TabBar:**
+
+Renders a horizontal strip. The active tab is highlighted with `BONE` + `BORDER_ACTIVE` borders, inactive tabs use `TEXT_DIM`. Each tab label is padded to at least 3 chars. On Compact layout, only the active tab's label is shown; others collapse to a dot.
+
+```rust
+pub struct TabBar<'a> {
+    pub tabs: &'a [&'a str],
+    pub active: usize,
 }
 
-pub enum Profile {
-    Micro,     // 256 MB, 32 contracts, 5_000 cache entries
-    Standard,  // 512 MB, 64 contracts, 10_000 cache entries (default)
-    Power,     // 2 GB,   256 contracts, 50_000 cache entries
+impl<'a> Widget for TabBar<'a> {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
+
+        // Fill background row
+        for x in area.x..(area.x + area.width) {
+            if let Some(cell) = buf.cell_mut((x, area.y)) {
+                cell.set_char(' ');
+                cell.set_style(Style::default().bg(BG_MID));
+            }
+        }
+
+        let mut x = area.x;
+        for (i, &tab) in self.tabs.iter().enumerate() {
+            let is_active = i == self.active;
+            let label = if is_active {
+                format!("⌈ {} ⌋", tab)
+            } else {
+                format!("  {}  ", tab)
+            };
+
+            if x + label.len() as u16 > area.x + area.width { break; }
+
+            buf.set_string(x, area.y, &label, Style::default()
+                .fg(if is_active { BONE } else { TEXT_DIM })
+                .bg(if is_active { BG_RAISED } else { BG_MID })
+                .add_modifier(if is_active { Modifier::BOLD } else { Modifier::empty() })
+            );
+
+            x += label.len() as u16;
+        }
+    }
+}
+```
+
+**ScrollableList:**
+
+Holds a `Vec<String>` of items, a `cursor` index, a `scroll_offset` tracking the top visible row, and an optional `filter` for substring matching. `j`/`k` or arrow keys move the cursor; `filter` is typed into `App`'s input buffer and passed in at render time.
+
+```rust
+pub struct ScrollableList {
+    pub items: Vec<String>,      // TODO Plan 70a: sourced from AppState
+    pub cursor: usize,
+    pub scroll_offset: usize,
+    pub filter: Option<String>,
 }
 
-pub struct ResourceUsage {
-    pub memory_bytes: u64,
-    pub memory_limit_bytes: u64,
-    pub resource_pressure: f64,    // 0.0 = idle, 1.0 = at limit
-    pub cache_hit_rate: f64,
-    pub cache_entries: usize,
-    pub cache_capacity: usize,
-    pub watch_list_size: usize,
-    pub dirty_slot_count: u64,
-    pub upstream_rpc_calls: u64,
-    pub upstream_rpc_errors: u64,
-    pub mode: MirageMode,
-    pub disk_usage_bytes: u64,
+impl ScrollableList {
+    pub fn new(items: Vec<String>) -> Self {
+        Self { items, cursor: 0, scroll_offset: 0, filter: None }
+    }
+
+    pub fn filtered_items(&self) -> Vec<(usize, &str)> {
+        // Returns (original_index, item_str) pairs for all matching items
+        let filter_lower = self.filter.as_deref()
+            .map(|f| f.to_lowercase());
+        self.items.iter().enumerate()
+            .filter(|(_, item)| {
+                filter_lower.as_deref()
+                    .map(|f| item.to_lowercase().contains(f))
+                    .unwrap_or(true)
+            })
+            .map(|(i, s)| (i, s.as_str()))
+            .collect()
+    }
+
+    pub fn move_cursor_down(&mut self) {
+        let n = self.filtered_items().len();
+        if n == 0 { return; }
+        self.cursor = (self.cursor + 1).min(n - 1);
+    }
+
+    pub fn move_cursor_up(&mut self) {
+        self.cursor = self.cursor.saturating_sub(1);
+    }
 }
 
-pub enum MirageMode { Live, Historical, Proxy }
+impl Widget for &ScrollableList {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
 
-// Pressure tiers (hard-coded):
-// < 0.5  → green: new forks allowed
-// ≥ 0.5  → warning: log, allow forks
-// ≥ 0.7  → throttle: evict ReadCache LRU, demote new contracts to SlotOnly, refuse forks
-// ≥ 0.9  → emergency: stop TargetedFollower replay entirely, mode = Proxy, emit CorticalState signal
+        let filtered = self.filtered_items();
+        let display_rows = area.height as usize;
 
-// Eviction: LRU on ReadCache when throttle tier hit.
-// DirtyStore is never evicted (preserves local state correctness).
-// BytecodeCache: LRU by code_hash, capacity = min(10_000, profile.cache_capacity / 5).
+        // Ensure scroll_offset keeps cursor visible
+        // (scroll_offset managed by parent on cursor move; widget just uses it)
+        for (row, (orig_idx, item)) in filtered.iter()
+            .skip(self.scroll_offset)
+            .take(display_rows)
+            .enumerate()
+        {
+            let y = area.y + row as u16;
+            let is_cursor = (self.scroll_offset + row) == self.cursor;
 
-// OS-level spawn gate (checked at startup):
-// required = profile.max_memory + 128 MB
-// available = sysinfo::System::available_memory()
-// if available < required: exit(2) with structured error message
+            let prefix = if is_cursor { "▶ " } else { "  " };
+            let line: String = format!("{}{}", prefix, item)
+                .chars().take(area.width as usize).collect();
+
+            buf.set_string(area.x, y, &line, Style::default()
+                .fg(if is_cursor { BONE } else { TEXT_PRIMARY })
+                .bg(if is_cursor { BG_RAISED } else { BG_VOID })
+                .add_modifier(if is_cursor { Modifier::BOLD } else { Modifier::empty() })
+            );
+        }
+    }
+}
+```
+
+**KeyHelpOverlay:**
+
+A floating centered box. Rendered on top of whatever is below it. Width is determined by the longest key+description pair plus padding. Toggle with `?`. `visible: bool` is checked by the parent screen — if `false`, the widget renders nothing.
+
+```rust
+pub struct KeyBinding {
+    pub key: String,
+    pub description: String,
+}
+
+pub struct KeyHelpOverlay {
+    pub bindings: Vec<KeyBinding>,
+    pub visible: bool,
+}
+
+impl Widget for &KeyHelpOverlay {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        use crate::palette::*;
+
+        if !self.visible || area.width < 20 || area.height < 5 { return; }
+
+        // Compute box dimensions
+        let max_key_len = self.bindings.iter()
+            .map(|b| b.key.len()).max().unwrap_or(1);
+        let max_desc_len = self.bindings.iter()
+            .map(|b| b.description.len()).max().unwrap_or(10);
+        let inner_width = (max_key_len + max_desc_len + 5).min(area.width as usize - 4);
+        let inner_height = self.bindings.len().min(area.height as usize - 4);
+        let box_width  = (inner_width  + 4) as u16;
+        let box_height = (inner_height + 2) as u16;
+
+        // Center the box
+        let box_x = area.x + area.width.saturating_sub(box_width) / 2;
+        let box_y = area.y + area.height.saturating_sub(box_height) / 2;
+
+        // Draw border
+        let border_style = Style::default().fg(BORDER_ACTIVE).bg(BG_RAISED);
+        let inner_style  = Style::default().fg(TEXT_PRIMARY).bg(BG_RAISED);
+
+        // Top row
+        if let Some(cell) = buf.cell_mut((box_x, box_y)) {
+            cell.set_char('┌'); cell.set_style(border_style);
+        }
+        for x in (box_x + 1)..(box_x + box_width - 1) {
+            if let Some(cell) = buf.cell_mut((x, box_y)) {
+                cell.set_char('─'); cell.set_style(border_style);
+            }
+        }
+        if let Some(cell) = buf.cell_mut((box_x + box_width - 1, box_y)) {
+            cell.set_char('┐'); cell.set_style(border_style);
+        }
+
+        // Title in top border
+        let title = " KEY BINDINGS ";
+        buf.set_string(box_x + 2, box_y, title,
+            Style::default().fg(BONE).bg(BG_RAISED));
+
+        // Body rows
+        for (row, binding) in self.bindings.iter().take(inner_height).enumerate() {
+            let y = box_y + 1 + row as u16;
+            // Left border
+            if let Some(cell) = buf.cell_mut((box_x, y)) {
+                cell.set_char('│'); cell.set_style(border_style);
+            }
+            // Fill background
+            for x in (box_x + 1)..(box_x + box_width - 1) {
+                if let Some(cell) = buf.cell_mut((x, y)) {
+                    cell.set_char(' '); cell.set_style(inner_style);
+                }
+            }
+            // Key (bold, rose)
+            let key_display = format!("{:<width$}", binding.key, width = max_key_len);
+            buf.set_string(box_x + 2, y, &key_display,
+                Style::default().fg(ROSE).bg(BG_RAISED).add_modifier(Modifier::BOLD));
+            // Separator
+            buf.set_string(box_x + 2 + max_key_len as u16, y, " — ",
+                Style::default().fg(TEXT_DIM).bg(BG_RAISED));
+            // Description
+            let desc: String = binding.description.chars()
+                .take(max_desc_len).collect();
+            buf.set_string(box_x + 2 + max_key_len as u16 + 3, y, &desc,
+                Style::default().fg(TEXT_PRIMARY).bg(BG_RAISED));
+            // Right border
+            if let Some(cell) = buf.cell_mut((box_x + box_width - 1, y)) {
+                cell.set_char('│'); cell.set_style(border_style);
+            }
+        }
+
+        // Bottom row
+        let bottom_y = box_y + box_height - 1;
+        if let Some(cell) = buf.cell_mut((box_x, bottom_y)) {
+            cell.set_char('└'); cell.set_style(border_style);
+        }
+        for x in (box_x + 1)..(box_x + box_width - 1) {
+            if let Some(cell) = buf.cell_mut((x, bottom_y)) {
+                cell.set_char('─'); cell.set_style(border_style);
+            }
+        }
+        if let Some(cell) = buf.cell_mut((box_x + box_width - 1, bottom_y)) {
+            cell.set_char('┘'); cell.set_style(border_style);
+        }
+    }
+}
+```
+
+**`src/widgets/mod.rs`:**
+
+```rust
+pub mod sparkline;
+pub mod gauge;
+pub mod heatmap;
+pub mod timeline;
+pub mod feed;
+pub mod tabs;
+pub mod status_bar;
+pub mod scrolllist;
+pub mod key_help;
+
+pub use sparkline::BrailleSparkline;
+pub use gauge::{VitalityGauge, ConfidenceGauge, AccuracyGauge, MockPhase};
+pub use heatmap::{PheromoneHeatmap, PheromoneLayer};
+pub use timeline::{TimelineRibbon, TimelineEvent, RibbonEventType};
+pub use feed::{EventFeed, FeedEntry, FeedLevel};
+pub use tabs::TabBar;
+pub use status_bar::StatusBar;
+pub use scrolllist::ScrollableList;
+pub use key_help::{KeyHelpOverlay, KeyBinding};
 ```
 
 ---
 
 ## Failure Recovery
 
-**revm 36.x API changes.** The prd2 specs use `Context::mainnet().with_db(...).build_mainnet()` and `evm.transact_commit(tx)`. If `revm::primitives` module paths have shifted, check `revm::context` and `revm::handler`. The `Database` trait's four methods (`basic`, `code_by_hash`, `storage`, `block_hash`) are stable. If the `build_mainnet()` builder pattern changed, fall back to `Evm::builder().with_db(db).build()`.
+**`char::from_u32` returns `None` on bad braille codepoint:**
+- The expression `0x2800 + bits as u32` can only produce values in U+2800..=U+28FF. All are valid Unicode. The `.unwrap_or(' ')` fallback is a safety net, not an expected code path. If it triggers, the `bits` computation overflowed — check that `left_bits` and `right_bits` are not producing values > 0xFF combined.
 
-**Alloy provider compilation fails.** Use `ProviderBuilder::new().on_http(url)` for HTTP and `ProviderBuilder::new().on_ws(WsConnect::new(url)).await` for WebSocket. Feature flags required: `provider-http`, `provider-ws`, `transport-http`, `transport-ws`. If `connect_pubsub` is renamed, check `alloy::providers::ws`.
+**`buf.cell_mut((x, y))` returns `None` at boundary:**
+- ratatui returns `None` for coordinates outside the buffer rect. Always guard with `if let Some(cell) = buf.cell_mut(...)`. Never index directly.
 
-**Port conflict on 8545.** Default port is 8545 (matching Anvil). Test harnesses should use `--port 18545`. If startup binding fails, the error is `MirageError::BindFailed(port)` and the process exits with code 1.
+**`PheromoneHeatmap` grid dimensions don't match `width`/`height` fields:**
+- The render loop uses `self.grid.len()` and `self.grid[0].len()` as the actual dimensions, clamped to `area.height` and `area.width`. The `width`/`height` fields on the struct are hints for layout sizing, not enforced. Mismatched fields produce a smaller rendered grid, not a panic.
 
-**Memory pressure from cached slots.** LRU eviction fires at the 0.7 throttle tier. `max_slots` per `ReadCache` controlled by `--cache-size` (default 10_000). If memory still climbs, reduce with `mirage_setResourceLimits` at runtime.
+**`KeyHelpOverlay` box extends beyond `area` bounds:**
+- The box dimensions are clamped to `area.width - 4` and `area.height - 4`. If `area` is smaller than 20x5 the widget returns early without rendering. Screens must allocate at least that much area for the overlay.
 
-**Scenario replay diverges from recorded.** State may have drifted from the recorded baseline. Use `evm_snapshot` before recording the baseline, store the snapshot ID, and replay from that exact ID. For scenarios recorded against a specific block, use `--mode historical --from-block N` to pin the baseline.
+**`ScrollableList` cursor out of bounds after filter change:**
+- When `filter` changes, the filtered item count may drop below `cursor`. The `filtered_items()` method does not clamp `cursor` — the parent screen must call `move_cursor_up()` / reset cursor to 0 when filter text changes. Add this to the screen's `handle_key` implementation.
 
-**Mainnet tx reverts during TargetedFollower replay.** Expected behavior when the golem's local state diverges from mainnet (e.g., liquidity changed past a swap's slippage tolerance). The follower logs the revert and continues. Check `mirage_status.divergence_detected` to confirm revert was incidental rather than systematic.
+**`EventFeed` scroll offset becomes stale after new entries push old ones out:**
+- `push()` does not adjust `scroll_offset`. If the user is scrolled back 50 lines and 100 new entries arrive, their view shifts. This is acceptable at scaffold stage — Plans 70a-70c will add proper scroll anchoring. For now, pressing the End key (handled by the parent screen) resets `scroll_offset` to 0.
 
-**Upstream RPC rate limit.** Reduce `--upstream-rps` (default 100). Use a private archive node for heavy fork workloads. `prefetchSlots` before complex transactions to avoid mid-execution fetch failures.
+**`cargo check` fails: `Widget` trait bound not satisfied:**
+- Ensure each struct derives nothing that conflicts with the `Widget` implementation. The `Widget` trait in ratatui 0.30 requires `fn render(self, area: Rect, buf: &mut Buffer)` consuming `self`. For `EventFeed` and `ScrollableList`, which must not be consumed, implement `Widget for &EventFeed` and `Widget for &ScrollableList` instead of consuming variants.
 
-**WebSocket subscription drops.** TargetedFollower reconnects with exponential backoff. No action needed in golem clients.
+**Braille characters not rendering correctly in some terminals:**
+- Braille Unicode support requires a terminal font with the Braille Patterns block (U+2800–U+28FF). Common fonts with support: JetBrains Mono, Nerd Fonts, Fira Code. If dots appear as boxes or question marks, this is a font issue, not a code bug. The sparkline widget is correct; note this in the testing checkpoint output.
 
 ---
 
 ## Testing Checkpoint
 
 ```bash
-cargo check -p mirage-rs
-cargo test -p mirage-rs -- --nocapture
+# Compile check — must have zero errors
+cargo check -p bardo-terminal
+
+# Run widget unit tests
+cargo test -p bardo-terminal -- widgets --nocapture
 ```
 
-Expected test output:
+**Expected test output:**
+
 ```
-test fork::tests::hybrid_db_dirty_store_wins ... ok
-test fork::tests::hybrid_db_read_cache_prevents_rpc ... ok
-test fork::tests::hybrid_db_partial_dirty_merge ... ok
-test fork::tests::dirty_store_snapshot_revert_roundtrip ... ok
-test fork::tests::dirty_store_snapshot_single_use ... ok
-test fork::tests::diff_classifier_protocol_at_threshold ... ok
-test fork::tests::diff_classifier_token_heuristic ... ok
-test fork::tests::diff_classifier_unwatch_prevents_readd ... ok
-test cow::tests::cow_branches_share_baseline ... ok
-test cow::tests::cow_branches_are_isolated ... ok
-test cow::tests::cow_memory_scales_with_overlays ... ok
-test cow::tests::bytecode_cache_no_ttl ... ok
-test replay::tests::speculative_exec_no_state_commit ... ok
-test replay::tests::state_diff_account_and_storage ... ok
-test replay::tests::block_stm_matches_sequential ... ok
-test scenario::tests::scenario_runner_basic ... ok
-test scenario::tests::scenario_runner_revert_restores_baseline ... ok
-test integration::tests::mirage_client_wait_ready ... ok
-test resources::tests::pressure_tiers ... ok
-test resources::tests::lru_eviction_at_capacity ... ok
+test widgets::sparkline::tests::test_braille_sparkline_encodes_correctly ... ok
+test widgets::gauge::tests::test_vitality_gauge_colors ... ok
+test widgets::gauge::tests::test_confidence_color_thresholds ... ok
+test widgets::feed::tests::test_event_feed_scroll ... ok
 ```
 
-Integration test:
-```bash
-# Start mirage-rs with a mock upstream (or real RPC via env)
-MIRAGE_RPC_URL="${RPC_URL:-http://localhost:8545}" \
-    cargo test -p mirage-rs --test integration -- --nocapture
+**Manual integration check:**
+
+To verify widgets render correctly, temporarily add widget exercise code to `HomeScreen::render`:
+
+```rust
+// In src/screens/home.rs, after existing render code:
+// Exercise the sparkline in a 1-row area at the bottom of the creature panel
+use crate::widgets::BrailleSparkline;
+let sparkline_area = Rect { x: area.x, y: area.y + area.height - 1,
+    width: 20, height: 1 };
+let sparkline = BrailleSparkline {
+    data: (0..40).map(|i| (i as f64 / 40.0 * std::f64::consts::PI * 2.0).sin().abs())
+        .collect(),
+    max_value: 1.0,
+    color: crate::palette::ROSE,
+    label: None,
+};
+sparkline.render(sparkline_area, frame.buffer_mut());
 ```
 
-Expected integration test steps:
-1. Spawn mirage-rs on port 18545 (avoid conflicting with dev instance)
-2. Connect via `MirageClient::new(MirageConfig { url: "http://127.0.0.1:18545", .. })`
-3. Call `mirage_client.wait_ready(Duration::from_secs(10)).await`
-4. Execute a simulated ETH transfer via `eth_send_transaction`
-5. Assert sender balance decreased in `eth_get_balance`
-6. Assert receiver balance increased
-7. Assert `StateDiff` contains the two balance changes
-8. Call `evm_snapshot`, modify state, call `evm_revert`, assert state restored
-9. Shutdown via `mirage_test_instance.shutdown().await`
+Run `cargo run -p bardo-terminal` and verify the braille sparkline appears as a sine wave of braille dots at the bottom of the creature panel. Remove the exercise code before committing.
 
-```bash
-# Expected integration output:
-# test integration_eth_transfer_state_diff ... ok
-# test integration_snapshot_revert ... ok
-# test integration_scenario_runner_cow_isolation ... ok
-```
+**Additional checks:**
+1. `BrailleSparkline` with 80 data points in a 40-col area renders without index out of bounds
+2. `VitalityGauge` at `value = 0.0` shows an empty bar (no filled cells)
+3. `EventFeed` with 1200 entries retains only 1000 (the max)
+4. `KeyHelpOverlay` with `visible = false` renders nothing (no stray characters in buffer)
+5. `TabBar` with active index 0 shows first tab highlighted in BONE, others in TEXT_DIM
 
 ---
 
 ## Completion Report
 
-*(Codex fills this after implementation)*
+*(Codex fills this in after implementation. Include: ratatui API differences encountered in 0.30 vs the plan's assumptions, any braille encoding corrections, manual render test results, and whether all four unit tests passed on first compilation attempt.)*
 
 ## Verification
 
 ### Invariants
 
-<!-- INV-001: HybridDB read priority order -->
-- **type**: cross_crate
-- **module**: `mirage_rs::fork::HybridDB`
-- **property**: Three-tier database read must check DirtyStore first, then ReadCache, then upstream RPC
-- **formula**: `read(addr) = DirtyStore[addr] || ReadCache[addr] || upstream_fetch(addr)`
-- **constraint**: Priority order is strict; no skipping tiers
-- **test_fn**: `test_hybrid_db_tier_priority`
+<!-- INV-001: Braille dot encoding bit positions -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::sparkline`
+- **property**: Braille characters encode 2×4 grid using standardized bit positions
+- **formula**: Left column: bits [0x40, 0x04, 0x02, 0x01] for rows 3→0; Right column: bits [0x80, 0x20, 0x10, 0x08] for rows 3→0
+- **constraint**: Exactly 8 bits per character; Unicode mapping U+2800 + bit_flags produces valid braille
+- **test_fn**: `test_braille_sparkline_encodes_correctly`
 - **strategy**: unit
-- **inputs**: `{"address": "Address", "in_dirty": "bool", "in_cache": "bool"}`
-- **oracle**: Return DirtyStore value if present; else ReadCache; else upstream
+- **inputs**: `{"n_dots": [0, 1, 2, 3, 4], "side": ["left", "right"]}`
+- **oracle**: `left_bits(0) = 0x00`, `left_bits(4) = 0x01 | 0x02 | 0x04 | 0x40 = 0x47`, all 8 bits lit = 0xFF = U+28FF
 - **severity**: spec
-- **source**: plan Quick Reference Unit 1, HybridDB
+- **source**: Plan 05 §Unit 1 Quick Reference — Braille dot encoding
 
-<!-- INV-002: Cache TTL expiration -->
+<!-- INV-002: Sparkline data point scaling -->
 - **type**: numeric_range
-- **module**: `mirage_rs::fork::HybridDB`
-- **property**: Cache entries must expire after TTL and re-fetch from upstream
-- **formula**: `cache_valid(entry) = (now - entry.cached_at) < cache_ttl`
-- **constraint**: `cache_ttl ∈ [1ms, 60s]`, default 12s
-- **test_fn**: `test_cache_ttl_expiration`
+- **module**: `bardo_terminal::widgets::sparkline`
+- **property**: Data points scale to 0..=4 dots per column, clamped at boundaries
+- **formula**: `left_dots = ((left_val / max) * 4.0).round().clamp(0.0, 4.0) as usize`
+- **constraint**: Output range [0..=4]; clamping applies to both min and max
+- **test_fn**: `test_sparkline_scaling_bounds`
 - **strategy**: proptest
-- **inputs**: `{"cache_ttl": "[1, 60000]ms", "elapsed_time": "[0, 70000]ms"}`
-- **oracle**: Entry valid iff `elapsed_time < cache_ttl`
+- **inputs**: `{"left_val": [0.0, 0.25, 0.5, 0.75, 1.0, 1.5, f64::INFINITY, f64::NAN], "max": [0.0, 1.0, 100.0]}`
+- **oracle**: `clamp(round((v/m)*4.0)) in [0.0, 4.0]` for all (v, m)
 - **severity**: spec
-- **source**: plan Unit 1, HybridDB field `cache_ttl`
+- **source**: Plan 05 §Unit 1 BrailleSparkline render logic
 
-<!-- INV-003: DirtyStore partial merge -->
-- **type**: sum_constraint
-- **module**: `mirage_rs::fork::HybridDB`
-- **property**: DirtyStore partial override merges dirty fields with upstream base when needs_upstream=true
-- **formula**: `merged_account = DirtyAccount { balance: dirty.balance || upstream.balance, nonce: dirty.nonce || upstream.nonce, code: dirty.code || upstream.code }`
-- **constraint**: All three fields (balance, nonce, code) must be either from DirtyStore OR upstream; no field is left undefined
-- **test_fn**: `test_hybrid_db_partial_dirty_merge`
-- **strategy**: unit
-- **inputs**: `{"dirty_balance": "Option<U256>", "dirty_nonce": "Option<u64>", "dirty_code": "Option<Bytecode>"}`
-- **oracle**: Result account has: (dirty.X.is_some()) ? dirty.X : upstream.X for each field
-- **severity**: spec
-- **source**: plan Unit 1, HybridDB::basic()
-
-<!-- INV-004: DiffClassifier protocol_slot_threshold -->
+<!-- INV-003: Max value auto-scaling for sparkline -->
 - **type**: numeric_range
-- **module**: `mirage_rs::fork::DiffClassifier`
-- **property**: Account classified as Protocol if written slots ≥ protocol_slot_threshold
-- **formula**: `classification = Protocol iff storage_written.len() >= protocol_slot_threshold`
-- **constraint**: `protocol_slot_threshold > 0`, default 3, `storage_written.len() ∈ [0, ∞)`
-- **test_fn**: `test_diff_classifier_protocol_threshold`
+- **module**: `bardo_terminal::widgets::sparkline`
+- **property**: When max_value ≤ 0, auto-scale from data.max(); otherwise use max_value
+- **formula**: `let max = if self.max_value > 0.0 { self.max_value } else { self.data.iter().cloned().fold(f64::NEG_INFINITY, f64::max).max(1.0) }`
+- **constraint**: Final max ≥ 1.0; never divides by zero
+- **test_fn**: `test_sparkline_max_value_auto_scale`
+- **strategy**: unit
+- **inputs**: `{"max_value": [0.0, -1.5, 100.0], "data": [[], [0.5], [1.0, 2.5]]}`
+- **oracle**: empty data → max = 1.0; non-empty, max_value=0 → max ≥ min(data); max_value > 0 → max = max_value
+- **severity**: spec
+- **source**: Plan 05 §Unit 1 BrailleSparkline render logic
+
+<!-- INV-004: Vitality gauge fill width scaling -->
+- **type**: numeric_range
+- **module**: `bardo_terminal::widgets::gauge`
+- **property**: Fill width scales with gauge value, clamped to terminal width
+- **formula**: `let fill_width = ((self.value.clamp(0.0, 1.0)) * area.width as f64) as u16`
+- **constraint**: fill_width ∈ [0, area.width]; value always clamped first
+- **test_fn**: `test_vitality_gauge_fill_width`
 - **strategy**: proptest
-- **inputs**: `{"slot_count": "[0, 100]", "threshold": "[1, 10]"}`
-- **oracle**: If `slot_count >= threshold`, classify as Protocol; else check other heuristics
+- **inputs**: `{"value": [0.0, 0.25, 0.5, 0.75, 1.0, -0.5, 1.5], "area_width": [1, 10, 80, 255]}`
+- **oracle**: `fill_width = floor(clamp(value, 0, 1) * width)`; result ≤ width
 - **severity**: spec
-- **source**: plan Unit 1, ClassificationConfig `protocol_slot_threshold`
+- **source**: Plan 05 §Unit 1 VitalityGauge render logic
 
-<!-- INV-005: Watch list capacity bounds -->
-- **type**: numeric_range
-- **module**: `mirage_rs::fork::DiffClassifier`
-- **property**: Watch list size must not exceed max_watched_contracts
-- **formula**: `watch_list.len() <= max_watched_contracts`
-- **constraint**: `max_watched_contracts > 0`, default 64, Micro profile 32, Standard 64, Power 256
-- **test_fn**: `test_watch_list_capacity_enforced`
-- **strategy**: unit
-- **inputs**: `{"watch_list_size": "[0, 256]", "max_contracts": "[32, 256]"}`
-- **oracle**: `watch_list.len() <= max_contracts` always true; returns error on overflow
-- **severity**: spec
-- **source**: plan Unit 1, ClassificationConfig `max_watched_contracts`; Unit 5 ResourceModel profiles
-
-<!-- INV-006: Contagion depth cap -->
-- **type**: numeric_range
-- **module**: `mirage_rs::fork::DiffClassifier`
-- **property**: Contagion propagation depth must not exceed max_contagion_depth
-- **formula**: `contagion_depth(address) <= max_contagion_depth`
-- **constraint**: `max_contagion_depth ≥ 1`, default 2
-- **test_fn**: `test_contagion_depth_capped`
-- **strategy**: unit
-- **inputs**: `{"depth": "[1, 5]", "max_depth": "[2, 5]"}`
-- **oracle**: Traversal stops at max_depth; no cycles allowed
-- **severity**: spec
-- **source**: plan Unit 1, ClassificationConfig `max_contagion_depth`
-
-<!-- INV-007: Snapshot ID single-use guarantee -->
+<!-- INV-005: MockPhase color assignment -->
 - **type**: state_machine
-- **module**: `mirage_rs::fork::DirtyStore`
-- **property**: Each snapshot ID can only be reverted to once; second revert call fails
-- **formula**: `revert(id) succeeds iff (id exists in snapshots AND id not in reverted_ids)`
-- **constraint**: Snapshot consumed on successful revert; invalid revert → error -32001
-- **test_fn**: `test_dirty_store_snapshot_single_use`
+- **module**: `bardo_terminal::widgets::gauge`
+- **property**: Each MockPhase maps to a unique color; all 5 phases are defined
+- **formula**: `match self { Thriving → SUCCESS, Stable → Rgb(88,160,170), Conservation → WARNING, Declining → Rgb(180,100,60), Terminal → ROSE_BRIGHT }`
+- **constraint**: All 5 variants must have a color; no unreachable arms
+- **test_fn**: `test_vitality_gauge_colors`
 - **strategy**: unit
-- **inputs**: `{"snapshot_id": "u64"}`
-- **oracle**: First `revert(id)` succeeds and removes from snapshot map; second call returns `-32001 SNAPSHOT_NOT_FOUND`
+- **inputs**: `{"phase": ["Thriving", "Stable", "Conservation", "Declining", "Terminal"]}`
+- **oracle**: Each phase returns a Color; no panics; colors are distinct
 - **severity**: spec
-- **source**: plan Unit 1, DirtyStore snapshot/revert semantics
+- **source**: Plan 05 §Unit 1 MockPhase::gauge_color
 
-<!-- INV-008: Block budget timeout per block -->
+<!-- INV-006: Confidence threshold bands -->
 - **type**: numeric_range
-- **module**: `mirage_rs::replay::TargetedFollower`
-- **property**: Each block replay must complete within block_budget duration
-- **formula**: `replay_time(block) <= block_budget`
-- **constraint**: `block_budget > 0`, default 10s, type `Duration`
-- **test_fn**: `test_block_budget_timeout_enforced`
-- **strategy**: integration
-- **inputs**: `{"block_budget": "[1, 30]s", "replay_duration": "[0, 60]s"}`
-- **oracle**: Exceeding budget triggers skip to latest or error
-- **severity**: code
-- **source**: plan Unit 3, FollowerConfig `block_budget`
+- **module**: `bardo_terminal::widgets::gauge`
+- **property**: Confidence color thresholds partition [0.0, 1.0] into 4 bands
+- **formula**: `if value ≥ 0.75 { SUCCESS } else if value ≥ 0.50 { Cyan } else if value ≥ 0.25 { WARNING } else { ROSE_DIM }`
+- **constraint**: Thresholds are [0.75, 0.50, 0.25]; bands are disjoint; all possible values covered
+- **test_fn**: `test_confidence_color_thresholds`
+- **strategy**: unit
+- **inputs**: `{"value": [0.0, 0.10, 0.25, 0.30, 0.50, 0.60, 0.75, 0.95, 1.0]}`
+- **oracle**: value ≥ 0.75 → SUCCESS; 0.50 ≤ v < 0.75 → Cyan; 0.25 ≤ v < 0.50 → WARNING; v < 0.25 → ROSE_DIM
+- **severity**: spec
+- **source**: Plan 05 §Unit 1 confidence_color and AccuracyGauge
 
-<!-- INV-009: TargetedFollower tx filter HashSet lookup -->
+<!-- INV-007: Viridis color stop indices -->
 - **type**: numeric_range
-- **module**: `mirage_rs::replay::TargetedFollower`
-- **property**: Transaction filter lookup via address HashSet is O(1) per tx, ~1µs typical latency
-- **formula**: `filter_lookup_time ≈ 1µs per tx`
-- **constraint**: Lookup must complete before next block arrives (~12-13s Ethereum); batching allowed
-- **test_fn**: `test_targeted_follower_filter_throughput`
-- **strategy**: integration
-- **inputs**: `{"watch_list_size": "[1, 256]", "tx_count": "[10, 10000]"}`
-- **oracle**: Throughput acceptable if all txs processed before block timeout
-- **severity**: code
-- **source**: plan Unit 3, TargetedFollower main loop comment
+- **module**: `bardo_terminal::widgets::heatmap`
+- **property**: 7-stop Viridis colormap indices clamp to valid range [0, 6]
+- **formula**: `let idx = (v * 6.0).floor() as usize; let idx_min6 = idx.min(6)`
+- **constraint**: Index always ≤ 6; boundary access [(idx + 1).min(6)] never exceeds array
+- **test_fn**: `test_viridis_index_bounds`
+- **strategy**: proptest
+- **inputs**: `{"value": [0.0, 0.0833, 0.1667, 0.333, 0.5, 0.667, 0.833, 1.0]}`
+- **oracle**: v ∈ [0, 1] → idx ∈ [0, 6]; v < 0 or v > 1 → clamp prevents out-of-bounds
+- **severity**: spec
+- **source**: Plan 05 §Unit 2 viridis_color function
 
-<!-- INV-010: SpeculativeExecutor cache memory cost -->
+<!-- INV-008: Viridis color interpolation -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::heatmap`
+- **property**: Linear interpolation between adjacent Viridis stops
+- **formula**: `let t = (v * 6.0) - idx as f64; let lerp_component = |a: u8, b: u8, t: f64| (a as f64 + (b as f64 - a as f64) * t).round() as u8`
+- **constraint**: t ∈ [0.0, 1.0] for interpolation; output always u8 (0..255)
+- **test_fn**: `test_viridis_color_interpolation`
+- **strategy**: unit
+- **inputs**: `{"value": [0.0, 0.1, 0.5, 0.9, 1.0]}`
+- **oracle**: value = 0 → VIRIDIS[0] exactly; value = 1 → VIRIDIS[6] exactly; intermediate values interpolated
+- **severity**: spec
+- **source**: Plan 05 §Unit 2 viridis_color function
+
+<!-- INV-009: Pheromone layer tinting -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::heatmap`
+- **property**: Threat layer adds red bias; Wisdom layer blends toward dream indigo at low values
+- **formula**: Threat: `Rgb(r+40, g-20, b-20)`; Wisdom: `t = (1.0 - value).clamp(0.0, 0.5)`, blend with (88, 88, 120)
+- **constraint**: Threat component addition/subtraction saturates; Wisdom blend factor t ∈ [0.0, 0.5]
+- **test_fn**: `test_pheromone_layer_tinting`
+- **strategy**: unit
+- **inputs**: `{"layer": ["Threat", "Opportunity", "Wisdom"], "value": [0.0, 0.5, 1.0]}`
+- **oracle**: Threat: R +40 (capped at 255), G -20 (floored at 0), B -20 (floored at 0); Wisdom: t ≤ 0.5 always
+- **severity**: spec
+- **source**: Plan 05 §Unit 2 layer_tint function
+
+<!-- INV-010: Heatmap grid bounds -->
 - **type**: capacity
-- **module**: `mirage_rs::replay::SpeculativeExecutor`
-- **property**: Each pending tx cache entry consumes ~12 KB of memory
-- **formula**: `memory_per_tx ≈ 12 KB`
-- **constraint**: Total speculative cache memory = `pending_tx_count * 12 KB`
-- **test_fn**: `test_speculative_executor_memory_per_tx`
-- **strategy**: unit
-- **inputs**: `{"pending_tx_count": "[1, 1000]"}`
-- **oracle**: Measure heap size before/after adding speculative results; ≈12 KB per entry
-- **severity**: code
-- **source**: plan Unit 3, SpeculativeResult comment
-
-<!-- INV-011: StateDiff invalidation on block write -->
-- **type**: event_sequence
-- **module**: `mirage_rs::replay::SpeculativeExecutor`
-- **property**: Speculative result must be invalidated if new block writes to any slot in read_set
-- **formula**: `invalidate(speculation) iff (block.storage_written ∩ speculation.read_set ≠ ∅)`
-- **constraint**: No stale speculative results used after invalidating write
-- **test_fn**: `test_speculative_invalidation_on_block_write`
-- **strategy**: integration
-- **inputs**: `{"read_set": "[Address, U256]", "block_writes": "[Address, U256]"}`
-- **oracle**: Overlap detected; speculation removed from cache
-- **severity**: spec
-- **source**: plan Unit 3, SpeculativeExecutor invalidation triggers
-
-<!-- INV-012: Block-STM conflict rate -->
-- **type**: monotonic
-- **module**: `mirage_rs::replay::MultiVersionStore`
-- **property**: DeFi block conflict rate must be <5% in typical workloads (Saraph & Herlihy 2019)
-- **formula**: `conflict_rate = (re_executions / total_txs) < 0.05`
-- **constraint**: `conflict_rate ∈ [0, 1]`
-- **test_fn**: `test_block_stm_conflict_rate`
-- **strategy**: integration
-- **inputs**: `{"block_txs": "Vec<Tx>"}`
-- **oracle**: Execute block via Block-STM; measure re-executions / total_txs
-- **severity**: spec
-- **source**: plan Unit 3, MultiVersionStore algorithm comment (Saraph & Herlihy 2019)
-
-<!-- INV-013: Scenario status enum valid transitions -->
-- **type**: state_machine
-- **module**: `mirage_rs::scenario::Scenario`
-- **property**: Scenario status transitions follow strict ordering: pending → (Success | Reverted | Timeout | GasExceeded | Error)
-- **formula**: `status_transition: Pending → (Success | Reverted | Timeout | GasExceeded | Error)`
-- **constraint**: No cycles allowed; no transitions between Success/Reverted/Timeout/GasExceeded
-- **test_fn**: `test_scenario_status_valid_transitions`
-- **strategy**: unit
-- **inputs**: `{"current_status": "ScenarioStatus", "next_status": "ScenarioStatus"}`
-- **oracle**: Transition valid iff current is Pending and next is terminal, or pre-condition violated → Error
-- **severity**: spec
-- **source**: plan Unit 4, ScenarioStatus enum
-
-<!-- INV-014: Scenario revert to baseline -->
-- **type**: roundtrip
-- **module**: `mirage_rs::scenario::ScenarioRunner`
-- **property**: Sequential scenario execution must revert to baseline_snapshot_id after each scenario
-- **formula**: `state_after_revert(baseline_id) = state_before_scenario`
-- **constraint**: Each scenario sees identical starting state via evm_revert(baseline_snapshot_id)
-- **test_fn**: `test_scenario_runner_revert_restores_baseline`
-- **strategy**: integration
-- **inputs**: `{"baseline_snapshot_id": "u64", "scenario_count": "[1, 10]"}`
-- **oracle**: After revert, state matches pre-scenario snapshot; subsequent scenarios see same state
-- **severity**: spec
-- **source**: plan Unit 4, scenario composition sequential pattern
-
-<!-- INV-015: Scenario timeout constraint -->
-- **type**: numeric_range
-- **module**: `mirage_rs::scenario::Scenario`
-- **property**: Scenario execution must respect timeout duration
-- **formula**: `execution_time <= timeout`
-- **constraint**: `timeout > 0`, type `Duration`, typical values 5-60s
-- **test_fn**: `test_scenario_timeout_enforced`
-- **strategy**: integration
-- **inputs**: `{"timeout": "[1, 60]s", "actual_time": "[0, 120]s"}`
-- **oracle**: If `actual_time > timeout`, status = Timeout
-- **severity**: code
-- **source**: plan Unit 4, Scenario `timeout` field
-
-<!-- INV-016: Scenario gas limit enforcement -->
-- **type**: numeric_range
-- **module**: `mirage_rs::scenario::Scenario`
-- **property**: Scenario gas usage must not exceed max_gas if set
-- **formula**: `gas_used <= max_gas or max_gas = None`
-- **constraint**: `max_gas ∈ Option<u64>`, if Some(n) then n > 0
-- **test_fn**: `test_scenario_gas_exceeded`
-- **strategy**: unit
-- **inputs**: `{"max_gas": "Option<u64>", "actual_gas": "u64"}`
-- **oracle**: If Some(limit) and `actual_gas > limit`, status = GasExceeded
-- **severity**: code
-- **source**: plan Unit 4, Scenario `max_gas` field
-
-<!-- INV-017: eth_estimateGas buffer -->
-- **type**: numeric_range
-- **module**: `mirage_rs::rpc`
-- **property**: eth_estimateGas must add 20% buffer to measured gas
-- **formula**: `estimated_gas = measured_gas + (measured_gas * 0.20)`
-- **constraint**: Buffer percentage ≥ 20%, buffer ≥ 0
-- **test_fn**: `test_eth_estimate_gas_buffer`
-- **strategy**: unit
-- **inputs**: `{"measured_gas": "[1, 30000000]", "buffer_pct": "0.20"}`
-- **oracle**: `result == measured * 1.20`
-- **severity**: spec
-- **source**: plan Unit 2, eth_estimateGas behavior
-
-<!-- INV-018: RPC timeout default -->
-- **type**: numeric_range
-- **module**: `mirage_rs::integration::MirageConfig`
-- **property**: Default RPC timeout must be 30 seconds
-- **formula**: `MirageConfig::default_local().timeout == 30s`
-- **constraint**: `timeout > 0`, type `Duration`
-- **test_fn**: `test_mirage_config_default_timeout`
-- **strategy**: unit
-- **inputs**: `{}`
-- **oracle**: `Duration::from_secs(30)`
-- **severity**: spec
-- **source**: plan Unit 5, MirageConfig default_local()
-
-<!-- INV-019: RPC retry attempts default -->
-- **type**: numeric_range
-- **module**: `mirage_rs::integration::MirageConfig`
-- **property**: Default retry attempts must be 3 with 500ms backoff
-- **formula**: `retry_attempts = 3, retry_backoff = 500ms`
-- **constraint**: `retry_attempts ≥ 1`, `retry_backoff > 0`
-- **test_fn**: `test_mirage_config_default_retries`
-- **strategy**: unit
-- **inputs**: `{}`
-- **oracle**: `attempts = 3, backoff = Duration::from_millis(500)`
-- **severity**: spec
-- **source**: plan Unit 5, MirageConfig defaults
-
-<!-- INV-020: Resource pressure numeric range -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources::ResourceModel`
-- **property**: Resource pressure must always be in [0.0, 1.0]
-- **formula**: `resource_pressure ∈ [0.0, 1.0]`
-- **constraint**: 0.0 = idle, 1.0 = at limit, intermediate values linear
-- **test_fn**: `test_resource_pressure_bounds`
+- **module**: `bardo_terminal::widgets::heatmap`
+- **property**: Heatmap render respects terminal area; grid access clamps to actual dimensions
+- **formula**: `let rows = self.grid.len().min(area.height as usize); let cols = self.grid[0].len().min(area.width as usize)`
+- **constraint**: rows ≤ grid.len(); cols ≤ grid[0].len(); rows ≤ area.height; cols ≤ area.width
+- **test_fn**: `test_heatmap_grid_clipping`
 - **strategy**: proptest
-- **inputs**: `{"memory_used": "[0, max_memory]", "max_memory": "[256MB, 2GB]"}`
-- **oracle**: `pressure = memory_used / max_memory`; must be clamped to [0, 1]
-- **severity**: spec
-- **source**: plan Unit 5, ResourceUsage `resource_pressure`
+- **inputs**: `{"grid_height": [1, 10, 100], "grid_width": [1, 10, 100], "area_height": [1, 50], "area_width": [1, 50]}`
+- **oracle**: rendered rows ≤ min(grid.len(), area.height); rendered cols ≤ min(grid[0].len(), area.width)
+- **severity**: code
+- **source**: Plan 05 §Unit 2 PheromoneHeatmap render logic
 
-<!-- INV-021: Resource pressure tier transitions -->
-- **type**: state_machine
-- **module**: `mirage_rs::resources::ResourceModel`
-- **property**: Resource pressure tier transitions must follow specification
-- **formula**: `tier = Green (< 0.5) | Warning (≥ 0.5) | Throttle (≥ 0.7) | Emergency (≥ 0.9)`
-- **constraint**: Transitions are monotonic: Green → Warning → Throttle → Emergency
-- **test_fn**: `test_resource_pressure_tier_transitions`
-- **strategy**: unit
-- **inputs**: `{"pressure": "[0.0, 1.0]"}`
-- **oracle**: See hardcoded tier thresholds in resources.rs
-- **severity**: spec
-- **source**: plan Unit 5, ResourceModel pressure tiers comment
-
-<!-- INV-022: Cache hit rate bounds -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources::ResourceUsage`
-- **property**: Cache hit rate must be in [0.0, 1.0]
-- **formula**: `cache_hit_rate ∈ [0.0, 1.0]`
-- **constraint**: 0.0 = all misses, 1.0 = all hits
-- **test_fn**: `test_cache_hit_rate_bounds`
+<!-- INV-011: Timeline ribbon tick-to-cell mapping -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::timeline`
+- **property**: Ticks-per-cell calculation never divides by zero; maps time window to terminal width
+- **formula**: `let ticks_per_cell = self.window_ticks.max(1) / w.max(1)`
+- **constraint**: Both numerator and denominator ≥ 1; result ≥ 1 when window_ticks ≥ width
+- **test_fn**: `test_timeline_ribbon_ticks_per_cell`
 - **strategy**: proptest
-- **inputs**: `{"hits": "[0, total]", "total": "[1, 100000]"}`
-- **oracle**: `cache_hit_rate = hits / total`; clamped to [0, 1]
-- **severity**: code
-- **source**: plan Unit 5, ResourceUsage `cache_hit_rate`
+- **inputs**: `{"window_ticks": [0, 1, 100, 10000], "area_width": [0, 1, 40, 200]}`
+- **oracle**: Never panics; ticks_per_cell ≥ 1; cell_tick range never negative
+- **severity**: spec
+- **source**: Plan 05 §Unit 2 TimelineRibbon render logic
 
-<!-- INV-023: Profile memory allocation -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources::ResourceModel::Profile`
-- **property**: Each profile has fixed maximum memory allocation
-- **formula**: `Micro: 256MB, Standard: 512MB, Power: 2GB`
-- **constraint**: Must be powers of 2 in bytes, Micro < Standard < Power
-- **test_fn**: `test_profile_memory_allocations`
+<!-- INV-012: Timeline event cell assignment -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::timeline`
+- **property**: Events are placed in ribbon cells based on tick range overlap
+- **formula**: `event_in_cell: event.tick >= cell_start_tick && event.tick < cell_start_tick + ticks_per_cell.max(1)`
+- **constraint**: Tick ranges are half-open [start, end); no event appears in two cells; latest event (by severity) chosen for each cell
+- **test_fn**: `test_timeline_ribbon_event_placement`
 - **strategy**: unit
-- **inputs**: `{"profile": "Profile"}`
-- **oracle**: See Profile enum variants
+- **inputs**: `{"event_ticks": [0, 100, 500, 1000], "window": {"start": 0, "width": 100}, "cell_width": 10}`
+- **oracle**: Each event in exactly one cell; cells with multiple events show max-severity
 - **severity**: spec
-- **source**: plan Unit 5, ResourceModel Profile enum
+- **source**: Plan 05 §Unit 2 TimelineRibbon render logic
 
-<!-- INV-024: Watch list per profile -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources::ResourceModel::Profile`
-- **property**: Each profile specifies max watched contracts
-- **formula**: `Micro: 32, Standard: 64, Power: 256`
-- **constraint**: Monotonic increase: Micro < Standard < Power
-- **test_fn**: `test_profile_watch_limits`
-- **strategy**: unit
-- **inputs**: `{"profile": "Profile"}`
-- **oracle**: See Profile-associated constants
-- **severity**: spec
-- **source**: plan Unit 5, ResourceModel profiles
-
-<!-- INV-025: Cache capacity per profile -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources::ResourceModel::Profile`
-- **property**: Each profile specifies cache entry capacity
-- **formula**: `Micro: 5_000, Standard: 10_000, Power: 50_000`
-- **constraint**: Monotonic increase: Micro < Standard < Power
-- **test_fn**: `test_profile_cache_capacities`
-- **strategy**: unit
-- **inputs**: `{"profile": "Profile"}`
-- **oracle**: Profile capacity limits
-- **severity**: spec
-- **source**: plan Unit 5, ResourceModel profiles
-
-<!-- INV-026: Bytecode cache capacity formula -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources::ResourceModel`
-- **property**: Bytecode cache capacity = min(10_000, profile.cache_capacity / 5)
-- **formula**: `bytecode_cache_capacity = min(10_000, profile_capacity / 5)`
-- **constraint**: Always ≤ 10_000, always ≤ profile_capacity / 5
-- **test_fn**: `test_bytecode_cache_capacity`
-- **strategy**: unit
-- **inputs**: `{"profile": "Profile"}`
-- **oracle**: Compute for each profile: min(10_000, capacity/5)
-- **severity**: spec
-- **source**: plan Unit 5, ResourceModel bytecode cache comment
-
-<!-- INV-027: Memory pressure startup check -->
-- **type**: numeric_range
-- **module**: `mirage_rs::resources`
-- **property**: At startup, available OS memory must exceed profile.max_memory + 128 MB
-- **formula**: `available_memory >= profile.max_memory_bytes + 128 * 1024 * 1024`
-- **constraint**: Startup fails (exit 2) if insufficient memory
-- **test_fn**: `test_memory_startup_gate`
-- **strategy**: integration
-- **inputs**: `{"profile": "Profile", "available_mb": "[256, 8192]"}`
-- **oracle**: Check sysinfo::System::available_memory(); must exceed requirement
-- **severity**: spec
-- **source**: plan Unit 5, OS-level spawn gate comment
-
-<!-- INV-028: LRU eviction at throttle tier -->
+<!-- INV-013: RibbonEventType glyph mapping -->
 - **type**: state_machine
-- **module**: `mirage_rs::resources`
-- **property**: When resource pressure ≥ 0.7, ReadCache LRU eviction is triggered
-- **formula**: `if pressure >= 0.7 then evict_lru(ReadCache)`
-- **constraint**: Only ReadCache evicted, never DirtyStore
-- **test_fn**: `test_lru_eviction_at_throttle_tier`
-- **strategy**: integration
-- **inputs**: `{"pressure": "[0.6, 0.8]"}`
-- **oracle**: At pressure ≥ 0.7, oldest cache entry is removed
+- **module**: `bardo_terminal::widgets::timeline`
+- **property**: All 5 event types have unique glyphs and colors
+- **formula**: `match self { TradeExecuted → '▲', DreamStarted → '◌', PhaseChange → '◆', Anomaly → '!', Death → '✕' }`
+- **constraint**: Each variant appears exactly once; color function covers all cases
+- **test_fn**: `test_ribbon_event_type_mapping`
+- **strategy**: unit
+- **inputs**: `{"event_type": ["TradeExecuted", "DreamStarted", "PhaseChange", "Anomaly", "Death"]}`
+- **oracle**: Each type returns unique glyph; each type returns a Color; no panics
 - **severity**: spec
-- **source**: plan Unit 5, eviction policy comment
+- **source**: Plan 05 §Unit 2 RibbonEventType impl
 
-<!-- INV-029: Upstream RPC rate limiter -->
+<!-- INV-014: Event feed ring buffer capacity -->
+- **type**: capacity
+- **module**: `bardo_terminal::widgets::feed`
+- **property**: EventFeed maintains max_entries limit via FIFO eviction
+- **formula**: `if self.entries.len() >= self.max_entries { self.entries.pop_front(); self.entries.push_back(entry); }`
+- **constraint**: entries.len() ≤ max_entries always; oldest entry dropped on overflow; VecDeque capacity ≤ 1000 or max_entries
+- **test_fn**: `test_event_feed_capacity`
+- **strategy**: unit
+- **inputs**: `{"max_entries": [1, 10, 100, 1000], "inserts": [5, 11, 1001]}`
+- **oracle**: After N inserts with N > max_entries, len = min(max_entries, N); first entries dropped
+- **severity**: spec
+- **source**: Plan 05 §Unit 3 EventFeed::push and Quick Reference
+
+<!-- INV-015: Event feed filtering -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::feed`
+- **property**: Filter applies case-insensitive substring matching
+- **formula**: `filter_lower.map(|f| e.message.to_lowercase().contains(f)).unwrap_or(true)`
+- **constraint**: No filter (None) matches all entries; empty filter string matches all; search is case-insensitive
+- **test_fn**: `test_event_feed_filter`
+- **strategy**: unit
+- **inputs**: `{"filter": [null, "", "msg", "MSG", "xyz"], "message": ["msg 6", "MSG 7", "other"]}`
+- **oracle**: null filter or empty → all entries; "msg" → matches "msg 6", "MSG 7"; "xyz" → no matches (case-insensitive)
+- **severity**: spec
+- **source**: Plan 05 §Unit 3 EventFeed::visible_entries
+
+<!-- INV-016: Event feed scroll bounds -->
 - **type**: numeric_range
-- **module**: `mirage_rs::provider::UpstreamRpc`
-- **property**: Upstream RPC requests must respect rate limit (default 100 RPS)
-- **formula**: `rps_limiter: Semaphore with capacity 100`
-- **constraint**: `rps ∈ (0, ∞)`, burst ∈ (0, ∞), default rps=100, burst=200
-- **test_fn**: `test_upstream_rps_limit`
-- **strategy**: integration
-- **inputs**: `{"rps": "[10, 500]", "request_rate": "[10, 1000]"}`
-- **oracle**: Requests blocked if rate exceeds limit
-- **severity**: code
-- **source**: plan Unit 1, UpstreamRpc rps_limiter
+- **module**: `bardo_terminal::widgets::feed`
+- **property**: Scroll offset never exceeds visible entries; always shows newest when scrolled to top
+- **formula**: `let start_idx = self.scroll_offset.min(total.saturating_sub(display_rows))`
+- **constraint**: start_idx ≤ total - display_rows (or 0 if total < display_rows); scrolling up is bounded
+- **test_fn**: `test_event_feed_scroll_bounds`
+- **strategy**: proptest
+- **inputs**: `{"total_entries": [0, 10, 100], "display_rows": [1, 5, 50], "scroll_offset": [0, 5, 100, 1000]}`
+- **oracle**: start_idx + display_rows ≤ total; start_idx ≥ 0; start_idx ≤ total.saturating_sub(1)
+- **severity**: spec
+- **source**: Plan 05 §Unit 3 EventFeed render logic
 
-<!-- INV-030: Upstream RPC exponential backoff retry -->
+<!-- INV-017: FeedLevel color assignment -->
+- **type**: state_machine
+- **module**: `bardo_terminal::widgets::feed`
+- **property**: Each FeedLevel has a unique color and label
+- **formula**: `match self { Info → TEXT_PRIMARY, Warn → WARNING, Error → ROSE_BRIGHT, Debug → TEXT_DIM }` and labels ["INFO ", "WARN ", "ERROR", "DBG  "]
+- **constraint**: All 4 variants covered; colors distinct; labels exactly 5 chars each
+- **test_fn**: `test_feed_level_colors_and_labels`
+- **strategy**: unit
+- **inputs**: `{"level": ["Info", "Warn", "Error", "Debug"]}`
+- **oracle**: Each level returns unique Color and label; labels are 5 chars; no panics
+- **severity**: spec
+- **source**: Plan 05 §Unit 3 FeedLevel impl
+
+<!-- INV-018: StatusBar layout proportions -->
 - **type**: numeric_range
-- **module**: `mirage_rs::provider::UpstreamRpc`
-- **property**: Upstream RPC retries use exponential backoff, max 3 attempts
-- **formula**: `backoff_delay = base_delay * (2 ^ attempt_num), max_attempts = 3`
-- **constraint**: `base_delay > 0`, `attempt_num ∈ [0, 2]`
-- **test_fn**: `test_upstream_exponential_backoff`
-- **strategy**: unit
-- **inputs**: `{"attempt": "[0, 2]", "base_delay": "[100, 1000]ms"}`
-- **oracle**: Delay = base * 2^attempt; after 3 failures, return UpstreamError(-32099)
+- **module**: `bardo_terminal::widgets::status_bar`
+- **property**: Center section positioned at 1/3 of width; right section right-aligned
+- **formula**: `let center_x = area.x + area.width / 3; let right_x = area.x + area.width.saturating_sub(right_len as u16)`
+- **constraint**: center_x ∈ [area.x, area.x + area.width]; right_x ≥ center_x; right_x ≥ area.x
+- **test_fn**: `test_status_bar_layout`
+- **strategy**: proptest
+- **inputs**: `{"area_width": [1, 40, 100, 255], "right_len": [0, 20, 50]}`
+- **oracle**: center_x = area.x + width/3; right_x ≥ area.x; center section + right section fit without overlap
 - **severity**: code
-- **source**: plan Unit 1, UpstreamRpc retry comment
+- **source**: Plan 05 §Unit 3 StatusBar render logic
 
-<!-- INV-031: EIP-2718 transaction type handling -->
-- **type**: state_machine
-- **module**: `mirage_rs::rpc`
-- **property**: All EIP-2718 transaction types (0-3) must be correctly parsed and executed
-- **formula**: `Type 0: legacy RLP | Type 1: EIP-2930 (0x01 || RLP) | Type 2: EIP-1559 (0x02 || RLP) | Type 3: EIP-4844 (0x03 || RLP)`
-- **constraint**: Signature verification skipped by default; impersonation bypasses checks
-- **test_fn**: `test_eip2718_type_parsing`
-- **strategy**: unit
-- **inputs**: `{"tx_type": "[0, 3]", "tx_data": "Bytes"}`
-- **oracle**: Correctly decode and execute based on type prefix
-- **severity**: spec
-- **source**: plan Unit 2, Transaction format handling
-
-<!-- INV-032: Account impersonation validity -->
-- **type**: state_machine
-- **module**: `mirage_rs::rpc`
-- **property**: Impersonated accounts can send transactions without signatures; non-impersonated accounts require valid signature OR private key
-- **formula**: `tx_valid = (sender in impersonated_set) OR (signature valid OR has_private_key)`
-- **constraint**: No invalid states
-- **test_fn**: `test_account_impersonation_validity`
-- **strategy**: unit
-- **inputs**: `{"sender": "Address", "impersonated": "HashSet<Address>"}`
-- **oracle**: Transaction allowed iff sender impersonated or credentials valid
-- **severity**: spec
-- **source**: plan Unit 2, hardhat_impersonateAccount behavior
-
-<!-- INV-033: Watch list contagion source tracking -->
-- **type**: state_machine
-- **module**: `mirage_rs::fork::WatchEntry`
-- **property**: Each watched contract has source: AutoClassified | Contagion { parent } | Manual
-- **formula**: `watch_entry.source ∈ { AutoClassified, Contagion(parent), Manual }`
-- **constraint**: Contagion parent must be valid address
-- **test_fn**: `test_watch_entry_source_tracking`
-- **strategy**: unit
-- **inputs**: `{"source": "WatchSource"}`
-- **oracle**: All three variants valid; contagion chain traceable
-- **severity**: spec
-- **source**: plan Unit 1, WatchSource enum
-
-<!-- INV-034: Scenario wallet tracking -->
+<!-- INV-019: TabBar active index bounds -->
 - **type**: numeric_range
-- **module**: `mirage_rs::scenario::ScenarioResult`
-- **property**: Final balances map must include all tracked addresses
-- **formula**: `final_balances.keys() ⊇ track_addresses`
-- **constraint**: No missing tracked addresses
-- **test_fn**: `test_scenario_tracks_all_addresses`
+- **module**: `bardo_terminal::widgets::tabs`
+- **property**: Active tab index must be valid; comparison uses ==
+- **formula**: `let is_active = i == self.active; (0..tabs.len()).contains(self.active)`
+- **constraint**: active < tabs.len(); fallback if active >= len requires parent validation
+- **test_fn**: `test_tab_bar_active_bounds`
 - **strategy**: unit
-- **inputs**: `{"track_addresses": "Vec<Address>", "final_balances": "HashMap<Address, U256>"}`
-- **oracle**: Every tracked address has an entry; may have zero balance
+- **inputs**: `{"tabs": [[], ["home"], ["a", "b", "c"]], "active": [0, 1, 2, 999]}`
+- **oracle**: is_active = true only when i == active; parent must ensure active < tabs.len()
 - **severity**: code
-- **source**: plan Unit 4, Scenario track_addresses and ScenarioResult
+- **source**: Plan 05 §Unit 4 TabBar render logic
 
-<!-- INV-035: Event sequence on local transaction -->
-- **type**: event_sequence
-- **module**: `mirage_rs::fork`
-- **property**: Local transaction execution must follow: Execute → DiffClassify → DirtyStoreApply → WatchListUpdate → TxReceipt
-- **formula**: `Sequence: TxExec → DiffClassify → DirtyApply → WatchUpdate → Receipt`
-- **constraint**: No skipped steps; order fixed
-- **test_fn**: `test_local_tx_event_sequence`
-- **strategy**: integration
-- **inputs**: `{"tx": "TransactionRequest"}`
-- **oracle**: Observe event stream; must see all steps in order
-- **severity**: spec
-- **source**: plan Unit 1, local transaction pipeline
+<!-- INV-020: Tab label truncation -->
+- **type**: numeric_range
+- **module**: `bardo_terminal::widgets::tabs`
+- **property**: Tab labels don't overflow terminal width via early break
+- **formula**: `if x + label.len() as u16 > area.x + area.width { break; }`
+- **constraint**: Loop exits when next tab would exceed right edge; partial tabs never rendered
+- **test_fn**: `test_tab_bar_width_truncation`
+- **strategy**: proptest
+- **inputs**: `{"area_width": [10, 40, 80], "tabs": [["short"], ["medium-length"], ["very-long-tab-name"]]}`
+- **oracle**: Rendered tabs fit in area_width; last visible tab ends ≤ area.x + area.width; no partial tabs
+- **severity**: code
+- **source**: Plan 05 §Unit 4 TabBar render logic
 
-<!-- INV-036: Speculative invalidation conditions -->
-- **type**: event_sequence
-- **module**: `mirage_rs::replay::SpeculativeExecutor`
-- **property**: Speculative result must invalidate on: (1) tx included on-chain, (2) new block writes to read_set, (3) block number/timestamp deviation
-- **formula**: `invalidate(spec) iff (tx_included) OR (block_writes ∩ read_set ≠ ∅) OR (block_num_changed OR timestamp_changed)`
-- **constraint**: Any condition triggers invalidation
-- **test_fn**: `test_speculative_invalidation_conditions`
-- **strategy**: integration
-- **inputs**: `{"condition": "InvalidationTrigger"}`
-- **oracle**: Speculation removed from cache on any trigger
+<!-- INV-021: ScrollableList cursor bounds -->
+- **type**: numeric_range
+- **module**: `bardo_terminal::widgets::scrolllist`
+- **property**: Cursor never exceeds filtered item count; down/up are bounded
+- **formula**: `self.cursor = (self.cursor + 1).min(n - 1)` (down), `self.cursor = self.cursor.saturating_sub(1)` (up)
+- **constraint**: cursor ∈ [0, n-1] where n = filtered_items().len(); empty list → no move allowed
+- **test_fn**: `test_scrollable_list_cursor_bounds`
+- **strategy**: proptest
+- **inputs**: `{"items": [[], ["a"], ["a", "b", "c"]], "cursor": [0, 1, 2, 999]}`
+- **oracle**: After move_down, cursor < n; after move_up, cursor ≥ 0; empty list: cursor unchanged
+- **severity**: code
+- **source**: Plan 05 §Unit 4 ScrollableList methods
+
+<!-- INV-022: ScrollableList filtering -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::scrolllist`
+- **property**: Filtering applies case-insensitive substring match; order preserved
+- **formula**: `filtered: items where filter_lower.map(|f| item.to_lowercase().contains(f)).unwrap_or(true)`
+- **constraint**: No filter → all items; case-insensitive; original indices preserved in output
+- **test_fn**: `test_scrollable_list_filter`
+- **strategy**: unit
+- **inputs**: `{"items": ["apple", "Apricot", "banana"], "filter": [null, "", "ap", "AP", "xyz"]}`
+- **oracle**: null → ["apple", "Apricot", "banana"]; "ap" → ["apple", "Apricot"] (case-insensitive); "xyz" → []
+- **severity**: code
+- **source**: Plan 05 §Unit 4 ScrollableList::filtered_items
+
+<!-- INV-023: KeyHelpOverlay dimensions -->
+- **type**: numeric_range
+- **module**: `bardo_terminal::widgets::key_help`
+- **property**: Box dimensions never exceed area; minimum area 20x5 required
+- **formula**: `inner_width = (max_key_len + max_desc_len + 5).min(area.width as usize - 4); inner_height = bindings.len().min(area.height as usize - 4); box_width = (inner_width + 4) as u16; box_height = (inner_height + 2) as u16`
+- **constraint**: box_width ≤ area.width; box_height ≤ area.height; area < 20x5 → no render (early return)
+- **test_fn**: `test_key_help_overlay_dimensions`
+- **strategy**: proptest
+- **inputs**: `{"area_width": [10, 20, 80, 255], "area_height": [3, 5, 40, 100], "bindings_count": [1, 5, 20]}`
+- **oracle**: visible area < 20x5 → returns early; box dimensions fit within area; centered position never negative
+- **severity**: code
+- **source**: Plan 05 §Unit 4 KeyHelpOverlay render logic
+
+<!-- INV-024: KeyHelpOverlay centering -->
+- **type**: formula
+- **module**: `bardo_terminal::widgets::key_help`
+- **property**: Box is centered horizontally and vertically
+- **formula**: `let box_x = area.x + area.width.saturating_sub(box_width) / 2; let box_y = area.y + area.height.saturating_sub(box_height) / 2`
+- **constraint**: box_x ≥ area.x; box_y ≥ area.y; box_x + box_width ≤ area.x + area.width; saturating_sub prevents underflow
+- **test_fn**: `test_key_help_overlay_centering`
+- **strategy**: proptest
+- **inputs**: `{"area_x": [0, 10], "area_y": [0, 5], "area_width": [40, 100], "area_height": [20, 50], "box_width": [10, 30], "box_height": [5, 15]}`
+- **oracle**: box_x in [area.x, area.x + (area.width - box_width)/2]; box_y similarly centered
+- **severity**: code
+- **source**: Plan 05 §Unit 4 KeyHelpOverlay render logic
+
+<!-- INV-025: Braille sparkline data capacity -->
+- **type**: capacity
+- **module**: `bardo_terminal::widgets::sparkline`
+- **property**: Sparkline capacity is 2 data points per terminal cell (80 points in 40 columns)
+- **formula**: `let data_capacity = cell_count * 2; let n = self.data.len().min(data_capacity); let offset = self.data.len().saturating_sub(data_capacity)`
+- **constraint**: Only latest data_capacity points rendered; oldest points dropped; offset ≥ 0
+- **test_fn**: `test_braille_sparkline_capacity`
+- **strategy**: proptest
+- **inputs**: `{"data_len": [0, 40, 80, 160, 1000], "cell_count": [1, 20, 40, 80]}`
+- **oracle**: Rendered points ≤ data_capacity; offset + n = data_len; newest data always at right edge
 - **severity**: spec
-- **source**: plan Unit 3, SpeculativeExecutor invalidation triggers
+- **source**: Plan 05 §Unit 1 BrailleSparkline render logic
+
+---
 
 ### Regression Anchors
 
-`test_hybrid_db_tier_priority`
-`test_cache_ttl_expiration`
-`test_hybrid_db_partial_dirty_merge`
-`test_diff_classifier_protocol_threshold`
-`test_watch_list_capacity_enforced`
-`test_contagion_depth_capped`
-`test_dirty_store_snapshot_single_use`
-`test_block_budget_timeout_enforced`
-`test_targeted_follower_filter_throughput`
-`test_speculative_executor_memory_per_tx`
-`test_speculative_invalidation_on_block_write`
-`test_block_stm_conflict_rate`
-`test_scenario_status_valid_transitions`
-`test_scenario_runner_revert_restores_baseline`
-`test_scenario_timeout_enforced`
-`test_scenario_gas_exceeded`
-`test_eth_estimate_gas_buffer`
-`test_mirage_config_default_timeout`
-`test_mirage_config_default_retries`
-`test_resource_pressure_bounds`
-`test_resource_pressure_tier_transitions`
-`test_cache_hit_rate_bounds`
-`test_profile_memory_allocations`
-`test_profile_watch_limits`
-`test_profile_cache_capacities`
-`test_bytecode_cache_capacity`
-`test_memory_startup_gate`
-`test_lru_eviction_at_throttle_tier`
-`test_upstream_rps_limit`
-`test_upstream_exponential_backoff`
-`test_eip2718_type_parsing`
-`test_account_impersonation_validity`
-`test_watch_entry_source_tracking`
-`test_scenario_tracks_all_addresses`
-`test_local_tx_event_sequence`
-`test_speculative_invalidation_conditions`
+`test_braille_sparkline_encodes_correctly`
+`test_sparkline_scaling_bounds`
+`test_sparkline_max_value_auto_scale`
+`test_vitality_gauge_fill_width`
+`test_vitality_gauge_colors`
+`test_confidence_color_thresholds`
+`test_viridis_index_bounds`
+`test_viridis_color_interpolation`
+`test_pheromone_layer_tinting`
+`test_heatmap_grid_clipping`
+`test_timeline_ribbon_ticks_per_cell`
+`test_timeline_ribbon_event_placement`
+`test_ribbon_event_type_mapping`
+`test_event_feed_capacity`
+`test_event_feed_filter`
+`test_event_feed_scroll_bounds`
+`test_feed_level_colors_and_labels`
+`test_status_bar_layout`
+`test_tab_bar_active_bounds`
+`test_tab_bar_width_truncation`
+`test_scrollable_list_cursor_bounds`
+`test_scrollable_list_filter`
+`test_key_help_overlay_dimensions`
+`test_key_help_overlay_centering`
+`test_braille_sparkline_capacity`
+
+---
 
 ### Cross-Crate Contracts
 
 | Upstream | Input Condition | Expected Behavior |
 |----------|----------------|-------------------|
-| `golem-core::GolemConfig` | Valid TOML config with `[mirage]` section | `MirageConfig::from_golem_config()` parses url, port, profile |
-| `golem-core::EventFabric` | `resource_pressure` value computed | mirage-rs emits to broadcast bus without blocking |
-| `revm::Database` | Implements 4 trait methods (basic, storage, code_by_hash, block_hash) | HybridDB passes all requests through 3-tier lookup |
-| `alloy::providers::Provider` | HTTP/WS connection established | UpstreamRpc respects rate limits and retries |
-| `jsonrpsee::RpcServer` | JSON-RPC 2.0 request parsed | Server routes to handler; unknown methods return -32601 |
+| `bardo_terminal::palette` | Color constants (SUCCESS, WARNING, ROSE_DIM, etc.) | Widgets import and use in match statements; all referenced constants must exist and be Color type |
+| `bardo_terminal::state::AppState` | Screen implementations read AppState | MockPhase, PAD summary, credit balance, tick number available for rendering (TODO Plan 70a connections) |
+| `ratatui::Buffer` | Cell access via `(x, y)` coordinates | `buf.cell_mut()` returns Option<&mut Cell>; widget checks bounds before write |
+| `ratatui::Rect` | Area dimensions (x, y, width, height) | width/height of 0 triggers early returns; all widgets clamp render to area bounds |
+| `std::collections::VecDeque` | EventFeed.entries | `push_back()`, `pop_front()`, `iter()`, `len()` all work; capacity managed manually |
+
+---
 
 ### Event Sequence Assertions
 
-1. **Local Transaction Path:**
-   - `eth_sendTransaction` called
-   - `EvmExecutor::transact()` executes
-   - `DiffClassifier::classify()` runs on StateDiff
-   - `DirtyStore::apply_diff()` commits changes
-   - Watch list updated with new Protocol contracts
-   - `eth_getTransactionReceipt` returns result
+**EventFeed ring buffer eviction (FIFO):**
+1. Feed initialized with max_entries=5
+2. Push entries 0..4 → entries.len() == 5
+3. Push entry 5 → pop_front (entry 0) then push_back (entry 5) → entries.len() == 5
+4. Back element tick == 5; front element tick == 1
+5. Verify: oldest entry removed; newest appended; length stable
 
-2. **Scenario Sequential Execution:**
-   - `mirage_beginScenarioSet()` captures baseline snapshot
-   - For each scenario: `mirage_defineScenario()` adds to set
-   - `mirage_runScenarioSet(Sequential)` begins
-   - Each scenario: execute txs → collect results → `evm_revert(baseline_id)` → restore state → next scenario
-   - Results returned with final_balances, gas_used, wall_time_ms, status
+**Timeline ribbon event selection (max severity per cell):**
+1. Cell [50, 100) ticks has 2 events: TradeExecuted (severity=10), DreamStarted (severity=50)
+2. Render selects max_by_key(|e| e.severity)
+3. DreamStarted displayed (glyph '◌' with DREAM color)
+4. Verify: cell shows only one event; highest severity wins
 
-3. **Resource Pressure Escalation:**
-   - Memory usage increases → `resource_pressure` increases
-   - At pressure >= 0.5: warning signal emitted, logging enabled
-   - At pressure >= 0.7: ReadCache LRU eviction starts, new contracts demoted to SlotOnly
-   - At pressure >= 0.9: TargetedFollower stops, mode switches to Proxy, CorticalState signal emitted
+**TabBar overflow truncation:**
+1. Area width 30, tabs ["Home", "Beat", "Mind", "Dreams"]
+2. Each label ~7 chars with padding; first 4 don't fit
+3. Render loop breaks when next tab would overflow
+4. Verify: partial tabs never appear; last visible tab ends ≤ 30
 
-4. **TargetedFollower Block Processing:**
-   - WebSocket newHeads received
-   - Block header enqueued to bounded channel (capacity 32)
-   - Processing loop: fetch tx list → filter by watch_list → replay → DiffClassify → apply → log
-   - If lagging >50 blocks: skip to latest without intermediate replay
-   - If block replay exceeds budget: skip to next and log warning
+---
 
 ### Academic References Verified
 
-No academic references (Gompertz, Ebbinghaus, PAD, Plutchik, Kelly criterion, etc.) apply to mirage-rs. This is an engineering/systems specification for EVM transaction replay and state management, not a behavioral/mortality model. All numeric constants and formulas are implementation parameters, not published research constants.
+| Reference | Formula/Constant | PRD2 Match | Web-Verified |
+|-----------|-----------------|------------|--------------|
+| Unicode Braille (U+2800 block) | 8-dot grid encoding, bit positions 0-7 | prd2/20-styx/05-tui-experience.md §3 mentions "2×4 braille grid" | Standard; no formula adjustments needed |
+| Viridis colormap | 7-stop RGB gradient from dark purple (68,1,84) to yellow (253,231,37) | prd2/20-styx/05-tui-experience.md §5 references "Viridis-like" gradient | Standard colormap; RGB stops verified against Viridis v2.0 |
+| PAD emotional model (Pleasure/Arousal/Dominance) | StatusBar references "P:0.3 A:0.1 D:0.4" format | prd2/03-daimon/ and prd2/20-styx/05-tui-experience.md §3 "PAD vector" | Russell 1980 "A Circumplex Model of Affect"; 3-dimensional space standard |
+| REM sleep rendering (Tier 1) | Dream phase renders "at sparse Tier 1, dream palette" | prd2/13-runtime/14-creature-system.md references "Tier 1" during REM | Tier terminology consistent with sprite resolution tiers; no formula |
 
+---
+
+**Notes:**
+- Plan 05 focuses on terminal widget rendering with no heavy computational formulas from mortality/economics models
+- All numeric ranges derive from terminal cell coordinates (u16: 0..65535) and f64 scales (0.0..1.0)
+- State machines (MockPhase, FeedLevel, RibbonEventType, PheromoneLayer) have exhaustive pattern matching
+- Capacity constraints driven by VecDeque (EventFeed) and grid dimensions (Heatmap)
+- Cross-crate contracts are shallow: palette constants, AppState read-only access, ratatui Buffer/Rect API
+- PAD references are forward-looking (TODO Plan 70a) and inherit from prd2/03-daimon documentation

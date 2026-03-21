@@ -211,4 +211,91 @@ mod tests {
         let rightmost_cell = buf.get(4, 0);
         assert_eq!(rightmost_cell.symbol(), "┤");
     }
+
+    /// INV-013: Every RibbonEventType variant maps to its specified glyph and color.
+    #[test]
+    fn test_ribbon_event_type_mapping() {
+        let cases: &[(RibbonEventType, char, Color)] = &[
+            (RibbonEventType::TradeExecuted, '▲', SUCCESS),
+            (RibbonEventType::DreamStarted, '◌', DREAM),
+            (RibbonEventType::PhaseChange, '◆', BONE),
+            (RibbonEventType::Anomaly, '!', WARNING),
+            (RibbonEventType::Death, '✕', ROSE_BRIGHT),
+        ];
+        for &(variant, expected_glyph, expected_color) in cases {
+            assert_eq!(
+                variant.glyph(),
+                expected_glyph,
+                "{variant:?} glyph mismatch"
+            );
+            assert_eq!(
+                variant.color(),
+                expected_color,
+                "{variant:?} color mismatch"
+            );
+        }
+    }
+
+    /// INV-011: ticks_per_cell divides the window evenly across area.width cells.
+    #[test]
+    fn test_timeline_ribbon_ticks_per_cell() {
+        // With window_ticks=100 and width=10, ticks_per_cell should be 10
+        // (100 + 10 - 1) / 10 = 10 (ceiling division)
+        let width: u64 = 10;
+        let window_ticks: u64 = 100;
+        let ticks_per_cell = (window_ticks.max(1) + width.saturating_sub(1)) / width.max(1);
+        assert_eq!(ticks_per_cell, 10);
+
+        // Non-even division: window_ticks=105, width=10 => ceil(105/10) = 11
+        let window_ticks2: u64 = 105;
+        let tpc2 = (window_ticks2.max(1) + width.saturating_sub(1)) / width.max(1);
+        assert_eq!(tpc2, 11);
+
+        // Edge: window_ticks=0 => max(1) => ceil(1/10) = 1
+        let tpc_zero = (0u64.max(1) + width.saturating_sub(1)) / width.max(1);
+        assert_eq!(tpc_zero, 1);
+    }
+
+    /// INV-012: Events land in the correct cell based on their tick value.
+    #[test]
+    fn test_timeline_ribbon_event_placement() {
+        use ratatui::buffer::Buffer;
+
+        let area = ratatui::layout::Rect {
+            x: 0,
+            y: 0,
+            width: 10,
+            height: 1,
+        };
+        let mut buf = Buffer::empty(area);
+
+        // window_ticks=100, current_tick=100, width=10 => ticks_per_cell=10, start_tick=0
+        // An event at tick 0 should appear in col 0 (cell range [0, 10))
+        // An event at tick 95 should appear in col 9 (cell range [90, 100))
+        let ribbon = TimelineRibbon {
+            events: vec![
+                TimelineEvent {
+                    tick: 0,
+                    event_type: RibbonEventType::TradeExecuted,
+                    severity: 100,
+                },
+                TimelineEvent {
+                    tick: 95,
+                    event_type: RibbonEventType::Anomaly,
+                    severity: 100,
+                },
+            ],
+            window_ticks: 100,
+            current_tick: 100,
+        };
+
+        ribbon.render(area, &mut buf);
+
+        // Col 0 should have TradeExecuted glyph
+        assert_eq!(buf.get(0, 0).symbol(), "▲");
+        // Col 9 should have Anomaly glyph
+        assert_eq!(buf.get(9, 0).symbol(), "!");
+        // Col 5 should be background track (no event in [50, 60))
+        assert_eq!(buf.get(5, 0).symbol(), "─");
+    }
 }

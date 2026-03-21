@@ -133,4 +133,71 @@ mod tests {
         list.move_cursor_up();
         assert_eq!(list.cursor, 0);
     }
+
+    /// INV-021: cursor cannot exceed filtered item count.
+    #[test]
+    fn test_scrollable_list_cursor_bounds() {
+        let mut list = ScrollableList::new(vec![
+            "one".to_string(),
+            "two".to_string(),
+            "three".to_string(),
+        ]);
+
+        // Down past the end stays clamped at last index.
+        for _ in 0..10 {
+            list.move_cursor_down();
+        }
+        assert_eq!(list.cursor, 2);
+
+        // Up past zero stays at zero.
+        for _ in 0..10 {
+            list.move_cursor_up();
+        }
+        assert_eq!(list.cursor, 0);
+
+        // With a filter that narrows to 1 item, cursor stays at 0.
+        list.filter = Some("two".to_string());
+        list.cursor = 0;
+        list.move_cursor_down();
+        assert_eq!(list.cursor, 0); // only 1 filtered item
+
+        // Empty list: cursor doesn't move.
+        let mut empty = ScrollableList::new(vec![]);
+        empty.move_cursor_down();
+        assert_eq!(empty.cursor, 0);
+        empty.move_cursor_up();
+        assert_eq!(empty.cursor, 0);
+    }
+
+    /// INV-022: case-insensitive substring filtering preserves original indices.
+    #[test]
+    fn test_scrollable_list_filter() {
+        let list_items = vec![
+            "Alpha".to_string(),
+            "BETA".to_string(),
+            "gamma".to_string(),
+            "AlphaBeta".to_string(),
+        ];
+
+        // Case-insensitive match on "alpha".
+        let mut list = ScrollableList::new(list_items.clone());
+        list.filter = Some("alpha".to_string());
+        let filtered = list.filtered_items();
+        assert_eq!(filtered, vec![(0, "Alpha"), (3, "AlphaBeta")]);
+
+        // Case-insensitive match on "BETA".
+        list.filter = Some("BETA".to_string());
+        let filtered = list.filtered_items();
+        assert_eq!(filtered, vec![(1, "BETA"), (3, "AlphaBeta")]);
+
+        // No filter returns all items.
+        list.filter = None;
+        let filtered = list.filtered_items();
+        assert_eq!(filtered.len(), 4);
+
+        // Filter with no matches returns empty.
+        list.filter = Some("zzz".to_string());
+        let filtered = list.filtered_items();
+        assert!(filtered.is_empty());
+    }
 }

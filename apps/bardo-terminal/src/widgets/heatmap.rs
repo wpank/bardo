@@ -171,4 +171,68 @@ mod tests {
         assert_eq!(viridis_color(-1.0), Color::Rgb(68, 1, 84)); // clamped to 0.0
         assert_eq!(viridis_color(2.0), Color::Rgb(253, 231, 37)); // clamped to 1.0
     }
+
+    /// INV-007: Every VIRIDIS stop index is reachable without panic.
+    #[test]
+    fn test_viridis_index_bounds() {
+        for i in 0..=6 {
+            let value = i as f64 / 6.0;
+            let color = viridis_color(value);
+            let (r, g, b) = VIRIDIS[i];
+            assert_eq!(color, Color::Rgb(r, g, b), "stop {i} mismatch");
+        }
+        // Out-of-range values must not panic
+        let _ = viridis_color(-100.0);
+        let _ = viridis_color(100.0);
+    }
+
+    /// INV-008: Viridis interpolation produces blended colors between stops.
+    #[test]
+    fn test_viridis_color_interpolation() {
+        // Halfway between stop 0 (68,1,84) and stop 1 (72,40,120)
+        let color = viridis_color(0.5 / 6.0);
+        let (r0, g0, b0) = VIRIDIS[0];
+        let (r1, g1, b1) = VIRIDIS[1];
+        let expected = Color::Rgb(
+            lerp_u8(r0, r1, 0.5),
+            lerp_u8(g0, g1, 0.5),
+            lerp_u8(b0, b1, 0.5),
+        );
+        assert_eq!(color, expected);
+    }
+
+    /// INV-009: Each pheromone layer tints the base color correctly.
+    #[test]
+    fn test_pheromone_layer_tinting() {
+        let base = Color::Rgb(100, 100, 100);
+        // Threat adds red bias
+        let threat = layer_tint(base, PheromoneLayer::Threat, 0.5);
+        assert_eq!(threat, Color::Rgb(140, 80, 80));
+        // Opportunity passes through unchanged
+        assert_eq!(layer_tint(base, PheromoneLayer::Opportunity, 0.5), base);
+        // Wisdom blends toward (88,88,120) — at value=1.0, weight is 0.0 so unchanged
+        assert_eq!(layer_tint(base, PheromoneLayer::Wisdom, 1.0), base);
+    }
+
+    /// INV-010: Heatmap grid clips to the render area.
+    #[test]
+    fn test_heatmap_grid_clipping() {
+        let mut buf = Buffer::empty(Rect::new(0, 0, 3, 2));
+        let grid = vec![
+            vec![0.0, 0.5, 1.0, 0.8, 0.3], // 5 cols, but area is only 3 wide
+            vec![0.2, 0.4, 0.6, 0.9, 0.1],
+            vec![0.1, 0.3, 0.5, 0.7, 0.9], // 3 rows, but area is only 2 tall
+        ];
+        let heatmap = PheromoneHeatmap {
+            grid,
+            width: 5,
+            height: 3,
+            layer: PheromoneLayer::Opportunity,
+            pulse_cells: vec![],
+        };
+        heatmap.render(Rect::new(0, 0, 3, 2), &mut buf);
+        // Should render only 3 cols x 2 rows without panic
+        assert_eq!(buf.get(0, 0).symbol(), &BLOCK_FULL.to_string());
+        assert_eq!(buf.get(2, 1).symbol(), &BLOCK_FULL.to_string());
+    }
 }

@@ -1,20 +1,18 @@
 [meta]
-plan = "03-mirage-rs"
+plan = "05-terminal-widgets"
 iteration = 1
-total = 18
-done = 0
+total = 12
+done = 12
 
 [[task]]
 id = "T1"
-title = "Verify and complete HybridDB Database trait implementation"
-status = "pending"
-files = ["apps/mirage-rs/src/fork.rs"]
+title = "Create palette.rs and state.rs stubs (Plan 04 prerequisites)"
+status = "done"
+files = ["apps/bardo-terminal/src/palette.rs", "apps/bardo-terminal/src/state.rs"]
 acceptance = [
-    "HybridDB implements revm::Database trait with basic(), code_by_hash(), storage(), block_hash()",
-    "Read priority: DirtyStore → ReadCache → upstream RPC",
-    "Partial dirty account merge logic works (dirty fields override, missing fields fetched from upstream)",
-    "resolve_block() returns pinned_block if set, else BlockTag::Latest",
-    "Verification tests pass: test_hybrid_db_tier_priority, test_cache_ttl_expiration, test_hybrid_db_partial_dirty_merge"
+    "palette.rs exports `pub` ROSEDUST palette color constants per plan Quick Reference (sufficient for downstream widget imports to resolve)",
+    "state.rs exports AppState struct (can be empty for now)",
+    "cargo check -p bardo-terminal passes"
 ]
 depends_on = []
 parallel_group = "A"
@@ -22,264 +20,156 @@ exclusive_files = true
 
 [[task]]
 id = "T2"
-title = "Verify and complete DirtyStore snapshot/revert implementation"
-status = "pending"
-files = ["apps/mirage-rs/src/fork.rs"]
+title = "Create widgets module structure and mod.rs"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/mod.rs"]
 acceptance = [
-    "DirtyStore::snapshot() returns snapshot ID",
-    "DirtyStore::revert() restores state (single-use snapshots)",
-    "Reverting to earlier snapshot invalidates later snapshots",
-    "total_dirty_slots counter tracks storage writes",
-    "Verification tests pass: test_dirty_store_snapshot_single_use"
+    "widgets/mod.rs declares all 9 widget modules (sparkline, gauge, heatmap, timeline, feed, tabs, status_bar, scrolllist, key_help)",
+    "main.rs includes mod widgets; declaration",
+    "cargo check -p bardo-terminal passes (modules compile even if empty)"
 ]
-depends_on = []
-parallel_group = "A"
+depends_on = ["T1"]
+parallel_group = "B"
 exclusive_files = true
 
 [[task]]
 id = "T3"
-title = "Verify and complete DiffClassifier classification logic"
-status = "pending"
-files = ["apps/mirage-rs/src/fork.rs"]
+title = "Implement BrailleSparkline widget (Unit 1a)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/sparkline.rs"]
 acceptance = [
-    "Classification enum: Protocol, SlotOnly, ReadOnly",
-    "Protocol classification when >= protocol_slot_threshold (default 3) slots written",
-    "Token heuristic: all written slots are high-entropy keccak mapping entries AND no low-numbered slots (< 20)",
-    "Contagion adds contracts to watch list (depth-capped at max_contagion_depth)",
-    "Verification tests pass: test_diff_classifier_protocol_threshold, test_watch_list_capacity_enforced, test_contagion_depth_capped"
+    "test_braille_sparkline_encodes_correctly passes (INV-001: braille bit positions)",
+    "test_sparkline_scaling_bounds passes (INV-002: scaling clamps to [0..=4])",
+    "test_sparkline_max_value_auto_scale passes (INV-003: max_value ≤ 0 uses data max)",
+    "test_braille_sparkline_capacity passes (INV-025: 80-point capacity, 2 per cell)"
 ]
-depends_on = []
-parallel_group = "A"
+depends_on = ["T2"]
+parallel_group = "C"
 exclusive_files = true
 
 [[task]]
 id = "T4"
-title = "Verify and complete UpstreamRpc rate limiting and retry"
-status = "pending"
-files = ["apps/mirage-rs/src/provider.rs"]
+title = "Implement gauge widgets: VitalityGauge, ConfidenceGauge, AccuracyGauge, MockPhase (Unit 1b)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/gauge.rs"]
 acceptance = [
-    "Rate limiter enforces --upstream-rps (default 100) with burst multiplier (default 200)",
-    "All fetch methods retry with exponential backoff (max 3 attempts)",
-    "On all retries exhausted: returns MirageError::Upstream",
-    "HTTP and WebSocket providers both supported",
-    "Verification tests pass: test_upstream_rps_limit, test_upstream_exponential_backoff"
+    "VitalityGauge, ConfidenceGauge, AccuracyGauge, and MockPhase exist per plan Quick Reference; ratatui::Widget implemented for all three gauge types",
+    "test_vitality_gauge_fill_width passes (INV-004)",
+    "test_vitality_gauge_colors passes (INV-005)",
+    "test_confidence_color_thresholds passes (INV-006)"
 ]
-depends_on = []
-parallel_group = "A"
+depends_on = ["T2"]
+parallel_group = "C"
 exclusive_files = true
 
 [[task]]
 id = "T5"
-title = "Verify and complete EvmExecutor implementation"
-status = "pending"
-files = ["apps/mirage-rs/src/fork.rs"]
+title = "Implement PheromoneHeatmap widget with Viridis gradient (Unit 2a)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/heatmap.rs"]
 acceptance = [
-    "EvmExecutor::call() executes read-only (no DirtyStore commit)",
-    "EvmExecutor::transact() executes and commits to DirtyStore",
-    "Uses revm 36.x Context::mainnet().with_db(...).build_mainnet() pattern",
-    "Returns ExecutionResult with success, gas_used, output"
+    "test_viridis_index_bounds passes (INV-007)",
+    "test_viridis_color_interpolation passes (INV-008)",
+    "test_pheromone_layer_tinting passes (INV-009)",
+    "test_heatmap_grid_clipping passes (INV-010)"
 ]
-depends_on = ["T1"]
-parallel_group = "B"
+depends_on = ["T2"]
+parallel_group = "C"
 exclusive_files = true
 
 [[task]]
 id = "T6"
-title = "Verify and register all eth_* JSON-RPC methods"
-status = "pending"
-files = ["apps/mirage-rs/src/rpc.rs"]
+title = "Implement TimelineRibbon widget with event rendering (Unit 2b)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/timeline.rs"]
 acceptance = [
-    "All methods from plan's table registered: eth_blockNumber, eth_chainId, eth_getBalance, eth_getStorageAt, eth_getCode, eth_getTransactionCount, eth_call, eth_sendTransaction, eth_sendRawTransaction, eth_getTransactionReceipt, eth_getTransactionByHash, eth_getLogs, eth_getBlockByNumber, eth_getBlockByHash, eth_estimateGas, eth_gasPrice, eth_feeHistory, eth_maxPriorityFeePerGas",
-    "eth_blockNumber returns local block counter",
-    "eth_call uses EvmExecutor::call()",
-    "eth_sendTransaction uses EvmExecutor::transact() and triggers DiffClassifier",
-    "Verification tests pass: test_eth_estimate_gas_buffer, test_eip2718_type_parsing"
+    "RibbonEventType (5 variants), TimelineEvent, TimelineRibbon per plan Quick Reference; RibbonEventType::glyph() and ::color(); ratatui::Widget for TimelineRibbon",
+    "test_timeline_ribbon_ticks_per_cell passes (INV-011)",
+    "test_timeline_ribbon_event_placement passes (INV-012)",
+    "test_ribbon_event_type_mapping passes (INV-013)"
 ]
-depends_on = ["T5"]
-parallel_group = "B"
+depends_on = ["T2"]
+parallel_group = "C"
 exclusive_files = true
 
 [[task]]
 id = "T7"
-title = "Verify and register Hardhat/Anvil compatibility methods"
-status = "pending"
-files = ["apps/mirage-rs/src/rpc.rs"]
+title = "Implement EventFeed widget with ring buffer and filtering (Unit 3a)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/feed.rs"]
 acceptance = [
-    "Both hardhat_* and anvil_* prefixes work identically",
-    "hardhat_impersonateAccount / anvil_impersonateAccount allow from without signature",
-    "hardhat_setBalance / anvil_setBalance, hardhat_setCode / anvil_setCode, hardhat_setStorageAt / anvil_setStorageAt write to DirtyStore",
-    "hardhat_mine / anvil_mine advance local block counter; hardhat_reset / anvil_reset clear DirtyStore, ReadCache, watch list",
-    "Verification tests pass: test_account_impersonation_validity"
+    "FeedLevel, FeedEntry, EventFeed per plan Quick Reference; EventFeed::new, ::push ring buffer at max_entries, ::visible_entries filtered newest-first; ratatui::Widget for &EventFeed",
+    "test_event_feed_capacity, test_event_feed_filter, test_event_feed_scroll_bounds, and test_feed_level_colors_and_labels pass (INV-014–INV-017)"
 ]
-depends_on = ["T6"]
-parallel_group = "B"
+depends_on = ["T2"]
+parallel_group = "D"
 exclusive_files = true
 
 [[task]]
 id = "T8"
-title = "Verify and register evm_* and mirage_* methods"
-status = "pending"
-files = ["apps/mirage-rs/src/rpc.rs"]
+title = "Implement StatusBar widget (Unit 3b)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/status_bar.rs"]
 acceptance = [
-    "evm_snapshot captures DirtyStore, returns snapshot ID; evm_revert restores to snapshot (single-use)",
-    "evm_mine mines N empty blocks; evm_increaseTime adds seconds; evm_setNextBlockTimestamp sets exact timestamp",
-    "mirage_setBalance, mirage_setCode, mirage_setStorageAt write to DirtyStore; mirage_mintERC20 auto-detects balance slot, mints atomically",
-    "mirage_watchContract, mirage_unwatchContract; mirage_getWatchList, mirage_getDirtySlots, mirage_status; mirage_getResourceUsage; mirage_getPosition; mirage_beginScenarioSet, mirage_defineScenario, mirage_runScenarioSet, mirage_getScenarioResults",
-    "Verification tests pass: test_watch_entry_source_tracking"
+    "StatusBar struct with phase, tick, pad_summary, credit_balance, projected_days per Quick Reference",
+    "test_status_bar_layout passes (INV-018)"
 ]
-depends_on = ["T7"]
-parallel_group = "B"
+depends_on = ["T2"]
+parallel_group = "D"
 exclusive_files = true
 
 [[task]]
 id = "T9"
-title = "Verify error codes match plan's table"
-status = "pending"
-files = ["apps/mirage-rs/src/lib.rs", "apps/mirage-rs/src/rpc.rs"]
+title = "Implement TabBar widget (Unit 4a)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/tabs.rs"]
 acceptance = [
-    "MirageError::rpc_code() returns correct codes: -32001 (SnapshotNotFound), -32010 (InvalidFrom), -32020 (SlotDetectionFailed), -32030 (WatchListFull), -32040 (UnknownProtocolType), -32050 (SetNotFound), -32054 (JobNotFound), -32055 (JobNotComplete), -32099 (Upstream)",
-    "JSON-RPC error responses use correct codes"
+    "TabBar struct with tabs (&[&str]) and active (usize) per Quick Reference",
+    "test_tab_bar_active_bounds passes (INV-019)",
+    "test_tab_bar_width_truncation passes (INV-020)"
 ]
-depends_on = ["T8"]
-parallel_group = "B"
-exclusive_files = false
+depends_on = ["T2"]
+parallel_group = "D"
+exclusive_files = true
 
 [[task]]
 id = "T10"
-title = "Verify server startup and artifact writing"
-status = "pending"
-files = ["apps/mirage-rs/src/main.rs"]
+title = "Implement ScrollableList widget with filtering (Unit 4b)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/scrolllist.rs"]
 acceptance = [
-    "Server binds to --host:--port (default 127.0.0.1:8545)",
-    "Writes /tmp/mirage-${port}.pid with process ID",
-    "Writes /tmp/mirage-${port}-status.json with status and port",
-    "Verifies upstream connectivity via eth_blockNumber if --rpc-url provided; EventFabric integration: main.rs constructs EventFabric and passes to MirageFork",
-    "Verification tests pass: test_memory_startup_gate"
+    "ScrollableList with items, cursor, scroll_offset, filter; new(), filtered_items() case-insensitive substring, move_cursor_down/up; ratatui::Widget for &ScrollableList",
+    "test_scrollable_list_cursor_bounds passes (INV-021)",
+    "test_scrollable_list_filter passes (INV-022)"
 ]
-depends_on = ["T9"]
-parallel_group = "B"
+depends_on = ["T2"]
+parallel_group = "D"
 exclusive_files = true
 
 [[task]]
 id = "T11"
-title = "Verify and complete TargetedFollower implementation"
-status = "pending"
-files = ["apps/mirage-rs/src/replay.rs"]
+title = "Implement KeyHelpOverlay widget (Unit 4c)"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/key_help.rs"]
 acceptance = [
-    "Subscribes to newHeads via WebSocket; reconnects on WebSocket drops with exponential backoff",
-    "Filters transactions: tx.to ∈ watch_list; replays matched txs in block order via EvmExecutor::transact",
-    "Applies StateDiff to DirtyStore; runs DiffClassifier for contagion (depth-capped)",
-    "Logs reverted replays; reverted replays do not corrupt DirtyStore state",
-    "Verification tests pass: test_block_budget_timeout_enforced, test_targeted_follower_filter_throughput"
+    "KeyBinding and KeyHelpOverlay per Quick Reference; ratatui::Widget for &KeyHelpOverlay; early return when not visible or area smaller than 20×5",
+    "test_key_help_overlay_dimensions passes (INV-023)",
+    "test_key_help_overlay_centering passes (INV-024)"
 ]
-depends_on = ["T5", "T3"]
-parallel_group = "C"
+depends_on = ["T2"]
+parallel_group = "D"
 exclusive_files = true
 
 [[task]]
 id = "T12"
-title = "Verify and complete SpeculativeExecutor implementation"
-status = "pending"
-files = ["apps/mirage-rs/src/replay.rs", "apps/mirage-rs/src/cow.rs"]
+title = "Finalize widgets module exports and integration"
+status = "done"
+files = ["apps/bardo-terminal/src/widgets/mod.rs"]
 acceptance = [
-    "Uses CowState for fork of current state",
-    "Does NOT commit to DirtyStore",
-    "Caches results by (tx_hash, base_state_block)",
-    "Invalidates cache when: tx included on-chain, new block writes to read_set, block number/timestamp deviates",
-    "Verification tests pass: test_speculative_executor_memory_per_tx, test_speculative_invalidation_on_block_write"
+    "widgets/mod.rs pub use re-exports every type in the plan Exports table",
+    "cargo check --workspace passes",
+    "bash plans/context/verify-chains/05-verify.sh passes (INV-001 through INV-025)"
 ]
-depends_on = ["T5"]
-parallel_group = "C"
-exclusive_files = true
-
-[[task]]
-id = "T13"
-title = "Verify StateDiff captures all changes"
-status = "pending"
-files = ["apps/mirage-rs/src/replay.rs"]
-acceptance = [
-    "StateDiff has: accounts (HashMap<Address, AccountDiff>), logs (Vec<LogEntry>), gas_used, success, output",
-    "AccountDiff has: info_changed, new_balance, new_nonce, new_code, storage_written, storage_read",
-    "LogEntry has: address, topics, data, log_index",
-    "Verification tests pass: test_speculative_invalidation_conditions"
-]
-depends_on = ["T12"]
-parallel_group = "C"
-exclusive_files = true
-
-[[task]]
-id = "T14"
-title = "Verify and complete ScenarioRunner implementation"
-status = "pending"
-files = ["apps/mirage-rs/src/scenario.rs"]
-acceptance = [
-    "Scenario TOML format parses correctly",
-    "ScenarioRunner::run_sequential() reverts to baseline after each scenario",
-    "ScenarioRunner::run_parallel() uses CowState branches (no revert needed)",
-    "ScenarioResult includes: status, gas_used, wall_time_ms, peak_memory_bytes, final_balances, position_state, logs, revert_reason",
-    "Verification tests pass: test_scenario_status_valid_transitions, test_scenario_runner_revert_restores_baseline, test_scenario_timeout_enforced, test_scenario_gas_exceeded, test_scenario_tracks_all_addresses"
-]
-depends_on = ["T13"]
-parallel_group = "D"
-exclusive_files = true
-
-[[task]]
-id = "T15"
-title = "Verify MirageClient uses GolemConfig correctly"
-status = "pending"
-files = ["apps/mirage-rs/src/integration.rs"]
-acceptance = [
-    "MirageConfig::from_golem_config() reads from GolemConfig::mirage",
-    "Uses config.mirage.url if set, else builds from host:port",
-    "MirageClient methods: eth_call, eth_send_transaction, evm_snapshot, evm_revert, mirage_watch_contract, mirage_get_position, mirage_status, mirage_get_resource_usage, mirage_begin_scenario_set, mirage_define_scenario, mirage_run_scenario_set, mirage_get_scenario_results all work",
-    "MirageClient::wait_ready() polls mirage_status until ready or timeout; MirageTestInstance spawns binary, polls until ready, shutdown() sends signal",
-    "Verification tests pass: test_mirage_config_default_timeout, test_mirage_config_default_retries"
-]
-depends_on = ["T10"]
-parallel_group = "D"
-exclusive_files = true
-
-[[task]]
-id = "T16"
-title = "Verify ResourceModel pressure tiers and eviction"
-status = "pending"
-files = ["apps/mirage-rs/src/resources.rs"]
-acceptance = [
-    "ResourceModel has profiles: Micro (256 MB, 32 contracts), Standard (512 MB, 64 contracts), Power (2 GB, 256 contracts)",
-    "Pressure tiers: < 0.5 (green), >= 0.5 (warning), >= 0.7 (throttle: evict ReadCache LRU), >= 0.9 (emergency: stop follower, mode = Proxy)",
-    "LRU eviction on ReadCache when throttle tier hit; DirtyStore never evicted; BytecodeCache: LRU by code_hash, capacity = min(10_000, profile.cache_capacity / 5)",
-    "ensure_spawn_budget() checks OS memory, exits with code 2 if insufficient",
-    "Verification tests pass: test_resource_pressure_bounds, test_resource_pressure_tier_transitions, test_cache_hit_rate_bounds, test_profile_memory_allocations, test_profile_watch_limits, test_profile_cache_capacities, test_bytecode_cache_capacity, test_lru_eviction_at_throttle_tier"
-]
-depends_on = ["T1"]
-parallel_group = "D"
-exclusive_files = true
-
-[[task]]
-id = "T17"
-title = "Write all unit tests from plan's Testing Checkpoint"
-status = "pending"
-files = ["apps/mirage-rs/src/fork.rs", "apps/mirage-rs/src/cow.rs", "apps/mirage-rs/src/replay.rs", "apps/mirage-rs/src/scenario.rs", "apps/mirage-rs/src/integration.rs", "apps/mirage-rs/src/resources.rs"]
-acceptance = [
-    "bash plans/context/verify-chains/03-verify.sh exits 0 (all INV steps)",
-    "cargo test -p mirage-rs passes"
-]
-depends_on = ["T14", "T15", "T16"]
+depends_on = ["T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11"]
 parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "T18"
-title = "Write integration test and verify compilation"
-status = "pending"
-files = ["apps/mirage-rs/tests/integration.rs"]
-acceptance = [
-    "Integration test spawns mirage-rs on port 18545; connects via MirageClient::new(); calls mirage_client.wait_ready(Duration::from_secs(10))",
-    "Executes simulated ETH transfer via eth_send_transaction; asserts sender balance decreased, receiver balance increased; asserts StateDiff contains balance changes",
-    "Calls evm_snapshot, modifies state, evm_revert, asserts state restored; shutdown via mirage_test_instance.shutdown()",
-    "cargo check --workspace passes; cargo test -p mirage-rs --test integration passes",
-    "Integration test test_local_tx_event_sequence verifies event sequence on local transaction"
-]
-depends_on = ["T17"]
-parallel_group = "E"
-exclusive_files = false
+exclusive_files = true

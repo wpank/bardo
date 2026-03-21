@@ -219,6 +219,113 @@ mod tests {
         assert_eq!(binding.description, "Copy");
     }
 
+    fn make_bindings(count: usize) -> Vec<KeyBinding> {
+        (0..count)
+            .map(|i| KeyBinding {
+                key: format!("C-{}", (b'a' + (i % 26) as u8) as char),
+                description: format!("action {}", i),
+            })
+            .collect()
+    }
+
+    /// INV-023: Box dimensions never exceed area; minimum area 20x5 triggers early return.
+    #[test]
+    fn test_key_help_overlay_dimensions() {
+        for &area_width in &[10u16, 20, 80, 255] {
+            for &area_height in &[3u16, 5, 40, 100] {
+                for &bindings_count in &[1usize, 5, 20] {
+                    let overlay = KeyHelpOverlay {
+                        bindings: make_bindings(bindings_count),
+                        visible: true,
+                    };
+                    let area = Rect::new(0, 0, area_width, area_height);
+                    let mut buffer = Buffer::empty(area);
+                    (&overlay).render(area, &mut buffer);
+
+                    if area_width < 20 || area_height < 5 {
+                        // Early return: buffer should be all spaces.
+                        assert!(
+                            buffer.content().iter().all(|cell| cell.symbol() == " "),
+                            "Expected early return for {}x{} with {} bindings",
+                            area_width,
+                            area_height,
+                            bindings_count,
+                        );
+                    } else {
+                        // Box must fit within the area. Verify no writes outside area bounds
+                        // (the buffer enforces this, so we just confirm rendering happened).
+                        let has_content = buffer
+                            .content()
+                            .iter()
+                            .any(|cell| cell.symbol() != " " && cell.symbol() != "");
+                        assert!(
+                            has_content,
+                            "Expected rendered content for {}x{} with {} bindings",
+                            area_width, area_height, bindings_count,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /// INV-024: Box is centered horizontally and vertically within the area.
+    #[test]
+    fn test_key_help_overlay_centering() {
+        for &area_x in &[0u16, 10] {
+            for &area_y in &[0u16, 5] {
+                for &area_width in &[40u16, 100] {
+                    for &area_height in &[20u16, 50] {
+                        let overlay = KeyHelpOverlay {
+                            bindings: make_bindings(3),
+                            visible: true,
+                        };
+                        let area = Rect::new(area_x, area_y, area_width, area_height);
+                        let mut buffer = Buffer::empty(area);
+                        (&overlay).render(area, &mut buffer);
+
+                        // Find rendered box bounds by scanning for box-drawing chars.
+                        let mut min_x = u16::MAX;
+                        let mut max_x = 0u16;
+                        let mut min_y = u16::MAX;
+                        let mut max_y = 0u16;
+                        for y in area.top()..area.bottom() {
+                            for x in area.left()..area.right() {
+                                let sym = buffer.get(x, y).symbol().to_string();
+                                if sym != " " {
+                                    min_x = min_x.min(x);
+                                    max_x = max_x.max(x);
+                                    min_y = min_y.min(y);
+                                    max_y = max_y.max(y);
+                                }
+                            }
+                        }
+
+                        assert!(min_x >= area_x, "box_x underflow");
+                        assert!(min_y >= area_y, "box_y underflow");
+                        assert!(max_x < area_x + area_width, "box overflows right");
+                        assert!(max_y < area_y + area_height, "box overflows bottom");
+
+                        let rendered_width = max_x - min_x + 1;
+                        let rendered_height = max_y - min_y + 1;
+                        let expected_x = area_x + area_width.saturating_sub(rendered_width) / 2;
+                        let expected_y = area_y + area_height.saturating_sub(rendered_height) / 2;
+                        assert_eq!(
+                            min_x, expected_x,
+                            "horizontal centering off for area ({},{},{}x{})",
+                            area_x, area_y, area_width, area_height,
+                        );
+                        assert_eq!(
+                            min_y, expected_y,
+                            "vertical centering off for area ({},{},{}x{})",
+                            area_x, area_y, area_width, area_height,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
     #[test]
     fn overlay_with_empty_bindings() {
         let overlay = KeyHelpOverlay {
