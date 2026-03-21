@@ -1,328 +1,140 @@
 [meta]
-plan = "02-core-types"
+plan = "04b-testing-bootstrap"
 role = "verifier"
-crates = ["golem-core", "golem-mortality"]
-total = 36
+crates = ["golem-core", "golem-runtime", "bardo-terminal", "mirage-rs"]
+total = 14
 
-# Compile gates (blocking, must pass first)
 [[task]]
 id = "CG1"
-title = "Compile check: golem-core"
+title = "Compile: cargo check --workspace"
 type = "compile"
-command = "cargo check -p golem-core"
+command = "cargo check --workspace"
 blocking = true
 status = "pending"
 
 [[task]]
 id = "CG2"
-title = "Compile check: golem-mortality"
+title = "Compile: cargo check -p golem-runtime"
 type = "compile"
-command = "cargo check -p golem-mortality"
-blocking = true
-status = "pending"
-
-# Invariant unit tests - golem-mortality (stochastic/epistemic/economic)
-[[task]]
-id = "INV1"
-title = "INV-001: Gompertz-Makeham Hazard Monotonicity"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_hazard_monotonic_with_age"
-test_fns = ["test_hazard_monotonic_with_age"]
-crate = "golem-mortality"
+command = "cargo check -p golem-runtime"
 blocking = true
 status = "pending"
 
 [[task]]
-id = "INV2"
-title = "INV-002: Gompertz Hazard Rate Cap"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_hazard_rate_within_bounds"
-test_fns = ["test_hazard_rate_within_bounds"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV3"
-title = "INV-003: Epistemic Frailty Multiplier Range"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_epistemic_frailty_multiplier_bounds"
-test_fns = ["test_epistemic_frailty_multiplier_bounds"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV4"
-title = "INV-004: Survival Probability Monotonic Decrease"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_survival_probability_decreasing"
-test_fns = ["test_survival_probability_decreasing"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV5"
-title = "INV-005: Ebbinghaus Epistemic Decay Curve"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_ebbinghaus_decay_halflife"
-test_fns = ["test_ebbinghaus_decay_halflife"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV6"
-title = "INV-006: Domain Decay Multipliers Variance"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_domain_multipliers_ordering"
-test_fns = ["test_domain_multipliers_ordering"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV7"
-title = "INV-007: Knowledge Type Weight Hierarchy"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_type_weight_ordering"
-test_fns = ["test_type_weight_ordering"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV8"
-title = "INV-008: Epistemic Fitness R-squared Bounds"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_epistemic_fitness_rsquared_bounds"
-test_fns = ["test_epistemic_fitness_rsquared_bounds"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV9"
-title = "INV-009: Senescence Threshold Hysteresis"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_senescence_stage_transitions"
-test_fns = ["test_senescence_stage_transitions"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV18"
-title = "INV-018: Economic Mortality Vitality EMA"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_burn_rate_ema_convergence"
-test_fns = ["test_burn_rate_ema_convergence"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV21"
-title = "INV-021: DeathCause Exhaustiveness"
-type = "unit_test"
-command = "cargo test -p golem-mortality test_death_cause_exhaustiveness"
-test_fns = ["test_death_cause_exhaustiveness"]
-crate = "golem-mortality"
-blocking = true
-status = "pending"
-
-# Invariant unit tests - golem-core (cortical/config/event)
-[[task]]
-id = "INV10"
-title = "INV-010: Behavioral Phase Thresholds"
-type = "unit_test"
-command = "cargo test -p golem-core test_behavioral_phase_thresholds"
-test_fns = ["test_behavioral_phase_thresholds"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV11"
-title = "INV-011: CorticalState Cache Line Alignment"
-type = "unit_test"
-command = "cargo test -p golem-core test_cortical_state_size_and_alignment"
-test_fns = ["test_cortical_state_size_and_alignment"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV12"
-title = "INV-012: PAD Vector Bounds"
-type = "unit_test"
-command = "cargo test -p golem-core test_pad_vector_bounds"
-test_fns = ["test_pad_vector_bounds"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV13"
-title = "INV-013: Plutchik Emotion Mapping from PAD"
-type = "unit_test"
-command = "cargo test -p golem-core test_plutchik_emotion_classification"
-test_fns = ["test_plutchik_emotion_classification"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV14"
-title = "INV-014: Regime Tag Correctness"
-type = "unit_test"
-command = "cargo test -p golem-core test_regime_tag_transitions"
-test_fns = ["test_regime_tag_transitions"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV15"
-title = "INV-015: Inheritance Confidence Cap"
-type = "unit_test"
-command = "cargo test -p golem-core test_inheritance_confidence_cap"
-test_fns = ["test_inheritance_confidence_cap"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV16"
-title = "INV-016: Regime Multiplier Coverage"
-type = "unit_test"
-command = "cargo test -p golem-core test_regime_multipliers_complete"
-test_fns = ["test_regime_multipliers_complete"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV17"
-title = "INV-017: Probe Threshold Ordering"
-type = "unit_test"
-command = "cargo test -p golem-core test_probe_threshold_ordering"
-test_fns = ["test_probe_threshold_ordering"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV22"
-title = "INV-022: EventFabric Ring Buffer Capacity"
-type = "unit_test"
-command = "cargo test -p golem-core test_event_fabric_ring_buffer_capacity"
-test_fns = ["test_event_fabric_ring_buffer_capacity"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV23"
-title = "INV-023: Subsystem Coverage"
-type = "unit_test"
-command = "cargo test -p golem-core test_subsystem_enum_completeness"
-test_fns = ["test_subsystem_enum_completeness"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV24"
-title = "INV-024: EventPayload Variant Count"
-type = "unit_test"
-command = "cargo test -p golem-core test_event_payload_variant_count"
-test_fns = ["test_event_payload_variant_count"]
-crate = "golem-core"
-blocking = true
-status = "pending"
-
-# Integration tests (complex contract validation)
-[[task]]
-id = "INV19"
-title = "INV-019: Death Clock Coupling Paths"
-type = "integration_test"
-command = "cargo test -p golem-mortality test_mortality_coupling_completeness"
-contracts = ["INV-019"]
-crate = "golem-mortality"
-blocking = false
-status = "pending"
-
-[[task]]
-id = "INV20"
-title = "INV-020: Extension Hook Fire Order"
-type = "integration_test"
-command = "cargo test -p golem-core test_extension_hook_fire_order"
-contracts = ["INV-020"]
-crate = "golem-core"
-blocking = false
-status = "pending"
-
-# Code quality gates
-[[task]]
-id = "CL1"
-title = "Clippy lints: golem-core"
+id = "CG3"
+title = "Compile: cargo check -p bardo-terminal"
 type = "compile"
-command = "cargo clippy -p golem-core -- -D warnings"
+command = "cargo check -p bardo-terminal"
 blocking = true
 status = "pending"
 
 [[task]]
-id = "CL2"
-title = "Clippy lints: golem-mortality"
+id = "INV001"
+title = "INV-001: test_with_rpc_constructor"
+type = "invariant"
+invariant = "INV-001"
+command = "cargo test -p golem-core -- test_with_rpc_constructor --exact"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV002"
+title = "INV-002: test_headless_constructor"
+type = "invariant"
+invariant = "INV-002"
+command = "cargo test -p golem-core -- test_headless_constructor --exact"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV003"
+title = "INV-003: test_app_backend_generic_compiles"
+type = "invariant"
+invariant = "INV-003"
+command = "cargo test -p bardo-terminal -- test_app_backend_generic_compiles --exact"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV004"
+title = "INV-004: test_pool_slot0_matches_expected_price"
+type = "invariant"
+invariant = "INV-004"
+command = "cargo test -p mirage-rs --test integration -- test_pool_slot0_matches_expected_price --nocapture"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV005"
+title = "INV-005: test_headless_constructor_compiles (golem-runtime)"
+type = "invariant"
+invariant = "INV-005"
+command = "cargo test -p golem-runtime -- test_headless_constructor_compiles --exact"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV006"
+title = "INV-006: test_golem_snapshot_default"
+type = "invariant"
+invariant = "INV-006"
+command = "cargo test -p golem-runtime -- test_golem_snapshot_default --exact"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV007"
+title = "nextest integration profile loads"
 type = "compile"
-command = "cargo clippy -p golem-mortality -- -D warnings"
+command = "cargo nextest run --profile integration --list"
 blocking = true
 status = "pending"
 
-# Event sequence and lifecycle scenarios
 [[task]]
-id = "LS1"
-title = "Economic Death Sequence"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_economic_death_sequence"
-scenarios = ["HeartbeatTick → VitalityUpdate(economic=0) → DeathClockAlarm → DeathInitiated → SuccessorSpawned"]
+id = "INV008"
+title = "plans/context/testing-reference.md exists and has strategy table"
+type = "invariant"
+invariant = "INV-008"
+command = "grep -c 'strategy' plans/context/testing-reference.md"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV009"
+title = "retrofit-testing-docs.sh is executable and runs against 04b"
+type = "invariant"
+invariant = "INV-009"
+command = "bash plans/context/prompts/retrofit-testing-docs.sh 04b"
 blocking = false
 status = "pending"
 
 [[task]]
-id = "LS2"
-title = "Epistemic Senescence Sequence"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_epistemic_senescence_sequence"
-scenarios = ["MarketObservation → OutcomeVerification → VitalityUpdate(epistemic<threshold) → DeathClockAlarm → PhaseTransition → DeathInitiated"]
-blocking = false
+id = "FIN1"
+title = "Final: all unit tests for touched crates"
+type = "unit_test"
+command = "cargo test -p golem-core -p golem-runtime -p bardo-terminal"
+crate = "golem-core"
+blocking = true
 status = "pending"
+test_invariants = [
+    "test_with_rpc_constructor",
+    "test_headless_constructor",
+    "test_app_backend_generic_compiles",
+    "test_headless_constructor_compiles",
+    "test_golem_snapshot_default"
+]
 
 [[task]]
-id = "LS3"
-title = "Stochastic Death Sequence"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_stochastic_death_sequence"
-scenarios = ["HeartbeatTick → hazard_roll → VitalityUpdate(stochastic=0) → DeathInitiated → SuccessorSpawned"]
-blocking = false
+id = "FIN2"
+title = "Final: mirage-rs integration suite"
+type = "unit_test"
+command = "cargo test -p mirage-rs --test integration"
+crate = "mirage-rs"
+blocking = true
 status = "pending"
-
-[[task]]
-id = "LS4"
-title = "Behavioral Phase Cascade"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_behavioral_phase_cascade"
-scenarios = ["VitalityUpdate(composite=0.8→0.6→0.4→0.2) → PhaseTransition at each threshold"]
-blocking = false
-status = "pending"
-
-[[task]]
-id = "LS5"
-title = "Extension Hook Execution Sequence"
-type = "lifecycle"
-command = "cargo test -p golem-core -- test_extension_hook_sequence"
-scenarios = ["on_session → on_heartbeat_start → on_lifespan_tick → on_daimon_update → on_memory_validate → on_risk_check → on_dream_trigger → on_cyber_reflect → on_clade_sync → on_telemetry_emit"]
-blocking = false
-status = "pending"
+test_invariants = [
+    "test_pool_slot0_matches_expected_price",
+    "integration_eth_transfer_state_diff",
+    "integration_snapshot_revert",
+    "integration_scenario_runner_cow_isolation"
+]

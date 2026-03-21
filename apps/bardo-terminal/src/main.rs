@@ -16,7 +16,7 @@ mod widgets;
 use std::io::stdout;
 
 use anyhow::{Result, anyhow};
-pub use app::App;
+pub use app::{App, EventSource};
 pub use screen::{Screen, ScreenId};
 pub use state::{AppAction, AppState};
 
@@ -41,10 +41,11 @@ async fn main() -> Result<()> {
 
     let mut terminal = setup_terminal()?;
     let mut app = App::new();
+    let mut events = EventSource::Crossterm;
 
     // `App::run` blocks on crossterm I/O and timing; keep it off the async scheduler's
     // cooperative path while preserving a Tokio runtime for future async work.
-    let run_result = tokio::task::block_in_place(|| app.run(&mut terminal));
+    let run_result = tokio::task::block_in_place(|| app.run(&mut terminal, &mut events));
 
     let teardown_result = teardown_terminal(&mut terminal);
 

@@ -7,6 +7,7 @@ use std::{
     env,
     ffi::OsString,
     path::{Path, PathBuf},
+    sync::mpsc,
     time::{Duration, Instant},
 };
 
@@ -14,7 +15,7 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use ratatui::{
     Frame, Terminal,
-    backend::CrosstermBackend,
+    backend::Backend,
     layout::{Alignment, Rect},
     style::{Modifier, Style},
     text::{Line, Span},
@@ -37,6 +38,34 @@ use crate::{
 
 const TARGET_FPS: u64 = 60;
 const FRAME_DURATION: Duration = Duration::from_micros(1_000_000 / TARGET_FPS);
+
+/// Where the render loop obtains crossterm [`Event`] values from.
+pub enum EventSource {
+    /// Poll the real terminal via crossterm (interactive mode).
+    Crossterm,
+    /// Inject events from a channel (tests, headless drivers).
+    Channel(mpsc::Receiver<Event>),
+}
+
+impl EventSource {
+    /// Waits up to `timeout` for the next event, or returns `None` on timeout.
+    pub(crate) fn poll_event(&mut self, timeout: Duration) -> Result<Option<Event>> {
+        match self {
+            EventSource::Crossterm => {
+                if event::poll(timeout)? {
+                    Ok(Some(event::read()?))
+                } else {
+                    Ok(None)
+                }
+            }
+            EventSource::Channel(rx) => match rx.recv_timeout(timeout) {
+                Ok(ev) => Ok(Some(ev)),
+                Err(mpsc::RecvTimeoutError::Timeout) => Ok(None),
+                Err(mpsc::RecvTimeoutError::Disconnected) => Ok(None),
+            },
+        }
+    }
+}
 
 /// Application scaffold that owns terminal state and screen navigation.
 pub struct App {
@@ -85,9 +114,10 @@ impl App {
     }
 
     /// Runs the 60 FPS render loop until the user quits.
-    pub(crate) fn run(
+    pub(crate) fn run<B: Backend>(
         &mut self,
-        terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>,
+        terminal: &mut Terminal<B>,
+        events: &mut EventSource,
     ) -> Result<()> {
         let mut last_frame = Instant::now();
 
@@ -96,8 +126,8 @@ impl App {
             let dt = frame_start.duration_since(last_frame).as_secs_f64();
 
             let timeout = FRAME_DURATION.saturating_sub(last_frame.elapsed());
-            if event::poll(timeout)? {
-                match event::read()? {
+            if let Some(ev) = events.poll_event(timeout)? {
+                match ev {
                     Event::Key(key) => {
                         if let Some(action) = self.handle_key(key) {
                             self.apply_action(action);
@@ -1065,5 +1095,27 @@ mod tests {
         assert_eq!(FRAME_DURATION, Duration::from_micros(1_000_000 / 60));
         // 16,666 microseconds per frame
         assert_eq!(FRAME_DURATION.as_micros(), 16_666);
+    }
+
+    /// INV-003: `App::run` is generic over `Backend` (e.g. `TestBackend`) and accepts
+    /// [`EventSource::Channel`] for injected events.
+    #[test]
+    fn test_app_backend_generic_compiles() {
+        let (tx, rx) = mpsc::channel();
+        let mut app = App::new();
+        let backend = TestBackend::new(80, 24);
+        let mut terminal = Terminal::new(backend).expect("test terminal");
+        let mut events = EventSource::Channel(rx);
+
+        std::thread::spawn(move || {
+            let _ = tx.send(Event::Key(KeyEvent::new(
+                KeyCode::Char('q'),
+                KeyModifiers::NONE,
+            )));
+        });
+
+        app.run(&mut terminal, &mut events)
+            .expect("run with TestBackend");
+        assert!(app.should_quit);
     }
 }

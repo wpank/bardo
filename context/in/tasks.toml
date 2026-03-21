@@ -1,250 +1,229 @@
 [meta]
-plan = "02-core-types"
+plan = "04b-testing-bootstrap"
 iteration = 1
-total = 18
+total = 12
 done = 0
+max_parallel = 5
+estimated_total_minutes = 60
 
 [[task]]
 id = "T1"
-title = "Foundation Types: GolemId, GolemError, TaintLabel, CognitiveTier"
+title = "golem-core: add test_with_rpc(), test_headless(), DeploymentMode::Headless"
 status = "pending"
-files = [
-  "crates/golem-core/src/id.rs",
-  "crates/golem-core/src/error.rs",
-  "crates/golem-core/src/taint.rs",
-  "crates/golem-core/src/cognitive.rs"
-]
+files = ["crates/golem-core/src/config.rs"]
 acceptance = [
-  "GolemId: new(), from_uuid(), and as_uuid() implemented per plan Exports/Quick Reference",
-  "GolemError is thiserror enum with Config, Init, Extension, EventFabric, CorticalState, Io, TomlParse, Serde variants",
-  "CognitiveTier is #[repr(u8)] enum (T0=0, T1=1, T2=2) with TryFrom<u8> returning Err on invalid values",
-  "cargo test -p golem-core passes for T1 files (see testing-backlog-02.md for enumerated test names)"
+    "DeploymentMode::Headless variant exists in the enum",
+    "GolemConfig::test_with_rpc(url: String) -> Self is a pub fn",
+    "GolemConfig::test_headless() -> Self is a pub fn",
+    "test_with_rpc_constructor unit test passes",
+    "test_headless_constructor unit test passes",
+    "cargo check -p golem-core succeeds"
 ]
 depends_on = []
 parallel_group = "A"
 exclusive_files = true
+estimated_seconds = 300
 
 [[task]]
 id = "T2"
-title = "GolemConfig: Full TOML schema with 11 sections and env var overrides"
+title = "bardo-terminal: make App::run generic over B: Backend; add EventSource enum"
 status = "pending"
-files = ["crates/golem-core/src/config.rs"]
+files = ["apps/bardo-terminal/src/app.rs", "apps/bardo-terminal/src/main.rs"]
 acceptance = [
-  "GolemConfig exposes top-level sections per plan Exports: golem, heartbeat, inference, safety, custody, styx, succession, daimon, dreams, oracle, mortality, compute",
-  "GolemConfig::from_file(Path) -> Result<Self, GolemError> reads and deserializes TOML",
-  "GolemConfig::from_str(&str) -> Result<Self, GolemError>",
-  "with_env_overrides(self) -> Result<Self, GolemError> applies GOLEM_* and BARDO_* env vars"
+    "EventSource enum exists with Crossterm and Channel(mpsc::Receiver<Event>) variants",
+    "App::run signature is: pub fn run<B: ratatui::backend::Backend>(&mut self, terminal: &mut Terminal<B>, event_source: EventSource)",
+    "main.rs passes EventSource::Crossterm to app.run()",
+    "test_app_backend_generic_compiles test passes",
+    "cargo test -p bardo-terminal passes (all existing tests still pass)"
 ]
-depends_on = ["T1"]
-parallel_group = "B"
+depends_on = []
+parallel_group = "A"
 exclusive_files = true
+estimated_seconds = 400
 
 [[task]]
 id = "T3"
-title = "CorticalState: 32 atomic signals with cache-line alignment"
+title = "mirage-rs: add test_pool_slot0_matches_expected_price + MIRAGE_TEST_PORT support"
 status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
-acceptance = [
-  "CorticalState is #[repr(C, align(64))] with 32 atomic signals",
-  "All f32 values use AtomicU32 with f32::to_bits()/from_bits()",
-  "Write helpers use Ordering::Release, read helpers use Ordering::Acquire",
-  "cargo test -p golem-core passes for cortical.rs unit tests (see testing-backlog-02.md for names)"
+files = [
+    "apps/mirage-rs/tests/integration.rs",
+    "apps/mirage-rs/src/rpc.rs"
 ]
-depends_on = ["T1"]
-parallel_group = "B"
+acceptance = [
+    "mirage_instance_or_env() helper exists and reads MIRAGE_TEST_PORT env var",
+    "to_sqrt_price_x96() and from_sqrt_price_x96() pure math helpers exist (in rpc.rs or math.rs)",
+    "test_pool_slot0_matches_expected_price test exists and passes",
+    "cargo test -p mirage-rs --test integration passes (all integration tests)"
+]
+depends_on = []
+parallel_group = "A"
 exclusive_files = true
+estimated_seconds = 500
 
 [[task]]
 id = "T4"
-title = "EventFabric: Non-blocking broadcast bus with 10K ring buffer"
+title = "mirage-rs: create new_pool.toml scenario"
 status = "pending"
-files = ["crates/golem-core/src/event.rs"]
+files = ["apps/mirage-rs/tests/scenarios/new_pool.toml"]
 acceptance = [
-  "EventFabric uses broadcast capacity 10_000 and a lock-protected VecDeque ring for durable replay",
-  "emit() assigns monotonic seq, enforces 10_000 cap with pop-front eviction, and publishes to subscribers",
-  "replay_from(after_seq) returns ordered events with seq >= after_seq",
-  "cargo test -p golem-core passes for event.rs unit tests (see testing-backlog-02.md for names)"
+    "apps/mirage-rs/tests/scenarios/new_pool.toml exists",
+    "TOML is valid (toml --check or cargo test parses it without error)",
+    "Contains [scenario], [fork], at least one [[setup]], at least one [[transactions]], and at least two [[assertions]] sections"
+]
+depends_on = []
+parallel_group = "A"
+exclusive_files = true
+estimated_seconds = 200
+
+[[task]]
+id = "T5"
+title = "golem-runtime: add GolemRuntime headless API stubs + GolemSnapshot"
+status = "pending"
+files = [
+    "crates/golem-runtime/src/lib.rs",
+    "crates/golem-runtime/Cargo.toml"
+]
+acceptance = [
+    "GolemSnapshot struct exists with all fields from plan Quick Reference (Serialize + Deserialize)",
+    "MarketObservation struct exists",
+    "GolemRuntime struct exists with headless(config) constructor",
+    "GolemRuntime::tick(), snapshot(), inject_event(), inject_observation(), set_vitality(), force_phase() all exist as pub fns",
+    "Methods that are todo!() compile without error",
+    "test_headless_constructor_compiles passes",
+    "test_golem_snapshot_default passes",
+    "cargo check -p golem-runtime succeeds",
+    "golem-core is declared as a dependency in Cargo.toml"
 ]
 depends_on = ["T1"]
 parallel_group = "B"
 exclusive_files = true
-
-[[task]]
-id = "T5"
-title = "Extension Trait System: 20 hooks with ExtensionRegistry"
-status = "pending"
-files = ["crates/golem-core/src/extension.rs"]
-acceptance = [
-  "Extension trait is async (async_trait) with at least 20 hook methods per plan",
-  "ExtensionRegistry supports register and build() with layer-based topological ordering and DAG validation (cycles/missing deps rejected)",
-  "fire_tool_call() returns the most restrictive action: Block short-circuits; otherwise Modify overrides Allow",
-  "cargo test -p golem-core passes for extension registry tests (see testing-backlog-02.md for names)"
-]
-depends_on = ["T1", "T4"]
-parallel_group = "C"
-exclusive_files = true
+estimated_seconds = 600
 
 [[task]]
 id = "T6"
-title = "HDC Primitives: 10240-bit sparse distributed representation stubs"
+title = "bardo-ctl: add FullLoopTest PipelinePhase + GateType + extra_gates_for_plan()"
 status = "pending"
-files = ["crates/golem-core/src/hdc.rs"]
+files = [
+    "tmp/bardo-ctl/src/orchestrator/pipeline.rs",
+    "tmp/bardo-ctl/src/orchestrator/plan.rs"
+]
 acceptance = [
-  "HdcVector stores [u64; 160] (10240 bits) and is Clone + Copy",
-  "zeros() is const fn and returns the zero vector",
-  "bind() is element-wise XOR with involution property bind(v,v)==zeros",
-  "cargo test -p golem-core passes for hdc.rs tests (see testing-backlog-02.md for names)"
+    "PipelinePhase::FullLoopTest variant exists in the enum",
+    "GateType::FullLoopTest { mirage_port: u16, scenarios: Vec<String> } variant exists",
+    "extra_gates_for_plan(plan: &PlanInfo) -> Vec<PipelinePhase> function exists in plan.rs",
+    "Returns TerminalValidation for plans touching bardo-terminal",
+    "Returns GolemLifecycleTest for plans touching golem-core/runtime/mortality/heartbeat/daimon",
+    "Returns FullLoopTest for plans touching golem-ta or golem-chain",
+    "Returns FullLoopTest for plans with num >= 71",
+    "cargo check -p bardo-ctl succeeds"
 ]
 depends_on = []
-parallel_group = "A"
+parallel_group = "B"
 exclusive_files = true
+estimated_seconds = 400
 
 [[task]]
 id = "T7"
-title = "Per-Tick Allocator: Thin bumpalo wrapper"
+title = "bardo-ctl: add full_loop_gate(), wait_for_mirage_ready(), find_free_port() to gates.rs"
 status = "pending"
-files = ["crates/golem-core/src/alloc.rs"]
+files = ["tmp/bardo-ctl/src/orchestrator/gates.rs"]
 acceptance = [
-  "reset(&mut self) calls self.inner.reset() (Step 10)",
-  "alloc<T>(&self, val: T) -> &T delegates to inner.alloc(val) (Step 10)",
-  "alloc_slice_copy<T: Copy>(&self, slice: &[T]) -> &[T] delegates to inner.alloc_slice_copy(slice) (Step 10)",
-  "cargo test -p golem-core passes for alloc.rs tests (see testing-backlog-02.md for names)"
+    "find_free_port() -> anyhow::Result<u16> exists",
+    "wait_for_mirage_ready(port: u16, timeout: Duration) -> anyhow::Result<()> exists; polls mirage_status JSON-RPC",
+    "full_loop_gate(repo_root: &Path) -> anyhow::Result<GateResult> exists",
+    "full_loop_gate returns GateResult { passed: false } with diagnostic when crates/golem-eval does not exist",
+    "full_loop_gate kills mirage-rs subprocess on both success and failure paths",
+    "cargo check -p bardo-ctl succeeds"
+]
+depends_on = ["T6"]
+parallel_group = "C"
+exclusive_files = true
+estimated_seconds = 600
+
+[[task]]
+id = "T8"
+title = "bardo-ctl: add FullLoopValidator to AgentRole enum with label/short/backend"
+status = "pending"
+files = ["tmp/bardo-ctl/src/agent/roles.rs"]
+acceptance = [
+    "AgentRole::FullLoopValidator variant exists",
+    "label() returns 'full-loop-validator' for FullLoopValidator",
+    "short() returns 'FLV' for FullLoopValidator",
+    "backend() returns AgentBackend::Claude for FullLoopValidator",
+    "cargo check -p bardo-ctl succeeds"
+]
+depends_on = []
+parallel_group = "B"
+exclusive_files = true
+estimated_seconds = 200
+
+[[task]]
+id = "T9"
+title = "nextest.toml: add integration test profile"
+status = "pending"
+files = ["nextest.toml"]
+acceptance = [
+    "[profile.integration] section exists",
+    "test-threads = 2",
+    "slow-timeout period is 120s",
+    "retries = 1",
+    "cargo nextest run --profile integration --list exits 0"
 ]
 depends_on = []
 parallel_group = "A"
 exclusive_files = true
+estimated_seconds = 60
 
 [[task]]
-id = "T8"
-title = "lib.rs: Re-export all public items"
+id = "T10"
+title = "Create plans/context/testing-reference.md"
 status = "pending"
-files = ["crates/golem-core/src/lib.rs"]
+files = ["plans/context/testing-reference.md"]
 acceptance = [
-  "All 10 modules declared and public: mod alloc, cognitive, config, cortical, error, event, extension, hdc, id, taint (Step 29)",
-  "Public re-exports cover every symbol in Plan 02 Exports required for downstream crates",
-  "cargo check -p golem-core passes (Step 29 checkpoint)",
-  "cargo test -p golem-core passes with zero failures"
+    "File exists at plans/context/testing-reference.md",
+    "Contains Phase 0-6 roadmap table",
+    "Contains INV-NNN strategy field table with all four strategy values",
+    "Contains gate trigger rules table",
+    "Contains GolemConfig::test_with_rpc() and spawn_mirage_test_instance usage examples",
+    "References testing2.md location (gringotts/bardo/tmp/testing2.md)"
 ]
-depends_on = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]
-parallel_group = "D"
+depends_on = []
+parallel_group = "A"
 exclusive_files = true
+estimated_seconds = 300
 
 [[task]]
-id = "V1"
-title = "Verification: PAD Vector Bounds (proptest)"
+id = "T11"
+title = "Create plans/context/prompts/retrofit-testing-docs.sh"
 status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
+files = ["plans/context/prompts/retrofit-testing-docs.sh"]
 acceptance = [
-  "test_pad_vector_bounds passes via `cargo test -p golem-core` / `02-verify.sh` inv-012 (INV-012)"
+    "File exists and is executable (chmod +x)",
+    "Accepts a plan number as $1 argument; exits 1 with helpful error if not found",
+    "Reads the plan file and extracts INV blocks + crates_touched",
+    "Writes a testing-backlog retrofit file to plans/context/",
+    "Writes a shared-rubric retrofit file to plans/context/",
+    "Script exits 0 when run against plans/04b-testing-bootstrap.md"
 ]
-depends_on = ["T3"]
-parallel_group = "E"
-exclusive_files = false
+depends_on = []
+parallel_group = "A"
+exclusive_files = true
+estimated_seconds = 300
 
 [[task]]
-id = "V2"
-title = "Verification: Plutchik Emotion Classification (proptest)"
+id = "T12"
+title = "Final verification: cargo check --workspace + all new tests pass"
 status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
+files = ["apps/bardo-terminal/src/**/*.rs", "crates/golem-core/src/**/*.rs", "crates/golem-runtime/src/**/*.rs"]
 acceptance = [
-  "test_plutchik_emotion_classification passes via `cargo test -p golem-core` / `02-verify.sh` inv-013 (INV-013)"
+    "cargo check --workspace exits 0",
+    "cargo test -p golem-core -- test_with_rpc_constructor test_headless_constructor passes",
+    "cargo test -p golem-runtime passes",
+    "cargo test -p bardo-terminal -- test_app_backend_generic_compiles passes",
+    "cargo test -p mirage-rs --test integration -- test_pool_slot0_matches_expected_price passes",
+    "cargo nextest run --profile integration --list exits 0"
 ]
-depends_on = ["T3"]
-parallel_group = "E"
+depends_on = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11"]
+parallel_group = "G"
 exclusive_files = false
-
-[[task]]
-id = "V3"
-title = "Verification: Behavioral Phase Thresholds (proptest)"
-status = "pending"
-files = ["crates/golem-core/src/cortical.rs"]
-acceptance = [
-  "test_behavioral_phase_thresholds passes via `cargo test -p golem-core` / `02-verify.sh` inv-010 (INV-010)"
-]
-depends_on = ["T3"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V4"
-title = "Verification: Regime Tag Transitions"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_regime_tag_transitions passes via `cargo test -p golem-core` / `02-verify.sh` inv-014 (INV-014)"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V5"
-title = "Verification: Regime Multipliers Complete Coverage"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_regime_multipliers_complete passes via `cargo test -p golem-core` / `02-verify.sh` inv-016 (INV-016)"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V6"
-title = "Verification: Probe Threshold Ordering"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_probe_threshold_ordering passes via `cargo test -p golem-core` / `02-verify.sh` inv-017 (INV-017)"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V7"
-title = "Verification: Inheritance Confidence Cap"
-status = "pending"
-files = ["crates/golem-core/src/config.rs"]
-acceptance = [
-  "test_inheritance_confidence_cap passes via `cargo test -p golem-core` / `02-verify.sh` inv-015 (INV-015)"
-]
-depends_on = ["T2"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V8"
-title = "Verification: Subsystem Enum Completeness"
-status = "pending"
-files = ["crates/golem-core/src/event.rs"]
-acceptance = [
-  "test_subsystem_enum_completeness passes via `cargo test -p golem-core` / `02-verify.sh` inv-023 (INV-023)"
-]
-depends_on = ["T4"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V9"
-title = "Verification: EventPayload Variant Count and Distribution"
-status = "pending"
-files = ["crates/golem-core/src/event.rs"]
-acceptance = [
-  "test_event_payload_variant_count passes via `cargo test -p golem-core` / `02-verify.sh` inv-024 (INV-024)"
-]
-depends_on = ["T4"]
-parallel_group = "E"
-exclusive_files = false
-
-[[task]]
-id = "V10"
-title = "Verification: Extension Hook Fire Order (Integration)"
-status = "pending"
-files = ["crates/golem-core/src/extension.rs"]
-acceptance = [
-  "test_extension_hook_fire_order passes via `cargo test -p golem-core` / `02-verify.sh` inv-020 (INV-020)"
-]
-depends_on = ["T5"]
-parallel_group = "E"
-exclusive_files = false
+estimated_seconds = 300
