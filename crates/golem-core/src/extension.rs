@@ -477,6 +477,170 @@ impl ExtensionRegistry {
         Ok(())
     }
 
+    /// Fires the input hook chain.
+    pub async fn fire_input(
+        &self,
+        msg: &mut InputMessage,
+        ctx: &InputCtx,
+    ) -> anyhow::Result<InputAction> {
+        for &index in self.firing_order(&HookId::Input) {
+            match self.extensions[index].on_input(msg, ctx).await? {
+                InputAction::Pass => {}
+                other => return Ok(other),
+            }
+        }
+        Ok(InputAction::Pass)
+    }
+
+    /// Fires the before-agent-start hook chain.
+    pub async fn fire_before_agent_start(&self, ctx: &mut AgentStartCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::BeforeAgentStart) {
+            self.extensions[index].on_before_agent_start(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the agent-start hook chain.
+    pub async fn fire_agent_start(&self, ctx: &AgentStartCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::AgentStart) {
+            self.extensions[index].on_agent_start(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the turn-start hook chain.
+    pub async fn fire_turn_start(&self, ctx: &TurnStartCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::TurnStart) {
+            self.extensions[index].on_turn_start(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the context hook chain.
+    pub async fn fire_context(
+        &self,
+        messages: &mut Vec<AgentMessage>,
+        ctx: &ContextCtx,
+    ) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::Context) {
+            self.extensions[index].on_context(messages, ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the before-provider-request hook chain.
+    pub async fn fire_before_provider_request(
+        &self,
+        ctx: &mut ProviderReqCtx,
+    ) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::BeforeProviderRequest) {
+            self.extensions[index]
+                .on_before_provider_request(ctx)
+                .await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the tool-execution-start hook chain.
+    pub async fn fire_tool_execution_start(&self, ctx: &ToolExecCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::ToolExecutionStart) {
+            self.extensions[index].on_tool_execution_start(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the tool-execution-update hook chain.
+    pub async fn fire_tool_execution_update(&self, ctx: &ToolExecCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::ToolExecutionUpdate) {
+            self.extensions[index].on_tool_execution_update(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the tool-execution-end hook chain.
+    pub async fn fire_tool_execution_end(&self, ctx: &ToolExecCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::ToolExecutionEnd) {
+            self.extensions[index].on_tool_execution_end(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the tool-result hook chain.
+    pub async fn fire_tool_result(
+        &self,
+        result: &mut ToolResult,
+        ctx: &ToolResultCtx,
+    ) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::ToolResult) {
+            self.extensions[index].on_tool_result(result, ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the turn-end hook chain.
+    pub async fn fire_turn_end(&self, ctx: &TurnEndCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::TurnEnd) {
+            self.extensions[index].on_turn_end(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the agent-end hook chain.
+    pub async fn fire_agent_end(&self, ctx: &AgentEndCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::AgentEnd) {
+            self.extensions[index].on_agent_end(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the system-prompt hook chain.
+    pub async fn fire_system_prompt(
+        &self,
+        prompt: &mut String,
+        ctx: &PromptCtx,
+    ) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::SystemPrompt) {
+            self.extensions[index].on_system_prompt(prompt, ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the steer hook chain.
+    pub async fn fire_steer(&self, msg: &SteerMessage, ctx: &mut SteerCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::Steer) {
+            self.extensions[index].on_steer(msg, ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the send-message hook chain.
+    pub async fn fire_send_message(
+        &self,
+        msg: &OutboundMessage,
+        ctx: &MsgCtx,
+    ) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::SendMessage) {
+            self.extensions[index].on_send_message(msg, ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the debug hook chain.
+    pub async fn fire_debug(&self, ctx: &DebugCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::Debug) {
+            self.extensions[index].on_debug(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fires the error hook chain.
+    pub async fn fire_error(&self, err: &GolemError, ctx: &ErrorCtx) -> anyhow::Result<()> {
+        for &index in self.firing_order(&HookId::Error) {
+            self.extensions[index].on_error(err, ctx).await?;
+        }
+        Ok(())
+    }
+
     /// Fires the shutdown hook chain.
     pub async fn fire_end(&self, ctx: &EndCtx) -> anyhow::Result<()> {
         for &index in self.firing_order(&HookId::End) {
@@ -571,5 +735,67 @@ mod tests {
             .get(&HookId::AfterTurn)
             .expect("order");
         assert_eq!(order, &vec![1, 0, 2]);
+    }
+
+    struct RecordingExt {
+        ext_name: &'static str,
+        ext_layer: u8,
+        ext_deps: &'static [&'static str],
+        log: Arc<parking_lot::Mutex<Vec<String>>>,
+    }
+
+    #[async_trait]
+    impl Extension for RecordingExt {
+        fn name(&self) -> &str {
+            self.ext_name
+        }
+
+        fn layer(&self) -> u8 {
+            self.ext_layer
+        }
+
+        fn depends_on(&self) -> &[&str] {
+            self.ext_deps
+        }
+
+        async fn on_after_turn(&self, _ctx: &mut AfterTurnCtx) -> anyhow::Result<()> {
+            self.log.lock().push(self.ext_name.to_owned());
+            Ok(())
+        }
+    }
+
+    #[tokio::test]
+    async fn test_extension_hook_fire_order() {
+        let log = Arc::new(parking_lot::Mutex::new(Vec::<String>::new()));
+
+        let mut registry = ExtensionRegistry::new();
+        registry.register(Arc::new(RecordingExt {
+            ext_name: "heartbeat",
+            ext_layer: 0,
+            ext_deps: &[],
+            log: Arc::clone(&log),
+        }));
+        registry.register(Arc::new(RecordingExt {
+            ext_name: "affect",
+            ext_layer: 1,
+            ext_deps: &["heartbeat"],
+            log: Arc::clone(&log),
+        }));
+        registry.register(Arc::new(RecordingExt {
+            ext_name: "risk",
+            ext_layer: 2,
+            ext_deps: &["affect"],
+            log: Arc::clone(&log),
+        }));
+        registry.build();
+
+        let mut ctx = AfterTurnCtx;
+        registry
+            .fire_after_turn(&mut ctx)
+            .await
+            .expect("fire_after_turn");
+
+        let order = log.lock().clone();
+        assert_eq!(order, vec!["heartbeat", "affect", "risk"]);
     }
 }

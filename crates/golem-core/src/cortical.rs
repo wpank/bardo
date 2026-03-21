@@ -99,6 +99,22 @@ impl BehavioralPhase {
             _ => Self::Terminal,
         }
     }
+
+    /// Determines the behavioral phase from a composite vitality score.
+    #[must_use]
+    pub fn from_vitality(vitality: f64) -> Self {
+        if vitality >= 0.7 {
+            Self::Thriving
+        } else if vitality >= 0.5 {
+            Self::Stable
+        } else if vitality >= 0.3 {
+            Self::Conservation
+        } else if vitality >= 0.1 {
+            Self::Declining
+        } else {
+            Self::Terminal
+        }
+    }
 }
 
 /// Eight-label emotion classification over the PAD octants.
@@ -426,6 +442,7 @@ impl Default for CorticalState {
 #[cfg(test)]
 mod tests {
     use super::{BehavioralPhase, CorticalState, PadVector, PlutchikEmotion};
+    use proptest::prelude::*;
 
     #[test]
     fn cortical_state_alignment() {
@@ -470,5 +487,108 @@ mod tests {
         assert_eq!(BehavioralPhase::from_u8(0), BehavioralPhase::Thriving);
         assert_eq!(BehavioralPhase::from_u8(4), BehavioralPhase::Terminal);
         assert_eq!(BehavioralPhase::from_u8(9), BehavioralPhase::Terminal);
+    }
+
+    #[test]
+    fn test_cortical_state_size_and_alignment() {
+        assert_eq!(std::mem::align_of::<CorticalState>(), 64);
+        assert!(std::mem::size_of::<CorticalState>() <= 256);
+    }
+
+    proptest! {
+        #[test]
+        fn test_pad_vector_bounds(
+            p in -2.0f64..3.0,
+            a in -2.0f64..3.0,
+            d in -2.0f64..3.0,
+        ) {
+            let pad = PadVector { pleasure: p, arousal: a, dominance: d };
+            let clamped = pad.clamp(-1.0, 1.0);
+            prop_assert!(clamped.pleasure >= -1.0 && clamped.pleasure <= 1.0,
+                "pleasure {} out of [-1, 1] after clamp", clamped.pleasure);
+            prop_assert!(clamped.arousal >= -1.0 && clamped.arousal <= 1.0,
+                "arousal {} out of [-1, 1] after clamp", clamped.arousal);
+            prop_assert!(clamped.dominance >= -1.0 && clamped.dominance <= 1.0,
+                "dominance {} out of [-1, 1] after clamp", clamped.dominance);
+
+            // Values already in range stay unchanged
+            if p >= -1.0 && p <= 1.0 {
+                prop_assert!((clamped.pleasure - p).abs() < f64::EPSILON);
+            }
+            if a >= -1.0 && a <= 1.0 {
+                prop_assert!((clamped.arousal - a).abs() < f64::EPSILON);
+            }
+            if d >= -1.0 && d <= 1.0 {
+                prop_assert!((clamped.dominance - d).abs() < f64::EPSILON);
+            }
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn test_plutchik_emotion_classification(
+            p in -1.0f64..=1.0,
+            a in -1.0f64..=1.0,
+            d in -1.0f64..=1.0,
+        ) {
+            let pad = PadVector { pleasure: p, arousal: a, dominance: d };
+            let emotion = PlutchikEmotion::from_pad(&pad);
+
+            // Must always produce a valid Plutchik variant
+            let valid = matches!(
+                emotion,
+                PlutchikEmotion::Joy
+                    | PlutchikEmotion::Trust
+                    | PlutchikEmotion::Fear
+                    | PlutchikEmotion::Surprise
+                    | PlutchikEmotion::Sadness
+                    | PlutchikEmotion::Disgust
+                    | PlutchikEmotion::Anger
+                    | PlutchikEmotion::Anticipation
+            );
+            prop_assert!(valid, "from_pad returned invalid variant for ({p}, {a}, {d})");
+
+            // Verify octant classification for strictly-signed inputs
+            if p > 0.0 && a > 0.0 && d > 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Joy);
+            }
+            if p > 0.0 && a < 0.0 && d > 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Trust);
+            }
+            if p < 0.0 && a > 0.0 && d < 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Fear);
+            }
+            if p < 0.0 && a > 0.0 && d > 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Anger);
+            }
+            if p < 0.0 && a < 0.0 && d < 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Sadness);
+            }
+            if p > 0.0 && a > 0.0 && d < 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Surprise);
+            }
+            if p < 0.0 && a < 0.0 && d > 0.0 {
+                prop_assert_eq!(emotion, PlutchikEmotion::Disgust);
+            }
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn test_behavioral_phase_thresholds(v in -1.0f64..2.0) {
+            let phase = BehavioralPhase::from_vitality(v);
+            match phase {
+                BehavioralPhase::Thriving => prop_assert!(v >= 0.7,
+                    "Thriving at vitality {v}, expected >= 0.7"),
+                BehavioralPhase::Stable => prop_assert!(v >= 0.5 && v < 0.7,
+                    "Stable at vitality {v}, expected [0.5, 0.7)"),
+                BehavioralPhase::Conservation => prop_assert!(v >= 0.3 && v < 0.5,
+                    "Conservation at vitality {v}, expected [0.3, 0.5)"),
+                BehavioralPhase::Declining => prop_assert!(v >= 0.1 && v < 0.3,
+                    "Declining at vitality {v}, expected [0.1, 0.3)"),
+                BehavioralPhase::Terminal => prop_assert!(v < 0.1,
+                    "Terminal at vitality {v}, expected < 0.1"),
+            }
+        }
     }
 }

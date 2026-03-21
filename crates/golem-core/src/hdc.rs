@@ -4,7 +4,7 @@ use core::convert::TryFrom;
 use uuid::Uuid;
 
 /// 10,240-bit binary sparse distributed vector.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct HdcVector {
     bits: [u64; 160],
 }

@@ -432,4 +432,281 @@ mod tests {
         assert_eq!(replay.first().expect("first").seq, 50);
         assert_eq!(replay.last().expect("last").seq, 10_049);
     }
+
+    #[test]
+    fn test_event_fabric_ring_buffer_capacity() {
+        let fabric = EventFabric::new(1);
+        for tick in 0..10_050 {
+            fabric.emit(
+                Subsystem::System,
+                tick,
+                EventPayload::ShutdownInitiated {
+                    phase: format!("phase-{tick}"),
+                },
+            );
+        }
+
+        let replay = fabric.replay_from(0);
+        assert_eq!(replay.len(), 10_000);
+        assert_eq!(replay.first().expect("first").seq, 50);
+        assert_eq!(replay.last().expect("last").seq, 10_049);
+    }
+
+    #[test]
+    fn test_subsystem_enum_completeness() {
+        let subsystems = [
+            Subsystem::Heartbeat,
+            Subsystem::Perception,
+            Subsystem::Daimon,
+            Subsystem::Mortality,
+            Subsystem::Grimoire,
+            Subsystem::Dreams,
+            Subsystem::Context,
+            Subsystem::Inference,
+            Subsystem::Tools,
+            Subsystem::Risk,
+            Subsystem::Coordination,
+            Subsystem::Lifecycle,
+            Subsystem::Engagement,
+            Subsystem::Session,
+            Subsystem::Creature,
+            Subsystem::System,
+        ];
+        assert_eq!(subsystems.len(), 16);
+        let set: std::collections::HashSet<_> = subsystems.iter().collect();
+        assert_eq!(set.len(), 16);
+    }
+
+    #[test]
+    fn test_event_payload_variant_count() {
+        let variants: Vec<EventPayload> = vec![
+            EventPayload::HeartbeatTick {
+                tick: 0,
+                tier: String::new(),
+                pe: 0.0,
+                threshold: 0.0,
+            },
+            EventPayload::HeartbeatComplete {
+                tick: 0,
+                duration_ms: 0,
+                actions_taken: 0,
+            },
+            EventPayload::MarketObservation {
+                regime: String::new(),
+                anomalies: vec![],
+                probe_count: 0,
+            },
+            EventPayload::DaimonAppraisal {
+                pleasure: 0.0,
+                arousal: 0.0,
+                dominance: 0.0,
+                emotion: String::new(),
+                markers_fired: 0,
+            },
+            EventPayload::SomaticMarkerFired {
+                situation: String::new(),
+                valence: 0.0,
+                source: String::new(),
+            },
+            EventPayload::VitalityUpdate {
+                economic: 0.0,
+                epistemic: 0.0,
+                stochastic: 0.0,
+                composite: 0.0,
+                phase: String::new(),
+            },
+            EventPayload::PhaseTransition {
+                from: String::new(),
+                to: String::new(),
+                cause: String::new(),
+            },
+            EventPayload::DeathClockAlarm {
+                clock: String::new(),
+                value: 0.0,
+                threshold: 0.0,
+            },
+            EventPayload::InsightPromoted {
+                id: String::new(),
+                category: String::new(),
+                confidence: 0.0,
+            },
+            EventPayload::HeuristicEvolved {
+                id: String::new(),
+                description: String::new(),
+            },
+            EventPayload::KnowledgeDecayed {
+                count: 0,
+                reason: String::new(),
+            },
+            EventPayload::WarningActivated {
+                id: String::new(),
+                severity: String::new(),
+            },
+            EventPayload::ScarRecorded {
+                source_golem: String::new(),
+                warning: String::new(),
+            },
+            EventPayload::CausalLinkUpdated {
+                from: String::new(),
+                to: String::new(),
+                strength: 0.0,
+            },
+            EventPayload::CuratorCycleComplete {
+                entries_validated: 0,
+                entries_pruned: 0,
+                entries_promoted: 0,
+            },
+            EventPayload::DreamStart {
+                trigger: String::new(),
+            },
+            EventPayload::DreamPhaseTransition {
+                from: String::new(),
+                to: String::new(),
+            },
+            EventPayload::DreamReplay {
+                episode_id: String::new(),
+                utility: 0.0,
+            },
+            EventPayload::DreamCounterfactual {
+                hypothesis: String::new(),
+                outcome: String::new(),
+            },
+            EventPayload::DreamConsolidation {
+                playbook_edits: 0,
+                insights_generated: 0,
+            },
+            EventPayload::DreamComplete {
+                cycles_completed: 0,
+            },
+            EventPayload::MicroConsolidation {
+                entries_processed: 0,
+                depotentiation_count: 0,
+            },
+            EventPayload::ContextAssembled {
+                total_tokens: 0,
+                categories: vec![],
+            },
+            EventPayload::ContextPolicySelfTuned {
+                revision: 0,
+                adjustments: vec![],
+            },
+            EventPayload::InferenceStart {
+                model: String::new(),
+                tier: String::new(),
+                input_tokens: 0,
+            },
+            EventPayload::InferenceToken {
+                token: String::new(),
+            },
+            EventPayload::InferenceComplete {
+                output_tokens: 0,
+                cost: 0.0,
+                latency_ms: 0,
+            },
+            EventPayload::ToolStart {
+                tool: String::new(),
+                category: String::new(),
+            },
+            EventPayload::ToolProgress {
+                tool: String::new(),
+                step: String::new(),
+                pct: 0.0,
+            },
+            EventPayload::ToolComplete {
+                tool: String::new(),
+                success: false,
+                duration_ms: 0,
+            },
+            EventPayload::PermitCreated {
+                id: String::new(),
+                action: String::new(),
+                value_limit: String::new(),
+            },
+            EventPayload::PermitStateChange {
+                id: String::new(),
+                from: String::new(),
+                to: String::new(),
+            },
+            EventPayload::RiskAssessment {
+                layer: String::new(),
+                result: String::new(),
+            },
+            EventPayload::CladeSyncComplete {
+                entries_sent: 0,
+                entries_received: 0,
+            },
+            EventPayload::BloomUpdated { domains: vec![] },
+            EventPayload::PheromoneDeposited {
+                layer: String::new(),
+                domain: String::new(),
+                intensity: 0.0,
+            },
+            EventPayload::PheromoneRead {
+                threats: 0,
+                opportunities: 0,
+                wisdom: 0,
+            },
+            EventPayload::BloodstainReceived {
+                source_generation: 0,
+                warning: String::new(),
+            },
+            EventPayload::CausalEdgePublished {
+                from_var: String::new(),
+                to_var: String::new(),
+            },
+            EventPayload::LifecycleTransition {
+                from: String::new(),
+                to: String::new(),
+            },
+            EventPayload::DeathInitiated {
+                cause: String::new(),
+            },
+            EventPayload::SuccessorSpawned {
+                successor_id: String::new(),
+            },
+            EventPayload::HealthStatus {
+                process: String::new(),
+                ok: false,
+                message: String::new(),
+            },
+            EventPayload::AchievementUnlocked {
+                id: String::new(),
+                description: String::new(),
+            },
+            EventPayload::MilestoneReached {
+                name: String::new(),
+                value: 0.0,
+            },
+            EventPayload::UserMessage {
+                content: String::new(),
+                session_id: String::new(),
+            },
+            EventPayload::GolemResponseChunk {
+                content: String::new(),
+                is_final: false,
+            },
+            EventPayload::CreatureFormEvolved {
+                from_form: 0,
+                to_form: 0,
+            },
+            EventPayload::ExpressionUpdated {
+                expression: String::new(),
+            },
+            EventPayload::ParticleEffectTriggered {
+                effect_type: String::new(),
+            },
+            EventPayload::ShutdownInitiated {
+                phase: String::new(),
+            },
+            EventPayload::ResourceWarning {
+                resource: String::new(),
+                utilization: 0.0,
+            },
+        ];
+        assert!(
+            variants.len() >= 50,
+            "EventPayload must have at least 50 variants, found {}",
+            variants.len()
+        );
+    }
 }

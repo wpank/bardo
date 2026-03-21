@@ -453,6 +453,64 @@ impl Default for HeartbeatConfig {
     }
 }
 
+/// Market regime classification tag.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[repr(u8)]
+#[serde(rename_all = "snake_case")]
+pub enum RegimeTag {
+    /// Trending-up market condition.
+    TrendingUp = 0,
+    /// Trending-down market condition.
+    TrendingDown = 1,
+    /// Volatile market condition.
+    Volatile = 2,
+    /// Range-bound market condition.
+    RangeBound = 3,
+    /// Unknown or unclassified market condition.
+    Unknown = 4,
+}
+
+impl RegimeTag {
+    /// Converts a raw u8 to a regime tag.
+    #[must_use]
+    pub const fn from_u8(v: u8) -> Self {
+        match v {
+            0 => Self::TrendingUp,
+            1 => Self::TrendingDown,
+            2 => Self::Volatile,
+            3 => Self::RangeBound,
+            _ => Self::Unknown,
+        }
+    }
+
+    /// Returns all regime tag variants.
+    #[must_use]
+    pub const fn all() -> [Self; 5] {
+        [
+            Self::TrendingUp,
+            Self::TrendingDown,
+            Self::Volatile,
+            Self::RangeBound,
+            Self::Unknown,
+        ]
+    }
+}
+
+impl FromStr for RegimeTag {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        match s.trim().to_ascii_lowercase().as_str() {
+            "trending_up" | "trending-up" | "trendingup" => Ok(Self::TrendingUp),
+            "trending_down" | "trending-down" | "trendingdown" => Ok(Self::TrendingDown),
+            "volatile" => Ok(Self::Volatile),
+            "range_bound" | "range-bound" | "rangebound" => Ok(Self::RangeBound),
+            "unknown" => Ok(Self::Unknown),
+            _ => Err("expected one of: trending_up, trending_down, volatile, range_bound, unknown"),
+        }
+    }
+}
+
 /// Multipliers applied to heartbeat cadence per detected regime.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -467,6 +525,20 @@ pub struct RegimeMultipliers {
     pub range_bound: f64,
     /// Multiplier for unknown regimes.
     pub unknown: f64,
+}
+
+impl RegimeMultipliers {
+    /// Returns the multiplier for a given regime tag.
+    #[must_use]
+    pub fn for_regime(&self, tag: RegimeTag) -> f64 {
+        match tag {
+            RegimeTag::TrendingUp => self.trending_up,
+            RegimeTag::TrendingDown => self.trending_down,
+            RegimeTag::Volatile => self.volatile,
+            RegimeTag::RangeBound => self.range_bound,
+            RegimeTag::Unknown => self.unknown,
+        }
+    }
 }
 
 impl Default for RegimeMultipliers {
@@ -1655,7 +1727,7 @@ impl Default for MirageSection {
 mod tests {
     use std::collections::HashMap;
 
-    use super::{ComputeTier, DeploymentMode, GolemConfig};
+    use super::{ComputeTier, DeploymentMode, GolemConfig, RegimeTag};
 
     #[test]
     fn config_from_str_minimal() {
@@ -1730,5 +1802,73 @@ mod tests {
         assert_eq!(config.mirage.timeout_ms, 1_500);
         assert_eq!(config.mirage.retry_attempts, 4);
         assert_eq!(config.mirage.retry_backoff_ms, 125);
+    }
+
+    #[test]
+    fn test_regime_tag_transitions() {
+        assert_eq!(RegimeTag::from_u8(0), RegimeTag::TrendingUp);
+        assert_eq!(RegimeTag::from_u8(1), RegimeTag::TrendingDown);
+        assert_eq!(RegimeTag::from_u8(2), RegimeTag::Volatile);
+        assert_eq!(RegimeTag::from_u8(3), RegimeTag::RangeBound);
+        assert_eq!(RegimeTag::from_u8(4), RegimeTag::Unknown);
+        assert_eq!(RegimeTag::from_u8(255), RegimeTag::Unknown);
+
+        let config = GolemConfig::default();
+        let m = &config.heartbeat.regime_multipliers;
+        assert_eq!(m.for_regime(RegimeTag::TrendingUp), 1.0);
+        assert_eq!(m.for_regime(RegimeTag::TrendingDown), 0.5);
+        assert_eq!(m.for_regime(RegimeTag::Volatile), 0.3);
+        assert_eq!(m.for_regime(RegimeTag::RangeBound), 2.0);
+        assert_eq!(m.for_regime(RegimeTag::Unknown), 0.8);
+    }
+
+    #[test]
+    fn test_inheritance_confidence_cap() {
+        let config = GolemConfig::default();
+        assert!(
+            config.succession.inheritance_confidence <= 0.7,
+            "inheritance_confidence must not exceed protocol cap of 0.7"
+        );
+        assert!(
+            config.oracle.gate.inheritance_coefficient <= 0.7,
+            "inheritance_coefficient must not exceed protocol cap of 0.7"
+        );
+    }
+
+    #[test]
+    fn test_regime_multipliers_complete() {
+        let config = GolemConfig::default();
+        let m = &config.heartbeat.regime_multipliers;
+        for tag in RegimeTag::all() {
+            assert!(
+                m.for_regime(tag) > 0.0,
+                "regime {tag:?} must have a positive multiplier"
+            );
+        }
+        assert_eq!(RegimeTag::all().len(), 5);
+    }
+
+    #[test]
+    fn test_probe_threshold_ordering() {
+        let config = GolemConfig::default();
+        let p = &config.heartbeat.probe_thresholds;
+        assert!(
+            p.price_delta_low_bps < p.price_delta_high_bps,
+            "price_delta_low_bps ({}) must be < price_delta_high_bps ({})",
+            p.price_delta_low_bps,
+            p.price_delta_high_bps
+        );
+        assert!(
+            p.health_factor_low > p.health_factor_high,
+            "health_factor_low ({}) must be > health_factor_high ({}) (inverted scale)",
+            p.health_factor_low,
+            p.health_factor_high
+        );
+        assert!(
+            p.world_model_drift_low < p.world_model_drift_high,
+            "world_model_drift_low ({}) must be < world_model_drift_high ({})",
+            p.world_model_drift_low,
+            p.world_model_drift_high
+        );
     }
 }
