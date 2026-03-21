@@ -40,8 +40,6 @@
 
 - [bardo-gateway](apps/bardo-gateway.md)
 - [bardo-terminal](apps/bardo-terminal.md)
-- [bardo-terminal protocol views](apps/bardo-terminal-protocol-views.md)
-- [bardo-terminal navigation](apps/bardo-terminal-navigation.md)
 - [bardo-styx](apps/bardo-styx.md)
 - [bardo-compute](apps/bardo-compute.md)
 - [mirage-rs](apps/mirage-rs.md)

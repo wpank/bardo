@@ -11,28 +11,54 @@ prd2/           Read-only product spec (334 files, ~230K lines). NEVER modify.
 plans/          Implementation plans + cross-plan state.
   CONTEXT.md      Cross-plan registry: types, crate boundaries, decisions. Read first, append at end.
   context/
-    last-completed.md   Summary from previous plan. Overwritten by each plan.
-    ignored-tests.md    Ledger of #[ignore] tests. Check on entry, update on exit.
-    workspace-map.md    Pre-generated file tree. Read instead of running find/ls.
-    preflight-snapshot.md  Git log, compile status, test count. Generated before each plan.
-    briefs/             Strategist execution briefs (one per plan).
-    reviews/            Reviewer feedback and archived iterations.
-    tasks/              Task checklists ({num}-tasks.toml). Update status as you work.
-    docs/               Scribe documentation ({num}-docs.md).
+    last-completed.md       Summary from previous plan. Overwritten by each plan.
+    ignored-tests.md        Ledger of #[ignore] tests. Check on entry, update on exit.
+    workspace-map.md        Pre-generated file tree. Read instead of running find/ls.
+    preflight-snapshot.md   Git log, compile status, test count. Generated before each plan.
+    prd2-extracts/          Pre-extracted, budget-allocated PRD2 sections per plan ({num}-prd2.md).
+    decompositions/         Pre-generated step-by-step breakdowns per plan ({num}-decomposition.md).
+    verify-chains/          Executable invariant test scripts per plan ({num}-verify.sh), when generated.
+    briefs/                 Execution briefs per plan ({num}-brief.md), written by the Strategist in bardo-ctl (not by bardo-enrich.sh).
+    tasks/                  Task checklists: {num}-tasks.toml, {num}-verify-tasks.toml, plus {num}-review-tasks.toml / {num}-scribe-tasks.toml when generated.
+    reviews/                Reviewer feedback and archived iterations.
+    docs/                   Scribe documentation ({num}-docs.md).
 crates/         Rust workspace. All implementation code.
 docs/           mdbook documentation. Updated by each plan after code is written.
 tmp/            Scratch space. Not committed.
 ```
 
+### Context enrichment (scripts in this repo)
+
+From the repository root:
+
+- **`./bardo-enrich.sh`** — Runs [`plans/context/prompts/enhance-toml.sh`](plans/context/prompts/enhance-toml.sh) for each selected plan that already has `plans/context/tasks/NN-tasks.toml`. Pass **`--enhance-plan`** to also run [`enhance-plan.sh`](plans/context/prompts/enhance-plan.sh) (only useful when optional inputs exist under `plans/context/`, e.g. decompositions, verification drafts). Supports `--all`, `--range START-END`, `--parallel N`, `--dry-run`. Defaults: `BACKEND=cursor`, `MODEL_CURSOR=composer-2-fast`.
+- **`bash plans/context/prompts/enhance-toml.sh NN`** — Enrich a single `NN-tasks.toml`.
+- **`bash plans/context/prompts/enhance-plan.sh NN`** — LLM pass over `plans/NN-*.md` using whatever generated context files are present.
+- **`bash plans/context/prompts/crate-claude-md.sh <crate>`** — Regenerate `crates/<crate>/CLAUDE.md`.
+- **`./scripts/bardo-sync-context.sh`** — Regenerate `plans/context/workspace-map.md` and `plans/context/preflight-snapshot.md` (optional: `SKIP_CARGO_CHECK=1` for git-only). Invoked from `./bardo-ctl.sh` before the TUI starts unless the script is missing.
+- **`bash plans/context/prompts/retrofit-tomls.sh`** — Deterministic sync of plan `## Verification` INV blocks into `test_invariants` on `NN-tasks.toml` / `NN-verify-tasks.toml` (no LLM). Use `--all` or pass plan numbers; optional `--parallel N`.
+- **`bash plans/context/prompts/context-distiller.sh`** — Write `plans/context/bundles/NN-bundle.md` per plan (`--all` or plan nums).
+- **`bash plans/context/prompts/golden-path-index.sh`** — Write `plans/context/golden-path-index.json` from crate `CLAUDE.md` files.
+- **`bash plans/context/prompts/plan-readiness-check.sh NN`** — Print `MISSING:` lines for expected context artifacts.
+- **`bash plans/context/prompts/sync-last-completed.sh`** — Refresh `last-completed.md` from the newest `plans/context/completion/*.md`.
+- **`bash plans/context/prompts/review-context-builder.sh`** — Write `plans/context/review-context/NN-review-context.md` (CONTEXT + review/verify TOMLs + prior reviews + verify-chain) for Architect/Auditor. `--all`, `--parallel N`. Plan keys match primary `NN-tasks.toml` only (not `*-review-tasks` / `*-scribe-tasks`).
+- **`bash plans/context/prompts/generate-briefs.sh`** — Write `plans/context/briefs/NN-brief.md` for each primary plan (no LLM): pulls Prerequisites, Imports, Quick Reference, Verification excerpts from the plan file plus pointers to PRD2/decomposition/tasks. `--all`, `--parallel N`. Replace or refine with a Strategist/LLM pass when you need deeper dependency proofs.
+
+`bardo-enrich.sh` does **not** generate PRD2 extracts, decompositions, or verify-chain shell scripts; those live under `plans/context/` only if you create them by other means.
+
+### Worktrees
+
+Each worktree receives **physical copies** of `plans/`, `prd2/`, and `AGENTS.md` at creation time. There are no symlinks. Context artifacts (briefs, decompositions, prd2-extracts, verify-chains) are readable within the worktree but writes do not propagate back to main until the branch merges.
+
 ## Your Role
 
-Your specific role (Strategist, Implementer, Architect, Auditor, Scribe, Critic, etc.) is
+Your specific role (Implementer, Architect, Auditor, Scribe, Critic, etc.) is
 defined in the **turn message** you receive at the start of your session. There are no
 per-role files to read — your instructions are the turn message itself. Follow them exactly.
 
 ## Universal Rules (All Agents)
 
-1. **No git operations.** No `git add`, `commit`, `checkout`, `merge`, `push`, `tag`, `stash`, `branch`. The shell handles all git.
+1. **No git operations** for Implementer, Strategist, reviewers, Scribe, and other plan-implementation roles: no `git add`, `commit`, `checkout`, `merge`, `push`, `tag`, `stash`, `branch` — the shell/orchestrator handles git. **Exception:** the **Merge Resolver** (and any role whose turn message explicitly says it may use git) may run git commands only as instructed in that prompt to resolve merge conflicts and complete the merge.
 2. **No prd2 modifications.** Those files are read-only input.
 3. **Dependencies are cached.** Dependencies are pre-cached. If a crate is missing, note it in your output.
 4. **Read workspace-map.md before using `find` or `ls` on `crates/`.** The map is pre-generated and saves tokens. Use `rg` for targeted symbol lookups only.
@@ -55,12 +81,17 @@ Read these files in this order. Do not write a single line of code until you've 
 
 1. **`plans/context/workspace-map.md`** — Every `.rs` file grouped by crate. This IS your `find` / `ls`. Do not run file discovery commands.
 2. **`plans/context/preflight-snapshot.md`** — Git log, compile status, test baseline. This IS your `git log` and ambient state check.
-3. **`plans/context/briefs/NN-brief.md`** — The Strategist's execution brief. It tells you what dependencies exist, what patterns to follow, what risks to watch. **This is your most important pre-read.** If the brief flags a missing type or a pattern mismatch, address it proactively.
-4. **`plans/context/last-completed.md`** — What the previous plan built, what it left behind, what you should watch for.
-5. **The plan file** — Read it cover to cover. The Quick Reference sections are your implementation spec.
-6. **`plans/CONTEXT.md`** — Cross-plan state. Types, crate boundaries, decisions, deviations.
-7. **`plans/context/ignored-tests.md`** — If your plan unblocks any tests, un-ignore them.
-8. **Check for supervisor messages**: If `tmp/agent-messages.md` exists and is non-empty, read it now and treat its contents as high-priority steering context for this plan. Do NOT delete or modify this file — the shell manages it.
+3. **`plans/context/briefs/NN-brief.md`** — Pre-generated execution brief. It tells you what dependencies exist, what patterns to follow, what risks to watch. **This is your most important pre-read.** If the brief flags a missing type or a pattern mismatch, address it proactively.
+4. **`plans/context/prd2-extracts/NN-prd2.md`** — Pre-extracted, budget-allocated PRD2 sections for this plan. Read this instead of browsing `prd2/` manually. If you need more context than what's here, go to `prd2/` directly — but this extract is the curated baseline.
+5. **`plans/context/decompositions/NN-decomposition.md`** — Pre-generated step-by-step breakdown. Use this as your implementation order. Each step already has acceptance criteria and Cargo check checkpoints.
+6. **`plans/context/tasks/NN-tasks.toml`** — Task checklist with parallel groups, file assignments, and acceptance criteria. The TOML is authoritative for what to implement and in what order.
+7. **`plans/context/last-completed.md`** — What the previous plan built, what it left behind, what you should watch for.
+8. **The plan file** — Read it cover to cover. The Quick Reference sections are your implementation spec.
+9. **`plans/CONTEXT.md`** — Cross-plan state. Types, crate boundaries, decisions, deviations.
+10. **`plans/context/ignored-tests.md`** — If your plan unblocks any tests, un-ignore them.
+11. **Supervisor / conductor messages**: If `tmp/agent-messages.md` exists and is non-empty, read it **before** other plan-specific files (right after workspace-map and preflight if you prefer). Treat it as operator or Conductor steering appended in chronological order. **Do not** delete, truncate, or edit this file — the orchestrator appends lines and may rotate it between runs. If you must acknowledge a message, do so in your own notes or commit messages, not by modifying `tmp/agent-messages.md`.
+
+**Optional digest:** When present, `plans/context/bundles/NN-bundle.md` summarizes key artifacts for a plan (from `plans/context/prompts/context-distiller.sh`). It does not replace reading the plan and task TOML.
 
 **After reading, verify:**
 - Prerequisites listed in the plan are marked complete in CONTEXT.md.
@@ -93,6 +124,7 @@ Before writing, understand what exists:
 - If a test depends on a future plan, mark it `#[ignore]` with `// TODO(plan-NN): requires <system>`.
 - Add ignored tests to `plans/context/ignored-tests.md`.
 - **Actually run your tests.** Do not just write them and assume they pass.
+- **Check `plans/context/verify-chains/NN-verify.sh`** — each `INV-NNN` block in the plan has an expected test function name listed there. Implement exactly those test functions. The Auditor runs this script; if your tests aren't there or fail, you will get `[S-N]` blocking issues.
 
 ### 1e. Compilation Gate
 Run `cargo check --workspace` after each unit. **Do not proceed with a broken workspace.** Fix the error, even if it means adjusting your code to match what actually exists rather than what the plan assumed.

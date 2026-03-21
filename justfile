@@ -55,7 +55,7 @@ release-linux-arm64:
 
 # Run mirage-rs dev fork
 mirage rpc_url="":
-	cargo run -p mirage-rs -- --rpc-url {{rpc_url}}
+	cargo run -p mirage-rs -- --rpc-url {{rpc_url}} --follow
 
 # Full CI check sequence
 ci: fmt-check lint test deny

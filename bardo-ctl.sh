@@ -61,6 +61,13 @@ mkdir -p \
   "${SCRIPT_DIR}/plans/context/archive" \
   "${SCRIPT_DIR}/tmp/plan-runs"
 
+# Refresh repo-wide context files for agents (workspace map + preflight snapshot).
+if [[ -x "${SCRIPT_DIR}/scripts/bardo-sync-context.sh" ]]; then
+  # Set BARDO_SYNC_CONTEXT_SKIP_CARGO=1 for a fast TUI start (git-only snapshot).
+  SKIP_CARGO_CHECK="${BARDO_SYNC_CONTEXT_SKIP_CARGO:-}" \
+    bash "${SCRIPT_DIR}/scripts/bardo-sync-context.sh" "${SCRIPT_DIR}" || true
+fi
+
 # Default flags — enable parallel wave execution and speculative pre-planning.
 # User-supplied args come after and can add overrides (e.g. --no-review).
 DEFAULT_FLAGS=(--parallel --pre-plan)
