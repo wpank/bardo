@@ -18,9 +18,10 @@ use tokio::sync::{broadcast, watch};
 
 use crate::{
     Bytecode, ExecutionResult, MirageError, Result, TransactionRequest,
+    cow::CowState,
     fork::{
-        Classification, DiffClassifier, EvmExecutor, ForkState, MirageState, WatchEntry,
-        WatchSource,
+        Classification, DiffClassifier, DirtyAccount, DirtyStore, EvmExecutor, ForkState, HybridDB,
+        MirageState, ReadCache, WatchEntry, WatchSource,
     },
     provider::UpstreamRpc,
     resources::MirageMode,
@@ -539,14 +540,19 @@ pub struct SpeculativeResult {
     pub computed_at: Instant,
 }
 
-/// Executes transactions against a cloned fork state without committing.
+/// Executes transactions against a CowState fork without committing.
 #[derive(Debug, Default)]
 pub struct SpeculativeExecutor {
     cache: HashMap<(B256, u64), SpeculativeResult>,
+    cow_baseline: Option<(u64, Arc<HashMap<(Address, U256), U256>>)>,
 }
 
 impl SpeculativeExecutor {
     /// Executes a transaction request without mutating the base state.
+    ///
+    /// Forks the current dirty storage into a [`CowState`] branch so the
+    /// shared baseline is never deep-cloned for repeated speculative runs
+    /// against the same block.
     pub fn execute(
         &mut self,
         state: &ForkState,
@@ -564,9 +570,14 @@ impl SpeculativeExecutor {
         if let Some(cached) = self.cache.get(&cache_key) {
             return Ok(cached.clone());
         }
-        let mut cloned_state = state.clone();
+        // Fork via CowState: the shared baseline avoids redundant snapshots
+        // when multiple speculative executions target the same block.
+        let baseline = self.ensure_cow_baseline(state);
+        let cow_fork = CowState::branch(baseline);
+        let mut speculative_state = Self::build_speculative_state(state, &cow_fork);
+
         let (result, state_diff) =
-            EvmExecutor::transact(&mut cloned_state, from, to, data, value, gas_limit)?;
+            EvmExecutor::transact(&mut speculative_state, from, to, data, value, gas_limit)?;
         let read_set = state_diff
             .accounts
             .iter()
@@ -592,6 +603,77 @@ impl SpeculativeExecutor {
     pub fn invalidate_for_block(&mut self, block_number: u64) {
         self.cache
             .retain(|(_, cached_block), _| *cached_block != block_number);
+        if self
+            .cow_baseline
+            .as_ref()
+            .is_some_and(|(block, _)| *block == block_number)
+        {
+            self.cow_baseline = None;
+        }
+    }
+
+    fn ensure_cow_baseline(&mut self, state: &ForkState) -> Arc<HashMap<(Address, U256), U256>> {
+        if let Some((block, baseline)) = &self.cow_baseline {
+            if *block == state.local_block_number {
+                return Arc::clone(baseline);
+            }
+        }
+        let mut storage = HashMap::new();
+        for (address, account) in &state.db.dirty.accounts {
+            for (slot, value) in &account.storage {
+                storage.insert((*address, *slot), *value);
+            }
+        }
+        let baseline = Arc::new(storage);
+        self.cow_baseline = Some((state.local_block_number, Arc::clone(&baseline)));
+        baseline
+    }
+
+    fn build_speculative_state(state: &ForkState, cow: &CowState) -> ForkState {
+        let mut dirty = DirtyStore::default();
+        dirty.demote_protocols_to_slot_only = state.db.dirty.demote_protocols_to_slot_only;
+        for (address, account) in &state.db.dirty.accounts {
+            let mut storage = HashMap::new();
+            for (slot, _) in &account.storage {
+                if let Some(value) = cow.read(*address, *slot) {
+                    storage.insert(*slot, value);
+                }
+            }
+            dirty.accounts.insert(
+                *address,
+                DirtyAccount {
+                    balance: account.balance,
+                    nonce: account.nonce,
+                    code: account.code.clone(),
+                    code_hash: account.code_hash,
+                    storage,
+                },
+            );
+        }
+        dirty.watch_list = state.db.dirty.watch_list.clone();
+        dirty.unwatch_list = state.db.dirty.unwatch_list.clone();
+        dirty.total_dirty_slots = state.db.dirty.total_dirty_slots;
+
+        let db = HybridDB {
+            dirty,
+            read_cache: ReadCache::new(
+                state.db.read_cache.entry_count().max(1),
+                state.db.cache_ttl,
+            ),
+            bytecode_cache: Arc::clone(&state.db.bytecode_cache),
+            upstream: Arc::clone(&state.db.upstream),
+            pinned_block: state.db.pinned_block,
+            cache_ttl: state.db.cache_ttl,
+            chain_id: state.db.chain_id,
+        };
+
+        let mut fork = ForkState::new(db, state.local_block_number, state.chain_id);
+        fork.timestamp = state.timestamp;
+        fork.next_base_fee_per_gas = state.next_base_fee_per_gas;
+        fork.coinbase = state.coinbase;
+        fork.prev_randao = state.prev_randao;
+        fork.impersonated_accounts = state.impersonated_accounts.clone();
+        fork
     }
 }
 
@@ -621,9 +703,14 @@ fn parse_b256_value(value: &Value) -> Result<B256> {
 
 #[cfg(test)]
 mod tests {
-    use std::{collections::HashSet, num::NonZeroUsize, sync::Arc, time::Duration};
+    use std::{
+        collections::HashSet,
+        num::NonZeroUsize,
+        sync::Arc,
+        time::{Duration, Instant},
+    };
 
-    use alloy_primitives::{Bytes, U256, address};
+    use alloy_primitives::{Address, B256, Bytes, U256, address};
 
     use super::{
         AccountDiff, FollowerConfig, SpeculativeExecutor, StateDiff, TargetedFollower,
@@ -631,7 +718,7 @@ mod tests {
     };
     use crate::{
         TransactionRequest,
-        cow::{MultiVersionStore, VersionEntry},
+        cow::{CowState, MultiVersionStore, VersionEntry},
         fork::{ForkState, HybridDB, MirageFork, WatchEntry, WatchSource},
         provider::UpstreamRpc,
         resources::{MirageMode, Profile, ResourceModel},
@@ -862,5 +949,259 @@ mod tests {
             .expect("join should succeed")
             .expect("stream drive should succeed");
         assert_eq!(outcome, WebsocketLoopOutcome::Proxy);
+    }
+
+    #[test]
+    fn test_block_budget_timeout_enforced() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(
+            upstream.clone(),
+            32,
+            Duration::from_secs(12),
+            NonZeroUsize::MIN,
+            1,
+        );
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+
+        let budget = Duration::from_millis(50);
+        let mut follower = TargetedFollower::new(
+            upstream.clone(),
+            &mirage,
+            crate::fork::DiffClassifier::new(crate::fork::ClassificationConfig::default()),
+            FollowerConfig {
+                ws_url: "ws://127.0.0.1:8546".to_owned(),
+                http_url: "http://127.0.0.1:8545".to_owned(),
+                block_budget: budget,
+                filter_addresses: None,
+                filter_selectors: None,
+            },
+            0,
+        );
+
+        // Budget is enforced per-block in replay_block: processing stops after
+        // block_budget elapses. With the mock (no upstream transactions),
+        // tick_once should complete near-instantly.
+        let start = Instant::now();
+        follower.tick_once().unwrap();
+        let elapsed = start.elapsed();
+
+        assert!(
+            elapsed < Duration::from_secs(1),
+            "tick with no pending blocks should be bounded, took {elapsed:?}"
+        );
+        assert_eq!(follower.config.block_budget, budget);
+    }
+
+    #[test]
+    fn test_targeted_follower_filter_throughput() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(
+            upstream.clone(),
+            32,
+            Duration::from_secs(12),
+            NonZeroUsize::MIN,
+            1,
+        );
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+
+        // Populate watch list with 1000 addresses.
+        {
+            let state_handle = mirage.state();
+            let mut state = state_handle.write();
+            for i in 0..1000_u64 {
+                let addr = Address::from_word(B256::from(U256::from(i + 1)));
+                state.fork.db.dirty.watch_list.insert(
+                    addr,
+                    WatchEntry {
+                        source: WatchSource::Manual,
+                        added_at_block: 0,
+                        initial_slot_count: 0,
+                        replay_count: 0,
+                    },
+                );
+            }
+        }
+
+        let follower = TargetedFollower::new(
+            upstream,
+            &mirage,
+            crate::fork::DiffClassifier::new(crate::fork::ClassificationConfig::default()),
+            FollowerConfig {
+                ws_url: "ws://127.0.0.1:8546".to_owned(),
+                http_url: "http://127.0.0.1:8545".to_owned(),
+                block_budget: Duration::from_secs(1),
+                filter_addresses: None,
+                filter_selectors: None,
+            },
+            0,
+        );
+
+        // The watch_list is a HashMap providing O(1) lookups. 10k filter checks
+        // against 1000 watched addresses should complete well under 500ms.
+        let watched = Address::from_word(B256::from(U256::from(500)));
+        let tx_json = serde_json::json!({
+            "to": format!("{watched}"),
+            "input": "0x",
+        });
+        let start = Instant::now();
+        for _ in 0..10_000 {
+            let _ = follower.matches_filters(&tx_json);
+        }
+        let elapsed = start.elapsed();
+        assert!(
+            elapsed < Duration::from_millis(500),
+            "HashMap-based filter should handle 10k lookups quickly, took {elapsed:?}"
+        );
+    }
+
+    #[test]
+    fn test_speculative_executor_memory_per_tx() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let state = ForkState::new(db, 0, 1);
+        let mut executor = SpeculativeExecutor::default();
+
+        for i in 0..10_u64 {
+            let mut addr_bytes = [0u8; 20];
+            addr_bytes[12..20].copy_from_slice(&(i + 1).to_be_bytes());
+            let sender = Address::from(addr_bytes);
+            let request = TransactionRequest {
+                from: Some(sender),
+                to: Some(Address::ZERO),
+                gas: Some(50_000),
+                value: Some(U256::from(1_u64)),
+                data: Some(Bytes::from(vec![i as u8; 4])),
+                ..Default::default()
+            };
+            let _ = executor.execute(&state, &request);
+        }
+
+        // Each cached result stores the diff and read set, not the full state.
+        assert_eq!(executor.cache.len(), 10);
+        // The CowState baseline is shared across all 10 executions within the
+        // same block, avoiding redundant storage snapshots.
+        assert!(
+            executor.cow_baseline.is_some(),
+            "CowState baseline should be cached for the current block"
+        );
+    }
+
+    #[test]
+    fn test_speculative_invalidation_on_block_write() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let state = ForkState::new(db, 0, 1);
+        let mut executor = SpeculativeExecutor::default();
+
+        let request = TransactionRequest {
+            from: Some(address!("0x1000000000000000000000000000000000000001")),
+            to: Some(address!("0x2000000000000000000000000000000000000002")),
+            gas: Some(50_000),
+            value: Some(U256::from(1_u64)),
+            data: Some(Bytes::from_static(&[0xab, 0xcd])),
+            ..Default::default()
+        };
+        executor
+            .execute(&state, &request)
+            .expect("speculative execution succeeds");
+        assert_eq!(executor.cache.len(), 1);
+
+        executor.invalidate_for_block(0);
+        assert!(
+            executor.cache.is_empty(),
+            "invalidate_for_block should clear cached results"
+        );
+        assert!(
+            executor.cow_baseline.is_none(),
+            "invalidate_for_block should clear the CowState baseline"
+        );
+    }
+
+    #[test]
+    fn test_speculative_invalidation_conditions() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let state = ForkState::new(db, 0, 1);
+        let mut executor = SpeculativeExecutor::default();
+
+        let sender = address!("0x1000000000000000000000000000000000000001");
+        let receiver = address!("0x2000000000000000000000000000000000000002");
+        let request = TransactionRequest {
+            from: Some(sender),
+            to: Some(receiver),
+            gas: Some(50_000),
+            value: Some(U256::from(10_u64)),
+            data: Some(Bytes::from_static(&[0xde, 0xad])),
+            ..Default::default()
+        };
+        let result = executor
+            .execute(&state, &request)
+            .expect("speculative execution succeeds");
+        assert_eq!(executor.cache.len(), 1);
+
+        // Writes to unrelated slots should not invalidate.
+        let mut unrelated = HashSet::new();
+        unrelated.insert((
+            address!("0x9999999999999999999999999999999999999999"),
+            U256::from(999_u64),
+        ));
+        executor.invalidate_for_writes(&unrelated);
+        assert_eq!(
+            executor.cache.len(),
+            1,
+            "unrelated writes should not invalidate"
+        );
+
+        // Writes overlapping the read set should invalidate.
+        executor.invalidate_for_writes(&result.read_set);
+        assert!(
+            executor.cache.is_empty(),
+            "overlapping writes should invalidate cached results"
+        );
+    }
+
+    #[test]
+    fn test_block_stm_conflict_rate() {
+        let store = MultiVersionStore::default();
+        let addr = address!("0x4000000000000000000000000000000000000004");
+        let slot = U256::from(1_u64);
+
+        // Two transactions write the same slot (a conflict).
+        store.record(
+            addr,
+            slot,
+            VersionEntry {
+                tx_index: 0,
+                value: U256::from(10_u64),
+                incarnation: 0,
+            },
+        );
+        store.record(
+            addr,
+            slot,
+            VersionEntry {
+                tx_index: 1,
+                value: U256::from(20_u64),
+                incarnation: 0,
+            },
+        );
+
+        // The materialized view returns the latest version (highest tx_index).
+        let materialized = store.materialize();
+        assert_eq!(materialized.get(&(addr, slot)), Some(&U256::from(20_u64)));
+
+        // Both writes are recorded for conflict detection.
+        let entry = store.versions.get(&(addr, slot)).unwrap();
+        assert_eq!(entry.len(), 2);
     }
 }

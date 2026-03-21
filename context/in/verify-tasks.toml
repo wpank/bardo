@@ -1,140 +1,575 @@
 [meta]
-plan = "04b-testing-bootstrap"
+plan = "03-mirage-rs"
 role = "verifier"
-crates = ["golem-core", "golem-runtime", "bardo-terminal", "mirage-rs"]
-total = 14
+crates = ["mirage-rs", "golem-core", "golem-chain-intelligence", "golem-context", "golem-coordination"]
+total = 79
 
 [[task]]
 id = "CG1"
-title = "Compile: cargo check --workspace"
+title = "Compile mirage-rs"
 type = "compile"
-command = "cargo check --workspace"
+command = "cargo check -p mirage-rs"
 blocking = true
 status = "pending"
 
 [[task]]
 id = "CG2"
-title = "Compile: cargo check -p golem-runtime"
+title = "Compile golem-core"
 type = "compile"
-command = "cargo check -p golem-runtime"
+command = "cargo check -p golem-core"
 blocking = true
 status = "pending"
 
 [[task]]
 id = "CG3"
-title = "Compile: cargo check -p bardo-terminal"
+title = "Compile golem-chain-intelligence"
 type = "compile"
-command = "cargo check -p bardo-terminal"
+command = "cargo check -p golem-chain-intelligence"
 blocking = true
 status = "pending"
 
 [[task]]
-id = "INV001"
-title = "INV-001: test_with_rpc_constructor"
-type = "invariant"
-invariant = "INV-001"
-command = "cargo test -p golem-core -- test_with_rpc_constructor --exact"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV002"
-title = "INV-002: test_headless_constructor"
-type = "invariant"
-invariant = "INV-002"
-command = "cargo test -p golem-core -- test_headless_constructor --exact"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV003"
-title = "INV-003: test_app_backend_generic_compiles"
-type = "invariant"
-invariant = "INV-003"
-command = "cargo test -p bardo-terminal -- test_app_backend_generic_compiles --exact"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV004"
-title = "INV-004: test_pool_slot0_matches_expected_price"
-type = "invariant"
-invariant = "INV-004"
-command = "cargo test -p mirage-rs --test integration -- test_pool_slot0_matches_expected_price --nocapture"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV005"
-title = "INV-005: test_headless_constructor_compiles (golem-runtime)"
-type = "invariant"
-invariant = "INV-005"
-command = "cargo test -p golem-runtime -- test_headless_constructor_compiles --exact"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV006"
-title = "INV-006: test_golem_snapshot_default"
-type = "invariant"
-invariant = "INV-006"
-command = "cargo test -p golem-runtime -- test_golem_snapshot_default --exact"
-blocking = true
-status = "pending"
-
-[[task]]
-id = "INV007"
-title = "nextest integration profile loads"
+id = "CG4"
+title = "Compile golem-context"
 type = "compile"
-command = "cargo nextest run --profile integration --list"
+command = "cargo check -p golem-context"
 blocking = true
 status = "pending"
 
 [[task]]
-id = "INV008"
-title = "plans/context/testing-reference.md exists and has strategy table"
-type = "invariant"
-invariant = "INV-008"
-command = "grep -c 'strategy' plans/context/testing-reference.md"
+id = "CG5"
+title = "Compile golem-coordination"
+type = "compile"
+command = "cargo check -p golem-coordination"
 blocking = true
 status = "pending"
 
 [[task]]
-id = "INV009"
-title = "retrofit-testing-docs.sh is executable and runs against 04b"
-type = "invariant"
-invariant = "INV-009"
-command = "bash plans/context/prompts/retrofit-testing-docs.sh 04b"
+id = "UT1"
+title = "HybridDB and DirtyStore snapshot tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs fork::tests:: -- --nocapture"
+test_fns = ["test_hybrid_db_tier_priority", "test_hybrid_db_dirty_store_wins", "test_hybrid_db_read_cache_prevents_rpc", "test_hybrid_db_partial_dirty_merge", "test_dirty_store_snapshot_revert_roundtrip", "test_dirty_store_snapshot_single_use"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT2"
+title = "Cache TTL expiration tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_cache_ttl_expiration -- --nocapture"
+test_fns = ["test_cache_ttl_expiration"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT3"
+title = "DiffClassifier protocol threshold tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs fork::tests::diff_classifier -- --nocapture"
+test_fns = ["test_diff_classifier_protocol_threshold", "test_diff_classifier_protocol_at_threshold", "test_diff_classifier_token_heuristic", "test_diff_classifier_unwatch_prevents_readd"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT4"
+title = "Watch list and contagion tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs watch_list_capacity_enforced test_contagion_depth_capped test_watch_entry_source_tracking -- --nocapture"
+test_fns = ["test_watch_list_capacity_enforced", "test_contagion_depth_capped", "test_watch_entry_source_tracking"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT5"
+title = "Copy-on-write state tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs cow::tests:: -- --nocapture"
+test_fns = ["test_cow_branches_share_baseline", "test_cow_branches_are_isolated", "test_cow_memory_scales_with_overlays", "test_bytecode_cache_no_ttl"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT6"
+title = "TargetedFollower and block budget tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_block_budget_timeout_enforced test_targeted_follower_filter_throughput -- --nocapture"
+test_fns = ["test_block_budget_timeout_enforced", "test_targeted_follower_filter_throughput"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT7"
+title = "Speculative executor tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs replay::tests::speculative -- --nocapture"
+test_fns = ["test_speculative_executor_memory_per_tx", "test_speculative_exec_no_state_commit", "test_speculative_invalidation_on_block_write", "test_speculative_invalidation_conditions"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT8"
+title = "StateDiff and Block-STM tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs replay::tests:: -- --nocapture"
+test_fns = ["test_state_diff_account_and_storage", "test_block_stm_conflict_rate", "test_block_stm_matches_sequential"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT9"
+title = "Scenario status and transitions tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs scenario::tests:: -- --nocapture"
+test_fns = ["test_scenario_status_valid_transitions", "test_scenario_runner_revert_restores_baseline", "test_scenario_runner_basic", "test_scenario_timeout_enforced", "test_scenario_gas_exceeded", "test_scenario_tracks_all_addresses"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT10"
+title = "RPC method tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_eth_estimate_gas_buffer test_eip2718_type_parsing test_account_impersonation_validity test_local_tx_event_sequence -- --nocapture"
+test_fns = ["test_eth_estimate_gas_buffer", "test_eip2718_type_parsing", "test_account_impersonation_validity", "test_local_tx_event_sequence"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT11"
+title = "MirageConfig default settings tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_mirage_config_default_timeout test_mirage_config_default_retries -- --nocapture"
+test_fns = ["test_mirage_config_default_timeout", "test_mirage_config_default_retries"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT12"
+title = "Resource pressure tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs resources::tests::pressure -- --nocapture"
+test_fns = ["test_resource_pressure_bounds", "test_resource_pressure_tier_transitions", "test_pressure_tiers"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT13"
+title = "Cache hit rate and profile tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_cache_hit_rate_bounds test_profile_memory_allocations test_profile_watch_limits test_profile_cache_capacities -- --nocapture"
+test_fns = ["test_cache_hit_rate_bounds", "test_profile_memory_allocations", "test_profile_watch_limits", "test_profile_cache_capacities"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT14"
+title = "Bytecode cache and eviction tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_bytecode_cache_capacity test_memory_startup_gate test_lru_eviction_at_throttle_tier test_lru_eviction_at_capacity -- --nocapture"
+test_fns = ["test_bytecode_cache_capacity", "test_memory_startup_gate", "test_lru_eviction_at_throttle_tier", "test_lru_eviction_at_capacity"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT15"
+title = "Upstream RPC rate limit and retry tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs test_upstream_rps_limit test_upstream_exponential_backoff -- --nocapture"
+test_fns = ["test_upstream_rps_limit", "test_upstream_exponential_backoff"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "UT16"
+title = "MirageClient integration tests"
+type = "unit_test"
+command = "cargo test -p mirage-rs integration::tests::mirage_client -- --nocapture"
+test_fns = ["test_mirage_client_wait_ready"]
+crate = "mirage-rs"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "IT1"
+title = "Full integration test suite"
+type = "integration_test"
+command = "cargo test -p mirage-rs --test integration -- --nocapture"
+contracts = ["mirage-rs"]
+crate = "mirage-rs"
 blocking = false
 status = "pending"
 
 [[task]]
-id = "FIN1"
-title = "Final: all unit tests for touched crates"
-type = "unit_test"
-command = "cargo test -p golem-core -p golem-runtime -p bardo-terminal"
-crate = "golem-core"
+id = "INV1"
+title = "INV-001: HybridDB read priority order"
+type = "invariant"
+invariant = "INV-001"
+command = "cargo test -p mirage-rs test_hybrid_db_tier_priority -- --nocapture"
+expected = "test result: ok"
 blocking = true
 status = "pending"
-test_invariants = [
-    "test_with_rpc_constructor",
-    "test_headless_constructor",
-    "test_app_backend_generic_compiles",
-    "test_headless_constructor_compiles",
-    "test_golem_snapshot_default"
-]
 
 [[task]]
-id = "FIN2"
-title = "Final: mirage-rs integration suite"
-type = "unit_test"
-command = "cargo test -p mirage-rs --test integration"
-crate = "mirage-rs"
+id = "INV2"
+title = "INV-002: Cache TTL expiration"
+type = "invariant"
+invariant = "INV-002"
+command = "cargo test -p mirage-rs test_cache_ttl_expiration -- --nocapture"
+expected = "test result: ok"
 blocking = true
 status = "pending"
-test_invariants = [
-    "test_pool_slot0_matches_expected_price",
-    "integration_eth_transfer_state_diff",
-    "integration_snapshot_revert",
-    "integration_scenario_runner_cow_isolation"
-]
+
+[[task]]
+id = "INV3"
+title = "INV-003: DirtyStore partial merge"
+type = "invariant"
+invariant = "INV-003"
+command = "cargo test -p mirage-rs test_hybrid_db_partial_dirty_merge -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV4"
+title = "INV-004: DiffClassifier protocol_slot_threshold"
+type = "invariant"
+invariant = "INV-004"
+command = "cargo test -p mirage-rs test_diff_classifier_protocol_threshold -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV5"
+title = "INV-005: Watch list capacity bounds"
+type = "invariant"
+invariant = "INV-005"
+command = "cargo test -p mirage-rs test_watch_list_capacity_enforced -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV6"
+title = "INV-006: Contagion depth cap"
+type = "invariant"
+invariant = "INV-006"
+command = "cargo test -p mirage-rs test_contagion_depth_capped -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV7"
+title = "INV-007: Snapshot ID single-use guarantee"
+type = "invariant"
+invariant = "INV-007"
+command = "cargo test -p mirage-rs test_dirty_store_snapshot_single_use -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV8"
+title = "INV-008: Block budget timeout per block"
+type = "invariant"
+invariant = "INV-008"
+command = "cargo test -p mirage-rs test_block_budget_timeout_enforced -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV9"
+title = "INV-009: TargetedFollower tx filter HashSet lookup"
+type = "invariant"
+invariant = "INV-009"
+command = "cargo test -p mirage-rs test_targeted_follower_filter_throughput -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV10"
+title = "INV-010: SpeculativeExecutor cache memory cost"
+type = "invariant"
+invariant = "INV-010"
+command = "cargo test -p mirage-rs test_speculative_executor_memory_per_tx -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV11"
+title = "INV-011: StateDiff invalidation on block write"
+type = "invariant"
+invariant = "INV-011"
+command = "cargo test -p mirage-rs test_speculative_invalidation_on_block_write -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV12"
+title = "INV-012: Block-STM conflict rate"
+type = "invariant"
+invariant = "INV-012"
+command = "cargo test -p mirage-rs test_block_stm_conflict_rate -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV13"
+title = "INV-013: Scenario status enum valid transitions"
+type = "invariant"
+invariant = "INV-013"
+command = "cargo test -p mirage-rs test_scenario_status_valid_transitions -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV14"
+title = "INV-014: Scenario revert to baseline"
+type = "invariant"
+invariant = "INV-014"
+command = "cargo test -p mirage-rs test_scenario_runner_revert_restores_baseline -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV15"
+title = "INV-015: Scenario timeout constraint"
+type = "invariant"
+invariant = "INV-015"
+command = "cargo test -p mirage-rs test_scenario_timeout_enforced -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV16"
+title = "INV-016: Scenario gas limit enforcement"
+type = "invariant"
+invariant = "INV-016"
+command = "cargo test -p mirage-rs test_scenario_gas_exceeded -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV17"
+title = "INV-017: eth_estimateGas buffer"
+type = "invariant"
+invariant = "INV-017"
+command = "cargo test -p mirage-rs test_eth_estimate_gas_buffer -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV18"
+title = "INV-018: RPC timeout default"
+type = "invariant"
+invariant = "INV-018"
+command = "cargo test -p mirage-rs test_mirage_config_default_timeout -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV19"
+title = "INV-019: RPC retry attempts default"
+type = "invariant"
+invariant = "INV-019"
+command = "cargo test -p mirage-rs test_mirage_config_default_retries -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV20"
+title = "INV-020: Resource pressure numeric range"
+type = "invariant"
+invariant = "INV-020"
+command = "cargo test -p mirage-rs test_resource_pressure_bounds -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV21"
+title = "INV-021: Resource pressure tier transitions"
+type = "invariant"
+invariant = "INV-021"
+command = "cargo test -p mirage-rs test_resource_pressure_tier_transitions -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV22"
+title = "INV-022: Cache hit rate bounds"
+type = "invariant"
+invariant = "INV-022"
+command = "cargo test -p mirage-rs test_cache_hit_rate_bounds -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV23"
+title = "INV-023: Profile memory allocation"
+type = "invariant"
+invariant = "INV-023"
+command = "cargo test -p mirage-rs test_profile_memory_allocations -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV24"
+title = "INV-024: Watch list per profile"
+type = "invariant"
+invariant = "INV-024"
+command = "cargo test -p mirage-rs test_profile_watch_limits -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV25"
+title = "INV-025: Cache capacity per profile"
+type = "invariant"
+invariant = "INV-025"
+command = "cargo test -p mirage-rs test_profile_cache_capacities -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV26"
+title = "INV-026: Bytecode cache capacity formula"
+type = "invariant"
+invariant = "INV-026"
+command = "cargo test -p mirage-rs test_bytecode_cache_capacity -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV27"
+title = "INV-027: Memory pressure startup check"
+type = "invariant"
+invariant = "INV-027"
+command = "cargo test -p mirage-rs test_memory_startup_gate -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV28"
+title = "INV-028: LRU eviction at throttle tier"
+type = "invariant"
+invariant = "INV-028"
+command = "cargo test -p mirage-rs test_lru_eviction_at_throttle_tier -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV29"
+title = "INV-029: Upstream RPC rate limiter"
+type = "invariant"
+invariant = "INV-029"
+command = "cargo test -p mirage-rs test_upstream_rps_limit -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV30"
+title = "INV-030: Upstream RPC exponential backoff retry"
+type = "invariant"
+invariant = "INV-030"
+command = "cargo test -p mirage-rs test_upstream_exponential_backoff -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV31"
+title = "INV-031: EIP-2718 transaction type handling"
+type = "invariant"
+invariant = "INV-031"
+command = "cargo test -p mirage-rs test_eip2718_type_parsing -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV32"
+title = "INV-032: Account impersonation validity"
+type = "invariant"
+invariant = "INV-032"
+command = "cargo test -p mirage-rs test_account_impersonation_validity -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV33"
+title = "INV-033: Watch list contagion source tracking"
+type = "invariant"
+invariant = "INV-033"
+command = "cargo test -p mirage-rs test_watch_entry_source_tracking -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV34"
+title = "INV-034: Scenario wallet tracking"
+type = "invariant"
+invariant = "INV-034"
+command = "cargo test -p mirage-rs test_scenario_tracks_all_addresses -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV35"
+title = "INV-035: Event sequence on local transaction"
+type = "invariant"
+invariant = "INV-035"
+command = "cargo test -p mirage-rs test_local_tx_event_sequence -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"
+
+[[task]]
+id = "INV36"
+title = "INV-036: Speculative invalidation conditions"
+type = "invariant"
+invariant = "INV-036"
+command = "cargo test -p mirage-rs test_speculative_invalidation_conditions -- --nocapture"
+expected = "test result: ok"
+blocking = true
+status = "pending"

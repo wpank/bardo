@@ -200,3 +200,26 @@ impl MirageError {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mirage_error_rpc_codes() {
+        let addr = Address::ZERO;
+
+        assert_eq!(MirageError::SnapshotNotFound(1).rpc_code(), -32001);
+        assert_eq!(MirageError::InvalidFrom(addr).rpc_code(), -32010);
+        assert_eq!(MirageError::SlotDetectionFailed(addr).rpc_code(), -32020);
+        assert_eq!(MirageError::WatchListFull.rpc_code(), -32030);
+        assert_eq!(
+            MirageError::UnknownProtocolType("x".into()).rpc_code(),
+            -32040
+        );
+        assert_eq!(MirageError::SetNotFound("s".into()).rpc_code(), -32050);
+        assert_eq!(MirageError::JobNotFound("j".into()).rpc_code(), -32054);
+        assert_eq!(MirageError::JobNotComplete("j".into()).rpc_code(), -32055);
+        assert_eq!(MirageError::Upstream("err".into()).rpc_code(), -32099);
+    }
+}

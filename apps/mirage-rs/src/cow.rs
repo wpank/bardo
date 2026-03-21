@@ -44,6 +44,18 @@ impl CowState {
     pub fn overlay_size(&self) -> usize {
         self.overlay.len()
     }
+
+    /// Returns a reference to the overlay (speculative writes only).
+    #[must_use]
+    pub fn overlay_ref(&self) -> &HashMap<(Address, U256), U256> {
+        &self.overlay
+    }
+
+    /// Returns the shared baseline.
+    #[must_use]
+    pub fn baseline_arc(&self) -> &Arc<HashMap<(Address, U256), U256>> {
+        &self.baseline
+    }
 }
 
 /// Shared bytecode cache keyed by code hash.

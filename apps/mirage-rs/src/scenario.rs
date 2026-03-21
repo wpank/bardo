@@ -541,7 +541,7 @@ mod tests {
     };
 
     #[tokio::test]
-    async fn scenario_runner_basic() {
+    async fn test_scenario_runner_basic() {
         let upstream = Arc::new(UpstreamRpc::mock(1));
         let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
         let fork = ForkState::new(db, 0, 1);
@@ -575,7 +575,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn scenario_runner_revert_restores_baseline() {
+    async fn test_scenario_runner_revert_restores_baseline() {
         let upstream = Arc::new(UpstreamRpc::mock(1));
         let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
         let fork = ForkState::new(db, 0, 1);
@@ -867,5 +867,144 @@ addresses = ["0x3000000000000000000000000000000000000010"]
             Scenario::from_toml("new-pool", include_str!("../tests/scenarios/new_pool.toml"))
                 .unwrap_or_else(|error| panic!("new pool parses: {error}"));
         assert!(new_pool.transactions.iter().any(|tx| tx.to.is_none()));
+    }
+
+    #[test]
+    fn test_scenario_status_valid_transitions() {
+        // ScenarioSetStatus: Draft → Running → Complete | Failed
+        let draft = ScenarioSetStatus::Draft;
+        let running = ScenarioSetStatus::Running;
+        let complete = ScenarioSetStatus::Complete;
+        let failed = ScenarioSetStatus::Failed;
+
+        assert_ne!(draft, running);
+        assert_ne!(running, complete);
+        assert_ne!(running, failed);
+        assert_ne!(complete, failed);
+
+        // ScenarioStatus variants are distinct terminal states
+        let success = ScenarioStatus::Success;
+        let timeout = ScenarioStatus::Timeout;
+        let gas_exceeded = ScenarioStatus::GasExceeded;
+        let reverted = ScenarioStatus::Reverted;
+
+        assert!(matches!(success, ScenarioStatus::Success));
+        assert!(matches!(timeout, ScenarioStatus::Timeout));
+        assert!(matches!(gas_exceeded, ScenarioStatus::GasExceeded));
+        assert!(matches!(reverted, ScenarioStatus::Reverted));
+        assert!(matches!(
+            ScenarioStatus::Error("x".into()),
+            ScenarioStatus::Error(_)
+        ));
+    }
+
+    #[tokio::test]
+    async fn test_scenario_timeout_enforced() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+        let sender = address!("0x5000000000000000000000000000000000000001");
+        let receiver = address!("0x5000000000000000000000000000000000000002");
+        let set = ScenarioSet {
+            id: "timeout-set".to_owned(),
+            baseline_snapshot_id: 0,
+            baseline_fork: None,
+            scenarios: vec![Scenario {
+                id: "timeout-scenario".to_owned(),
+                name: "should timeout".to_owned(),
+                transactions: vec![
+                    simple_transaction(sender, receiver, U256::from(1_u64)),
+                    simple_transaction(sender, receiver, U256::from(1_u64)),
+                    simple_transaction(sender, receiver, U256::from(1_u64)),
+                ],
+                track_addresses: vec![sender],
+                max_gas: None,
+                timeout: Duration::ZERO,
+                assertions: ScenarioAssertions::default(),
+            }],
+            status: ScenarioSetStatus::Draft,
+        };
+
+        let runner = ScenarioRunner::new(mirage.state());
+        let results = runner.run_sequential(&set).await;
+        assert_eq!(results.len(), 1);
+        assert!(matches!(results[0].status, ScenarioStatus::Timeout));
+    }
+
+    #[tokio::test]
+    async fn test_scenario_gas_exceeded() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+        let sender = address!("0x6000000000000000000000000000000000000001");
+        let receiver = address!("0x6000000000000000000000000000000000000002");
+        let set = ScenarioSet {
+            id: "gas-set".to_owned(),
+            baseline_snapshot_id: 0,
+            baseline_fork: None,
+            scenarios: vec![Scenario {
+                id: "gas-scenario".to_owned(),
+                name: "should exceed gas".to_owned(),
+                transactions: vec![simple_transaction(sender, receiver, U256::from(1_u64))],
+                track_addresses: vec![sender],
+                max_gas: Some(1),
+                timeout: Duration::from_secs(10),
+                assertions: ScenarioAssertions::default(),
+            }],
+            status: ScenarioSetStatus::Draft,
+        };
+
+        let runner = ScenarioRunner::new(mirage.state());
+        let results = runner.run_sequential(&set).await;
+        assert_eq!(results.len(), 1);
+        assert!(matches!(results[0].status, ScenarioStatus::GasExceeded));
+    }
+
+    #[tokio::test]
+    async fn test_scenario_tracks_all_addresses() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+        let sender = address!("0x7000000000000000000000000000000000000001");
+        let receiver = address!("0x7000000000000000000000000000000000000002");
+        let bystander = address!("0x7000000000000000000000000000000000000003");
+        let set = ScenarioSet {
+            id: "track-set".to_owned(),
+            baseline_snapshot_id: 0,
+            baseline_fork: None,
+            scenarios: vec![Scenario {
+                id: "track-scenario".to_owned(),
+                name: "track all".to_owned(),
+                transactions: vec![simple_transaction(sender, receiver, U256::from(1_u64))],
+                track_addresses: vec![sender, receiver, bystander],
+                max_gas: None,
+                timeout: Duration::from_secs(10),
+                assertions: ScenarioAssertions::default(),
+            }],
+            status: ScenarioSetStatus::Draft,
+        };
+
+        let runner = ScenarioRunner::new(mirage.state());
+        let results = runner.run_sequential(&set).await;
+        assert_eq!(results.len(), 1);
+        assert!(matches!(results[0].status, ScenarioStatus::Success));
+        assert!(results[0].final_balances.contains_key(&sender));
+        assert!(results[0].final_balances.contains_key(&receiver));
+        assert!(results[0].final_balances.contains_key(&bystander));
     }
 }

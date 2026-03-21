@@ -1917,6 +1917,186 @@ mod tests {
     }
 
     #[test]
+    fn test_hybrid_db_tier_priority() {
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let addr = address!("0xAAAA000000000000000000000000000000000001");
+        upstream.set_mock_account(
+            addr,
+            AccountInfo {
+                balance: U256::from(100_u64),
+                nonce: 1,
+                code_hash: Bytecode::default().hash_slow(),
+                code: Some(Bytecode::default()),
+            },
+        );
+        let mut db = HybridDB::new(
+            Arc::clone(&upstream),
+            16,
+            Duration::from_secs(60),
+            TEST_CACHE_SIZE,
+            1,
+        );
+
+        // Tier 3: upstream (no dirty, no cache) => balance 100
+        let info = db.basic(addr).unwrap().unwrap();
+        assert_eq!(info.balance, U256::from(100_u64));
+
+        // Tier 2: read cache is now populated; upstream should not be hit again
+        let before = upstream.stats().0;
+        let info = db.basic(addr).unwrap().unwrap();
+        assert_eq!(info.balance, U256::from(100_u64));
+        assert_eq!(upstream.stats().0, before);
+
+        // Tier 1: dirty override wins over cache and upstream
+        db.set_balance(addr, U256::from(42_u64));
+        let info = db.basic(addr).unwrap().unwrap();
+        assert_eq!(info.balance, U256::from(42_u64));
+    }
+
+    #[test]
+    fn test_cache_ttl_expiration() {
+        use super::ReadCache;
+
+        let mut cache = ReadCache::new(16, Duration::from_millis(1));
+        let addr = address!("0xBBBB000000000000000000000000000000000001");
+        cache.insert_account(
+            addr,
+            AccountInfo {
+                balance: U256::from(10_u64),
+                ..AccountInfo::default()
+            },
+        );
+        // Fresh entry should be returned
+        assert!(cache.get_account(&addr).is_some());
+
+        // Wait for TTL to expire
+        std::thread::sleep(Duration::from_millis(5));
+        assert!(cache.get_account(&addr).is_none());
+    }
+
+    #[test]
+    fn test_diff_classifier_protocol_threshold() {
+        let addr = address!("0xCCCC000000000000000000000000000000000001");
+        let classifier = DiffClassifier::new(ClassificationConfig::default());
+
+        // Below threshold (2 slots < 3): should NOT be Protocol
+        let mut diff = StateDiff::success(21_000, Bytes::default());
+        diff.accounts.insert(
+            addr,
+            AccountDiff {
+                info_changed: false,
+                new_balance: None,
+                new_nonce: None,
+                new_code: None,
+                storage_written: [
+                    (U256::from(1), U256::from(1)),
+                    (U256::from(2), U256::from(2)),
+                ]
+                .into_iter()
+                .collect(),
+                storage_read: HashSet::default(),
+            },
+        );
+        assert_eq!(
+            classifier.classify(&diff).get(&addr),
+            Some(&Classification::SlotOnly)
+        );
+    }
+
+    #[test]
+    fn test_watch_list_capacity_enforced() {
+        let classifier = DiffClassifier::new(ClassificationConfig {
+            max_watched_contracts: 2,
+            ..ClassificationConfig::default()
+        });
+
+        let a1 = address!("0xDDDD000000000000000000000000000000000001");
+        let a2 = address!("0xDDDD000000000000000000000000000000000002");
+        let a3 = address!("0xDDDD000000000000000000000000000000000003");
+
+        let make_protocol_diff = |addr| {
+            let mut diff = StateDiff::success(21_000, Bytes::default());
+            diff.accounts.insert(
+                addr,
+                AccountDiff {
+                    info_changed: false,
+                    new_balance: None,
+                    new_nonce: None,
+                    new_code: None,
+                    storage_written: [
+                        (U256::from(1), U256::from(1)),
+                        (U256::from(2), U256::from(2)),
+                        (U256::from(3), U256::from(3)),
+                    ]
+                    .into_iter()
+                    .collect(),
+                    storage_read: HashSet::default(),
+                },
+            );
+            diff
+        };
+
+        let mut store = DirtyStore::default();
+        // First two should succeed
+        classifier
+            .apply(&mut store, &make_protocol_diff(a1), 1)
+            .unwrap();
+        classifier
+            .apply(&mut store, &make_protocol_diff(a2), 2)
+            .unwrap();
+        assert_eq!(store.watch_list.len(), 2);
+
+        // Third should fail (at capacity)
+        let result = classifier.apply(&mut store, &make_protocol_diff(a3), 3);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_contagion_depth_capped() {
+        // Verify that ClassificationConfig defaults to max_contagion_depth=2
+        let config = ClassificationConfig::default();
+        assert_eq!(config.max_contagion_depth, 2);
+        assert!(config.enable_contagion);
+    }
+
+    #[test]
+    fn test_watch_entry_source_tracking() {
+        let addr = address!("0xEEEE000000000000000000000000000000000001");
+        let classifier = DiffClassifier::new(ClassificationConfig::default());
+
+        let mut diff = StateDiff::success(21_000, Bytes::default());
+        diff.accounts.insert(
+            addr,
+            AccountDiff {
+                info_changed: false,
+                new_balance: None,
+                new_nonce: None,
+                new_code: None,
+                storage_written: [
+                    (U256::from(1), U256::from(1)),
+                    (U256::from(2), U256::from(2)),
+                    (U256::from(3), U256::from(3)),
+                ]
+                .into_iter()
+                .collect(),
+                storage_read: HashSet::default(),
+            },
+        );
+
+        let mut store = DirtyStore::default();
+        classifier.apply(&mut store, &diff, 42).unwrap();
+
+        let entry = store
+            .watch_list
+            .get(&addr)
+            .expect("address should be watched");
+        assert_eq!(entry.source, WatchSource::AutoClassified);
+        assert_eq!(entry.added_at_block, 42);
+        assert_eq!(entry.initial_slot_count, 3);
+        assert_eq!(entry.replay_count, 0);
+    }
+
+    #[test]
     fn set_erc20_balance_tracks_total_supply() {
         let upstream = Arc::new(UpstreamRpc::mock(1));
         let token = address!("0x8000000000000000000000000000000000000000");

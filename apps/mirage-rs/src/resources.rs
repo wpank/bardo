@@ -350,4 +350,196 @@ mod tests {
 
         assert!(err.to_string().contains("available=0"));
     }
+
+    #[test]
+    fn test_resource_pressure_bounds() {
+        let model = ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12));
+        assert_eq!(model.pressure_for_memory(0), 0.0);
+        assert!(model.pressure_for_memory(256 * 1024 * 1024) >= 0.0);
+        assert!(model.pressure_for_memory(256 * 1024 * 1024) <= 1.5);
+        // Over the cap: clamped to 1.5
+        let over = model.pressure_for_memory(2 * 1024 * 1024 * 1024);
+        assert!((over - 1.5).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_resource_pressure_tier_transitions() {
+        let model = ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12));
+        // Standard = 512 MB. 50% = 256 MB, 70% = 358 MB, 90% = 460 MB.
+        let below_warning = ResourceUsage::new(
+            &model,
+            200 * 1024 * 1024,
+            0.8,
+            10,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert!(!below_warning.is_warning());
+        assert_eq!(below_warning.pressure_action(), PressureAction::None);
+
+        let at_warning = ResourceUsage::new(
+            &model,
+            256 * 1024 * 1024,
+            0.8,
+            10,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert!(at_warning.is_warning());
+        assert!(!at_warning.is_throttled());
+        assert_eq!(at_warning.pressure_action(), PressureAction::EvictCache);
+
+        let at_throttle = ResourceUsage::new(
+            &model,
+            360 * 1024 * 1024,
+            0.8,
+            10,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert!(at_throttle.is_throttled());
+        assert!(!at_throttle.is_emergency());
+        assert_eq!(at_throttle.pressure_action(), PressureAction::Throttle);
+
+        let at_emergency = ResourceUsage::new(
+            &model,
+            470 * 1024 * 1024,
+            0.8,
+            10,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert!(at_emergency.is_emergency());
+        assert_eq!(
+            at_emergency.pressure_action(),
+            PressureAction::DemoteToProxy
+        );
+    }
+
+    #[test]
+    fn test_pressure_tiers() {
+        let model = ResourceModel::for_profile(Profile::Micro, Duration::from_secs(12));
+        // Micro = 256 MB.
+        let idle = ResourceUsage::new(
+            &model,
+            50 * 1024 * 1024,
+            0.9,
+            5,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert_eq!(idle.pressure_action(), PressureAction::None);
+
+        let warning = ResourceUsage::new(
+            &model,
+            130 * 1024 * 1024,
+            0.9,
+            5,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert_eq!(warning.pressure_action(), PressureAction::EvictCache);
+
+        let emergency = ResourceUsage::new(
+            &model,
+            240 * 1024 * 1024,
+            0.9,
+            5,
+            0,
+            0,
+            0,
+            0,
+            MirageMode::Live,
+            0,
+        );
+        assert_eq!(emergency.pressure_action(), PressureAction::DemoteToProxy);
+    }
+
+    #[test]
+    fn test_cache_hit_rate_bounds() {
+        let mut cache = ReadCache::new(100, Duration::from_secs(60));
+        // No lookups: hit rate should be 1.0 (perfect by default)
+        assert!((cache.hit_rate() - 1.0).abs() < f64::EPSILON);
+
+        // Insert and hit
+        let info = AccountInfo {
+            balance: U256::from(1_u64),
+            nonce: 0,
+            code_hash: Bytecode::default().hash_slow(),
+            code: Some(Bytecode::default()),
+        };
+        let addr = address!("0x1000000000000000000000000000000000000001");
+        cache.insert_account(addr, info);
+        let _ = cache.get_account(&addr); // hit
+        assert!(cache.hit_rate() >= 0.0);
+        assert!(cache.hit_rate() <= 1.0);
+
+        // Miss
+        let missing = address!("0x2000000000000000000000000000000000000002");
+        let _ = cache.get_account(&missing); // miss
+        assert!(cache.hit_rate() >= 0.0);
+        assert!(cache.hit_rate() <= 1.0);
+    }
+
+    #[test]
+    fn test_profile_memory_allocations() {
+        let micro = ResourceModel::for_profile(Profile::Micro, Duration::from_secs(12));
+        let standard = ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12));
+        let power = ResourceModel::for_profile(Profile::Power, Duration::from_secs(12));
+
+        assert_eq!(micro.max_memory_bytes, 256 * 1024 * 1024);
+        assert_eq!(standard.max_memory_bytes, 512 * 1024 * 1024);
+        assert_eq!(power.max_memory_bytes, 2 * 1024 * 1024 * 1024);
+    }
+
+    #[test]
+    fn test_profile_watch_limits() {
+        let micro = ResourceModel::for_profile(Profile::Micro, Duration::from_secs(12));
+        let standard = ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12));
+        let power = ResourceModel::for_profile(Profile::Power, Duration::from_secs(12));
+
+        assert_eq!(micro.max_watched_contracts, 32);
+        assert_eq!(standard.max_watched_contracts, 64);
+        assert_eq!(power.max_watched_contracts, 256);
+    }
+
+    #[test]
+    fn test_profile_cache_capacities() {
+        let micro = ResourceModel::for_profile(Profile::Micro, Duration::from_secs(12));
+        let standard = ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12));
+        let power = ResourceModel::for_profile(Profile::Power, Duration::from_secs(12));
+
+        assert_eq!(micro.cache_capacity, 5_000);
+        assert_eq!(standard.cache_capacity, 10_000);
+        assert_eq!(power.cache_capacity, 50_000);
+
+        // Bytecode cache is cache_capacity / 5
+        assert_eq!(micro.bytecode_cache_capacity().get(), 1_000);
+        assert_eq!(standard.bytecode_cache_capacity().get(), 2_000);
+        assert_eq!(power.bytecode_cache_capacity().get(), 10_000);
+    }
 }

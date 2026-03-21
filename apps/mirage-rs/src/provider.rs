@@ -592,3 +592,95 @@ fn parse_bytes(value: &Value) -> Result<Bytes> {
         .map_err(|error| MirageError::Upstream(format!("invalid bytecode: {error}")))?;
     Ok(Bytes::from(bytes))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_upstream_rpc_rate_limit_tokens_start_at_burst() {
+        let upstream = UpstreamRpc::new_with_limits(None, None, 1, 100, 200);
+        // Burst of 200 calls should complete nearly instantly
+        let start = Instant::now();
+        for _ in 0..200 {
+            upstream.enforce_rate_limit();
+        }
+        let elapsed = start.elapsed();
+        assert!(
+            elapsed < Duration::from_millis(200),
+            "200 burst calls should complete quickly, took {elapsed:?}"
+        );
+
+        // After burst exhaustion, next call must wait (~10ms for 100 rps)
+        let start = Instant::now();
+        upstream.enforce_rate_limit();
+        let elapsed = start.elapsed();
+        assert!(
+            elapsed >= Duration::from_millis(5),
+            "call after burst exhaustion should wait >=5ms, took {elapsed:?}"
+        );
+    }
+
+    #[test]
+    fn test_upstream_rpc_retry_backoff() {
+        let upstream = UpstreamRpc::new(None, None, 1);
+        assert_eq!(upstream.retry_attempts, 2);
+        assert_eq!(upstream.retry_backoff, Duration::from_millis(100));
+        assert_eq!(upstream.requests_per_second, 100);
+        assert_eq!(upstream.burst, 200);
+    }
+
+    #[test]
+    fn test_upstream_rpc_mock_get_block_number() {
+        let upstream = UpstreamRpc::mock(1);
+        upstream.mock.write().block_number = 42;
+        assert_eq!(upstream.get_block_number().unwrap(), 42);
+    }
+
+    #[test]
+    fn test_rate_limit_disabled_when_zero_rps() {
+        let upstream = UpstreamRpc::new_with_limits(None, None, 1, 0, 0);
+        let start = Instant::now();
+        for _ in 0..500 {
+            upstream.enforce_rate_limit();
+        }
+        let elapsed = start.elapsed();
+        assert!(
+            elapsed < Duration::from_millis(50),
+            "zero rps should skip rate limiting, took {elapsed:?}"
+        );
+    }
+
+    #[test]
+    fn test_mock_account_info() {
+        let upstream = UpstreamRpc::mock(1);
+        let address = Address::ZERO;
+        let info = upstream
+            .get_account_info(address, BlockTag::Latest)
+            .unwrap();
+        assert!(info.is_some());
+        let info = info.unwrap();
+        assert_eq!(info.balance, U256::from(DEFAULT_MOCK_BALANCE));
+    }
+
+    #[test]
+    fn test_mock_storage() {
+        let upstream = UpstreamRpc::mock(1);
+        let address = Address::ZERO;
+        let slot = U256::from(1);
+        upstream.set_mock_storage(address, slot, U256::from(99));
+        let value = upstream
+            .get_storage_at(address, slot, BlockTag::Latest)
+            .unwrap();
+        assert_eq!(value, U256::from(99));
+    }
+
+    #[test]
+    fn test_block_tag_json() {
+        assert_eq!(BlockTag::Latest.as_json(), Value::String("latest".into()));
+        assert_eq!(
+            BlockTag::Number(255).as_json(),
+            Value::String("0xff".into())
+        );
+    }
+}

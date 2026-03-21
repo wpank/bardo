@@ -12,6 +12,22 @@ use mirage_rs::{
 use serde::de::DeserializeOwned;
 
 #[tokio::test]
+async fn integration_spawn_and_ready() {
+    let mut instance = spawn_mirage_test_instance(None, Some(18_545))
+        .await
+        .expect("spawn test instance");
+    let client = MirageClient::new(instance.config())
+        .await
+        .expect("construct client");
+    client
+        .wait_ready(Duration::from_secs(10))
+        .await
+        .expect("instance ready within 10s");
+
+    instance.shutdown().await.expect("shutdown instance");
+}
+
+#[tokio::test]
 async fn integration_eth_transfer_state_diff() {
     let mut instance = spawn_mirage_test_instance(None, Some(18_548))
         .await

@@ -397,14 +397,16 @@ fn register_state_mutation_methods(
             Ok::<_, ErrorObjectOwned>(true)
         })?;
     }
-    module.register_async_method("anvil_setNonce", |params, ctx, _| async move {
-        let (address, nonce): (Address, u64) = params.parse().map_err(invalid_params)?;
-        with_state_write(&ctx.state, |state| {
-            state.fork.db.set_nonce(address, nonce);
-        })
-        .await;
-        Ok::<_, ErrorObjectOwned>(true)
-    })?;
+    for method in ["hardhat_setNonce", "anvil_setNonce"] {
+        module.register_async_method(method, |params, ctx, _| async move {
+            let (address, nonce): (Address, u64) = params.parse().map_err(invalid_params)?;
+            with_state_write(&ctx.state, |state| {
+                state.fork.db.set_nonce(address, nonce);
+            })
+            .await;
+            Ok::<_, ErrorObjectOwned>(true)
+        })?;
+    }
     for method in ["hardhat_mine", "anvil_mine", "evm_mine"] {
         module.register_async_method(method, |params, ctx, _| async move {
             let params: std::result::Result<Vec<serde_json::Value>, _> = params.parse();
@@ -460,14 +462,16 @@ fn register_state_mutation_methods(
             Ok::<_, ErrorObjectOwned>(true)
         })?;
     }
-    module.register_async_method("anvil_setPrevRandao", |params, ctx, _| async move {
-        let (value,): (B256,) = params.parse().map_err(invalid_params)?;
-        with_state_write(&ctx.state, |state| {
-            state.fork.prev_randao = value;
-        })
-        .await;
-        Ok::<_, ErrorObjectOwned>(true)
-    })?;
+    for method in ["hardhat_setPrevRandao", "anvil_setPrevRandao"] {
+        module.register_async_method(method, |params, ctx, _| async move {
+            let (value,): (B256,) = params.parse().map_err(invalid_params)?;
+            with_state_write(&ctx.state, |state| {
+                state.fork.prev_randao = value;
+            })
+            .await;
+            Ok::<_, ErrorObjectOwned>(true)
+        })?;
+    }
     Ok(())
 }
 
@@ -1988,6 +1992,65 @@ mod tests {
             RlpValue::Bytes(signature.s().to_bytes().to_vec()),
         ]);
         Bytes::from(rlp_encode(&signed))
+    }
+
+    #[tokio::test]
+    async fn evm_snapshot_captures_dirty_store_and_revert_is_single_use() {
+        let addr = address!("0x6000000000000000000000000000000000000006");
+        let upstream = Arc::new(UpstreamRpc::mock(1));
+        let db = HybridDB::new(upstream, 32, Duration::from_secs(12), NonZeroUsize::MIN, 1);
+        let fork = ForkState::new(db, 0, 1);
+        let mirage = MirageFork::new(
+            fork,
+            ResourceModel::for_profile(Profile::Standard, Duration::from_secs(12)),
+            MirageMode::Live,
+        );
+        let (shutdown, _) = broadcast::channel(1);
+        let context = ServerContext {
+            state: mirage.state(),
+            shutdown,
+        };
+
+        // Set initial balance
+        with_state_write(&context.state, |state| {
+            state.fork.db.set_balance(addr, U256::from(100_u64));
+        })
+        .await;
+
+        // Take snapshot
+        let snapshot_id = with_state_write(&context.state, |state| state.fork.snapshot()).await;
+
+        // Modify state after snapshot
+        with_state_write(&context.state, |state| {
+            state.fork.db.set_balance(addr, U256::from(999_u64));
+        })
+        .await;
+
+        // Confirm modified state
+        let balance_after_modify = run_fork_snapshot(&context.state, false, move |mut fork| {
+            Ok(fork.db.basic(addr)?.unwrap_or_default().balance)
+        })
+        .await
+        .unwrap();
+        assert_eq!(balance_after_modify, U256::from(999_u64));
+
+        // Revert to snapshot — should restore original balance
+        let reverted =
+            with_state_write(&context.state, |state| state.fork.revert(snapshot_id)).await;
+        assert!(reverted.is_ok());
+        assert_eq!(reverted.unwrap(), true);
+
+        let balance_after_revert = run_fork_snapshot(&context.state, false, move |mut fork| {
+            Ok(fork.db.basic(addr)?.unwrap_or_default().balance)
+        })
+        .await
+        .unwrap();
+        assert_eq!(balance_after_revert, U256::from(100_u64));
+
+        // Second revert with same ID should fail (single-use)
+        let second_revert =
+            with_state_write(&context.state, |state| state.fork.revert(snapshot_id)).await;
+        assert!(second_revert.is_err());
     }
 
     fn sign_typed(signing_key: &SigningKey, tx_type: u8, to: Option<Address>) -> Bytes {
