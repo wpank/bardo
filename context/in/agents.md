@@ -124,7 +124,7 @@ Before writing, understand what exists:
 - If a test depends on a future plan, mark it `#[ignore]` with `// TODO(plan-NN): requires <system>`.
 - Add ignored tests to `plans/context/ignored-tests.md`.
 - **Actually run your tests.** Do not just write them and assume they pass.
-- **Check `plans/context/verify-chains/NN-verify.sh`** — each `INV-NNN` block in the plan has an expected test function name listed there. Implement exactly those test functions. The Auditor runs this script; if your tests aren't there or fail, you will get `[S-N]` blocking issues.
+- **Check `plans/context/verify-chains/NN-verify.sh`** — each `INV-NNN` block in the plan has an expected test function name listed there. Implement exactly those test functions. The Reviewer checks this script; if your tests aren't there or fail, you will get `[S-N]` blocking issues.
 
 ### 1e. Compilation Gate
 Run `cargo check --workspace` after each unit. **Do not proceed with a broken workspace.** Fix the error, even if it means adjusting your code to match what actually exists rather than what the plan assumed.
@@ -285,27 +285,27 @@ If your context fills up mid-plan (you've processed many units and have extensiv
 ## Pipeline
 
 ```
-┌──────────┐   ┌──────────────┐   ┌─────────────┐   ┌──────────────┐
-│Strategist│──▶│ Implementer  │──▶│Arch Reviewer │──▶│ Spec Auditor │
-│  (brief) │   │ (code+tests) │   │  (quality)   │   │  (fidelity)  │
-└──────────┘   └──────────────┘   └──────┬───────┘   └──────┬───────┘
-                                         │                    │
-                                    Both APPROVE? ────────────┘
-                                     │         │
-                                    YES        NO
-                                     │         │
-                                  commit    archive reviews
-                                             ↓
-                                    ┌──────────┐
-                                    │Strategist│ (integrate feedback)
-                                    │  re-run  │
-                                    └────┬─────┘
-                                         ↓
-                                    Implementer fix cycle
-                                         ↓
-                                    Both reviewers re-run
-                                         ↓
-                                    (repeat up to MAX_REVIEW_ITERATIONS)
+┌──────────┐   ┌──────────────┐   ┌───────────────────┐   ┌───────┐   ┌────────┐
+│Strategist│──▶│ Implementer  │──▶│ Reviewer           │──▶│Scribe │──▶│ Critic │
+│  (brief) │   │ (code+tests) │   │ (arch+audit, .md)  │   │(docs) │   │(docs)  │
+└──────────┘   └──────────────┘   └────────┬───────────┘   └───────┘   └────────┘
+                                            │
+                                        APPROVE?
+                                         │       │
+                                        YES      NO
+                                         │       │
+                                       Scribe  archive review
+                                               ↓
+                                      ┌──────────┐
+                                      │Strategist│ (integrate feedback)
+                                      │  re-run  │
+                                      └────┬─────┘
+                                           ↓
+                                      Implementer fix cycle
+                                           ↓
+                                      Reviewer re-runs
+                                           ↓
+                                      (repeat up to MAX_REVIEW_ITERATIONS)
 ```
 
 ## Agent Roles
@@ -314,21 +314,19 @@ If your context fills up mid-plan (you've processed many units and have extensiv
 |-------|------|-------|--------|--------|
 | **Strategist** | Before implementation | Plan, CONTEXT.md, workspace-map, preflight, prior reviews | `briefs/NN-brief.md` | Dependencies exist, patterns match, risks identified, review feedback integrated |
 | **Implementer** | After strategist | Brief, plan, CONTEXT.md, workspace-map (iter 2+: reviews) | Code, tests, docs, CONTEXT.md, last-completed.md | Code compiles, tests pass, docs written |
-| **Architect** | After implementation | Diff, full modified files, brief, CONTEXT.md | `reviews/NN-arch-review.md` | Compilation, clippy, layering, API surface, patterns, correctness |
-| **Spec Auditor** | After implementation | Diff, prd2 sources, plan, CONTEXT.md | `reviews/NN-spec-review.md` | Type contracts, behavioral completeness, missing pieces, deviations, prd2 intent |
+| **Reviewer** | After implementation | Diff, full modified files, brief, prd2 sources, plan QR | `reviews/NN-arch.md` | Compilation, clippy, layering, API surface, patterns, correctness, type contracts, behavioral completeness, missing pieces, export contracts, INV-NNN coverage, Cargo.toml entries |
 
-## Non-Overlapping Concerns
+## Reviewer Owns
 
-To prevent redundant checks and conflicting feedback:
+The combined Reviewer checks both code quality and specification fidelity in one pass:
 
-- **Architect** owns: compilation, clippy, `pub` visibility, error handling style, module structure, test organization, race conditions, panicking paths, doc comments existence.
-- **Spec Auditor** owns: type field correctness, formula accuracy, behavioral rule coverage, missing implementations, export contracts, prd2 alignment, deviation documentation.
-- **Neither reviews the other's domain.** If the Spec Auditor notices a code quality issue, it notes it under "Notes" (non-blocking) and trusts the Architect to catch it. Vice versa.
+- Compilation, clippy, `pub` visibility, error handling style, module structure, test organization, race conditions, panicking paths, doc comments existence.
+- Type field correctness, formula accuracy, behavioral rule coverage, missing implementations, export contracts, prd2 alignment, INV-NNN test coverage, Cargo.toml entries.
 
 ## Iteration Protocol
 
-1. Both APPROVE → compilation gate → test gate → git commit → next plan.
-2. Either REVISE → current reviews archived as `NN-{role}-iterN.md` → strategist re-runs with history → implementer fix cycle → both reviewers re-run.
+1. Reviewer APPROVE → Scribe → Critic → commit → next plan.
+2. Reviewer REVISE → current review archived as `NN-arch-iterN.md` → strategist re-runs with history → implementer fix cycle → Reviewer re-runs.
 3. Maximum `MAX_REVIEW_ITERATIONS` (default 3). If exceeded → halt report written → exit 1 → human intervention required.
 4. Only **blocking issues** (`[B-N]`, `[S-N]`) trigger a REVISE verdict. Recommendations are noted but never block.
 5. `--no-review` skips the entire orchestration loop. Use for Plan 01 or trivial plans.
