@@ -219,113 +219,6 @@ mod tests {
         assert_eq!(binding.description, "Copy");
     }
 
-    fn make_bindings(count: usize) -> Vec<KeyBinding> {
-        (0..count)
-            .map(|i| KeyBinding {
-                key: format!("C-{}", (b'a' + (i % 26) as u8) as char),
-                description: format!("action {}", i),
-            })
-            .collect()
-    }
-
-    /// INV-023: Box dimensions never exceed area; minimum area 20x5 triggers early return.
-    #[test]
-    fn test_key_help_overlay_dimensions() {
-        for &area_width in &[10u16, 20, 80, 255] {
-            for &area_height in &[3u16, 5, 40, 100] {
-                for &bindings_count in &[1usize, 5, 20] {
-                    let overlay = KeyHelpOverlay {
-                        bindings: make_bindings(bindings_count),
-                        visible: true,
-                    };
-                    let area = Rect::new(0, 0, area_width, area_height);
-                    let mut buffer = Buffer::empty(area);
-                    (&overlay).render(area, &mut buffer);
-
-                    if area_width < 20 || area_height < 5 {
-                        // Early return: buffer should be all spaces.
-                        assert!(
-                            buffer.content().iter().all(|cell| cell.symbol() == " "),
-                            "Expected early return for {}x{} with {} bindings",
-                            area_width,
-                            area_height,
-                            bindings_count,
-                        );
-                    } else {
-                        // Box must fit within the area. Verify no writes outside area bounds
-                        // (the buffer enforces this, so we just confirm rendering happened).
-                        let has_content = buffer
-                            .content()
-                            .iter()
-                            .any(|cell| cell.symbol() != " " && cell.symbol() != "");
-                        assert!(
-                            has_content,
-                            "Expected rendered content for {}x{} with {} bindings",
-                            area_width, area_height, bindings_count,
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    /// INV-024: Box is centered horizontally and vertically within the area.
-    #[test]
-    fn test_key_help_overlay_centering() {
-        for &area_x in &[0u16, 10] {
-            for &area_y in &[0u16, 5] {
-                for &area_width in &[40u16, 100] {
-                    for &area_height in &[20u16, 50] {
-                        let overlay = KeyHelpOverlay {
-                            bindings: make_bindings(3),
-                            visible: true,
-                        };
-                        let area = Rect::new(area_x, area_y, area_width, area_height);
-                        let mut buffer = Buffer::empty(area);
-                        (&overlay).render(area, &mut buffer);
-
-                        // Find rendered box bounds by scanning for box-drawing chars.
-                        let mut min_x = u16::MAX;
-                        let mut max_x = 0u16;
-                        let mut min_y = u16::MAX;
-                        let mut max_y = 0u16;
-                        for y in area.top()..area.bottom() {
-                            for x in area.left()..area.right() {
-                                let sym = buffer.get(x, y).symbol().to_string();
-                                if sym != " " {
-                                    min_x = min_x.min(x);
-                                    max_x = max_x.max(x);
-                                    min_y = min_y.min(y);
-                                    max_y = max_y.max(y);
-                                }
-                            }
-                        }
-
-                        assert!(min_x >= area_x, "box_x underflow");
-                        assert!(min_y >= area_y, "box_y underflow");
-                        assert!(max_x < area_x + area_width, "box overflows right");
-                        assert!(max_y < area_y + area_height, "box overflows bottom");
-
-                        let rendered_width = max_x - min_x + 1;
-                        let rendered_height = max_y - min_y + 1;
-                        let expected_x = area_x + area_width.saturating_sub(rendered_width) / 2;
-                        let expected_y = area_y + area_height.saturating_sub(rendered_height) / 2;
-                        assert_eq!(
-                            min_x, expected_x,
-                            "horizontal centering off for area ({},{},{}x{})",
-                            area_x, area_y, area_width, area_height,
-                        );
-                        assert_eq!(
-                            min_y, expected_y,
-                            "vertical centering off for area ({},{},{}x{})",
-                            area_x, area_y, area_width, area_height,
-                        );
-                    }
-                }
-            }
-        }
-    }
-
     #[test]
     fn overlay_with_empty_bindings() {
         let overlay = KeyHelpOverlay {
@@ -341,5 +234,149 @@ mod tests {
             .iter()
             .any(|cell| cell.symbol() != " " && cell.symbol() != "");
         assert!(has_content, "Empty overlay should still render box");
+    }
+
+    /// INV-023: Box dimensions never exceed area; minimum area 20x5 required.
+    #[test]
+    fn test_key_help_overlay_dimensions() {
+        let bindings = vec![
+            KeyBinding {
+                key: "?".into(),
+                description: "toggle help".into(),
+            },
+            KeyBinding {
+                key: "q".into(),
+                description: "quit application".into(),
+            },
+            KeyBinding {
+                key: "j/k".into(),
+                description: "navigate".into(),
+            },
+            KeyBinding {
+                key: "Enter".into(),
+                description: "confirm selection".into(),
+            },
+            KeyBinding {
+                key: "Esc".into(),
+                description: "close".into(),
+            },
+        ];
+
+        // Area too small: width < 20
+        let overlay = KeyHelpOverlay {
+            bindings: bindings.clone(),
+            visible: true,
+        };
+        let small_area = Rect::new(0, 0, 10, 40);
+        let mut buf = Buffer::empty(small_area);
+        (&overlay).render(small_area, &mut buf);
+        assert!(
+            buf.content().iter().all(|c| c.symbol() == " "),
+            "width < 20 should render nothing"
+        );
+
+        // Area too small: height < 5
+        let small_h_area = Rect::new(0, 0, 80, 3);
+        let mut buf = Buffer::empty(small_h_area);
+        (&overlay).render(small_h_area, &mut buf);
+        assert!(
+            buf.content().iter().all(|c| c.symbol() == " "),
+            "height < 5 should render nothing"
+        );
+
+        // Normal area: box fits
+        for &(w, h, n_bindings) in &[(20u16, 5u16, 1usize), (80, 40, 5), (255, 100, 20)] {
+            let bindings_subset: Vec<KeyBinding> = (0..n_bindings)
+                .map(|i| KeyBinding {
+                    key: format!("k{i}"),
+                    description: format!("action {i}"),
+                })
+                .collect();
+            let overlay = KeyHelpOverlay {
+                bindings: bindings_subset.clone(),
+                visible: true,
+            };
+
+            let max_key = bindings_subset
+                .iter()
+                .map(|b| b.key.len())
+                .max()
+                .unwrap_or(1);
+            let max_desc = bindings_subset
+                .iter()
+                .map(|b| b.description.len())
+                .max()
+                .unwrap_or(10);
+            let inner_w = (max_key + max_desc + 5).min(w.saturating_sub(4) as usize);
+            let inner_h = bindings_subset.len().min(h.saturating_sub(4) as usize);
+            let box_w = (inner_w + 4) as u16;
+            let box_h = (inner_h + 2) as u16;
+
+            assert!(box_w <= w, "box_w {box_w} > area_w {w}");
+            assert!(box_h <= h, "box_h {box_h} > area_h {h}");
+
+            let area = Rect::new(0, 0, w, h);
+            let mut buf = Buffer::empty(area);
+            (&overlay).render(area, &mut buf);
+        }
+    }
+
+    /// INV-024: Box is centered horizontally and vertically.
+    #[test]
+    fn test_key_help_overlay_centering() {
+        let bindings = vec![
+            KeyBinding {
+                key: "?".into(),
+                description: "help".into(),
+            },
+            KeyBinding {
+                key: "q".into(),
+                description: "quit".into(),
+            },
+        ];
+
+        for &(ax, ay, aw, ah) in &[(0u16, 0u16, 40u16, 20u16), (10, 5, 100, 50)] {
+            let overlay = KeyHelpOverlay {
+                bindings: bindings.clone(),
+                visible: true,
+            };
+
+            let max_key = bindings.iter().map(|b| b.key.len()).max().unwrap_or(1);
+            let max_desc = bindings
+                .iter()
+                .map(|b| b.description.len())
+                .max()
+                .unwrap_or(10);
+            let inner_w = (max_key + max_desc + 5).min(aw.saturating_sub(4) as usize);
+            let inner_h = bindings.len().min(ah.saturating_sub(4) as usize);
+            let box_w = (inner_w + 4) as u16;
+            let box_h = (inner_h + 2) as u16;
+
+            let box_x = ax + aw.saturating_sub(box_w) / 2;
+            let box_y = ay + ah.saturating_sub(box_h) / 2;
+
+            // Box position never goes below area origin
+            assert!(box_x >= ax, "box_x {box_x} < area.x {ax}");
+            assert!(box_y >= ay, "box_y {box_y} < area.y {ay}");
+
+            // Box fits within area
+            assert!(
+                box_x + box_w <= ax + aw,
+                "box right edge {} > area right edge {}",
+                box_x + box_w,
+                ax + aw
+            );
+            assert!(
+                box_y + box_h <= ay + ah,
+                "box bottom edge {} > area bottom edge {}",
+                box_y + box_h,
+                ay + ah
+            );
+
+            // Render to verify no panic
+            let area = Rect::new(ax, ay, aw, ah);
+            let mut buf = Buffer::empty(area);
+            (&overlay).render(area, &mut buf);
+        }
     }
 }

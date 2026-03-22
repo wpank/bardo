@@ -387,6 +387,16 @@ impl Default for AppState {
     }
 }
 
+impl AppState {
+    /// Called once per render tick by App::run().
+    /// TODO(plan-70a): replace with real cognitive event listener.
+    pub(crate) fn poll_sound_triggers(&self, engine: &crate::sound::SoundEngine) {
+        if self.tick_count % 60 == 0 {
+            engine.play(crate::sound::SoundEvent::HeartbeatTick);
+        }
+    }
+}
+
 /// Action emitted by screens and consumed by the app loop.
 ///
 /// Core scaffold actions are `Quit`, `NextScreen`, `PrevScreen`, and `Resize`.

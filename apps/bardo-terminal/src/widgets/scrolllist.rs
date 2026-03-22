@@ -134,70 +134,88 @@ mod tests {
         assert_eq!(list.cursor, 0);
     }
 
-    /// INV-021: cursor cannot exceed filtered item count.
+    /// INV-021: Cursor never exceeds filtered item count; down/up are bounded.
     #[test]
     fn test_scrollable_list_cursor_bounds() {
-        let mut list = ScrollableList::new(vec![
-            "one".to_string(),
-            "two".to_string(),
-            "three".to_string(),
-        ]);
-
-        // Down past the end stays clamped at last index.
-        for _ in 0..10 {
-            list.move_cursor_down();
-        }
-        assert_eq!(list.cursor, 2);
-
-        // Up past zero stays at zero.
-        for _ in 0..10 {
-            list.move_cursor_up();
-        }
-        assert_eq!(list.cursor, 0);
-
-        // With a filter that narrows to 1 item, cursor stays at 0.
-        list.filter = Some("two".to_string());
-        list.cursor = 0;
-        list.move_cursor_down();
-        assert_eq!(list.cursor, 0); // only 1 filtered item
-
-        // Empty list: cursor doesn't move.
+        // Empty list: cursor stays at 0
         let mut empty = ScrollableList::new(vec![]);
         empty.move_cursor_down();
         assert_eq!(empty.cursor, 0);
         empty.move_cursor_up();
         assert_eq!(empty.cursor, 0);
+
+        // Single item: cursor stays at 0
+        let mut single = ScrollableList::new(vec!["a".to_string()]);
+        single.move_cursor_down();
+        assert_eq!(single.cursor, 0);
+        single.move_cursor_up();
+        assert_eq!(single.cursor, 0);
+
+        // Multiple items: cursor bounded by count
+        let mut multi =
+            ScrollableList::new(vec!["a".to_string(), "b".to_string(), "c".to_string()]);
+        for _ in 0..10 {
+            multi.move_cursor_down();
+        }
+        assert_eq!(multi.cursor, 2); // max index = len - 1
+        for _ in 0..10 {
+            multi.move_cursor_up();
+        }
+        assert_eq!(multi.cursor, 0);
+
+        // With filter active, cursor bounded by filtered count
+        multi.cursor = 0;
+        multi.filter = Some("a".to_string());
+        let filtered_count = multi.filtered_items().len();
+        assert_eq!(filtered_count, 1);
+        multi.move_cursor_down();
+        assert_eq!(multi.cursor, 0); // only 1 item, can't go past 0
+
+        // Out-of-bounds cursor from prior state
+        multi.cursor = 999;
+        multi.filter = None;
+        multi.move_cursor_down();
+        // After move_down with cursor=999, min(1000, 2) = 2
+        assert!(multi.cursor <= multi.filtered_items().len().saturating_sub(1));
     }
 
-    /// INV-022: case-insensitive substring filtering preserves original indices.
+    /// INV-022: Filtering applies case-insensitive substring match; order preserved.
     #[test]
     fn test_scrollable_list_filter() {
-        let list_items = vec![
-            "Alpha".to_string(),
-            "BETA".to_string(),
-            "gamma".to_string(),
-            "AlphaBeta".to_string(),
-        ];
+        let list = ScrollableList::new(vec![
+            "apple".to_string(),
+            "Apricot".to_string(),
+            "banana".to_string(),
+        ]);
 
-        // Case-insensitive match on "alpha".
-        let mut list = ScrollableList::new(list_items.clone());
-        list.filter = Some("alpha".to_string());
-        let filtered = list.filtered_items();
-        assert_eq!(filtered, vec![(0, "Alpha"), (3, "AlphaBeta")]);
+        // No filter: all items in order
+        let all = list.filtered_items();
+        assert_eq!(all.len(), 3);
+        assert_eq!(all[0], (0, "apple"));
+        assert_eq!(all[1], (1, "Apricot"));
+        assert_eq!(all[2], (2, "banana"));
 
-        // Case-insensitive match on "BETA".
-        list.filter = Some("BETA".to_string());
-        let filtered = list.filtered_items();
-        assert_eq!(filtered, vec![(1, "BETA"), (3, "AlphaBeta")]);
+        // Empty filter: all items
+        let mut list_empty_filter = list.clone();
+        list_empty_filter.filter = Some("".to_string());
+        assert_eq!(list_empty_filter.filtered_items().len(), 3);
 
-        // No filter returns all items.
-        list.filter = None;
-        let filtered = list.filtered_items();
-        assert_eq!(filtered.len(), 4);
+        // "ap" matches "apple" and "Apricot" (case-insensitive)
+        let mut list_ap = list.clone();
+        list_ap.filter = Some("ap".to_string());
+        let filtered = list_ap.filtered_items();
+        assert_eq!(filtered.len(), 2);
+        assert_eq!(filtered[0], (0, "apple"));
+        assert_eq!(filtered[1], (1, "Apricot"));
 
-        // Filter with no matches returns empty.
-        list.filter = Some("zzz".to_string());
-        let filtered = list.filtered_items();
-        assert!(filtered.is_empty());
+        // "AP" also matches (case-insensitive)
+        let mut list_ap_upper = list.clone();
+        list_ap_upper.filter = Some("AP".to_string());
+        assert_eq!(list_ap_upper.filtered_items().len(), 2);
+
+        // "xyz" matches nothing
+        let mut list_xyz = list.clone();
+        list_xyz.filter = Some("xyz".to_string());
+        assert_eq!(list_xyz.filtered_items().len(), 0);
     }
 }

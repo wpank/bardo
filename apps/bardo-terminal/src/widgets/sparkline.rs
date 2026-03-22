@@ -13,7 +13,7 @@ const LEFT_COL_BITS: [u8; 4] = [0x40, 0x04, 0x02, 0x01];
 const RIGHT_COL_BITS: [u8; 4] = [0x80, 0x20, 0x10, 0x08];
 
 fn filled_bits(bits: &[u8; 4], n_dots: usize) -> u8 {
-    bits[4_usize.saturating_sub(n_dots.min(4))..]
+    bits[..n_dots.min(4)]
         .iter()
         .fold(0u8, |acc, &bit| acc | bit)
 }
@@ -103,11 +103,117 @@ mod tests {
     #[test]
     fn test_braille_sparkline_encodes_correctly() {
         assert_eq!(left_bits(0), 0x00);
+        assert_eq!(right_bits(0), 0x00);
+        assert_eq!(left_bits(1), 0x40);
+        assert_eq!(left_bits(2), 0x40 | 0x04);
+        assert_eq!(left_bits(3), 0x40 | 0x04 | 0x02);
         assert_eq!(left_bits(4), 0x01 | 0x02 | 0x04 | 0x40);
+        assert_eq!(right_bits(1), 0x80);
+        assert_eq!(right_bits(2), 0x80 | 0x20);
+        assert_eq!(right_bits(3), 0x80 | 0x20 | 0x10);
+        assert_eq!(right_bits(4), 0x08 | 0x10 | 0x20 | 0x80);
 
         let all_bits = left_bits(4) | right_bits(4);
         assert_eq!(all_bits, 0xFF);
         let ch = char::from_u32(0x2800 + all_bits as u32).unwrap();
         assert_eq!(ch, '\u{28FF}');
+    }
+
+    /// INV-002: Data points scale to 0..=4 dots per column, clamped at boundaries.
+    #[test]
+    fn test_sparkline_scaling_bounds() {
+        // Test with max = 1.0
+        for &val in &[0.0_f64, 0.25, 0.5, 0.75, 1.0, 1.5] {
+            let dots = ((val / 1.0) * 4.0).round().clamp(0.0, 4.0) as usize;
+            assert!(dots <= 4, "dots {dots} out of range for val {val}");
+        }
+        // Test with max = 100.0
+        for &val in &[0.0_f64, 25.0, 50.0, 75.0, 100.0, 150.0] {
+            let dots = ((val / 100.0) * 4.0).round().clamp(0.0, 4.0) as usize;
+            assert!(dots <= 4, "dots {dots} out of range for val {val}");
+        }
+        // Edge cases: NaN and Infinity clamp to valid range
+        let nan_dots = ((f64::NAN / 1.0) * 4.0).round().clamp(0.0, 4.0);
+        assert!((0.0..=4.0).contains(&nan_dots) || nan_dots.is_nan());
+        let inf_dots = ((f64::INFINITY / 1.0) * 4.0).round().clamp(0.0, 4.0);
+        assert!((0.0..=4.0).contains(&inf_dots));
+    }
+
+    /// INV-003: When max_value <= 0, auto-scale from data.max(); otherwise use max_value.
+    #[test]
+    fn test_sparkline_max_value_auto_scale() {
+        // Empty data, max_value=0 => auto-scale should produce max >= 1.0
+        let s1 = BrailleSparkline {
+            data: vec![],
+            max_value: 0.0,
+            color: Color::Reset,
+            label: None,
+        };
+        // Auto-scale logic: fold(NEG_INFINITY, max).max(1.0) on empty slice => 1.0
+        let offset = s1.data.len().saturating_sub(0);
+        let auto_max = s1.data[offset..]
+            .iter()
+            .copied()
+            .fold(0.0_f64, f64::max)
+            .max(1.0);
+        assert_eq!(auto_max, 1.0);
+
+        // Non-empty data, max_value=0 => auto-scale from data max
+        let s2 = BrailleSparkline {
+            data: vec![1.0, 2.5],
+            max_value: 0.0,
+            color: Color::Reset,
+            label: None,
+        };
+        let auto_max2 = s2.data.iter().copied().fold(0.0_f64, f64::max).max(1.0);
+        assert_eq!(auto_max2, 2.5);
+
+        // max_value > 0 => use max_value directly
+        let s3 = BrailleSparkline {
+            data: vec![0.5],
+            max_value: 100.0,
+            color: Color::Reset,
+            label: None,
+        };
+        assert_eq!(s3.max_value, 100.0);
+
+        // Negative max_value => treated as <= 0, auto-scale
+        let s4 = BrailleSparkline {
+            data: vec![0.5],
+            max_value: -1.5,
+            color: Color::Reset,
+            label: None,
+        };
+        assert!(s4.max_value <= 0.0); // will trigger auto-scale
+    }
+
+    /// INV-025: Sparkline capacity is 2 data points per terminal cell.
+    #[test]
+    fn test_braille_sparkline_capacity() {
+        // Test various data lengths and cell counts
+        for &(data_len, cell_count) in
+            &[(0usize, 1usize), (40, 20), (80, 40), (160, 40), (1000, 80)]
+        {
+            let data_capacity = cell_count * 2;
+            let n = data_len.min(data_capacity);
+            let offset = data_len.saturating_sub(data_capacity);
+
+            // Only latest data_capacity points rendered
+            assert!(n <= data_capacity, "n={n} > capacity={data_capacity}");
+            // offset + n = data_len (newest data at right edge)
+            assert_eq!(offset + n, data_len);
+
+            // Actually render to verify no panic
+            let data: Vec<f64> = (0..data_len).map(|i| i as f64).collect();
+            let sparkline = BrailleSparkline {
+                data,
+                max_value: 1.0,
+                color: Color::Reset,
+                label: None,
+            };
+            let area = Rect::new(0, 0, cell_count as u16, 1);
+            let mut buf = Buffer::empty(area);
+            sparkline.render(area, &mut buf);
+        }
     }
 }

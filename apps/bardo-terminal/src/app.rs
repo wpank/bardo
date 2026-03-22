@@ -23,14 +23,17 @@ use ratatui::{
 };
 
 use crate::{
+    animation::Animator,
     layout::{LayoutBreakpoint, compute_layout},
     navigation::{CommandPalette, KeybindingMap, Modal, ModalManager, VimMode, VimModeState},
     palette::{
         BG_MID, BG_RAISED, BONE, BORDER_ACTIVE, BORDER_DREAM, ROSE, ROSE_BRIGHT, ROSE_DIM,
         TEXT_DIM, TEXT_PRIMARY, WARNING,
     },
+    particles::{EmitterPreset, ParticleSystem},
     screen::{ScreenId, ScreenRegistry, StubScreen},
     screens::{HomeScreen, ProtocolViewsScreen},
+    sound::{SoundConfig, SoundEngine},
     state::{AppAction, AppState, VimDirection, WindowId, format_duration},
     sys_stats::SysStats,
     widgets::{KeyBinding, KeyHelpOverlay},
@@ -79,6 +82,9 @@ pub struct App {
     vim_mode_state: VimModeState,
     show_help: bool,
     sys_stats: SysStats,
+    particles: ParticleSystem,
+    animator: Animator,
+    sound_engine: SoundEngine,
 }
 
 impl App {
@@ -108,6 +114,9 @@ impl App {
             vim_mode_state: VimModeState::new(false),
             show_help: false,
             sys_stats: SysStats::new(),
+            particles: ParticleSystem::new(),
+            animator: Animator::new(),
+            sound_engine: SoundEngine::new(SoundConfig::default()),
         };
         app.focus_active_screen();
         app
@@ -146,6 +155,17 @@ impl App {
             if let Some(sys) = self.sys_stats.tick() {
                 self.state.sys = sys;
             }
+
+            // Sound, particle, and animation ticking (Plan 08)
+            self.state.poll_sound_triggers(&self.sound_engine);
+            self.particles.tick();
+            self.animator.tick();
+
+            // TODO(plan-70a): trigger from real cognitive events
+            if self.state.tick_count == 1 {
+                self.particles.emit(EmitterPreset::DreamOnset, 20, 10);
+            }
+
             terminal.draw(|frame| self.render(frame))?;
 
             last_frame = frame_start;
@@ -506,6 +526,9 @@ impl App {
                     size,
                 );
             }
+
+            // Particle overlay (rendered last so particles appear on top)
+            self.particles.render(frame.buffer_mut(), size);
         }
     }
 

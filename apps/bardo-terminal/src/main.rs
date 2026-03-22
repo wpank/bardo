@@ -2,13 +2,18 @@
 //!
 //! This binary owns terminal setup, the render loop, and shutdown cleanup.
 
+mod animation;
 mod app;
 mod layout;
 mod mock;
 mod navigation;
 mod palette;
+mod particles;
+pub mod rpc_server;
 mod screen;
 mod screens;
+mod sonification;
+mod sound;
 mod state;
 mod sys_stats;
 mod widgets;
@@ -17,27 +22,51 @@ use std::io::stdout;
 
 use anyhow::{Result, anyhow};
 pub use app::{App, EventSource};
+use clap::Parser;
 pub use screen::{Screen, ScreenId};
 pub use state::{AppAction, AppState};
 
 use crossterm::{
     cursor::Show,
-    event::{DisableMouseCapture, EnableMouseCapture},
+    event::{DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEvent, KeyModifiers},
     execute,
     terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{Terminal, backend::CrosstermBackend};
 use tracing_subscriber::EnvFilter;
 
+#[derive(Parser)]
+#[command(name = "bardo-terminal")]
+struct Cli {
+    /// Run in headless mode (TestBackend, no TTY)
+    #[arg(long)]
+    headless: bool,
+    /// JSON-RPC port for headless mode
+    #[arg(long, default_value = "9100")]
+    rpc_port: u16,
+    /// Terminal width for headless mode
+    #[arg(long, default_value = "120")]
+    width: u16,
+    /// Terminal height for headless mode
+    #[arg(long, default_value = "40")]
+    height: u16,
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Panic hook must run before raw mode / alternate screen so a mid-render panic
-    // cannot strand the user's shell.
-    install_panic_hook();
+    let cli = Cli::parse();
 
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::from_default_env())
         .init();
+
+    if cli.headless {
+        return run_headless(cli.rpc_port, cli.width, cli.height).await;
+    }
+
+    // Panic hook must run before raw mode / alternate screen so a mid-render panic
+    // cannot strand the user's shell.
+    install_panic_hook();
 
     let mut terminal = setup_terminal()?;
     let mut app = App::new();
@@ -58,6 +87,58 @@ async fn main() -> Result<()> {
             Err(run_error)
         }
     }
+}
+
+async fn run_headless(rpc_port: u16, width: u16, height: u16) -> Result<()> {
+    use ratatui::backend::TestBackend;
+
+    let (action_tx, mut action_rx) = tokio::sync::mpsc::channel::<String>(64);
+    let (shutdown_tx, mut shutdown_rx) = tokio::sync::mpsc::channel::<()>(1);
+
+    // Channel for injecting crossterm events into the app loop.
+    let (event_tx, event_rx) = std::sync::mpsc::channel::<Event>();
+
+    let rpc = rpc_server::RpcServer::new(rpc_port, action_tx, shutdown_tx);
+    tokio::spawn(async move {
+        if let Err(e) = rpc.run().await {
+            tracing::error!(error = ?e, "RPC server error");
+        }
+    });
+
+    // Bridge: convert RPC actions and shutdown signals into crossterm events.
+    let event_tx_action = event_tx.clone();
+    let event_tx_shutdown = event_tx;
+    tokio::spawn(async move {
+        loop {
+            tokio::select! {
+                Some(action) = action_rx.recv() => {
+                    if action == "quit" {
+                        let _ = event_tx_action.send(Event::Key(KeyEvent::new(
+                            KeyCode::Char('q'),
+                            KeyModifiers::NONE,
+                        )));
+                        break;
+                    }
+                }
+                Some(()) = shutdown_rx.recv() => {
+                    let _ = event_tx_shutdown.send(Event::Key(KeyEvent::new(
+                        KeyCode::Char('q'),
+                        KeyModifiers::NONE,
+                    )));
+                    break;
+                }
+            }
+        }
+    });
+
+    let backend = TestBackend::new(width, height);
+    let mut terminal = Terminal::new(backend)?;
+    let mut app = App::new();
+    let mut events = EventSource::Channel(event_rx);
+
+    tokio::task::block_in_place(|| app.run(&mut terminal, &mut events))?;
+
+    Ok(())
 }
 
 trait TerminalCleanup {

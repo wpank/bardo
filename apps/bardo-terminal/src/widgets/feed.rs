@@ -186,89 +186,139 @@ mod tests {
         assert_eq!(visible[0].tick, 6);
     }
 
+    /// INV-014: EventFeed maintains max_entries limit via FIFO eviction.
     #[test]
     fn test_event_feed_capacity() {
-        let mut feed = EventFeed::new(4);
-        for i in 0..10_u64 {
-            feed.push(FeedEntry {
-                tick: i,
-                level: FeedLevel::Info,
-                message: format!("e{i}"),
-            });
+        for &(max_entries, inserts) in &[(1usize, 5usize), (10, 11), (100, 100), (1000, 1001)] {
+            let mut feed = EventFeed::new(max_entries);
+            for i in 0..inserts as u64 {
+                feed.push(FeedEntry {
+                    tick: i,
+                    level: FeedLevel::Info,
+                    message: format!("msg {i}"),
+                });
+            }
+            assert!(
+                feed.entries.len() <= max_entries,
+                "len {} > max {max_entries} after {inserts} inserts",
+                feed.entries.len()
+            );
+            if inserts > max_entries {
+                assert_eq!(feed.entries.len(), max_entries);
+                // Oldest entries dropped: front tick should be inserts - max_entries
+                assert_eq!(
+                    feed.entries.front().unwrap().tick,
+                    (inserts - max_entries) as u64
+                );
+            }
         }
-        assert_eq!(feed.entries.len(), 4);
-        // Oldest retained entry should be tick 6 (0..5 evicted)
-        assert_eq!(feed.entries.front().unwrap().tick, 6);
-        assert_eq!(feed.entries.back().unwrap().tick, 9);
     }
 
+    /// INV-015: Filter applies case-insensitive substring matching.
     #[test]
     fn test_event_feed_filter() {
-        let mut feed = EventFeed::new(20);
+        let mut feed = EventFeed::new(100);
+        feed.push(FeedEntry {
+            tick: 0,
+            level: FeedLevel::Info,
+            message: "msg 6".to_string(),
+        });
         feed.push(FeedEntry {
             tick: 1,
-            level: FeedLevel::Info,
-            message: "alpha event".into(),
+            level: FeedLevel::Warn,
+            message: "MSG 7".to_string(),
         });
         feed.push(FeedEntry {
             tick: 2,
-            level: FeedLevel::Warn,
-            message: "beta warning".into(),
-        });
-        feed.push(FeedEntry {
-            tick: 3,
             level: FeedLevel::Error,
-            message: "ALPHA error".into(),
+            message: "other".to_string(),
         });
 
-        // Case-insensitive substring match
-        feed.filter = Some("alpha".into());
-        let visible = feed.visible_entries();
-        assert_eq!(visible.len(), 2);
-        // Newest first
-        assert_eq!(visible[0].tick, 3);
-        assert_eq!(visible[1].tick, 1);
-
-        // No filter returns all, newest first
+        // No filter: all entries
         feed.filter = None;
-        let visible = feed.visible_entries();
-        assert_eq!(visible.len(), 3);
-        assert_eq!(visible[0].tick, 3);
+        assert_eq!(feed.visible_entries().len(), 3);
 
-        // Filter with no matches
-        feed.filter = Some("zzz".into());
-        assert!(feed.visible_entries().is_empty());
+        // Empty filter: all entries
+        feed.filter = Some("".to_string());
+        assert_eq!(feed.visible_entries().len(), 3);
+
+        // Case-insensitive "msg" matches "msg 6" and "MSG 7"
+        feed.filter = Some("msg".to_string());
+        let vis = feed.visible_entries();
+        assert_eq!(vis.len(), 2);
+
+        // Uppercase filter still matches
+        feed.filter = Some("MSG".to_string());
+        assert_eq!(feed.visible_entries().len(), 2);
+
+        // No match
+        feed.filter = Some("xyz".to_string());
+        assert_eq!(feed.visible_entries().len(), 0);
     }
 
+    /// INV-016: Scroll offset never exceeds visible entries.
     #[test]
     fn test_event_feed_scroll_bounds() {
-        let mut feed = EventFeed::new(100);
-        for i in 0..20_u64 {
-            feed.push(FeedEntry {
-                tick: i,
-                level: FeedLevel::Info,
-                message: format!("msg {i}"),
-            });
+        for &(total_entries, display_rows, scroll_offset) in &[
+            (0usize, 1usize, 0usize),
+            (0, 5, 100),
+            (10, 5, 0),
+            (10, 5, 5),
+            (10, 5, 100),
+            (10, 50, 0),
+            (100, 5, 1000),
+        ] {
+            let mut feed = EventFeed::new(total_entries.max(1));
+            for i in 0..total_entries as u64 {
+                feed.push(FeedEntry {
+                    tick: i,
+                    level: FeedLevel::Info,
+                    message: format!("msg {i}"),
+                });
+            }
+            feed.scroll_offset = scroll_offset;
+
+            let visible = feed.visible_entries();
+            let total = visible.len();
+            let start_idx = feed.scroll_offset.min(total.saturating_sub(display_rows));
+
+            // start_idx + display_rows should not exceed total (unless total < display_rows)
+            if total >= display_rows {
+                assert!(
+                    start_idx + display_rows <= total,
+                    "start_idx({start_idx}) + rows({display_rows}) > total({total})"
+                );
+            }
+            assert!(start_idx <= total.saturating_sub(1).max(0));
         }
-
-        let visible = feed.visible_entries();
-        assert_eq!(visible.len(), 20);
-
-        // scroll_offset beyond visible count is clamped during render
-        feed.scroll_offset = 999;
-        let area = Rect::new(0, 0, 40, 5);
-        let mut buf = Buffer::empty(area);
-        (&feed).render(area, &mut buf);
-        // Should not panic, offset is clamped to visible.len() - display_rows
-
-        // scroll_offset = 0 means newest entries shown first
-        feed.scroll_offset = 0;
-        let visible = feed.visible_entries();
-        assert_eq!(visible[0].tick, 19);
     }
 
+    /// INV-017: Each FeedLevel has a unique color and label.
     #[test]
     fn test_feed_level_colors_and_labels() {
+        let levels = [
+            FeedLevel::Info,
+            FeedLevel::Warn,
+            FeedLevel::Error,
+            FeedLevel::Debug,
+        ];
+
+        // All labels are 5 chars
+        for level in &levels {
+            assert_eq!(
+                level.label().len(),
+                5,
+                "{:?} label '{}' is not 5 chars",
+                level,
+                level.label()
+            );
+        }
+
+        // Colors are assigned without panic
+        let colors: Vec<Color> = levels.iter().map(|l| l.color()).collect();
+        assert_eq!(colors.len(), 4);
+
+        // Specific mappings
         assert_eq!(FeedLevel::Info.color(), TEXT_PRIMARY);
         assert_eq!(FeedLevel::Warn.color(), WARNING);
         assert_eq!(FeedLevel::Error.color(), ROSE_BRIGHT);
@@ -278,15 +328,5 @@ mod tests {
         assert_eq!(FeedLevel::Warn.label(), "WARN ");
         assert_eq!(FeedLevel::Error.label(), "ERROR");
         assert_eq!(FeedLevel::Debug.label(), "DBG  ");
-
-        // All labels are 5 chars wide
-        for level in [
-            FeedLevel::Info,
-            FeedLevel::Warn,
-            FeedLevel::Error,
-            FeedLevel::Debug,
-        ] {
-            assert_eq!(level.label().len(), 5);
-        }
     }
 }

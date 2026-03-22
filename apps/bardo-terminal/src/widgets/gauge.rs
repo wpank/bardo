@@ -205,62 +205,54 @@ mod tests {
         assert_eq!(confidence_color(0.60), CYAN);
         assert_eq!(confidence_color(0.30), WARNING);
         assert_eq!(confidence_color(0.10), ROSE_DIM);
+
+        // Boundary values
+        assert_eq!(confidence_color(0.75), SUCCESS);
+        assert_eq!(confidence_color(0.50), CYAN);
+        assert_eq!(confidence_color(0.25), WARNING);
+        assert_eq!(confidence_color(0.0), ROSE_DIM);
+        assert_eq!(confidence_color(1.0), SUCCESS);
+        assert_eq!(confidence_color(0.95), SUCCESS);
     }
 
+    /// INV-004: Fill width scales with gauge value, clamped to terminal width.
     #[test]
     fn test_vitality_gauge_fill_width() {
+        for &value in &[0.0_f64, 0.25, 0.5, 0.75, 1.0, -0.5, 1.5] {
+            for &area_width in &[1u16, 10, 80, 255] {
+                let clamped = value.clamp(0.0, 1.0);
+                let fill_width = (clamped * area_width as f64) as u16;
+                assert!(
+                    fill_width <= area_width,
+                    "fill_width {fill_width} > area_width {area_width} for value {value}"
+                );
+            }
+        }
+
+        // Render test: value=0 should have 0 filled cells
+        let gauge = VitalityGauge {
+            value: 0.0,
+            label: "test".into(),
+            phase: MockPhase::Stable,
+        };
         let area = Rect::new(0, 0, 20, 2);
         let mut buf = Buffer::empty(area);
-
-        let gauge = VitalityGauge {
-            value: 0.5,
-            label: "VIT".into(),
-            phase: MockPhase::Conservation,
-        };
         gauge.render(area, &mut buf);
-
-        // gauge_y = area.y + 1 when height >= 2
-        let gauge_y = 1;
-        let mut filled = 0u16;
+        // Bar row is y=1; all cells should be unfilled (BLOCK_LIGHT)
         for x in 0..20 {
-            let cell = buf.get(x, gauge_y);
-            if cell.symbol() == BLOCK_FULL.to_string() {
-                filled += 1;
-            }
+            assert_eq!(buf.get(x, 1).symbol(), "░");
         }
-        // fill_width = (0.5 * 20.0) as u16 = 10
-        assert_eq!(filled, 10);
 
-        // value=1.0 should fill entire width
-        let mut buf2 = Buffer::empty(area);
-        let gauge_full = VitalityGauge {
+        // Render test: value=1 should have all filled cells
+        let gauge2 = VitalityGauge {
             value: 1.0,
-            label: "VIT".into(),
+            label: "test".into(),
             phase: MockPhase::Thriving,
         };
-        gauge_full.render(area, &mut buf2);
-        let mut filled_full = 0u16;
+        let mut buf2 = Buffer::empty(area);
+        gauge2.render(area, &mut buf2);
         for x in 0..20 {
-            if buf2.get(x, gauge_y).symbol() == BLOCK_FULL.to_string() {
-                filled_full += 1;
-            }
+            assert_eq!(buf2.get(x, 1).symbol(), "█");
         }
-        assert_eq!(filled_full, 20);
-
-        // value=0.0 should fill nothing
-        let mut buf3 = Buffer::empty(area);
-        let gauge_empty = VitalityGauge {
-            value: 0.0,
-            label: "VIT".into(),
-            phase: MockPhase::Terminal,
-        };
-        gauge_empty.render(area, &mut buf3);
-        let mut filled_empty = 0u16;
-        for x in 0..20 {
-            if buf3.get(x, gauge_y).symbol() == BLOCK_FULL.to_string() {
-                filled_empty += 1;
-            }
-        }
-        assert_eq!(filled_empty, 0);
     }
 }

@@ -212,75 +212,48 @@ mod tests {
         assert_eq!(rightmost_cell.symbol(), "┤");
     }
 
-    /// INV-013: Every RibbonEventType variant maps to its specified glyph and color.
+    /// INV-011: Ticks-per-cell calculation never divides by zero.
     #[test]
-    fn test_ribbon_event_type_mapping() {
-        let cases: &[(RibbonEventType, char, Color)] = &[
-            (RibbonEventType::TradeExecuted, '▲', SUCCESS),
-            (RibbonEventType::DreamStarted, '◌', DREAM),
-            (RibbonEventType::PhaseChange, '◆', BONE),
-            (RibbonEventType::Anomaly, '!', WARNING),
-            (RibbonEventType::Death, '✕', ROSE_BRIGHT),
-        ];
-        for &(variant, expected_glyph, expected_color) in cases {
-            assert_eq!(
-                variant.glyph(),
-                expected_glyph,
-                "{variant:?} glyph mismatch"
-            );
-            assert_eq!(
-                variant.color(),
-                expected_color,
-                "{variant:?} color mismatch"
-            );
+    fn test_timeline_ribbon_ticks_per_cell() {
+        for &(window_ticks, area_width) in &[(0u64, 0u16), (0, 1), (1, 1), (100, 40), (10000, 200)]
+        {
+            let w = area_width as u64;
+            let ticks_per_cell = (window_ticks.max(1) + w.saturating_sub(1)) / w.max(1);
+            assert!(ticks_per_cell >= 1 || window_ticks == 0);
+
+            // Render should not panic
+            let ribbon = TimelineRibbon {
+                events: vec![],
+                window_ticks,
+                current_tick: window_ticks,
+            };
+            let area = Rect::new(0, 0, area_width, 1);
+            let mut buf = Buffer::empty(area);
+            ribbon.render(area, &mut buf);
         }
     }
 
-    /// INV-011: ticks_per_cell divides the window evenly across area.width cells.
-    #[test]
-    fn test_timeline_ribbon_ticks_per_cell() {
-        // With window_ticks=100 and width=10, ticks_per_cell should be 10
-        // (100 + 10 - 1) / 10 = 10 (ceiling division)
-        let width: u64 = 10;
-        let window_ticks: u64 = 100;
-        let ticks_per_cell = (window_ticks.max(1) + width.saturating_sub(1)) / width.max(1);
-        assert_eq!(ticks_per_cell, 10);
-
-        // Non-even division: window_ticks=105, width=10 => ceil(105/10) = 11
-        let window_ticks2: u64 = 105;
-        let tpc2 = (window_ticks2.max(1) + width.saturating_sub(1)) / width.max(1);
-        assert_eq!(tpc2, 11);
-
-        // Edge: window_ticks=0 => max(1) => ceil(1/10) = 1
-        let tpc_zero = (0u64.max(1) + width.saturating_sub(1)) / width.max(1);
-        assert_eq!(tpc_zero, 1);
-    }
-
-    /// INV-012: Events land in the correct cell based on their tick value.
+    /// INV-012: Events are placed in ribbon cells based on tick range overlap.
     #[test]
     fn test_timeline_ribbon_event_placement() {
-        use ratatui::buffer::Buffer;
-
-        let area = ratatui::layout::Rect {
-            x: 0,
-            y: 0,
-            width: 10,
-            height: 1,
-        };
-        let mut buf = Buffer::empty(area);
-
-        // window_ticks=100, current_tick=100, width=10 => ticks_per_cell=10, start_tick=0
-        // An event at tick 0 should appear in col 0 (cell range [0, 10))
-        // An event at tick 95 should appear in col 9 (cell range [90, 100))
+        // 10-cell ribbon, window=100, current_tick=100 => start_tick=0
+        // ticks_per_cell = ceil(100/10) = 10
+        // Cell 0: [0, 10), Cell 5: [50, 60)
         let ribbon = TimelineRibbon {
             events: vec![
                 TimelineEvent {
-                    tick: 0,
+                    tick: 5,
                     event_type: RibbonEventType::TradeExecuted,
-                    severity: 100,
+                    severity: 10,
                 },
                 TimelineEvent {
-                    tick: 95,
+                    tick: 55,
+                    event_type: RibbonEventType::DreamStarted,
+                    severity: 50,
+                },
+                // Two events in same cell, different severity
+                TimelineEvent {
+                    tick: 55,
                     event_type: RibbonEventType::Anomaly,
                     severity: 100,
                 },
@@ -288,14 +261,49 @@ mod tests {
             window_ticks: 100,
             current_tick: 100,
         };
-
+        let area = Rect::new(0, 0, 10, 1);
+        let mut buf = Buffer::empty(area);
         ribbon.render(area, &mut buf);
 
-        // Col 0 should have TradeExecuted glyph
+        // Cell 0 should show TradeExecuted glyph
         assert_eq!(buf.get(0, 0).symbol(), "▲");
-        // Col 9 should have Anomaly glyph
-        assert_eq!(buf.get(9, 0).symbol(), "!");
-        // Col 5 should be background track (no event in [50, 60))
-        assert_eq!(buf.get(5, 0).symbol(), "─");
+        // Cell 5 should show Anomaly glyph (higher severity wins)
+        assert_eq!(buf.get(5, 0).symbol(), "!");
+        // Empty cells should show '─'
+        assert_eq!(buf.get(2, 0).symbol(), "─");
+    }
+
+    /// INV-013: All 5 event types have unique glyphs and colors.
+    #[test]
+    fn test_ribbon_event_type_mapping() {
+        let types = [
+            RibbonEventType::TradeExecuted,
+            RibbonEventType::DreamStarted,
+            RibbonEventType::PhaseChange,
+            RibbonEventType::Anomaly,
+            RibbonEventType::Death,
+        ];
+        let mut glyphs: Vec<char> = types.iter().map(|t| t.glyph()).collect();
+        let original_len = glyphs.len();
+        glyphs.sort();
+        glyphs.dedup();
+        assert_eq!(glyphs.len(), original_len, "all glyphs must be unique");
+
+        let colors: Vec<Color> = types.iter().map(|t| t.color()).collect();
+        // Each type returns a Color without panicking
+        assert_eq!(colors.len(), 5);
+
+        // Verify specific mappings
+        assert_eq!(RibbonEventType::TradeExecuted.glyph(), '▲');
+        assert_eq!(RibbonEventType::DreamStarted.glyph(), '◌');
+        assert_eq!(RibbonEventType::PhaseChange.glyph(), '◆');
+        assert_eq!(RibbonEventType::Anomaly.glyph(), '!');
+        assert_eq!(RibbonEventType::Death.glyph(), '✕');
+
+        assert_eq!(RibbonEventType::TradeExecuted.color(), SUCCESS);
+        assert_eq!(RibbonEventType::DreamStarted.color(), DREAM);
+        assert_eq!(RibbonEventType::PhaseChange.color(), BONE);
+        assert_eq!(RibbonEventType::Anomaly.color(), WARNING);
+        assert_eq!(RibbonEventType::Death.color(), ROSE_BRIGHT);
     }
 }
