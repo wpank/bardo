@@ -1,5 +1,51 @@
 #!/usr/bin/env bash
 set -e
-STAGED=$(git diff --cached --name-only --diff-filter=ACM -- '*.rs')
-[ -z "$STAGED" ] && exit 0
-cargo fmt -- --check
+
+# ── Secret leak detection ──────────────────────────────────────────
+# Block commits containing API keys, tokens, or secrets.
+# Scans all staged file contents (not just .rs files).
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -n "$STAGED_FILES" ]; then
+    # Patterns that should never appear in committed code
+    PATTERNS=(
+        'sk-ant-[a-zA-Z0-9_-]{20,}'        # Anthropic API keys
+        'sk-[a-zA-Z0-9]{20,}'              # OpenAI API keys
+        'ANTHROPIC_API_KEY=[^$\s]'          # Hardcoded key assignments
+        'OPENAI_API_KEY=[^$\s]'             # Hardcoded key assignments
+        'BARDO_GATEWAY_API_KEY=[^$\s]'      # Hardcoded gateway key
+        'ALCHEMY_KEY=[^$\s]'                # Alchemy keys
+        'INFURA_KEY=[^$\s]'                 # Infura keys
+        'PRIVATE_KEY=[^$\s]'                # Private keys
+        '0x[a-fA-F0-9]{64}'                # Ethereum private keys (64 hex chars)
+    )
+
+    for pattern in "${PATTERNS[@]}"; do
+        # Search staged content (not filenames)
+        MATCHES=$(git diff --cached -G"$pattern" --name-only 2>/dev/null || true)
+        if [ -n "$MATCHES" ]; then
+            # Double-check: read the actual staged content to confirm
+            for file in $MATCHES; do
+                # Skip .env.example (it has placeholder patterns)
+                if [ "$file" = ".env.example" ]; then
+                    continue
+                fi
+                # Check the staged version of the file
+                if git show ":$file" 2>/dev/null | grep -qP "$pattern"; then
+                    echo "ERROR: Potential secret detected in staged file: $file"
+                    echo "  Pattern: $pattern"
+                    echo ""
+                    echo "If this is a false positive, commit with: git commit --no-verify"
+                    echo "But double-check first -- leaked secrets are expensive."
+                    exit 1
+                fi
+            done
+        fi
+    done
+fi
+
+# ── Rust formatting ────────────────────────────────────────────────
+STAGED_RS=$(git diff --cached --name-only --diff-filter=ACM -- '*.rs')
+if [ -n "$STAGED_RS" ]; then
+    cargo fmt -- --check
+fi
