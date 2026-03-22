@@ -21,6 +21,15 @@ SAME_ERROR_MAX=3
 MIN_UPTIME_SECS=30
 AGENT="claude"         # claude | cursor
 CLAUDE_MODEL="opus"    # opus | sonnet | haiku  (Claude CLI short names)
+GATEWAY_MODE="auto"    # auto | on | off
+
+# --- Source .env if present ---
+
+if [[ -f "${SCRIPT_DIR}/.env" ]]; then
+    set -a
+    source "${SCRIPT_DIR}/.env"
+    set +a
+fi
 
 # --- Flag parsing (strip supervisor flags before passing remainder to mori) ---
 
@@ -43,12 +52,39 @@ while [[ $# -gt 0 ]]; do
             CLAUDE_MODEL="$2"
             shift 2
             ;;
+        --gateway)
+            GATEWAY_MODE="on"
+            shift
+            ;;
+        --no-gateway)
+            GATEWAY_MODE="off"
+            shift
+            ;;
         *)
             PASSTHROUGH_ARGS+=("$1")
             shift
             ;;
     esac
 done
+
+# --- Gateway setup ---
+
+GATEWAY_PORT="${BARDO_GATEWAY_PORT:-4000}"
+GATEWAY_URL="http://127.0.0.1:${GATEWAY_PORT}"
+GATEWAY_KEY="${BARDO_GATEWAY_API_KEY:-mori-local-gateway}"
+
+if [[ "$GATEWAY_MODE" == "on" ]]; then
+    export ANTHROPIC_BASE_URL="$GATEWAY_URL"
+    export BARDO_GATEWAY_API_KEY="$GATEWAY_KEY"
+elif [[ "$GATEWAY_MODE" == "auto" ]]; then
+    if curl -s --connect-timeout 1 "${GATEWAY_URL}/v1/health" >/dev/null 2>&1; then
+        export ANTHROPIC_BASE_URL="$GATEWAY_URL"
+        export BARDO_GATEWAY_API_KEY="$GATEWAY_KEY"
+        log "Gateway detected at ${GATEWAY_URL}, routing agents through it"
+    fi
+elif [[ "$GATEWAY_MODE" == "off" ]]; then
+    unset ANTHROPIC_BASE_URL
+fi
 
 consecutive_failures=0
 declare -A error_attempts  # signature -> count

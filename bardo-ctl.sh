@@ -3,24 +3,26 @@ set -euo pipefail
 
 # bardo-ctl.sh — Launch the Mori TUI (Ratatui-based pipeline monitor)
 #
-# Usage: ./bardo-ctl.sh <plan-spec> [extra-flags...]
-#        ./mori.sh <plan-spec> [extra-flags...]        (symlink)
+# Usage: ./mori.sh [--gateway|--no-gateway] <plan-spec> [extra-flags...]
 #
 #   Plan specs:  "02"  "01-09"  "08a-08d"  (required)
 #
+# Gateway flag:
+#   --gateway      Route agent inference through bardo-gateway (default: auto-detect)
+#   --no-gateway   Bypass gateway, agents talk directly to Anthropic/OpenAI
+#
+#   Auto-detect: if bardo-gateway is listening on port 4000, routes through it.
+#   Set BARDO_GATEWAY_API_KEY in .env or environment (default: mori-local-gateway).
+#
 # Default flags applied automatically:
-#   --parallel     Run plans in parallel within each wave (same-wave plans run concurrently)
-#   --pre-plan     Speculatively prepare briefs for upcoming waves while the current runs
+#   --parallel     Run plans in parallel within each wave
+#   --pre-plan     Speculatively prepare briefs for upcoming waves
 #
 # Override examples:
 #   ./mori.sh 02-05 --no-review        skip architect/auditor/scribe/critic
 #   ./mori.sh 02-05 --skip-tests       skip cargo test gate
 #   ./mori.sh 02-05 --max-agents 4     cap concurrency at 4 agents
 #   ./mori.sh 02-05 --refactor         enable post-plan refactoring passes
-#
-# Must be run from the monorepo root or any subdirectory — SCRIPT_DIR is
-# always resolved to the directory containing this script (= repo root).
-# The --repo-root flag is passed explicitly so mori never has to guess.
 #
 # Context files written/read by agents (all relative to repo root):
 #   plans/context/briefs/          — strategist briefs
@@ -38,7 +40,49 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CTL_DIR="${SCRIPT_DIR}/apps/mori"
 
-# Sanity-check: ensure we resolved the right directory.
+# ── Source .env if present ──────────────────────────────────────────
+if [[ -f "${SCRIPT_DIR}/.env" ]]; then
+  set -a
+  source "${SCRIPT_DIR}/.env"
+  set +a
+fi
+
+# ── Parse gateway flag (strip before passing to mori) ──────────────
+GATEWAY_MODE="auto"
+PASSTHROUGH_ARGS=()
+for arg in "$@"; do
+  case "$arg" in
+    --gateway)    GATEWAY_MODE="on" ;;
+    --no-gateway) GATEWAY_MODE="off" ;;
+    *)            PASSTHROUGH_ARGS+=("$arg") ;;
+  esac
+done
+set -- "${PASSTHROUGH_ARGS[@]+"${PASSTHROUGH_ARGS[@]}"}"
+
+# ── Gateway setup ──────────────────────────────────────────────────
+GATEWAY_PORT="${BARDO_GATEWAY_PORT:-4000}"
+GATEWAY_URL="http://127.0.0.1:${GATEWAY_PORT}"
+GATEWAY_KEY="${BARDO_GATEWAY_API_KEY:-mori-local-gateway}"
+
+setup_gateway() {
+  export ANTHROPIC_BASE_URL="$GATEWAY_URL"
+  export BARDO_GATEWAY_API_KEY="$GATEWAY_KEY"
+  echo "  gateway: ${GATEWAY_URL} (key=${GATEWAY_KEY:0:8}...)"
+}
+
+if [[ "$GATEWAY_MODE" == "on" ]]; then
+  setup_gateway
+elif [[ "$GATEWAY_MODE" == "auto" ]]; then
+  # Auto-detect: check if gateway is listening
+  if curl -s --connect-timeout 1 "${GATEWAY_URL}/v1/health" >/dev/null 2>&1; then
+    setup_gateway
+  fi
+  # If not running, agents go direct — no error
+elif [[ "$GATEWAY_MODE" == "off" ]]; then
+  unset ANTHROPIC_BASE_URL
+fi
+
+# ── Sanity checks ──────────────────────────────────────────────────
 if [[ ! -f "${SCRIPT_DIR}/Cargo.toml" ]]; then
   echo "error: expected Cargo.toml at ${SCRIPT_DIR}"
   echo "  This script must live in the repository root."
@@ -67,14 +111,12 @@ if [[ -x "${SCRIPT_DIR}/scripts/bardo-sync-context.sh" ]]; then
     bash "${SCRIPT_DIR}/scripts/bardo-sync-context.sh" "${SCRIPT_DIR}" || true
 fi
 
-# Default flags — enable parallel wave execution and speculative pre-planning.
+# ── Launch ─────────────────────────────────────────────────────────
 DEFAULT_FLAGS=(--parallel --pre-plan)
 
-# Use the workspace release binary (built via `cargo build -p mori --release`).
 RELEASE_BIN="${SCRIPT_DIR}/target/release/mori"
 if [[ -x "$RELEASE_BIN" ]]; then
   exec "$RELEASE_BIN" --repo-root "$SCRIPT_DIR" "${DEFAULT_FLAGS[@]}" "$@"
 fi
 
-# Fallback: build and run via cargo from workspace root.
 exec cargo run -p mori --release -- --repo-root "$SCRIPT_DIR" "${DEFAULT_FLAGS[@]}" "$@"
