@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# bardo-supervisor.sh — Self-healing supervisor for bardo-ctl.
+# bardo-supervisor.sh — Self-healing supervisor for mori.
 #
 # Catches crashes, feeds crash reports to an AI agent for auto-fix,
 # rebuilds, and restarts. Circuit breaker prevents infinite loops.
 #
 # Usage: ./bardo-supervisor.sh [--agent claude|cursor] [--claude-model opus|sonnet|haiku]
-#                              [--max-attempts N] [--same-error-max N] [bardo-ctl args...]
+#                              [--max-attempts N] [--same-error-max N] [mori args...]
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TUI_DIR="$SCRIPT_DIR/tmp/bardo-ctl"
+CTL_DIR="$SCRIPT_DIR/apps/mori"
 LOG_DIR="$SCRIPT_DIR/tmp/plan-runs"
 CRASH_REPORT="$LOG_DIR/crash-report.json"
 SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
@@ -22,7 +22,7 @@ MIN_UPTIME_SECS=30
 AGENT="claude"         # claude | cursor
 CLAUDE_MODEL="opus"    # opus | sonnet | haiku  (Claude CLI short names)
 
-# --- Flag parsing (strip supervisor flags before passing remainder to bardo-ctl) ---
+# --- Flag parsing (strip supervisor flags before passing remainder to mori) ---
 
 PASSTHROUGH_ARGS=()
 while [[ $# -gt 0 ]]; do
@@ -49,7 +49,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-# (passthrough args used directly as PASSTHROUGH_ARGS below)
 
 consecutive_failures=0
 declare -A error_attempts  # signature -> count
@@ -65,7 +64,7 @@ log() {
 # --- Signal handling ---
 
 cleanup_and_exit() {
-    trap - INT TERM  # Reset to avoid recursion
+    trap - INT TERM
     log "Supervisor exiting (signal)"
     exit 0
 }
@@ -74,7 +73,6 @@ trap 'cleanup_and_exit' INT TERM
 
 # --- JSON helpers ---
 
-# JSON-escape a string (requires jq, which is already used on line 115+)
 json_escape() {
     printf '%s' "$1" | jq -Rs . 2>/dev/null || echo '"unknown"'
 }
@@ -87,7 +85,6 @@ build_fallback_report() {
     local log_tail
     log_tail="$(tail -100 "$LOG_DIR/bardo-ctl.log" 2>/dev/null || echo 'no log')"
 
-    # Compute a rough signature from the first line of stderr
     local first_line
     first_line="$(head -1 "$STDERR_LOG" 2>/dev/null || echo 'unknown')"
     local sig
@@ -130,20 +127,16 @@ EOJSON
 build_claude_context() {
     local context=""
 
-    # 1. Crash report
     context+="## Crash Report\n\`\`\`json\n$(cat "$CRASH_REPORT")\n\`\`\`\n\n"
 
-    # 2. Recent logs
     local recent_log
     recent_log="$(tail -200 "$LOG_DIR/bardo-ctl.log" 2>/dev/null || echo 'no log')"
     context+="## Recent Logs (last 200 lines)\n\`\`\`\n${recent_log}\n\`\`\`\n\n"
 
-    # 3. Stderr
     local stderr_content
     stderr_content="$(tail -100 "$STDERR_LOG" 2>/dev/null || echo 'no stderr')"
     context+="## Stderr\n\`\`\`\n${stderr_content}\n\`\`\`\n\n"
 
-    # 4. Previous fix attempts for this signature
     local sig
     sig="$(jq -r '.error_signature' "$CRASH_REPORT" 2>/dev/null || echo 'unknown')"
     if [[ -f "$FIX_HISTORY" ]]; then
@@ -154,11 +147,10 @@ build_claude_context() {
         fi
     fi
 
-    # 5. Uncommitted diff
     local diff
-    diff="$(cd "$TUI_DIR" && git diff -- src/ 2>/dev/null | head -500 || echo 'no diff')"
+    diff="$(cd "$CTL_DIR" && git diff -- src/ 2>/dev/null | head -500 || echo 'no diff')"
     if [[ -n "$diff" && "$diff" != "no diff" ]]; then
-        context+="## Uncommitted Changes in tmp/bardo-ctl/src/\n\`\`\`diff\n${diff}\n\`\`\`\n\n"
+        context+="## Uncommitted Changes in apps/mori/src/\n\`\`\`diff\n${diff}\n\`\`\`\n\n"
     fi
 
     echo -e "$context"
@@ -170,15 +162,15 @@ build_fix_prompt() {
     local context
     context="$(build_claude_context)"
     cat <<PROMPT
-You are fixing a crash in bardo-ctl, a Rust TUI application.
+You are fixing a crash in mori, a Rust TUI application.
 
 ${context}
 
 ## Rules
-- Only modify files under tmp/bardo-ctl/src/
+- Only modify files under apps/mori/src/
 - Fix the ROOT CAUSE, not the symptom
 - Keep changes minimal — smallest diff that fixes the crash
-- The code must compile after your fix (cargo check must pass)
+- The code must compile after your fix (cargo check -p mori must pass)
 - If prior fix attempts are shown above, try a DIFFERENT approach
 
 Fix the crash now.
@@ -196,7 +188,7 @@ invoke_claude_fix() {
         --model "$CLAUDE_MODEL" \
         --max-turns 10 \
         --allowedTools "Read,Edit,Glob,Grep,Bash(cargo:*),Bash(ls:*),Bash(wc:*),Bash(cat:*)" \
-        --add-dir "$TUI_DIR" \
+        --add-dir "$CTL_DIR" \
         "$prompt" >> "$SUPERVISOR_LOG" 2>&1; then
         log "Claude ($CLAUDE_MODEL) fix attempt completed for $sig"
     else
@@ -234,8 +226,8 @@ invoke_fix() {
 # --- Build ---
 
 rebuild() {
-    log "Rebuilding bardo-ctl..."
-    if (cd "$TUI_DIR" && cargo build --release 2>&1 | tee -a "$SUPERVISOR_LOG"); then
+    log "Rebuilding mori..."
+    if cargo build -p mori --release 2>&1 | tee -a "$SUPERVISOR_LOG"; then
         log "Build succeeded"
         return 0
     else
@@ -250,9 +242,9 @@ record_fix() {
     local sig="$1"
     local success="$2"
     local diff_stat
-    diff_stat="$(cd "$TUI_DIR" && git diff --stat -- src/ 2>/dev/null | tail -1 || echo 'unknown')"
+    diff_stat="$(cd "$CTL_DIR" && git diff --stat -- src/ 2>/dev/null | tail -1 || echo 'unknown')"
     local files_changed
-    files_changed="$(cd "$TUI_DIR" && git diff --name-only -- src/ 2>/dev/null | tr '\n' ', ' || echo 'unknown')"
+    files_changed="$(cd "$CTL_DIR" && git diff --name-only -- src/ 2>/dev/null | tr '\n' ', ' || echo 'unknown')"
 
     local entry
     entry="{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"error_signature\":\"$sig\",\"success\":$success,\"files_changed\":\"$files_changed\",\"diff_stat\":\"$diff_stat\"}"
@@ -263,8 +255,7 @@ record_fix() {
 
 alert_and_exit() {
     log "CIRCUIT BREAKER TRIPPED: $consecutive_failures consecutive failures"
-    # macOS notification
-    osascript -e 'display notification "bardo-ctl supervisor gave up after '"$consecutive_failures"' failures" with title "bardo-supervisor"' 2>/dev/null || true
+    osascript -e 'display notification "mori supervisor gave up after '"$consecutive_failures"' failures" with title "mori-supervisor"' 2>/dev/null || true
     exit 1
 }
 
@@ -272,15 +263,14 @@ alert_and_exit() {
 
 mkdir -p "$LOG_DIR"
 
-# Resolve binary path like bardo-ctl.sh does
-RELEASE_BIN="${TUI_DIR}/target/release/bardo-ctl"
+# Use workspace release binary
+RELEASE_BIN="${SCRIPT_DIR}/target/release/mori"
 if [[ -x "$RELEASE_BIN" ]]; then
-    BARDO_CTL_CMD="$RELEASE_BIN"
+    MORI_CTL_CMD="$RELEASE_BIN"
 else
-    BARDO_CTL_CMD="cargo run --release --manifest-path ${TUI_DIR}/Cargo.toml --"
+    MORI_CTL_CMD="cargo run -p mori --release --"
 fi
 
-# Match bardo-ctl.sh default flags so the supervisor gets the same behavior.
 DEFAULT_FLAGS=(--parallel --pre-plan --repo-root "$SCRIPT_DIR")
 
 log "Supervisor starting (agent=$AGENT claude_model=$CLAUDE_MODEL, MAX_ATTEMPTS=$MAX_ATTEMPTS, SAME_ERROR_MAX=$SAME_ERROR_MAX)"
@@ -292,25 +282,18 @@ while true; do
     rm -f "$CRASH_REPORT"
     start_time="$(date +%s)"
 
-    # Run bardo-ctl in the foreground so it inherits the terminal directly.
-    # Backgrounding with & breaks crossterm's EventStream initialization because
-    # mio's kqueue-based event source fails when the process is in a background
-    # process group. Running in the foreground avoids this entirely — signals
-    # (INT/TERM) go to the process group and the child handles them naturally.
     set +e
-    RUST_BACKTRACE=1 $BARDO_CTL_CMD "${DEFAULT_FLAGS[@]}" "${PASSTHROUGH_ARGS[@]}" 2>"$STDERR_LOG"
+    RUST_BACKTRACE=1 $MORI_CTL_CMD "${DEFAULT_FLAGS[@]}" "${PASSTHROUGH_ARGS[@]}" 2>"$STDERR_LOG"
     exit_code=$?
     set -e
 
-    # Clean exit or user quit (Ctrl-C = 130)
     if [[ $exit_code -eq 0 ]] || [[ $exit_code -eq 130 ]]; then
-        log "bardo-ctl exited cleanly (code=$exit_code)"
+        log "mori exited cleanly (code=$exit_code)"
         break
     fi
 
-    log "bardo-ctl crashed (exit_code=$exit_code)"
+    log "mori crashed (exit_code=$exit_code)"
 
-    # If it ran long enough, this is a new problem — reset counter
     end_time="$(date +%s)"
     elapsed=$((end_time - start_time))
     if [[ $elapsed -ge $MIN_UPTIME_SECS ]]; then
@@ -318,12 +301,10 @@ while true; do
     fi
     consecutive_failures=$((consecutive_failures + 1))
 
-    # Build fallback crash report from stderr if bardo-ctl didn't write one
     if [[ ! -f "$CRASH_REPORT" ]]; then
         build_fallback_report
     fi
 
-    # Check circuit breakers
     sig="$(jq -r '.error_signature' "$CRASH_REPORT" 2>/dev/null || echo 'unknown')"
     error_attempts[$sig]=$(( ${error_attempts[$sig]:-0} + 1 ))
 
@@ -341,10 +322,8 @@ while true; do
         alert_and_exit
     fi
 
-    # Invoke agent to fix
     invoke_fix
 
-    # Rebuild
     if rebuild; then
         record_fix "$sig" "true"
     else
@@ -355,11 +334,10 @@ while true; do
         continue
     fi
 
-    # Reset terminal state in case TUI left it in raw/alt-screen mode
     stty sane 2>/dev/null || true
     tput reset 2>/dev/null || true
 
-    log "Restarting bardo-ctl (attempt $consecutive_failures/$MAX_ATTEMPTS)"
+    log "Restarting mori (attempt $consecutive_failures/$MAX_ATTEMPTS)"
     sleep 1
 done
 
