@@ -49,11 +49,10 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-set -- "${PASSTHROUGH_ARGS[@]+"${PASSTHROUGH_ARGS[@]}"}"
+# (passthrough args used directly as PASSTHROUGH_ARGS below)
 
 consecutive_failures=0
 declare -A error_attempts  # signature -> count
-child_pid=0
 
 # --- Logging ---
 
@@ -63,17 +62,10 @@ log() {
     echo "[$ts] $*" | tee -a "$SUPERVISOR_LOG"
 }
 
-# --- Signal forwarding ---
-
-forward_signal() {
-    if [[ $child_pid -ne 0 ]]; then
-        kill -"$1" "$child_pid" 2>/dev/null || true
-    fi
-}
+# --- Signal handling ---
 
 cleanup_and_exit() {
-    forward_signal TERM
-    wait "$child_pid" 2>/dev/null || true
+    trap - INT TERM  # Reset to avoid recursion
     log "Supervisor exiting (signal)"
     exit 0
 }
@@ -288,19 +280,26 @@ else
     BARDO_CTL_CMD="cargo run --release --manifest-path ${TUI_DIR}/Cargo.toml --"
 fi
 
+# Match bardo-ctl.sh default flags so the supervisor gets the same behavior.
+DEFAULT_FLAGS=(--parallel --pre-plan --repo-root "$SCRIPT_DIR")
+
 log "Supervisor starting (agent=$AGENT claude_model=$CLAUDE_MODEL, MAX_ATTEMPTS=$MAX_ATTEMPTS, SAME_ERROR_MAX=$SAME_ERROR_MAX)"
+
+# Always rebuild on fresh start to pick up source changes
+rebuild
 
 while true; do
     rm -f "$CRASH_REPORT"
     start_time="$(date +%s)"
 
-    # Run bardo-ctl, capturing stderr
+    # Run bardo-ctl in the foreground so it inherits the terminal directly.
+    # Backgrounding with & breaks crossterm's EventStream initialization because
+    # mio's kqueue-based event source fails when the process is in a background
+    # process group. Running in the foreground avoids this entirely — signals
+    # (INT/TERM) go to the process group and the child handles them naturally.
     set +e
-    RUST_BACKTRACE=1 $BARDO_CTL_CMD "$@" </dev/tty 2> >(tee "$STDERR_LOG" >&2) &
-    child_pid=$!
-    wait "$child_pid"
+    RUST_BACKTRACE=1 $BARDO_CTL_CMD "${DEFAULT_FLAGS[@]}" "${PASSTHROUGH_ARGS[@]}" 2>"$STDERR_LOG"
     exit_code=$?
-    child_pid=0
     set -e
 
     # Clean exit or user quit (Ctrl-C = 130)
@@ -355,6 +354,10 @@ while true; do
         sleep 2
         continue
     fi
+
+    # Reset terminal state in case TUI left it in raw/alt-screen mode
+    stty sane 2>/dev/null || true
+    tput reset 2>/dev/null || true
 
     log "Restarting bardo-ctl (attempt $consecutive_failures/$MAX_ATTEMPTS)"
     sleep 1
