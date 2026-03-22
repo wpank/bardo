@@ -125,6 +125,9 @@ pub struct PromptSection {
     pub priority: u8,
     /// Never include more than this many chars, regardless of budget.
     pub hard_cap: Option<usize>,
+    /// Cache layer for prefix alignment (1=role, 2=workspace, 3=plan, 0=unique).
+    /// The gateway places `cache_control` breakpoints at layer transitions.
+    pub cache_layer: u8,
 }
 
 /// Assemble a prompt from priority-ranked sections.
@@ -165,14 +168,21 @@ pub fn assemble_prompt(mut sections: Vec<PromptSection>, token_budget: usize) ->
         }
     }
 
-    // Emit in original order
-    sections
-        .into_iter()
-        .enumerate()
-        .filter(|(i, _)| included[*i])
-        .map(|(_, s)| s.content)
-        .collect::<Vec<_>>()
-        .join("\n\n")
+    // Emit in original order, inserting layer markers at transitions.
+    // The gateway uses these markers to place cache_control breakpoints.
+    let mut result = Vec::new();
+    let mut last_layer: u8 = 0;
+    for (i, s) in sections.into_iter().enumerate() {
+        if !included[i] {
+            continue;
+        }
+        if s.cache_layer > 0 && s.cache_layer != last_layer {
+            result.push(format!("<!-- mori:layer:{} -->", s.cache_layer));
+            last_layer = s.cache_layer;
+        }
+        result.push(s.content);
+    }
+    result.join("\n\n")
 }
 
 /// Build implementer prompt sections from injected context files.
@@ -192,42 +202,49 @@ pub fn implementer_sections(
             content: agents_md.to_string(),
             priority: 5,
             hard_cap: None,
+            cache_layer: 1, // Stable across all agents of same role
         },
         PromptSection {
             name: "plan_spec",
             content: plan_md.to_string(),
             priority: 5,
             hard_cap: Some(50_000),
+            cache_layer: 3, // Stable within a plan
         },
         PromptSection {
             name: "brief",
             content: brief_md.to_string(),
             priority: 4,
             hard_cap: None,
+            cache_layer: 3,
         },
         PromptSection {
             name: "tasks",
             content: tasks_toml.to_string(),
             priority: 3,
             hard_cap: None,
+            cache_layer: 0, // Unique per task
         },
         PromptSection {
             name: "workspace_map",
             content: workspace_map.to_string(),
             priority: 3,
             hard_cap: Some(20_000),
+            cache_layer: 2, // Stable within a build
         },
         PromptSection {
             name: "preflight",
             content: preflight.to_string(),
             priority: 3,
             hard_cap: Some(5_000),
+            cache_layer: 2, // Stable within a build
         },
         PromptSection {
             name: "registry",
             content: registry_snapshot.to_string(),
             priority: 2,
             hard_cap: Some(8_000),
+            cache_layer: 0, // Changes as plans complete
         },
     ];
     if let Some(reviews) = prev_reviews {
@@ -236,6 +253,7 @@ pub fn implementer_sections(
             content: reviews.to_string(),
             priority: 4,
             hard_cap: Some(15_000),
+            cache_layer: 0, // Unique per iteration
         });
     }
     sections
@@ -371,6 +389,9 @@ fn read_agents_md(repo_root: &Path) -> String {
 }
 
 /// Injects a titled XML block when `root/relative_path` exists and is non-empty.
+///
+/// Resolves paths through the new per-plan directory layout first, falling
+/// back to the legacy `plans/context/` layout.
 fn optional_context_file_section(
     root: &Path,
     relative_path: &str,
@@ -378,7 +399,7 @@ fn optional_context_file_section(
     xml_tag: &str,
     max_chars: usize,
 ) -> String {
-    let path = root.join(relative_path);
+    let path = super::paths::resolve_context_path(root, relative_path);
     if !path.is_file() {
         return String::new();
     }
@@ -395,13 +416,24 @@ fn optional_context_file_section(
 }
 
 fn optional_verify_chain_section(root: &Path, plan_num: &str) -> String {
-    let rel = format!("plans/context/verify-chains/{plan_num}-verify.sh");
-    let path = root.join(&rel);
+    let plans_dir = super::paths::plans_root(root);
+    let path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        plan_num,
+        &format!("{plan_num}-verify.sh"),
+        "verify-chains",
+        &format!("{plan_num}-verify.sh"),
+    );
     if !path.is_file() {
         return String::new();
     }
     let content = std::fs::read_to_string(&path).unwrap_or_default();
     let snippet = truncate(&content, 4000);
+    // Show the path relative to repo root for the agent prompt
+    let rel = path
+        .strip_prefix(root)
+        .map(|p| p.display().to_string())
+        .unwrap_or_else(|_| path.display().to_string());
     format!(
         "\n## Verify chain script\n\nPath: `{rel}`. After implementation, run `bash {rel}` when validating invariants.\n\n```bash\n{snippet}\n```\n"
     )
@@ -444,7 +476,14 @@ pub fn build_shared_context(
     let cross_plan_ctx = context::read_context(repo_root)?;
 
     // Read the strategist brief if it exists
-    let brief_path = repo_root.join(format!("plans/context/briefs/{}-brief.md", plan.num));
+    let plans_dir = super::paths::plans_root(repo_root);
+    let brief_path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        &plan.num,
+        "brief.md",
+        "briefs",
+        &format!("{}-brief.md", plan.num),
+    );
     let brief = std::fs::read_to_string(&brief_path).unwrap_or_default();
 
     // Repo-root AGENTS.md (fallback: agents/AGENTS.md for older layouts)
@@ -491,10 +530,13 @@ pub fn format_shared_prefix(ctx: &SharedPlanContext, budget: &PromptBudget) -> S
 }
 
 /// Read all completion summaries from plans/context/completion/*-summary.md.
+/// Also checks per-plan directories for summary.md files (new layout).
 /// Returns them joined with separators, suitable for prompt injection.
 fn read_completion_summaries(repo_root: &Path) -> String {
-    let completion_dir = repo_root.join("plans/context/completion");
     let mut summaries = Vec::new();
+
+    // Legacy: plans/context/completion/*-summary.md
+    let completion_dir = repo_root.join("plans/context/completion");
     if completion_dir.exists() {
         if let Ok(entries) = std::fs::read_dir(&completion_dir) {
             for entry in entries.flatten() {
@@ -508,6 +550,22 @@ fn read_completion_summaries(repo_root: &Path) -> String {
             }
         }
     }
+
+    // New: plans/{base}/summary.md
+    let plans_dir = super::paths::plans_root(repo_root);
+    if let Ok(entries) = std::fs::read_dir(&plans_dir) {
+        for entry in entries.flatten() {
+            if entry.path().is_dir() {
+                let summary_path = entry.path().join("summary.md");
+                if summary_path.exists() {
+                    if let Ok(content) = std::fs::read_to_string(&summary_path) {
+                        summaries.push(content);
+                    }
+                }
+            }
+        }
+    }
+
     summaries.join("\n---\n")
 }
 
@@ -578,7 +636,8 @@ pub fn implementer_prompt(repo_root: &Path, plan: &PlanInfo) -> Result<String> {
     let ignored_tests = truncate(&context::read_ignored_tests(repo_root)?, 2000);
     let prd2_extract = truncate(&context::read_prd2_extract(repo_root, &plan.num)?, 8000);
 
-    let last_completed_path = repo_root.join("plans/context/last-completed.md");
+    let noreview_plans_dir = super::paths::plans_root(repo_root);
+    let last_completed_path = super::paths::global_artifact(&noreview_plans_dir, "last-completed.md");
     let last_completed = if last_completed_path.exists() {
         truncate(
             &std::fs::read_to_string(&last_completed_path).unwrap_or_default(),
@@ -779,7 +838,8 @@ pub fn implementer_prompt_with_brief(
     let ignored_tests = truncate(&context::read_ignored_tests(repo_root)?, 2000);
     let prd2_extract = truncate(&context::read_prd2_extract(repo_root, &plan.num)?, 6000);
 
-    let last_completed_path = repo_root.join("plans/context/last-completed.md");
+    let impl_plans_dir = super::paths::plans_root(repo_root);
+    let last_completed_path = super::paths::global_artifact(&impl_plans_dir, "last-completed.md");
     let last_completed = if last_completed_path.exists() {
         truncate(
             &std::fs::read_to_string(&last_completed_path).unwrap_or_default(),
@@ -790,16 +850,32 @@ pub fn implementer_prompt_with_brief(
     };
 
     // Read the strategist brief
-    let brief_path = repo_root.join(format!("plans/context/briefs/{}-brief.md", plan.num));
+    let brief_path = super::paths::plan_artifact_by_num(
+        &impl_plans_dir,
+        &plan.num,
+        "brief.md",
+        "briefs",
+        &format!("{}-brief.md", plan.num),
+    );
     let brief = std::fs::read_to_string(&brief_path).unwrap_or_default();
 
     // Read task checklist if it exists
-    let tasks_path = repo_root.join(format!("plans/context/tasks/{}-tasks.toml", plan.num));
+    let tasks_path = super::paths::plan_artifact_by_num(
+        &impl_plans_dir,
+        &plan.num,
+        "tasks.toml",
+        "tasks",
+        &format!("{}-tasks.toml", plan.num),
+    );
     let tasks_section = if tasks_path.exists() {
         let tasks_content = std::fs::read_to_string(&tasks_path).unwrap_or_default();
+        // Show the path relative to repo root for the agent prompt
+        let tasks_rel = tasks_path
+            .strip_prefix(repo_root)
+            .map(|p| p.display().to_string())
+            .unwrap_or_else(|_| format!("plans/context/tasks/{}-tasks.toml", plan.num));
         format!(
-            "\n## Task Checklist\n\n<tasks>\n{tasks_content}\n</tasks>\n\nUpdate task status in `plans/context/tasks/{num}-tasks.toml` as you work:\n- Set status to \"active\" when starting a task\n- Set status to \"done\" when complete\n- Update meta.done count\n",
-            num = plan.num
+            "\n## Task Checklist\n\n<tasks>\n{tasks_content}\n</tasks>\n\nUpdate task status in `{tasks_rel}` as you work:\n- Set status to \"active\" when starting a task\n- Set status to \"done\" when complete\n- Update meta.done count\n",
         )
     } else {
         String::new()
@@ -831,7 +907,7 @@ pub fn implementer_prompt_with_brief(
                     ));
                 }
             }
-            let gate_output_path = repo_root.join("plans/context/last-gate-output.txt");
+            let gate_output_path = super::paths::global_artifact(&impl_plans_dir, "last-gate-output.txt");
             let gate_output = std::fs::read_to_string(&gate_output_path).unwrap_or_default();
             let gate_sec = if !gate_output.is_empty() {
                 format!("```\n{}\n```\n", truncate_tail(&gate_output, 2000))
@@ -1164,7 +1240,8 @@ pub fn implementer_fix_prompt(repo_root: &Path, plan: &PlanInfo, iteration: u32)
                 ));
             }
         }
-        let gate_output_path = repo_root.join("plans/context/last-gate-output.txt");
+        let fix_plans_dir = super::paths::plans_root(repo_root);
+        let gate_output_path = super::paths::global_artifact(&fix_plans_dir, "last-gate-output.txt");
         let gate_output = std::fs::read_to_string(&gate_output_path).unwrap_or_default();
         let gate_sec = if !gate_output.is_empty() {
             format!("```\n{}\n```\n", truncate_tail(&gate_output, 3000))
@@ -1432,7 +1509,14 @@ pub fn architect_prompt(
     };
 
     // Read brief and PRD2 from worktree (map_root) so agents see modifications
-    let brief_path = map_root.join(format!("plans/context/briefs/{}-brief.md", plan.num));
+    let arch_plans_dir = super::paths::plans_root(map_root);
+    let brief_path = super::paths::plan_artifact_by_num(
+        &arch_plans_dir,
+        &plan.num,
+        "brief.md",
+        "briefs",
+        &format!("{}-brief.md", plan.num),
+    );
     let brief = truncate(
         &std::fs::read_to_string(&brief_path).unwrap_or_default(),
         4000,
@@ -1462,10 +1546,13 @@ pub fn architect_prompt(
     };
 
     // Load review task TOML if it exists
-    let review_tasks_path = map_root.join(format!(
-        "plans/context/tasks/{}-review-tasks.toml",
-        plan.num
-    ));
+    let review_tasks_path = super::paths::plan_artifact_by_num(
+        &arch_plans_dir,
+        &plan.num,
+        "review-tasks.toml",
+        "tasks",
+        &format!("{}-review-tasks.toml", plan.num),
+    );
     let review_tasks_section = if review_tasks_path.exists() {
         let content = std::fs::read_to_string(&review_tasks_path).unwrap_or_default();
         format!(
@@ -1644,7 +1731,14 @@ pub fn auditor_prompt(
     };
 
     // Read brief and PRD2 from worktree (map_root) so agents see modifications
-    let brief_path = map_root.join(format!("plans/context/briefs/{}-brief.md", plan.num));
+    let audit_plans_dir = super::paths::plans_root(map_root);
+    let brief_path = super::paths::plan_artifact_by_num(
+        &audit_plans_dir,
+        &plan.num,
+        "brief.md",
+        "briefs",
+        &format!("{}-brief.md", plan.num),
+    );
     let brief = truncate(
         &std::fs::read_to_string(&brief_path).unwrap_or_default(),
         4000,
@@ -1674,10 +1768,13 @@ pub fn auditor_prompt(
     };
 
     // Load review task TOML if it exists (auditor shares the same review TOML)
-    let review_tasks_path = map_root.join(format!(
-        "plans/context/tasks/{}-review-tasks.toml",
-        plan.num
-    ));
+    let review_tasks_path = super::paths::plan_artifact_by_num(
+        &audit_plans_dir,
+        &plan.num,
+        "review-tasks.toml",
+        "tasks",
+        &format!("{}-review-tasks.toml", plan.num),
+    );
     let review_tasks_section = if review_tasks_path.exists() {
         let content = std::fs::read_to_string(&review_tasks_path).unwrap_or_default();
         format!(
@@ -1877,7 +1974,14 @@ pub fn combined_reviewer_prompt(
         }
     };
 
-    let brief_path = map_root.join(format!("plans/context/briefs/{}-brief.md", plan.num));
+    let combined_plans_dir = super::paths::plans_root(map_root);
+    let brief_path = super::paths::plan_artifact_by_num(
+        &combined_plans_dir,
+        &plan.num,
+        "brief.md",
+        "briefs",
+        &format!("{}-brief.md", plan.num),
+    );
     let brief = truncate(
         &std::fs::read_to_string(&brief_path).unwrap_or_default(),
         4000,
@@ -1905,10 +2009,13 @@ pub fn combined_reviewer_prompt(
         String::new()
     };
 
-    let review_tasks_path = map_root.join(format!(
-        "plans/context/tasks/{}-review-tasks.toml",
-        plan.num
-    ));
+    let review_tasks_path = super::paths::plan_artifact_by_num(
+        &combined_plans_dir,
+        &plan.num,
+        "review-tasks.toml",
+        "tasks",
+        &format!("{}-review-tasks.toml", plan.num),
+    );
     let review_tasks_section = if review_tasks_path.exists() {
         let content = std::fs::read_to_string(&review_tasks_path).unwrap_or_default();
         format!(
@@ -2097,10 +2204,14 @@ pub fn scribe_prompt(repo_root: &Path, plan: &PlanInfo, worktree: Option<&Path>)
     let prd2_extract = truncate(&context::read_prd2_extract(map_root, &plan.num)?, 16000);
 
     // Load scribe-specific task TOML if it exists
-    let scribe_tasks_path = map_root.join(format!(
-        "plans/context/tasks/{}-scribe-tasks.toml",
-        plan.num
-    ));
+    let scribe_plans_dir = super::paths::plans_root(map_root);
+    let scribe_tasks_path = super::paths::plan_artifact_by_num(
+        &scribe_plans_dir,
+        &plan.num,
+        "scribe-tasks.toml",
+        "tasks",
+        &format!("{}-scribe-tasks.toml", plan.num),
+    );
     let scribe_tasks_section = if scribe_tasks_path.exists() {
         let content = std::fs::read_to_string(&scribe_tasks_path).unwrap_or_default();
         format!(
@@ -2324,7 +2435,14 @@ pub fn doc_revision_prompt(
     let workspace_map = truncate(&context::read_workspace_map(map_root)?, 6000);
     let prd2_extract = truncate(&context::read_prd2_extract(repo_root, &plan.num)?, 16000);
 
-    let docs_path = repo_root.join(format!("plans/context/docs/{}-docs.md", plan.num));
+    let revision_plans_dir = super::paths::plans_root(repo_root);
+    let docs_path = super::paths::plan_artifact_by_num(
+        &revision_plans_dir,
+        &plan.num,
+        "docs.md",
+        "docs",
+        &format!("{}-docs.md", plan.num),
+    );
     let existing_docs = std::fs::read_to_string(&docs_path).unwrap_or_default();
 
     // Skill injection: humanizer always for doc revision
@@ -2397,7 +2515,14 @@ pub fn critic_prompt(repo_root: &Path, plan: &PlanInfo, worktree: Option<&Path>)
     // Read PRD2 and docs from worktree (map_root) so agents see modifications
     let prd2_extract = truncate(&context::read_prd2_extract(map_root, &plan.num)?, 6000);
 
-    let docs_path = map_root.join(format!("plans/context/docs/{}-docs.md", plan.num));
+    let critic_plans_dir = super::paths::plans_root(map_root);
+    let docs_path = super::paths::plan_artifact_by_num(
+        &critic_plans_dir,
+        &plan.num,
+        "docs.md",
+        "docs",
+        &format!("{}-docs.md", plan.num),
+    );
     let docs = std::fs::read_to_string(&docs_path).unwrap_or_default();
 
     // Skill injection: humanizer always for Critic
@@ -2712,7 +2837,14 @@ pub fn quick_reviewer_prompt(
         }
     };
 
-    let brief_path = map_root.join(format!("plans/context/briefs/{}-brief.md", plan.num));
+    let qr_plans_dir = super::paths::plans_root(map_root);
+    let brief_path = super::paths::plan_artifact_by_num(
+        &qr_plans_dir,
+        &plan.num,
+        "brief.md",
+        "briefs",
+        &format!("{}-brief.md", plan.num),
+    );
     let brief = truncate(
         &std::fs::read_to_string(&brief_path).unwrap_or_default(),
         3000,
@@ -3769,9 +3901,23 @@ pub fn generate_static_brief(repo_root: &Path, plan: &PlanInfo) -> Result<String
     }
 
     // Load any existing pattern file for the plan's crates
+    let static_plans_dir = super::paths::plans_root(repo_root);
     let patterns = {
-        let pattern_path = repo_root.join(format!("plans/context/patterns-{}.md", plan.num));
-        std::fs::read_to_string(pattern_path).unwrap_or_default()
+        let pattern_path = super::paths::plan_artifact_by_num(
+            &static_plans_dir,
+            &plan.num,
+            &format!("patterns-{}.md", plan.num),
+            "",
+            &format!("patterns-{}.md", plan.num),
+        );
+        // Also try global path
+        let content = std::fs::read_to_string(&pattern_path).unwrap_or_default();
+        if content.is_empty() {
+            let legacy = repo_root.join(format!("plans/context/patterns-{}.md", plan.num));
+            std::fs::read_to_string(legacy).unwrap_or_default()
+        } else {
+            content
+        }
     };
 
     // Load completion summaries from plans that this plan depends on
@@ -3790,8 +3936,13 @@ pub fn generate_static_brief(repo_root: &Path, plan: &PlanInfo) -> Result<String
                     None
                 }
             }) {
-                let sum_path =
-                    repo_root.join(format!("plans/context/summaries/{dep_num}-summary.md"));
+                let sum_path = super::paths::plan_artifact_by_num(
+                    &static_plans_dir,
+                    dep_num,
+                    "summary.md",
+                    "summaries",
+                    &format!("{dep_num}-summary.md"),
+                );
                 if let Ok(s) = std::fs::read_to_string(&sum_path) {
                     sums.push_str(&format!(
                         "\n### Plan {dep_num} summary\n{}\n",

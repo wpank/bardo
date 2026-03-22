@@ -10,6 +10,20 @@ use ratatui::text::Line;
 
 use crate::agent::AgentRole;
 
+/// Milestone progress tracking entry. Each milestone from the queue config
+/// gets one of these, updated as plans complete.
+#[derive(Debug, Clone)]
+pub struct MilestoneProgress {
+    /// Milestone name (e.g. "Minimal MVP").
+    pub name: String,
+    /// Total plans in this milestone (including maintenance plans).
+    pub total_plans: usize,
+    /// Number of plans that have completed.
+    pub completed_plans: usize,
+    /// Tags associated with this milestone.
+    pub tags: Vec<String>,
+}
+
 /// Cached parsed output lines to avoid re-parsing every frame.
 /// The render function checks if `last_len` matches `output.len()`;
 /// if so, it reuses `lines` instead of re-parsing.
@@ -769,6 +783,8 @@ pub struct RunState {
     pub cumulative_cost_usd: f64,
     /// Cost per plan in USD.
     pub cost_per_plan: HashMap<String, f64>,
+    /// Milestone progress tracking (populated from queue config).
+    pub milestone_info: Vec<MilestoneProgress>,
 }
 
 /// A user inject message pending conductor routing decision
@@ -943,6 +959,7 @@ impl Default for RunState {
             main_merges: Vec::new(),
             cumulative_cost_usd: 0.0,
             cost_per_plan: HashMap::new(),
+            milestone_info: Vec::new(),
         }
     }
 }

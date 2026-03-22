@@ -173,7 +173,14 @@ pub fn load_role_checklist(
     plan_num: &str,
     suffix: &str,
 ) -> Result<Option<TaskChecklist>> {
-    let path = repo_root.join(format!("plans/context/tasks/{plan_num}-{suffix}.toml"));
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        plan_num,
+        &format!("{suffix}.toml"),
+        "tasks",
+        &format!("{plan_num}-{suffix}.toml"),
+    );
     if !path.exists() {
         return Ok(None);
     }

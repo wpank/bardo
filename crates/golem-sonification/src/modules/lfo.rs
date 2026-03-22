@@ -127,7 +127,7 @@ impl Module for Lfo {
         let rate_cv = inputs.get("rate");
         let sync = inputs.get("sync");
         let mut out = [0.0_f32; BLOCK_SIZE];
-        let phase_inc_base = self.frequency / SAMPLE_RATE;
+        let _phase_inc_base = self.frequency / SAMPLE_RATE;
 
         for i in 0..BLOCK_SIZE {
             // Check sync rising edge
@@ -233,5 +233,45 @@ impl Module for Lfo {
         self.shape = 0;
         self.sh_value = 0.0;
         self.prev_sync = 0.0;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lfo_sine_output() {
+        let mut lfo = Lfo::new("test_lfo");
+        lfo.set_param("shape", 0.0); // sine
+        lfo.set_param("frequency", 10.0);
+
+        let inputs = HashMap::new();
+        let mut outputs = HashMap::new();
+
+        // Process several blocks to cover a full cycle
+        for _ in 0..100 {
+            lfo.process(&inputs, &mut outputs);
+        }
+
+        let out = outputs.get("out").expect("LFO should produce 'out'");
+        for &sample in out {
+            assert!(
+                sample >= -1.1 && sample <= 1.1,
+                "LFO sine sample {sample} out of range [-1.1, 1.1]"
+            );
+        }
+    }
+
+    #[test]
+    fn test_lfo_all_shapes_no_panic() {
+        for shape in 0..=4 {
+            let mut lfo = Lfo::new(format!("lfo_{shape}"));
+            lfo.set_param("shape", shape as f32);
+            let inputs = HashMap::new();
+            let mut outputs = HashMap::new();
+            lfo.process(&inputs, &mut outputs);
+            assert!(outputs.contains_key("out"));
+        }
     }
 }

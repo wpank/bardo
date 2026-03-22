@@ -10,10 +10,13 @@ pub mod executor;
 pub mod gates;
 pub mod inject;
 pub mod iteration_memory;
+pub mod memory;
+pub mod paths;
 pub mod phase;
 pub mod pipeline;
 pub mod plan;
 pub mod preflight;
+pub mod queue;
 pub mod prompts;
 pub mod registry;
 pub mod review;
@@ -182,7 +185,7 @@ pub struct OrchestratorConfig {
 
 impl OrchestratorConfig {
     pub fn new(repo_root: PathBuf) -> Self {
-        let plans_dir = repo_root.join("plans");
+        let plans_dir = paths::plans_root(&repo_root);
         Self {
             repo_root,
             plans_dir,

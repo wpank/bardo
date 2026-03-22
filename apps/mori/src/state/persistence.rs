@@ -117,7 +117,7 @@ pub struct PersistenceManager {
 
 impl PersistenceManager {
     pub fn new(repo_root: &Path) -> Self {
-        let log_dir = repo_root.join("tmp/plan-runs");
+        let log_dir = crate::orchestrator::paths::runs_dir(repo_root);
         let status_file = log_dir.join("status.json");
         let events_file = log_dir.join("events.jsonl");
         Self {

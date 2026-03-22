@@ -73,7 +73,7 @@ impl NoiseSource {
     }
 
     fn white_sample(&mut self) -> f32 {
-        self.rng.gen_range(-1.0..1.0)
+        self.rng.r#gen::<f32>() * 2.0 - 1.0
     }
 
     fn pink_sample(&mut self) -> f32 {
@@ -92,8 +92,8 @@ impl NoiseSource {
 
     fn dust_sample(&mut self, density: f32) -> f32 {
         let threshold = density.clamp(0.0, 1.0);
-        if self.rng.gen::<f32>() < threshold * 0.01 {
-            self.rng.gen_range(-1.0..1.0)
+        if self.rng.r#gen::<f32>() < threshold * 0.01 {
+            self.rng.r#gen::<f32>() * 2.0 - 1.0
         } else {
             0.0
         }
@@ -184,5 +184,44 @@ impl Module for NoiseSource {
         self.b4 = 0.0;
         self.b5 = 0.0;
         self.b6 = 0.0;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_noise_white_no_panic() {
+        let mut noise = NoiseSource::new("test_noise");
+        noise.set_param("mode", 0.0); // white
+        let inputs = HashMap::new();
+        let mut outputs = HashMap::new();
+        noise.process(&inputs, &mut outputs);
+
+        let out = outputs.get("out").expect("NoiseSource should produce 'out'");
+        // White noise should have non-zero output
+        let max_abs = out.iter().map(|s| s.abs()).fold(0.0_f32, f32::max);
+        assert!(max_abs > 0.0, "White noise should produce non-zero output");
+    }
+
+    #[test]
+    fn test_noise_pink_no_panic() {
+        let mut noise = NoiseSource::new("test_noise");
+        noise.set_param("mode", 1.0); // pink
+        let inputs = HashMap::new();
+        let mut outputs = HashMap::new();
+        noise.process(&inputs, &mut outputs);
+        assert!(outputs.contains_key("out"));
+    }
+
+    #[test]
+    fn test_noise_dust_no_panic() {
+        let mut noise = NoiseSource::new("test_noise");
+        noise.set_param("mode", 2.0); // dust
+        let inputs = HashMap::new();
+        let mut outputs = HashMap::new();
+        noise.process(&inputs, &mut outputs);
+        assert!(outputs.contains_key("out"));
     }
 }

@@ -15,6 +15,8 @@ pub struct SessionCost {
     pub session_id: String,
     /// When this session was first seen.
     pub created_at: DateTime<Utc>,
+    /// When this session last recorded a request.
+    pub last_active: DateTime<Utc>,
     /// Total requests in this session.
     pub total_requests: u64,
     /// Total cost in USD (actual spend).
@@ -46,6 +48,7 @@ impl SessionCost {
         Self {
             session_id,
             created_at: Utc::now(),
+            last_active: Utc::now(),
             total_requests: 0,
             total_cost_usd: 0.0,
             total_savings_usd: 0.0,
@@ -65,6 +68,7 @@ impl SessionCost {
         savings_usd: f64,
     ) {
         self.total_requests += 1;
+        self.last_active = Utc::now();
         self.total_cost_usd += cost_usd;
         self.total_savings_usd += savings_usd;
 

@@ -241,13 +241,57 @@ impl ConfigState {
         if config.fallback_model.is_some() {
             cfg.fallback_model = config.fallback_model.clone();
         }
+        // Apply execution preset if specified
+        if let Some(ref preset) = config.preset {
+            cfg.apply_preset(preset);
+        }
         cfg
     }
 
-    /// Load persisted config from plan-runs/config.toml
+    /// Apply an execution preset that adjusts models, iterations, and role
+    /// overrides to optimize for a specific dimension.
+    ///
+    /// Known presets: `"quality"`, `"balanced"`, `"cost"`, `"speed"`.
+    /// Unknown preset names are logged as warnings and ignored.
+    pub fn apply_preset(&mut self, preset: &str) {
+        match preset {
+            "quality" => {
+                self.claude_default_model = "claude-opus-4-6".to_string();
+                self.max_iterations = 5;
+                self.clippy_enabled = true;
+            }
+            "balanced" => {
+                self.claude_default_model = "claude-sonnet-4-6".to_string();
+                self.max_iterations = 3;
+            }
+            "cost" => {
+                self.claude_default_model = "claude-sonnet-4-6".to_string();
+                self.max_iterations = 2;
+                self.role_models
+                    .insert("critic".to_string(), "claude-haiku-4-5".to_string());
+                self.role_models
+                    .insert("scribe".to_string(), "claude-haiku-4-5".to_string());
+                self.role_models
+                    .insert("auditor".to_string(), "claude-haiku-4-5".to_string());
+            }
+            "speed" => {
+                self.claude_default_model = "claude-sonnet-4-6".to_string();
+                self.express_mode = true;
+                self.max_auto_fix_attempts = 2;
+            }
+            _ => {
+                tracing::warn!(preset, "unknown preset, ignoring");
+            }
+        }
+    }
+
+    /// Load persisted config from .mori/config.toml (falls back to tmp/plan-runs/config.toml).
     pub fn load(repo_root: &Path) -> Option<Self> {
-        let path = repo_root.join("tmp/plan-runs/config.toml");
-        let content = std::fs::read_to_string(path).ok()?;
+        let primary = repo_root.join(".mori/config.toml");
+        let fallback = repo_root.join("tmp/plan-runs/config.toml");
+        let content = std::fs::read_to_string(&primary)
+            .or_else(|_| std::fs::read_to_string(&fallback))
+            .ok()?;
         let mut cfg: Self = toml::from_str(&content).ok()?;
         let mut models = load_available_models();
         models.extend(load_cursor_models());
@@ -256,9 +300,9 @@ impl ConfigState {
         Some(cfg)
     }
 
-    /// Save config to plan-runs/config.toml
+    /// Save config to .mori/config.toml
     pub fn save(&self, repo_root: &Path) -> anyhow::Result<()> {
-        let dir = repo_root.join("tmp/plan-runs");
+        let dir = repo_root.join(".mori");
         std::fs::create_dir_all(&dir)?;
         let content = toml::to_string_pretty(self)?;
         std::fs::write(dir.join("config.toml"), content)?;

@@ -13,6 +13,7 @@
 //! [`openai_stream_to_anthropic`] wraps an OpenAI byte stream and re-emits
 //! Anthropic-format events (used by Claude Code when the gateway routed to OpenAI).
 
+use std::collections::VecDeque;
 use std::pin::Pin;
 
 use bytes::Bytes;
@@ -39,7 +40,7 @@ struct AnthToOai {
     /// Set to true once we've emitted `data: [DONE]`.
     done: bool,
     /// Accumulated output bytes to emit this tick before pulling new inner bytes.
-    pending: Vec<Bytes>,
+    pending: VecDeque<Bytes>,
 }
 
 /// Wrap a raw Anthropic SSE byte stream and re-emit OpenAI-format SSE events.
@@ -56,14 +57,13 @@ pub fn anthropic_stream_to_openai(stream: ByteStream, model: String) -> ByteStre
         model,
         finish_reason: None,
         done: false,
-        pending: Vec::new(),
+        pending: VecDeque::new(),
     };
 
     Box::pin(stream::unfold(state, |mut s| async move {
         loop {
             // Drain any pre-built output first.
-            if let Some(chunk) = s.pending.first().cloned() {
-                s.pending.remove(0);
+            if let Some(chunk) = s.pending.pop_front() {
                 return Some((Ok(chunk), s));
             }
             if s.done {
@@ -121,7 +121,7 @@ pub fn anthropic_stream_to_openai(stream: ByteStream, model: String) -> ByteStre
                         }
                         // Emit the role-initialization chunk Cursor expects first.
                         let chunk = oai_chunk(&s.msg_id, &s.model, None, Some("assistant"), None);
-                        s.pending.push(Bytes::from(chunk));
+                        s.pending.push_back(Bytes::from(chunk));
                     }
                     Some("content_block_delta") => {
                         if let Some(text) = event
@@ -133,7 +133,7 @@ pub fn anthropic_stream_to_openai(stream: ByteStream, model: String) -> ByteStre
                             .and_then(|t| t.as_str())
                         {
                             let chunk = oai_chunk(&s.msg_id, &s.model, Some(text), None, None);
-                            s.pending.push(Bytes::from(chunk));
+                            s.pending.push_back(Bytes::from(chunk));
                         }
                     }
                     Some("message_delta") => {
@@ -147,8 +147,8 @@ pub fn anthropic_stream_to_openai(stream: ByteStream, model: String) -> ByteStre
                     Some("message_stop") => {
                         let reason = s.finish_reason.clone().unwrap_or_else(|| "stop".into());
                         let chunk = oai_chunk(&s.msg_id, &s.model, None, None, Some(&reason));
-                        s.pending.push(Bytes::from(chunk));
-                        s.pending.push(Bytes::from("data: [DONE]\n\n"));
+                        s.pending.push_back(Bytes::from(chunk));
+                        s.pending.push_back(Bytes::from("data: [DONE]\n\n"));
                         s.done = true;
                     }
                     _ => {} // ping, content_block_start/stop — skip
@@ -216,10 +216,16 @@ struct OaiToAnth {
     started: bool,
     /// Accumulated output_tokens from the final OpenAI usage field.
     output_tokens: u64,
+    /// Input tokens from OpenAI's usage (prompt_tokens).
+    input_tokens: u64,
+    /// Cached input tokens from OpenAI's prompt_tokens_details.cached_tokens.
+    cached_tokens: u64,
+    /// Reasoning tokens from OpenAI's completion_tokens_details.reasoning_tokens.
+    reasoning_tokens: u64,
     /// Final stop_reason extracted from the last OpenAI chunk.
     stop_reason: String,
     done: bool,
-    pending: Vec<Bytes>,
+    pending: VecDeque<Bytes>,
 }
 
 /// Wrap a raw OpenAI SSE byte stream and re-emit Anthropic-format SSE events.
@@ -235,15 +241,17 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
         msg_id: "msg_oai".into(),
         started: false,
         output_tokens: 0,
+        input_tokens: 0,
+        cached_tokens: 0,
+        reasoning_tokens: 0,
         stop_reason: "end_turn".into(),
         done: false,
-        pending: Vec::new(),
+        pending: VecDeque::new(),
     };
 
     Box::pin(stream::unfold(state, |mut s| async move {
         loop {
-            if let Some(chunk) = s.pending.first().cloned() {
-                s.pending.remove(0);
+            if let Some(chunk) = s.pending.pop_front() {
                 return Some((Ok(chunk), s));
             }
             if s.done {
@@ -271,29 +279,36 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                 };
 
                 if data == "[DONE]" {
-                    // Emit closing Anthropic sequence.
-                    let model = s.model.clone();
+                    // Emit closing Anthropic sequence with full usage from OpenAI.
                     let stop = s.stop_reason.clone();
                     let out_toks = s.output_tokens;
-                    let id = s.msg_id.clone();
-                    s.pending.push(anth_event(
+                    let in_toks = s.input_tokens;
+                    let cached = s.cached_tokens;
+                    let reasoning = s.reasoning_tokens;
+                    s.pending.push_back(anth_event(
                         "content_block_stop",
                         &serde_json::json!({"type":"content_block_stop","index":0}),
                     ));
-                    s.pending.push(anth_event(
+                    // Include all OpenAI usage in the message_delta so the handler's
+                    // streaming tap can extract input_tokens, cached_tokens, and
+                    // reasoning_tokens alongside output_tokens.
+                    s.pending.push_back(anth_event(
                         "message_delta",
                         &serde_json::json!({
                             "type": "message_delta",
                             "delta": {"stop_reason": stop, "stop_sequence": null},
-                            "usage": {"output_tokens": out_toks},
+                            "usage": {
+                                "output_tokens": out_toks,
+                                "input_tokens": in_toks,
+                                "cached_tokens": cached,
+                                "reasoning_tokens": reasoning
+                            },
                         }),
                     ));
-                    s.pending.push(anth_event(
+                    s.pending.push_back(anth_event(
                         "message_stop",
                         &serde_json::json!({"type":"message_stop"}),
                     ));
-                    let _ = id; // captured above for clarity
-                    let _ = model;
                     s.done = true;
                     continue;
                 }
@@ -328,12 +343,30 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                 }
 
                 // Capture usage if present (some providers send it on the last chunk).
-                if let Some(toks) = event
-                    .get("usage")
-                    .and_then(|u| u.get("completion_tokens"))
-                    .and_then(|t| t.as_u64())
-                {
-                    s.output_tokens = toks;
+                // OpenAI includes prompt_tokens, completion_tokens, and detailed breakdowns.
+                if let Some(usage) = event.get("usage") {
+                    if let Some(toks) = usage.get("completion_tokens").and_then(|t| t.as_u64()) {
+                        s.output_tokens = toks;
+                    }
+                    if let Some(toks) = usage.get("prompt_tokens").and_then(|t| t.as_u64()) {
+                        s.input_tokens = toks;
+                    }
+                    // OpenAI cached tokens (automatic prefix caching, 50% discount).
+                    if let Some(toks) = usage
+                        .get("prompt_tokens_details")
+                        .and_then(|d| d.get("cached_tokens"))
+                        .and_then(|t| t.as_u64())
+                    {
+                        s.cached_tokens = toks;
+                    }
+                    // o-series reasoning tokens.
+                    if let Some(toks) = usage
+                        .get("completion_tokens_details")
+                        .and_then(|d| d.get("reasoning_tokens"))
+                        .and_then(|t| t.as_u64())
+                    {
+                        s.reasoning_tokens = toks;
+                    }
                 }
 
                 // Map finish_reason.
@@ -346,7 +379,7 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                     s.started = true;
                     let id = s.msg_id.clone();
                     let model = s.model.clone();
-                    s.pending.push(anth_event(
+                    s.pending.push_back(anth_event(
                         "message_start",
                         &serde_json::json!({
                             "type": "message_start",
@@ -362,7 +395,7 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                             },
                         }),
                     ));
-                    s.pending.push(anth_event(
+                    s.pending.push_back(anth_event(
                         "content_block_start",
                         &serde_json::json!({
                             "type": "content_block_start",
@@ -371,7 +404,7 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                         }),
                     ));
                     s.pending
-                        .push(anth_event("ping", &serde_json::json!({"type": "ping"})));
+                        .push_back(anth_event("ping", &serde_json::json!({"type": "ping"})));
                 }
 
                 // Content chunk → emit text delta.
@@ -382,7 +415,7 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                             s.started = true;
                             let id = s.msg_id.clone();
                             let model = s.model.clone();
-                            s.pending.push(anth_event(
+                            s.pending.push_back(anth_event(
                                 "message_start",
                                 &serde_json::json!({
                                     "type": "message_start",
@@ -394,7 +427,7 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                                     },
                                 }),
                             ));
-                            s.pending.push(anth_event(
+                            s.pending.push_back(anth_event(
                                 "content_block_start",
                                 &serde_json::json!({
                                     "type": "content_block_start", "index": 0,
@@ -402,9 +435,9 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
                                 }),
                             ));
                             s.pending
-                                .push(anth_event("ping", &serde_json::json!({"type":"ping"})));
+                                .push_back(anth_event("ping", &serde_json::json!({"type":"ping"})));
                         }
-                        s.pending.push(anth_event(
+                        s.pending.push_back(anth_event(
                             "content_block_delta",
                             &serde_json::json!({
                                 "type": "content_block_delta",

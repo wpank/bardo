@@ -30,8 +30,8 @@ use clap::{CommandFactory, FromArgMatches, Parser};
 #[derive(Parser, Debug)]
 #[command(name = "bardo-ctl", version, about = "Bardo plan orchestrator + TUI")]
 struct Cli {
-    /// Plan specs to run/validate (e.g. "01" "01-09" "08a-08d")
-    #[arg(required = true)]
+    /// Plan specs to run/validate (e.g. "01" "01-09" "08a-08d").
+    /// If omitted, reads from .mori/queue.toml.
     plans: Vec<String>,
 
     /// Validate plan files and show parallelism stats (no execution)
@@ -113,6 +113,30 @@ struct Cli {
     /// Build the DAG, print the execution plan, and exit without spawning agents
     #[arg(long)]
     dry_run: bool,
+
+    /// Force reading .mori/queue.toml even when plan specs are given on CLI
+    #[arg(long)]
+    queue: bool,
+
+    /// Run only plans from a specific milestone (reads .mori/queue.toml)
+    #[arg(long)]
+    milestone: Option<String>,
+
+    /// Execution preset: "quality", "balanced", "cost", or "speed"
+    #[arg(long)]
+    preset: Option<String>,
+
+    /// Enable embedded inference gateway (default: enabled if compiled with gateway feature)
+    #[arg(long, default_value = "true")]
+    gateway: bool,
+
+    /// Disable the embedded inference gateway
+    #[arg(long)]
+    no_gateway: bool,
+
+    /// Port for the embedded gateway
+    #[arg(long, default_value = "4000")]
+    gateway_port: u16,
 }
 
 fn default_batch_id() -> String {
@@ -152,6 +176,59 @@ fn main() -> anyhow::Result<()> {
             .unwrap_or_else(|| std::env::current_dir().unwrap_or_default())
     });
 
+    // --- Queue & milestone resolution ---
+    // If no plan specs given on CLI (or --queue / --milestone is set), try .mori/queue.toml
+    let queue_config = if cli.plans.is_empty() || cli.queue || cli.milestone.is_some() {
+        crate::orchestrator::queue::QueueConfig::load(&repo_root)
+    } else {
+        None
+    };
+
+    if let Some(ref qc) = queue_config {
+        // Resolve plan specs from queue config
+        if cli.plans.is_empty() || cli.queue {
+            if let Some(ref ms_name) = cli.milestone {
+                // --milestone: load only that milestone's plans
+                cli.plans = qc.milestone_plans(ms_name).unwrap_or_default();
+                if cli.plans.is_empty() {
+                    anyhow::bail!("Milestone {:?} not found or has no plans", ms_name);
+                }
+            } else {
+                cli.plans = qc.all_plan_specs();
+            }
+        } else if let Some(ref ms_name) = cli.milestone {
+            // CLI specs given + --milestone: use milestone plans instead
+            cli.plans = qc.milestone_plans(ms_name).unwrap_or_default();
+            if cli.plans.is_empty() {
+                anyhow::bail!("Milestone {:?} not found or has no plans", ms_name);
+            }
+        }
+
+        // Apply run settings from queue (CLI flags take precedence)
+        if matches.value_source("max_agents") != Some(clap::parser::ValueSource::CommandLine) {
+            if let Some(max) = qc.run.max_agents {
+                cli.max_agents = max;
+            }
+        }
+        if matches.value_source("max_parallel_plans")
+            != Some(clap::parser::ValueSource::CommandLine)
+        {
+            if let Some(max) = qc.run.max_parallel_plans {
+                cli.max_parallel_plans = max;
+            }
+        }
+        if qc.run.mode.as_deref() == Some("express") && !cli.express {
+            cli.express = true;
+        }
+    }
+
+    // Bail if still no plans after queue resolution
+    if cli.plans.is_empty() && !cli.cleanup {
+        anyhow::bail!(
+            "No plan specs provided. Pass plan specs on the CLI or create .mori/queue.toml"
+        );
+    }
+
     // Validate mode: print stats and exit
     if cli.validate {
         return run_validate(&repo_root, &cli.plans);
@@ -168,7 +245,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     // Set up file-based tracing (don't write to terminal — TUI owns it)
-    let log_dir = repo_root.join("tmp/plan-runs");
+    let log_dir = crate::orchestrator::paths::runs_dir(&repo_root);
     std::fs::create_dir_all(&log_dir)?;
 
     // Truncate log at startup so each run starts clean
@@ -192,6 +269,11 @@ fn main() -> anyhow::Result<()> {
     let crash_state = Arc::new(Mutex::new(None::<CrashAppState>));
     CRASH_STATE.get_or_init(|| crash_state.clone());
 
+    // Resolve preset: CLI --preset takes priority, then queue config preset
+    let preset = cli
+        .preset
+        .or_else(|| queue_config.as_ref().and_then(|q| q.run.preset.clone()));
+
     let config = app::AppConfig {
         repo_root,
         plan_specs: cli.plans,
@@ -211,6 +293,10 @@ fn main() -> anyhow::Result<()> {
         fast: cli.fast,
         express: cli.express,
         fallback_model: cli.fallback_model,
+        preset,
+        gateway_enabled: cli.gateway && !cli.no_gateway,
+        gateway_port: cli.gateway_port,
+        gateway_api_key: String::new(), // auto-generated at startup
     };
 
     // Panic hook: restore terminal, capture crash report, log, then default handler.
@@ -322,7 +408,7 @@ fn run_validate(repo_root: &PathBuf, plan_specs: &[String]) -> anyhow::Result<()
     use orchestrator::tasks;
     use orchestrator::unified_dag::UnifiedTaskDag;
 
-    let plans_dir = repo_root.join("plans");
+    let plans_dir = crate::orchestrator::paths::plans_root(&repo_root);
     let plans = discover_plans(&plans_dir, plan_specs)?;
 
     println!("Plans discovered: {}", plans.len());
@@ -495,7 +581,7 @@ fn run_dry_run(
     use orchestrator::tasks;
     use orchestrator::unified_dag::UnifiedTaskDag;
 
-    let plans_dir = repo_root.join("plans");
+    let plans_dir = crate::orchestrator::paths::plans_root(&repo_root);
     let plans = discover_plans(&plans_dir, plan_specs)?;
 
     println!("=== Dry Run ===\n");

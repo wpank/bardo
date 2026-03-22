@@ -286,7 +286,8 @@ pub fn read_context(repo_root: &Path) -> Result<String> {
 
 /// Read workspace-map.md
 pub fn read_workspace_map(repo_root: &Path) -> Result<String> {
-    let path = repo_root.join("plans/context/workspace-map.md");
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::global_artifact(&plans_dir, "workspace-map.md");
     Ok(std::fs::read_to_string(path).unwrap_or_default())
 }
 
@@ -303,13 +304,21 @@ pub fn regenerate_workspace_map(scan_root: &Path) -> Result<String> {
 
 /// Read ignored-tests.md
 pub fn read_ignored_tests(repo_root: &Path) -> Result<String> {
-    let path = repo_root.join("plans/context/ignored-tests.md");
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::global_artifact(&plans_dir, "ignored-tests.md");
     Ok(std::fs::read_to_string(path).unwrap_or_default())
 }
 
 /// Read pre-extracted prd2 context for a plan.
 pub fn read_prd2_extract(repo_root: &Path, plan_num: &str) -> Result<String> {
-    let path = repo_root.join(format!("plans/context/prd2-extracts/{plan_num}-prd2.md"));
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        plan_num,
+        "prd-extract.md",
+        "prd2-extracts",
+        &format!("{plan_num}-prd2.md"),
+    );
     Ok(std::fs::read_to_string(path).unwrap_or_default())
 }
 
@@ -343,19 +352,40 @@ pub fn extract_prd2_context(repo_root: &Path, plan_num: &str) -> Result<()> {
 
 /// Read pre-generated checklist for a plan.
 pub fn read_checklist(repo_root: &Path, plan_num: &str) -> Result<String> {
-    let path = repo_root.join(format!("plans/context/checklists/{plan_num}-checklist.md"));
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        plan_num,
+        "checklist.md",
+        "checklists",
+        &format!("{plan_num}-checklist.md"),
+    );
     Ok(std::fs::read_to_string(path).unwrap_or_default())
 }
 
 /// Read pre-generated verify-tasks for a plan.
 pub fn read_verify_tasks(repo_root: &Path, plan_num: &str) -> Result<String> {
-    let path = repo_root.join(format!("plans/context/tasks/{plan_num}-verify-tasks.toml"));
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        plan_num,
+        "verify-tasks.toml",
+        "tasks",
+        &format!("{plan_num}-verify-tasks.toml"),
+    );
     Ok(std::fs::read_to_string(path).unwrap_or_default())
 }
 
 /// Read an existing summary for a plan
 pub fn read_summary(repo_root: &Path, plan_num: &str) -> Result<Option<String>> {
-    let path = repo_root.join(format!("plans/context/summaries/{plan_num}-summary.md"));
+    let plans_dir = super::paths::plans_root(repo_root);
+    let path = super::paths::plan_artifact_by_num(
+        &plans_dir,
+        plan_num,
+        "summary.md",
+        "summaries",
+        &format!("{plan_num}-summary.md"),
+    );
     if path.exists() {
         Ok(Some(std::fs::read_to_string(path)?))
     } else {
@@ -379,7 +409,8 @@ pub fn generate_summary(
     iteration: u32,
     elapsed: Duration,
 ) -> Result<String> {
-    let last_completed_path = repo_root.join("plans/context/last-completed.md");
+    let gen_plans_dir = super::paths::plans_root(repo_root);
+    let last_completed_path = super::paths::global_artifact(&gen_plans_dir, "last-completed.md");
     let last_completed = std::fs::read_to_string(&last_completed_path).unwrap_or_default();
 
     // Extract sections from last-completed.md

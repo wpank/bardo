@@ -1,10 +1,12 @@
 use super::artifacts::ArtifactStore;
+use super::memory::PlaybookConfig;
 use super::registry::Registry;
 use super::schema::{CompletionReport, ReviewReport};
 use crate::agent::AgentRole;
 use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+use tracing::warn;
 
 pub struct ContextInjector<'a> {
     pub artifact_store: &'a ArtifactStore,
@@ -47,56 +49,60 @@ impl ContextInjector<'_> {
         let ctx_dir = worktree.join("context/in");
         std::fs::create_dir_all(&ctx_dir)?;
 
-        // Plan spec -- try exact match, then prefix match
-        let plan_file = self.repo_root.join("plans").join(format!("{plan_num}.md"));
-        if plan_file.exists() {
-            std::fs::copy(&plan_file, ctx_dir.join("plan.md"))?;
-        } else if let Ok(entries) = std::fs::read_dir(self.repo_root.join("plans")) {
-            for entry in entries.flatten() {
-                let name = entry.file_name().to_string_lossy().to_string();
-                if name.starts_with(plan_num) && name.ends_with(".md") {
-                    std::fs::copy(entry.path(), ctx_dir.join("plan.md"))?;
-                    break;
+        let plans_dir = crate::orchestrator::paths::plans_root(&self.repo_root);
+
+        // Plan spec -- try per-plan directory first, then flat file, then prefix scan
+        if let Some(plan_dir) = crate::orchestrator::paths::find_plan_dir(&plans_dir, plan_num) {
+            // New layout: plans/{base}/plan.md
+            self.copy_in_file(worktree, "plan.md", &plan_dir.join("plan.md"))?;
+
+            // Per-plan artifacts from the directory
+            self.copy_in_file(worktree, "brief.md", &plan_dir.join("brief.md"))?;
+            self.copy_in_file(worktree, "tasks.toml", &plan_dir.join("tasks.toml"))?;
+            self.copy_in_file(worktree, "prd2-extract.md", &plan_dir.join("prd-extract.md"))?;
+            self.copy_in_file(worktree, "verify-tasks.toml", &plan_dir.join("verify-tasks.toml"))?;
+        } else {
+            // Legacy flat layout
+            let plan_file = plans_dir.join(format!("{plan_num}.md"));
+            if plan_file.exists() {
+                std::fs::copy(&plan_file, ctx_dir.join("plan.md"))?;
+            } else if let Ok(entries) = std::fs::read_dir(&plans_dir) {
+                for entry in entries.flatten() {
+                    let name = entry.file_name().to_string_lossy().to_string();
+                    if name.starts_with(plan_num) && name.ends_with(".md") {
+                        std::fs::copy(entry.path(), ctx_dir.join("plan.md"))?;
+                        break;
+                    }
                 }
             }
+
+            // Legacy per-plan artifacts
+            let brief_path = plans_dir.join(format!("context/briefs/{plan_num}-brief.md"));
+            self.copy_in_file(worktree, "brief.md", &brief_path)?;
+
+            let tasks_path = plans_dir.join(format!("context/tasks/{plan_num}-tasks.toml"));
+            self.copy_in_file(worktree, "tasks.toml", &tasks_path)?;
+
+            let prd2 = plans_dir.join(format!("context/prd2-extracts/{plan_num}-prd2.md"));
+            self.copy_in_file(worktree, "prd2-extract.md", &prd2)?;
+
+            let verify_tasks = plans_dir.join(format!("context/tasks/{plan_num}-verify-tasks.toml"));
+            self.copy_in_file(worktree, "verify-tasks.toml", &verify_tasks)?;
         }
 
-        // Brief
-        let brief_path = self
-            .repo_root
-            .join(format!("plans/context/briefs/{plan_num}-brief.md"));
-        self.copy_in_file(worktree, "brief.md", &brief_path)?;
-
-        // Tasks
-        let tasks_path = self
-            .repo_root
-            .join(format!("plans/context/tasks/{plan_num}-tasks.toml"));
-        self.copy_in_file(worktree, "tasks.toml", &tasks_path)?;
-
-        // Workspace map
-        let wmap_path = self.repo_root.join("plans/context/workspace-map.md");
+        // Global artifacts -- use paths::global_artifact for new/legacy resolution
+        let wmap_path = crate::orchestrator::paths::global_artifact(&plans_dir, "workspace-map.md");
         self.copy_in_file(worktree, "workspace-map.md", &wmap_path)?;
 
-        // Preflight snapshot
-        let pre_path = self.repo_root.join("plans/context/preflight-snapshot.md");
+        let pre_path = crate::orchestrator::paths::global_artifact(&plans_dir, "preflight-snapshot.md");
         self.copy_in_file(worktree, "preflight.md", &pre_path)?;
+
+        let ignored = crate::orchestrator::paths::global_artifact(&plans_dir, "ignored-tests.md");
+        self.copy_in_file(worktree, "ignored-tests.md", &ignored)?;
 
         // Cross-plan registry (authoritative path is plans/CONTEXT.md, not plans/context/)
         let cross = self.repo_root.join("plans/CONTEXT.md");
         self.copy_in_file(worktree, "cross-plan-context.md", &cross)?;
-
-        // PRD2 extract + verify checklist (same paths agents use on disk)
-        let prd2 = self
-            .repo_root
-            .join(format!("plans/context/prd2-extracts/{plan_num}-prd2.md"));
-        self.copy_in_file(worktree, "prd2-extract.md", &prd2)?;
-        let verify_tasks = self
-            .repo_root
-            .join(format!("plans/context/tasks/{plan_num}-verify-tasks.toml"));
-        self.copy_in_file(worktree, "verify-tasks.toml", &verify_tasks)?;
-
-        let ignored = self.repo_root.join("plans/context/ignored-tests.md");
-        self.copy_in_file(worktree, "ignored-tests.md", &ignored)?;
 
         // Conductor / operator steering (if any)
         let nudge = self.repo_root.join("tmp/agent-messages.md");
@@ -111,6 +117,41 @@ impl ContextInjector<'_> {
             let prev = self.artifact_store.prev_iter_summary(plan_num, iter - 1)?;
             if !prev.is_empty() {
                 self.write_in_file(worktree, "prev-reviews.md", &prev)?;
+            }
+        }
+
+        // Playbook injection: match rules from .mori/memory/playbook.toml
+        // against the plan's task files and inject matched advice.
+        let playbook_path = self.repo_root.join(".mori/memory/playbook.toml");
+        if playbook_path.exists() {
+            match std::fs::read_to_string(&playbook_path) {
+                Ok(content) => match toml::from_str::<PlaybookConfig>(&content) {
+                    Ok(playbook) => {
+                        // Collect all file paths from this plan's task list
+                        let plan_files: Vec<String> = crate::orchestrator::tasks::load_checklist(
+                            self.repo_root, plan_num,
+                        )
+                        .ok()
+                        .flatten()
+                        .map(|cl| {
+                            cl.tasks.iter().flat_map(|t| t.files.clone()).collect()
+                        })
+                        .unwrap_or_default();
+
+                        let matched = playbook.match_rules(&plan_files, &[]);
+                        if !matched.is_empty() {
+                            let mut md = String::from(
+                                "# Playbook Notes (from prior builds)\n\n",
+                            );
+                            for rule in &matched {
+                                md.push_str(&format!("- {}\n", rule.context));
+                            }
+                            self.write_in_file(worktree, "playbook.md", &md)?;
+                        }
+                    }
+                    Err(e) => warn!("playbook: failed to parse playbook.toml: {e}"),
+                },
+                Err(e) => warn!("playbook: failed to read playbook.toml: {e}"),
             }
         }
 

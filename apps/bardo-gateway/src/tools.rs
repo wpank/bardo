@@ -107,6 +107,12 @@ impl ToolTracker {
         self.usage.remove(session_id);
         self.request_counts.remove(session_id);
     }
+
+    /// Retain only sessions that pass the predicate. Used by session eviction.
+    pub fn retain_sessions(&self, mut keep: impl FnMut(&str) -> bool) {
+        self.usage.retain(|k, _| keep(k));
+        self.request_counts.retain(|k, _| keep(k));
+    }
 }
 
 #[cfg(test)]

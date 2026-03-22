@@ -1,47 +1,14 @@
-//! `bardo-gateway` — inference gateway and provider router.
+//! CLI entry point for the standalone bardo-gateway binary.
 //!
-//! Proxies LLM requests to Anthropic and OpenAI APIs with:
-//! - Auto-detection of request format (Anthropic Messages vs OpenAI Chat Completions)
-//! - Moka async cache with LRU + TTL for exact request deduplication
-//! - Tier-based model routing (T0 suppression, T1 Haiku, T2 Opus/Sonnet)
-//! - Per-session cost tracking
-//! - Tool definition pruning for unused tools
-//! - JSON key normalization for better cache hit rates
-//! - Cost tracking headers on every response
-//! - X-Api-Key authentication
+//! When embedded inside mori, the library's `start_server()` is called directly
+//! with a `GatewayConfig` — this binary is not used.
 
-mod auth;
-mod cache;
-mod error;
-mod format;
-mod handler;
-mod prefix;
-mod pricing;
-mod provider;
-mod session;
-mod sse;
-mod state;
-mod tier;
-mod tools;
-
-use std::sync::Arc;
-
-use axum::{
-    Router, middleware,
-    routing::{get, post},
-};
 use clap::Parser;
-use dashmap::DashMap;
-use pricing::default_pricing;
-
-use state::AppState;
+use bardo_gateway::GatewayConfig;
 
 /// Bardo inference gateway.
 #[derive(Parser)]
-#[command(
-    name = "bardo-gateway",
-    about = "Inference gateway and provider router"
-)]
+#[command(name = "bardo-gateway", about = "Inference gateway and provider router")]
 struct Cli {
     /// Port to listen on.
     #[arg(short, long, default_value = "4000")]
@@ -62,6 +29,22 @@ struct Cli {
     /// Cache TTL in seconds.
     #[arg(long, default_value = "3600")]
     ttl: u64,
+
+    /// Maximum request body size in bytes (default: 10MB).
+    #[arg(long, default_value = "10485760")]
+    max_body_size: usize,
+
+    /// Maximum concurrent in-flight requests (0 = unlimited).
+    #[arg(long, default_value = "256")]
+    max_concurrent: usize,
+
+    /// Maximum idle connections per upstream host.
+    #[arg(long, default_value = "64")]
+    pool_max_idle: usize,
+
+    /// Idle connection timeout in seconds.
+    #[arg(long, default_value = "90")]
+    pool_idle_timeout: u64,
 }
 
 #[tokio::main]
@@ -75,65 +58,32 @@ async fn main() -> anyhow::Result<()> {
 
     let cli = Cli::parse();
 
-    let api_key = cli
-        .api_key
-        .or_else(|| std::env::var("BARDO_GATEWAY_API_KEY").ok())
-        .unwrap_or_else(|| {
-            let key = uuid::Uuid::new_v4().to_string();
-            tracing::warn!(key = %key, "no API key set, generated random key");
-            key
-        });
-
-    let anthropic_api_key =
+    // Collect Anthropic API keys from environment.
+    let primary_key =
         std::env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
-
-    let openai_api_key = std::env::var("OPENAI_API_KEY")
-        .ok()
-        .filter(|k| !k.is_empty());
-    let has_openai = openai_api_key.is_some();
-
-    let bind_addr = format!("{}:{}", cli.bind, cli.port);
-
-    let state = AppState {
-        api_key: api_key.clone(),
-        anthropic_api_key,
-        openai_api_key,
-        http: reqwest::Client::builder()
-            .timeout(std::time::Duration::from_secs(300))
-            .build()?,
-        cache: Arc::new(cache::ResponseCache::new(cli.max_cache, cli.ttl)),
-        pricing: default_pricing(),
-        bind_addr: bind_addr.clone(),
-        stats: Arc::new(state::GatewayStats::new()),
-        sessions: Arc::new(DashMap::new()),
-        tool_tracker: Arc::new(tools::ToolTracker::new()),
-    };
-
-    // Routes that require authentication
-    let authed = Router::new()
-        .route("/v1/messages", post(handler::messages))
-        .route("/v1/chat/completions", post(handler::chat_completions))
-        .route("/v1/costs", get(handler::costs))
-        .layer(middleware::from_fn_with_state(
-            state.clone(),
-            auth::require_auth,
-        ));
-
-    // Public routes
-    let app = Router::new()
-        .route("/v1/health", get(handler::health))
-        .route("/v1/stats", get(handler::stats).with_state(state.clone()))
-        .merge(authed)
-        .layer(tower_http::trace::TraceLayer::new_for_http())
-        .with_state(state);
-
-    let listener = tokio::net::TcpListener::bind(&bind_addr).await?;
-    tracing::info!(addr = %bind_addr, api_key = %api_key, "bardo-gateway listening");
-
-    if has_openai {
-        tracing::info!("OpenAI provider enabled");
+    let mut anthropic_api_keys = vec![primary_key];
+    for i in 2..=10 {
+        if let Ok(key) = std::env::var(format!("ANTHROPIC_API_KEY_{i}")) {
+            if !key.is_empty() {
+                anthropic_api_keys.push(key);
+            }
+        }
     }
 
-    axum::serve(listener, app).await?;
-    Ok(())
+    let config = GatewayConfig {
+        port: cli.port,
+        bind: cli.bind,
+        api_key: cli.api_key.unwrap_or_default(),
+        anthropic_api_keys,
+        openai_api_key: std::env::var("OPENAI_API_KEY").ok().filter(|k| !k.is_empty()),
+        openrouter_api_key: std::env::var("OPENROUTER_API_KEY").ok().filter(|k| !k.is_empty()),
+        max_cache: cli.max_cache,
+        ttl: cli.ttl,
+        max_body_size: cli.max_body_size,
+        max_concurrent: cli.max_concurrent,
+        pool_max_idle: cli.pool_max_idle,
+        pool_idle_timeout: cli.pool_idle_timeout,
+    };
+
+    bardo_gateway::start_server(config).await
 }

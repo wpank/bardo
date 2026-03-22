@@ -30,7 +30,7 @@ pub(crate) async fn run_sequential(config: AppConfig) -> Result<()> {
     // Initialize subsystems
     let orch_config = OrchestratorConfig {
         repo_root: config.repo_root.clone(),
-        plans_dir: config.repo_root.join("plans"),
+        plans_dir: crate::orchestrator::paths::plans_root(&config.repo_root),
         no_review: config.no_review,
         skip_tests: config.skip_tests,
         max_iterations: config.max_iterations,
@@ -220,6 +220,10 @@ pub(crate) async fn run_sequential(config: AppConfig) -> Result<()> {
     // Re-apply CLI flags that should always take precedence over persisted config.
     if config.fast {
         state.config.fast_mode = true;
+    }
+    // Apply execution preset (after load so preset overrides persisted values)
+    if let Some(ref preset) = config.preset {
+        state.config.apply_preset(preset);
     }
     agent_pool.set_fast_mode(state.config.fast_mode);
     agent_pool.set_fallback_model(state.config.fallback_model.clone());

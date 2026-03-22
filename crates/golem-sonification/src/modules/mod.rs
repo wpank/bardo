@@ -70,6 +70,17 @@ pub struct PortDeclaration {
     pub default_value: f32,
 }
 
+/// A cable connecting one module's output port to another module's input port.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PatchCable {
+    /// Source port.
+    pub from: PortId,
+    /// Destination port.
+    pub to: PortId,
+    /// Signal attenuation factor (0.0-1.0).
+    pub attenuation: f32,
+}
+
 /// The processing interface for all rack modules.
 ///
 /// Modules read from named input ports and write to named output ports.

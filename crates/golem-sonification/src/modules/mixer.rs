@@ -143,3 +143,44 @@ impl Module for Mixer {
         self.levels = [1.0; 4];
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::modules::BLOCK_SIZE;
+
+    #[test]
+    fn test_mixer_weighted_sum() {
+        let mut mixer = Mixer::new("test_mixer");
+        mixer.set_param("level_1", 0.5);
+        mixer.set_param("level_2", 0.25);
+
+        let mut inputs = HashMap::new();
+        inputs.insert("in_1".to_string(), [1.0_f32; BLOCK_SIZE]);
+        inputs.insert("in_2".to_string(), [1.0_f32; BLOCK_SIZE]);
+
+        let mut outputs = HashMap::new();
+        mixer.process(&inputs, &mut outputs);
+
+        let out = outputs.get("out").expect("Mixer should produce 'out'");
+        // 1.0*0.5 + 1.0*0.25 = 0.75
+        for &sample in out {
+            assert!(
+                (sample - 0.75).abs() < f32::EPSILON,
+                "Mixer should sum weighted inputs, got {sample}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_mixer_no_panic() {
+        let mut mixer = Mixer::new("test_mixer");
+        let inputs = HashMap::new();
+        let mut outputs = HashMap::new();
+        mixer.process(&inputs, &mut outputs);
+        let out = outputs.get("out").expect("Mixer should produce 'out'");
+        for &sample in out {
+            assert!(sample.abs() < f32::EPSILON, "Empty mixer should produce silence");
+        }
+    }
+}

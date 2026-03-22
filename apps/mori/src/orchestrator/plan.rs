@@ -232,7 +232,13 @@ fn plan_num(base: &str) -> String {
     base.split('-').next().unwrap_or(base).to_string()
 }
 
-/// List all plan bases from the plans directory, sorted
+/// List all plan bases from the plans directory, sorted.
+///
+/// Detects both layouts:
+/// - New: directories containing `plan.md` (e.g. `plans/01-workspace-scaffold/plan.md`)
+/// - Legacy: flat `.md` files (e.g. `plans/01-workspace-scaffold.md`)
+///
+/// If both exist for the same base name, the directory version wins.
 fn all_plan_bases(plans_dir: &Path) -> Result<Vec<String>> {
     let mut bases = Vec::new();
     if !plans_dir.exists() {
@@ -241,15 +247,31 @@ fn all_plan_bases(plans_dir: &Path) -> Result<Vec<String>> {
     for entry in std::fs::read_dir(plans_dir)? {
         let entry = entry?;
         let name = entry.file_name().to_string_lossy().to_string();
+
+        // New layout: directory with plan.md inside
+        if entry.path().is_dir()
+            && name.starts_with(|c: char| c.is_ascii_alphanumeric())
+            && entry.path().join("plan.md").exists()
+        {
+            bases.push(name);
+            continue;
+        }
+
+        // Legacy: flat .md files
         if name.starts_with(|c: char| c.is_ascii_alphanumeric())
             && name.ends_with(".md")
             && name != "CONTEXT.md"
         {
             let base = name.trim_end_matches(".md").to_string();
-            bases.push(base);
+            // Don't add if we already found a directory version
+            if !bases.contains(&base) {
+                bases.push(base);
+            }
         }
     }
     bases.sort();
+    // Deduplicate (directory version wins over flat file)
+    bases.dedup();
     Ok(bases)
 }
 
@@ -325,7 +347,7 @@ pub fn discover_plans(plans_dir: &Path, specs: &[String]) -> Result<Vec<PlanInfo
                 continue;
             }
             seen.insert(base.clone());
-            let path = plans_dir.join(format!("{base}.md"));
+            let path = crate::orchestrator::paths::plan_doc(plans_dir, &base);
             if !path.exists() {
                 bail!("Plan file not found: {}", path.display());
             }

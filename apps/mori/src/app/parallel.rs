@@ -99,7 +99,8 @@ fn inject_implementer_context_in_worktree(
     }
     let artifact_root = repo_root.join("tmp/bardo-artifacts");
     let _ = std::fs::create_dir_all(&artifact_root);
-    let registry_root = repo_root.join("plans/context/registry");
+    let plans_dir = crate::orchestrator::paths::plans_root(repo_root);
+    let registry_root = crate::orchestrator::paths::registry_dir(&plans_dir);
     let _ = std::fs::create_dir_all(&registry_root);
     let artifacts = crate::orchestrator::ArtifactStore::new(artifact_root);
     let registry = crate::orchestrator::Registry::new(registry_root);
@@ -370,7 +371,7 @@ pub(crate) async fn execute_actions(
                 // Conditionally run terminal render and golem lifecycle gates
                 // based on which crates the plan touches.
                 let plan_num = plan.split('-').next().unwrap_or(plan);
-                let plan_path = config.repo_root.join("plans").join(format!("{}.md", plan));
+                let plan_path = crate::orchestrator::paths::plan_doc(&crate::orchestrator::paths::plans_root(&config.repo_root), plan);
                 let plan_content = std::fs::read_to_string(&plan_path).unwrap_or_default();
 
                 if crate::orchestrator::gates::plan_touches_crate(&plan_content, "bardo-terminal") {
@@ -503,7 +504,7 @@ pub(crate) async fn execute_actions(
 
                         let plan_num = plan.split('-').next().unwrap_or(plan).to_string();
                         let pi = crate::orchestrator::plan::discover_plans(
-                            &config.repo_root.join("plans"),
+                            &crate::orchestrator::paths::plans_root(&config.repo_root),
                             &[plan_num],
                         )
                         .ok()
@@ -612,7 +613,7 @@ pub(crate) async fn execute_actions(
                 } else {
                     let plan_num = plan.split('-').next().unwrap_or(plan);
                     let plan_info = crate::orchestrator::plan::discover_plans(
-                        &config.repo_root.join("plans"),
+                        &crate::orchestrator::paths::plans_root(&config.repo_root),
                         &[plan_num.to_string()],
                     )
                     .ok()
@@ -1295,7 +1296,7 @@ pub(crate) async fn execute_actions(
 
                 let plan_num = plan.split('-').next().unwrap_or(plan);
                 let pi = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[plan_num.to_string()],
                 )
                 .ok()
@@ -1399,7 +1400,7 @@ pub(crate) async fn execute_actions(
 
                 let plan_num = plan.split('-').next().unwrap_or(plan);
                 let pi = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[plan_num.to_string()],
                 )
                 .ok()
@@ -1587,7 +1588,7 @@ pub(crate) async fn execute_actions(
 
                 let plan_num = plan.split('-').next().unwrap_or(plan);
                 let pi = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[plan_num.to_string()],
                 )
                 .ok()
@@ -1758,7 +1759,7 @@ pub(crate) async fn execute_actions(
 
                 let plan_num = plan.split('-').next().unwrap_or(plan);
                 let pi = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[plan_num.to_string()],
                 )
                 .ok()
@@ -1925,7 +1926,7 @@ pub(crate) async fn execute_actions(
                 );
                 let plan_num = plan.split('-').next().unwrap_or(plan);
                 if let Some(pi) = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[plan_num.to_string()],
                 )
                 .ok()
@@ -1988,7 +1989,7 @@ pub(crate) async fn execute_actions(
                 );
                 let plan_num = plan.split('-').next().unwrap_or(plan);
                 if let Some(pi) = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[plan_num.to_string()],
                 )
                 .ok()
@@ -2177,7 +2178,7 @@ pub(crate) async fn execute_actions(
                 );
                 let prefix = plan.split('-').next().unwrap_or(plan).to_string();
                 if let Some(pi) = crate::orchestrator::plan::discover_plans(
-                    &config.repo_root.join("plans"),
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
                     &[prefix],
                 )
                 .ok()
@@ -2185,7 +2186,8 @@ pub(crate) async fn execute_actions(
                 {
                     let artifact_root = config.repo_root.join("tmp/bardo-artifacts");
                     let _ = std::fs::create_dir_all(&artifact_root);
-                    let registry_root = config.repo_root.join("plans/context/registry");
+                    let plans_dir = crate::orchestrator::paths::plans_root(&config.repo_root);
+                    let registry_root = crate::orchestrator::paths::registry_dir(&plans_dir);
                     let _ = std::fs::create_dir_all(&registry_root);
                     let artifacts = crate::orchestrator::ArtifactStore::new(artifact_root);
                     let registry = crate::orchestrator::Registry::new(registry_root);
@@ -2320,7 +2322,7 @@ pub(crate) async fn execute_actions(
                 .and_then(|cl| cl.tasks.iter().find(|t| t.id == *task_str).cloned());
 
             let pi = crate::orchestrator::plan::discover_plans(
-                &config.repo_root.join("plans"),
+                &crate::orchestrator::paths::plans_root(&config.repo_root),
                 &[plan_base.split('-').next().unwrap_or(plan_base).to_string()],
             )
             .ok()
@@ -2607,7 +2609,7 @@ pub(crate) async fn execute_actions(
                 .collect();
 
             let pi = crate::orchestrator::plan::discover_plans(
-                &config.repo_root.join("plans"),
+                &crate::orchestrator::paths::plans_root(&config.repo_root),
                 &[plan_base
                     .split('-')
                     .next()
@@ -2954,7 +2956,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
     // Initialize subsystems
     let orch_config = OrchestratorConfig {
         repo_root: config.repo_root.clone(),
-        plans_dir: config.repo_root.join("plans"),
+        plans_dir: crate::orchestrator::paths::plans_root(&config.repo_root),
         no_review: config.no_review,
         skip_tests: config.skip_tests,
         max_iterations: config.max_iterations,
@@ -3405,6 +3407,17 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
         state.plans.len(),
     );
 
+    // Pre-populate task checklist cache for all plans so task_weighted_progress
+    // returns a stable count from the first frame (avoids 159→1909 flickering).
+    let plan_bases: Vec<String> = state.plans.iter().map(|p| p.base.clone()).collect();
+    for base in &plan_bases {
+        state.ensure_checklist_cached(base);
+    }
+    info!(
+        "Checklist cache seeded: {} plans cached",
+        state.plan_task_cache.len(),
+    );
+
     // Build wave structure for TUI display (mirrors the sequential run() path)
     if let Ok(dag) =
         crate::orchestrator::PlanDag::from_plans_and_tasks(&orchestrator.plans, &task_files)
@@ -3434,6 +3447,10 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
     }
     if config.express {
         state.config.express_mode = true;
+    }
+    // Apply execution preset (after load so preset overrides persisted values)
+    if let Some(ref preset) = config.preset {
+        state.config.apply_preset(preset);
     }
     pool.set_fast_mode(state.config.fast_mode);
     pool.set_fallback_model(state.config.fallback_model.clone());
@@ -3732,6 +3749,45 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                     );
                                     let _ = persistence.append_task_event(&event);
                                 }
+
+                                // --- Episode logging (memory system) ---
+                                {
+                                    let pa = state.parallel_agents.iter()
+                                        .find(|p| p.instance_id == *iid);
+                                    let ep_model = pa.map(|p| p.model.clone())
+                                        .unwrap_or_default();
+                                    let ep_output_tokens = pa.map(|p| p.output_tokens)
+                                        .unwrap_or(0);
+                                    let ep_cost = pa.map(|p| p.cost_usd)
+                                        .unwrap_or(0.0);
+                                    let ep_role = role.label().to_string();
+                                    for task_id in &instance_tasks {
+                                        let started_key = format!("{}:{}", task_id.plan, task_id.task);
+                                        let duration = state.task_started_at.get(&started_key)
+                                            .map(|t| t.elapsed().as_secs() as u32)
+                                            .unwrap_or(0);
+                                        let ep = crate::orchestrator::memory::Episode {
+                                            id: format!("{}:{}:{}", task_id.plan, task_id.task,
+                                                chrono::Utc::now().to_rfc3339()),
+                                            timestamp: chrono::Utc::now().to_rfc3339(),
+                                            plan_id: task_id.plan.clone(),
+                                            task_id: task_id.task.clone(),
+                                            role: ep_role.clone(),
+                                            model: ep_model.clone(),
+                                            files_changed: Vec::new(),
+                                            input_tokens,
+                                            output_tokens: ep_output_tokens,
+                                            cost_usd: ep_cost,
+                                            gate_passed: true,
+                                            iterations: 1,
+                                            duration_secs: duration,
+                                            error_signature: None,
+                                            reflection: None,
+                                        };
+                                        crate::orchestrator::memory::log_episode(&config.repo_root, &ep);
+                                    }
+                                }
+
                                 state.add_log("executor", &format!(
                                     "Instance {} done ({} tasks, {}chars, {}tok)",
                                     iid, instance_tasks.len(), output_len, input_tokens,
@@ -4312,7 +4368,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
 
                                             let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                             let pi = crate::orchestrator::plan::discover_plans(
-                                                &config.repo_root.join("plans"), &[plan_num],
+                                                &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                             ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
 
                                             if let Some(ref plan_info) = pi {
@@ -4377,7 +4433,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                             // Spawn critic
                                             let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                             let pi = crate::orchestrator::plan::discover_plans(
-                                                &config.repo_root.join("plans"), &[plan_num],
+                                                &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                             ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
 
                                             if let Some(ref plan_info) = pi {
@@ -4460,7 +4516,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                                 // Re-spawn critic
                                                 let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                                 let pi = crate::orchestrator::plan::discover_plans(
-                                                    &config.repo_root.join("plans"), &[plan_num],
+                                                    &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                                 ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
                                                 if let Some(ref plan_info) = pi {
                                                     let iid_critic = format!("critic:{plan}");
@@ -4545,7 +4601,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
 
                                             let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                             let pi = crate::orchestrator::plan::discover_plans(
-                                                &config.repo_root.join("plans"), &[plan_num],
+                                                &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                             ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
 
                                             if let Some(ref plan_info) = pi {
@@ -4629,7 +4685,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                                 ), LogLevel::Warn);
                                                 let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                                 let pi = crate::orchestrator::plan::discover_plans(
-                                                    &config.repo_root.join("plans"), &[plan_num],
+                                                    &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                                 ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
                                                 if let Some(ref plan_info) = pi {
                                                     let iid_critic = format!("critic:{plan}");
@@ -4675,7 +4731,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
 
                                     let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                     let pi = crate::orchestrator::plan::discover_plans(
-                                        &config.repo_root.join("plans"), &[plan_num],
+                                        &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                     ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
 
                                     if let Some(ref plan_info) = pi {
@@ -4753,7 +4809,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
 
                                         let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                         let pi = crate::orchestrator::plan::discover_plans(
-                                            &config.repo_root.join("plans"), &[plan_num],
+                                            &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                         ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
 
                                         if let Some(ref plan_info) = pi {
@@ -4925,7 +4981,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                 // Re-spawn the same agent
                                 let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                 let pi = crate::orchestrator::plan::discover_plans(
-                                    &config.repo_root.join("plans"), &[plan_num],
+                                    &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                 ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
                                 if let Some(ref plan_info) = pi {
                                     let iteration = executor.plan_iteration(&plan);
@@ -5029,7 +5085,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                     // Re-discover plan info and spawn scribe
                                     let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                     let pi = crate::orchestrator::plan::discover_plans(
-                                        &config.repo_root.join("plans"), &[plan_num],
+                                        &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                     ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
                                     if let Some(ref plan_info) = pi {
                                         let worktree_fallback = worktree_mgr.worktree_base().join(format!("plan-{plan}"));
@@ -5112,7 +5168,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                         state.plan_review_stage.insert(plan.clone(), crate::state::ReviewStage::CriticPending);
                                         let plan_num = plan.split('-').next().unwrap_or(&plan).to_string();
                                         let pi = crate::orchestrator::plan::discover_plans(
-                                            &config.repo_root.join("plans"), &[plan_num],
+                                            &crate::orchestrator::paths::plans_root(&config.repo_root), &[plan_num],
                                         ).ok().and_then(|ps| ps.into_iter().find(|p| p.base == plan));
                                         if let Some(ref plan_info) = pi {
                                             let worktree_fallback = worktree_mgr.worktree_base().join(format!("plan-{plan}"));
@@ -8042,7 +8098,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                                     }
                                                     state.complete = false;
                                                     // Clear persisted state so executor doesn't restore old completions
-                                                    let _ = std::fs::remove_file(config.repo_root.join("tmp/plan-runs/task-state.json"));
+                                                    let _ = std::fs::remove_file(crate::orchestrator::paths::runs_dir(&config.repo_root).join("task-state.json"));
                                                     let actions = executor.schedule_next_with_budget(Some(active_agent_count(&state)));
                                                     execute_actions(
                                                         actions, &mut executor, &mut pool, &worktree_mgr, &mut state,
@@ -8091,7 +8147,7 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                                         }
                                                         state.complete = false;
                                                         // Clear persisted state so executor doesn't restore old completions
-                                                        let _ = std::fs::remove_file(config.repo_root.join("tmp/plan-runs/task-state.json"));
+                                                        let _ = std::fs::remove_file(crate::orchestrator::paths::runs_dir(&config.repo_root).join("task-state.json"));
                                                         let actions = executor.schedule_next_with_budget(Some(active_agent_count(&state)));
                                                         execute_actions(
                                                             actions, &mut executor, &mut pool, &worktree_mgr, &mut state,

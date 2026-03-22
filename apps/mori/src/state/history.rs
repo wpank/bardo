@@ -16,7 +16,7 @@ pub struct ThreadHistory {
 
 impl ThreadHistory {
     pub fn path(repo_root: &Path) -> PathBuf {
-        repo_root.join("tmp/plan-runs/thread-history.json")
+        crate::orchestrator::paths::runs_dir(repo_root).join("thread-history.json")
     }
 
     pub fn load(repo_root: &Path) -> Result<Self> {
