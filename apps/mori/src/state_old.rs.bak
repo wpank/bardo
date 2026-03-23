@@ -1,0 +1,200 @@
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct PipelineStatus {
+    pub run_id: String,
+    pub batch_id: String,
+    pub plans_total: u32,
+    pub plans_completed: u32,
+    pub plans_remaining: u32,
+    pub current_plan: String,
+    pub current_phase: String,
+    pub current_iteration: u32,
+    pub started_at: String,
+    pub last_activity: String,
+    pub pid: u32,
+    pub anvil_pid: u32,
+    pub hang_threshold_seconds: u32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct PipelineEvent {
+    pub ts: String,
+    pub event: String,
+    pub plan: String,
+    pub phase: String,
+    pub iter: u32,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct AppState {
+    pub status: Option<PipelineStatus>,
+    pub events: Vec<PipelineEvent>,
+    pub log_tail: Vec<String>,
+    pub current_plan: String,
+    pub anvil_running: bool,
+    pub anvil_pid: u32,
+    pub pipeline_running: bool,
+    pub run_pid: u32,
+    /// All plan names discovered from the status/events (for display)
+    pub all_plans: Vec<PlanEntry>,
+    pub selected_plan_idx: usize,
+    pub log_scroll: usize,
+    pub message_input: String,
+    pub input_mode: InputMode,
+}
+
+#[derive(Debug, Clone, Default, PartialEq)]
+pub enum InputMode {
+    #[default]
+    Normal,
+    Inject,
+}
+
+#[derive(Debug, Clone)]
+pub struct PlanEntry {
+    pub name: String,
+    pub status: PlanStatus,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum PlanStatus {
+    Completed,
+    Active,
+    Pending,
+    Skipped,
+}
+
+pub struct StateReader {
+    base_dir: PathBuf,
+}
+
+fn pid_alive(pid: u32) -> bool {
+    if pid == 0 {
+        return false;
+    }
+    std::process::Command::new("kill")
+        .args(["-0", &pid.to_string()])
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false)
+}
+
+impl StateReader {
+    pub fn new(base_dir: PathBuf) -> Self {
+        Self { base_dir }
+    }
+
+    fn status_file(&self) -> PathBuf {
+        self.base_dir.join("tmp/plan-runs/status.json")
+    }
+
+    fn events_file(&self) -> PathBuf {
+        self.base_dir.join("tmp/plan-runs/events.jsonl")
+    }
+
+    fn log_file(&self) -> PathBuf {
+        self.base_dir.join("tmp/plan-runs/active-run.log")
+    }
+
+    fn current_plan_file(&self) -> PathBuf {
+        self.base_dir.join("tmp/plan-runs/current-plan.txt")
+    }
+
+    fn anvil_pid_file(&self) -> PathBuf {
+        self.base_dir.join("tmp/anvil.pid")
+    }
+
+    fn run_pid_file(&self) -> PathBuf {
+        self.base_dir.join("tmp/plan-runs/run.pid")
+    }
+
+    pub fn read_status(&self) -> Option<PipelineStatus> {
+        let content = std::fs::read_to_string(self.status_file()).ok()?;
+        serde_json::from_str(&content).ok()
+    }
+
+    pub fn read_events(&self, max: usize) -> Vec<PipelineEvent> {
+        let content = std::fs::read_to_string(self.events_file()).unwrap_or_default();
+        let lines: Vec<&str> = content.lines().collect();
+        let start = lines.len().saturating_sub(max);
+        lines[start..]
+            .iter()
+            .filter_map(|line| serde_json::from_str(line).ok())
+            .collect()
+    }
+
+    pub fn read_log_tail(&self, lines: usize) -> Vec<String> {
+        let content = std::fs::read_to_string(self.log_file()).unwrap_or_default();
+        let all_lines: Vec<String> = content.lines().map(String::from).collect();
+        let start = all_lines.len().saturating_sub(lines);
+        all_lines[start..].to_vec()
+    }
+
+    pub fn read_current_plan(&self) -> String {
+        std::fs::read_to_string(self.current_plan_file())
+            .unwrap_or_default()
+            .trim()
+            .to_string()
+    }
+
+    pub fn check_anvil(&self) -> (bool, u32) {
+        let pid_str = std::fs::read_to_string(self.anvil_pid_file()).unwrap_or_default();
+        let pid: u32 = pid_str.trim().parse().unwrap_or(0);
+        (pid_alive(pid), pid)
+    }
+
+    pub fn check_pipeline(&self) -> (bool, u32) {
+        let pid_str = std::fs::read_to_string(self.run_pid_file()).unwrap_or_default();
+        let pid: u32 = pid_str.trim().parse().unwrap_or(0);
+        (pid_alive(pid), pid)
+    }
+
+    pub fn refresh(&self, state: &mut AppState) {
+        state.status = self.read_status();
+        state.events = self.read_events(200);
+        state.log_tail = self.read_log_tail(200);
+        state.current_plan = self.read_current_plan();
+        let (anvil_alive, anvil_pid) = self.check_anvil();
+        state.anvil_running = anvil_alive;
+        state.anvil_pid = anvil_pid;
+        let (pipeline_alive, run_pid) = self.check_pipeline();
+        state.pipeline_running = pipeline_alive;
+        state.run_pid = run_pid;
+
+        // Build plan list from events
+        let mut plans: Vec<PlanEntry> = Vec::new();
+        let mut seen_plans: std::collections::HashSet<String> = Default::default();
+
+        for event in &state.events {
+            if !event.plan.is_empty() && !seen_plans.contains(&event.plan) {
+                seen_plans.insert(event.plan.clone());
+                let status = match event.event.as_str() {
+                    "plan_done" => PlanStatus::Completed,
+                    "plan_skip" => PlanStatus::Skipped,
+                    _ => {
+                        if event.plan == state.current_plan {
+                            PlanStatus::Active
+                        } else {
+                            PlanStatus::Pending
+                        }
+                    }
+                };
+                plans.push(PlanEntry {
+                    name: event.plan.clone(),
+                    status,
+                });
+            }
+        }
+
+        // Update statuses for plans we know about
+        for plan in plans.iter_mut() {
+            if plan.name == state.current_plan && state.pipeline_running {
+                plan.status = PlanStatus::Active;
+            }
+        }
+
+        state.all_plans = plans;
+    }
+}

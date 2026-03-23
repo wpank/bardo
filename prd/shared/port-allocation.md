@@ -1,0 +1,44 @@
+# Port Allocation [SPEC]
+
+> **Document Type**: REF (normative) | **Referenced by**: `15-dev/`, `08-vault/`, `07-tools/` | **Last Updated**: 2026-03-08
+>
+> Canonical port assignments for all local development services. When adding a new service, allocate a port here first to avoid conflicts.
+
+> **Reader orientation:** This document defines the canonical port assignments for all Bardo local development services. It belongs to the `shared/` reference layer and is the single source of truth for avoiding port conflicts during local development. When adding a new service (vault debug UI, Anvil RPC, Styx relay, indexer, etc.), allocate a port here first. See `prd2/shared/glossary.md` for full term definitions.
+
+---
+
+## Port Map (Normative)
+
+| Port  | Service                       | Package                | Notes                                             |
+| ----- | ----------------------------- | ---------------------- | ------------------------------------------------- |
+| 3000  | Vault debug UI                | `packages/vault/ui`    | Vite dev server                                   |
+| 3001  | Dev debug UI                  | `packages/dev/ui`      | React + Vite                                      |
+| 3002  | Portal local server           | `packages/portal`      | `npx @bardo portal` -- agent management dashboard |
+| 3003  | Dev browser SPA               | `packages/dev/browser` | Browser-based development SPA                     |
+| 5100  | Otterscan block explorer      | Docker (external)      | Zero-config, no database                          |
+| 8080  | Vault tool server (HTTP+SSE)  | `packages/vault`       | Standalone HTTP transport                         |
+| 8081  | Vault tool server (WebSocket) | `packages/vault`       | WebSocket transport                               |
+| 8545  | Anvil RPC                     | `packages/dev`         | Default EVM JSON-RPC endpoint                     |
+| 8443  | Local Styx WebSocket (dev TLS)| `bardo-styx`           | Development mode, TLS                             |
+| 42069 | Ponder indexer                | `packages/dev`         | PGlite-backed local indexer                       |
+| 42070 | Indexer translation proxy     | `packages/dev`         | Translates The Graph queries to Ponder format     |
+
+---
+
+## Conflict Resolution
+
+- `apps/web` (Next.js) defaults to port 3000 in production. During local development with `pnpm testnet`, the vault debug UI occupies 3000. If both need to run simultaneously, start `apps/web` with `PORT=3003 pnpm dev`.
+- Anvil always binds to 8545. If another Anvil or Hardhat instance is running, kill it first or use `--port` to override.
+- The indexer proxy port is always `indexerPort + 1` (default: 42069 + 1 = 42070).
+
+---
+
+## Reserved Ranges
+
+| Range       | Purpose                                                                   |
+| ----------- | ------------------------------------------------------------------------- |
+| 3000-3009   | UI dev servers (vault, dev, portal, browser)                              |
+| 8080-8099   | Tool server instances (future: per-agent servers during swarm simulation) |
+| 8545        | Anvil RPC (fixed)                                                         |
+| 42069-42079 | Indexer services                                                          |

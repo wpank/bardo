@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Worktrees receive physical copies of plans/ and prd2/ — no symlinks.
+# This hook is a safety net: remove any accidentally re-introduced symlinks.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+for dir in plans prd2; do
+  target="$REPO_ROOT/$dir"
+  if [[ -L "$target" ]]; then
+    rm "$target"
+    mkdir -p "$target"
+    echo "bardo: removed stale symlink for $dir/ (worktrees use copies, not symlinks)"
+  fi
+  git rm --cached --quiet "$dir" 2>/dev/null || true
+done

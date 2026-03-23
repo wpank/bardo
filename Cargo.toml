@@ -1,0 +1,182 @@
+[workspace]
+resolver = "2"
+members = [
+    # Shared compute primitives (zero internal deps)
+    "crates/bardo-primitives",
+    # Zero-Golem inference protocol types (shared between gateway and golem-inference)
+    "crates/bardo-inference",
+    # Layer 0
+    "crates/golem-core",
+    # Layer 1
+    "crates/golem-runtime",
+    # Layer 2
+    "crates/golem-heartbeat",
+    "crates/golem-grimoire",
+    "crates/golem-daimon",
+    "crates/golem-mortality",
+    "crates/golem-dreams",
+    "crates/golem-context",
+    # Layer 3
+    "crates/golem-safety",
+    # Layer 4
+    "crates/golem-inference",
+    "crates/golem-chain",
+    "crates/golem-chain-intelligence",
+    "crates/golem-triage",
+    "crates/golem-ta",
+    "crates/golem-oneirography",
+    "crates/golem-tools",
+    # Layer 5
+    "crates/golem-coordination",
+    # Layer 6
+    "crates/golem-surfaces",
+    "crates/golem-creature",
+    "crates/golem-engagement",
+    "crates/golem-sonification",
+    # Layer 7
+    "crates/golem-binary",
+    # Apps
+    "apps/bardo-gateway",
+    "apps/bardo-terminal",
+    "apps/bardo-styx",
+    "apps/bardo-compute",
+    "apps/mirage-rs",
+    # Mori (orchestration infrastructure)
+    "crates/mori-index",
+    "crates/mori-context",
+    "apps/mori",
+    "crates/mori-mcp",
+    "apps/mori-service",
+    # Test harness
+    "tests/harness",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "Proprietary"
+authors = ["Bardo <engineering@bardo.run>"]
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.50", features = ["full"] }
+futures = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+# Logging / tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# HTTP / Web
+axum = { version = "0.8", features = ["ws"] }
+reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls"] }
+tower = { version = "0.5", features = ["limit", "load-shed"] }
+tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
+
+# Ethereum
+alloy = { version = "1.7", features = ["full"] }
+alloy-primitives = "1"
+alloy-sol-types = "1"
+revm = { version = "36.0", features = ["std"] }
+
+# Database
+rusqlite = { version = "0.32", features = ["bundled"] }
+sled = "0.34"
+
+# Serialization (binary)
+bincode = "1"
+
+# Vector DB / Embeddings
+lancedb = "0.27"
+fastembed = "5.13"
+
+# TUI (0.28+ pulls instability→darling requiring rustc 1.88; 0.27 is the last 1.85-compatible)
+ratatui = "0.27"
+crossterm = { version = "0.28", features = ["event-stream"] }
+
+# Caching
+moka = { version = "0.12", features = ["future"] }
+blake3 = "1"
+
+# Code intelligence (AST parsing, indexing)
+tree-sitter = "0.24"
+tree-sitter-rust = "0.23"
+
+# Audio (crates enable with `rodio = { workspace = true, optional = true }` + feature)
+rodio = "0.22"
+
+# Full-text search (Grimoire BM25, Plan 69)
+tantivy = "0.22"
+
+# Observability (Plans 39c, 63b)
+opentelemetry = { version = "0.27", features = ["metrics"] }
+opentelemetry-otlp = { version = "0.27", features = ["grpc-tonic"] }
+tracing-opentelemetry = "0.28"
+
+# Testing
+proptest = "1.10"
+criterion = { version = "0.5", features = ["html_reports"] }
+
+# Zero-copy serialization / memory-mapped indexes
+rkyv = { version = "0.8", features = ["bytecheck"] }
+memmap2 = "0.9"
+
+# Incremental computation
+salsa = "0.26"
+
+# Utilities
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+rand = "0.8"
+bytes = "1"
+dashmap = "6"
+parking_lot = "0.12"
+clap = { version = "4", features = ["derive"] }
+async-trait = "0.1"
+futures-util = "0.3"
+lru = "0.12"
+sysinfo = "0.33"
+jsonrpsee = { version = "0.26", features = ["server", "http-client"] }
+k256 = { version = "0.13", features = ["ecdsa"] }
+zeroize = { version = "1", features = ["derive"] }
+sha2 = "0.10"
+p256 = "0.13"
+wasmtime = "26"
+bumpalo = "3"
+tokio-tungstenite = "0.26"
+tokio-stream = "0.1"
+tracing-appender = "0.2"
+fastrand = "2"
+serde_yaml = "0.9"
+dirs = "6"
+regex = "1"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+unwrap_used = "deny"
+expect_used = "warn"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.dev]
+debug = true

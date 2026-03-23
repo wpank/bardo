@@ -1,0 +1,29 @@
+# Match workspace rust-version
+msrv = "1.85"
+
+# Complexity thresholds
+cognitive-complexity-threshold = 30
+too-many-arguments-threshold = 8
+type-complexity-threshold = 300
+large-error-threshold = 256
+
+# Allow expect/unwrap in tests (unwrap_used is denied in production)
+allow-expect-in-tests = true
+allow-unwrap-in-tests = true
+allow-dbg-in-tests = true
+allow-print-in-tests = true
+
+# Domain terms that are valid in doc comments
+doc-valid-idents = ["EVM", "RPC", "JSON-RPC", "BM25", "WASM", "LLM", "TUI", "DWARF"]
+
+# Disallow types that cause subtle bugs
+disallowed-types = [
+    { path = "std::sync::Mutex", reason = "Use parking_lot::Mutex (no poisoning, faster)" },
+    { path = "std::sync::RwLock", reason = "Use parking_lot::RwLock" },
+]
+
+# Disallow methods that are process-global or error-prone
+disallowed-methods = [
+    { path = "std::env::set_current_dir", reason = "Process-global mutation; use absolute paths" },
+    { path = "std::thread::sleep", reason = "Use tokio::time::sleep in async code" },
+]
