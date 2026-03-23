@@ -18,6 +18,30 @@ Multi-agent coordination layer. Golems in a clade communicate not through direct
 
 **Bloodstain ingestion** — when an agent dies, it deposits a `Bloodstain`: a compressed record of the conditions that led to its death, the `DeathCause`, and its final `VitalityState`. Bloodstains are treated as high-weight wisdom signals for the clade members that observe them. A cluster of bloodstains in similar market conditions is a strong signal about a dangerous regime.
 
+## Stigmergy
+
+Indirect coordination via environmental modification. Grasse (1959). Ants deposit pheromones; golems deposit signals. No central orchestration — agents respond to the field, not to each other directly. The field is the communication medium.
+
+## Pheromone Decay Semantics
+
+| Layer | Decay Rate | Notes |
+|-------|-----------|-------|
+| `THREAT` | High | Fades within a few ticks unless reinforced by multiple agents. Prevents false alarms from lingering. |
+| `OPPORTUNITY` | Medium | Persists long enough to attract nearby agents but doesn't outlast the window it describes. |
+| `WISDOM` | Slow | Persists across many ticks. Requires minimum epistemic fitness to deposit — low-fitness agents cannot write to this layer. |
+
+## Styx Relay
+
+For remote clades, the pheromone field propagates through the Styx relay layer. Mycorrhizal network model (Simard 2012): signals travel between nodes without direct peer-to-peer communication. Local clades share a ring buffer; remote clades connect through the relay with additional latency and attenuation.
+
+## Information Economics
+
+Grossman-Stiglitz (1980): freely shared alpha is immediately priced in. Golems share threats and structural signals, never raw alpha. Coordination value comes from the things other agents can act on without destroying the edge.
+
+Bloodstains are Zahavi handicap signals — the costliest possible signal, because the signaler paid with its existence. A cluster of bloodstains under similar market conditions is a strong prior about a dangerous regime. At ecosystem maturity the dead-to-living ratio is 27:1; the accumulated mortality record is the primary source of structural wisdom.
+
+Lethe knowledge commons prices queries at $0.002 via x402 micropayments.
+
 ## System Position
 
 `golem-coordination` depends on `golem-mortality` for `DeathCause` and `VitalityState`, and on `golem-core` for `BehavioralPhase`. The pheromone field itself is external infrastructure (likely a lightweight gossip protocol or shared-memory ring buffer for local clades).

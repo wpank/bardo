@@ -20,6 +20,18 @@
 
 **Background fibers for context health monitoring** — long-running tasks that watch for workspace staleness (e.g. Grimoire entries whose confidence has degraded since retrieval) and flag them for eviction. Runs at low priority and does not block the inference path.
 
+## Token Budget Scaling
+
+T2 gets full budget, T1 gets half, T0 gets none (no LLM call). For T2 and T1, the assembler runs a binary search over the ranked symbol set — symbols ranked by PageRank score — to find the maximum set that fits within budget without overflowing.
+
+## Intervention Lifecycle
+
+An `Intervention<T>` must be explicitly acknowledged and cleared per tick. It cannot linger across ticks. The type parameter ensures the handler is specific to the intervention type — there is no untyped enum to pattern-match on, so a `LiquidationEvent` intervention cannot be accidentally routed to a `RegimeChange` handler.
+
+## Allocation Efficiency
+
+The workspace assembly runs on the hot path between the gate decision and the LLM call. Pre-allocated slot buffers are reused across ticks where `ContextPolicy` permits. No heap allocation per tick in the common case.
+
 ## System Position
 
 `golem-context` sits between `golem-heartbeat`'s gate step and the actual LLM call. It depends on `golem-grimoire` for memory retrieval, `golem-mortality` for `EpistemicClock` data, and `golem-safety` for `ContextPolicy` enforcement. The workspace assembly happens on the hot path, so the design prioritizes allocation efficiency — pre-allocated slot buffers, reused across ticks where policy permits.

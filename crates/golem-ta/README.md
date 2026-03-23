@@ -20,6 +20,25 @@ Transitions carry a confidence score derived from the stability of the current B
 
 **`TaCorticalExtension`** — implements `golem_core::extension::Extension`. Runs the TDA pipeline on each heartbeat tick, writes the current regime and confidence to `CorticalState`, and feeds regime-change events to `golem-triage` for surprise scoring.
 
+## Filtration Process
+
+Price-volume data forms a point cloud. A Vietoris-Rips complex grows over this cloud as the scale parameter increases. Topological features — connected components (β₀) and loops (β₁) — are born at specific scales and die at others. Persistence = death - birth. High persistence means the feature is structurally significant and not an artifact of noise. Low persistence features are filtered out.
+
+## Betti Curve Interpretation
+
+| Signal | Meaning |
+|--------|---------|
+| β₀ high | Fragmented market structure — price action is disconnected across scales |
+| β₁ high + persistent | Range-bound — price is oscillating inside stable loops |
+| β₁ low | Trending — directional movement, few closed loops |
+| Unstable curves | Transition — topology is changing, destination regime unknown |
+
+## Hysteresis and Compute
+
+Regime commits only after the new signature persists for a minimum number of ticks. Confidence is derived from Betti curve stability — an unstable curve produces low confidence regardless of the regime label.
+
+TDA is the most compute-intensive step in the analysis pipeline. It runs at lower frequency than the heartbeat (every N ticks) and the result is cached between updates. The point cloud is bounded at approximately 100 points per window to keep simplex enumeration tractable.
+
 ## System Position
 
 `golem-ta` is an Extension, not a dependency of the heartbeat pipeline. It registers at a specific layer in the extension registry and runs before the heartbeat's analyze step. The regime classification in `CorticalState` is consumed by `golem-heartbeat` when making gating decisions and by `golem-daimon` for appraisal.

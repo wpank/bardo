@@ -21,7 +21,7 @@ arena.reset(); // all prior references are now invalid
 
 ### `cortical` — CorticalState, PadVector, BehavioralPhase, PlutchikEmotion
 
-`CorticalState` is a lock-free, cache-line-aligned signal surface shared between subsystems. It fits in 256 bytes (compile-time assertion) and is always heap-allocated inside an `Arc`:
+`CorticalState` is the 32-signal real-time self-model shared across all subsystems. It fits in 256 bytes (compile-time assertion) and is always heap-allocated inside an `Arc`. Signals are updated atomically via grouped write methods and read lock-free through the `somatic_bus`:
 
 ```rust
 let state = CorticalState::new();
@@ -61,7 +61,7 @@ Re-export of `bardo_primitives::InferenceTier` as `CognitiveTier`. Same type, di
 
 ### `event` — EventFabric, GolemEvent, EventPayload, Subsystem
 
-`EventFabric` is a publish/subscribe bus for `GolemEvent`. `Subsystem` tags events by source (Cortical, Chain, Grimoire, Inference, etc.).
+`EventFabric` is a publish/subscribe bus for `GolemEvent`, backed by `tokio::broadcast` internally. `Subsystem` tags events by source (Cortical, Chain, Grimoire, Inference, etc.). Extensions subscribe by declaring their `Subsystem` tag type; the fabric routes only relevant events to each subscriber.
 
 ### `extension` — Extension trait and ExtensionRegistry
 
@@ -83,12 +83,12 @@ impl Extension for MyExt {
 }
 ```
 
-`ExtensionRegistry` does topological ordering across all registered extensions before firing hooks. Call `registry.build()` once after registration; it panics on cycles or missing dependencies. Hook methods return action types where appropriate:
+`ExtensionRegistry` does topological ordering across all registered extensions before firing hooks. Call `registry.build()` once after registration; it panics on cycles or missing dependencies. The runtime ships 28 concrete extensions across 7 dependency layers. Hook methods return action types where appropriate:
 
 - `on_input` → `InputAction` (Pass, Transform, Suppress)
 - `on_tool_call` → `ToolAction` (Allow, Block, Modify)
 
-Full hook list: `on_session`, `on_input`, `on_before_agent_start`, `on_agent_start`, `on_turn_start`, `on_context`, `on_before_provider_request`, `on_tool_call`, `on_tool_execution_start/update/end`, `on_tool_result`, `on_turn_end`, `on_agent_end`, `on_after_turn`, `on_system_prompt`, `on_steer`, `on_send_message`, `on_debug`, `on_error`, `on_end`.
+Full hook list (20 hooks): `on_session`, `on_input`, `on_before_agent_start`, `on_agent_start`, `on_turn_start`, `on_context`, `on_before_provider_request`, `on_tool_call`, `on_tool_execution_start/update/end`, `on_tool_result`, `on_turn_end`, `on_agent_end`, `on_after_turn`, `on_system_prompt`, `on_steer`, `on_send_message`, `on_debug`, `on_error`, `on_end`.
 
 ### `id` — GolemId
 

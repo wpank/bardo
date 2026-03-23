@@ -18,12 +18,10 @@ use serde_json::Value;
 use crate::error::AppError;
 use crate::state::AppState;
 
-use super::estimator::{
-    estimate_input_tokens, estimate_provider_cost_usd, estimate_request_cost, usd_from_usdc,
-    usdc_from_usd,
-};
-use super::types::*;
-use super::verifier::verify_authorization_offchain;
+use super::estimator::{estimate_input_tokens, estimate_provider_cost_usd, estimate_request_cost};
+use mpp_core::currency::{usd_from_usdc, usdc_from_usd};
+use mpp_core::types::*;
+use mpp_core::verifier::verify_authorization;
 
 /// Generate a random 32-byte nonce.
 fn generate_nonce() -> alloy::primitives::FixedBytes<32> {
@@ -100,8 +98,8 @@ pub async fn mpp_payment(
 
             let payment_required = PaymentRequired {
                 amount,
-                asset: super::verifier::USDC_BASE,
-                chain_id: super::verifier::BASE_CHAIN_ID,
+                asset: mpp_core::verifier::USDC_BASE,
+                chain_id: mpp_core::verifier::BASE_CHAIN_ID,
                 recipient,
                 expiry: now_secs() + quote_validity,
                 intent: PaymentIntent::Charge,
@@ -144,7 +142,7 @@ pub async fn mpp_payment(
 
 /// Handle a Charge intent: verify authorization, run handler, settle, emit receipt.
 async fn handle_charge(
-    mpp_state: &super::MppState,
+    mpp_state: &mpp_core::MppState,
     mut request: Request<Body>,
     credential: PaymentCredential,
     next: Next,
@@ -153,7 +151,7 @@ async fn handle_charge(
     let spread_pct = mpp_state.config.default_spread;
 
     // Verify ERC-3009 signature off-chain.
-    verify_authorization_offchain(
+    verify_authorization(
         &credential.authorization,
         recipient,
         alloy::primitives::U256::ZERO,
@@ -181,7 +179,7 @@ async fn handle_charge(
 
 /// Handle a Session draw: check balance, run handler, draw actual cost, emit receipt.
 async fn handle_session_draw(
-    mpp_state: &super::MppState,
+    mpp_state: &mpp_core::MppState,
     mut request: Request<Body>,
     credential: PaymentCredential,
     next: Next,
@@ -343,7 +341,7 @@ pub async fn session_open(
     let recipient = mpp_state.config.recipient_address;
 
     // Verify the funding authorization.
-    verify_authorization_offchain(
+    verify_authorization(
         &payload.authorization,
         recipient,
         alloy::primitives::U256::ZERO,
@@ -402,7 +400,7 @@ pub async fn session_status(
 pub async fn session_close(
     State(state): State<AppState>,
     axum::extract::Path(session_id): axum::extract::Path<String>,
-) -> Result<axum::Json<super::session::SessionSettlement>, AppError> {
+) -> Result<axum::Json<mpp_core::session::SessionSettlement>, AppError> {
     let mpp_state = state
         .mpp
         .as_ref()
@@ -437,7 +435,7 @@ pub struct SessionStatusResponse {
     pub funded_amount: alloy::primitives::U256,
     pub drawn_amount: alloy::primitives::U256,
     pub remaining: alloy::primitives::U256,
-    pub status: super::session::MppSessionStatus,
+    pub status: mpp_core::session::SessionStatus,
     pub created_at: u64,
     pub expires_at: u64,
     pub draw_count: u64,

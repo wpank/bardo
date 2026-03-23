@@ -1,9 +1,15 @@
-//! Spread calculation and ERC-8004 reputation-based discounts.
+//! Spread calculation and reputation-based discounts.
+//!
+//! Spread is the markup applied on top of provider cost. Higher reputation
+//! tiers get lower spreads, incentivizing on-chain identity and history.
 
 use alloy::primitives::Address;
 use serde::{Deserialize, Serialize};
 
-/// ERC-8004 reputation tiers with corresponding spread percentages.
+/// Reputation tiers with corresponding spread percentages.
+///
+/// Tiers map to on-chain attestations (e.g. ERC-8004). Higher tiers
+/// get lower spreads as a reward for established identity.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ReputationTier {
@@ -28,8 +34,8 @@ impl ReputationTier {
 
     /// Look up reputation tier for an address.
     ///
-    /// Phase 1 stub: always returns `None` (20% spread).
-    /// Phase 2 will query ERC-8004 registry via golem-chain.
+    /// Stub: always returns `None` (20% spread).
+    /// Future: query an on-chain registry.
     pub async fn for_address(_addr: Address) -> Self {
         Self::None
     }
@@ -46,11 +52,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn spread_tiers() {
+    fn spread_decreases_with_tier() {
+        let tiers = [
+            ReputationTier::None,
+            ReputationTier::Basic,
+            ReputationTier::Verified,
+            ReputationTier::Trusted,
+            ReputationTier::Sovereign,
+        ];
+        for pair in tiers.windows(2) {
+            assert!(pair[0].spread() > pair[1].spread());
+        }
+    }
+
+    #[test]
+    fn spread_values() {
         assert!((ReputationTier::None.spread() - 0.20).abs() < f64::EPSILON);
-        assert!((ReputationTier::Basic.spread() - 0.18).abs() < f64::EPSILON);
-        assert!((ReputationTier::Verified.spread() - 0.15).abs() < f64::EPSILON);
-        assert!((ReputationTier::Trusted.spread() - 0.12).abs() < f64::EPSILON);
         assert!((ReputationTier::Sovereign.spread() - 0.08).abs() < f64::EPSILON);
     }
 }

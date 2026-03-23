@@ -101,6 +101,12 @@ Create a fresh `InferenceMeta` for each call. Do not reuse `request_id` across c
 
 The `sse` module parses the raw byte stream from the gateway into `InferenceChunk` values. `GatewayClient::stream` sets `request.stream = true` automatically before sending. You do not need to set it yourself.
 
+## Gateway Caching
+
+When routing through `bardo-gateway`, inference benefits from three cache layers. The hash cache matches exact request payloads and returns in sub-millisecond. The semantic cache uses embedding similarity to catch near-duplicate requests — different wording, same intent — and returns in 5-20ms. The prompt prefix cache is provider-native: Anthropic offers a 90% token discount on cached prefix tokens, which matters at high request volume.
+
+These layers combine with context engineering (smaller prompts reduce both latency and cost) and multi-provider routing. The gateway can route across Anthropic, OpenAI, Venice, BlockRun, OpenRouter, and local models depending on tier, vitality, and availability. Combined, the total inference cost reduction across the cache and routing stack runs 40-85% relative to uncached single-provider calls.
+
 ## Usage
 
 ```toml
