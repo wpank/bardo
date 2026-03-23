@@ -2152,11 +2152,8 @@ pub(crate) async fn execute_actions(
                     tracing::warn!(
                         "Failed to cleanup worktree for {plan}: {e} — continuing anyway"
                     );
-                    // Force remove if cleanup failed
-                    let _ = std::fs::remove_dir_all(&pw.path);
-                    let _ = crate::git::ops::run_git(&config.repo_root, &["worktree", "prune"]);
-                    let _ =
-                        crate::git::ops::run_git(&config.repo_root, &["branch", "-D", &pw.branch]);
+                    // Worktree cleanup is disabled — do NOT force-remove
+                    tracing::info!("Skipping force cleanup for plan worktree {plan}");
                 }
 
                 state.add_log(

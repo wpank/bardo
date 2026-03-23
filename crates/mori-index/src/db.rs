@@ -547,6 +547,79 @@ impl Db {
         self.file_id(path)
     }
 
+    /// Get a symbol by its row id.
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn symbol_by_id(&self, id: i64) -> Result<Option<DbSymbol>, IndexError> {
+        let result = self
+            .conn
+            .query_row(
+                "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+                 FROM symbols s LEFT JOIN files f ON s.file_id = f.id
+                 WHERE s.id = ?1",
+                params![id],
+                |row| row_to_db_symbol(row),
+            )
+            .optional()?;
+        Ok(result)
+    }
+
+    /// Get all symbols that reference a given symbol with full details.
+    ///
+    /// Returns `(referring_symbol, ref_kind, from_line)` for each reference.
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn symbol_referrers_detailed(
+        &self,
+        symbol_id: i64,
+    ) -> Result<Vec<(DbSymbol, String, u32)>, IndexError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path, r.ref_kind, r.from_line
+             FROM refs r
+             JOIN symbols s ON r.from_symbol = s.id
+             LEFT JOIN files f ON s.file_id = f.id
+             WHERE r.to_symbol = ?1",
+        )?;
+        let rows = stmt.query_map(params![symbol_id], |row| {
+            let sym = row_to_db_symbol(row)?;
+            let ref_kind: String = row.get(11)?;
+            let from_line: u32 = row.get(12)?;
+            Ok((sym, ref_kind, from_line))
+        })?;
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Find impl blocks that implement a given trait.
+    ///
+    /// Filters references by `ref_kind = 'impl_trait'`.
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn impl_trait_referrers(&self, symbol_id: i64) -> Result<Vec<DbSymbol>, IndexError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+             FROM refs r
+             JOIN symbols s ON r.from_symbol = s.id
+             LEFT JOIN files f ON s.file_id = f.id
+             WHERE r.to_symbol = ?1 AND r.ref_kind = 'impl_trait'",
+        )?;
+        let rows = stmt.query_map(params![symbol_id], |row| row_to_db_symbol(row))?;
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
     /// Get all symbols that reference a given symbol (incoming edges).
     ///
     /// # Errors
@@ -869,6 +942,138 @@ mod tests {
         });
         assert_eq!(stats_after.symbols, 0);
         assert_eq!(stats_after.refs, 0);
+    }
+
+    #[test]
+    fn symbol_by_id_lookup() {
+        let db = test_db();
+        let hash = blake3::hash(b"x").as_bytes().to_vec();
+        let file_id = db.upsert_file("test.rs", &hash, 0).unwrap();
+
+        let syms = vec![sample_symbol("target_fn", SymbolKind::Function)];
+        let ids = db.insert_symbols(file_id, &syms).unwrap();
+
+        let found = db.symbol_by_id(ids[0]).unwrap();
+        assert!(found.is_some());
+        let found = found.unwrap();
+        assert_eq!(found.symbol.name, "target_fn");
+        assert_eq!(found.id, ids[0]);
+
+        // Miss case
+        let missing = db.symbol_by_id(99999).unwrap();
+        assert!(missing.is_none());
+    }
+
+    #[test]
+    fn symbol_referrers_detailed_test() {
+        let db = test_db();
+        let hash = blake3::hash(b"x").as_bytes().to_vec();
+        let file_id = db.upsert_file("test.rs", &hash, 0).unwrap();
+
+        let syms = vec![
+            sample_symbol("callee", SymbolKind::Function),
+            sample_symbol("caller_a", SymbolKind::Function),
+            sample_symbol("caller_b", SymbolKind::Function),
+        ];
+        let ids = db.insert_symbols(file_id, &syms).unwrap();
+
+        // caller_a calls callee at line 10, caller_b imports callee at line 20
+        let refs = vec![
+            SymbolRef {
+                from_file: "test.rs".to_string(),
+                from_line: 10,
+                target: "callee".to_string(),
+                ref_kind: RefKind::Call,
+            },
+            SymbolRef {
+                from_file: "test.rs".to_string(),
+                from_line: 20,
+                target: "callee".to_string(),
+                ref_kind: RefKind::Import,
+            },
+        ];
+        db.insert_refs(&refs, &[ids[1], ids[2]]).unwrap();
+        db.resolve_refs().unwrap();
+
+        let detailed = db.symbol_referrers_detailed(ids[0]).unwrap();
+        assert_eq!(detailed.len(), 2);
+
+        let names: Vec<&str> = detailed
+            .iter()
+            .map(|(s, _, _)| s.symbol.name.as_str())
+            .collect();
+        assert!(names.contains(&"caller_a"));
+        assert!(names.contains(&"caller_b"));
+
+        // Check ref_kind and from_line
+        let call_ref = detailed
+            .iter()
+            .find(|(s, _, _)| s.symbol.name == "caller_a")
+            .unwrap();
+        assert_eq!(call_ref.1, "call");
+        assert_eq!(call_ref.2, 10);
+
+        let import_ref = detailed
+            .iter()
+            .find(|(s, _, _)| s.symbol.name == "caller_b")
+            .unwrap();
+        assert_eq!(import_ref.1, "import");
+        assert_eq!(import_ref.2, 20);
+    }
+
+    #[test]
+    fn impl_trait_referrers_test() {
+        let db = test_db();
+        let hash = blake3::hash(b"x").as_bytes().to_vec();
+        let file_id = db.upsert_file("test.rs", &hash, 0).unwrap();
+
+        let syms = vec![
+            Symbol {
+                name: "MyTrait".to_string(),
+                kind: SymbolKind::Trait,
+                file: "test.rs".to_string(),
+                line: 1,
+                signature: "pub trait MyTrait".to_string(),
+                visibility: Visibility::Public,
+                doc: None,
+                content_hash: blake3::hash(b"trait").into(),
+            },
+            Symbol {
+                name: "MyStruct".to_string(),
+                kind: SymbolKind::Impl,
+                file: "test.rs".to_string(),
+                line: 10,
+                signature: "impl MyTrait for MyStruct".to_string(),
+                visibility: Visibility::Public,
+                doc: None,
+                content_hash: blake3::hash(b"impl").into(),
+            },
+            sample_symbol("some_caller", SymbolKind::Function),
+        ];
+        let ids = db.insert_symbols(file_id, &syms).unwrap();
+
+        // impl_trait ref from MyStruct impl to MyTrait
+        let refs = vec![
+            SymbolRef {
+                from_file: "test.rs".to_string(),
+                from_line: 10,
+                target: "MyTrait".to_string(),
+                ref_kind: RefKind::ImplTrait,
+            },
+            // A regular call ref that should NOT be returned
+            SymbolRef {
+                from_file: "test.rs".to_string(),
+                from_line: 15,
+                target: "MyTrait".to_string(),
+                ref_kind: RefKind::Call,
+            },
+        ];
+        db.insert_refs(&refs, &[ids[1], ids[2]]).unwrap();
+        db.resolve_refs().unwrap();
+
+        let impls = db.impl_trait_referrers(ids[0]).unwrap();
+        assert_eq!(impls.len(), 1);
+        assert_eq!(impls[0].symbol.name, "MyStruct");
     }
 
     #[test]

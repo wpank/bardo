@@ -9,8 +9,8 @@ use rand::Rng;
 use rand::SeedableRng;
 use ratatui::{buffer::Buffer, layout::Rect, style::Color};
 
-use super::palette::{lerp_color_linear, rgb_components, BG_VOID, ROSE};
-use super::tokens::{hsv_to_rgb, DesignTokens};
+use super::palette::{BG_VOID, ROSE, lerp_color_linear, rgb_components};
+use super::tokens::{DesignTokens, hsv_to_rgb};
 
 // ── Plasma Field ────────────────────────────────────────────────────
 
@@ -311,15 +311,14 @@ impl MetaballEffect {
                         cell.set_fg(self.fg_color);
                     }
                 } else if field >= self.threshold * 0.6 {
-                    let boundary_char =
-                        match ((field / self.threshold * 6.0) as u8).min(5) {
-                            0 => '⠁',
-                            1 => '⠃',
-                            2 => '⠇',
-                            3 => '⠟',
-                            4 => '⠿',
-                            _ => '⣿',
-                        };
+                    let boundary_char = match ((field / self.threshold * 6.0) as u8).min(5) {
+                        0 => '⠁',
+                        1 => '⠃',
+                        2 => '⠇',
+                        3 => '⠟',
+                        4 => '⠿',
+                        _ => '⣿',
+                    };
                     if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
                         cell.set_char(boundary_char);
                         cell.set_fg(self.fg_color);
@@ -366,7 +365,11 @@ mod tests {
             }
             prev = v;
         }
-        assert!(diffs > 990, "Expected most consecutive values to differ, got {} diffs", diffs);
+        assert!(
+            diffs > 990,
+            "Expected most consecutive values to differ, got {} diffs",
+            diffs
+        );
     }
 
     #[test]
@@ -424,7 +427,10 @@ mod tests {
         }
         for row in &tunnel.distance_lut {
             for &v in row {
-                assert!(v.abs() < i32::MAX / 2, "Distance LUT value should be finite");
+                assert!(
+                    v.abs() < i32::MAX / 2,
+                    "Distance LUT value should be finite"
+                );
             }
         }
     }

@@ -269,6 +269,13 @@ impl Index {
         &self.db
     }
 
+    /// Access the in-memory symbol graph, if built.
+    ///
+    /// Call `rebuild_graph()` first to ensure the graph is available.
+    pub fn graph(&self) -> Option<&SymbolGraph> {
+        self.graph.as_ref()
+    }
+
     /// Generate embeddings for symbols that don't have them yet.
     ///
     /// Requires the `embedding` feature. Lazily initializes the embedding model

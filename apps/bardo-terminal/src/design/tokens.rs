@@ -34,10 +34,8 @@ impl DesignTokens {
 
     // ── Border styles ───────────────────────────────────────────
     pub const BORDER_THIN: [char; 11] = ['─', '│', '┌', '┐', '└', '┘', '├', '┤', '┬', '┴', '┼'];
-    pub const BORDER_THICK: [char; 11] =
-        ['═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬'];
-    pub const BORDER_HEAVY: [char; 11] =
-        ['━', '┃', '┏', '┓', '┗', '┛', '┣', '┫', '┳', '┻', '╋'];
+    pub const BORDER_THICK: [char; 11] = ['═', '║', '╔', '╗', '╚', '╝', '╠', '╣', '╦', '╩', '╬'];
+    pub const BORDER_HEAVY: [char; 11] = ['━', '┃', '┏', '┓', '┗', '┛', '┣', '┫', '┳', '┻', '╋'];
     pub const BORDER_ROUNDED: [char; 4] = ['╭', '╮', '╰', '╯'];
     pub const BORDER_DASHED: [char; 8] = ['┄', '┅', '┆', '┇', '┈', '┉', '┊', '┋'];
     pub const DIAGONAL: [char; 2] = ['╱', '╲'];
@@ -170,11 +168,7 @@ impl PadMicroShift {
         let l2 = (l + self.arousal * 0.03).clamp(0.0, 1.0);
         let h2 = (h + self.dominance * 2.0).rem_euclid(360.0);
         let (r2, g2, b2) = hsl_to_rgb(h2, s2, l2);
-        Color::Rgb(
-            (r2 * 255.0) as u8,
-            (g2 * 255.0) as u8,
-            (b2 * 255.0) as u8,
-        )
+        Color::Rgb((r2 * 255.0) as u8, (g2 * 255.0) as u8, (b2 * 255.0) as u8)
     }
 }
 

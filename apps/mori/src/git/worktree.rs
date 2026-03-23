@@ -20,6 +20,40 @@ fn write_cursor_cli_config(worktree_path: &Path) -> Result<()> {
     Ok(())
 }
 
+/// Write `.mori/mcp-config.json` into a worktree so the MCP context server
+/// indexes the worktree's files (not the main repo's).
+fn write_mori_mcp_config(worktree_path: &Path, repo_root: &Path) -> Result<()> {
+    let mori_dir = worktree_path.join(".mori");
+    std::fs::create_dir_all(&mori_dir)?;
+
+    // Find the mori-mcp binary: prefer the release build in the main repo,
+    // then debug, then fall back to just "mori-mcp" (on PATH).
+    let binary = ["target/release/mori-mcp", "target/debug/mori-mcp"]
+        .iter()
+        .find_map(|rel| {
+            let candidate = repo_root.join(rel);
+            candidate
+                .exists()
+                .then(|| candidate.to_string_lossy().to_string())
+        })
+        .unwrap_or_else(|| "mori-mcp".to_string());
+
+    let wt_root = worktree_path.to_string_lossy();
+    let config = serde_json::json!({
+        "mcpServers": {
+            "mori": {
+                "command": binary,
+                "args": ["context-server", "--root", wt_root]
+            }
+        }
+    });
+    std::fs::write(
+        mori_dir.join("mcp-config.json"),
+        serde_json::to_string_pretty(&config)?,
+    )?;
+    Ok(())
+}
+
 fn copy_dir_all(src: &Path, dst: &Path) -> std::io::Result<()> {
     std::fs::create_dir_all(dst)?;
     for entry in std::fs::read_dir(src)? {
@@ -221,6 +255,10 @@ impl WorktreeManager {
             warn!("Failed to write .cursor/cli.json for task worktree: {e}");
         }
 
+        if let Err(e) = write_mori_mcp_config(&path, &self.repo_root) {
+            warn!("Failed to write .mori/mcp-config.json for task worktree: {e}");
+        }
+
         copy_repo_root_files_into_worktree(&self.repo_root, &path);
         if let Err(e) = crate::orchestrator::context::regenerate_workspace_map(&path) {
             warn!("Failed to regenerate workspace-map.md in task worktree: {e}");
@@ -256,6 +294,10 @@ impl WorktreeManager {
 
         if let Err(e) = write_cursor_cli_config(&path) {
             warn!("Failed to write .cursor/cli.json for utility worktree: {e}");
+        }
+
+        if let Err(e) = write_mori_mcp_config(&path, &self.repo_root) {
+            warn!("Failed to write .mori/mcp-config.json for utility worktree: {e}");
         }
 
         copy_repo_root_files_into_worktree(&self.repo_root, &path);
@@ -294,6 +336,9 @@ impl WorktreeManager {
                 if let Err(e) = write_cursor_cli_config(&path) {
                     warn!("Failed to refresh .cursor/cli.json for reused worktree: {e}");
                 }
+                if let Err(e) = write_mori_mcp_config(&path, &self.repo_root) {
+                    warn!("Failed to refresh .mori/mcp-config.json for reused worktree: {e}");
+                }
                 // Ensure root files are present even on reuse
                 copy_repo_root_files_into_worktree(&self.repo_root, &path);
                 if let Err(e) = crate::orchestrator::context::regenerate_workspace_map(&path) {
@@ -309,25 +354,22 @@ impl WorktreeManager {
                 });
             }
 
-            // Wrong branch or corrupt — clean up and recreate
-            warn!(
-                "Plan worktree for {plan_base} on wrong branch ({:?}), recreating",
+            // Wrong branch or corrupt — cannot reuse, and cleanup is disabled
+            anyhow::bail!(
+                "Plan worktree for {plan_base} exists on wrong branch ({:?}). \
+                 Remove it manually and retry.",
                 existing_branch
             );
-            if let Err(e) = self.remove_worktree(&path) {
-                warn!("Failed to remove stale worktree: {e} — force removing directory");
-                let _ = std::fs::remove_dir_all(&path);
-                let _ = ops::run_git(&self.repo_root, &["worktree", "prune"]);
-            }
         }
 
         let path_str = path.to_str().context("worktree path not valid UTF-8")?;
 
-        // If the directory still exists (e.g. left over from a crash), force remove it
+        // If the directory still exists (e.g. left over from a crash), don't force-remove
         if path.exists() {
-            warn!("Worktree directory still exists at {path_str}, force removing");
-            let _ = std::fs::remove_dir_all(&path);
-            let _ = ops::run_git(&self.repo_root, &["worktree", "prune"]);
+            anyhow::bail!(
+                "Worktree directory already exists at {path_str}. \
+                 Remove it manually and retry."
+            );
         }
 
         // Check if branch exists, create from base if not
@@ -362,6 +404,10 @@ impl WorktreeManager {
 
         if let Err(e) = write_cursor_cli_config(&path) {
             warn!("Failed to write .cursor/cli.json for plan worktree: {e}");
+        }
+
+        if let Err(e) = write_mori_mcp_config(&path, &self.repo_root) {
+            warn!("Failed to write .mori/mcp-config.json for plan worktree: {e}");
         }
 
         info!("Created plan worktree: {branch} at {path_str}");
@@ -469,42 +515,14 @@ impl WorktreeManager {
     /// Clean up a plan worktree after merge (or during reset).
     /// Resilient: handles in-progress merges, dirty state, and git worktree
     /// registry inconsistencies.
+    /// NOTE: Cleanup disabled — worktrees and branches are preserved to prevent
+    /// destruction of in-flight work.
     #[instrument(skip_all, fields(plan = %worktree.plan_base))]
     pub fn cleanup_plan_worktree(&self, worktree: &PlanWorktree) -> Result<()> {
-        // Log what we're about to destroy
-        if worktree.path.exists() {
-            let uncommitted = crate::git::ops::run_git(&worktree.path, &["status", "--porcelain"])
-                .map(|s| s.lines().count())
-                .unwrap_or(0);
-            info!(
-                "Cleaning up plan worktree for {} (uncommitted_files={})",
-                worktree.plan_base, uncommitted
-            );
-        }
-        if worktree.path.exists() {
-            // Abort any in-progress merge in the worktree
-            let _ = ops::run_git(&worktree.path, &["merge", "--abort"]);
-            // Reset any dirty state so `git worktree remove` doesn't complain
-            let _ = ops::run_git(&worktree.path, &["reset", "--hard"]);
-            let _ = ops::run_git(&worktree.path, &["clean", "-fd"]);
-        }
-
-        // Try the normal remove first
-        if let Err(e) = self.remove_worktree(&worktree.path) {
-            warn!(
-                "Normal worktree remove failed for {}: {e}",
-                worktree.plan_base
-            );
-            // Fallback: force-remove the directory and prune the worktree registry
-            if worktree.path.exists() {
-                let _ = std::fs::remove_dir_all(&worktree.path);
-            }
-            let _ = ops::run_git(&self.repo_root, &["worktree", "prune"]);
-        }
-
-        // Clean up the branch (force delete, may already be gone)
-        let _ = ops::run_git(&self.repo_root, &["branch", "-D", &worktree.branch]);
-        info!("Cleaned up plan worktree for {}", worktree.plan_base);
+        info!(
+            "Skipping plan worktree cleanup (disabled): {}",
+            worktree.plan_base
+        );
         Ok(())
     }
 
@@ -591,54 +609,24 @@ impl WorktreeManager {
 
     /// Remove a worktree directory and delete its associated branch.
     /// F3: Retries up to 3 times with 100ms delay before force-remove fallback.
+    ///
+    /// NOTE: Cleanup disabled — worktrees and branches are preserved to prevent
+    /// destruction of in-flight work.
     pub fn remove_worktree(&self, path: &Path) -> Result<()> {
-        let branch = self.branch_for_worktree(path);
-
-        let path_str = path.to_str().context("worktree path is not valid UTF-8")?;
-        let mut last_err = None;
-        for attempt in 0..3 {
-            match ops::run_git(
-                &self.repo_root,
-                &["worktree", "remove", "--force", path_str],
-            ) {
-                Ok(_) => {
-                    last_err = None;
-                    break;
-                }
-                Err(e) => {
-                    last_err = Some(e);
-                    if attempt < 2 {
-                        std::thread::sleep(std::time::Duration::from_millis(100));
-                    }
-                }
-            }
-        }
-        if let Some(e) = last_err {
-            // F3: Force-remove fallback
-            warn!("Worktree remove failed after 3 attempts for {path_str}: {e}, force removing");
-            if path.exists() {
-                let _ = std::fs::remove_dir_all(path);
-            }
-            let _ = ops::run_git(&self.repo_root, &["worktree", "prune"]);
-        }
-
-        if let Some(branch) = branch {
-            if let Err(e) = ops::run_git(&self.repo_root, &["branch", "-D", &branch]) {
-                warn!("Could not delete branch {branch}: {e}");
-            }
-        }
-
+        info!(
+            "Skipping worktree removal (cleanup disabled): {}",
+            path.display()
+        );
         Ok(())
     }
 
     /// Clean up a task worktree after its branch has been merged.
+    ///
+    /// NOTE: Cleanup disabled — worktrees and branches are preserved.
     #[instrument(skip_all, fields(plan = %worktree.plan_base, task = %worktree.task_id))]
     pub fn cleanup_task(&self, worktree: &TaskWorktree) -> Result<()> {
-        self.remove_worktree(&worktree.path)?;
-        // The branch might already be deleted by remove_worktree, try -d (safe delete)
-        let _ = ops::run_git(&self.repo_root, &["branch", "-d", &worktree.branch]);
         info!(
-            "Cleaned up worktree for {}/{}",
+            "Skipping task worktree cleanup (disabled): {}/{}",
             worktree.plan_base, worktree.task_id
         );
         Ok(())
@@ -646,22 +634,10 @@ impl WorktreeManager {
 
     /// Remove all worktrees managed by this instance (everything under `.worktrees/`).
     ///
-    /// Intended for cleanup on exit or abort.
+    /// NOTE: Cleanup disabled — worktrees and branches are preserved.
     #[instrument(skip_all)]
     pub fn cleanup_all(&self) -> Result<()> {
-        let entries = list_worktrees(&self.repo_root)?;
-        for entry in entries {
-            let path = PathBuf::from(&entry.path);
-            if path.starts_with(&self.worktree_base) {
-                if let Err(e) = self.remove_worktree(&path) {
-                    warn!("Failed to remove worktree {}: {e}", path.display());
-                }
-            }
-        }
-        // Remove the directory itself if it's now empty
-        if self.worktree_base.exists() {
-            let _ = std::fs::remove_dir(&self.worktree_base);
-        }
+        info!("Skipping cleanup_all (disabled): worktrees preserved");
         Ok(())
     }
 

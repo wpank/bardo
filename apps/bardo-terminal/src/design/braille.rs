@@ -3,7 +3,11 @@
 //! Unicode U+2800-U+28FF provides a 2x4 dot grid per cell (8 sub-pixels).
 //! An 80x24 terminal becomes 160x96 effective resolution.
 
-use ratatui::{buffer::Buffer, layout::Rect, style::{Color, Style}};
+use ratatui::{
+    buffer::Buffer,
+    layout::Rect,
+    style::{Color, Style},
+};
 
 /// Sub-pixel braille canvas. One BrailleCanvas maps to a rectangle of terminal cells.
 /// The pixel grid is `width_chars*2` wide by `height_chars*4` tall.
@@ -72,14 +76,30 @@ impl BrailleCanvas {
         //   dot1=bit0 (0,0), dot2=bit1 (0,1), dot3=bit2 (0,2)
         //   dot4=bit3 (1,0), dot5=bit4 (1,1), dot6=bit5 (1,2)
         //   dot7=bit6 (0,3), dot8=bit7 (1,3)
-        if dot(0, 0) { bits |= 1 << 0; }
-        if dot(0, 1) { bits |= 1 << 1; }
-        if dot(0, 2) { bits |= 1 << 2; }
-        if dot(1, 0) { bits |= 1 << 3; }
-        if dot(1, 1) { bits |= 1 << 4; }
-        if dot(1, 2) { bits |= 1 << 5; }
-        if dot(0, 3) { bits |= 1 << 6; }
-        if dot(1, 3) { bits |= 1 << 7; }
+        if dot(0, 0) {
+            bits |= 1 << 0;
+        }
+        if dot(0, 1) {
+            bits |= 1 << 1;
+        }
+        if dot(0, 2) {
+            bits |= 1 << 2;
+        }
+        if dot(1, 0) {
+            bits |= 1 << 3;
+        }
+        if dot(1, 1) {
+            bits |= 1 << 4;
+        }
+        if dot(1, 2) {
+            bits |= 1 << 5;
+        }
+        if dot(0, 3) {
+            bits |= 1 << 6;
+        }
+        if dot(1, 3) {
+            bits |= 1 << 7;
+        }
         char::from_u32(0x2800 | bits as u32).unwrap_or('⠀')
     }
 

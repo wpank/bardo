@@ -160,20 +160,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     let repo_root = cli.repo_root.unwrap_or_else(|| {
-        std::process::Command::new("git")
-            .args(["rev-parse", "--show-toplevel"])
-            .output()
-            .ok()
-            .and_then(|o| {
-                if o.status.success() {
-                    String::from_utf8(o.stdout)
-                        .ok()
-                        .map(|s| PathBuf::from(s.trim()))
-                } else {
-                    None
-                }
-            })
-            .unwrap_or_else(|| std::env::current_dir().unwrap_or_default())
+        find_main_worktree().unwrap_or_else(|| std::env::current_dir().unwrap_or_default())
     });
 
     // --- Queue & milestone resolution ---

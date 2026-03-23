@@ -115,7 +115,11 @@ pub async fn compress_history_if_needed(
         let content = extract_message_text(msg);
         // Truncate very long individual messages to keep the compression request reasonable.
         let truncated = if content.len() > 2000 {
-            &content[..2000]
+            let mut end = 2000;
+            while !content.is_char_boundary(end) {
+                end -= 1;
+            }
+            &content[..end]
         } else {
             &content
         };

@@ -2,9 +2,11 @@
 //!
 //! Wraps `mori-index` and `mori-context` operations as MCP tools: `search_code`,
 //! `get_symbol_context`, `get_file_ast`, `find_similar_patterns`,
-//! `get_index_stats`, and `get_context`.
+//! `get_index_stats`, `get_context`, `find_references`, `find_implementations`,
+//! `get_callers`, and `workspace_map`.
 
 use mori_index::Index;
+use mori_index::graph::Direction;
 use serde_json::{Value, json};
 
 use crate::protocol::{ToolCallResult, ToolContent, ToolDefinition};
@@ -87,6 +89,53 @@ pub fn list_tools() -> Vec<ToolDefinition> {
                 "required": ["query"]
             }),
         },
+        ToolDefinition {
+            name: "find_references".into(),
+            description: "Find all references to a symbol: callers, importers, type users, and implementors.".into(),
+            input_schema: json!({
+                "type": "object",
+                "properties": {
+                    "symbol_name": { "type": "string", "description": "Name of the symbol to find references for" },
+                    "limit": { "type": "number", "description": "Max results (default 50)" }
+                },
+                "required": ["symbol_name"]
+            }),
+        },
+        ToolDefinition {
+            name: "find_implementations".into(),
+            description: "Find all types that implement a given trait.".into(),
+            input_schema: json!({
+                "type": "object",
+                "properties": {
+                    "trait_name": { "type": "string", "description": "Name of the trait to find implementations for" }
+                },
+                "required": ["trait_name"]
+            }),
+        },
+        ToolDefinition {
+            name: "get_callers".into(),
+            description: "Trace the transitive call/dependency graph: who calls this symbol (callers) or what it calls (callees), up to N hops deep.".into(),
+            input_schema: json!({
+                "type": "object",
+                "properties": {
+                    "symbol_name": { "type": "string", "description": "Name of the symbol to trace" },
+                    "depth": { "type": "number", "description": "Max hops (default 3, max 10)" },
+                    "direction": { "type": "string", "description": "\"callers\" (default) traces what uses this symbol, \"callees\" traces what this symbol uses" }
+                },
+                "required": ["symbol_name"]
+            }),
+        },
+        ToolDefinition {
+            name: "workspace_map".into(),
+            description: "Return the workspace crate graph: members, inter-crate dependencies, and indexed symbol counts per crate.".into(),
+            input_schema: json!({
+                "type": "object",
+                "properties": {
+                    "detail_level": { "type": "string", "description": "\"summary\" (default) returns crate graph, \"full\" adds public symbol lists" }
+                },
+                "required": []
+            }),
+        },
     ]
 }
 
@@ -99,6 +148,10 @@ pub fn call_tool(index: &mut Index, name: &str, arguments: &Value) -> ToolCallRe
         "find_similar_patterns" => tool_find_similar_patterns(index, arguments),
         "get_index_stats" => tool_get_index_stats(index),
         "get_context" => tool_get_context(index, arguments),
+        "find_references" => tool_find_references(index, arguments),
+        "find_implementations" => tool_find_implementations(index, arguments),
+        "get_callers" => tool_get_callers(index, arguments),
+        "workspace_map" => tool_workspace_map(index, arguments),
         _ => tool_error(format!("Unknown tool: {name}")),
     }
 }
@@ -224,41 +277,34 @@ fn tool_get_file_ast(index: &Index, args: &Value) -> ToolCallResult {
         None => return tool_error("Missing required parameter: file_path".into()),
     };
 
-    // Use the filename as a keyword query. The DB search_by_name looks at
-    // symbol names, not file paths, so instead we search with a generous
-    // limit and filter client-side. This is an approximation because Index
-    // doesn't expose a `symbols_in_file()` method directly.
-    //
-    // We search for the last path component to get a broader match set,
-    // then filter by file.
-    let query = file_path
-        .rsplit('/')
-        .next()
-        .unwrap_or(file_path)
-        .trim_end_matches(".rs");
-
-    let results = match index.search(query, 500) {
-        Ok(r) => r,
-        Err(e) => return tool_error(format!("search failed: {e}")),
+    // Direct lookup by file path in the index database.
+    let file_id = match index.db().file_id_by_path(file_path) {
+        Ok(Some(id)) => id,
+        Ok(None) => return tool_text(format!("No indexed symbols found for file: {file_path}")),
+        Err(e) => return tool_error(format!("file lookup failed: {e}")),
     };
 
-    let file_symbols: Vec<Value> = results
+    let symbols = match index.db().symbols_in_file(file_id) {
+        Ok(s) => s,
+        Err(e) => return tool_error(format!("symbols_in_file failed: {e}")),
+    };
+
+    if symbols.is_empty() {
+        return tool_text(format!("No indexed symbols found for file: {file_path}"));
+    }
+
+    let file_symbols: Vec<Value> = symbols
         .iter()
-        .filter(|r| r.symbol.file.contains(file_path) || file_path.contains(&r.symbol.file))
-        .map(|r| {
+        .map(|s| {
             json!({
-                "name": r.symbol.name,
-                "line": r.symbol.line,
-                "kind": format!("{:?}", r.symbol.kind),
-                "signature": r.symbol.signature,
-                "visibility": format!("{:?}", r.symbol.visibility),
+                "name": s.symbol.name,
+                "line": s.symbol.line,
+                "kind": format!("{:?}", s.symbol.kind),
+                "signature": s.symbol.signature,
+                "visibility": format!("{:?}", s.symbol.visibility),
             })
         })
         .collect();
-
-    if file_symbols.is_empty() {
-        return tool_text(format!("No indexed symbols found for file: {file_path}"));
-    }
 
     tool_text(serde_json::to_string_pretty(&file_symbols).unwrap_or_default())
 }
@@ -366,6 +412,302 @@ fn tool_get_context(index: &mut Index, args: &Value) -> ToolCallResult {
         }
         Err(e) => tool_error(format!("context assembly failed: {e}")),
     }
+}
+
+fn tool_find_references(index: &Index, args: &Value) -> ToolCallResult {
+    let symbol_name = match args.get("symbol_name").and_then(Value::as_str) {
+        Some(n) => n,
+        None => return tool_error("Missing required parameter: symbol_name".into()),
+    };
+
+    let limit = args.get("limit").and_then(Value::as_u64).unwrap_or(50) as usize;
+
+    // Find the symbol by name.
+    let results = match index.db().search_by_name(symbol_name, 5) {
+        Ok(r) => r,
+        Err(e) => return tool_error(format!("search failed: {e}")),
+    };
+
+    // Prefer exact name match, fall back to first result.
+    let sym = results
+        .iter()
+        .find(|s| s.symbol.name == symbol_name)
+        .or_else(|| results.first());
+
+    let Some(sym) = sym else {
+        return tool_error(format!("Symbol not found: {symbol_name}"));
+    };
+
+    let referrers = match index.db().symbol_referrers_detailed(sym.id) {
+        Ok(r) => r,
+        Err(e) => return tool_error(format!("symbol_referrers_detailed failed: {e}")),
+    };
+
+    let items: Vec<Value> = referrers
+        .iter()
+        .take(limit)
+        .map(|(s, ref_kind, from_line)| {
+            json!({
+                "name": s.symbol.name,
+                "file": s.symbol.file,
+                "line": s.symbol.line,
+                "kind": format!("{:?}", s.symbol.kind),
+                "signature": s.symbol.signature,
+                "ref_kind": ref_kind,
+                "from_line": from_line,
+            })
+        })
+        .collect();
+
+    let output = json!({
+        "symbol": symbol_name,
+        "reference_count": referrers.len(),
+        "references": items,
+    });
+
+    tool_text(serde_json::to_string_pretty(&output).unwrap_or_default())
+}
+
+fn tool_find_implementations(index: &Index, args: &Value) -> ToolCallResult {
+    let trait_name = match args.get("trait_name").and_then(Value::as_str) {
+        Some(n) => n,
+        None => return tool_error("Missing required parameter: trait_name".into()),
+    };
+
+    // Search for the trait.
+    let results = match index.db().search_by_name(trait_name, 10) {
+        Ok(r) => r,
+        Err(e) => return tool_error(format!("search failed: {e}")),
+    };
+
+    // Find a result that is actually a Trait.
+    let trait_sym = results
+        .iter()
+        .find(|s| {
+            s.symbol.kind == mori_index::symbol::SymbolKind::Trait && s.symbol.name == trait_name
+        })
+        .or_else(|| {
+            results
+                .iter()
+                .find(|s| s.symbol.kind == mori_index::symbol::SymbolKind::Trait)
+        });
+
+    let Some(trait_sym) = trait_sym else {
+        return tool_error(format!("Trait not found: {trait_name}"));
+    };
+
+    let impls = match index.db().impl_trait_referrers(trait_sym.id) {
+        Ok(r) => r,
+        Err(e) => return tool_error(format!("impl_trait_referrers failed: {e}")),
+    };
+
+    let items: Vec<Value> = impls
+        .iter()
+        .map(|s| {
+            json!({
+                "name": s.symbol.name,
+                "file": s.symbol.file,
+                "line": s.symbol.line,
+                "signature": s.symbol.signature,
+            })
+        })
+        .collect();
+
+    let output = json!({
+        "trait": trait_name,
+        "implementation_count": items.len(),
+        "implementations": items,
+    });
+
+    tool_text(serde_json::to_string_pretty(&output).unwrap_or_default())
+}
+
+fn tool_get_callers(index: &mut Index, args: &Value) -> ToolCallResult {
+    let symbol_name = match args.get("symbol_name").and_then(Value::as_str) {
+        Some(n) => n,
+        None => return tool_error("Missing required parameter: symbol_name".into()),
+    };
+
+    let depth = args
+        .get("depth")
+        .and_then(Value::as_u64)
+        .unwrap_or(3)
+        .min(10) as usize;
+
+    let direction_str = args
+        .get("direction")
+        .and_then(Value::as_str)
+        .unwrap_or("callers");
+
+    let direction = match direction_str {
+        "callers" => Direction::Reverse,
+        "callees" => Direction::Forward,
+        other => {
+            return tool_error(format!(
+                "Unknown direction: {other}. Use \"callers\" or \"callees\"."
+            ));
+        }
+    };
+
+    // Find the symbol.
+    let results = match index.db().search_by_name(symbol_name, 5) {
+        Ok(r) => r,
+        Err(e) => return tool_error(format!("search failed: {e}")),
+    };
+
+    let sym = results
+        .iter()
+        .find(|s| s.symbol.name == symbol_name)
+        .or_else(|| results.first());
+
+    let Some(sym) = sym else {
+        return tool_error(format!("Symbol not found: {symbol_name}"));
+    };
+
+    // Ensure graph is built.
+    if let Err(e) = index.rebuild_graph() {
+        return tool_error(format!("graph rebuild failed: {e}"));
+    }
+
+    let graph = match index.graph() {
+        Some(g) => g,
+        None => return tool_error("Graph not available".into()),
+    };
+
+    let traversal = graph.transitive(sym.id, depth, direction);
+
+    // Load symbol details for each reachable node.
+    let mut items = Vec::with_capacity(traversal.len());
+    for (node_id, node_depth) in &traversal {
+        if let Ok(Some(node_sym)) = index.db().symbol_by_id(*node_id) {
+            items.push(json!({
+                "name": node_sym.symbol.name,
+                "file": node_sym.symbol.file,
+                "line": node_sym.symbol.line,
+                "kind": format!("{:?}", node_sym.symbol.kind),
+                "depth": node_depth,
+            }));
+        }
+    }
+
+    let output = json!({
+        "symbol": symbol_name,
+        "direction": direction_str,
+        "max_depth": depth,
+        "node_count": items.len(),
+        "nodes": items,
+    });
+
+    tool_text(serde_json::to_string_pretty(&output).unwrap_or_default())
+}
+
+fn tool_workspace_map(index: &Index, args: &Value) -> ToolCallResult {
+    let detail_level = args
+        .get("detail_level")
+        .and_then(Value::as_str)
+        .unwrap_or("summary");
+
+    let root = index.root();
+    let root_cargo = root.join("Cargo.toml");
+
+    let cargo_str = match std::fs::read_to_string(&root_cargo) {
+        Ok(s) => s,
+        Err(e) => return tool_error(format!("Failed to read {}: {e}", root_cargo.display())),
+    };
+
+    let cargo_val: toml::Value = match cargo_str.parse() {
+        Ok(v) => v,
+        Err(e) => return tool_error(format!("Failed to parse Cargo.toml: {e}")),
+    };
+
+    // Extract workspace members.
+    let members = cargo_val
+        .get("workspace")
+        .and_then(|w| w.get("members"))
+        .and_then(|m| m.as_array())
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|v| v.as_str().map(String::from))
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+
+    // For each member, read its Cargo.toml and extract name + path deps.
+    let mut crates = Vec::new();
+    for member in &members {
+        let member_cargo = root.join(member).join("Cargo.toml");
+        let member_str = match std::fs::read_to_string(&member_cargo) {
+            Ok(s) => s,
+            Err(_) => continue,
+        };
+        let member_val: toml::Value = match member_str.parse() {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+
+        let name = member_val
+            .get("package")
+            .and_then(|p| p.get("name"))
+            .and_then(|n| n.as_str())
+            .unwrap_or(member.as_str());
+
+        // Collect path dependencies (internal workspace deps).
+        let mut deps = Vec::new();
+        if let Some(dep_table) = member_val.get("dependencies").and_then(|d| d.as_table()) {
+            for (dep_name, dep_val) in dep_table {
+                let has_path = dep_val.get("path").and_then(|p| p.as_str()).is_some();
+                if has_path {
+                    deps.push(dep_name.clone());
+                }
+            }
+        }
+
+        // Count indexed symbols for this crate's files.
+        let prefix = format!("{member}/");
+        let symbol_count = match index.db().all_file_paths() {
+            Ok(paths) => {
+                let file_count: usize = paths.iter().filter(|p| p.starts_with(&prefix)).count();
+                // If we have files, count their symbols.
+                if file_count > 0 && detail_level == "full" {
+                    paths
+                        .iter()
+                        .filter(|p| p.starts_with(&prefix))
+                        .map(|p| {
+                            index
+                                .db()
+                                .file_id_by_path(p)
+                                .ok()
+                                .flatten()
+                                .and_then(|fid| index.db().symbols_in_file(fid).ok())
+                                .map_or(0, |s| s.len())
+                        })
+                        .sum::<usize>()
+                } else {
+                    0
+                }
+            }
+            Err(_) => 0,
+        };
+
+        let mut crate_info = json!({
+            "name": name,
+            "path": member,
+            "deps": deps,
+        });
+
+        if detail_level == "full" {
+            crate_info["symbol_count"] = json!(symbol_count);
+        }
+
+        crates.push(crate_info);
+    }
+
+    let output = json!({
+        "workspace_members": members.len(),
+        "crates": crates,
+    });
+
+    tool_text(serde_json::to_string_pretty(&output).unwrap_or_default())
 }
 
 // ---------------------------------------------------------------------------

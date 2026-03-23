@@ -1,6 +1,15 @@
 //! Symbol dependency graph with PageRank scoring.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet, VecDeque};
+
+/// Direction for graph traversal.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Direction {
+    /// Follow forward edges (dependencies: what this symbol uses).
+    Forward,
+    /// Follow reverse edges (dependents: what uses this symbol).
+    Reverse,
+}
 
 /// A directed graph of symbol dependencies.
 ///
@@ -47,6 +56,49 @@ impl SymbolGraph {
     /// The number of nodes in the graph.
     pub fn node_count(&self) -> usize {
         self.node_count
+    }
+
+    /// BFS traversal from `start_id` up to `max_depth` hops.
+    ///
+    /// Returns `(node_id, depth)` pairs for all reachable nodes, excluding the start.
+    /// Direction controls whether to follow forward edges (dependencies) or
+    /// reverse edges (dependents/callers).
+    pub fn transitive(
+        &self,
+        start_id: i64,
+        max_depth: usize,
+        direction: Direction,
+    ) -> Vec<(i64, usize)> {
+        if max_depth == 0 {
+            return Vec::new();
+        }
+
+        let edges = match direction {
+            Direction::Forward => &self.forward,
+            Direction::Reverse => &self.reverse,
+        };
+
+        let mut visited = HashSet::new();
+        visited.insert(start_id);
+        let mut queue = VecDeque::new();
+        queue.push_back((start_id, 0usize));
+        let mut results = Vec::new();
+
+        while let Some((node, depth)) = queue.pop_front() {
+            if depth >= max_depth {
+                continue;
+            }
+            let neighbors = edges.get(&node).map_or(&[] as &[i64], Vec::as_slice);
+            for &neighbor in neighbors {
+                if visited.insert(neighbor) {
+                    let d = depth + 1;
+                    results.push((neighbor, d));
+                    queue.push_back((neighbor, d));
+                }
+            }
+        }
+
+        results
     }
 
     /// Run iterative PageRank with optional bias toward symbols in specific files.
@@ -201,5 +253,57 @@ mod tests {
         let graph = SymbolGraph::from_edges(&[], 0);
         let ranks = graph.pagerank(&[], &HashMap::new(), 10, 0.85);
         assert!(ranks.is_empty());
+    }
+
+    #[test]
+    fn transitive_linear_forward() {
+        // A(1) -> B(2) -> C(3) -> D(4)
+        let edges = vec![(1, 2), (2, 3), (3, 4)];
+        let graph = SymbolGraph::from_edges(&edges, 4);
+
+        // depth 2 from A: B at 1, C at 2, NOT D
+        let result = graph.transitive(1, 2, Direction::Forward);
+        assert_eq!(result.len(), 2);
+        assert!(result.contains(&(2, 1)));
+        assert!(result.contains(&(3, 2)));
+
+        // depth 10 from A: all reachable
+        let result = graph.transitive(1, 10, Direction::Forward);
+        assert_eq!(result.len(), 3);
+        assert!(result.contains(&(4, 3)));
+    }
+
+    #[test]
+    fn transitive_linear_reverse() {
+        // A(1) -> B(2) -> C(3) -> D(4)
+        let edges = vec![(1, 2), (2, 3), (3, 4)];
+        let graph = SymbolGraph::from_edges(&edges, 4);
+
+        // Reverse from D: C at 1, B at 2, A at 3
+        let result = graph.transitive(4, 3, Direction::Reverse);
+        assert_eq!(result.len(), 3);
+        assert!(result.contains(&(3, 1)));
+        assert!(result.contains(&(2, 2)));
+        assert!(result.contains(&(1, 3)));
+    }
+
+    #[test]
+    fn transitive_cycle() {
+        // A(1) -> B(2) -> C(3) -> A(1)
+        let edges = vec![(1, 2), (2, 3), (3, 1)];
+        let graph = SymbolGraph::from_edges(&edges, 3);
+
+        let result = graph.transitive(1, 10, Direction::Forward);
+        assert_eq!(result.len(), 2); // B and C only, no infinite loop
+        assert!(result.contains(&(2, 1)));
+        assert!(result.contains(&(3, 2)));
+    }
+
+    #[test]
+    fn transitive_zero_depth() {
+        let edges = vec![(1, 2), (2, 3)];
+        let graph = SymbolGraph::from_edges(&edges, 3);
+        let result = graph.transitive(1, 0, Direction::Forward);
+        assert!(result.is_empty());
     }
 }

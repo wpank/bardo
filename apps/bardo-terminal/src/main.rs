@@ -4,6 +4,7 @@
 
 mod animation;
 mod app;
+mod design;
 mod layout;
 mod mock;
 mod navigation;
