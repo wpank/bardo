@@ -6,7 +6,7 @@ A Rust monorepo of tools for building autonomous agents, running cost-efficient 
 
 ## Tools
 
-### [bardo-gateway](apps/bardo-gateway)
+### [bardo-gateway](apps/bardo-gateway) — [demo](demo/demo1.mp4)
 
 An HTTP inference proxy that sits in front of Anthropic, OpenAI, and OpenRouter. Drop it in, point your API calls at port 4000, and it handles:
 
@@ -24,7 +24,7 @@ It speaks the Anthropic and OpenAI wire formats. Existing SDKs work unchanged �
 
 ---
 
-### [mori](apps/mori)
+### [mori](apps/mori) — [demo](demo/demo3.mp4)
 
 A multi-agent build orchestration system. You give it plans and it dispatches Claude agents to implement them in parallel, manages worktrees so agents don't step on each other, runs gate verification after each step, and tracks budget.
 
@@ -56,6 +56,35 @@ just mirage rpc_url=https://mainnet.example.com
 ```
 
 Used for pre-flight simulation before any on-chain action. The [`golem-chain`](crates/golem-chain) crate wraps `revm` for programmatic simulation from Rust — fork a block, overlay account state, run a call sequence, inspect the result.
+
+---
+
+### Golems — [demo](demo/demo4.mp4)
+
+A Golem is a mortal autonomous agent compiled as a single Rust binary. It has a wallet, a strategy, a knowledge base, and a finite lifespan. It runs on a VM (local or Fly.io), connects to chain, and makes decisions on every tick of its heartbeat.
+
+Each tick runs a nine-step cycle: observe market state, retrieve relevant memories from the grimoire, appraise the situation through the daimon affect engine (PAD vectors), generate candidate actions via three-tier inference (T0 rule-based → T1 light model → T2 full model), simulate outcomes in mirage-rs, apply safety constraints via PolicyCage, execute the chosen action on-chain, update the grimoire, then reflect.
+
+Golems die. Economic death fires when the USDC balance can no longer sustain inference costs. Epistemic death fires when prediction accuracy drops below threshold. Stochastic death adds entropy. When a Golem reaches terminal state it runs the Thanatopsis succession protocol — transferring learned heuristics and strategy DNA to a successor before shutting down.
+
+The [`golem-runtime`](crates/golem-runtime) crate is the entry point for a Golem binary. It boots extensions in topological order, enforces lifecycle state transitions at compile time via the type-state pattern, and dispatches per-tick and per-block hooks concurrently where possible. The lifecycle is `Provisioning → Active ⇄ Dreaming → Terminal → Dead`. The PolicyCage is sealed at `Provisioning → Active`; it cannot be modified while the Golem is running.
+
+```bash
+# Run a Golem locally
+bardo-golem start --config bardo.toml
+
+# Connect the terminal to observe it
+cargo run -p bardo-terminal -- --golem g-7f3a
+```
+
+Core subsystems:
+
+- **[`golem-core`](crates/golem-core)** — foundation types: `GolemId`, `CognitiveTier`, PAD affect vectors, event fabric, HDC primitives
+- **[`golem-grimoire`](crates/golem-grimoire)** — three-tier memory: LanceDB episodes, SQLite semantic patterns, procedural playbook
+- **[`golem-mortality`](crates/golem-mortality)** — triple-clock death: economic, epistemic, stochastic; Thanatopsis succession
+- **[`golem-daimon`](crates/golem-daimon)** — affect engine: PAD vector computation, appraisal triggers, behavioral phase transitions
+- **[`golem-inference`](crates/golem-inference)** — cost-aware T0/T1/T2 inference routing through bardo-gateway
+- **[`golem-safety`](crates/golem-safety)** — PolicyCage sandboxing, capability-based auth, taint tracking
 
 ---
 
