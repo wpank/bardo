@@ -6,7 +6,9 @@ A Rust monorepo of tools for building autonomous agents, running cost-efficient 
 
 ## Tools
 
-### [bardo-gateway](apps/bardo-gateway) — [demo](demo/demo1.mp4)
+### [bardo-gateway](apps/bardo-gateway)
+
+<video src="demo/demo1.mp4" controls width="100%"></video>
 
 An HTTP inference proxy that sits in front of Anthropic, OpenAI, and OpenRouter. Drop it in, point your API calls at port 4000, and it handles:
 
@@ -24,7 +26,9 @@ It speaks the Anthropic and OpenAI wire formats. Existing SDKs work unchanged �
 
 ---
 
-### [mori](apps/mori) — [demo](demo/demo3.mp4)
+### [mori](apps/mori)
+
+<video src="demo/demo3.mp4" controls width="100%"></video>
 
 A multi-agent build orchestration system. You give it plans and it dispatches Claude agents to implement them in parallel, manages worktrees so agents don't step on each other, runs gate verification after each step, and tracks budget.
 
@@ -59,7 +63,9 @@ Used for pre-flight simulation before any on-chain action. The [`golem-chain`](c
 
 ---
 
-### Golems — [demo](demo/demo4.mp4)
+### Golems
+
+<video src="demo/demo4.mp4" controls width="100%"></video>
 
 A Golem is a mortal autonomous agent compiled as a single Rust binary. It has a wallet, a strategy, a knowledge base, and a finite lifespan. It runs on a VM (local or Fly.io), connects to chain, and makes decisions on every tick of its heartbeat.
 
@@ -95,6 +101,54 @@ A TUI for observing what's happening inside a running golem. Ratatui-based, conn
 ```bash
 cargo run -p bardo-terminal
 ```
+
+---
+
+## How Bardo is Built
+
+Bardo is being built by the orchestration system it describes. The specification is 234,657 lines across 343 files, 115 implementation plans spanning 7 dependency layers, and 467 academic citations that preserve the research context behind design decisions. No single AI agent can hold all of that in context at once, so mori exists to make it tractable.
+
+### The scale problem
+
+26 Rust crates with explicit interdependencies. Plans cannot execute out of order — `golem-mortality` needs types from `golem-core`, which needs types from `bardo-primitives`. The full dependency graph has 7 layers. At the specification level, implementing any single crate requires synthesizing context from multiple PRD domains (mortality pulls from 18 files across 3 directories), plus citing papers like Tom Ray's Tierra experiments and Hinton's 2022 mortal computation work.
+
+### Two phases
+
+**Phase 1 — spec to work units.** Three shell scripts transform raw plans into per-step context slices targeting 5–15KB each:
+
+1. `extract-prd2-context.sh` — pulls relevant specification sections using weighted budget allocation. Explicit inline citations in plan files get 2x weight vs general crate-domain material.
+2. `task-decomposer.sh` — assembles context from six sources (plan file, task TOML, type registry, existing source, PRD2 extract, golden-path examples) and generates an ordered decomposition. Each step must compile when combined with all previous steps. Cargo check checkpoints every 2–3 steps.
+3. `context-distiller.sh` — transforms a 50–100KB decomposition into N files of 5–15KB using a `PREV_SUMMARY` carry-forward. Each step gets one-line summaries of prior accomplishments instead of full prior context.
+
+**Phase 2 — execution and integration.** A DAG scheduler manages dependencies. An agent swarm executes work units. Compile/test/review gates enforce quality. Passing plans merge to a batch integration branch.
+
+### DAG and wave scheduling
+
+Plans declare dependencies in YAML frontmatter. Kahn's algorithm computes waves of parallelizable work. Wave 0 is the workspace scaffold. Wave 1 runs foundational type crates in parallel. By wave 4, five plans execute simultaneously.
+
+At task granularity, a `UnifiedTaskDag` tracks individual tasks across all 115 plans. A task is runnable when all dependencies are complete, it is not already in flight, and it has no file overlap with any currently running task. Two tasks in different plans run in parallel unless they write the same files. Anything touching `mod.rs` or `Cargo.toml` serializes automatically.
+
+### Agent swarm
+
+bardo-ctl orchestrates 25 specialized agent roles across three backends (Claude, Cursor, Codex). Implementers use Claude. Design reviewers and merge resolvers use Codex. Code auditors and critics use Cursor.
+
+Each plan runs a state machine: Preflight → Strategist → Implementer → compile gate → dependency check → test gate → spec compliance → parallel review (Architect + Auditor + Scribe) → Critic verdict → commit. Failures loop back to the Implementer with iteration memory attached. Three failures at any gate halts the plan.
+
+The **Conductor** sits above all plan pipelines as a meta-orchestrator. It monitors agent health, nudges silent agents after 300s, restarts stalled agents after 600s, and aborts plans stuck in a phase after 1800s. Implementers get priority 0 in the rate limiter (highest). The Conductor is priority 7 (lowest) — it never starves an Implementer of a slot.
+
+### Git worktrees and isolation
+
+Each plan gets its own git worktree with its own branch (`codex/plan/{name}`). All worktrees share a single `sccache` instance with normalized paths (`SCCACHE_BASEDIRS`), so the second plan compiling `golem-core` gets a near-instant cache hit instead of recompiling. Without this, parallel worktrees redundantly rebuild the full dependency tree.
+
+### Iteration memory and learning
+
+Failed attempts feed forward. After each gate failure, `iteration-memory.sh` builds cumulative DO NOT RETRY lists from compiler errors, review blockers, and diff stats. If iteration 1 fails with a type mismatch and iteration 2 fails with a missing trait bound, iteration 3 sees both. The agent cannot repeat either mistake.
+
+Successful first-pass plans are indexed by category (computational, behavioral, data-structural, integration) with their implementation patterns. Future decompositions pull up to 2 golden-path examples for similar work — a new data-structural plan sees examples of what worked before.
+
+### The key lesson
+
+Not better models. Not longer context windows. Not more agents. The right 12KB of context, delivered at the right time, to the right agent, with memory of what already failed — that's what makes the difference. The context engineering pipeline (~2,000 lines of bash) may be doing more work than the 42,744-line Rust orchestrator.
 
 ---
 
