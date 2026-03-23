@@ -22,3 +22,17 @@ pub struct CachedValue {
 pub struct ChainProvider {
     _private: (),
 }
+
+impl ChainProvider {
+    /// Execute a read-only `eth_call` against the given chain and contract.
+    ///
+    /// Stub implementation — returns empty bytes until real RPC transport is wired.
+    pub async fn eth_call(
+        &self,
+        _chain_id: u64,
+        _to: alloy::primitives::Address,
+        _calldata: alloy::primitives::Bytes,
+    ) -> std::result::Result<alloy::primitives::Bytes, crate::error::ChainError> {
+        Ok(alloy::primitives::Bytes::new())
+    }
+}

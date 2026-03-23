@@ -647,4 +647,113 @@ mod tests {
             std::process::id()
         ))
     }
+
+    // ── Named tests for verify chain (UT1, INV-023, INV-024) ────────
+
+    #[test]
+    fn test_default_quit_key() {
+        let bindings = KeybindingMap::default_bindings();
+        assert_eq!(
+            bindings.resolve(
+                KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE),
+                ScreenId::HearthOverview
+            ),
+            Some(AppAction::Quit)
+        );
+    }
+
+    #[test]
+    fn test_goto_window_key_1() {
+        let bindings = KeybindingMap::default_bindings();
+        assert_eq!(
+            bindings.resolve(
+                KeyEvent::new(KeyCode::Char('1'), KeyModifiers::NONE),
+                ScreenId::HearthOverview
+            ),
+            Some(AppAction::GotoWindow(WindowId::Hearth))
+        );
+    }
+
+    #[test]
+    fn test_function_key_f1() {
+        let bindings = KeybindingMap::default_bindings();
+        assert_eq!(
+            bindings.resolve(
+                KeyEvent::new(KeyCode::F(1), KeyModifiers::NONE),
+                ScreenId::HearthOverview
+            ),
+            Some(AppAction::GotoWindow(WindowId::Hearth))
+        );
+    }
+
+    #[test]
+    fn test_parse_key_str_simple_char() {
+        assert_eq!(
+            parse_key_str("q"),
+            Some(KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE))
+        );
+        assert_eq!(
+            parse_key_str("?"),
+            Some(KeyEvent::new(KeyCode::Char('?'), KeyModifiers::NONE))
+        );
+    }
+
+    #[test]
+    fn test_parse_key_str_ctrl_modifier() {
+        assert_eq!(
+            parse_key_str("ctrl+c"),
+            Some(KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL))
+        );
+    }
+
+    #[test]
+    fn test_parse_key_str_function_key() {
+        assert_eq!(
+            parse_key_str("F1"),
+            Some(KeyEvent::new(KeyCode::F(1), KeyModifiers::NONE))
+        );
+        assert_eq!(
+            parse_key_str("f12"),
+            Some(KeyEvent::new(KeyCode::F(12), KeyModifiers::NONE))
+        );
+        assert_eq!(parse_key_str("f13"), None);
+    }
+
+    #[test]
+    fn test_keybinding_per_screen_priority() {
+        let mut bindings = KeybindingMap::default_bindings();
+        let override_key = KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE);
+        bindings
+            .per_screen
+            .entry(ScreenId::HearthOverview)
+            .or_default()
+            .insert(override_key, AppAction::ShowHelp);
+
+        // Per-screen binding wins over global
+        assert_eq!(
+            bindings.resolve(override_key, ScreenId::HearthOverview),
+            Some(AppAction::ShowHelp)
+        );
+        // Other screens still get the global binding
+        assert_eq!(
+            bindings.resolve(override_key, ScreenId::MindPipeline),
+            Some(AppAction::Quit)
+        );
+    }
+
+    #[test]
+    fn test_keybinding_default_has_essential_keys() {
+        let bindings = KeybindingMap::default_bindings();
+        let quit = KeyEvent::new(KeyCode::Char('q'), KeyModifiers::NONE);
+        let ctrl_c = KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL);
+        let tab = KeyEvent::new(KeyCode::Tab, KeyModifiers::NONE);
+        let help = KeyEvent::new(KeyCode::Char('?'), KeyModifiers::NONE);
+        let palette = KeyEvent::new(KeyCode::Char('/'), KeyModifiers::NONE);
+
+        assert!(bindings.global.contains_key(&quit));
+        assert!(bindings.global.contains_key(&ctrl_c));
+        assert!(bindings.global.contains_key(&tab));
+        assert!(bindings.global.contains_key(&help));
+        assert!(bindings.global.contains_key(&palette));
+    }
 }

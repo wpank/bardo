@@ -307,6 +307,61 @@ pub enum EventPayload {
         resource: String,
         utilization: f64,
     },
+    // ── Sonification event variants (Plan 08j) ──────────────────────────────
+    /// Gamma-band heartbeat clock tick (~40Hz). Payload: current arousal level.
+    ClockGammaTick {
+        /// Current arousal level (0.0–1.0).
+        arousal: f32,
+    },
+    /// Theta-band heartbeat clock tick (~8Hz). Payload: predictions resolved this cycle.
+    ClockThetaTick {
+        /// Number of predictions resolved since last theta tick.
+        predictions_resolved: u32,
+    },
+    /// Delta-band heartbeat clock tick (~1Hz). Payload: Grimoire entries processed.
+    ClockDeltaTick {
+        /// Number of Grimoire entries processed this cycle.
+        entries_processed: u32,
+    },
+    /// Heartbeat frequency adjusted. Payload: scale factor relative to baseline.
+    ClockFrequencyAdjusted {
+        /// Frequency scale factor (1.0 = nominal, >1.0 faster, <1.0 slower).
+        scale: f32,
+    },
+    /// A pending prediction was resolved. Used by EventMapper for prediction_gate.
+    PredictionResolved {
+        /// Signed prediction residual (predicted − actual).
+        residual: f32,
+        /// True if the actual value fell within the predicted interval.
+        within_interval: bool,
+        /// Prediction confidence at time of creation.
+        confidence: f32,
+    },
+    /// A new prediction was created.
+    PredictionCreated {
+        /// Confidence of the new prediction (0.0–1.0).
+        confidence: f32,
+    },
+    /// A swap was executed on-chain.
+    SwapExecuted {
+        /// Realised PnL for the swap in USD (negative = loss).
+        pnl_usd: f32,
+    },
+    /// A leveraged position was liquidated.
+    PositionLiquidated {
+        /// Loss amount in USD (positive value).
+        loss_usd: f32,
+    },
+    /// A dream-phase hypothesis was generated.
+    DreamHypothesis {
+        /// Confidence of the generated hypothesis (0.0–1.0).
+        confidence: f32,
+    },
+    /// A Grimoire warning was activated, optionally carrying bloodstain context.
+    GrimoireWarning {
+        /// True when the warning originates from a dead-golem bloodstain record.
+        is_bloodstain: bool,
+    },
 }
 
 /// Non-blocking broadcast fabric with bounded replay.
