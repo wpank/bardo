@@ -13,6 +13,8 @@ pub enum AppError {
     BadRequest(String),
     /// Authentication failed.
     Unauthorized(String),
+    /// Payment required (402) -- MPP flow.
+    PaymentRequired(String),
     /// Provider returned a server error (5xx / network failure).
     ProviderError(String),
     /// Upstream provider returned a client error (4xx). Forwarded with the
@@ -35,6 +37,10 @@ impl IntoResponse for AppError {
         let (status, payload) = match &self {
             Self::BadRequest(msg) => (StatusCode::BAD_REQUEST, error_json("bad_request", msg)),
             Self::Unauthorized(msg) => (StatusCode::UNAUTHORIZED, error_json("unauthorized", msg)),
+            Self::PaymentRequired(msg) => (
+                StatusCode::PAYMENT_REQUIRED,
+                error_json("payment_required", msg),
+            ),
             Self::ProviderError(msg) => {
                 (StatusCode::BAD_GATEWAY, error_json("provider_error", msg))
             }

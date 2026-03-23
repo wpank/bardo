@@ -52,6 +52,10 @@ pub struct AppState {
     /// In-flight request coalescing — waiters subscribe to a broadcast for the same hash.
     pub inflight:
         Arc<DashMap<[u8; 32], tokio::sync::broadcast::Sender<Result<bytes::Bytes, String>>>>,
+    /// MPP payment state (None if MPP not enabled).
+    pub mpp: Option<Arc<crate::mpp::MppState>>,
+    /// Maximum request body size in bytes (used by MPP middleware).
+    pub max_body_size: usize,
 }
 
 impl AppState {

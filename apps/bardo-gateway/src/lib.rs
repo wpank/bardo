@@ -12,6 +12,7 @@ pub mod dashboard;
 pub mod error;
 pub mod format;
 pub mod handler;
+pub mod mpp;
 pub mod prefix;
 pub mod pricing;
 pub mod provider;
@@ -54,6 +55,8 @@ pub struct GatewayConfig {
     pub max_concurrent: usize,
     pub pool_max_idle: usize,
     pub pool_idle_timeout: u64,
+    /// MPP configuration (None = MPP disabled).
+    pub mpp: Option<mpp::MppConfig>,
 }
 
 impl Default for GatewayConfig {
@@ -71,6 +74,7 @@ impl Default for GatewayConfig {
             max_concurrent: 256,
             pool_max_idle: 64,
             pool_idle_timeout: 90,
+            mpp: None,
         }
     }
 }
@@ -252,6 +256,15 @@ pub async fn start_server(config: GatewayConfig) -> anyhow::Result<()> {
         }),
         semantic_cache: sem_cache.clone(),
         inflight: Arc::new(DashMap::new()),
+        mpp: config.mpp.as_ref().filter(|c| c.enabled).map(|c| {
+            tracing::info!(
+                recipient = %c.recipient_address,
+                spread = c.default_spread,
+                "MPP payment protocol enabled"
+            );
+            Arc::new(mpp::MppState::new(c.clone()))
+        }),
+        max_body_size: config.max_body_size,
     };
 
     // Start the cost writer (subscribes to stats broadcast).
@@ -328,6 +341,23 @@ pub async fn start_server(config: GatewayConfig) -> anyhow::Result<()> {
         });
     }
 
+    // MPP session expiry background task.
+    if state.mpp.is_some() {
+        let mpp_ref = state.mpp.clone();
+        tokio::spawn(async move {
+            let mut interval = tokio::time::interval(Duration::from_secs(60));
+            loop {
+                interval.tick().await;
+                if let Some(ref mpp) = mpp_ref {
+                    let expired = mpp.sessions.expire_stale();
+                    if !expired.is_empty() {
+                        tracing::info!(count = expired.len(), "expired stale MPP sessions");
+                    }
+                }
+            }
+        });
+    }
+
     // Routes.
     let authed = Router::new()
         .route("/v1/messages", post(handler::messages))
@@ -339,12 +369,24 @@ pub async fn start_server(config: GatewayConfig) -> anyhow::Result<()> {
         .route("/v1/batch/result/{id}", get(batch::batch_result))
         .layer(middleware::from_fn_with_state(
             state.clone(),
+            mpp::middleware::mpp_payment,
+        ))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
             auth::require_auth,
         ));
 
     let dashboard_dir = std::env::current_dir()
         .unwrap_or_default()
         .join("tmp/bardo-dashboard");
+
+    // MPP session management routes (auth handled by MPP protocol, not API key).
+    let mpp_routes = Router::new()
+        .route("/v1/mpp/sessions", post(mpp::middleware::session_open))
+        .route(
+            "/v1/mpp/sessions/{id}",
+            get(mpp::middleware::session_status).delete(mpp::middleware::session_close),
+        );
 
     let app = Router::new()
         .route("/v1/health", get(handler::health))
@@ -355,6 +397,7 @@ pub async fn start_server(config: GatewayConfig) -> anyhow::Result<()> {
             "/dashboard",
             tower_http::services::ServeDir::new(&dashboard_dir),
         )
+        .merge(mpp_routes)
         .merge(authed)
         .layer(DefaultBodyLimit::max(config.max_body_size))
         .layer(tower_http::trace::TraceLayer::new_for_http())

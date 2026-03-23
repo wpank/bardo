@@ -3,6 +3,7 @@
 //! When embedded inside mori, the library's `start_server()` is called directly
 //! with a `GatewayConfig` — this binary is not used.
 
+use alloy::primitives::Address;
 use bardo_gateway::GatewayConfig;
 use clap::Parser;
 
@@ -48,6 +49,26 @@ struct Cli {
     /// Idle connection timeout in seconds.
     #[arg(long, default_value = "90")]
     pool_idle_timeout: u64,
+
+    /// Enable MPP (Machine Payment Protocol) server.
+    #[arg(long, env = "BARDO_MPP_ENABLED")]
+    mpp_enabled: bool,
+
+    /// MPP recipient address (hex, gateway wallet that receives payments).
+    #[arg(long, env = "BARDO_MPP_RECIPIENT")]
+    mpp_recipient: Option<String>,
+
+    /// MPP spread percentage (default 0.20 = 20%).
+    #[arg(long, env = "BARDO_MPP_SPREAD", default_value = "0.20")]
+    mpp_spread: f64,
+
+    /// MPP session TTL in seconds.
+    #[arg(long, env = "BARDO_MPP_SESSION_TTL", default_value = "3600")]
+    mpp_session_ttl: u64,
+
+    /// MPP quote validity in seconds.
+    #[arg(long, env = "BARDO_MPP_QUOTE_VALIDITY", default_value = "300")]
+    mpp_quote_validity: u64,
 }
 
 #[tokio::main]
@@ -89,6 +110,22 @@ async fn main() -> anyhow::Result<()> {
         max_concurrent: cli.max_concurrent,
         pool_max_idle: cli.pool_max_idle,
         pool_idle_timeout: cli.pool_idle_timeout,
+        mpp: if cli.mpp_enabled {
+            let recipient = cli
+                .mpp_recipient
+                .as_deref()
+                .and_then(|s| s.parse::<Address>().ok())
+                .unwrap_or(Address::ZERO);
+            Some(bardo_gateway::mpp::MppConfig {
+                enabled: true,
+                recipient_address: recipient,
+                default_spread: cli.mpp_spread,
+                session_ttl: cli.mpp_session_ttl,
+                quote_validity: cli.mpp_quote_validity,
+            })
+        } else {
+            None
+        },
     };
 
     bardo_gateway::start_server(config).await
