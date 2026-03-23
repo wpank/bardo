@@ -8,7 +8,7 @@ A Rust monorepo of tools for building autonomous agents, running cost-efficient 
 
 ### [bardo-gateway](apps/bardo-gateway)
 
-<video src="demo/demo1.mp4" controls width="100%"></video>
+<video src="https://github.com/user-attachments/assets/af53e532-ea51-4439-99b0-20b14ed5df8b" controls width="100%"></video>
 
 An HTTP inference proxy that sits in front of Anthropic, OpenAI, and OpenRouter. Drop it in, point your API calls at port 4000, and it handles:
 
@@ -28,7 +28,7 @@ It speaks the Anthropic and OpenAI wire formats. Existing SDKs work unchanged â€
 
 ### [mori](apps/mori)
 
-<video src="demo/demo3.mp4" controls width="100%"></video>
+<video src="https://github.com/user-attachments/assets/dc71ba75-6af3-4e3f-81b4-5862c9d48d8e" controls width="100%"></video>
 
 A multi-agent build orchestration system. You give it plans and it dispatches Claude agents to implement them in parallel, manages worktrees so agents don't step on each other, runs gate verification after each step, and tracks budget.
 
@@ -65,7 +65,7 @@ Used for pre-flight simulation before any on-chain action. The [`golem-chain`](c
 
 ### Golems
 
-<video src="demo/demo4.mp4" controls width="100%"></video>
+<video src="https://github.com/user-attachments/assets/d515773e-6024-4d89-aad7-3e68faa827c1" controls width="100%"></video>
 
 A Golem is a mortal autonomous agent compiled as a single Rust binary. It has a wallet, a strategy, a knowledge base, and a finite lifespan. It runs on a VM (local or Fly.io), connects to chain, and makes decisions on every tick of its heartbeat.
 
