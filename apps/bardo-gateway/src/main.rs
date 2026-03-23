@@ -104,6 +104,15 @@ async fn main() -> anyhow::Result<()> {
         openrouter_api_key: std::env::var("OPENROUTER_API_KEY")
             .ok()
             .filter(|k| !k.is_empty()),
+        venice_api_key: std::env::var("VENICE_API_KEY")
+            .ok()
+            .filter(|k| !k.is_empty()),
+        bankr_api_key: std::env::var("BANKR_API_KEY")
+            .ok()
+            .filter(|k| !k.is_empty()),
+        bankr_base_url: std::env::var("BANKR_API_BASE_URL")
+            .ok()
+            .filter(|k| !k.is_empty()),
         max_cache: cli.max_cache,
         ttl: cli.ttl,
         max_body_size: cli.max_body_size,

@@ -4,6 +4,7 @@
 //! Call `start_server(config).await` to run the gateway as a background tokio task.
 
 pub mod auth;
+pub mod bankr;
 pub mod batch;
 pub mod cache;
 pub mod compress;
@@ -23,6 +24,7 @@ pub mod sse;
 pub mod state;
 pub mod tier;
 pub mod tools;
+pub mod venice;
 
 use std::sync::Arc;
 use std::time::Duration;
@@ -37,7 +39,9 @@ use bytes::Bytes;
 use dashmap::DashMap;
 use tokio::sync::Semaphore;
 
-use providers::{AnthropicProvider, OpenAiProvider, OpenRouterProvider, Provider};
+use providers::{
+    AnthropicProvider, BankrProvider, OpenAiProvider, OpenRouterProvider, Provider, VeniceProvider,
+};
 use state::AppState;
 
 /// Configuration for the gateway server.
@@ -49,6 +53,9 @@ pub struct GatewayConfig {
     pub anthropic_api_keys: Vec<String>,
     pub openai_api_key: Option<String>,
     pub openrouter_api_key: Option<String>,
+    pub venice_api_key: Option<String>,
+    pub bankr_api_key: Option<String>,
+    pub bankr_base_url: Option<String>,
     pub max_cache: u64,
     pub ttl: u64,
     pub max_body_size: usize,
@@ -68,6 +75,9 @@ impl Default for GatewayConfig {
             anthropic_api_keys: vec![],
             openai_api_key: None,
             openrouter_api_key: None,
+            venice_api_key: None,
+            bankr_api_key: None,
+            bankr_base_url: None,
             max_cache: 10_000,
             ttl: 3600,
             max_body_size: 10_485_760,
@@ -119,9 +129,23 @@ pub async fn start_server(config: GatewayConfig) -> anyhow::Result<()> {
         http.clone(),
         anthropic_api_keys,
     ))];
+    if let Some(ref key) = config.venice_api_key {
+        provider_list.push(Arc::new(VeniceProvider::new(http.clone(), key.clone())));
+        tracing::info!("Venice provider enabled (zero-retention inference)");
+    }
     if let Some(ref key) = config.openai_api_key {
         provider_list.push(Arc::new(OpenAiProvider::new(http.clone(), key.clone())));
         tracing::info!("OpenAI provider enabled");
+    }
+    if let Some(ref key) = config.bankr_api_key {
+        let bankr = BankrProvider::new(http.clone(), key.clone());
+        let bankr = if let Some(ref base) = config.bankr_base_url {
+            bankr.with_base_url(base.clone())
+        } else {
+            bankr
+        };
+        provider_list.push(Arc::new(bankr));
+        tracing::info!("Bankr provider enabled (self-funding inference)");
     }
     if let Some(ref key) = config.openrouter_api_key {
         provider_list.push(Arc::new(OpenRouterProvider::new(http.clone(), key.clone())));

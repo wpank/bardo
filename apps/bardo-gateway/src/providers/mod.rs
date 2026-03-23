@@ -6,9 +6,11 @@
 //! bytes, regardless of what the underlying API actually speaks.
 //!
 //! Resolution is first-match by priority:
-//! 1. `AnthropicProvider` — `claude-*` models
-//! 2. `OpenAiProvider`    — `gpt-*`, `o1`, `o3`, `o4-*` models
-//! 3. `OpenRouterProvider`— catch-all for everything else
+//! 1. `AnthropicProvider`  — `claude-*` models
+//! 2. `VeniceProvider`     — `venice/*`, Venice-hosted models (zero-retention)
+//! 3. `OpenAiProvider`     — `gpt-*`, `o1`, `o3`, `o4-*` models
+//! 4. `BankrProvider`      — `bankr/*` models (self-funding inference)
+//! 5. `OpenRouterProvider` — catch-all for everything else
 
 use std::pin::Pin;
 
@@ -22,12 +24,16 @@ use serde::Serialize;
 use crate::error::AppError;
 
 pub mod anthropic;
+pub mod bankr;
 pub mod openai;
 pub mod openrouter;
+pub mod venice;
 
 pub use anthropic::AnthropicProvider;
+pub use bankr::BankrProvider;
 pub use openai::OpenAiProvider;
 pub use openrouter::OpenRouterProvider;
+pub use venice::VeniceProvider;
 
 /// Pinned byte stream returned by streaming provider calls.
 pub type ByteStream = Pin<Box<dyn Stream<Item = Result<Bytes, reqwest::Error>> + Send>>;

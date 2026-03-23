@@ -143,6 +143,41 @@ fn default_batch_id() -> String {
     chrono::Local::now().format("%Y%m%d").to_string()
 }
 
+/// Find the main (non-linked) worktree root.
+///
+/// When running inside a linked worktree, `git rev-parse --show-toplevel` returns the
+/// linked worktree path, not the main repo. We use `git worktree list` to find the
+/// primary worktree, falling back to `--show-toplevel` if parsing fails.
+fn find_main_worktree() -> Option<PathBuf> {
+    // Try `git worktree list` first — the first entry is always the main worktree.
+    let output = std::process::Command::new("git")
+        .args(["worktree", "list", "--porcelain"])
+        .output()
+        .ok()?;
+    if output.status.success() {
+        let stdout = String::from_utf8(output.stdout).ok()?;
+        // First "worktree <path>" line is the main worktree.
+        for line in stdout.lines() {
+            if let Some(path) = line.strip_prefix("worktree ") {
+                return Some(PathBuf::from(path));
+            }
+        }
+    }
+
+    // Fallback: plain rev-parse
+    let output = std::process::Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .output()
+        .ok()?;
+    if output.status.success() {
+        String::from_utf8(output.stdout)
+            .ok()
+            .map(|s| PathBuf::from(s.trim()))
+    } else {
+        None
+    }
+}
+
 fn main() -> anyhow::Result<()> {
     let matches = Cli::command().get_matches();
     let mut cli = Cli::from_arg_matches(&matches).unwrap();

@@ -145,5 +145,58 @@ pub fn default_pricing() -> Vec<ModelPricing> {
             cached_input_per_m: Some(0.55), // 50% of 1.1
             reasoning_per_m: Some(4.4),
         },
+        // ── Venice ──
+        // Venice uses DIEM points; these are estimated equivalent rates.
+        ModelPricing {
+            model: "llama-3.3-70b".into(),
+            input_per_m: 0.59,
+            output_per_m: 0.79,
+            cached_input_per_m: None,
+            reasoning_per_m: None,
+        },
+        ModelPricing {
+            model: "deepseek-ai-DeepSeek-R1".into(),
+            input_per_m: 0.55,
+            output_per_m: 2.19,
+            cached_input_per_m: None,
+            reasoning_per_m: Some(2.19),
+        },
+        ModelPricing {
+            model: "zai-org-glm-4.7".into(),
+            input_per_m: 0.50,
+            output_per_m: 1.50,
+            cached_input_per_m: None,
+            reasoning_per_m: None,
+        },
+        ModelPricing {
+            model: "qwen-2.5-vl-72b".into(),
+            input_per_m: 0.40,
+            output_per_m: 0.40,
+            cached_input_per_m: None,
+            reasoning_per_m: None,
+        },
+        // ── Bankr ──
+        // Bankr wraps other models; pricing reflects Bankr rates.
+        ModelPricing {
+            model: "bankr/gemini-2.5-flash".into(),
+            input_per_m: 0.15,
+            output_per_m: 0.60,
+            cached_input_per_m: Some(0.0375),
+            reasoning_per_m: None,
+        },
+        ModelPricing {
+            model: "bankr/claude-sonnet-4".into(),
+            input_per_m: 3.0,
+            output_per_m: 15.0,
+            cached_input_per_m: Some(0.30),
+            reasoning_per_m: None,
+        },
+        ModelPricing {
+            model: "bankr/claude-opus-4-6".into(),
+            input_per_m: 5.0,
+            output_per_m: 25.0,
+            cached_input_per_m: Some(0.50),
+            reasoning_per_m: None,
+        },
     ]
 }
