@@ -84,7 +84,8 @@ Respond with your assessment and optionally one directive:
 - `[THROTTLE N]` — Set the agent soft limit to N (reduce parallelism if rate limited)
 - `[ENRICH plan_num]` — Run `./bardo-enrich.sh <plan_num>` in the repo root (enhance-toml / optional enhance-plan pipeline) when decomposition, PRD2 extracts, or task TOMLs are missing or stale
 - `[PHASE-REJECT plan_base] reason` — Reject the most recent phase transition for a plan and roll it back. Use when: implementation output is too short or wrong, gates passed vacuously, reviews were superficial, or merge had issues. The plan re-runs from the appropriate earlier phase.
-- `[RETRY-PLAN plan_base]` — Full clean retry of a Failed plan. Kills any active agents for the plan, removes its git worktree and branch, clears all completed tasks and failure counts, and reschedules it from scratch (T1). The plan gets a fresh worktree from the current batch branch, so it picks up any code merged by other plans since the original failure. Use when: a plan failed due to transient issues (agent crashes, zero-output exits, spawn races, resource contention) rather than a fundamental problem with the plan itself. Do NOT retry if the same structural error will just recur — fix the root cause first (e.g. nudge to fix a missing file reference, or throttle to reduce contention).
+- `[RETRY-PLAN plan_base]` — Full clean retry of a Failed plan. Kills any active agents for the plan, removes its git worktree and branch, clears all completed tasks and failure counts, and reschedules it from scratch (T1). The plan gets a fresh worktree from the current batch branch, so it picks up any code merged by other plans since the original failure. Use when: the worktree or branch is corrupted, or the plan needs to start over from a fundamentally different approach. Do NOT use for transient failures — use SOFT-RETRY instead to preserve completed work.
+- `[SOFT-RETRY plan_base]` — Soft retry of a Failed plan. Resets failure counts and spawn backoff, sets phase back to Implementing, but PRESERVES all completed tasks and the existing worktree/branch. Only incomplete tasks are rescheduled. Use when: a plan failed due to transient issues (agent crashes, zero-output exits, spawn races, resource contention) where some tasks already completed successfully. This is the preferred retry for spawn-race failures.
 
 Note: `[PRE-PLAN]`, `[VALIDATE]`, `[FIX-PLAN]`, and `[SKIP-VALIDATION]` are parallel-mode only and have no effect in sequential mode. Do not issue them.
 
@@ -116,7 +117,7 @@ The operator expects to leave this pipeline running unattended. Your job is to k
 - **When state looks weird** (plans half-done with no agent, iteration counts that don't match phase, agents working on already-completed tasks), treat it as corruption and restart the affected plan from a clean state. Don't try to reason your way through broken state — reset it.
 - **When edge cases surface** (unexpected file conflicts, merge failures, tests that pass locally but fail in gates, agents producing empty or nonsensical output), document what you see in your assessment and take the most conservative recovery action. Commit what's good, restart what's broken.
 - **When API rate limits hit**, immediately `[THROTTLE]` down to reduce concurrency. Don't keep spawning agents into a rate limit wall.
-- **When agents exit with zero output** (0 chars, 0-3 input tokens), this is a spawn race — the process died before it could read the prompt. If a plan fails permanently from repeated zero-output exits, use `[RETRY-PLAN plan_base]` to reset it. If it keeps happening, `[THROTTLE]` down first to reduce contention, then retry.
+- **When agents exit with zero output** (0 chars, 0-3 input tokens), this is a spawn race — the process died before it could read the prompt. Spawn races no longer count toward task failure limits, so plans won't fail from spawn races alone unless 10+ consecutive spawn failures occur. If a plan does fail from repeated spawn races, use `[SOFT-RETRY plan_base]` to reset it while preserving completed tasks. If it keeps happening, `[THROTTLE]` down first to reduce contention, then retry.
 - **When context pressure is climbing fast**, don't wait for 80%. If an agent is at 60% and accelerating (lots of error output, long compile logs), nudge it to commit progress and wrap up the current task before it hits the wall.
 
 The goal: the operator should be able to walk away and come back to either a completed run or a recoverable state — never a silent hang or lost work.
@@ -342,7 +343,7 @@ Context pressure: {context_pct}%
 {gate_info}
 {gate_output_section}
 What is your assessment? Include a directive if action is needed.
-Reminder: If you see plans stuck in Failed state due to transient issues (zero-output exits, spawn races), use [RETRY-PLAN plan_base] to reset them."#,
+Reminder: If you see plans stuck in Failed state due to transient issues (zero-output exits, spawn races), use [SOFT-RETRY plan_base] to reset them while preserving completed work. Only use [RETRY-PLAN plan_base] if the worktree/branch is corrupted or the plan needs a fundamentally fresh start."#,
         revise_count = state.consecutive_revise_count,
     )
 }
@@ -478,6 +479,16 @@ pub fn parse_directive(response: &str) -> Option<ConductorDirective> {
                 }
             }
         }
+        if trimmed.starts_with("[SOFT-RETRY ") {
+            if let Some(rest) = trimmed.strip_prefix("[SOFT-RETRY ") {
+                if let Some(bracket_end) = rest.find(']') {
+                    let plan = rest[..bracket_end].trim().to_string();
+                    if !plan.is_empty() {
+                        return Some(ConductorDirective::SoftRetryPlan { plan });
+                    }
+                }
+            }
+        }
     }
     None
 }
@@ -551,6 +562,10 @@ pub enum ConductorDirective {
     },
     /// Reset a Failed plan so it retries from scratch — clears failure counts and phase.
     RetryPlan {
+        plan: String,
+    },
+    /// Soft-retry a Failed plan — resets failure counts but preserves completed tasks and worktree.
+    SoftRetryPlan {
         plan: String,
     },
 }

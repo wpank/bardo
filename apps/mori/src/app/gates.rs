@@ -1545,6 +1545,13 @@ pub(crate) async fn execute_conductor_directive(
                 LogLevel::Warn,
             );
         }
+        ConductorDirective::SoftRetryPlan { plan } => {
+            state.add_log(
+                "conductor",
+                &format!("SOFT-RETRY {plan} — not supported in sequential mode"),
+                LogLevel::Warn,
+            );
+        }
     }
     Ok(())
 }

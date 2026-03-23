@@ -243,13 +243,39 @@ impl ParallelExecutor {
 
     /// Record a spawn failure for a plan. Apply exponential backoff starting from first failure.
     /// Backoff: 1st failure = 2s, 2nd = 4s, 3rd+ = 30s (full block).
-    pub fn record_spawn_failure(&mut self, plan: &str) {
+    pub fn record_spawn_failure(&mut self, plan: &str) -> Vec<ExecutorAction> {
         let count = self
             .spawn_failure_counts
             .entry(plan.to_string())
             .or_insert(0);
         *count += 1;
         let n = *count;
+
+        // After 10 spawn failures, fail the plan so the conductor can decide what to do.
+        if n >= 10 {
+            let reason = format!(
+                "plan {} hit {} consecutive spawn failures (zero-output exits)",
+                plan, n
+            );
+            tracing::error!("{}", reason);
+            if let Some(state) = self.plan_states.get_mut(plan) {
+                state.phase = PlanPhase::Failed(reason);
+            }
+            // Cancel remaining in-flight tasks for this plan
+            let plan_in_flight: Vec<GlobalTaskId> = self
+                .in_flight_tasks
+                .keys()
+                .filter(|gid| gid.plan == plan)
+                .cloned()
+                .collect();
+            for gid in plan_in_flight {
+                self.in_flight_tasks.remove(&gid);
+            }
+            self.merge_queue.retain(|p| p != plan);
+            self.merge_queue_entered_at.remove(plan);
+            return self.schedule_next();
+        }
+
         let backoff_secs = match n {
             1 => 2,  // 1st failure: 2 second backoff
             2 => 4,  // 2nd failure: 4 second backoff
@@ -259,11 +285,12 @@ impl ParallelExecutor {
         self.spawn_blocked_until
             .insert(plan.to_string(), blocked_until);
         tracing::warn!(
-            "Plan {} spawn failed ({}/3) — backoff {}s",
+            "Plan {} spawn failed ({}/10) — backoff {}s",
             plan,
             n,
             backoff_secs
         );
+        vec![]
     }
 
     /// Record a successful spawn for a plan. Clears any backoff state.
@@ -1618,6 +1645,25 @@ impl ParallelExecutor {
         self.handle_task_failed(lead)
     }
 
+    /// Handle an instance that died from a spawn race (zero-output exit).
+    /// Puts tasks back as runnable WITHOUT incrementing failure counts,
+    /// since the agent never actually ran.
+    pub fn handle_instance_spawn_failed(&mut self, instance_id: &str) -> Vec<ExecutorAction> {
+        let tasks = self.tasks_for_instance(instance_id);
+        if tasks.is_empty() {
+            return self.schedule_next();
+        }
+
+        for task_id in &tasks {
+            self.in_flight_tasks.remove(task_id);
+            // Remove from completed so they become runnable again
+            self.completed_tasks.remove(task_id);
+        }
+        info!(instance = %instance_id, task_count = tasks.len(),
+            "Spawn-failed instance — tasks returned to queue without failure count increment");
+        self.schedule_next()
+    }
+
     /// Reset a plan from Failed state so it can be retried from a completely clean state.
     /// Removes worktree + branch, clears all task state, and reschedules from scratch.
     pub fn retry_failed_plan(&mut self, plan: &str) -> Vec<ExecutorAction> {
@@ -1691,6 +1737,67 @@ impl ParallelExecutor {
         }];
         actions.extend(self.schedule_next());
         actions
+    }
+
+    /// Soft-retry a Failed plan: reset failure/spawn counters and set phase back to
+    /// Implementing, but PRESERVE completed tasks and the worktree/branch. Use for
+    /// transient failures (spawn races, resource contention) where real work was done.
+    pub fn soft_retry_failed_plan(&mut self, plan: &str) -> Vec<ExecutorAction> {
+        match self.plan_states.get(plan) {
+            Some(state) if matches!(state.phase, PlanPhase::Failed(_)) => {}
+            _ => {
+                info!(
+                    plan = plan,
+                    "SOFT-RETRY ignored — plan is not in Failed state"
+                );
+                return vec![];
+            }
+        }
+
+        // Reset phase to Implementing — keeps completed tasks intact
+        if let Some(state) = self.plan_states.get_mut(plan) {
+            state.phase = PlanPhase::Implementing;
+        }
+
+        // Clear in-flight tasks (they'll get rescheduled)
+        let in_flight: Vec<GlobalTaskId> = self
+            .in_flight_tasks
+            .keys()
+            .filter(|gid| gid.plan == plan)
+            .cloned()
+            .collect();
+        for gid in in_flight {
+            self.in_flight_tasks.remove(&gid);
+        }
+
+        // Clear task failure counts so tasks can be retried
+        let task_keys: Vec<GlobalTaskId> = self
+            .task_failure_count
+            .keys()
+            .filter(|gid| gid.plan == plan)
+            .cloned()
+            .collect();
+        for key in task_keys {
+            self.task_failure_count.remove(&key);
+        }
+
+        // Clear spawn backoff
+        self.spawn_failure_counts.remove(plan);
+        self.spawn_blocked_until.remove(plan);
+
+        let completed_count = self
+            .completed_tasks
+            .iter()
+            .filter(|gid| gid.plan == plan)
+            .count();
+        info!(
+            plan = plan,
+            completed_preserved = completed_count,
+            "SOFT-RETRY — reset failure counts, preserving {} completed tasks and worktree",
+            completed_count
+        );
+
+        self.schedule_next()
     }
 }
 

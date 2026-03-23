@@ -137,6 +137,13 @@ pub async fn run(mut config: AppConfig) -> Result<()> {
         start_embedded_gateway(&mut config).await;
     }
 
+    // When gateway is disabled (--no-gateway), clear any gateway-related env vars
+    // so agents don't accidentally route through an external or stale gateway.
+    if !config.gateway_enabled {
+        std::env::remove_var("ANTHROPIC_BASE_URL");
+        std::env::remove_var("BARDO_GATEWAY_API_KEY");
+    }
+
     if config.parallel {
         return run_parallel(config).await;
     }
@@ -198,13 +205,22 @@ async fn start_embedded_gateway(config: &mut AppConfig) {
         }
     });
 
-    // Give the gateway a moment to bind.
-    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+    // Give the gateway a moment to bind, then verify it's actually listening.
+    tokio::time::sleep(std::time::Duration::from_millis(200)).await;
 
-    // Set environment variables so all spawned agents route through the gateway.
     let base_url = format!("http://127.0.0.1:{port}");
-    std::env::set_var("ANTHROPIC_BASE_URL", &base_url);
-    std::env::set_var("BARDO_GATEWAY_API_KEY", &api_key);
+    match tokio::net::TcpStream::connect(format!("127.0.0.1:{port}")).await {
+        Ok(_) => {
+            // Gateway is listening — set env vars so agents route through it.
+            std::env::set_var("ANTHROPIC_BASE_URL", &base_url);
+            std::env::set_var("BARDO_GATEWAY_API_KEY", &api_key);
+        }
+        Err(e) => {
+            warn!(port, error = %e, "embedded gateway failed to bind — agents will use direct API");
+            config.gateway_enabled = false;
+            return;
+        }
+    }
 
     info!(
         port,

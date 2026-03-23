@@ -4095,6 +4095,17 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                             &spawn_ready_tx,
                                         ).await?;
                                     }
+                                    ConductorDirective::SoftRetryPlan { plan } => {
+                                        state.add_log("conductor", &format!(
+                                            "SOFT-RETRY {plan} — resetting failure counts, preserving completed tasks"
+                                        ), LogLevel::Warn);
+                                        let actions = executor.soft_retry_failed_plan(&plan);
+                                        execute_actions(
+                                            actions, &mut executor, &mut pool, &worktree_mgr, &mut state,
+                                            &config, &persistence, &gate_tx, &batch_branch, &git_manager,
+                                            &spawn_ready_tx,
+                                        ).await?;
+                                    }
                                 }
                                 // Clear pending phase validation on any directive
                                 state.pending_phase_validation = None;
@@ -5333,14 +5344,20 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                 let actions = if output_len < 50 {
                                     // Apply spawn backoff so retries don't race.
                                     // Extract plan name from instance tasks.
+                                    let mut spawn_actions = vec![];
                                     if let Some(first_task) = instance_tasks.first() {
-                                        executor.record_spawn_failure(&first_task.plan);
+                                        spawn_actions = executor.record_spawn_failure(&first_task.plan);
                                     }
                                     state.add_log("executor", &format!(
                                         "Implementer exited for {} with no output ({}chars, {}tok) — will retry with backoff",
                                         iid, output_len, input_tokens
                                     ), LogLevel::Warn);
-                                    executor.handle_instance_failed(&iid)
+                                    // Use spawn-failed handler: returns tasks to queue
+                                    // WITHOUT incrementing failure counts, since the
+                                    // agent never actually ran.
+                                    let mut actions = executor.handle_instance_spawn_failed(&iid);
+                                    actions.extend(spawn_actions);
+                                    actions
                                 } else {
                                     for task_id in &instance_tasks {
                                         state.executor_completed_tasks.insert(task_id.to_string());
