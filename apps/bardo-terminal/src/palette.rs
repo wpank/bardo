@@ -69,61 +69,61 @@ impl ColorPalette {
 }
 
 /// Deep background void color.
-pub(crate) const BG_VOID: Color = Color::Rgb(6, 6, 8);
+pub const BG_VOID: Color = Color::Rgb(6, 6, 8);
 /// Raised panel background color.
-pub(crate) const BG_RAISED: Color = Color::Rgb(12, 10, 14);
+pub const BG_RAISED: Color = Color::Rgb(12, 10, 14);
 /// Mid-depth background color.
-pub(crate) const BG_MID: Color = Color::Rgb(8, 8, 16);
+pub const BG_MID: Color = Color::Rgb(8, 8, 16);
 /// Warm-shifted void background.
-pub(crate) const BG_WARM: Color = Color::Rgb(10, 8, 8);
+pub const BG_WARM: Color = Color::Rgb(10, 8, 8);
 /// Standard border color.
-pub(crate) const BORDER: Color = Color::Rgb(24, 20, 32);
+pub const BORDER: Color = Color::Rgb(24, 20, 32);
 /// Active border color.
-pub(crate) const BORDER_ACTIVE: Color = Color::Rgb(170, 112, 136);
+pub const BORDER_ACTIVE: Color = Color::Rgb(170, 112, 136);
 /// Dream-state border color.
-pub(crate) const BORDER_DREAM: Color = Color::Rgb(88, 88, 120);
+pub const BORDER_DREAM: Color = Color::Rgb(88, 88, 120);
 /// Primary rose text color.
-pub(crate) const ROSE: Color = Color::Rgb(170, 112, 136);
+pub const ROSE: Color = Color::Rgb(170, 112, 136);
 /// Bright rose color for alerts.
-pub(crate) const ROSE_BRIGHT: Color = Color::Rgb(204, 144, 168);
+pub const ROSE_BRIGHT: Color = Color::Rgb(204, 144, 168);
 /// Dim rose color.
-pub(crate) const ROSE_DIM: Color = Color::Rgb(122, 80, 96);
+pub const ROSE_DIM: Color = Color::Rgb(122, 80, 96);
 /// Deep rose color.
-pub(crate) const ROSE_DEEP: Color = Color::Rgb(58, 32, 48);
+pub const ROSE_DEEP: Color = Color::Rgb(58, 32, 48);
 /// Phosphor residue rose color.
-pub(crate) const ROSE_EMBER: Color = Color::Rgb(72, 40, 56);
+pub const ROSE_EMBER: Color = Color::Rgb(72, 40, 56);
 /// Bone highlight color.
-pub(crate) const BONE: Color = Color::Rgb(200, 184, 144);
+pub const BONE: Color = Color::Rgb(200, 184, 144);
 /// Dim bone color.
-pub(crate) const BONE_DIM: Color = Color::Rgb(138, 122, 90);
+pub const BONE_DIM: Color = Color::Rgb(138, 122, 90);
 /// Primary readable text color.
-pub(crate) const TEXT_PRIMARY: Color = Color::Rgb(152, 128, 144);
+pub const TEXT_PRIMARY: Color = Color::Rgb(152, 128, 144);
 /// Secondary text color.
-pub(crate) const TEXT_DIM: Color = Color::Rgb(88, 72, 88);
+pub const TEXT_DIM: Color = Color::Rgb(88, 72, 88);
 /// Barely visible text color.
-pub(crate) const TEXT_GHOST: Color = Color::Rgb(48, 40, 48);
+pub const TEXT_GHOST: Color = Color::Rgb(48, 40, 48);
 /// Subliminal text color.
-pub(crate) const TEXT_PHANTOM: Color = Color::Rgb(32, 24, 32);
+pub const TEXT_PHANTOM: Color = Color::Rgb(32, 24, 32);
 /// Dream-state primary color.
-pub(crate) const DREAM: Color = Color::Rgb(88, 88, 120);
+pub const DREAM: Color = Color::Rgb(88, 88, 120);
 /// Dim dream color.
-pub(crate) const DREAM_DIM: Color = Color::Rgb(56, 56, 88);
+pub const DREAM_DIM: Color = Color::Rgb(56, 56, 88);
 /// Deep dream background noise color.
-pub(crate) const DREAM_DEEP: Color = Color::Rgb(40, 40, 72);
+pub const DREAM_DEEP: Color = Color::Rgb(40, 40, 72);
 /// Warning color.
-pub(crate) const WARNING: Color = Color::Rgb(170, 136, 85);
+pub const WARNING: Color = Color::Rgb(170, 136, 85);
 /// Success color.
-pub(crate) const SUCCESS: Color = Color::Rgb(112, 136, 122);
+pub const SUCCESS: Color = Color::Rgb(112, 136, 122);
 /// Danger alias.
-pub(crate) const DANGER: Color = ROSE_BRIGHT;
+pub const DANGER: Color = ROSE_BRIGHT;
 /// Scanline dark color.
-pub(crate) const SCANLINE_DARK: Color = Color::Rgb(5, 5, 7);
+pub const SCANLINE_DARK: Color = Color::Rgb(5, 5, 7);
 /// Phosphor residue color.
-pub(crate) const PHOSPHOR_RES: Color = Color::Rgb(26, 16, 24);
+pub const PHOSPHOR_RES: Color = Color::Rgb(26, 16, 24);
 /// Warm noise color.
-pub(crate) const NOISE_WARM: Color = Color::Rgb(42, 24, 32);
+pub const NOISE_WARM: Color = Color::Rgb(42, 24, 32);
 /// Cool noise color.
-pub(crate) const NOISE_COOL: Color = Color::Rgb(32, 24, 40);
+pub const NOISE_COOL: Color = Color::Rgb(32, 24, 40);
 
 /// Bold text modifier.
 pub(crate) const STYLE_BOLD: Modifier = Modifier::BOLD;

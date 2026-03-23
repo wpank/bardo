@@ -1,4 +1,4 @@
-//! MPP-specific error types.
+//! MPP error types.
 
 /// Errors from the MPP payment layer.
 #[derive(Debug, thiserror::Error)]

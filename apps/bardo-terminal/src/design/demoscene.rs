@@ -55,7 +55,8 @@ impl PlasmaEffect {
             for x in area.left()..area.right() {
                 let v = plasma_value(x as f32, y as f32, t);
                 let color = lerp_color_linear(self.color_low, self.color_high, v);
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                    let cell = buf.get_mut(x, y);
                     cell.set_bg(color);
                 }
             }
@@ -147,7 +148,8 @@ impl TunnelEffect {
 
                 let bx = area.x + x as u16;
                 let by = area.y + y as u16;
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(bx, by)) {
+                if buf.area.contains(ratatui::layout::Position::new(bx, by)) {
+                    let cell = buf.get_mut(bx, by);
                     cell.set_char(ch);
                     cell.set_fg(color);
                 }
@@ -228,7 +230,8 @@ impl FireEffect {
                 }
                 let bx = area.x + x as u16;
                 let by = area.y + y as u16;
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(bx, by)) {
+                if buf.area.contains(ratatui::layout::Position::new(bx, by)) {
+                    let cell = buf.get_mut(bx, by);
                     cell.set_char(Self::value_to_char(v));
                     cell.set_fg(Self::value_to_color(v));
                 }
@@ -306,7 +309,8 @@ impl MetaballEffect {
             for x in area.left()..area.right() {
                 let field = metaball_field(x as f64, y as f64, &self.balls);
                 if field >= self.threshold {
-                    if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                    if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                        let cell = buf.get_mut(x, y);
                         cell.set_char(self.fg_char);
                         cell.set_fg(self.fg_color);
                     }
@@ -319,7 +323,8 @@ impl MetaballEffect {
                         4 => '⠿',
                         _ => '⣿',
                     };
-                    if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                    if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                        let cell = buf.get_mut(x, y);
                         cell.set_char(boundary_char);
                         cell.set_fg(self.fg_color);
                     }

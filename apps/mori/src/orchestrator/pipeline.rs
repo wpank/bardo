@@ -608,11 +608,11 @@ mod tests {
         });
         assert_eq!(p.phase, PipelinePhase::SpecComplianceCheck);
 
-        // SpecComplianceCheck pass -> Reviewing
+        // SpecComplianceCheck pass -> Committing (run_reviews=false for default test plan)
         p.handle_event(PipelineEvent::GatePassed {
             gate: GateType::InvariantGate,
         });
-        assert_eq!(p.phase, PipelinePhase::Reviewing);
+        assert_eq!(p.phase, PipelinePhase::Committing);
     }
 
     #[test]

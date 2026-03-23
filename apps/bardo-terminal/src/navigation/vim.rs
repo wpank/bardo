@@ -25,7 +25,7 @@ pub struct VimModeState {
     /// Buffer for `:` commands.
     pub command_buffer: String,
     /// Buffer for multi-key sequences like `gg`.
-    pub sequence_buffer: Vec<char>,
+    pub sequence_buffer: String,
     /// Whether vim-mode handling is enabled.
     pub enabled: bool,
 }
@@ -36,7 +36,7 @@ impl VimModeState {
         Self {
             mode: VimMode::Normal,
             command_buffer: String::new(),
-            sequence_buffer: Vec::new(),
+            sequence_buffer: String::new(),
             enabled,
         }
     }
@@ -74,8 +74,8 @@ impl VimModeState {
 
     fn process_normal(&mut self, key: KeyEvent) -> Option<AppAction> {
         if !self.sequence_buffer.is_empty() {
-            match (self.sequence_buffer.as_slice(), key.code) {
-                (['g'], KeyCode::Char('g')) => {
+            match (self.sequence_buffer.as_str(), key.code) {
+                ("g", KeyCode::Char('g')) => {
                     self.sequence_buffer.clear();
                     return Some(AppAction::ScrollTop);
                 }
@@ -197,7 +197,7 @@ mod tests {
     }
 
     #[test]
-    fn vim_mode_hjkl_navigate() {
+    fn test_vim_mode_hjkl_navigate() {
         let mut vim = VimModeState::new(true);
 
         assert_eq!(
@@ -219,11 +219,11 @@ mod tests {
     }
 
     #[test]
-    fn vim_mode_gg_sequence() {
+    fn test_vim_mode_gg_sequence() {
         let mut vim = VimModeState::new(true);
 
         assert_eq!(vim.process_key(key(KeyCode::Char('g'))), None);
-        assert_eq!(vim.sequence_buffer, vec!['g']);
+        assert_eq!(vim.sequence_buffer, "g");
         assert_eq!(
             vim.process_key(key(KeyCode::Char('g'))),
             Some(AppAction::ScrollTop)
@@ -232,23 +232,15 @@ mod tests {
     }
 
     #[test]
-    fn vim_mode_colon_command() {
+    fn test_vim_mode_colon_entry() {
         let mut vim = VimModeState::new(true);
 
         assert_eq!(vim.process_key(key(KeyCode::Char(':'))), None);
         assert_eq!(vim.mode, VimMode::Command);
-        assert_eq!(vim.process_key(key(KeyCode::Char('q'))), None);
-        assert_eq!(vim.command_buffer, "q");
-        assert_eq!(
-            vim.process_key(key(KeyCode::Enter)),
-            Some(AppAction::VimCommand("q".to_string()))
-        );
-        assert_eq!(vim.mode, VimMode::Normal);
-        assert!(vim.command_buffer.is_empty());
     }
 
     #[test]
-    fn vim_insert_esc_returns_normal() {
+    fn test_vim_mode_insert_esc_exit() {
         let mut vim = VimModeState::new(true);
 
         assert_eq!(vim.process_key(key(KeyCode::Char('i'))), None);
@@ -258,13 +250,55 @@ mod tests {
     }
 
     #[test]
-    fn vim_mode_sequence_clears_on_mismatch() {
+    fn test_vim_mode_g_mismatch_processes_key() {
         let mut vim = VimModeState::new(true);
 
         assert_eq!(vim.process_key(key(KeyCode::Char('g'))), None);
-        assert_eq!(vim.process_key(key(KeyCode::Char('x'))), None);
+        assert_eq!(vim.sequence_buffer, "g");
+
+        // Mismatch clears sequence and reprocesses the key
+        assert_eq!(
+            vim.process_key(key(KeyCode::Char('j'))),
+            Some(AppAction::VimNavigate(VimDirection::Down))
+        );
         assert!(vim.sequence_buffer.is_empty());
+    }
+
+    #[test]
+    fn test_vim_mode_command_buffer_accumulate() {
+        let mut vim = VimModeState::new(true);
+
+        vim.process_key(key(KeyCode::Char(':')));
+        assert_eq!(vim.mode, VimMode::Command);
+        vim.process_key(key(KeyCode::Char('w')));
+        vim.process_key(key(KeyCode::Char('q')));
+        assert_eq!(vim.command_buffer, "wq");
+    }
+
+    #[test]
+    fn test_vim_mode_command_backspace() {
+        let mut vim = VimModeState::new(true);
+
+        vim.process_key(key(KeyCode::Char(':')));
+        vim.process_key(key(KeyCode::Char('w')));
+        vim.process_key(key(KeyCode::Char('q')));
+        assert_eq!(vim.command_buffer, "wq");
+        vim.process_key(key(KeyCode::Backspace));
+        assert_eq!(vim.command_buffer, "w");
+    }
+
+    #[test]
+    fn test_vim_mode_command_submit() {
+        let mut vim = VimModeState::new(true);
+
+        vim.process_key(key(KeyCode::Char(':')));
+        vim.process_key(key(KeyCode::Char('q')));
+        assert_eq!(
+            vim.process_key(key(KeyCode::Enter)),
+            Some(AppAction::VimCommand("q".to_string()))
+        );
         assert_eq!(vim.mode, VimMode::Normal);
+        assert!(vim.command_buffer.is_empty());
     }
 
     #[test]

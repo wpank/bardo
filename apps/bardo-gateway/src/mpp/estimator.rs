@@ -7,6 +7,7 @@ use alloy::primitives::U256;
 use serde_json::Value;
 
 use crate::pricing::PricingTable;
+pub use mpp_core::currency::{usd_from_usdc, usdc_from_usd};
 
 /// Estimate the total request cost in USDC base units (6 decimals).
 ///
@@ -92,17 +93,6 @@ fn json_char_count(val: &Value) -> u64 {
         Value::Object(map) => map.values().map(json_char_count).sum(),
         _ => 0,
     }
-}
-
-/// Convert USD (f64) to USDC base units (U256, 6 decimals).
-pub fn usdc_from_usd(usd: f64) -> U256 {
-    U256::from((usd * 1_000_000.0) as u64)
-}
-
-/// Convert USDC base units (U256) back to USD (f64).
-pub fn usd_from_usdc(usdc: U256) -> f64 {
-    let micro: u64 = usdc.try_into().unwrap_or(u64::MAX);
-    micro as f64 / 1_000_000.0
 }
 
 #[cfg(test)]

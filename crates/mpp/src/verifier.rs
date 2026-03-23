@@ -1,12 +1,28 @@
 //! ERC-3009 off-chain signature verification.
 //!
 //! Verifies `transferWithAuthorization` signatures using EIP-712 typed data
-//! recovery via alloy. No RPC calls needed for off-chain verification.
+//! recovery. No RPC calls needed -- pure cryptographic verification.
 
 use alloy::primitives::{Address, B256, Signature, U256, address, keccak256};
 
-use super::error::MppError;
-use super::types::Erc3009Authorization;
+use crate::error::MppError;
+use crate::types::Erc3009Authorization;
+
+/// EIP-712 domain parameters for an ERC-3009-compatible token.
+///
+/// Use [`Erc3009Domain::usdc_base`] for USDC on Base, or construct your own
+/// for other tokens/chains.
+#[derive(Debug, Clone)]
+pub struct Erc3009Domain {
+    /// Token name (e.g. "USD Coin").
+    pub name: String,
+    /// Token version (e.g. "2").
+    pub version: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Token contract address.
+    pub verifying_contract: Address,
+}
 
 /// USDC contract address on Base.
 pub const USDC_BASE: Address = address!("833589fCD6eDb6E08f4c7C32D4f71b54bdA02913");
@@ -14,29 +30,34 @@ pub const USDC_BASE: Address = address!("833589fCD6eDb6E08f4c7C32D4f71b54bdA0291
 /// Base chain ID.
 pub const BASE_CHAIN_ID: u64 = 8453;
 
-/// EIP-712 domain separator components for USDC on Base.
-/// USDC uses the standard EIP-712 domain:
-///   name: "USD Coin"
-///   version: "2"
-///   chainId: 8453
-///   verifyingContract: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
-fn usdc_domain_separator() -> B256 {
-    // keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
-    let domain_type_hash = keccak256(
-        b"EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)",
-    );
+impl Erc3009Domain {
+    /// USDC on Base (chain 8453).
+    pub fn usdc_base() -> Self {
+        Self {
+            name: "USD Coin".to_string(),
+            version: "2".to_string(),
+            chain_id: BASE_CHAIN_ID,
+            verifying_contract: USDC_BASE,
+        }
+    }
 
-    let name_hash = keccak256(b"USD Coin");
-    let version_hash = keccak256(b"2");
+    /// Compute the EIP-712 domain separator for this token.
+    pub fn domain_separator(&self) -> B256 {
+        let domain_type_hash = keccak256(
+            b"EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)",
+        );
+        let name_hash = keccak256(self.name.as_bytes());
+        let version_hash = keccak256(self.version.as_bytes());
 
-    let mut buf = Vec::with_capacity(5 * 32);
-    buf.extend_from_slice(domain_type_hash.as_slice());
-    buf.extend_from_slice(name_hash.as_slice());
-    buf.extend_from_slice(version_hash.as_slice());
-    buf.extend_from_slice(&U256::from(BASE_CHAIN_ID).to_be_bytes::<32>());
-    buf.extend_from_slice(USDC_BASE.into_word().as_slice());
+        let mut buf = Vec::with_capacity(5 * 32);
+        buf.extend_from_slice(domain_type_hash.as_slice());
+        buf.extend_from_slice(name_hash.as_slice());
+        buf.extend_from_slice(version_hash.as_slice());
+        buf.extend_from_slice(&U256::from(self.chain_id).to_be_bytes::<32>());
+        buf.extend_from_slice(self.verifying_contract.into_word().as_slice());
 
-    keccak256(&buf)
+        keccak256(&buf)
+    }
 }
 
 /// ERC-3009 TransferWithAuthorization type hash.
@@ -59,8 +80,8 @@ fn struct_hash(auth: &Erc3009Authorization) -> B256 {
 }
 
 /// Compute the full EIP-712 digest: `keccak256(0x1901 || domainSeparator || structHash)`.
-fn eip712_digest(auth: &Erc3009Authorization) -> B256 {
-    let domain_sep = usdc_domain_separator();
+pub fn eip712_digest(domain: &Erc3009Domain, auth: &Erc3009Authorization) -> B256 {
+    let domain_sep = domain.domain_separator();
     let s_hash = struct_hash(auth);
 
     let mut buf = Vec::with_capacity(2 + 32 + 32);
@@ -74,14 +95,32 @@ fn eip712_digest(auth: &Erc3009Authorization) -> B256 {
 /// Verify an ERC-3009 authorization off-chain using ecrecover.
 ///
 /// Checks:
-/// 1. `to` matches the expected recipient (gateway wallet)
+/// 1. `to` matches the expected recipient
 /// 2. `value` >= minimum required amount
 /// 3. Current time is between `valid_after` and `valid_before`
 /// 4. Recovered signer matches `from`
-pub fn verify_authorization_offchain(
+///
+/// Uses USDC on Base domain by default. For other tokens, use
+/// [`verify_authorization_with_domain`].
+pub fn verify_authorization(
     auth: &Erc3009Authorization,
     expected_recipient: Address,
     min_amount: U256,
+) -> Result<(), MppError> {
+    verify_authorization_with_domain(
+        auth,
+        expected_recipient,
+        min_amount,
+        &Erc3009Domain::usdc_base(),
+    )
+}
+
+/// Verify an ERC-3009 authorization against a specific token domain.
+pub fn verify_authorization_with_domain(
+    auth: &Erc3009Authorization,
+    expected_recipient: Address,
+    min_amount: U256,
+    domain: &Erc3009Domain,
 ) -> Result<(), MppError> {
     // Check recipient.
     if auth.to != expected_recipient {
@@ -110,7 +149,7 @@ pub fn verify_authorization_offchain(
     }
 
     // Recover signer from EIP-712 typed data digest.
-    let digest = eip712_digest(auth);
+    let digest = eip712_digest(domain, auth);
     let signature = Signature::new(
         U256::from_be_bytes::<32>(auth.r.into()),
         U256::from_be_bytes::<32>(auth.s.into()),
@@ -137,15 +176,29 @@ mod tests {
 
     #[test]
     fn domain_separator_is_deterministic() {
-        let d1 = usdc_domain_separator();
-        let d2 = usdc_domain_separator();
+        let domain = Erc3009Domain::usdc_base();
+        let d1 = domain.domain_separator();
+        let d2 = domain.domain_separator();
         assert_eq!(d1, d2);
     }
 
     #[test]
     fn type_hash_is_correct() {
-        // The type hash should be a valid keccak256 output (32 bytes, non-zero).
         let th = transfer_with_auth_type_hash();
         assert_ne!(th, B256::ZERO);
+    }
+
+    #[test]
+    fn custom_domain() {
+        let domain = Erc3009Domain {
+            name: "Test Token".to_string(),
+            version: "1".to_string(),
+            chain_id: 1,
+            verifying_contract: Address::ZERO,
+        };
+        let sep = domain.domain_separator();
+        assert_ne!(sep, B256::ZERO);
+        // Different from USDC Base.
+        assert_ne!(sep, Erc3009Domain::usdc_base().domain_separator());
     }
 }

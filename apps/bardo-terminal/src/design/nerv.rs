@@ -146,7 +146,11 @@ impl PsychographicDisplay {
 
     pub fn overflow_cells(&self) -> u32 {
         let d = self.density();
-        if d > 0.8 { ((d - 0.8) * 5.0) as u32 } else { 0 }
+        if d > 0.8 {
+            ((d - 0.8) * 5.0).round() as u32
+        } else {
+            0
+        }
     }
 
     pub fn render(&self, _buf: &mut Buffer, _area: Rect) {
@@ -226,7 +230,8 @@ impl NervChrome {
                 };
                 for &y in &[y_top, y_bot] {
                     if y < area.y + area.height {
-                        if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                        if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                            let cell = buf.get_mut(x, y);
                             cell.set_char(ch);
                             cell.set_style(stripe_style);
                         }
@@ -282,8 +287,9 @@ impl NervChrome {
     fn dim_non_essential_panels(&self, buf: &mut Buffer, area: Rect) {
         for y in area.top()..area.bottom() {
             for x in area.left()..area.right() {
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
-                    if cell.fg() != BONE && cell.fg() != ROSE_BRIGHT {
+                if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                    let cell = buf.get_mut(x, y);
+                    if cell.fg != BONE && cell.fg != ROSE_BRIGHT {
                         cell.modifier |= Modifier::DIM;
                     }
                 }
@@ -338,8 +344,9 @@ pub fn render_scanlines(area: Rect, buf: &mut Buffer, phase_offset: bool, streng
         let is_dark = (y % 2 == 0) ^ phase_offset;
         if is_dark {
             for x in area.left()..area.right() {
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
-                    if cell.bg() == BG_VOID {
+                if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                    let cell = buf.get_mut(x, y);
+                    if cell.bg == BG_VOID {
                         cell.set_bg(lerp_color_linear(BG_VOID, SCANLINE_DARK, strength as f32));
                     }
                 }
@@ -363,7 +370,8 @@ pub fn render_background_noise(
         for x in area.left()..area.right() {
             if rng.r#gen::<f64>() < density {
                 let ch = chars[rng.r#gen_range(0..chars.len())];
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                    let cell = buf.get_mut(x, y);
                     cell.set_char(ch);
                     cell.set_fg(color);
                 }
@@ -405,8 +413,8 @@ mod tests {
         chrome.render_hazard_stripes(&mut buf, area, 1);
 
         // Check that even and odd x positions have different diagonal chars in top row
-        let cell0 = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
-        let cell1 = buf.cell(ratatui::layout::Position::new(1, 0)).unwrap();
+        let cell0 = buf.get(0, 0);
+        let cell1 = buf.get(1, 0);
         let c0 = cell0.symbol().chars().next().unwrap();
         let c1 = cell1.symbol().chars().next().unwrap();
         assert_ne!(c0, c1, "Adjacent cells should alternate diagonal chars");
@@ -433,7 +441,8 @@ mod tests {
         // Set all cells to BG_VOID background
         for y in area.top()..area.bottom() {
             for x in area.left()..area.right() {
-                if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                    let cell = buf.get_mut(x, y);
                     cell.set_bg(BG_VOID);
                 }
             }
@@ -441,14 +450,13 @@ mod tests {
         render_scanlines(area, &mut buf, false, 0.5);
 
         // Even rows should be darkened (different from BG_VOID)
-        let even_cell = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
-        let odd_cell = buf.cell(ratatui::layout::Position::new(0, 1)).unwrap();
+        let even_cell = buf.get(0, 0);
+        let odd_cell = buf.get(0, 1);
         assert_ne!(
-            even_cell.bg(),
-            odd_cell.bg(),
+            even_cell.bg, odd_cell.bg,
             "Even rows should be darkened, odd rows unchanged"
         );
-        assert_eq!(odd_cell.bg(), BG_VOID, "Odd row bg should remain BG_VOID");
+        assert_eq!(odd_cell.bg, BG_VOID, "Odd row bg should remain BG_VOID");
     }
 
     #[test]
@@ -507,12 +515,14 @@ mod tests {
         let mut buf = Buffer::empty(area);
         // Set some cells to BONE fg and some to TEXT_PRIMARY
         for x in 0..5 {
-            if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, 0)) {
+            if buf.area.contains(ratatui::layout::Position::new(x, 0)) {
+                let cell = buf.get_mut(x, 0);
                 cell.set_fg(BONE);
             }
         }
         for x in 5..10 {
-            if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, 0)) {
+            if buf.area.contains(ratatui::layout::Position::new(x, 0)) {
+                let cell = buf.get_mut(x, 0);
                 cell.set_fg(TEXT_PRIMARY);
             }
         }
@@ -527,14 +537,14 @@ mod tests {
         chrome.dim_non_essential_panels(&mut buf, area);
 
         // BONE cells should NOT have DIM modifier
-        let bone_cell = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
+        let bone_cell = buf.get(0, 0);
         assert!(
             !bone_cell.modifier.contains(Modifier::DIM),
             "BONE fg cells should not be dimmed"
         );
 
         // TEXT_PRIMARY cells should have DIM modifier
-        let text_cell = buf.cell(ratatui::layout::Position::new(5, 0)).unwrap();
+        let text_cell = buf.get(5, 0);
         assert!(
             text_cell.modifier.contains(Modifier::DIM),
             "TEXT_PRIMARY fg cells should be dimmed"

@@ -456,4 +456,132 @@ mod tests {
         assert!(!palette.filtered.is_empty());
         assert_eq!(palette.commands[palette.filtered[0]].name, "Quit");
     }
+
+    // --- Named tests for verification chain (INV-001 to INV-008, INV-027) ---
+
+    #[test]
+    fn test_lcs_score_non_negative() {
+        use super::lcs_score;
+        assert!(lcs_score("abc", "xyz") == 0);
+        assert!(lcs_score("hello", "world") >= 0);
+        assert!(lcs_score("", "") == 0);
+        assert!(lcs_score("a", "b") == 0);
+    }
+
+    #[test]
+    fn test_lcs_score_identity() {
+        use super::lcs_score;
+        assert_eq!(lcs_score("quit", "quit"), 4);
+        assert_eq!(lcs_score("abc", "abc"), 3);
+        assert_eq!(lcs_score("x", "x"), 1);
+    }
+
+    #[test]
+    fn test_lcs_score_upper_bound() {
+        use super::lcs_score;
+        let a = "hello";
+        let b = "world";
+        let score = lcs_score(a, b);
+        assert!(score <= a.len().min(b.len()));
+
+        let score2 = lcs_score("ab", "abcdef");
+        assert!(score2 <= 2);
+    }
+
+    #[test]
+    fn test_lcs_score_empty_string() {
+        use super::lcs_score;
+        assert_eq!(lcs_score("", "anything"), 0);
+        assert_eq!(lcs_score("something", ""), 0);
+        assert_eq!(lcs_score("", ""), 0);
+    }
+
+    #[test]
+    fn test_lcs_score_case_insensitive() {
+        use super::lcs_score;
+        assert_eq!(lcs_score("QUIT", "quit"), lcs_score("quit", "quit"));
+        assert_eq!(lcs_score("Abc", "abc"), lcs_score("abc", "abc"));
+    }
+
+    #[test]
+    fn test_palette_selection_clamps() {
+        let mut palette = CommandPalette {
+            visible: true,
+            query: String::new(),
+            commands: default_commands(),
+            filtered: vec![],
+            selected: 999,
+        };
+
+        palette.update_filter();
+        assert!(
+            palette.selected < palette.filtered.len(),
+            "selected {} must be < filtered.len() {}",
+            palette.selected,
+            palette.filtered.len()
+        );
+
+        palette.query = "zzzznotfound".into();
+        palette.selected = 5;
+        palette.update_filter();
+        if palette.filtered.is_empty() {
+            assert_eq!(palette.selected, 0);
+        } else {
+            assert!(palette.selected < palette.filtered.len());
+        }
+    }
+
+    #[test]
+    fn test_palette_filtered_indices_valid() {
+        let mut palette = CommandPalette::default();
+        palette.query = "scr".into();
+        palette.update_filter();
+        for &idx in &palette.filtered {
+            assert!(
+                idx < palette.commands.len(),
+                "filtered index {} out of bounds (commands.len() = {})",
+                idx,
+                palette.commands.len()
+            );
+        }
+    }
+
+    #[test]
+    fn test_palette_empty_query_shows_all() {
+        let mut palette = CommandPalette {
+            visible: true,
+            query: String::new(),
+            commands: default_commands(),
+            filtered: vec![],
+            selected: 0,
+        };
+
+        palette.update_filter();
+
+        assert_eq!(palette.filtered.len(), palette.commands.len());
+        assert_eq!(
+            palette.filtered,
+            (0..palette.commands.len()).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn test_palette_render_minimum_dimensions() {
+        let palette = CommandPalette {
+            visible: true,
+            query: String::new(),
+            commands: default_commands(),
+            filtered: (0..default_commands().len()).collect(),
+            selected: 0,
+        };
+
+        let backend = ratatui::backend::TestBackend::new(3, 3);
+        let mut terminal = ratatui::Terminal::new(backend).unwrap();
+        terminal
+            .draw(|frame| {
+                let area = frame.size();
+                palette.render(frame, area);
+            })
+            .unwrap();
+    }
 }

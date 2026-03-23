@@ -112,7 +112,8 @@ impl BrailleCanvas {
                 let y = origin.y + cy as u16;
                 if x < origin.x + origin.width && y < origin.y + origin.height {
                     let ch = self.encode_cell(cx, cy);
-                    if let Some(cell) = buf.cell_mut(ratatui::layout::Position::new(x, y)) {
+                    if buf.area.contains(ratatui::layout::Position::new(x, y)) {
+                        let cell = buf.get_mut(x, y);
                         cell.set_char(ch);
                         cell.set_style(style);
                     }
@@ -207,10 +208,10 @@ mod tests {
         let mut buf = Buffer::empty(area);
         canvas.render_to_buffer(&mut buf, area);
 
-        let cell0 = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
+        let cell0 = buf.get(0, 0);
         assert_eq!(cell0.symbol(), "\u{2801}"); // dot at (0,0) = bit 0
 
-        let cell1 = buf.cell(ratatui::layout::Position::new(1, 0)).unwrap();
+        let cell1 = buf.get(1, 0);
         assert_eq!(cell1.symbol(), "\u{2800}"); // empty
     }
 }

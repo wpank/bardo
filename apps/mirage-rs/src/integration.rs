@@ -7,7 +7,6 @@ use std::{path::PathBuf, process::Stdio, time::Duration};
 use alloy_primitives::{Address, B256, Bytes, hex};
 use futures_util::StreamExt;
 use futures_util::stream::{self, BoxStream};
-use golem_core::config::GolemConfig;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use tokio::{process::Child, time::sleep};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
@@ -35,8 +34,9 @@ pub struct MirageConfig {
 
 impl MirageConfig {
     /// Derives client config from a golem runtime config.
+    #[cfg(feature = "golem")]
     #[must_use]
-    pub fn from_golem_config(config: &GolemConfig) -> Self {
+    pub fn from_golem_config(config: &golem_core::config::GolemConfig) -> Self {
         let url = config
             .mirage
             .url
@@ -454,7 +454,6 @@ mod tests {
 
     use alloy_primitives::{Bytes, U256, address, hex};
     use futures_util::StreamExt;
-    use golem_core::config::GolemConfig;
 
     use crate::{
         TransactionRequest,
@@ -486,9 +485,10 @@ mod tests {
             .unwrap_or_else(|error| panic!("server stops cleanly: {error}"));
     }
 
+    #[cfg(feature = "golem")]
     #[test]
     fn mirage_config_from_golem_config_uses_mirage_section() {
-        let config = GolemConfig::from_str(
+        let config = golem_core::config::GolemConfig::from_str(
             r#"
                 [mirage]
                 port = 18545
