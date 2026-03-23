@@ -165,9 +165,49 @@ Routing happens by model name prefix. Requests for `claude-*` go to Anthropic, `
 
 All providers implement the `Provider` trait (`src/provider.rs`). Adding a new provider means implementing `send`, `parse_response`, and `report_cost`. The trait is intentionally minimal -- you don't need to handle caching, normalization, or cost tracking. The gateway does that for all providers uniformly.
 
+### Venice: privacy-classified inference
+
+Venice runs inference inside TEEs (Trusted Execution Environments) with a zero-retention policy -- no prompts or completions are stored after the response is sent. The gateway integrates Venice as a privacy-aware routing target, not just another provider.
+
+The security classifier (`src/venice/security_class.rs`) scans every request's message content using deterministic keyword/pattern matching (no LLM calls) and assigns one of three classifications:
+
+| Class | When | Routing |
+|-------|------|---------|
+| **Standard** | Default. No sensitive content detected. | Any provider. Provider may retain for training. |
+| **Confidential** | Request discusses portfolio composition (>$1K), rebalance timing, deal negotiation terms, or governance deliberation with position exposure. | Venice preferred. Falls back to other providers. |
+| **Private** | Request contains MEV-sensitive execution timing (pending actions >$500), counterparty behavioral analysis, death-phase reasoning, or owner PII. | Venice mandatory. Gateway returns 503 rather than falling back to a retaining provider. |
+
+Eight triggers drive classification: `PortfolioComposition`, `RebalanceTiming`, `DealNegotiation`, `GovernanceDeliberation`, `MevSensitive`, `CounterpartyAnalysis`, `DeathReflection`, `OwnerPii`. Each maps to Confidential or Private.
+
+The DIEM budget tracker (`src/venice/diem.rs`) monitors Venice-specific credit allocations across categories, so privacy-routed inference stays within its budget independently of the main provider spend.
+
+### Bankr: self-funding agent inference
+
+Bankr provides inference backed by agent-managed wallets. An agent that earns revenue (from MCP tool fees, x402 service income, DeFi yield) can fund its own inference costs through Bankr without a human paying API bills.
+
+The metabolic loop monitor (`src/bankr/metabolic.rs`) tracks the key number: the sustainability ratio.
+
+```
+ratio = total_daily_revenue / total_daily_inference_cost
+```
+
+When `ratio >= 1.0`, the agent is self-sustaining -- its economic death clock stops. The monitor recomputes on a configurable interval (default 60s) over a rolling window (default 7 days) and exposes the ratio for the golem mortality system to consume.
+
+Supporting modules:
+- `credits.rs` -- credit balance tracking with vault fee conversion rates
+- `routing.rs` -- model tier mapping (`BankrModelTier`) and selection based on credit balance and task complexity
+- `verification.rs` -- cross-model verification for high-stakes actions (a second model confirms parsed action intent before execution)
+- `config.rs` -- auto-replenish policies, throttle policies for low-balance states, self-funding configuration
+
+The gateway auto-selects Bankr when the requesting agent has a funded Bankr wallet and the request falls within its credit budget. No configuration change needed from the agent side.
+
+### Key rotation and failover
+
 **Key rotation:** Multiple Anthropic keys (`ANTHROPIC_API_KEY`, `ANTHROPIC_API_KEY_2` through `ANTHROPIC_API_KEY_10`) round-robin across requests. When one key hits a rate limit, the gateway moves to the next. This is the simplest way to increase throughput without changing client code.
 
 **Failover:** When a provider returns an error or rate-limits, the gateway falls through to the next available provider that can serve the requested model. The order is configurable by priority. If Anthropic is down, requests fall to OpenRouter (which proxies Anthropic via a different endpoint with separate rate limits).
+
+**Privacy override:** If the security classifier tags a request as Private, the failover chain is constrained to Venice only. The gateway will not route Private-classified content through a retaining provider, even if Venice is unavailable.
 
 ## Cost tracking
 
@@ -234,33 +274,91 @@ HTTP 402-based USDC micropayment flow. Disabled by default. Lets agents pay for 
 
 The motivation: API keys are a human concept. An autonomous agent that earns and spends USDC should be able to pay for inference directly, the same way it pays for gas. MPP makes inference a commodity priced in USDC, not a gated resource behind an API key.
 
-**Charge mode** -- one-shot per-request billing:
-```
-Client -> POST /v1/messages
-Gateway -> 402 Payment Required (with payment quote)
-Client -> pays on-chain, retries with receipt
-Gateway -> 200 OK
+The protocol primitives live in the standalone [`mpp` crate](../../crates/mpp) -- types, ERC-3009 verification, session management, and settlement logic that any Rust service can use independently of the gateway.
+
+### The x402 flow
+
+A two-step HTTP exchange built on HTTP 402. No session state, no deposits, no trust required.
+
+**Step 1 -- challenge.** Client sends a request without payment. The gateway reads the request body, estimates cost from the model and input token count (character-based heuristic: ~4 chars per token, with model-specific output multipliers), and returns HTTP 402 with a `PaymentRequired` payload:
+
+```json
+{
+  "amount": "35000",
+  "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "chain_id": 8453,
+  "recipient": "0xYourGatewayWallet",
+  "expiry": 1711234567,
+  "intent": "charge",
+  "nonce": "0xa1b2c3...32bytes",
+  "breakdown": {
+    "provider_cost": "29166",
+    "spread": "5834",
+    "spread_pct": 0.20
+  }
+}
 ```
 
-**Session mode** -- pre-funded streaming:
+The `amount` is USDC base units (6 decimals) -- `35000` is $0.035. The `nonce` is 32 random bytes preventing replay. The `breakdown` shows exactly how much goes to the provider and how much the gateway keeps.
+
+**Step 2 -- payment.** Client constructs an ERC-3009 `transferWithAuthorization`, signs it with their private key (EIP-712 typed data), and retries with an `X-Payment` header containing the `PaymentCredential`.
+
+The gateway verifies the signature **off-chain** -- no RPC call needed. It computes the EIP-712 struct hash (`TransferWithAuthorization(address from, address to, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce)`), builds the domain separator (USDC on Base: name "USD Coin", version "2", chain 8453, contract `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`), recovers the signer via `ecrecover` on the keccak256 digest, and checks it matches the claimed `from` address.
+
+On success, the gateway serves the request and returns:
+- `Payment-Receipt` header with the actual amount charged (may be less than pre-authorized)
+- `X-Bardo-Cost`, `X-Bardo-Provider-Cost`, `X-Bardo-Spread`, `X-Bardo-Spread-Pct` headers for cost transparency
+- `X-Bardo-Naive-Cost` and `X-Bardo-Savings` showing what the gateway saved vs direct provider pricing
+
+### Session mode
+
+For workloads with many requests (agent builds, streaming, iterative refinement), per-request signatures add overhead. MPP sessions solve this:
+
 ```bash
-# Open a session with a deposit
+# Open a session with an ERC-3009 deposit
 curl -X POST http://localhost:4000/v1/mpp/sessions \
-  -d '{"deposit": 20.00}'
+  -H "content-type: application/json" \
+  -d '{"authorization": {"from":"0x...","to":"0x...","value":"5000000",...}}'
+# -> {"session_id": "abc-123", "funded_amount": "5000000", "expires_at": 1711238167}
 
-# Make requests -- cost deducted from session balance
+# Subsequent requests draw from the session -- no new signature per request
 curl -X POST http://localhost:4000/v1/messages \
-  -H "Authorization: Payment <mpp-voucher>" \
-  -d '...'
+  -H "x-payment: {\"intent\":\"session\",\"session_id\":\"abc-123\",\"session_op\":\"draw\"}" \
+  -d '{"model":"claude-sonnet-4","messages":[...]}'
+# -> 200 OK + Payment-Receipt with amount_charged and amount_remaining
 
-# Check session balance
-curl http://localhost:4000/v1/mpp/sessions/{id}
+# Check balance
+curl http://localhost:4000/v1/mpp/sessions/abc-123
+# -> {"remaining": "4850000", "draw_count": 3, ...}
 
-# Close session (unused funds returned)
-curl -X DELETE http://localhost:4000/v1/mpp/sessions/{id}
+# Close session -- unused funds returned
+curl -X DELETE http://localhost:4000/v1/mpp/sessions/abc-123
+# -> {"total_funded": "5000000", "total_drawn": "150000", "refund_amount": "4850000"}
 ```
 
-Enable with CLI flags or env vars:
+Sessions are stored in a concurrent `DashMap`, with SQLite persistence for crash recovery. TTL defaults to 1 hour. A background task expires stale sessions.
+
+### Spread model
+
+The spread is the markup over raw provider cost:
+
+```
+total_charge = provider_cost * (1.0 + spread_pct)
+```
+
+Default 20%. The `mpp` crate defines reputation tiers that reduce spread for established users:
+
+| Tier | Spread | Criteria |
+|------|--------|----------|
+| None | 20% | Default, no on-chain identity |
+| Basic | 18% | 5+ completed builds |
+| Verified | 15% | 25+ builds, >90% gate pass rate |
+| Trusted | 12% | 100+ builds, >95% pass, estimates within 20% |
+| Sovereign | 8% | 500+ builds |
+
+Tier lookup is currently stubbed (returns None). Production would query an on-chain ERC-8004 registry.
+
+### Enabling MPP
 
 ```bash
 BARDO_MPP_ENABLED=true \
@@ -269,7 +367,7 @@ BARDO_MPP_SPREAD=0.20 \
   cargo run -p bardo-gateway
 ```
 
-The spread (default 20%) is the markup over raw provider cost. It covers the gateway operator's infrastructure and makes running a public gateway economically viable.
+The recipient address is the gateway operator's wallet on Base. Settlement happens on-chain via the ERC-3009 `transferWithAuthorization` the client signed. The gateway batches settlements to amortize gas.
 
 ## Deployment
 
