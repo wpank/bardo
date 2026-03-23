@@ -1,0 +1,861 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bridge &amp; Aggregator - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/05-tools-bridge-aggregator.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--bridge-and-aggregator-tools-spec"><a class="header" href="#bardo-tools--bridge-and-aggregator-tools-spec">Bardo Tools – Bridge and aggregator tools [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles)</p>
+<p>Cross-chain bridge tools (Stargate, Across, Hop) and DEX aggregator routing/comparison tools. 9 tools total: 6 bridge, 3 aggregator.</p>
+<p>Governance tools (veCRV, vlCVX, veAERO, veBAL) have been removed. Governance locks create time-locked positions that conflict with Golem (a mortal autonomous agent compiled as a single Rust binary on a micro-VM) mortality – a 4-year veCRV lock outlives any Golem, creating orphaned state with no exit path. The locked tokens become permanently inaccessible when the Golem dies. For the same reason, <code>governance_extend_lock</code> is gone. If governance participation is needed, it should happen through a non-mortal owner, not through Golem-controlled wallets.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies 9 tools for cross-chain bridging (Stargate, Across, Hop) and DEX aggregator routing (1inch, CoW Protocol, ParaSwap, Odos). Bridge tools move assets between EVM chains; aggregator tools compare quotes across routing venues. You should be familiar with cross-chain messaging, bridge trust models, and DEX aggregator mechanics. Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="cross-chain-bridge-tools-6"><a class="header" href="#cross-chain-bridge-tools-6">Cross-chain bridge tools (6)</a></h2>
+<h3 id="bridge_get_quote"><a class="header" href="#bridge_get_quote"><code>bridge_get_quote</code></a></h3>
+<p>Get a quote for bridging tokens between chains. Queries the specified bridge protocol’s quoter contract or API for output amount, fees, and estimated delivery time.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>token</code></td><td><code>String</code></td><td>Yes</td><td>Token to bridge (0x address or symbol)</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount to bridge (human-readable)</td></tr>
+<tr><td><code>source_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+<tr><td><code>dest_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Destination chain ID</td></tr>
+<tr><td><code>bridge</code></td><td><code>String</code></td><td>Yes</td><td><code>"stargate"</code>, <code>"across"</code>, or <code>"hop"</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BridgeGetQuoteParams {
+    /// Token to bridge. Symbol (e.g., "USDC") or 0x-prefixed address.
+    pub token: String,
+    /// Amount to bridge in human-readable units.
+    pub amount: String,
+    /// Source chain ID (e.g., 1 for Ethereum, 8453 for Base).
+    pub source_chain: u64,
+    /// Destination chain ID.
+    pub dest_chain: u64,
+    /// Bridge protocol: "stargate", "across", or "hop".
+    pub bridge: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeQuote {
+    pub bridge: String,
+    pub token: String,
+    pub amount_in: String,
+    /// Output amount on destination chain. May differ from amount_in due to fees.
+    pub amount_out: String,
+    pub bridge_fee: String,
+    pub relayer_fee: String,
+    pub total_fee_usd: f64,
+    /// e.g., "1-3 minutes"
+    pub estimated_time: String,
+    pub destination_token: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Medium</code> (1-5s) – bridge API or quoter contract call
+<strong>progress_steps</strong>: <code>["Resolving token", "Querying bridge quoter", "Computing fees"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>BridgeQuoteCard</code> – shows source -&gt; destination chain badges, fee breakdown, and estimated time with a timeline indicator.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Gets a bridge quote for transferring tokens between chains (Stargate, Across, Hop). Returns fees, estimated time, and output amount. Read-only.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Always call <code>bridge_compare</code> instead of this tool if you want the best route. Use this only when you already know which bridge to use.</li>
+<li>Check <code>bridge_get_limits</code> to verify the amount is within the bridge’s transfer range before quoting.</li>
+</ul>
+<p><strong>Event Fabric</strong> (Bardo’s <code>tokio::broadcast</code> channel system for real-time event streaming between runtime components):</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "bridge_get_quote", params: { bridge, token, source_chain, dest_chain } }</code></li>
+<li><code>tool:update</code> -&gt; <code>{ step: "Querying bridge quoter" }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { amount_out, total_fee_usd, estimated_time } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (none), <code>tool_result</code> (none)</p>
+<hr>
+<h3 id="bridge_execute"><a class="header" href="#bridge_execute"><code>bridge_execute</code></a></h3>
+<p>Execute a cross-chain bridge transfer. Tokens leave the source chain and arrive on the destination chain after a delay. The handler builds calldata via Alloy (the standard Rust library for EVM interaction) <code>sol!</code> bindings for the bridge’s router contract, simulates via Revm (Rust EVM implementation for local transaction simulation against forked chain state) fork, then signs and broadcasts.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bridge</code></td><td><code>String</code></td><td>Yes</td><td><code>"stargate"</code>, <code>"across"</code>, or <code>"hop"</code></td></tr>
+<tr><td><code>token</code></td><td><code>String</code></td><td>Yes</td><td>Token to bridge</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount to bridge</td></tr>
+<tr><td><code>source_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+<tr><td><code>dest_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Destination chain ID</td></tr>
+<tr><td><code>recipient</code></td><td><code>String</code></td><td>No</td><td>Recipient on destination chain (default: same address)</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BridgeExecuteParams {
+    pub bridge: String,
+    pub token: String,
+    pub amount: String,
+    pub source_chain: u64,
+    pub dest_chain: u64,
+    /// Recipient on destination chain. Defaults to the Golem's wallet.
+    pub recipient: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeExecuteResult {
+    pub tx_hash: String,
+    pub bridge_id: String,
+    /// ISO 8601 estimated arrival time.
+    pub estimated_arrival: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Write</code> – requires <code>Capability&lt;BridgeExecute&gt;</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer3</code> – unbounded write (tokens leave current chain)
+<strong>tick_budget</strong>: <code>TickBudget::Slow</code> (5-15s) – simulation + approval + broadcast + confirmation
+<strong>progress_steps</strong>: <code>["Checking bridge limits", "Simulating via Revm", "Approving token", "Building bridge calldata", "Signing transaction", "Broadcasting", "Confirming source receipt"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Executing</code></p>
+<p><strong>Custody implications</strong>:</p>
+<ul>
+<li><strong>Delegation</strong>: Session key signs via the bridge router contract. CaveatEnforcer must whitelist the bridge router address and token. Cross-chain recipient must match the Golem’s own address (or owner-approved destinations).</li>
+<li><strong>Embedded</strong>: Privy wallet signs. PolicyCage (the on-chain smart contract that enforces an owner’s safety constraints) validates bridge target, spending limit, and recipient.</li>
+<li><strong>Local Key</strong>: Local keypair signs. On-chain delegation bounds constrain allowed bridge routers and amounts.</li>
+</ul>
+<p><strong>TUI rendering</strong>: <code>BridgeProgress</code> – multi-step progress bar with source/destination chain icons. After broadcast, transitions to a tracking view showing in-flight status with <code>bridge_get_status</code> polling.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Executes a cross-chain bridge transfer. Tokens leave the source chain and arrive on the destination chain after a delay. Track status via bridge_get_status.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Bridge as needed for cross-chain strategy. Use <code>bridge_compare</code> first. Always specify recipient.</li>
+<li><strong>cautious</strong>: Bridge only to consolidate assets on a single chain for risk reduction.</li>
+<li><strong>declining</strong>: Bridge to consolidate assets for settlement.</li>
+<li><strong>terminal</strong>: Bridge only for final asset consolidation.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "bridge_execute", params: { bridge, token, amount, source_chain, dest_chain } }</code></li>
+<li><code>tool:update</code> -&gt; <code>{ step: "Simulating via Revm" }</code> | <code>{ step: "Signing transaction" }</code> | <code>{ step: "Broadcasting" }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { tx_hash, bridge_id, estimated_arrival } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (balance check, bridge limit validation, spending limit), <code>tool_result</code> (track in-flight bridge in Grimoire (the Golem’s persistent memory system with episodic, semantic, and strategy layers))</p>
+<p><strong>Ground truth verification</strong>:</p>
+<ul>
+<li><strong>expected_outcome</strong>: <code>"Bridge {amount} {token} from chain {source_chain} to chain {dest_chain} via {bridge}"</code></li>
+<li><strong>actual_outcome</strong>: <code>"Source tx {tx_hash}, bridge ID {bridge_id}, status: {bridge_status}"</code> (from <code>bridge_get_status</code>)</li>
+<li><strong>ground_truth_source</strong>: <code>"source_receipt + bridge_status_api + destination_balance_diff"</code> – full verification requires destination chain balance check after arrival</li>
+</ul>
+<hr>
+<h3 id="bridge_get_status"><a class="header" href="#bridge_get_status"><code>bridge_get_status</code></a></h3>
+<p>Check the status of an in-flight bridge transaction. Queries the bridge protocol’s status API or destination chain for completion.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bridge</code></td><td><code>String</code></td><td>Yes</td><td><code>"stargate"</code>, <code>"across"</code>, or <code>"hop"</code></td></tr>
+<tr><td><code>bridge_id</code></td><td><code>String</code></td><td>Yes</td><td>Bridge transfer ID from <code>bridge_execute</code></td></tr>
+<tr><td><code>source_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BridgeGetStatusParams {
+    pub bridge: String,
+    /// Bridge transfer ID returned by bridge_execute.
+    pub bridge_id: String,
+    pub source_chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeStatus {
+    /// pending, in-transit, completed, or failed.
+    pub status: String,
+    pub tx_hash_source: String,
+    pub tx_hash_dest: Option&lt;String&gt;,
+    /// ISO 8601 estimated time remaining, null if completed.
+    pub eta: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Fast</code> (&lt;1s) – single API call
+<strong>progress_steps</strong>: <code>["Querying bridge status"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>BridgeStatusBadge</code> – inline status badge: pending (yellow pulse), in-transit (blue spinner), completed (green check), failed (red X). If completed, shows destination tx hash as a clickable link.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Checks the status of an in-flight bridge transfer. Returns pending/in-transit/completed/failed. Read-only.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Poll every 30 seconds for Stargate and Hop. Across fills are faster – poll every 15 seconds.</li>
+<li>If status is “failed”, check the error details and consider retrying via <code>bridge_execute</code>.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "bridge_get_status", params: { bridge, bridge_id } }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { status, eta } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (none), <code>tool_result</code> (alert if status is “failed”)</p>
+<hr>
+<h3 id="bridge_compare"><a class="header" href="#bridge_compare"><code>bridge_compare</code></a></h3>
+<p>Compare all bridge options for a route and rank by net output after fees. Queries Stargate, Across, and Hop in parallel and returns a ranked list with a recommendation.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>token</code></td><td><code>String</code></td><td>Yes</td><td>Token to bridge</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount to bridge</td></tr>
+<tr><td><code>source_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+<tr><td><code>dest_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Destination chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BridgeCompareParams {
+    pub token: String,
+    pub amount: String,
+    pub source_chain: u64,
+    pub dest_chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeCompareRoute {
+    pub bridge: String,
+    pub amount_out: String,
+    pub total_fee_usd: f64,
+    pub estimated_time: String,
+    pub rank: u32,
+    pub notes: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeRecommendation {
+    pub bridge: String,
+    pub reason: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeCompareResult {
+    pub routes: Vec&lt;BridgeCompareRoute&gt;,
+    pub recommendation: BridgeRecommendation,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Medium</code> (1-5s) – parallel queries to 3 bridges
+<strong>progress_steps</strong>: <code>["Querying Stargate", "Querying Across", "Querying Hop", "Ranking by net output"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>BridgeCompareTable</code> – ranked table with bridge name, output amount, fees, estimated time, and a “Recommended” badge on the winner.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Compares all bridge options for a route and ranks by net output after fees. Returns a recommendation. Read-only. Always use before bridging.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Always call this before <code>bridge_execute</code>. Picking the wrong bridge can cost 2-5% in fees on large transfers.</li>
+<li>The recommendation considers both fees and speed. For time-sensitive transfers, check the <code>estimated_time</code> column directly.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "bridge_compare", params: { token, amount, source_chain, dest_chain } }</code></li>
+<li><code>tool:update</code> -&gt; <code>{ step: "Querying Stargate" }</code> | <code>{ step: "Querying Across" }</code> | <code>{ step: "Ranking by net output" }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { winner: recommendation.bridge, route_count } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (none), <code>tool_result</code> (none)</p>
+<hr>
+<h3 id="bridge_get_limits"><a class="header" href="#bridge_get_limits"><code>bridge_get_limits</code></a></h3>
+<p>Get minimum and maximum transfer amounts for a bridge route. Also returns available liquidity on the destination side, which determines the practical maximum.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bridge</code></td><td><code>String</code></td><td>Yes</td><td><code>"stargate"</code>, <code>"across"</code>, or <code>"hop"</code></td></tr>
+<tr><td><code>token</code></td><td><code>String</code></td><td>Yes</td><td>Token address or symbol</td></tr>
+<tr><td><code>source_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+<tr><td><code>dest_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Destination chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BridgeGetLimitsParams {
+    pub bridge: String,
+    pub token: String,
+    pub source_chain: u64,
+    pub dest_chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeLimits {
+    /// Minimum transfer amount in token units.
+    pub min_amount: String,
+    /// Maximum transfer amount in token units.
+    pub max_amount: String,
+    /// Available liquidity on destination side.
+    pub available_liquidity: String,
+    pub token: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Fast</code> (&lt;1s)
+<strong>progress_steps</strong>: <code>["Querying bridge limits"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>LimitsBadge</code> – inline display showing min/max range and a utilization bar for available liquidity (green = plenty, red = near depleted).</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Returns min/max transfer amounts and available liquidity for a bridge route. Read-only. Check before bridging to avoid BRIDGE_LIMIT_EXCEEDED errors.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Always check limits before calling <code>bridge_execute</code>. Submitting an amount outside limits wastes gas on a reverted transaction.</li>
+<li>If <code>available_liquidity</code> is less than your transfer amount, the bridge will fail even if the amount is within min/max range.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "bridge_get_limits", params: { bridge, token, source_chain, dest_chain } }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { min_amount, max_amount, available_liquidity } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (none), <code>tool_result</code> (none)</p>
+<hr>
+<h3 id="bridge_estimate_time"><a class="header" href="#bridge_estimate_time"><code>bridge_estimate_time</code></a></h3>
+<p>Estimate bridge completion time based on current queue depth and network conditions. Returns p50 and p90 estimates for probabilistic planning.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bridge</code></td><td><code>String</code></td><td>Yes</td><td><code>"stargate"</code>, <code>"across"</code>, or <code>"hop"</code></td></tr>
+<tr><td><code>source_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+<tr><td><code>dest_chain</code></td><td><code>u64</code></td><td>Yes</td><td>Destination chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BridgeEstimateTimeParams {
+    pub bridge: String,
+    pub source_chain: u64,
+    pub dest_chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeTimeEstimate {
+    /// Median completion time (e.g., "2 minutes").
+    pub p50_time: String,
+    /// 90th percentile completion time (e.g., "8 minutes").
+    pub p90_time: String,
+    /// Number of pending transfers in the bridge's queue.
+    pub current_queue_depth: u32,
+    /// Additional context (e.g., "Queue depth normal", "High congestion").
+    pub notes: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Fast</code> (&lt;1s)
+<strong>progress_steps</strong>: <code>["Querying bridge queue"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>TimeEstimateBadge</code> – shows p50 time as primary with p90 in parentheses. Color-coded: green (&lt; 5 min), yellow (5-15 min), red (&gt; 15 min).</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Estimates bridge completion time based on current queue depth. Returns p50 and p90 estimates. Read-only.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Use the p90 estimate for planning, not p50. Bridge delays can spike during network congestion.</li>
+<li>If <code>current_queue_depth</code> is unusually high, consider waiting or using a different bridge.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "bridge_estimate_time", params: { bridge, source_chain, dest_chain } }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { p50_time, p90_time, current_queue_depth } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (none), <code>tool_result</code> (none)</p>
+<hr>
+<h2 id="dex-aggregator-routing-tools-3"><a class="header" href="#dex-aggregator-routing-tools-3">DEX aggregator routing tools (3)</a></h2>
+<p>Cross-aggregator comparison and utility tools. These tools query external aggregator APIs (1inch, CoW Protocol, ParaSwap, Odos) for quotes and gas estimates. They do not execute trades – use the aggregator-specific swap tools in <a href="03-tools-trading.html">03-tools-trading.md</a> (swap execution, UniswapX orders, cross-chain intents, and approval management) for execution.</p>
+<h3 id="aggregator_compare"><a class="header" href="#aggregator_compare"><code>aggregator_compare</code></a></h3>
+<p>Get quotes from all supported aggregators in parallel and rank by net output after gas costs. The winner is the aggregator delivering the most tokens to the Golem after subtracting gas costs denominated in the output token.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>token_in</code></td><td><code>String</code></td><td>Yes</td><td>Token to sell</td></tr>
+<tr><td><code>token_out</code></td><td><code>String</code></td><td>Yes</td><td>Token to buy</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount to sell</td></tr>
+<tr><td><code>chain</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct AggregatorCompareParams {
+    pub token_in: String,
+    pub token_out: String,
+    pub amount: String,
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AggregatorQuote {
+    pub aggregator: String,
+    pub amount_out: String,
+    /// Output minus gas cost in output token terms.
+    pub net_output_after_gas: String,
+    pub gas_usd: f64,
+    pub rank: u32,
+    /// e.g., "MEV protected", "Best for large trades"
+    pub notes: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AggregatorCompareResult {
+    /// Aggregator name of the winner.
+    pub winner: String,
+    pub quotes: Vec&lt;AggregatorQuote&gt;,
+    /// Human-readable recommendation explaining why the winner was chosen.
+    pub recommendation: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Medium</code> (1-5s) – parallel API calls to 4 aggregators
+<strong>progress_steps</strong>: <code>["Querying 1inch", "Querying CoW", "Querying ParaSwap", "Querying Odos", "Ranking by net output"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>AggregatorCompareTable</code> – ranked table with aggregator logo, output amount, gas cost, net output, and notes. Winner row highlighted.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Gets quotes from all supported aggregators in parallel and ranks by net output after gas. Returns a winner and recommendation. Read-only. Always use before large trades to find the best execution venue.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Use for trades where the Uniswap router might not be optimal (e.g., exotic tokens, large size, multi-hop routes).</li>
+<li>CoW Protocol quotes are MEV-protected by default. Note this in the recommendation if CoW is competitive but not the cheapest.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "aggregator_compare", params: { token_in, token_out, amount, chain } }</code></li>
+<li><code>tool:update</code> -&gt; <code>{ step: "Querying 1inch" }</code> | <code>{ step: "Querying CoW" }</code> | <code>{ step: "Ranking by net output" }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { winner, quote_count } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (none)</p>
+<hr>
+<h3 id="aggregator_get_gas_estimate"><a class="header" href="#aggregator_get_gas_estimate"><code>aggregator_get_gas_estimate</code></a></h3>
+<p>Get gas cost estimate for a swap via a specific aggregator. Useful for comparing gas efficiency between aggregators before committing to one.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>aggregator</code></td><td><code>String</code></td><td>Yes</td><td><code>"1inch"</code>, <code>"cow"</code>, <code>"paraswap"</code>, or <code>"odos"</code></td></tr>
+<tr><td><code>token_in</code></td><td><code>String</code></td><td>Yes</td><td>Token to sell</td></tr>
+<tr><td><code>token_out</code></td><td><code>String</code></td><td>Yes</td><td>Token to buy</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount to sell</td></tr>
+<tr><td><code>chain</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct AggregatorGetGasEstimateParams {
+    /// Aggregator: "1inch", "cow", "paraswap", or "odos".
+    pub aggregator: String,
+    pub token_in: String,
+    pub token_out: String,
+    pub amount: String,
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GasEstimate {
+    pub gas_units: u64,
+    pub gas_price: String,
+    pub gas_cost_eth: String,
+    pub gas_cost_usd: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Fast</code> (&lt;1s)
+<strong>progress_steps</strong>: <code>["Querying aggregator gas estimate"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>GasBadge</code> – inline display showing gas cost in USD with a color indicator based on current gas conditions (green = cheap, red = expensive relative to 7d average).</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Returns gas cost estimate for a swap via a specific aggregator. Read-only. Use aggregator_compare for a full ranking – this tool is for single-aggregator gas checks.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>CoW Protocol (cow) gas is paid by solvers, so <code>gas_cost_usd</code> will be 0 for CoW quotes. The cost is embedded in the spread instead.</li>
+<li>Compare gas estimates across aggregators to find the most gas-efficient route for small trades where gas is a significant fraction of trade value.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "aggregator_get_gas_estimate", params: { aggregator, token_in, token_out, chain } }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { gas_cost_usd } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (none)</p>
+<hr>
+<h3 id="aggregator_check_approval"><a class="header" href="#aggregator_check_approval"><code>aggregator_check_approval</code></a></h3>
+<p>Check if a token approval is needed for a specific aggregator’s router contract. Returns approval calldata if required. Does not broadcast – the actual approval must go through <code>uniswap_approve_token</code> or a dedicated approve handler.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>aggregator</code></td><td><code>String</code></td><td>Yes</td><td><code>"1inch"</code>, <code>"cow"</code>, <code>"paraswap"</code>, <code>"odos"</code>, or <code>"bebop"</code></td></tr>
+<tr><td><code>token</code></td><td><code>String</code></td><td>Yes</td><td>Token address to check</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount that will be sold</td></tr>
+<tr><td><code>chain</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct AggregatorCheckApprovalParams {
+    /// Aggregator: "1inch", "cow", "paraswap", "odos", or "bebop".
+    pub aggregator: String,
+    pub token: String,
+    pub amount: String,
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AggregatorApprovalResult {
+    pub needs_approval: bool,
+    /// Aggregator router contract address, null if no approval needed.
+    pub spender: Option&lt;String&gt;,
+    /// Pre-built approval tx calldata, null if no approval needed.
+    pub approval_tx: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>CapabilityTier::Read</code>
+<strong>risk_tier</strong>: <code>RiskTier::Layer1</code>
+<strong>tick_budget</strong>: <code>TickBudget::Fast</code> (&lt;1s)
+<strong>progress_steps</strong>: <code>["Resolving spender", "Reading allowance"]</code>
+<strong>sprite_trigger</strong>: <code>SpriteTrigger::Thinking</code></p>
+<p><strong>TUI rendering</strong>: <code>ApprovalChip</code> – inline badge showing “Approved” (green) or “Needs approval” (yellow) with aggregator name.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Checks if a token approval is needed for a specific aggregator. Returns approval tx calldata if required. Read-only check, no state change.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>Check before any aggregator swap. Each aggregator uses a different router contract, so approvals from one don’t carry over.</li>
+<li>If <code>needs_approval</code> is true, use the spender address with the appropriate approval tool before executing the swap.</li>
+</ul>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "aggregator_check_approval", params: { aggregator, token, chain } }</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success: true, result_summary: { needs_approval } }</code></li>
+</ul>
+<p><strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (none)</p>
+<hr>
+<h2 id="tooldef-summary"><a class="header" href="#tooldef-summary">ToolDef summary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tool</th><th>Category</th><th>Capability</th><th>Risk tier</th><th>Tick budget</th><th>Sprite</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bridge_get_quote</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Medium</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>bridge_execute</code></td><td><code>Trading</code></td><td><code>Write</code></td><td><code>Layer3</code></td><td><code>Slow</code></td><td><code>Executing</code></td></tr>
+<tr><td><code>bridge_get_status</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Fast</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>bridge_compare</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Medium</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>bridge_get_limits</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Fast</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>bridge_estimate_time</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Fast</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>aggregator_compare</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Medium</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>aggregator_get_gas_estimate</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Fast</code></td><td><code>Thinking</code></td></tr>
+<tr><td><code>aggregator_check_approval</code></td><td><code>Trading</code></td><td><code>Read</code></td><td><code>Layer1</code></td><td><code>Fast</code></td><td><code>Thinking</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="removed-governance-and-incentive-tools"><a class="header" href="#removed-governance-and-incentive-tools">Removed: governance and incentive tools</a></h2>
+<p>The following 8 tools from the v1 spec have been cut:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Removed tool</th><th>Reason</th></tr>
+</thead>
+<tbody>
+<tr><td><code>governance_lock_token</code></td><td>Governance locks (1 week to 4 years) outlive Golems. Locked tokens become permanently inaccessible at Golem death.</td></tr>
+<tr><td><code>governance_vote_gauge</code></td><td>Requires active voting power from locks. Without locks, no votes.</td></tr>
+<tr><td><code>governance_get_bribes</code></td><td>Bribe markets are only actionable with voting power. Read-only bribe data can be added to a data tool if needed.</td></tr>
+<tr><td><code>governance_claim_bribes</code></td><td>Requires locked positions that can’t exist under mortality constraints.</td></tr>
+<tr><td><code>governance_get_voting_power</code></td><td>No locks -&gt; no voting power -&gt; nothing to query.</td></tr>
+<tr><td><code>governance_get_gauge_apy</code></td><td>Gauge APY is only relevant for locked position holders.</td></tr>
+<tr><td><code>governance_get_locked_positions</code></td><td>No locks -&gt; no positions -&gt; nothing to list.</td></tr>
+<tr><td><code>governance_extend_lock</code></td><td>Extending locks compounds the mortality conflict – the extended duration could outlive the Golem by years.</td></tr>
+</tbody>
+</table>
+</div>
+<p>If a Golem needs to interact with governance protocols, the correct pattern is to delegate governance tokens to a non-mortal owner address, not to lock them in the Golem’s own wallet.</p>
+<hr>
+<h2 id="error-codes"><a class="header" href="#error-codes">Error codes</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>BRIDGE_LIMIT_EXCEEDED</code></td><td>Transfer amount exceeds bridge’s min/max limits</td></tr>
+<tr><td><code>BRIDGE_CHAIN_NOT_SUPPORTED</code></td><td>Bridge does not support this source/destination chain pair</td></tr>
+<tr><td><code>BRIDGE_TOKEN_NOT_SUPPORTED</code></td><td>Bridge does not support this token on this route</td></tr>
+<tr><td><code>BRIDGE_LIQUIDITY_INSUFFICIENT</code></td><td>Available liquidity on destination side is less than transfer amount</td></tr>
+<tr><td><code>BRIDGE_TRANSFER_FAILED</code></td><td>Bridge transfer failed (check bridge_get_status for details)</td></tr>
+<tr><td><code>AGGREGATOR_UNAVAILABLE</code></td><td>Aggregator API is down or returned an error</td></tr>
+<tr><td><code>QUOTE_EXPIRED</code></td><td>Aggregator quote has expired</td></tr>
+<tr><td><code>AGGREGATOR_INSUFFICIENT_LIQUIDITY</code></td><td>Aggregator cannot fill the trade at any price</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/04-tools-lp.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/06-tools-vault.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/04-tools-lp.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/06-tools-vault.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

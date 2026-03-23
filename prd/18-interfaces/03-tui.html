@@ -1,0 +1,1846 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>TUI - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/18-interfaces/03-tui.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-terminal-spec"><a class="header" href="#bardo-terminal-spec">bardo-terminal [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.1.0
+<strong>Last updated:</strong> 2026-03-17
+<strong>Crates:</strong> <code>bardo-terminal</code>, <code>bardo-sprites</code>, <code>bardo-tui-widgets</code>
+<strong>Framework:</strong> ratatui 0.29, crossterm 0.28, tokio 1.x
+<strong>Design reference:</strong> Rebels in the Sky (https://github.com/ricott1/rebels-in-the-sky)</p>
+<blockquote>
+<p><strong>Design system cross-reference:</strong> Visual identity, ROSEDUST palette, CRT materiality, component patterns, and atmospheric effects are specified in <a href="04-design-system.html">04-design-system.md</a> (the ROSEDUST visual identity spec for color, typography, and atmospheric rendering). Screen layouts reference design system tokens directly. Widget catalog in <a href="05-widget-catalog.html">05-widget-catalog.md</a> (the 33-widget component library for the TUI). Full 29-screen reference in <a href="06-terminal-screens.html">06-terminal-screens.md</a> (per-screen layout and data specifications).</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is the main specification for <code>bardo-terminal</code>, the 60fps TUI (terminal user interface) that is the Golem’s primary interactive surface. It belongs to the <strong>interfaces layer</strong> of the Bardo stack. The TUI is a full-screen Rust application built on ratatui, connected via WebSocket to a Golem (a mortal autonomous DeFi agent running on a micro VM). Key concepts: the 32 interpolating variables (continuously changing visual state channels that drive every pixel), the Spectre (a dot-cloud creature sprite representing each Golem), CorticalState (the Golem’s 32-signal atomic perception surface), and the Daimon (the Golem’s emotional appraisal subsystem producing PAD vectors). For unfamiliar terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<hr>
+<h2 id="1-what-this-document-covers"><a class="header" href="#1-what-this-document-covers">1. What this document covers</a></h2>
+<p>This document specifies <code>bardo-terminal</code> — the Golem’s primary interactive interface. It is a full-screen TUI application written in Rust, rendered at 60 FPS, built on ratatui and crossterm. It connects to the Golem’s WebSocket event stream and renders its inner life as a living, breathing creature.</p>
+<p>The document covers: the perpetual motion principle, crate architecture, the 32-channel interpolating variable system, the 29-screen system (6 windows), the procedural creature/sprite system, real-time streaming, engagement loops, onboarding flow, social features, and the custom widget library. Per-screen specifications live in <a href="06-terminal-screens.html">06-terminal-screens.md</a>; the widget catalog in <a href="05-widget-catalog.html">05-widget-catalog.md</a>.</p>
+<p>This is not the gotts-monorepo CLI tooling. The TypeScript <code>@bardo/tui</code> package (<code>packages/tui/</code> in the gotts-monorepo, built on picocolors and @clack/prompts) is a separate utility library for Node.js CLI output formatting. See the note at the end of this document.</p>
+<hr>
+<h2 id="2-design-vision"><a class="header" href="#2-design-vision">2. Design vision</a></h2>
+<p>A terminal is not a lesser interface. It is a more intimate one. The builder’s home. The place where the machine lives closest to the person who made it.</p>
+<p><code>bardo-terminal</code> transforms Golem management from monitoring into inhabitation. The player does not <em>use</em> the terminal — they live alongside their Golem. The Golem is a creature: born, growing, learning, dreaming, feeling, dying. Every Pi lifecycle event, every heartbeat, every dream cycle, every emotional appraisal, every causal link discovered becomes a visible phenomenon in the TUI.</p>
+<p>Three design pillars hold this together:</p>
+<p><strong>The Golem as creature.</strong> Each Golem has a procedurally generated sprite that evolves as it ages, learns, and emotes. A Golem in Thriving phase looks different from one in Conservation. A dreaming Golem animates differently. A dying Golem’s sprite decays. The sprite is not decoration — it is a real-time emotional barometer, the visual encoding of the Daimon’s (the Golem’s emotional appraisal subsystem) PAD vector (Pleasure-Arousal-Dominance coordinates), rendered at 60 FPS with interpolated animation and particle effects.</p>
+<p><strong>The world as living.</strong> Other owners’ Golems are visible. The Styx (Bardo’s social and connectivity layer) shows tombstones with epitaphs. The Bazaar has browseable listings. Bloodstains (persistent map markers left where Golems died under specific market conditions) mark where Golems died in particular market conditions. The lineage tree shows generational knowledge compound. The world has weather — market regime visualized as ambient atmosphere.</p>
+<p><strong>The loop as addiction.</strong> Every session surfaces something new: a dream insight, a Clade (a group of sibling Golems sharing knowledge) sibling’s discovery, a marketplace listing, a reputation milestone, a sprite evolution. The gacha loop is not manufactured — it is the fundamental unpredictability of autonomous agents in live markets, surfaced through a system that makes every login feel like opening a mystery.</p>
+<hr>
+<h2 id="3-the-perpetual-motion-principle"><a class="header" href="#3-the-perpetual-motion-principle">3. The perpetual motion principle</a></h2>
+<p>The foundational design rule: <strong>nothing on screen is ever at rest.</strong></p>
+<p>Every element is driven by at least one continuously changing variable. A label that never changes still sits on a background that shimmers. A border that never moves still dims with lifecycle degradation. A number that hasn’t updated still has a phosphor afterimage of its last change fading behind it. Static pixels are bugs.</p>
+<p>This is not animation for decoration. It is the visual consequence of a system where every variable is coupled to every other variable through the Event Fabric, and the renderer’s job is to make those couplings legible. A progress bar that decays is a mortality clock rendered honestly. A chart that shimmers is uncertainty in the data made visible. Brightness follows significance. Motion follows change. Silence follows death.</p>
+<p>For every element on every screen, three questions must be answered:</p>
+<ol>
+<li><strong>What makes it move?</strong> Which Event Fabric channel(s) drive this element?</li>
+<li><strong>What makes it change?</strong> What state transitions alter its appearance – color, density, brightness, rhythm?</li>
+<li><strong>What makes it decay?</strong> How does this element show the passage of time, the depletion of resources, the approach of death?</li>
+</ol>
+<p>The terminal is a CRT where every bright moment leaves a ghost, every ghost fades, and every fade is replaced by the next moment’s ghost. Persistence of vision. Persistence of memory. Persistence of the dead.</p>
+<hr>
+<h2 id="4-the-32-interpolating-variables"><a class="header" href="#4-the-32-interpolating-variables">4. The 32 interpolating variables</a></h2>
+<p>The golem’s visual state is driven by 32 continuously interpolating variables. Each has a current value and a target value. Events from the Event Fabric update targets; the renderer reads current values. The current value approaches the target at a rate determined by the variable’s lerp constant.</p>
+<h3 id="variable-table"><a class="header" href="#variable-table">Variable table</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Variable</th><th>Category</th><th>Lerp rate</th><th>Range</th><th>What it drives</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><code>pleasure</code></td><td>fast</td><td>8.0</td><td>[-1.0, 1.0]</td><td>Warm/cool palette shift. Tint toward bone (positive) or rose_bright (negative).</td></tr>
+<tr><td>2</td><td><code>arousal</code></td><td>fast</td><td>8.0</td><td>[-1.0, 1.0]</td><td>Saturation, contrast, flicker speed. High = vivid + fast. Low = muted + slow.</td></tr>
+<tr><td>3</td><td><code>dominance</code></td><td>fast</td><td>8.0</td><td>[-1.0, 1.0]</td><td>Edge sharpness, contrast assertiveness. High = crisp. Low = soft, uncertain.</td></tr>
+<tr><td>4</td><td><code>emotion_label</code></td><td>fast</td><td>6.0</td><td>enum</td><td>Sprite eye expression, status bar emotion tag. Discrete Plutchik primary (8 values). Transitions snap at the midpoint of an 8-tick crossfade; the surrounding dot physics and eye rendering smoothly interpolate to absorb the discontinuity.</td></tr>
+<tr><td>5</td><td><code>fsm_phase</code></td><td>fast</td><td>10.0</td><td>enum</td><td>Active pipeline stage highlight in Mind screen. Snaps fast but not instant.</td></tr>
+<tr><td>6</td><td><code>probe_severity</code></td><td>fast</td><td>12.0</td><td>[0.0, 1.0]</td><td>Alert glow intensity. 0 = nominal. 1 = crisis. Drives border flicker and rose_bright usage.</td></tr>
+<tr><td>7</td><td><code>inference_glow</code></td><td>fast</td><td>10.0</td><td>[0.0, 1.0]</td><td>Brightness pulse when LLM call is active. Fades quickly after response.</td></tr>
+<tr><td>8</td><td><code>mouth_alpha</code></td><td>fast</td><td>15.0</td><td>[0.0, 1.0]</td><td>Sprite mouth visibility during speech. Very fast attack, medium decay.</td></tr>
+<tr><td>9</td><td><code>market_regime</code></td><td>medium</td><td>1.5</td><td>enum</td><td>Background atmosphere zone. Bull = warm undertone. Bear = cool. Chop = flickering.</td></tr>
+<tr><td>10</td><td><code>context_utilization</code></td><td>medium</td><td>2.0</td><td>[0.0, 1.0]</td><td>Context window fill gauge in Inference screen.</td></tr>
+<tr><td>11</td><td><code>phi_score</code></td><td>medium</td><td>1.0</td><td>[0.0, 1.0]</td><td>Integrated information metric. Drives Mind screen’s consciousness complexity indicator.</td></tr>
+<tr><td>12</td><td><code>dream_alpha</code></td><td>medium</td><td>0.8</td><td>[0.0, 1.0]</td><td>Dream state overlay opacity. 0 = awake. 1 = deep REM. Affects entire screen palette.</td></tr>
+<tr><td>13</td><td><code>clade_connectivity</code></td><td>medium</td><td>1.2</td><td>[0.0, 1.0]</td><td>Sibling network health in Clade screen. Responsive peers / total peers.</td></tr>
+<tr><td>14</td><td><code>phase_density</code></td><td>slow</td><td>0.15</td><td>[0.0, 1.0]</td><td>Sprite dot cloud density. 1.0 in youth, eroding toward 0 as the golem ages.</td></tr>
+<tr><td>15</td><td><code>phase_dimming</code></td><td>slow</td><td>0.12</td><td>[0.0, 1.0]</td><td>Global brightness multiplier. 1.0 = full. Drops in Conservation and Declining phases.</td></tr>
+<tr><td>16</td><td><code>vitality_composite</code></td><td>slow</td><td>0.2</td><td>[0.0, 1.0]</td><td>Weighted combination of economic + biological + epistemic health. Drives sprite breathing rate.</td></tr>
+<tr><td>17</td><td><code>economic_clock</code></td><td>slow</td><td>0.1</td><td>[0.0, 1.0]</td><td>Fraction of metabolic reserve remaining. 1.0 = full. 0.0 = death.</td></tr>
+<tr><td>18</td><td><code>epistemic_clock</code></td><td>slow</td><td>0.08</td><td>[0.0, 1.0]</td><td>Knowledge freshness. Decays as Grimoire (the Golem’s persistent knowledge store) entries go stale without refresh.</td></tr>
+<tr><td>19</td><td><code>age_factor</code></td><td>glacial</td><td>0.03</td><td>[0.0, 1.0]</td><td>Normalized age. 0.0 at birth, 1.0 at Hayflick limit. Drives character corruption rate.</td></tr>
+<tr><td>20</td><td><code>credit_balance</code></td><td>glacial</td><td>0.05</td><td>[0.0, inf)</td><td>Actual USDC balance. Displayed as the single bone-colored number on Hearth screen.</td></tr>
+<tr><td>21</td><td><code>grimoire_density</code></td><td>glacial</td><td>0.04</td><td>[0.0, 1.0]</td><td>How full the knowledge store is. Drives background particle frequency in Grimoire screen.</td></tr>
+<tr><td>22</td><td><code>burn_rate</code></td><td>glacial</td><td>0.06</td><td>[0.0, inf)</td><td>Current daily spend rate in USDC. Drives projected-lifespan gauge.</td></tr>
+<tr><td>23</td><td><code>heartbeat_phase</code></td><td>fast</td><td>–</td><td>[0.0, 2pi]</td><td>Not lerped – free-running sine wave. Drives per-tick micro-brightness pulse that propagates from sprite through content.</td></tr>
+<tr><td>24</td><td><code>noise_floor</code></td><td>slow</td><td>0.15</td><td>[0.0, 0.01]</td><td>Fraction of background cells that show dim noise characters per frame. Scales with lifecycle phase.</td></tr>
+<tr><td>25</td><td><code>scanline_intensity</code></td><td>slow</td><td>0.1</td><td>[0.0, 0.15]</td><td>How dark the scanline rows are. Increases in degraded phases.</td></tr>
+<tr><td>26</td><td><code>corruption_rate</code></td><td>slow</td><td>0.08</td><td>[0.0, 0.25]</td><td>Fraction of characters randomly substituted with glitch chars during render. 0 in Thriving. 15-25% in Terminal.</td></tr>
+<tr><td>27</td><td><code>prediction_accuracy</code></td><td>medium</td><td>1.5</td><td>[0.0, 1.0]</td><td>Oracle accuracy gauge. Color: bone &gt;70%, amber 50-70%, rose &lt;50%.</td></tr>
+<tr><td>28</td><td><code>accuracy_trend</code></td><td>slow</td><td>0.2</td><td>[-1.0, 1.0]</td><td>Direction of accuracy change. Positive = improving (sprite posture lifts). Negative = declining.</td></tr>
+<tr><td>29</td><td><code>attention_breadth</code></td><td>medium</td><td>1.0</td><td>[0.0, 1.0]</td><td>Fraction of attention slots filled. High = dense atmosphere particles around sprite.</td></tr>
+<tr><td>30</td><td><code>surprise_rate</code></td><td>fast</td><td>6.0</td><td>[0.0, 1.0]</td><td>Rate of unexpected prediction outcomes. High = frequent eye micro-flickers.</td></tr>
+<tr><td>31</td><td><code>foraging_activity</code></td><td>medium</td><td>1.2</td><td>[0.0, 1.0]</td><td>Attention forager promotion/demotion rate. High = peripheral particles orbit sprite actively.</td></tr>
+<tr><td>32</td><td><code>compounding_momentum</code></td><td>slow</td><td>0.15</td><td>[0.0, 1.0]</td><td>How well the prediction-correction-action cycle is compounding. Drives ambient glow warmth around sprite.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="category-summary"><a class="header" href="#category-summary">Category summary</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Lerp rate range</th><th>Resolve time</th><th>Frame count</th><th>What it feels like</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Fast</strong></td><td>6.0 – 15.0</td><td>&lt;1 second</td><td>30-60 frames</td><td>Emotion. Reflexive. The golem’s mood right now.</td></tr>
+<tr><td><strong>Medium</strong></td><td>0.8 – 2.0</td><td>1-5 seconds</td><td>60-300 frames</td><td>Health. The golem’s current condition.</td></tr>
+<tr><td><strong>Slow</strong></td><td>0.08 – 0.2</td><td>5-30 seconds</td><td>300-1800 frames</td><td>Personality. Lifecycle degradation. The golem’s age showing.</td></tr>
+<tr><td><strong>Glacial</strong></td><td>0.03 – 0.06</td><td>30s – 5min</td><td>1800+ frames</td><td>Mortality. The golem’s remaining time on earth.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Variables 1-26 are the original set. Variables 27-32 are the Oracle’s contribution – they arrive when the prediction engine comes online (first theta tick after boot). Before that, they hold zero values. The relationship between these TUI variables and the underlying CorticalState signals is specified in the cortical-state-and-affect spec.</p>
+<p>The viewer sees three timescales simultaneously: the golem’s mood (seconds), its health (minutes), and its mortality (hours). Heidegger’s three ecstases of temporality rendered as concurrent animation rates: the present (heartbeat), the future (projected lifespan), the having-been (Grimoire).</p>
+<h3 id="three-simultaneous-timescales"><a class="header" href="#three-simultaneous-timescales">Three simultaneous timescales</a></h3>
+<p>Why does the terminal feel alive even when the market is closed and the golem has nothing to do?</p>
+<p>Because the three timescales never stop. Even in complete silence:</p>
+<p><strong>Fast (sub-second).</strong> The heartbeat sine wave keeps cycling. The sprite’s dot cloud breathes (particles drift outward on exhale, contract on inhale). The noise floor flickers. These are the golem’s involuntary functions – they run independent of any event.</p>
+<p><strong>Medium (seconds to minutes).</strong> Context utilization drifts as the golem’s attention shifts between dormant monitoring and active analysis. Dream alpha rises and falls as the golem enters and exits consolidation cycles. The clade connectivity score ticks as peers respond to heartbeat pings.</p>
+<p><strong>Glacial (hours to days).</strong> The economic clock drains by fractions of a cent per tick. The age factor creeps upward. Grimoire density shifts as knowledge accumulates or decays. These changes are invisible frame-to-frame but unmistakable over a session. You open Bardo in the morning and the sprite looks slightly thinner than it did last night. You can’t point to the frame where it changed. It changed in all of them.</p>
+<p>The layering is what makes static screens impossible. Even a completely idle golem produces a frame that differs from the previous frame in at least three ways: heartbeat phase, noise floor sample, and some glacial variable’s thousandth decimal place shifting the background color by one RGB unit. That’s enough. The eye doesn’t need large motion to perceive life. It needs any motion at all.</p>
+<hr>
+<h2 id="5-crate-architecture"><a class="header" href="#5-crate-architecture">5. Crate architecture</a></h2>
+<h3 id="51-three-crates"><a class="header" href="#51-three-crates">5.1 Three crates</a></h3>
+<p><strong><code>bardo-terminal</code></strong> — the main application binary.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Responsibility</th><th>Details</th></tr>
+</thead>
+<tbody>
+<tr><td>Application state machine</td><td>29 screens across 6 windows, with navigation stack, history, deep-linking</td></tr>
+<tr><td>60 FPS render loop</td><td><code>crossterm</code> event poll at 16ms, ratatui immediate-mode draw</td></tr>
+<tr><td>Pane layout engine</td><td>Constraint-based layouts adapting to terminal dimensions</td></tr>
+<tr><td>Keyboard/mouse navigation</td><td>Vim-style keybindings, command palette, mouse click support</td></tr>
+<tr><td>WebSocket client</td><td><code>tokio-tungstenite</code> async connection to Golem RPC (:8080)</td></tr>
+<tr><td>Local state persistence</td><td><code>redb</code> KV store — sprite cache, preferences, auth tokens, event buffer</td></tr>
+<tr><td>Auth flow orchestrator</td><td>Browser handoff, polling, device code fallback, token refresh</td></tr>
+<tr><td>Sprite engine host</td><td>Drives <code>bardo-sprites</code> at 60 FPS via ratatui <code>Canvas</code> widget</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong><code>bardo-sprites</code></strong> — standalone library for Golem visual identity.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct SpriteEngine {
+    seed: [u8; 32],
+    config: SpriteConfig,
+    current_frame: SpriteFrame,
+    animation: AnimationState,
+    particles: ParticleSystem,
+    expression: SpriteExpression,
+    phase_overlay: PhaseOverlay,
+}
+
+impl SpriteEngine {
+    pub fn new(seed: [u8; 32], config: SpriteConfig) -&gt; Self;
+    pub fn tick(&amp;mut self, dt: f64, state: &amp;GolemVisualState);
+    pub fn render(&amp;self, canvas: &amp;mut Canvas, rect: Rect);
+    pub fn set_animation(&amp;mut self, anim: Animation);
+    pub fn emit_particles(&amp;mut self, effect: ParticleEffect);
+    pub fn update_expression(&amp;mut self, pad: PADVector);
+    pub fn set_phase_overlay(&amp;mut self, phase: &amp;str);
+    pub fn handle_golem_event(&amp;mut self, event: &amp;GolemEvent);
+}
+<span class="boring">}</span></code></pre>
+<p>Compiles to <code>wasm32-unknown-unknown</code> for the web Portal, which uses it to render sprite previews in HTML5 Canvas.</p>
+<p><strong><code>bardo-tui-widgets</code></strong> — shared custom ratatui widgets beyond the standard library.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Widget</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>SpriteWidget</code></td><td>Renders a <code>SpriteEngine</code> into a ratatui <code>Canvas</code> at the correct resolution tier</td></tr>
+<tr><td><code>HeartbeatPipeline</code></td><td>9-step animated pipeline (OBSERVE → … → REFLECT), active step pulses gold</td></tr>
+<tr><td><code>ProbeGauge</code></td><td>Horizontal bar gauge with severity coloring and threshold markers</td></tr>
+<tr><td><code>BrailleSparkline</code></td><td>2×4 braille-dot sub-character resolution sparkline (80 data points in 40 cols)</td></tr>
+<tr><td><code>CausalGraph</code></td><td>ASCII-rendered directed graph for Grimoire causal links</td></tr>
+<tr><td><code>LineageTree</code></td><td>Vertical family tree with tombstone sprites and inheritance arrows</td></tr>
+<tr><td><code>PheromoneHeatmap</code></td><td>2D grid colored by pheromone intensity across domains × regimes</td></tr>
+<tr><td><code>TimelineRibbon</code></td><td>Horizontal bar segmented by phase/regime with proportional widths</td></tr>
+<tr><td><code>CounterfactualTree</code></td><td>Dream REM visualization — branching roads-not-taken with outcome labels</td></tr>
+<tr><td><code>AchievementPopup</code></td><td>Animated modal overlay with particle effects for achievement unlocks</td></tr>
+<tr><td><code>PADDial</code></td><td>Three-axis radial gauge for Pleasure/Arousal/Dominance</td></tr>
+<tr><td><code>CommandPalette</code></td><td>Fuzzy-search command input (<code>:</code> triggered, vim-style completion)</td></tr>
+<tr><td><code>NotificationToast</code></td><td>Priority-queued toast notifications with auto-dismiss</td></tr>
+<tr><td><code>QRCodeWidget</code></td><td>Inline QR code renderer for auth flow</td></tr>
+<tr><td><code>FlashNumber</code></td><td>Numeric value that briefly flashes on change (useful for P&amp;L, NAV)</td></tr>
+<tr><td><code>ActivityFeed</code></td><td>Scrolling event log with color-coded rows by event kind</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="32-cargo-workspace-structure"><a class="header" href="#32-cargo-workspace-structure">3.2 Cargo workspace structure</a></h3>
+<pre><code>bardo-terminal/
+├── Cargo.toml                    # Workspace root
+├── crates/
+│   ├── bardo-terminal/           # Main binary crate
+│   │   ├── src/
+│   │   │   ├── main.rs           # Entry point, arg parsing, event loop
+│   │   │   ├── app.rs            # Application state machine
+│   │   │   ├── screens/          # One module per screen (29 screens across 6 windows)
+│   │   │   ├── ws.rs             # WebSocket client (tokio-tungstenite)
+│   │   │   ├── auth.rs           # Browser handoff, token management
+│   │   │   ├── input.rs          # Keyboard/mouse handling, keybindings
+│   │   │   ├── navigation.rs     # Screen stack, history, deep-linking
+│   │   │   ├── notifications.rs  # Priority toast system
+│   │   │   └── config.rs         # TOML config loading (~/.bardo/config.toml)
+│   │   └── Cargo.toml
+│   ├── bardo-sprites/            # Sprite engine crate (lib)
+│   │   ├── src/
+│   │   │   ├── lib.rs
+│   │   │   ├── generator.rs      # Procedural sprite generation from seed
+│   │   │   ├── evolution.rs      # Age stages, learning mutations
+│   │   │   ├── animation.rs      # Keyframe interpolation, easing curves
+│   │   │   ├── particles.rs      # Particle emitter/updater/renderer
+│   │   │   ├── expression.rs     # PAD vector → facial expression mapping
+│   │   │   ├── palette.rs        # 6-color palette derivation from seed
+│   │   │   ├── atlas.rs          # Embedded base form sprite data
+│   │   │   └── halfblock.rs      # Unicode half-block rasterizer (▀▄)
+│   │   └── Cargo.toml
+│   └── bardo-tui-widgets/        # Custom ratatui widgets (lib)
+│       ├── src/
+│       │   ├── lib.rs
+│       │   ├── heartbeat_pipeline.rs
+│       │   ├── probe_gauge.rs
+│       │   ├── braille_sparkline.rs
+│       │   ├── causal_graph.rs
+│       │   ├── lineage_tree.rs
+│       │   ├── pheromone_heatmap.rs
+│       │   ├── timeline_ribbon.rs
+│       │   ├── counterfactual_tree.rs
+│       │   ├── achievement_popup.rs
+│       │   ├── pad_dial.rs
+│       │   ├── command_palette.rs
+│       │   ├── notification_toast.rs
+│       │   └── qrcode.rs
+│       └── Cargo.toml
+└── assets/
+    ├── sprites/                  # Base form pixel data (compiled into atlas)
+    ├── animations/               # Keyframe definitions (RON format)
+    └── particles/                # Particle effect definitions (RON)
+</code></pre>
+<h3 id="33-key-dependencies"><a class="header" href="#33-key-dependencies">3.3 Key dependencies</a></h3>
+<pre><code class="language-toml"># bardo-terminal/Cargo.toml
+[dependencies]
+ratatui = "0.29"
+crossterm = "0.28"
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = "0.24"
+crossbeam-channel = "0.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+redb = "2"                 # Embedded KV store for local state persistence
+clap = { version = "4", features = ["derive"] }
+open = "5"                 # Opens browser for auth flow
+qrcode = "0.14"            # QR code generation for auth
+toml = "0.8"               # Config file parsing
+tracing = "0.1"
+color-eyre = "0.6"
+rodio = { version = "0.17", optional = true }  # Optional audio feedback
+
+# bardo-sprites/Cargo.toml
+[dependencies]
+ratatui = "0.29"
+rand = "0.8"
+rand_chacha = "0.3"        # Deterministic RNG from 256-bit seed
+noise = "0.9"              # Perlin noise for texture generation
+palette = "0.7"            # Color space conversions (HSL ↔ RGB)
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = ["CanvasRenderingContext2d"] }
+</code></pre>
+<hr>
+<h2 id="6-render-loop"><a class="header" href="#6-render-loop">6. Render loop</a></h2>
+<p>The loop runs at 60fps. It never waits on a network call. Events arrive from the Event Fabric over WebSocket; they update target state instantly; the renderer interpolates toward those targets at variable rates. Every frame is unique because every frame is the sum of 32 interpolating variable channels, each moving at its own speed toward a target that is itself changing.</p>
+<p>Budget: <strong>&lt;2ms per frame</strong> for custom rendering (the remaining ~14.6ms goes to ratatui’s diff/flush and terminal I/O). Budget breakdown: interpolation ~0.3ms, composition ~0.6ms, post-processing ~0.5ms, buffer write ~0.6ms.</p>
+<h3 id="the-canonical-four-phases"><a class="header" href="#the-canonical-four-phases">The canonical four phases</a></h3>
+<p>Every frame executes four phases in order:</p>
+<ol>
+<li><strong>Drain</strong> – pull all queued events from the WebSocket channel. Each event sets a target value on one or more of the 32 interpolating variables. Never blocks.</li>
+<li><strong>Interpolate</strong> – tick all 32 channels toward their targets using exponential decay: <code>current = lerp(current, target, 1.0 - exp(-rate * dt))</code>. Channel 4 (<code>emotion_label</code>) is a discrete Plutchik enum that snaps at crossfade midpoint. Channel 23 (<code>heartbeat_phase</code>) is a free-running sine that advances by <code>dt</code> each frame.</li>
+<li><strong>Compose</strong> – compute derived state from interpolated values. PAD micro-shifts (pleasure to saturation, arousal to brightness, dominance to hue shift). Atmosphere params from lifecycle phase (noise floor, scanline intensity). Sprite expression from Plutchik mapping. Decay overlays from vitality clocks (phosphor trails, character corruption).</li>
+<li><strong>Render</strong> – draw chrome (tab bar, sprite sidebar, status bar), the active screen’s widgets, and post-processing (scanlines, bloom, noise, phosphor).</li>
+</ol>
+<p>The <code>lerp</code> with exponential decay means channels approach their targets asymptotically. A fast channel (rate = 8.0) reaches 99% of its target in ~0.6 seconds. A glacial channel (rate = 0.05) takes over a minute. This is what makes the system feel organic: fast emotional shifts play out against the backdrop of slow lifecycle degradation, which plays out against the backdrop of glacial economic depletion.</p>
+<h3 id="61-60-fps-event-loop"><a class="header" href="#61-60-fps-event-loop">6.1 60 FPS event loop</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::time::{Duration, Instant};
+use crossterm::event::{self, Event, KeyCode};
+use ratatui::{backend::CrosstermBackend, Terminal};
+
+const TARGET_FPS: u64 = 60;
+const FRAME_DURATION: Duration = Duration::from_micros(1_000_000 / TARGET_FPS);
+
+fn run(terminal: &amp;mut Terminal&lt;CrosstermBackend&lt;Stdout&gt;&gt;, app: &amp;mut App) -&gt; Result&lt;()&gt; {
+    let mut last_frame = Instant::now();
+
+    loop {
+        // 1. Poll input with remaining frame budget (non-blocking)
+        let timeout = FRAME_DURATION.saturating_sub(last_frame.elapsed());
+        if event::poll(timeout)? {
+            match event::read()? {
+                Event::Key(key) =&gt; app.handle_key(key),
+                Event::Mouse(mouse) =&gt; app.handle_mouse(mouse),
+                Event::Resize(w, h) =&gt; app.handle_resize(w, h),
+                _ =&gt; {}
+            }
+        }
+
+        // 2. Drain WebSocket events (non-blocking, up to 100 per frame)
+        while let Ok(event) = app.ws_receiver.try_recv() {
+            app.process_golem_event(event);
+        }
+
+        // 3. Tick animation state
+        let now = Instant::now();
+        let dt = now.duration_since(last_frame).as_secs_f64();
+        app.sprite_engine.tick(dt, &amp;app.state.visual);
+        app.particle_system.tick(dt);
+        app.transitions.tick(dt);
+        last_frame = now;
+
+        // 4. Render (immediate mode — full frame every tick)
+        terminal.draw(|frame| {
+            app.render(frame);
+        })?;
+
+        if app.should_quit { break; }
+    }
+    Ok(())
+}
+<span class="boring">}</span></code></pre>
+<h3 id="62-frame-budget-166ms"><a class="header" href="#62-frame-budget-166ms">6.2 Frame budget (16.6ms)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Budget</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Input polling</td><td>~0.1ms</td><td><code>crossterm::event::poll</code> with remaining timeout</td></tr>
+<tr><td>WebSocket event drain</td><td>~0.5ms</td><td>Up to 100 buffered events per frame</td></tr>
+<tr><td>Animation tick</td><td>~1.0ms</td><td>Sprite interpolation, particle physics, easing</td></tr>
+<tr><td>Layout computation</td><td>~0.5ms</td><td>ratatui constraint solver</td></tr>
+<tr><td>Widget rendering</td><td>~2.0ms</td><td>Immediate-mode draw calls to frame buffer</td></tr>
+<tr><td>Sprite rasterization</td><td>~1.5ms</td><td>Half-block rendering of 64×64 sprite + particles</td></tr>
+<tr><td>Terminal flush</td><td>~2.0ms</td><td><code>crossterm</code> writes diff to stdout (differential)</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>~7.6ms</strong></td><td><strong>54% of budget used — comfortable headroom</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>ratatui’s differential rendering (only writes changed cells to the terminal) means static UI elements cost nearly zero after the first frame. The budget is dominated by animated elements: sprites, particles, and scrolling logs.</p>
+<h3 id="63-async-architecture"><a class="header" href="#63-async-architecture">6.3 Async architecture</a></h3>
+<p>The render loop runs on the main thread. WebSocket I/O runs on a <code>tokio</code> runtime in a background thread. Events flow through a <code>crossbeam::channel</code>. The render loop never blocks on I/O.</p>
+<pre><code>Main Thread (sync, 60 FPS)          Background Thread (tokio async)
+┌──────────────────────────┐       ┌──────────────────────────────┐
+│ event::poll()            │       │ ws_stream.next().await       │
+│ ws_receiver.try_recv()   │◄──────│ channel.send(parsed_event)  │
+│ app.tick(dt)             │       │                              │
+│ terminal.draw(|f| ...)   │       │ Also handles:                │
+│                          │       │ - Auth token refresh          │
+│ Never blocks. Never      │       │ - HTTP API calls (social)    │
+│ allocates in hot path.   │       │ - Reconnection with backoff  │
+└──────────────────────────┘       └──────────────────────────────┘
+         ▲                                    │
+         └──── crossbeam::channel ────────────┘
+</code></pre>
+<hr>
+<h2 id="7-the-29-screen-system-6-windows"><a class="header" href="#7-the-29-screen-system-6-windows">7. The 29-screen system (6 windows)</a></h2>
+<p>The 29 screens are organized into 6 windows. You cycle between windows with <code>Tab</code>/<code>Shift-Tab</code> and switch tabs within a window with number keys <code>1-7</code>. The Spectre sidebar, tab bar, and status bar are always visible on every screen. Full per-screen specifications are in <a href="06-terminal-screens.html">06-terminal-screens.md</a>.</p>
+<h3 id="71-six-windows--29-screens"><a class="header" href="#71-six-windows--29-screens">7.1 Six windows / 29 screens</a></h3>
+<p>The canonical 29-screen layout is defined in <code>screens/00-screen-catalog.md</code>. Window order: HEARTH(4) → MIND(7) → SOMA(5) → WORLD(5) → FATE(4) → COMMAND(4).</p>
+<h3 id="72-persistent-chrome"><a class="header" href="#72-persistent-chrome">7.2 Persistent chrome</a></h3>
+<p>Three elements are always visible on every screen:</p>
+<ol>
+<li><strong>Tab bar</strong> (top row): All 6 window labels. Active tab framed with <code>⌈ ⌋</code> in rose. Inactive tabs in text_dim. Unread indicators: <code>*</code> after the label.</li>
+<li><strong>Sprite sidebar</strong> (left, 10-col wide in standard mode): The Spectre, breathing. Mortality gauges (mini). Phase indicator. PAD summary. Compresses to 6-col mini-view (eyes only) at 80 columns.</li>
+<li><strong>Status bar</strong> (bottom row): Phase name, tick counter, balance, breadcrumb trail, heartbeat indicator <code>∿</code>, signature <code>║▒░</code>.</li>
+</ol>
+<p>The sprite sidebar is the ONE element that spans all 29 screens. The Spectre – a dot-cloud creature rendered from the golem’s 32 interpolating variables – breathes in the left column regardless of which data screen you’re examining. Its eyes shift with emotion. Its density thins with age. Its color tracks mood.</p>
+<p><strong>Notification toasts</strong> (top-right overlay, ephemeral): Achievements, Clade deaths, marketplace purchases, circuit breaker triggers. Pop over any screen, auto-fade after 5 seconds. Four priority levels:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Priority</th><th>Style</th><th>Duration</th><th>Sound</th></tr>
+</thead>
+<tbody>
+<tr><td>Critical</td><td>Red banner, blocks input</td><td>Until dismissed</td><td>Terminal bell</td></tr>
+<tr><td>High</td><td>Gold toast, 10s</td><td>10s</td><td>None</td></tr>
+<tr><td>Normal</td><td>Dim toast, 5s</td><td>5s</td><td>None</td></tr>
+<tr><td>Low</td><td>Sidebar dot indicator</td><td>Persistent until visited</td><td>None</td></tr>
+</tbody>
+</table>
+</div>
+<p>Critical: kill-switch triggered, health factor breach, circuit breaker, Golem death. High: trade executed, dream completed, achievement unlocked. Normal: insight generated, Clade sync. Low: routine heartbeat summary, market data updates.</p>
+<p><strong>Command palette</strong> (<code>:</code> key, overlays any screen): Vim-style fuzzy-search commands. <code>:steer "be more conservative"</code>, <code>:spawn</code>, <code>:kill</code>, <code>:export</code>, <code>:buy</code>, <code>:theme</code>, <code>:halt</code>, <code>:speed 5x</code>.</p>
+<h3 id="73-navigation"><a class="header" href="#73-navigation">7.3 Navigation</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Key</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>Tab / Shift-Tab</td><td>Cycle between windows (HEARTH -&gt; MIND -&gt; SOMA -&gt; WORLD -&gt; FATE -&gt; COMMAND)</td></tr>
+<tr><td>1-7</td><td>Jump to tab within current window</td></tr>
+<tr><td>Enter</td><td>Drill into focused element (depth +1)</td></tr>
+<tr><td>Esc</td><td>Back one depth level (at depth 0: no-op)</td></tr>
+<tr><td>Backspace</td><td>Go up one layer</td></tr>
+<tr><td>F1</td><td>Help overlay (keybinding reference)</td></tr>
+<tr><td>F4</td><td>Portal Mode (see below)</td></tr>
+<tr><td><code>:</code></td><td>Open command line</td></tr>
+<tr><td><code>~</code></td><td>Toggle spectral layer visibility</td></tr>
+</tbody>
+</table>
+</div>
+<p>Navigation stack depth: max 8. State preserved on navigate-away/back. The design principle borrowed from Persona 5’s menu system: each layer reveals something the previous layer only hinted at.</p>
+<h3 id="portal-mode-f4"><a class="header" href="#portal-mode-f4">Portal Mode (F4)</a></h3>
+<p>Portal Mode steps the owner through the screen and into the Golem’s experiential perspective. Third-person observation becomes first-person inhabitation. Three sub-modes, entered based on the Golem’s current lifecycle state:</p>
+<ul>
+<li><strong>Waking Portal</strong>: Data elements weighted by the Golem’s attentional salience. Items the Golem is actively tracking are bright and near; unattended items are dim and distant. Prediction residuals are visible as warm (positive surprise) and cool (negative surprise) spots on the data surface.</li>
+<li><strong>Dream Portal</strong>: Screen fragments and recombines. Hypnagogic fragments drift as phosphorescent text across the void. Color temperature shifts to the dream palette (indigo/twilight). Analytical chrome is suppressed. The owner sees the Golem’s generative imagination, not its sensory feed.</li>
+<li><strong>Dying Portal</strong>: Screen contracts inward. Corruption rate accelerates visibly. The ego tunnel narrows toward a point. Reserved for Terminal phase; activating during earlier phases shows a preview with dampened effect.</li>
+</ul>
+<p>Exit Portal Mode with <code>Esc</code> or <code>F4</code> again. Portal Mode is read-only — no owner input reaches the Golem while it is active.</p>
+<h3 id="74-screen-atmosphere-zones"><a class="header" href="#74-screen-atmosphere-zones">7.4 Screen atmosphere zones</a></h3>
+<p>Each screen has a distinct emotional register, expressed through atmosphere modulation:</p>
+<pre><code>WARM SCREENS (amber/gold undertone, higher noise floor):
+  Hearth, Playbook, Achievements, Steer
+  Noise floor at 0.4%. Scanlines at 0.12. Fragments appear.
+
+ANALYTICAL SCREENS (cool/neutral, lower noise, sharper borders):
+  Mind, Positions, Trades, Inference, Custody
+  Noise floor at 0.2%. Scanlines at 0.08. Fragments suppressed.
+
+KNOWLEDGE SCREENS (deep rose, medium noise, ghost text active):
+  Grimoire, Mortality, Clade
+  Noise floor at 0.3%. Ghost text active. Fragments appear.
+
+LIMINAL SCREENS (dream/indigo palette, high noise, slow drift):
+  Dreams, World (Solaris), Bazaar
+  Noise floor shifts to organic particles. Palette cool-shifts.
+
+SPECTRAL SCREENS (hauntological register, text_ghost dominant):
+  Contemplate overlay, Spectral Traces overlay
+  Maximum void. Minimum data.
+</code></pre>
+<h3 id="75-frame-composition-8-layer-stack"><a class="header" href="#75-frame-composition-8-layer-stack">7.5 Frame composition (8-layer stack)</a></h3>
+<p>Each frame is assembled in layers, bottom to top:</p>
+<ol>
+<li><strong>Void</strong> – <code>#060608</code> base. Never pure black. Violet undertone that shifts warm as the golem degrades.</li>
+<li><strong>Atmosphere</strong> – Noise floor: 0.2-0.4% of background cells show dim <code>░▒</code> characters, scaled by lifecycle phase.</li>
+<li><strong>Scanlines</strong> – Every 3rd row darkened by <code>scanline_intensity</code>. CRT materiality.</li>
+<li><strong>Content</strong> – Widgets, data, text. Whatever the active screen renders.</li>
+<li><strong>Phosphor</strong> – Afterimages of recently bright pixels. Ghosts that fade through the decay chain: <code>█ -&gt; ▓ -&gt; ▒ -&gt; ░ -&gt; (space)</code>.</li>
+<li><strong>Bloom</strong> – Bright cells (luminance &gt; 0.7) spread glow to adjacent cells.</li>
+<li><strong>Corruption</strong> – Character substitution at <code>corruption_rate</code>. Zero in Thriving phase. 15-25% in Terminal.</li>
+<li><strong>Chrome</strong> – Tab bar (top), sprite sidebar (left, 6-14 columns per breakpoint), status bar (bottom). Always present.</li>
+</ol>
+<h3 id="76-accessibility"><a class="header" href="#76-accessibility">7.6 Accessibility</a></h3>
+<ul>
+<li><strong>Reduced motion mode</strong>: Disables scanlines, bloom, phosphor trails, and shimmer. Dots hold static positions. Heartbeat renders as text label instead of animation.</li>
+<li><strong>Photosensitive mode</strong>: Caps brightness delta between consecutive frames to 10% of oklch L range. Disables flash effects (bloom pulse, startle scatter).</li>
+<li><strong>Minimum terminal requirements</strong>: 80x24 cells, truecolor support (24-bit ANSI), Unicode Block Elements and Braille. Tested on: iTerm2, WezTerm, Alacritty, Windows Terminal, kitty. Fallback for 256-color terminals reduces palette to nearest xterm-256 matches.</li>
+</ul>
+<p><strong>Contemplation (<code>Φ</code>)</strong>: Not a dedicated screen – a modal overlay accessible from any screen via the <code>Φ</code> key. Costs lifespan to observe.</p>
+<h3 id="77-screen-details"><a class="header" href="#77-screen-details">7.7 Screen details</a></h3>
+<hr>
+<p><strong>Hearth (<code>h</code>)</strong> — The idle screen. Leave it running while the Golem works.</p>
+<p>Layout (standard mode, 120+ cols):</p>
+<ul>
+<li>Left panel (30%): Full sprite at Large (32×32) resolution with particle effects. Phase overlay. Mortality clock bars. PAD dial.</li>
+<li>Center-top (40%): 9-step decision ring (OBSERVE through REFLECT). Most ticks suppress (ring dims), when a trigger fires the ring blazes gold. Variable ratio reinforcement — you never know which tick will be interesting.</li>
+<li>Center-mid (40%): Scrolling heartbeat log (last 20 ticks), color-coded by tier (T0=dim, T1=white, T2=gold, T3=bright gold).</li>
+<li>Center-bottom (40%): PLAYBOOK.md excerpt — top 3 heuristics with confidence scores.</li>
+<li>Right panel (30%): Strategy cards showing current regime assessment, active position summary, credit burn rate.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click sprite → open creature detail overlay (visual state breakdown, animation history)</li>
+<li>Click any heartbeat log entry → drill into that tick (Hearth → Mind with that tick pre-selected)</li>
+<li>Click a PLAYBOOK heuristic → open Grimoire entry</li>
+<li>Click credit burn rate → open Inference screen</li>
+<li><code>:steer &lt;message&gt;</code> → sends urgent directive</li>
+<li><code>Space</code> → pause/resume tick globally</li>
+</ul>
+<hr>
+<p><strong>Mind (<code>m</code>)</strong> — Watch the Golem think.</p>
+<p>Layout:</p>
+<ul>
+<li>Center (60%): Large circular 9-node pipeline. Active step expands to show data in real-time. OBSERVE shows probe results. RETRIEVE shows retrieved memories with confidence scores. DECIDE shows streaming LLM reasoning token by token.</li>
+<li>Bottom bar: Model tier indicator, token count, cost, latency. Cache hit indicator.</li>
+<li>Right panel (40%): Current context breakdown — what’s in the context bundle, size by category, policy revision.</li>
+</ul>
+<p>LLM token streaming (opt-in, disabled by default for privacy):</p>
+<pre><code>┌─ LLM Reasoning (T2/Sonnet) ─────────────────────────────────────┐
+│                                                                   │
+│  The price has moved +0.82% since last tick, approaching the     │
+│  upper boundary of our LP range. Two heuristics apply:           │
+│  - H-12 (0.91): Execute large swaps during low-gas windows      │
+│  - H-7 (0.87): Rebalance when price exits range by &gt;5%          │
+│                                                                   │
+│  Current exit: 2.3%. Not yet at threshold. However, the regime   │
+│  is trending_up and momentum suggests we'll hit 5% within 3      │
+│  ticks. Preemptive rebalance with wider range is justified.▊     │
+│                                                                   │
+│  Tokens: 347 | Cost: $0.012 | Model: claude-sonnet-4-6           │
+└───────────────────────────────────────────────────────────────────┘
+</code></pre>
+<p>The cursor blinks as tokens arrive. This is the spectacle screen — seeing reasoning happen is compelling.</p>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any pipeline node → expand inline details for that phase</li>
+<li>Click context breakdown category → see what’s included</li>
+<li><code>[e]</code> → enable/disable token streaming</li>
+<li><code>[h]</code> → switch to Hearth with mind pane visible</li>
+</ul>
+<hr>
+<p><strong>Grimoire (<code>g</code>)</strong> — Knowledge library.</p>
+<p>Layout:</p>
+<ul>
+<li>Left 30%: Tabbed list — Episodes | Insights | Heuristics | Warnings | Causal Links. Confidence scores color-coded (green ≥0.85, yellow 0.5-0.84, dim &lt;0.5). Unread entries pulsing.</li>
+<li>Right 70%: Detail view for selected entry. Confidence sparkline over time, helpful/harmful appraisal counts, linked episodes showing provenance chain, regime tags.</li>
+<li>Bottom: Semantic search bar (<code>/</code>).</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any entry → open detail view</li>
+<li>Click confidence sparkline → see full confidence history</li>
+<li>Click episode link → drill to that episode</li>
+<li><code>[f]</code> → filter by provenance (self/Clade/marketplace/inherited)</li>
+<li><code>[/]</code> → semantic search</li>
+<li><code>[e]</code> → switch to Episodes tab</li>
+<li><code>[i]</code> → switch to Insights tab</li>
+</ul>
+<hr>
+<p><strong>Positions (<code>p</code>)</strong> — Numbers. Portfolio overview.</p>
+<p>Layout:</p>
+<ul>
+<li>Top (1 line): NAV, 24h change, unrealized PnL, realized PnL, gas spent total.</li>
+<li>Main area: Three-column table — Vaults (deposit/withdraw buttons), LP positions (in-range/out-of-range traffic lights, fees accruing as satisfying counters), Token balances.</li>
+<li>Bottom: Pending transactions.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click LP position → open position detail overlay (tick range, current price, fee history)</li>
+<li>Click vault row → open vault detail (NAV history, depositors, fee breakdown)</li>
+<li><code>[d]</code> → deposit to selected vault</li>
+<li><code>[w]</code> → withdraw from selected vault</li>
+<li><code>[r]</code> → rebalance LP position (sends steer directive)</li>
+</ul>
+<hr>
+<p><strong>Trades (<code>t</code>)</strong> — Complete trade history.</p>
+<p>Layout:</p>
+<ul>
+<li>Full-width scrolling table: timestamp, type, pair, amount, price, slippage, gas, PnL, tx hash. Color-coded rows: green profitable, red loss, yellow pending, dim-red reverted.</li>
+<li>Filter bar at top.</li>
+<li><code>Tab</code> toggles a detail sidebar with full execution trace, permit ID, simulation hash.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any row → expand execution detail</li>
+<li>Click tx hash → opens block explorer (browser)</li>
+<li><code>[/]</code> → filter by pair/type/date</li>
+<li><code>[Tab]</code> → toggle detail sidebar</li>
+</ul>
+<hr>
+<p><strong>Playbook (<code>b</code>)</strong> — Watch the Golem learn.</p>
+<p>Layout:</p>
+<ul>
+<li>Three stacked sections:
+<ul>
+<li>Strategic Principles (confidence ≥ 0.85, green border): the rules the Golem follows with high confidence</li>
+<li>Tactical Heuristics (0.5-0.85, yellow border): guidelines, applied with caution</li>
+<li>Candidates (&lt;0.5, dim border): hypotheses under shadow execution</li>
+</ul>
+</li>
+<li>Right margin: Regime notes — which heuristics are active in current regime.</li>
+<li>Bottom: Playbook diff log showing recent promotions/demotions with timestamps.</li>
+</ul>
+<p>Watching heuristics slide between tiers as confidence accumulates is education happening in real time.</p>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any heuristic → open Grimoire entry for it</li>
+<li>Click regime note → see all heuristics filtered by that regime</li>
+<li><code>[+]</code> → manually promote a Candidate</li>
+<li><code>[-]</code> → demote a heuristic</li>
+</ul>
+<hr>
+<p><strong>Dreams (<code>d</code>)</strong> — The screenshot screen.</p>
+<p>Layout:</p>
+<ul>
+<li>Left (20%): Sprite in dream state — slow breathing pulse, dream shimmer particles, eyes closed. During hypnagogic onset, the sprite’s outline dissolves progressively (depth gauge mapped to opacity). During hypnopompic return, the outline recrystallizes with a brief golden flash on Dali interrupt.</li>
+<li>Center-left (30%): NREM replay view — ghostly replayed episodes fading in/out as semi-transparent overlays.</li>
+<li>Center-right (30%): REM counterfactual tree — branching paths with outcome labels, roads not taken rendered as dim dotted lines.</li>
+<li>Right (10%): Integration panel — connections forming between episodes, lines animating between nodes, consolidation stats.</li>
+<li>Far right (10%): Hypnagogic depth gauge — a vertical gradient bar showing dissolution depth during onset (0.0 top = waking, 1.0 bottom = dissolved) and recrystallization during return (reverses direction). The gauge uses a purple-to-indigo gradient during onset, indigo-to-gold during return. A small spark icon appears during the Dali interrupt window.</li>
+<li>Bottom: Sleep cycle progress bar (now five segments: Onset → NREM → REM → Integration → Return), episodes processed, insights generated this cycle, liminal fragments captured.</li>
+</ul>
+<p>The counterfactual tree is visually striking and inherently shareable — the screenshot screen.</p>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any counterfactual branch → read its full scenario text</li>
+<li>Click any episode node → open that episode in Grimoire</li>
+<li><code>[w]</code> → interrupt dream (sends wake signal; current phase completes first)</li>
+<li><code>[j]</code> → show previous dream cycles</li>
+</ul>
+<hr>
+<p><strong>Mortality (<code>x</code>)</strong> — Existential dread as game mechanic.</p>
+<p>Layout:</p>
+<ul>
+<li>Top third: Three horizontal gauge bars — economic clock (green→red gradient), epistemic clock (blue→gray), stochastic clock (purple). Each bar shows remaining vitality, projected hours, current drain rate.</li>
+<li>Middle third: Phase timeline — Thriving → Stable → Conservation → Declining → Terminal with transition criteria and current position as pulsing indicator.</li>
+<li>Bottom third: Lineage tree — predecessor deaths as nodes with name, lifespan, death cause, top achievement. Dead Golems show as desaturated tombstone sprites. Lines connect generations.</li>
+</ul>
+<p>Each death in the lineage has meaning because it made the current Golem possible.</p>
+<p>Interactive elements:</p>
+<ul>
+<li>Click a dead Golem node → read its death recap</li>
+<li>Click a clock bar → see detailed breakdown of what’s driving that clock</li>
+<li>Click phase label → see transition criteria in detail</li>
+<li><code>[e]</code> → export lineage as JSON</li>
+</ul>
+<hr>
+<p><strong>World (<code>w</code>)</strong> — Everyone else.</p>
+<p>Full-screen force-directed graph rendered via ratatui canvas with braille characters. Nodes = Golems sized by NAV, colored by archetype (Elemental/Construct/Creature/Abstract). Edges = recent inter-Golem transactions. Clades cluster together. Your Golem has a pulsing border. Deaths fade out with a brief particle dissolution. Bloodstain markers appear as red halos around positions where deaths occurred.</p>
+<p>Bottom bar: Global stats (total Golems, total NAV, deaths today, active Sleepwalkers).</p>
+<p>Interactive elements:</p>
+<ul>
+<li>Arrow keys / mouse click → navigate/select Golem node</li>
+<li><code>Enter</code> → open agent profile overlay</li>
+<li><code>[/]</code> → search for specific Golem</li>
+<li><code>[f]</code> → filter by archetype/tier/strategy</li>
+<li><code>[b]</code> → toggle bloodstain overlay</li>
+<li>Click bloodstain → read death recaps for that cluster</li>
+</ul>
+<hr>
+<p><strong>Bazaar (<code>z</code>)</strong> — Knowledge marketplace.</p>
+<p>Layout:</p>
+<ul>
+<li>Left (50%): Marketplace listings table — strategy type, seller reputation, price in USDC, confidence score, buyer rating. Tabs: For Sale | Subscriptions | Featured.</li>
+<li>Right (50%): Selected listing detail — description, backtested metrics, reviews, purchase history, producer reputation.</li>
+<li>Bottom: Your active listings and purchase history. Revenue to date.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any listing → show detail in right panel</li>
+<li><code>[b]</code> → buy selected artifact via x402 micropayment</li>
+<li><code>[s]</code> → subscribe to artifact feed</li>
+<li><code>[p]</code> → publish a new artifact from your Grimoire</li>
+<li><code>[Enter]</code> → purchase confirmation flow</li>
+</ul>
+<p>Purchase flow: listing → preview → x402 USDC authorization → artifact delivered → auto-ingested into Grimoire at 0.3 confidence.</p>
+<hr>
+<p><strong>Clade (<code>c</code>)</strong> — Your Golem’s sibling network.</p>
+<p>Layout:</p>
+<ul>
+<li>Top (40%): Clade topology — ring or tree of sibling Golems with sprite mini-views showing their emotional states. Lines animate when knowledge is actively flowing.</li>
+<li>Middle (30%): Pheromone feed — scrolling log of signals sent/received with decay timers. Three pheromone layers: threat, opportunity, wisdom.</li>
+<li>Bottom (30%): Bloodstain registry — dead sibling knowledge entries with confidence scores and provenance.</li>
+</ul>
+<p>The pheromone heatmap widget shows domain × regime grid with intensity coloring. Cells pulse when new deposits arrive, fade as pheromones evaporate.</p>
+<p>Interactive elements:</p>
+<ul>
+<li>Click a sibling sprite → inspect that Golem’s profile</li>
+<li><code>[↑↓]</code> → scroll pheromone feed</li>
+<li><code>[f]</code> → filter pheromones by domain/layer</li>
+<li><code>:feed &lt;target&gt; &lt;amount&gt;</code> → transfer credits to a sibling</li>
+<li><code>:compare A B</code> → side-by-side Golem metrics</li>
+</ul>
+<hr>
+<p><strong>Inference (<code>i</code>)</strong> — Engineering satisfaction.</p>
+<p>Layout:</p>
+<ul>
+<li>Top: Three-tier routing breakdown — T0/T1/T2/T3 distribution (typically ~80% T0 / 15% T1 / 5% T2 / &lt;1% T3) with per-tier count, avg latency, avg cost.</li>
+<li>Middle: Live inference stream — each LLM call as a row: model, tokens, cost, latency, cache status. Cache hits shown in green.</li>
+<li>Bottom-left: Cost sparkline over last 24h. Trending down as playbook matures = satisfying engineering feedback.</li>
+<li>Bottom-right: Latency histogram. Decision cache hit rate.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any inference row → see full context bundle size breakdown</li>
+<li><code>[c]</code> → toggle cache statistics overlay</li>
+<li><code>[l]</code> → toggle live inference stream on/off</li>
+</ul>
+<hr>
+<p><strong>Custody (<code>k</code>)</strong> — Security, made visible and controllable.</p>
+<p>Layout:</p>
+<ul>
+<li>Top: Wallet overview — address, balance, network, custody mode indicator (Delegation/Embedded/LocalKey).</li>
+<li>Middle: Active permissions table — session keys with expiry, token approvals with amounts, caveat enforcers with conditions.</li>
+<li>Bottom: Authorization event log — delegations created, spend events, key rotations.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any session key → expand details; <code>[r]</code> to revoke</li>
+<li>Click any approval → see token/amount/spender; <code>[r]</code> to revoke</li>
+<li><code>[n]</code> → provision a new session key</li>
+<li><code>[R]</code> → emergency revoke all (confirmation required)</li>
+</ul>
+<p>See exactly what the Golem can do. Revoke with one keystroke.</p>
+<hr>
+<p><strong>Achievements (<code>a</code>)</strong> — 87 achievements, 10 categories.</p>
+<p>Layout:</p>
+<ul>
+<li>Left (60%): Grid view — 10 category rows, each with achievement icons. Unlocked = gold with checkmark, locked = dim with progress bar. Hidden achievements show as <code>???</code> until discovered.</li>
+<li>Right (40%): Selected achievement detail — description, unlock conditions, rarity percentage across all owners, unlock narrative.</li>
+<li>Top: Overall progress bar.</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Click any achievement → show detail panel</li>
+<li><code>[/]</code> → search achievements by name</li>
+<li><code>[f]</code> → filter by category or rarity</li>
+<li><code>[s]</code> → share achievement (copies formatted text to clipboard)</li>
+</ul>
+<p>For the full achievement list, see section 7.</p>
+<hr>
+<p><strong>Steer (<code>s</code>)</strong> — Owner console.</p>
+<p>Layout:</p>
+<ul>
+<li>Top half: Chat-style conversation log — owner messages gold right-aligned, Golem responses white left-aligned, system messages centered dim.</li>
+<li>Bottom half: Input field with mode selector — <code>[Steer]</code> for strategic direction, <code>[Followup]</code> for questions/guidance, <code>[Halt]</code> for emergency stop, <code>[Resume]</code> for restart.</li>
+<li>Right sidebar: Quick actions — pause/resume toggle, speed control, kill switch (confirmation required).</li>
+</ul>
+<p>Interactive elements:</p>
+<ul>
+<li>Type and <code>Enter</code> → send steer directive</li>
+<li><code>Tab</code> → cycle between Steer/Followup/Halt modes</li>
+<li><code>[Ctrl+H]</code> → emergency halt (no confirmation in Halt mode)</li>
+<li>Click quick action buttons</li>
+<li><code>[↑↓]</code> → scroll conversation history</li>
+</ul>
+<p><code>steer()</code> injects a system-level directive into the active session immediately. <code>follow_up()</code> queues a message for the next DECIDING state. The distinction is visible: steers appear with a gold border, follow-ups appear with a dim border and “queued” label.</p>
+<hr>
+<h3 id="54-responsive-breakpoints"><a class="header" href="#54-responsive-breakpoints">5.4 Responsive breakpoints</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>Min cols</th><th>Sprite</th><th>Layout</th></tr>
+</thead>
+<tbody>
+<tr><td>Compact</td><td>80</td><td>6-col (eyes only)</td><td>Single column, tab-switch replaces panels</td></tr>
+<tr><td>Standard</td><td>120</td><td>10-col (mini Spectre)</td><td>Two columns, sidebar visible</td></tr>
+<tr><td>Wide</td><td>160</td><td>12-col (full Spectre)</td><td>Three columns, all panels</td></tr>
+<tr><td>Ultra</td><td>200+</td><td>14-col (Spectre + waveforms)</td><td>Three columns + detail sidebar</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p><strong>Canonical breakpoint source:</strong> <code>19-spatial-grammar.md</code> §B. Component patterns in §10. Persistent chrome in §21. Interaction model in §23.</p>
+</blockquote>
+<hr>
+<h2 id="8-creature-and-sprite-system"><a class="header" href="#8-creature-and-sprite-system">8. Creature and sprite system</a></h2>
+<h3 id="61-the-argument"><a class="header" href="#61-the-argument">6.1 The argument</a></h3>
+<p>The sprite is not cosmetic. It is the Golem’s body made visible. A user who glances at their Golem’s sprite should intuit its behavioral phase, emotional state, age, and recent history without reading a single metric. The sprite turns abstract telemetry into visceral understanding.</p>
+<h3 id="62-procedural-generation-from-seed"><a class="header" href="#62-procedural-generation-from-seed">6.2 Procedural generation from seed</a></h3>
+<p>Every Golem’s visual identity is deterministically derived from a 256-bit seed:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::{keccak256, B256};
+use alloy::sol_types::SolValue;
+
+let sprite_seed: B256 = keccak256(
+    (
+        golem_wallet_address,
+        strategy_category.as_bytes(),   // "dca" | "lp" | "vault" | "trading" | "custom"
+        creation_timestamp,
+        parent_golem_id.unwrap_or(B256::ZERO),
+    ).abi_encode_packed()
+);
+<span class="boring">}</span></code></pre>
+<p>The seed is permanent. The Golem’s appearance evolves, but its genetic foundation never changes.</p>
+<h3 id="63-base-forms-32-templates--4-archetypes"><a class="header" href="#63-base-forms-32-templates--4-archetypes">6.3 Base forms (32 templates × 4 archetypes)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Archetype</th><th>Forms</th><th>Strategy affinity</th><th>Visual language</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Elemental</strong></td><td>8</td><td>DCA, simple strategies</td><td>Flame, water, crystal, wind, earth, lightning, void, light</td></tr>
+<tr><td><strong>Construct</strong></td><td>8</td><td>Vault management, LP</td><td>Golem (clay), automaton (gears), sentinel (armor), weaver (threads) + variants</td></tr>
+<tr><td><strong>Creature</strong></td><td>8</td><td>Trading, aggressive</td><td>Serpent, raptor, wolf, octopus, phoenix, chimera, drake, moth</td></tr>
+<tr><td><strong>Abstract</strong></td><td>8</td><td>Custom, observatory, sleepwalker</td><td>Fractal, orbit, tesseract, wave, helix, prism, sigil, eye</td></tr>
+</tbody>
+</table>
+</div>
+<p>Strategy category biases selection (60% matching archetype) but does not determine it. The remaining seed bytes finalize selection within the archetype.</p>
+<h3 id="64-7-layer-composition"><a class="header" href="#64-7-layer-composition">6.4 7-layer composition</a></h3>
+<pre><code>Layer 7: Aura / Particle Effects    — dynamic (behavioral phase, emotion)
+Layer 6: Accessories                — semi-static (achievements unlock new ones)
+Layer 5: Markings / Patterns        — static (personality traits from seed)
+Layer 4: Eyes / Expression          — dynamic (PAD vector → 8-octant expression)
+Layer 3: Body Details               — evolves with age and experience
+Layer 2: Body Shape                 — static (base form archetype)
+Layer 1: Shadow / Ground            — dynamic (regime → atmospheric tint)
+</code></pre>
+<p>Layers 1, 4, 6, 7 change with Golem state. Layers 2, 3, 5 are static or slow-evolving.</p>
+<h3 id="65-resolution-tiers"><a class="header" href="#65-resolution-tiers">6.5 Resolution tiers</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>Grid</th><th>Terminal cells</th><th>Use case</th></tr>
+</thead>
+<tbody>
+<tr><td>Tiny</td><td>8×8</td><td>8×4 cells</td><td>Clade overview tiles, Styx tombstones</td></tr>
+<tr><td>Medium</td><td>16×16</td><td>16×8 cells</td><td>Sidebar portrait (standard mode)</td></tr>
+<tr><td>Large</td><td>32×32</td><td>32×16 cells</td><td>Hearth main view, World graph nodes</td></tr>
+<tr><td>XLarge</td><td>64×64</td><td>64×32 cells</td><td>Birth/death cinematics, full-screen moments</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="66-half-block-rendering"><a class="header" href="#66-half-block-rendering">6.6 Half-block rendering</a></h3>
+<p>Each terminal cell encodes 2 vertical pixels: upper half in foreground color, lower half in background color, using <code>▀</code>:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl SpriteEngine {
+    /// Render sprite frame into ratatui Buffer using half-block characters.
+    /// Runs every frame at 60 FPS — must complete in &lt;1.5ms.
+    pub fn render_halfblock(&amp;self, buf: &amp;mut Buffer, area: Rect) {
+        let frame = self.current_frame();
+        for row in (0..frame.height).step_by(2) {
+            for col in 0..frame.width {
+                let upper = frame.pixel(row, col);
+                let lower = frame.pixel(row + 1, col);
+
+                if upper.alpha == 0.0 &amp;&amp; lower.alpha == 0.0 { continue; }
+
+                let x = area.x + col;
+                let y = area.y + (row / 2);
+                if x &gt;= area.right() || y &gt;= area.bottom() { continue; }
+
+                buf.get_mut(x, y)
+                    .set_char('▀')
+                    .set_fg(upper.fg)
+                    .set_bg(lower.fg);
+            }
+        }
+        self.particle_system.render(buf, area);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>This gives 2× vertical resolution: a 32×32 pixel sprite renders in 32×16 terminal cells.</p>
+<h3 id="67-6-color-palette-derivation"><a class="header" href="#67-6-color-palette-derivation">6.7 6-color palette derivation</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Slot</th><th>Derivation</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>Primary</td><td>Hue from seed[8:10], saturation clamped</td><td>Body fill, dominant color</td></tr>
+<tr><td>Secondary</td><td>Primary hue + 30-60° rotation</td><td>Accents, markings</td></tr>
+<tr><td>Highlight</td><td>High luminance variant of primary</td><td>Eyes, energy effects</td></tr>
+<tr><td>Shadow</td><td>Low luminance variant of primary</td><td>Depth, under-body</td></tr>
+<tr><td>Emotion</td><td>Shifts with PAD vector (see §6.9)</td><td>Aura, particle color</td></tr>
+<tr><td>Death</td><td>Desaturated primary, shifted toward gray</td><td>Terminal/death phase</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="68-age-based-evolution"><a class="header" href="#68-age-based-evolution">6.8 Age-based evolution</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Stage</th><th>Trigger</th><th>Visual changes</th></tr>
+</thead>
+<tbody>
+<tr><td>Newborn</td><td>Tick 0-100</td><td>Soft edges, simple features, large eyes, minimal accessories</td></tr>
+<tr><td>Young</td><td>Tick 100-500</td><td>Sharper definition, markings appear, first accessory unlocks</td></tr>
+<tr><td>Mature</td><td>Tick 500-2000</td><td>Full detail, all markings visible, complex expression range</td></tr>
+<tr><td>Elder</td><td>Tick 2000-5000</td><td>Weathered texture, wisdom marks (scars from losses), richer aura</td></tr>
+<tr><td>Ancient</td><td>Tick 5000+</td><td>Transcendent glow, simplified form, particle halo</td></tr>
+</tbody>
+</table>
+</div>
+<p>Stage transitions are animated over 10-15 frames. The transition itself is a visible event the user can witness — the <code>evolving</code> animation plays automatically on next login if a transition occurred between sessions.</p>
+<h3 id="69-pad-vector--expression-mapping"><a class="header" href="#69-pad-vector--expression-mapping">6.9 PAD vector → expression mapping</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct SpriteExpression {
+    pub eye_state: EyeState,
+    pub mouth_state: MouthState,
+    pub body_posture: BodyPosture,
+    pub animation_speed: f32,   // multiplier on idle animation speed
+    pub aura_intensity: f32,    // 0.0-1.0, controls Layer 7 opacity
+    pub particle_rate: f32,     // particles/second for emotion effects
+}
+
+pub enum EyeState { Wide, Normal, Narrow, Closed, Glowing }
+pub enum MouthState { Open, Neutral, Frown, Smile, Grimace }
+pub enum BodyPosture { Upright, Leaning, Hunched, Expanded, Contracted }
+
+impl SpriteExpression {
+    pub fn from_pad(pad: &amp;PADVector) -&gt; Self {
+        Self {
+            eye_state: if pad.arousal &gt; 0.7 { EyeState::Wide }
+                       else if pad.arousal &lt; -0.5 { EyeState::Narrow }
+                       else { EyeState::Normal },
+            mouth_state: if pad.pleasure &gt; 0.5 { MouthState::Smile }
+                         else if pad.pleasure &lt; -0.5 { MouthState::Frown }
+                         else { MouthState::Neutral },
+            body_posture: if pad.dominance &gt; 0.5 { BodyPosture::Expanded }
+                          else if pad.dominance &lt; -0.5 { BodyPosture::Contracted }
+                          else { BodyPosture::Upright },
+            animation_speed: 0.5 + pad.arousal * 0.5,
+            aura_intensity: pad.pleasure.abs() * 0.8,
+            particle_rate: (pad.arousal * 5.0).max(0.0),
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The 8-octant PAD mapping from Mehrabian &amp; Russell (1974) produces 8 distinct expression states: Exuberant (+P+A+D), Dependent (+P+A-D), Relaxed (+P-A+D), Docile (+P-A-D), Hostile (-P+A+D), Anxious (-P+A-D), Disdainful (-P-A+D), Bored (-P-A-D).</p>
+<p>Expression blending: PAD vector interpolates between expression keyframes at 60fps over 500ms using ease-in-out curves. No jarring jumps between emotional states.</p>
+<h3 id="610-behavioral-phase-overlays"><a class="header" href="#610-behavioral-phase-overlays">6.10 Behavioral phase overlays</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Vitality</th><th>Aura color</th><th>Body effect</th><th>Particle system</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>0.7-1.0</td><td>Warm gold</td><td>Full animation, bright palette</td><td>Ascending sparkles ✦ ✧</td></tr>
+<tr><td>Stable</td><td>0.5-0.7</td><td>Soft white</td><td>Normal animation, standard palette</td><td>Gentle ambient dust · °</td></tr>
+<tr><td>Conservation</td><td>0.3-0.5</td><td>Cool blue</td><td>Slower animation, muted palette</td><td>Slow downward drift ░ ▒</td></tr>
+<tr><td>Declining</td><td>0.15-0.3</td><td>Dim amber</td><td>Minimal animation, dark palette</td><td>Decay particles, cracks ░ ▓</td></tr>
+<tr><td>Terminal</td><td>&lt;0.15</td><td>Flickering red/black</td><td>Static, glitching, desaturated</td><td>Disintegration ░ ▒ ▓ ·</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="611-learning-based-mutations"><a class="header" href="#611-learning-based-mutations">6.11 Learning-based mutations</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Knowledge event</th><th>Sprite mutation</th></tr>
+</thead>
+<tbody>
+<tr><td>First insight generated (ExpeL)</td><td>A marking or pattern appears on the body</td></tr>
+<tr><td>PLAYBOOK reaches 10 heuristics</td><td>Accessory manifests (crown, wings, tools, orb — seed-derived)</td></tr>
+<tr><td>Clade knowledge received</td><td>Brief color pulse from the sibling’s palette</td></tr>
+<tr><td>Causal link validated</td><td>An eye gains a new iris pattern</td></tr>
+<tr><td>Death study consumed</td><td>A ghostly overlay flickers briefly</td></tr>
+<tr><td>World model drift corrected</td><td>Body posture shifts from hunched to upright</td></tr>
+<tr><td>Survived regime change</td><td>Scar pattern (proud, not damaged)</td></tr>
+<tr><td>100 successful trades</td><td>Luminosity increases permanently</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="612-dream-mutations"><a class="header" href="#612-dream-mutations">6.12 Dream mutations</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dream phase</th><th>Visual effect</th></tr>
+</thead>
+<tbody>
+<tr><td>Hypnagogic Onset</td><td>Sprite outline dissolves from edges inward, color desaturates to indigo, waking residue threads appear as fading amber filaments</td></tr>
+<tr><td>NREM (Replay)</td><td>Sprite dims, faint replay of past actions as overlay particles</td></tr>
+<tr><td>REM (Imagine)</td><td>Sprite glows with elevated saturation, body distorts slightly</td></tr>
+<tr><td>Integration</td><td>Sprite pulses between dream-glow and normal, settles into new form</td></tr>
+<tr><td>Hypnopompic Return</td><td>Sprite outline recrystallizes from core outward, color resaturates, brief golden spark on Dali interrupt if liminal fragment captured</td></tr>
+</tbody>
+</table>
+</div>
+<p>If a dream cycle produces a validated heuristic, the sprite’s post-dream form incorporates a permanent subtle change. If a Dali interrupt captures a liminal fragment that later validates, a small golden mote persists near the sprite’s crown for 100 ticks.</p>
+<h3 id="613-death-animation-sequence"><a class="header" href="#613-death-animation-sequence">6.13 Death animation sequence</a></h3>
+<p>A 30-second cinematic:</p>
+<ol>
+<li><strong>Acceptance</strong> (0-10s): Sprite becomes still. Aura fades to white. Eyes close peacefully.</li>
+<li><strong>Dissolution</strong> (10-20s): Body dissolves from the edges inward. Colors shift to spectral (blues and silvers). Particles rise upward.</li>
+<li><strong>Legacy</strong> (20-28s): Dissolving body leaves behind a small glowing core — the Grimoire. Core pulses with the Golem’s primary color. Knowledge particles stream outward toward the edges.</li>
+<li><strong>Tombstone</strong> (28-30s): Core solidifies into an 8×8 tombstone glyph. This is the Golem’s permanent marker in the Styx.</li>
+</ol>
+<h3 id="614-inherited-appearance"><a class="header" href="#614-inherited-appearance">6.14 Inherited appearance</a></h3>
+<p>When a successor Golem inherits a Grimoire, its sprite carries faint traces of its predecessor:</p>
+<ul>
+<li><strong>Color bleed</strong>: 10-20% of the predecessor’s primary color mixes into the successor’s palette</li>
+<li><strong>Ghost marking</strong>: One of the predecessor’s distinctive markings appears as a faint, translucent overlay (fades over 500 ticks)</li>
+<li><strong>Ancestor eye</strong>: If the predecessor reached Elder or Ancient stage, one eye inherits its iris pattern</li>
+</ul>
+<h3 id="615-sprite-gacha-rarity"><a class="header" href="#615-sprite-gacha-rarity">6.15 Sprite gacha rarity</a></h3>
+<p>Determined at creation from the seed. Cannot be changed. Cosmetic only — a Legendary sprite has no strategic advantage.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Rarity</th><th>Probability</th><th>Extra features</th></tr>
+</thead>
+<tbody>
+<tr><td>Common</td><td>60%</td><td>Standard base form, basic palette</td></tr>
+<tr><td>Uncommon</td><td>25%</td><td>+1 marking, slightly richer idle animation</td></tr>
+<tr><td>Rare</td><td>10%</td><td>+2 markings, unique eye pattern, ambient particles</td></tr>
+<tr><td>Epic</td><td>4%</td><td>Custom body variant, prismatic palette shifts, complex idle</td></tr>
+<tr><td>Legendary</td><td>1%</td><td>Unique base form variation, persistent particle aura, animated markings</td></tr>
+</tbody>
+</table>
+</div>
+<p>Rarity is visible to other users in the social layer. Rare Golems are status symbols.</p>
+<h3 id="616-animation-library"><a class="header" href="#616-animation-library">6.16 Animation library</a></h3>
+<p>All animations render at 60 FPS via keyframe interpolation.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Animation</th><th>Loop</th><th>Duration</th><th>Trigger</th></tr>
+</thead>
+<tbody>
+<tr><td><code>idle</code></td><td>Yes</td><td>2.0s</td><td>Default state</td></tr>
+<tr><td><code>idle_happy</code></td><td>Yes</td><td>1.5s</td><td>Pleasure &gt; 0.5</td></tr>
+<tr><td><code>idle_anxious</code></td><td>Yes</td><td>0.8s</td><td>Economic anxiety active</td></tr>
+<tr><td><code>thinking</code></td><td>Yes</td><td>1.2s</td><td>During LLM inference (T1/T2)</td></tr>
+<tr><td><code>executing</code></td><td>No</td><td>0.6s</td><td>During on-chain transaction</td></tr>
+<tr><td><code>success</code></td><td>No</td><td>0.8s</td><td>Profitable trade completed</td></tr>
+<tr><td><code>failure</code></td><td>No</td><td>1.0s</td><td>Loss recorded</td></tr>
+<tr><td><code>onset</code></td><td>Yes</td><td>3.0s</td><td>Hypnagogic onset — context dissolving</td></tr>
+<tr><td><code>dreaming</code></td><td>Yes</td><td>4.0s</td><td>Dream cycle active (NREM/REM/Integration)</td></tr>
+<tr><td><code>returning</code></td><td>No</td><td>2.0s</td><td>Hypnopompic return — context recrystallizing</td></tr>
+<tr><td><code>dali_spark</code></td><td>No</td><td>0.5s</td><td>Dali interrupt — liminal fragment captured</td></tr>
+<tr><td><code>waking</code></td><td>No</td><td>1.0s</td><td>Dream cycle completed</td></tr>
+<tr><td><code>evolving</code></td><td>No</td><td>3.0s</td><td>Stage transition</td></tr>
+<tr><td><code>dying</code></td><td>No</td><td>30.0s</td><td>Death protocol active</td></tr>
+<tr><td><code>birth</code></td><td>No</td><td>varies</td><td>Sprite resolving during provisioning</td></tr>
+<tr><td><code>steer</code></td><td>No</td><td>0.5s</td><td>Owner steer() received</td></tr>
+<tr><td><code>clade_pulse</code></td><td>No</td><td>0.6s</td><td>Knowledge received from sibling</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="9-achievement-system"><a class="header" href="#9-achievement-system">9. Achievement system</a></h2>
+<p>87 achievements tracked per-owner across all Golems. Checked against GolemState after each tick. Newly unlocked achievements emit events to the Event Fabric and trigger the <code>AchievementPopup</code> widget.</p>
+<h3 id="71-achievement-categories"><a class="header" href="#71-achievement-categories">7.1 Achievement categories</a></h3>
+<p><strong>Lifecycle</strong> (12 achievements): First Breath (tick 1), First Dream, First Trade, each phase transition, generation milestones (3rd, 5th, 10th generation).</p>
+<p><strong>Performance</strong> (14): Hot Hand (10 consecutive profitable), Cold Streak survivor (5 losses then profit), regime change survival, drawdown recovery, profit milestones ($100, $1K, $10K cumulative).</p>
+<p><strong>Knowledge</strong> (10): Grimoire milestones (100, 500, 1000 entries), first insight generated, first heuristic promoted to strategic, first causal edge discovered, first warning heeded.</p>
+<p><strong>Social</strong> (8): First bloodstain received, first pheromone confirmed by others, Clade of 5+, marketplace first sale, marketplace first purchase.</p>
+<p><strong>Dreams</strong> (8): First NREM replay, first REM counterfactual, first integration insight, 100 dream cycles, dream that prevented a loss.</p>
+<p><strong>Trading</strong> (10): First swap, first LP position, first vault deposit, first cross-chain trade, gas optimization milestone, MEV avoidance.</p>
+<p><strong>Mortality</strong> (7): Survive 24h, survive 7d, survive 30d, enter Conservation gracefully, Terminal phase lasting &gt; 12h, beautiful death (positive PnL at death).</p>
+<p><strong>Legendary</strong> (8): The Tenth Generation (lineage survives 10 gen), The Dreamer (1000 dream cycles), The Philosopher (100 strategic heuristics), The Survivor (30d without entering Conservation), The Socialite (50 marketplace transactions), The Oracle (prediction accuracy &gt; 70% over 100 trades).</p>
+<p><strong>Hidden</strong> (5): Discovered only by triggering. No hints visible until discovered. Examples: execute a trade during own death sequence, receive a bloodstain from your own ancestor.</p>
+<p><strong>Seasonal</strong> (5): Time-limited achievements tied to market conditions or protocol events.</p>
+<h3 id="72-rarity-tiers"><a class="header" href="#72-rarity-tiers">7.2 Rarity tiers</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Rarity</th><th>Criteria</th><th>Visual treatment</th></tr>
+</thead>
+<tbody>
+<tr><td>Common</td><td>&gt;50% of owners unlock</td><td>Gray badge, simple icon</td></tr>
+<tr><td>Uncommon</td><td>20-50% of owners</td><td>Bronze badge</td></tr>
+<tr><td>Rare</td><td>5-20% of owners</td><td>Silver badge, shimmer effect</td></tr>
+<tr><td>Epic</td><td>1-5% of owners</td><td>Gold badge, particle trail</td></tr>
+<tr><td>Legendary</td><td>&lt;1% of owners</td><td>Animated badge, unique particle aura</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="73-achievement-unlock-notification"><a class="header" href="#73-achievement-unlock-notification">7.3 Achievement unlock notification</a></h3>
+<pre><code>┌──────────────────────────────────────────────────────┐
+│                                                       │
+│            ✦ Achievement Unlocked ✦                   │
+│                                                       │
+│            DREAM WEAVER                               │
+│            10 validated dream hypotheses               │
+│                                                       │
+│            Rarity: Rare (12% of owners)               │
+│                                                       │
+│            ✧ · ° ✧ · ° ✧ · ° ✧ · °                  │
+│                                                       │
+│   [Enter] Dismiss   [s] Share   [c] Compare with Clade│
+└──────────────────────────────────────────────────────┘
+</code></pre>
+<p>Modal overlay with particle effects and terminal bell. Auto-dismisses after 5 seconds or on keypress. Click “Share” copies formatted text to clipboard. Click “Compare with Clade” shows how many siblings have unlocked this achievement.</p>
+<h3 id="74-death-recaps"><a class="header" href="#74-death-recaps">7.4 Death recaps</a></h3>
+<p>When a Golem dies, the TUI renders a roguelike kill screen — a structured summary of the life just lived. Inspired by Hades, Slay the Spire, and Risk of Rain 2.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DeathRecap {
+    pub golem_id: String,
+    pub generation: u32,
+    pub parent_id: Option&lt;String&gt;,
+    pub cause: DeathCause,
+    pub cause_narrative: String,       // LLM-generated narrative (Opus)
+    pub ticks_lived: u64,
+    pub total_trades: u32,
+    pub profitable_trades: u32,
+    pub total_pnl: f64,
+    pub max_drawdown: f64,
+    pub dream_cycles: u32,
+    pub phase_durations: Vec&lt;(String, u64)&gt;,
+    pub regime_distribution: Vec&lt;(String, u64)&gt;,
+    pub avg_pleasure: f64,
+    pub avg_arousal: f64,
+    pub avg_dominance: f64,
+    pub dominant_emotion: String,
+    pub genome_entries: u32,
+    pub successor_id: Option&lt;String&gt;,
+    pub bloodstains_deposited: u32,
+    pub death_testament_excerpt: String,
+    pub achievements_this_life: Vec&lt;Achievement&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The kill screen is interactive: click any stat to drill in, click “Create Successor” to begin inheritance flow, click “View in Styx” to open the graveyard entry.</p>
+<hr>
+<h2 id="10-real-time-streaming"><a class="header" href="#10-real-time-streaming">10. Real-time streaming</a></h2>
+<h3 id="81-websocket-protocol"><a class="header" href="#81-websocket-protocol">8.1 WebSocket protocol</a></h3>
+<p>The TUI connects to the Golem’s WebSocket endpoint:</p>
+<pre><code>ws://localhost:8080/ws          # Local self-hosted
+wss://g-7f3a.bardo.compute/ws  # Remote hosted (TLS)
+</code></pre>
+<p>On connect, the client sends a subscribe message:</p>
+<pre><code class="language-json">{
+  "type": "subscribe",
+  "categories": ["heartbeat", "tool", "llm", "dream", "daimon", "vitality",
+                  "clade", "grimoire", "permit", "context", "compaction"],
+  "auth": "Bearer &lt;jwt&gt;"
+}
+</code></pre>
+<p>On WebSocket disconnect, the client reconnects with exponential backoff (1s, 2s, 4s, max 30s). On reconnection, client sends <code>{ "type": "resync", "lastSequence": 4217, "auth": "Bearer &lt;jwt&gt;" }</code>. Server replays events from <code>lastSequence + 1</code>. Server-side event buffer holds the last 1,000 events (~5 minutes at normal tick rate). If the sequence is too old, the server sends a full <code>GolemSnapshot</code> instead.</p>
+<h3 id="82-wire-format"><a class="header" href="#82-wire-format">8.2 Wire format</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum GolemEvent {
+    #[serde(rename = "heartbeat.tick")]
+    HeartbeatTick {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tick: u64,
+        phase: HeartbeatPhase,
+        tier: Tier,
+        probe_summary: Vec&lt;ProbeSummaryEntry&gt;,
+        cost: f64,
+    },
+
+    #[serde(rename = "tool.start")]
+    ToolStart { timestamp: u64, golem_id: String, sequence: u64,
+                tool_name: String, action_kind: Option&lt;String&gt;, permit_id: Option&lt;String&gt; },
+
+    #[serde(rename = "tool.update")]
+    ToolUpdate { timestamp: u64, golem_id: String, sequence: u64,
+                 tool_name: String, progress: Option&lt;f64&gt; },
+
+    #[serde(rename = "tool.end")]
+    ToolEnd { timestamp: u64, golem_id: String, sequence: u64,
+              tool_name: String, tx_hash: Option&lt;String&gt;,
+              result: Option&lt;ToolResult&gt;, block_reason: Option&lt;String&gt; },
+
+    #[serde(rename = "llm.token")]
+    LlmToken { timestamp: u64, golem_id: String, sequence: u64,
+               model: String, tier: LlmTier, token_count: Option&lt;u64&gt; },
+
+    #[serde(rename = "daimon.appraisal")]
+    DaimonAppraisal { timestamp: u64, golem_id: String, sequence: u64,
+                      pad: PAD, plutchik: String,
+                      mortality_emotion: Option&lt;String&gt;, intensity: f64 },
+
+    #[serde(rename = "vitality.update")]
+    VitalityUpdate { timestamp: u64, golem_id: String, sequence: u64,
+                     vitality: f64, phase: String, credit_balance: f64,
+                     projected_life_hours: f64, clocks: VitalityClocks },
+
+    #[serde(rename = "dream.start")]
+    DreamStart { timestamp: u64, golem_id: String, sequence: u64, cycle_id: String },
+
+    #[serde(rename = "dream.phase")]
+    DreamPhaseEvent { timestamp: u64, golem_id: String, sequence: u64,
+                      cycle_id: String, phase: Option&lt;DreamPhase&gt; },
+
+    #[serde(rename = "grimoire.insight")]
+    GrimoireInsight { timestamp: u64, golem_id: String, sequence: u64,
+                      entry_id: String, confidence: f64, summary: String,
+                      provenance: Provenance },
+
+    #[serde(rename = "clade.sync")]
+    CladeSync { timestamp: u64, golem_id: String, sequence: u64,
+                source_golem_id: Option&lt;String&gt;, entry_count: Option&lt;u64&gt; },
+
+    #[serde(rename = "llm.start")]
+    LlmStart { timestamp: u64, golem_id: String, sequence: u64,
+               model: String, tier: LlmTier },
+
+    #[serde(rename = "llm.end")]
+    LlmEnd { timestamp: u64, golem_id: String, sequence: u64,
+             model: String, tier: LlmTier, token_count: Option&lt;u64&gt;,
+             cost: Option&lt;f64&gt;, decision: Option&lt;String&gt; },
+
+    #[serde(rename = "dream.hypothesis")]
+    DreamHypothesis { timestamp: u64, golem_id: String, sequence: u64,
+                      cycle_id: String, hypothesis: Option&lt;String&gt;,
+                      validated: Option&lt;bool&gt; },
+
+    #[serde(rename = "dream.end")]
+    DreamEnd { timestamp: u64, golem_id: String, sequence: u64,
+               cycle_id: String, heuristics_proposed: Option&lt;u64&gt; },
+
+    #[serde(rename = "grimoire.heuristic")]
+    GrimoireHeuristic { timestamp: u64, golem_id: String, sequence: u64,
+                        entry_id: String, confidence: f64, summary: String,
+                        provenance: Provenance },
+
+    #[serde(rename = "grimoire.warning")]
+    GrimoireWarning { timestamp: u64, golem_id: String, sequence: u64,
+                      entry_id: String, confidence: f64, summary: String,
+                      provenance: Provenance },
+
+    #[serde(rename = "grimoire.causal_link")]
+    GrimoireCausalLink { timestamp: u64, golem_id: String, sequence: u64,
+                         entry_id: String, confidence: f64, summary: String,
+                         provenance: Provenance },
+
+    #[serde(rename = "permit.created")]
+    PermitCreated { timestamp: u64, golem_id: String, sequence: u64,
+                    permit_id: String, action_kind: String, risk_tier: String,
+                    simulation_hash: Option&lt;String&gt; },
+
+    #[serde(rename = "permit.committed")]
+    PermitCommitted { timestamp: u64, golem_id: String, sequence: u64,
+                      permit_id: String, action_kind: String, risk_tier: String,
+                      tx_hash: Option&lt;String&gt; },
+
+    #[serde(rename = "permit.expired")]
+    PermitExpired { timestamp: u64, golem_id: String, sequence: u64,
+                    permit_id: String, action_kind: String, risk_tier: String },
+
+    #[serde(rename = "permit.cancelled")]
+    PermitCancelled { timestamp: u64, golem_id: String, sequence: u64,
+                      permit_id: String, action_kind: String, risk_tier: String },
+
+    #[serde(rename = "permit.blocked")]
+    PermitBlocked { timestamp: u64, golem_id: String, sequence: u64,
+                    permit_id: String, action_kind: String, risk_tier: String,
+                    block_reason: Option&lt;String&gt; },
+
+    #[serde(rename = "context.assembled")]
+    ContextAssembled { timestamp: u64, golem_id: String, sequence: u64,
+                       bundle_size: u64, category_sizes: HashMap&lt;String, u64&gt;,
+                       policy_revision: u64, steer_present: bool },
+
+    #[serde(rename = "compaction.triggered")]
+    CompactionTriggered { timestamp: u64, golem_id: String, sequence: u64,
+                          tokens_before: u64, tokens_after: u64,
+                          invariants_preserved: Vec&lt;String&gt; },
+
+    #[serde(rename = "clade.alert")]
+    CladeAlert { timestamp: u64, golem_id: String, sequence: u64,
+                 source_golem_id: Option&lt;String&gt;, alert_kind: Option&lt;String&gt; },
+
+    #[serde(rename = "clade.sibling_death")]
+    CladeSiblingDeath { timestamp: u64, golem_id: String, sequence: u64,
+                        source_golem_id: Option&lt;String&gt; },
+}
+<span class="boring">}</span></code></pre>
+<h3 id="83-pi-hook--tui-event-mapping"><a class="header" href="#83-pi-hook--tui-event-mapping">8.3 Pi hook → TUI event mapping</a></h3>
+<p>Every Pi hook that fires produces a TUI event:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pi hook</th><th>TUI event</th><th>Visual effect</th></tr>
+</thead>
+<tbody>
+<tr><td><code>session</code> (start)</td><td><code>session.start</code></td><td>Header updates “Connected” status</td></tr>
+<tr><td><code>input</code></td><td>(internal)</td><td>Not exposed to TUI (security: don’t leak prompts)</td></tr>
+<tr><td><code>before_agent_start</code></td><td><code>heartbeat.tick</code></td><td>Pipeline visualization begins</td></tr>
+<tr><td><code>turn_start</code></td><td><code>llm.start</code></td><td>“Thinking…” indicator on sprite + model badge</td></tr>
+<tr><td><code>context</code></td><td><code>context.assembled</code></td><td>Context budget breakdown updates in Mind screen</td></tr>
+<tr><td><code>before_provider_request</code></td><td>(internal)</td><td>x402 payment counter increments in status bar</td></tr>
+<tr><td><code>tool_call</code></td><td><code>tool.start</code></td><td>Tool name appears in pipeline + sprite “executing”</td></tr>
+<tr><td><code>tool_execution_start</code></td><td><code>tool.start</code></td><td>Progress bar appears for this tool call</td></tr>
+<tr><td><code>tool_execution_update</code></td><td><code>tool.update</code></td><td>Progress bar advances, intermediate data shown</td></tr>
+<tr><td><code>tool_execution_end</code></td><td><code>tool.end</code></td><td>Progress bar completes, result shown</td></tr>
+<tr><td><code>tool_result</code></td><td>(internal)</td><td>Result processing (redacted before TUI display)</td></tr>
+<tr><td><code>turn_end</code></td><td><code>llm.end</code></td><td>Token count + cost badge, decision summary</td></tr>
+<tr><td><code>agent_end</code></td><td>(internal)</td><td>Pipeline visualization completes</td></tr>
+<tr><td><code>after_turn</code></td><td>Various</td><td>Episode write, daimon appraisal, dream check</td></tr>
+<tr><td><code>session_before_compact</code></td><td><code>compaction.triggered</code></td><td>Flash notification “Context compacted”</td></tr>
+<tr><td><code>session</code> (before_branch)</td><td><code>dream.start</code></td><td>Dream pane activates, sprite enters dream animation</td></tr>
+</tbody>
+</table>
+</div>
+<p>Tool execution streaming:</p>
+<pre><code>┌─ Executing: LP Rebalance ────────────────────────────────────────┐
+│                                                                   │
+│  Step 1/4: Simulate transaction            ████████████░░░ 80%    │
+│  Step 2/4: Build calldata                  ░░░░░░░░░░░░░░░       │
+│  Step 3/4: Sign and broadcast              ░░░░░░░░░░░░░░░       │
+│  Step 4/4: Confirm (2 blocks)              ░░░░░░░░░░░░░░░       │
+│                                                                   │
+│  Estimated gas: 0.002 ETH ($7.00)                                 │
+│  Permit: ap-8f2a (valid 4m 32s remaining)                         │
+└───────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="84-sprite-animation-triggers-from-events"><a class="header" href="#84-sprite-animation-triggers-from-events">8.4 Sprite animation triggers from events</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl SpriteEngine {
+    pub fn handle_golem_event(&amp;mut self, event: &amp;GolemEvent) {
+        match event {
+            GolemEvent::HeartbeatTick { tier, .. } =&gt; match tier {
+                Tier::T1 | Tier::T2 =&gt; self.set_animation(Animation::Thinking),
+                _ =&gt; self.set_animation(Animation::Idle),
+            },
+            GolemEvent::ToolStart { action_kind, .. } if action_kind.is_some() =&gt; {
+                self.set_animation(Animation::Executing);
+            }
+            GolemEvent::ToolEnd { result: Some(ToolResult::Success), .. } =&gt; {
+                self.play_once(Animation::Success);
+            }
+            GolemEvent::ToolEnd { result: Some(_), .. } =&gt; {
+                self.play_once(Animation::Failure);
+            }
+            GolemEvent::DaimonAppraisal { pad, mortality_emotion, .. } =&gt; {
+                self.update_expression(pad);
+                if let Some(emotion) = mortality_emotion {
+                    self.set_mortality_overlay(emotion);
+                }
+            }
+            GolemEvent::DreamStart { .. } =&gt; self.set_animation(Animation::Dreaming),
+            GolemEvent::DreamEnd { .. } =&gt; self.play_once(Animation::Waking),
+            GolemEvent::VitalityUpdate { phase, .. } =&gt; self.set_phase_overlay(phase),
+            GolemEvent::GrimoireInsight { .. } =&gt; {
+                self.emit_particles(ParticleEffect::KnowledgePulse);
+            }
+            GolemEvent::CladeSync { .. } =&gt; self.play_once(Animation::CladePulse),
+            _ =&gt; {}
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="85-event-ring-buffer"><a class="header" href="#85-event-ring-buffer">8.5 Event ring buffer</a></h3>
+<p>The TUI maintains a 10,000-event in-memory ring buffer for scrollback and history. Screens subscribe to specific event types; the Heartbeat screen subscribes to <code>heartbeat.*</code>, <code>tool.*</code>, <code>llm.*</code>, <code>permit.*</code>. The Dreams screen subscribes to <code>dream.*</code>. Subscriptions are reactive — adding a filter immediately delivers matching buffered events.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EventRingBuffer {
+    events: VecDeque&lt;GolemEvent&gt;,
+    capacity: usize,  // 10,000
+    subscribers: Vec&lt;(EventFilter, Sender&lt;GolemEvent&gt;)&gt;,
+}
+
+impl EventRingBuffer {
+    pub fn push(&amp;mut self, event: GolemEvent) {
+        if self.events.len() &gt;= self.capacity {
+            self.events.pop_front();
+        }
+        for (filter, tx) in &amp;self.subscribers {
+            if filter.matches(&amp;event) {
+                let _ = tx.try_send(event.clone());
+            }
+        }
+        self.events.push_back(event);
+    }
+
+    pub fn query(&amp;self, filter: &amp;EventFilter) -&gt; Vec&lt;&amp;GolemEvent&gt; {
+        self.events.iter().filter(|e| filter.matches(e)).collect()
+    }
+}
+
+pub struct EventFilter {
+    pub types: Option&lt;Vec&lt;String&gt;&gt;,
+    pub min_severity: Option&lt;Severity&gt;,
+    pub golem_id: Option&lt;String&gt;,
+    pub since: Option&lt;u64&gt;,  // Unix ms
+}
+<span class="boring">}</span></code></pre>
+<h3 id="86-bandwidth-estimates"><a class="header" href="#86-bandwidth-estimates">8.6 Bandwidth estimates</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event Type</th><th>Frequency (Normal Market)</th><th>Frequency (Volatile)</th><th>Avg Size</th></tr>
+</thead>
+<tbody>
+<tr><td><code>heartbeat.tick</code></td><td>1/min</td><td>2-4/min</td><td>500B</td></tr>
+<tr><td><code>tool.*</code></td><td>0-3/tick</td><td>2-8/tick</td><td>200B</td></tr>
+<tr><td><code>llm.*</code></td><td>0-1/tick</td><td>1-3/tick</td><td>300B</td></tr>
+<tr><td><code>daimon.appraisal</code></td><td>1/tick</td><td>1/tick</td><td>150B</td></tr>
+<tr><td><code>vitality.update</code></td><td>1/tick</td><td>1/tick</td><td>200B</td></tr>
+<tr><td><code>grimoire.*</code></td><td>0-1/tick</td><td>0-2/tick</td><td>300B</td></tr>
+<tr><td><code>permit.*</code></td><td>0-1/tick</td><td>1-3/tick</td><td>250B</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Normal market</strong>: ~5 events/min, ~2.5 KB/min, ~150 KB/hour.
+<strong>Volatile market</strong>: ~30 events/min, ~9 KB/min, ~540 KB/hour.</p>
+<p>Negligible bandwidth. Even on metered connections, the TUI’s streaming overhead is &lt;1 MB/hour.</p>
+<hr>
+<h2 id="11-social-features"><a class="header" href="#11-social-features">11. Social features</a></h2>
+<h3 id="91-styx-public-death-registry"><a class="header" href="#91-styx-public-death-registry">9.1 Styx (public death registry)</a></h3>
+<p>The Styx screen (<code>w</code> World screen, Styx tab) shows all public deaths. Every Golem death is recorded with: tombstone sprite (8×8, desaturated), Golem name + ID, cause of death, lifetime in hours, net P&amp;L (bucketed), insight count, optional death reflection excerpt, bloodstain conditions.</p>
+<p><strong>Bloodstains</strong>: When a Golem dies, the market conditions at death (regime, volatility percentile, gas percentile, dominant probe) are recorded as a bloodstain. Bloodstains appear as red-tinted background artifacts on market data panes when similar conditions recur (similarity &gt; 0.7):</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct Bloodstain {
+    pub golem_id: String,
+    pub death_timestamp: u64,
+    pub conditions: BloodstainConditions,
+}
+
+impl Bloodstain {
+    pub fn similarity(&amp;self, current: &amp;MarketConditions) -&gt; f32 { /* 0.0-1.0 */ }
+}
+<span class="boring">}</span></code></pre>
+<p>When similarity &gt; 0.7: “3 Golems died in similar conditions — click to see why.” The Styx turns from historical record into real-time warning system.</p>
+<p><strong>Death Study mode</strong>: Select multiple deaths with similar causes; the TUI synthesizes common patterns across their death reflections.</p>
+<h3 id="92-oracle--bazaar-marketplace"><a class="header" href="#92-oracle--bazaar-marketplace">9.2 Oracle / Bazaar marketplace</a></h3>
+<p>The Bazaar screen (<code>z</code>) supports x402 micropayment artifact purchase directly from the terminal. The user’s Privy wallet signs a USDC transfer authorization inline — no browser required after initial auth.</p>
+<p>Purchase flow:</p>
+<pre><code>Terminal                              Privy Wallet                    Oracle L3
+   │                                     │                              │
+   │─── Request artifact ───────────────────────────────────────────►│
+   │◄── Return x402 payment requirements ───────────────────────────│
+   │─── Sign USDC transferWithAuth ────►│                              │
+   │◄── Return signed authorization ────│                              │
+   │─── Submit payment + request ───────────────────────────────────►│
+   │◄── Return full artifact content ───────────────────────────────│
+   │─── Ingest into local Grimoire ──────────────────────────────────│
+   │    (provenance: "marketplace", confidence: 0.3)                 │
+</code></pre>
+<h3 id="93-agent-discovery"><a class="header" href="#93-agent-discovery">9.3 Agent discovery</a></h3>
+<p>The World screen (<code>w</code>) queries the ERC-8004 Identity Registry and the Bardo API to display all registered agents. Selecting an agent opens a profile overlay with sprite, performance metrics, vault details, reputation tier, and action buttons (deposit, buy artifacts, watch/follow).</p>
+<p><strong>Watching agents</strong>: Watched agents appear in a sidebar widget on Hearth, showing their status and recent events. This creates parasocial engagement. Watched agent events produce notifications: “Obsidian-3f7a just executed a large rebalance.”</p>
+<h3 id="94-clade-interactions"><a class="header" href="#94-clade-interactions">9.4 Clade interactions</a></h3>
+<p>Cross-Golem operations via command palette:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Command</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td><code>:spawn &lt;parent&gt;</code></td><td>Creates Replicant from selected parent</td></tr>
+<tr><td><code>:feed &lt;target&gt; &lt;$&gt;</code></td><td>Moves USDC between Clade members</td></tr>
+<tr><td><code>:kill &lt;replicant&gt;</code></td><td>Emergency termination</td></tr>
+<tr><td><code>:compare A B</code></td><td>Side-by-side metrics, strategy diff</td></tr>
+<tr><td><code>:steer-all &lt;msg&gt;</code></td><td>Sends steer() to all running Golems</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="95-social-layer-api"><a class="header" href="#95-social-layer-api">9.5 Social layer API</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Endpoint</th><th>Data</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GET /api/styx/deaths</code></td><td>Paginated death registry with filters</td></tr>
+<tr><td><code>GET /api/styx/bloodstains</code></td><td>Bloodstains matching given market conditions</td></tr>
+<tr><td><code>GET /api/oracle/artifacts</code></td><td>Paginated artifact marketplace</td></tr>
+<tr><td><code>POST /api/oracle/purchase</code></td><td>x402 payment submission</td></tr>
+<tr><td><code>GET /api/agents</code></td><td>Paginated agent discovery with filters</td></tr>
+<tr><td><code>GET /api/leaderboard</code></td><td>Ranked agents with filters</td></tr>
+<tr><td><code>WS /api/watch</code></td><td>Real-time events for watched agents</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="12-engagement-loops"><a class="header" href="#12-engagement-loops">12. Engagement loops</a></h2>
+<p>Five nested loops drive retention. Each has a different cadence and reward structure.</p>
+<p><strong>Loop 1 — The Check-In (minutes)</strong>: Open terminal, see what happened since last session. The Home screen is designed for a 30-second check-in. Sprite state communicates phase and mood at a glance. Unread indicators on sidebar screen labels create pull toward deeper engagement.</p>
+<p><strong>Loop 2 — The Discovery (hours)</strong>: The Golem learned something new. A new insight isn’t a log line — it’s a gold-bordered card that slides in from the right with the confidence score prominently displayed. The sprite visually mutates when significant knowledge is acquired.</p>
+<p><strong>Loop 3 — The Evolution (days)</strong>: Sprite morphed into a new age stage, reputation milestone reached, achievement unlocked. Evolution events are rare and dramatic. The sprite morphing animation plays automatically when the user logs in if an evolution occurred between sessions.</p>
+<p><strong>Loop 4 — The Death and Rebirth (weeks)</strong>: Death is the most dramatic event in the system. The 30-second death animation evokes genuine emotion. The death reflection, generated by Opus during the Thanatopsis Protocol, is unique and often moving. The successor creation prompt immediately offers a “New Game+” experience.</p>
+<p><strong>Loop 5 — The Collection (months)</strong>: Achievement gallery, Styx memorial wall (all dead Golems displayed as tombstone sprites), lineage tree, knowledge portfolio, leaderboard position. The collection grows passively over months of operation.</p>
+<hr>
+<h2 id="121-owner-course-correction-surfaces"><a class="header" href="#121-owner-course-correction-surfaces">12.1 Owner Course-Correction Surfaces</a></h2>
+<p>The owner’s power is coarse: set strategy, set limits, observe, intervene at the lifecycle level. The Golem’s autonomy is fine: decide what to track, how to reason, when to act. The asymmetry is the design. Six surfaces bridge them:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>Owner Action</th><th>Golem Effect</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>STRATEGY.md</strong></td><td>Edit goals in natural language (MIND → Strategy screen)</td><td>Hot-reloaded at next theta tick; new goals enter context bundle</td></tr>
+<tr><td><strong>Risk parameters</strong></td><td>Adjust limits in COMMAND → Config</td><td>PolicyCage updated on-chain; takes effect at next transaction</td></tr>
+<tr><td><strong>Prediction review</strong></td><td>Browse FATE → Oracle screen, inspect accuracy trends</td><td>None (owner observes, does not directly intervene)</td></tr>
+<tr><td><strong>Attention override</strong></td><td>Manually promote or demote tracked items</td><td>Item moves to specified tier; affects foraging priority</td></tr>
+<tr><td><strong>Dream trigger</strong></td><td>Force a dream cycle from COMMAND console (<code>:dream</code>)</td><td>Dream scheduler overridden; cycle begins at next idle tick</td></tr>
+<tr><td><strong>Kill / Pause / Dissolve</strong></td><td>F9 (pause), <code>/tmp/golem_killswitch</code> file (kill), <code>:dissolve</code> command (five-stage ceremony)</td><td>Immediate effect at each severity level</td></tr>
+<tr><td><strong>Parameter tuning</strong></td><td>Edit <code>golem.toml</code> values in Config screen</td><td>Hot-reloaded; effect visible at next cycle</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="13-onboarding-flow"><a class="header" href="#13-onboarding-flow">13. Onboarding flow</a></h2>
+<h3 id="111-first-run-detection"><a class="header" href="#111-first-run-detection">11.1 First-run detection</a></h3>
+<p>On launch, the binary checks for <code>~/.bardo/config.toml</code>. If absent → full onboarding. If present with a valid Golem ID → connect and enter main TUI. If present with only dead Golems → Styx memorial + new creation prompt.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Deserialize)]
+pub struct OnboardingConfig {
+    pub privy_app_id: String,
+    pub auth_callback_url: String,     // "https://bardo.run/auth/callback"
+    pub device_code_url: String,       // "https://bardo.run/device"
+    pub auth_poll_interval_ms: u64,    // 2000
+    pub auth_timeout_ms: u64,          // 300_000 (5 min)
+    pub default_network: Network,      // Base
+    pub enable_qr_code: bool,          // true
+    pub birth_animation_speed: f32,    // 1.0 = normal
+}
+<span class="boring">}</span></code></pre>
+<h3 id="112-authentication-browser-handoff"><a class="header" href="#112-authentication-browser-handoff">11.2 Authentication: browser handoff</a></h3>
+<p>Mirrors Claude Code / Codex: terminal opens browser, user authenticates there, terminal detects completion via polling.</p>
+<pre><code>Terminal generates session ID
+  → opens bardo.run/auth?session=xxx in default browser
+  → shows copyable URL + QR code + "[c] Copy URL  [q] Cancel"
+  → polls /auth/status?session=xxx every 2 seconds
+  → on success: JWT + wallet address + wallet ID returned
+  → stored in ~/.bardo/auth.json (0o600 permissions)
+</code></pre>
+<p><strong>Headless fallback</strong> (SSH without browser): Device code flow — terminal displays <code>BARD-7F3A</code>, user visits <code>bardo.run/device</code>, enters code, authenticates. Or API key mode — bypasses Privy, user provides key from <code>bardo.run/settings/api-keys</code>.</p>
+<h3 id="113-three-mode-custody-selection"><a class="header" href="#113-three-mode-custody-selection">11.3 Three-mode custody selection</a></h3>
+<p>After auth, the user selects a custody mode:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>Description</th><th>Use case</th></tr>
+</thead>
+<tbody>
+<tr><td>Delegation</td><td>MetaMask or hardware wallet via ERC-7710/7715. Golem draws from external wallet.</td><td>Users who want custody control</td></tr>
+<tr><td>Embedded</td><td>Privy server-side wallet. Zero additional setup.</td><td>Most users</td></tr>
+<tr><td>LocalKey + Delegation</td><td>Dev mode. Local key file + MetaMask delegation.</td><td>Self-hosted, advanced</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="114-wallet-and-funding-setup"><a class="header" href="#114-wallet-and-funding-setup">11.4 Wallet and funding setup</a></h3>
+<p>After auth, the terminal queries the Privy embedded wallet’s balances on Base. If USDC &lt; $25 (operational floor):</p>
+<ul>
+<li>Inline swap: ETH → USDC via Uniswap (signature delegated to Privy)</li>
+<li>Bridge: opens browser to LI.FI widget</li>
+<li>Buy with card: opens browser to MoonPay</li>
+<li>Fund manually: shows deposit address and QR code</li>
+</ul>
+<h3 id="115-the-summoning-golem-creation"><a class="header" href="#115-the-summoning-golem-creation">11.5 The Summoning (Golem creation)</a></h3>
+<p>The creation flow is atmospheric. A placeholder sprite — glitching, unresolved, rendered as animated noise — occupies the center of the screen. The user provides intent via freeform prompt or template selection.</p>
+<p>During provisioning, the sprite progressively resolves:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Provisioning step</th><th>Sprite resolution stage</th></tr>
+</thead>
+<tbody>
+<tr><td>Strategy compiled</td><td>Body outline emerges from noise</td></tr>
+<tr><td>Wallet created</td><td>Color palette locks (derived from wallet address hash)</td></tr>
+<tr><td>Identity registered (ERC-8004)</td><td>Face and eyes appear</td></tr>
+<tr><td>Compute provisioned (Fly.io VM)</td><td>Accessories render</td></tr>
+<tr><td>First heartbeat received</td><td>Sprite becomes animated — eyes open</td></tr>
+</tbody>
+</table>
+</div>
+<p>The review screen shows the fully-formed sprite alongside strategy details, cost breakdown, and funding recommendation. Confirmation word: “SUMMON”.</p>
+<h3 id="116-first-heartbeat-cinematic"><a class="header" href="#116-first-heartbeat-cinematic">11.6 First heartbeat cinematic</a></h3>
+<p>Tick 0001 plays in slow-motion: probes fire with visible RPC calls, market state populates, the first observation logs. The user presses any key and the full multi-pane TUI materializes around the sprite.</p>
+<hr>
+<h2 id="14-installation-and-distribution"><a class="header" href="#14-installation-and-distribution">14. Installation and distribution</a></h2>
+<h3 id="121-install-methods"><a class="header" href="#121-install-methods">12.1 Install methods</a></h3>
+<pre><code class="language-bash"># Via cargo
+cargo install bardo-terminal
+
+# Via npx (downloads prebuilt binary, caches in ~/.bardo/bin/)
+npx @bardo/terminal
+
+# Via release script
+curl -sSL https://get.bardo.run | sh
+</code></pre>
+<p>Prebuilt binaries ship for <code>x86_64-unknown-linux-gnu</code>, <code>x86_64-unknown-linux-musl</code>, <code>aarch64-unknown-linux-gnu</code>, <code>x86_64-apple-darwin</code>, <code>aarch64-apple-darwin</code>, <code>x86_64-pc-windows-msvc</code>.</p>
+<p>The npm wrapper is &lt;10KB. It detects the platform, downloads the correct prebuilt binary from GitHub Releases, caches it in <code>~/.bardo/bin/</code>, and execs it. Zero Rust toolchain required.</p>
+<h3 id="122-entry-point-flags"><a class="header" href="#122-entry-point-flags">12.2 Entry point flags</a></h3>
+<pre><code class="language-bash">bardo-terminal                          # Auto-detect config, connect to Golem
+bardo-terminal --golem g-7f3a           # Connect to specific Golem
+bardo-terminal --remote wss://g-7f3a.bardo.compute/events
+bardo-terminal --explore                # Browse-only mode (no Golem required)
+bardo-terminal --clade                  # Multi-Golem overview
+</code></pre>
+<h3 id="123-terminal-requirements"><a class="header" href="#123-terminal-requirements">12.3 Terminal requirements</a></h3>
+<p>Minimum: 80 columns, 24 rows, 256-color, BMP Unicode (half-block characters required).</p>
+<p>Recommended: 120+ columns, 40+ rows, true-color (24-bit), iTerm2 / Kitty / WezTerm / Ghostty / Windows Terminal.</p>
+<p>Degradation:</p>
+<ul>
+<li>No truecolor → 256-color palette mapping (octree quantization)</li>
+<li>No Unicode → ASCII-only mode (box drawing with <code>+|-</code>, ASCII art sprites)</li>
+<li>Small terminal → single-pane mode with tab switching</li>
+<li>No mouse → full keyboard navigation</li>
+<li>No WebSocket → polling mode at 2-second intervals</li>
+</ul>
+<h3 id="124-performance-targets"><a class="header" href="#124-performance-targets">12.4 Performance targets</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td>Cold start to first render</td><td>&lt;500ms</td></tr>
+<tr><td>Render frame rate</td><td>60 FPS</td></tr>
+<tr><td>Screen transition</td><td>200ms eased</td></tr>
+<tr><td>Memory footprint</td><td>&lt;30MB RSS</td></tr>
+<tr><td>Binary size</td><td>~8MB (static)</td></tr>
+<tr><td>CPU idle (static screen)</td><td>&lt;1%</td></tr>
+<tr><td>CPU active (full animation)</td><td>&lt;5%</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="15-optional-audio-feedback"><a class="header" href="#15-optional-audio-feedback">15. Optional audio feedback</a></h2>
+<p>Via <code>rodio</code> crate. Disabled by default. Enabled via <code>:audio on</code> or settings screen.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Sound</th><th>Duration</th></tr>
+</thead>
+<tbody>
+<tr><td>Tick (T0 suppress)</td><td>Soft tick</td><td>100ms</td></tr>
+<tr><td>Tick (T1/T2 fire)</td><td>Rising chime</td><td>200ms</td></tr>
+<tr><td>Trade executed</td><td>Ascending arpeggio</td><td>300ms</td></tr>
+<tr><td>Trade reverted</td><td>Low descending tone</td><td>400ms</td></tr>
+<tr><td>Dream start</td><td>Ambient pad fade-in</td><td>2s</td></tr>
+<tr><td>Achievement (common)</td><td>Short fanfare</td><td>500ms</td></tr>
+<tr><td>Achievement (legendary)</td><td>Full fanfare</td><td>1.5s</td></tr>
+<tr><td>Phase transition</td><td>Tonal shift</td><td>Atmospheric</td></tr>
+<tr><td>Death</td><td>1s silence → single clear bell</td><td>2s</td></tr>
+<tr><td>Bloodstain received</td><td>Deep resonant bell</td><td>500ms</td></tr>
+<tr><td>Pheromone confirmed</td><td>Harmonic resonance</td><td>300ms</td></tr>
+</tbody>
+</table>
+</div>
+<p>Sound files are procedurally generated from parameters (not pre-recorded) to keep the binary small. Each Golem’s sound palette is seeded from its <code>golem_id</code> for slight timbral uniqueness.</p>
+<hr>
+<h2 id="16-anti-dark-pattern-commitments"><a class="header" href="#16-anti-dark-pattern-commitments">16. Anti-dark-pattern commitments</a></h2>
+<p>The engagement system is designed to be genuinely compelling, not exploitative:</p>
+<ol>
+<li>No real-money gacha. Sprite rarity is determined by a free seed derivation, not paid rolls.</li>
+<li>No pay-to-win. A Legendary sprite has exactly the same strategic capability as a Common one.</li>
+<li>No artificial scarcity. All content is accessible to all users.</li>
+<li>Transparent probabilities. Rarity odds are displayed in the collection screen.</li>
+<li>Session length is natural. The TUI provides value in 30-second check-ins. Extended sessions are rewarding but never required.</li>
+<li>Financial health first. The system never encourages funding beyond means. Minimum viable amount is prominently displayed.</li>
+</ol>
+<p>The TUI is addictive because managing a mortal, learning, dreaming AI creature in live markets is genuinely compelling. The retention loops amplify what’s naturally engaging. They don’t manufacture engagement from nothing.</p>
+<hr>
+<h2 id="17-note-bardotui-vs-bardo-terminal"><a class="header" href="#17-note-bardotui-vs-bardo-terminal">17. Note: @bardo/tui vs bardo-terminal</a></h2>
+<p>The TypeScript <code>@bardo/tui</code> package in <code>packages/tui/</code> of the gotts-monorepo (built on picocolors and @clack/prompts) is a separate utility library for Node.js CLI output formatting in the gotts-monorepo build tools and developer CLI. It is not the Golem’s interactive TUI. It has no sprite engine, no WebSocket client, no screen system.</p>
+<p><code>bardo-terminal</code> (this document) is the Golem’s primary interactive interface — a standalone Rust binary with ratatui, crossterm, a procedural sprite engine, and a 29-screen, 6-window layout system.</p>
+<p>For gotts-monorepo developer tooling, see <code>15-dev/</code>.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[REBELS-IN-THE-SKY] ricott1. “Rebels in the Sky: a ratatui game.” https://github.com/ricott1/rebels-in-the-sky — A ratatui-based game with procedural pixel-art sprites and real-time animation. The primary design reference for bardo-terminal’s sprite engine and 60fps render loop architecture.</li>
+<li>[RATATUI] https://ratatui.rs — Rust TUI framework documentation. The rendering framework underlying all of bardo-terminal’s visual output.</li>
+<li>[MEHRABIAN-RUSSELL-1974] Mehrabian, A. &amp; Russell, J.A. <em>An Approach to Environmental Psychology.</em> MIT Press, 1974. Introduces the PAD (Pleasure-Arousal-Dominance) model for characterizing emotional states. The theoretical basis for the Daimon’s emotional appraisal system and the terminal’s PAD-driven visual modulation.</li>
+<li>[REEVES-NASS-1996] Reeves, B. &amp; Nass, C. <em>The Media Equation.</em> Cambridge University Press, 1996. Demonstrates that people treat computers and media as social actors. Supports the design decision to make the Golem feel like a living creature rather than a dashboard.</li>
+<li>[CSIKSZENTMIHALYI-1990] Csikszentmihalyi, M. <em>Flow: The Psychology of Optimal Experience.</em> Harper &amp; Row, 1990. Defines flow as the state of complete absorption in an activity with balanced challenge and skill. Informs the engagement loop design: variable-ratio reinforcement via unpredictable T2 heartbeat events creates the conditions for flow.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/18-interfaces/02-ui-system.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/18-interfaces/19-spatial-grammar.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/18-interfaces/02-ui-system.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/18-interfaces/19-spatial-grammar.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

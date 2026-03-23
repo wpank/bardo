@@ -1,0 +1,1437 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Uniswap API - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/17-tools-uniswap-api.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--uniswap-api-tools-spec"><a class="header" href="#bardo-tools--uniswap-api-tools-spec">Bardo Tools – Uniswap API tools [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles), <a href="20-config.html">20-config.md</a> (environment variables, TOML config schema, API key tiers)</p>
+<p>Tools backed by the Uniswap Trading API. Category: <code>trading</code> (swap tools), <code>lp</code> (LP tools), <code>data</code> (reference tools). 21 tools. All require <code>BARDO_UNISWAP_API_KEY</code>.</p>
+<p><strong>Protocol framing note:</strong> This document covers Uniswap API integration in depth. Equivalent depth of specification exists or will exist for other major DeFi protocols: Aave/Morpho lending tools (<code>07-tools-lending.md</code>), Curve/Balancer AMM tools, Pendle yield tools (<code>11-tools-yield.md</code>), bridging aggregators (<code>05-tools-bridge-aggregator.md</code>). The Uniswap API is one integration among many — not the center of the tool library.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies 21 tools backed by the Uniswap Trading API (<code>trade-api.gateway.uniswap.org/v1</code>). These tools provide limit orders, batch execution, EIP-7702 delegation, LP operations via API, and multi-step cross-chain plans. All require a <code>BARDO_UNISWAP_API_KEY</code>. You should be familiar with Uniswap’s swap routing, Permit2, and UniswapX order types. Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="why-the-uniswap-api"><a class="header" href="#why-the-uniswap-api">Why the Uniswap API</a></h2>
+<p>The Uniswap Trading API is not a convenience wrapper around on-chain calls. It unlocks a different class of DeFi operation that is not achievable by reading chain state or calling smart contracts directly.</p>
+<h3 id="vs-on-chain-reads--direct-contract-calls"><a class="header" href="#vs-on-chain-reads--direct-contract-calls">vs on-chain reads + direct contract calls</a></h3>
+<p>Direct on-chain routing requires implementing a routing algorithm across thousands of pools, with no access to off-chain or private liquidity. The practical gaps:</p>
+<ul>
+<li><strong>No private liquidity</strong>: UniswapX RFQ fillers hold significant off-chain inventory. A direct on-chain swap never touches this liquidity, always trading at worse prices.</li>
+<li><strong>No MEV protection</strong>: Submitting a signed transaction to the public mempool exposes the order to frontrunning and sandwich attacks. UniswapX intents go to a private filler network, bypassing the mempool entirely.</li>
+<li><strong>No Permit2 optimization</strong>: Permit2 batches token approval + transfer into a single signature, saving a full approval transaction. Constructing valid Permit2 calldata from scratch requires replicating protocol-specific logic that the API generates correctly.</li>
+<li><strong>No cross-chain orchestration</strong>: A bridge + swap flow requires coordinating separate protocols (bridge + DEX) with no shared state. The API generates sequenced calldata and tracks proof submission across steps.</li>
+<li><strong>No gas calibration</strong>: Estimating gas accurately requires simulating transactions against current chain state. The API does this server-side with live state, returning calibrated estimates. Client-side estimation is unreliable under congestion.</li>
+</ul>
+<h3 id="vs-uniswap-sdk-uniswapv3-sdk-uniswaprouter-sdk-uniswapsmart-order-router"><a class="header" href="#vs-uniswap-sdk-uniswapv3-sdk-uniswaprouter-sdk-uniswapsmart-order-router">vs Uniswap SDK (@uniswap/v3-sdk, @uniswap/router-sdk, @uniswap/smart-order-router)</a></h3>
+<p>The SDK runs routing client-side using on-chain pool state fetched via RPC. This was the right approach before UniswapX. Now:</p>
+<ul>
+<li><strong>No RFQ access</strong>: The SDK cannot query UniswapX RFQ fillers. It routes through on-chain pools only.</li>
+<li><strong>No intent submission</strong>: There is no SDK path for submitting Dutch v2/v3 or Priority orders. These require the API.</li>
+<li><strong>No gasless execution</strong>: The SDK produces signed transactions. UniswapX gasless orders are a different primitive (signed intents) that only the API supports.</li>
+<li><strong>No LP migration</strong>: The SDK has no concept of migrating a position between protocol versions. <code>/lp/migrate</code> generates the calldata to atomically exit a V3 position and enter a V4 position.</li>
+<li><strong>No multi-step planning</strong>: The SDK does not track multi-step execution state.</li>
+</ul>
+<h3 id="vs-other-aggregators-0x-1inch-paraswap"><a class="header" href="#vs-other-aggregators-0x-1inch-paraswap">vs other aggregators (0x, 1inch, Paraswap)</a></h3>
+<ul>
+<li><strong>Exclusive RFQ access</strong>: UniswapX RFQ fillers are not accessible via other aggregators. Private liquidity from Uniswap’s filler network only routes through the Uniswap API.</li>
+<li><strong>V4 hooks support</strong>: No other aggregator routes through V4 pools with hooks. The <code>hooksOptions</code> parameter enables targeted routing exclusive to this API.</li>
+<li><strong>Deepest Permit2 integration</strong>: Permit2 is a Uniswap-built primitive. The API generates Permit2 calldata with full correctness guarantees.</li>
+<li><strong>EIP-5792/7702 support</strong>: Batch and delegated execution modes are specific to the Uniswap API.</li>
+</ul>
+<h3 id="capabilities-only-available-via-api"><a class="header" href="#capabilities-only-available-via-api">Capabilities only available via API</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Capability</th><th>Endpoint</th><th>Alternative</th></tr>
+</thead>
+<tbody>
+<tr><td>Limit orders (off-chain, on-chain fill)</td><td><code>/limit_order_quote</code> + <code>/order</code></td><td>None</td></tr>
+<tr><td>Gasless swaps (filler pays gas)</td><td><code>/quote</code> with UniswapX routing + <code>/order</code></td><td>None</td></tr>
+<tr><td>LP migration (V2-&gt;V3-&gt;V4 calldata)</td><td><code>/lp/migrate</code></td><td>Manual: 2 separate txs, no atomicity</td></tr>
+<tr><td>LP rewards claiming</td><td><code>/lp/claim_rewards</code></td><td>Protocol-specific, non-standard</td></tr>
+<tr><td>EIP-5792 batch execution</td><td><code>/swap_5792</code></td><td>None (EOA cannot batch)</td></tr>
+<tr><td>EIP-7702 smart delegation</td><td><code>/swap_7702</code> + <code>/wallet/encode_7702</code></td><td>None (requires delegation setup)</td></tr>
+<tr><td>Bridge token enumeration</td><td><code>/swappable_tokens</code></td><td>Manual: query each bridge protocol separately</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="paradigms-enabled"><a class="header" href="#paradigms-enabled">Paradigms enabled</a></h2>
+<h3 id="gasless-agent-operation"><a class="header" href="#gasless-agent-operation">Gasless agent operation</a></h3>
+<p>An agent can operate indefinitely without holding native tokens for gas. UniswapX Dutch v2/v3 orders are signed intents: the agent specifies what it wants, fillers compete to fill it, and the winning filler pays the gas. The agent’s gas cost is priced into the output amount.</p>
+<p>Flow: <code>uniswap_api_get_quote</code> with <code>routing_preference: "DUTCH_V2"</code> -&gt; sign the returned quote -&gt; <code>uniswap_api_submit_order</code>. Monitor via <code>uniswap_api_get_orders</code>. No ETH required.</p>
+<h3 id="v4-hooks-targeted-routing"><a class="header" href="#v4-hooks-targeted-routing">V4-hooks-targeted routing</a></h3>
+<p>V4 pools can have hooks – custom contract logic that executes before/after every swap or LP operation. An agent deploying a custom hook strategy needs liquidity to route through that hook’s pool.</p>
+<p><code>uniswap_api_get_quote</code> with <code>hooks_options: "V4_HOOKS_ONLY"</code> routes exclusively through V4 pools with hooks. <code>V4_HOOKS_INCLUSIVE</code> prefers them. <code>V4_NO_HOOKS</code> avoids them. No other way to enforce this constraint exists outside the API.</p>
+<h3 id="limit-order-portfolios"><a class="header" href="#limit-order-portfolios">Limit order portfolios</a></h3>
+<p>An agent can maintain an active book of limit orders. Flow: <code>uniswap_api_get_limit_order_quote</code> -&gt; sign -&gt; <code>uniswap_api_submit_order</code> with routing <code>LIMIT_ORDER</code> -&gt; monitor via <code>uniswap_api_get_orders</code>. Unfilled orders expire at <code>order_deadline</code>. Enables DCA, grid trading, and yield-seeking entries without on-chain interaction until fill.</p>
+<h3 id="approval-first-safety-pipeline"><a class="header" href="#approval-first-safety-pipeline">Approval-first safety pipeline</a></h3>
+<p>Call <code>uniswap_api_check_approval</code> before any swap or LP operation. It returns whether approval exists and, if not, the approval transaction calldata. This converts on-chain reverts (gas spent, tx failed) into pre-flight errors (no gas spent, no tx submitted).</p>
+<p>With EIP-5792, the approval calldata and the swap calldata can be submitted as a single atomic batch.</p>
+<hr>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<h3 id="per-golem-a-mortal-autonomous-agent-compiled-as-a-single-rust-binary-on-a-micro-vm-config-block"><a class="header" href="#per-golem-a-mortal-autonomous-agent-compiled-as-a-single-rust-binary-on-a-micro-vm-config-block">Per-Golem (a mortal autonomous agent compiled as a single Rust binary on a micro-VM) config block</a></h3>
+<pre><code class="language-toml">[uniswap_api]
+api_key = "your-api-key-from-developers.uniswap.org"
+base_url = "https://trade-api.gateway.uniswap.org/v1"
+rate_limit = 3
+quote_max_age_ms = 30000
+gas_buffer_pct = 20
+universal_router_version = "2.0"
+permit2_enabled = true
+enable_lp = true
+enable_limit_orders = true
+enable_smart_wallet = false
+chain_ids = [1, 8453, 42161, 10, 137]
+</code></pre>
+<p>Config precedence: Golem config file &gt; env vars &gt; defaults.</p>
+<p>API keys are obtained from <a href="https://developers.uniswap.org/dashboard/">developers.uniswap.org</a>.</p>
+<h3 id="environment-variables"><a class="header" href="#environment-variables">Environment variables</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>BARDO_UNISWAP_API_KEY</code></td><td>–</td><td>API key (required to activate API tools)</td></tr>
+<tr><td><code>BARDO_UNISWAP_API_BASE_URL</code></td><td><code>https://trade-api.gateway.uniswap.org/v1</code></td><td>Base URL override</td></tr>
+<tr><td><code>BARDO_UNISWAP_API_RATE_LIMIT</code></td><td><code>3</code></td><td>Requests per second</td></tr>
+<tr><td><code>BARDO_UNISWAP_API_QUOTE_MAX_AGE_MS</code></td><td><code>30000</code></td><td>Quote cache TTL (ms)</td></tr>
+<tr><td><code>BARDO_UNISWAP_API_GAS_BUFFER_PCT</code></td><td><code>20</code></td><td>Gas estimate buffer percent</td></tr>
+<tr><td><code>BARDO_UNISWAP_ROUTER_VERSION</code></td><td><code>2.0</code></td><td>Universal Router version (<code>1.2</code> or <code>2.0</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="feature-flags"><a class="header" href="#feature-flags">Feature flags</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Flag</th><th>Effect when false</th></tr>
+</thead>
+<tbody>
+<tr><td><code>enable_lp</code></td><td>LP tools fall back to SDK; <code>uniswap_api_migrate_liquidity</code>, <code>uniswap_api_get_lp_pool_info</code> disabled</td></tr>
+<tr><td><code>enable_limit_orders</code></td><td><code>uniswap_api_get_limit_order_quote</code> disabled; <code>uniswap_api_submit_order</code> still works for Dutch/Priority orders</td></tr>
+<tr><td><code>enable_smart_wallet</code></td><td><code>uniswap_api_batch_swap</code>, <code>uniswap_api_create_delegated_swap</code> disabled</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="http-client"><a class="header" href="#http-client">HTTP client</a></h2>
+<p>All API tools share a <code>TradingApiClient</code> built on <code>reqwest</code>:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct TradingApiClient {
+    client: reqwest::Client,
+    base_url: String,
+    api_key: TaintedString,
+    rate_limiter: Arc&lt;TokenBucket&gt;,
+}
+
+impl TradingApiClient {
+    pub async fn get&lt;T: DeserializeOwned&gt;(&amp;self, path: &amp;str, params: &amp;impl Serialize) -&gt; Result&lt;T&gt; {
+        self.rate_limiter.acquire().await;
+        let resp = self.client
+            .get(format!("{}{}", self.base_url, path))
+            .header("x-api-key", self.api_key.as_ref())
+            .query(params)
+            .send()
+            .await?;
+        Self::handle_response(resp).await
+    }
+
+    pub async fn post&lt;T: DeserializeOwned&gt;(&amp;self, path: &amp;str, body: &amp;impl Serialize) -&gt; Result&lt;T&gt; {
+        self.rate_limiter.acquire().await;
+        let resp = self.client
+            .post(format!("{}{}", self.base_url, path))
+            .header("x-api-key", self.api_key.as_ref())
+            .json(body)
+            .send()
+            .await?;
+        Self::handle_response(resp).await
+    }
+
+    fn is_fallback_eligible(status: reqwest::StatusCode) -&gt; bool {
+        matches!(status.as_u16(), 429 | 503 | 504)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Rate limiting: token bucket (default 3 req/sec). The bucket is shared across all API tools within a Golem session.</p>
+<hr>
+<h2 id="swap-tools-category-trading"><a class="header" href="#swap-tools-category-trading">Swap tools (category: <code>trading</code>)</a></h2>
+<h3 id="uniswap_api_get_quote"><a class="header" href="#uniswap_api_get_quote"><code>uniswap_api_get_quote</code></a></h3>
+<p>Requests a quote for a swap, bridge, or wrap/unwrap. Routes across V2/V3/V4 and UniswapX.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>token_in</code></td><td><code>String</code></td><td>Yes</td><td>Input token symbol or address</td></tr>
+<tr><td><code>token_out</code></td><td><code>String</code></td><td>Yes</td><td>Output token symbol or address</td></tr>
+<tr><td><code>token_in_chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID for input token</td></tr>
+<tr><td><code>token_out_chain_id</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Chain ID for output token (cross-chain if different)</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount in token base units</td></tr>
+<tr><td><code>trade_type</code></td><td><code>String</code></td><td>Yes</td><td><code>"exactIn"</code> or <code>"exactOut"</code></td></tr>
+<tr><td><code>swapper</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Wallet address (required for UniswapX routing)</td></tr>
+<tr><td><code>routing_preference</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td><code>"AUTO"</code>, <code>"CLASSIC"</code>, <code>"DUTCH_V2"</code>, <code>"DUTCH_V3"</code>, <code>"PRIORITY"</code>, <code>"FASTEST"</code>. Default: <code>"AUTO"</code></td></tr>
+<tr><td><code>protocols</code></td><td><code>Option&lt;Vec&lt;String&gt;&gt;</code></td><td>No</td><td>Restrict to specific protocols (e.g., <code>["V4"]</code>)</td></tr>
+<tr><td><code>slippage_tolerance</code></td><td><code>Option&lt;u32&gt;</code></td><td>No</td><td>Slippage in basis points (1-5000)</td></tr>
+<tr><td><code>auto_slippage</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Let API compute optimal slippage</td></tr>
+<tr><td><code>hooks_options</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td><code>"V4_HOOKS_INCLUSIVE"</code>, <code>"V4_HOOKS_ONLY"</code>, <code>"V4_NO_HOOKS"</code></td></tr>
+<tr><td><code>spread_optimization</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Spread execution to minimize price impact</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct QuoteResult {
+    pub quote_id: String,
+    pub token_in: String,
+    pub token_out: String,
+    pub token_in_chain_id: u64,
+    pub token_out_chain_id: u64,
+    pub amount_in: String,
+    pub amount_out: String,
+    pub price_impact: f64,
+    pub gas_estimate: String,
+    pub gas_estimate_usd: f64,
+    pub routing_type: String,
+    pub route: serde_json::Value,
+    pub permit_data: Option&lt;serde_json::Value&gt;,
+    pub valid_until: u64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Requesting quote", "Parsing route"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Gets a swap/bridge/wrap quote from the Uniswap Trading API. Routes across V2/V3/V4 and UniswapX. Prefer over manual routing – exclusive access to RFQ fillers and V4 hooks. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Use AUTO routing for most trades. Use DUTCH_V2 for gasless execution. Set hooks_options for hook-specific strategies.</li>
+<li><strong>cautious</strong>: Prefer DUTCH_V2 (gasless) to conserve ETH. Enable auto_slippage.</li>
+<li><strong>declining</strong>: Quote only settlement swaps. Use FASTEST routing.</li>
+<li><strong>terminal</strong>: Quote only final settlement. Use FASTEST with urgency “urgent”.</li>
+</ul>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ token_in, token_out, amount, routing_preference }</code> -&gt; <code>tool:end</code> -&gt; <code>{ quote_id, amount_out, routing_type, price_impact }</code></p>
+<hr>
+<h3 id="uniswap_api_check_approval"><a class="header" href="#uniswap_api_check_approval"><code>uniswap_api_check_approval</code></a></h3>
+<p>Checks if a wallet has required token spend approval for a swap or LP operation. Returns approval transaction calldata if needed. Consolidates the previously separate <code>check_swap_approval</code> and <code>check_lp_approval</code> into a single tool – the API endpoint is the same, the context (swap vs LP) determines which tokens to check.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address to check</td></tr>
+<tr><td><code>tokens</code></td><td><code>Vec&lt;String&gt;</code></td><td>Yes</td><td>Token addresses to check approval for</td></tr>
+<tr><td><code>amounts</code></td><td><code>Vec&lt;String&gt;</code></td><td>Yes</td><td>Amounts in token base units (parallel with tokens)</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>permit2_enabled</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Check Permit2 approval. Default: <code>true</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct ApprovalCheckResult {
+    pub all_approved: bool,
+    pub token_approvals: Vec&lt;TokenApproval&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TokenApproval {
+    pub token: String,
+    pub approved: bool,
+    pub approval_tx: Option&lt;TransactionCalldata&gt;,
+    pub permit_data: Option&lt;serde_json::Value&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Checking approvals"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Checks wallet token approvals for swap or LP operations. Returns approval tx calldata if needed. ALWAYS call before any write operation. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li>All phases: call before every swap or LP operation. Batch approval txs with EIP-5792 if smart wallet is available.</li>
+</ul>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ wallet_address, token_count }</code> -&gt; <code>tool:end</code> -&gt; <code>{ all_approved, needs_approval_count }</code></p>
+<hr>
+<h3 id="uniswap_api_create_swap_calldata"><a class="header" href="#uniswap_api_create_swap_calldata"><code>uniswap_api_create_swap_calldata</code></a></h3>
+<p>Converts a quote into executable swap transaction calldata. Call <code>uniswap_api_get_quote</code> first, then pass the quote object here.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>quote</code></td><td><code>serde_json::Value</code></td><td>Yes</td><td>Quote object from <code>uniswap_api_get_quote</code></td></tr>
+<tr><td><code>signature</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Permit2 signature</td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas info</td></tr>
+<tr><td><code>safety_mode</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Enable additional on-chain safety checks</td></tr>
+<tr><td><code>deadline</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Unix timestamp deadline</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct SwapCalldataResult {
+    pub calldata: String,
+    pub to: String,
+    pub value: String,
+    pub chain_id: u64,
+    pub gas_estimate: Option&lt;String&gt;,
+    pub simulation_result: Option&lt;serde_json::Value&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building calldata", "Simulating"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Converts a quote into executable swap transaction calldata. Call uniswap_api_get_quote first. Optional: simulate for gas accuracy and revert detection.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Always set simulate_transaction: true for trades &gt;$1000. Use safety_mode: true.</li>
+<li><strong>cautious</strong>: Always simulate. Always use safety_mode.</li>
+<li><strong>declining</strong>: Simulate and execute settlement trades only.</li>
+<li><strong>terminal</strong>: Simulate. Set urgency urgent.</li>
+</ul>
+<p><strong>Ground truth:</strong> <code>expected_outcome</code> = quote amount_out. <code>actual_outcome</code> = simulation output. <code>ground_truth_source</code> = <code>"api_simulation"</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ quote_id, simulate_transaction }</code> -&gt; <code>tool:end</code> -&gt; <code>{ calldata_length, gas_estimate }</code></p>
+<hr>
+<h3 id="uniswap_api_batch_swap"><a class="header" href="#uniswap_api_batch_swap"><code>uniswap_api_batch_swap</code></a></h3>
+<p>Generates EIP-5792 <code>wallet_sendCalls</code> payload for a swap. Requires a smart wallet supporting EIP-5792. Bundles approval + swap into a single atomic batch.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>quote</code></td><td><code>serde_json::Value</code></td><td>Yes</td><td>Quote object from <code>uniswap_api_get_quote</code></td></tr>
+<tr><td><code>permit_data</code></td><td><code>Option&lt;serde_json::Value&gt;</code></td><td>No</td><td>Permit data for approval batching</td></tr>
+<tr><td><code>deadline</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Unix timestamp deadline</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct BatchSwapResult {
+    pub calls: Vec&lt;TransactionCalldata&gt;,
+    pub chain_id: u64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building batch"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Generates EIP-5792 wallet_sendCalls payload for a swap. Requires smart wallet. Bundles approval + swap atomically.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Capability gate:</strong> <code>enable_smart_wallet = true</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ quote_id }</code> -&gt; <code>tool:end</code> -&gt; <code>{ call_count, chain_id }</code></p>
+<hr>
+<h3 id="uniswap_api_create_delegated_swap"><a class="header" href="#uniswap_api_create_delegated_swap"><code>uniswap_api_create_delegated_swap</code></a></h3>
+<p>Generates EIP-7702 calldata for smart contract wallet delegation execution.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>quote</code></td><td><code>serde_json::Value</code></td><td>Yes</td><td>Quote object from <code>uniswap_api_get_quote</code></td></tr>
+<tr><td><code>delegation_address</code></td><td><code>String</code></td><td>Yes</td><td>Address of the delegation target contract</td></tr>
+<tr><td><code>permit_data</code></td><td><code>Option&lt;serde_json::Value&gt;</code></td><td>No</td><td>Permit data</td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas info</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct DelegatedSwapResult {
+    pub calldata: String,
+    pub to: String,
+    pub value: String,
+    pub chain_id: u64,
+    pub gas_info: Option&lt;serde_json::Value&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Encoding delegation"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Generates EIP-7702 calldata for smart contract wallet delegation execution. Requires delegation setup.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Capability gate:</strong> <code>enable_smart_wallet = true</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ quote_id }</code> -&gt; <code>tool:end</code> -&gt; <code>{ calldata_length, chain_id }</code></p>
+<hr>
+<h3 id="uniswap_api_submit_order"><a class="header" href="#uniswap_api_submit_order"><code>uniswap_api_submit_order</code></a></h3>
+<p>Submits a signed UniswapX intent or limit order to the filler network. Gasless – filler pays gas. Consolidates the previously separate <code>submit_uniswapx_order</code> naming.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>signature</code></td><td><code>String</code></td><td>Yes</td><td>EIP-712 signature of the quote</td></tr>
+<tr><td><code>quote</code></td><td><code>serde_json::Value</code></td><td>Yes</td><td>The signed quote object</td></tr>
+<tr><td><code>routing</code></td><td><code>String</code></td><td>Yes</td><td><code>"DUTCH_V2"</code>, <code>"DUTCH_V3"</code>, <code>"PRIORITY"</code>, <code>"LIMIT_ORDER"</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct SubmitOrderResult {
+    pub order_id: String,
+    pub order_hash: String,
+    pub status: String,
+    pub created_at: u64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Validating signature", "Submitting to filler network"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Submits a signed UniswapX intent to the filler network. Gasless – filler pays gas. Requires EIP-712 signature. Supports Dutch v2/v3, Priority, and Limit orders.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Prefer for trades &gt;$1000 (MEV protection + gasless). DUTCH_V2 for market orders, LIMIT_ORDER for DCA.</li>
+<li><strong>cautious</strong>: Prefer for all trades (gasless conserves ETH). Monitor fill via <code>uniswap_api_get_orders</code>.</li>
+<li><strong>declining</strong>: Use for settlement orders (gasless is critical when ETH is scarce).</li>
+<li><strong>terminal</strong>: Use for final settlement orders only.</li>
+</ul>
+<p><strong>Ground truth:</strong> <code>expected_outcome</code> = order submitted with status “open”. <code>actual_outcome</code> = API response status. <code>ground_truth_source</code> = <code>"uniswapx_api"</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ routing, order_hash }</code> -&gt; <code>tool:end</code> -&gt; <code>{ order_id, status }</code></p>
+<hr>
+<h3 id="uniswap_api_get_orders"><a class="header" href="#uniswap_api_get_orders"><code>uniswap_api_get_orders</code></a></h3>
+<p>Retrieves and filters UniswapX orders. At least one filter parameter is required.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>swapper</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Filter by swapper address</td></tr>
+<tr><td><code>order_ids</code></td><td><code>Option&lt;Vec&lt;String&gt;&gt;</code></td><td>No</td><td>Filter by specific order IDs</td></tr>
+<tr><td><code>order_status</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td><code>"open"</code>, <code>"expired"</code>, <code>"error"</code>, <code>"cancelled"</code>, <code>"filled"</code>, <code>"insufficient-funds"</code></td></tr>
+<tr><td><code>order_type</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Filter by order type</td></tr>
+<tr><td><code>limit</code></td><td><code>Option&lt;u32&gt;</code></td><td>No</td><td>Max results. Default: <code>10</code></td></tr>
+<tr><td><code>cursor</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Pagination cursor</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct GetOrdersResult {
+    pub orders: Vec&lt;OrderEntry&gt;,
+    pub cursor: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct OrderEntry {
+    pub order_id: String,
+    pub order_hash: String,
+    pub status: String,
+    pub swapper: String,
+    pub input: TokenAmount,
+    pub output: TokenAmount,
+    pub deadline: u64,
+    pub created_at: u64,
+    pub filled_at: Option&lt;u64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Fetching orders"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Retrieves UniswapX orders. Filter by swapper, order ID, status. Use to monitor pending gasless orders. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ filter_count }</code> -&gt; <code>tool:end</code> -&gt; <code>{ order_count }</code></p>
+<hr>
+<h3 id="uniswap_api_check_swap_status"><a class="header" href="#uniswap_api_check_swap_status"><code>uniswap_api_check_swap_status</code></a></h3>
+<p>Gets the status of swap or bridge transactions by hash.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>transaction_hashes</code></td><td><code>Vec&lt;String&gt;</code></td><td>Yes</td><td>Transaction hashes to check</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID where transactions were submitted</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct SwapStatusResult {
+    pub swaps: Vec&lt;SwapStatus&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SwapStatus {
+    pub tx_hash: String,
+    pub status: String,   // "PENDING", "SUCCESS", "FAILED", "EXPIRED", "NOT_FOUND"
+    pub details: Option&lt;serde_json::Value&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Checking status"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Gets status of swap or bridge transactions by hash. Supports batch checking. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ hash_count }</code> -&gt; <code>tool:end</code> -&gt; <code>{ statuses }</code></p>
+<hr>
+<h3 id="uniswap_api_get_limit_order_quote"><a class="header" href="#uniswap_api_get_limit_order_quote"><code>uniswap_api_get_limit_order_quote</code></a></h3>
+<p>Gets a quote for a limit order at a specified price.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>swapper</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address placing the order</td></tr>
+<tr><td><code>token_in</code></td><td><code>String</code></td><td>Yes</td><td>Input token address</td></tr>
+<tr><td><code>token_out</code></td><td><code>String</code></td><td>Yes</td><td>Output token address</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Input amount in token base units</td></tr>
+<tr><td><code>limit_price</code></td><td><code>String</code></td><td>Yes</td><td>Minimum output amount (limit price as token ratio)</td></tr>
+<tr><td><code>trade_type</code></td><td><code>String</code></td><td>Yes</td><td><code>"exactIn"</code> or <code>"exactOut"</code></td></tr>
+<tr><td><code>order_deadline</code></td><td><code>u64</code></td><td>Yes</td><td>Unix timestamp when order expires</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct LimitOrderQuoteResult {
+    pub quote: serde_json::Value,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer2</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Requesting limit quote"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Gets a quote for a limit order at a specified price. Sign the quote, then submit via uniswap_api_submit_order with routing LIMIT_ORDER. No gas until fill.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Use for DCA strategies, grid trading, yield-seeking entries (e.g., limit buy 2% below market).</li>
+<li><strong>cautious</strong>: Conservative entries only. Set tight expiry.</li>
+<li><strong>declining</strong>: Not applicable for new orders.</li>
+<li><strong>terminal</strong>: Not applicable.</li>
+</ul>
+<p><strong>Capability gate:</strong> <code>enable_limit_orders = true</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ token_in, token_out, limit_price }</code> -&gt; <code>tool:end</code> -&gt; <code>{ quote_valid }</code></p>
+<hr>
+<h2 id="lp-tools-category-lp"><a class="header" href="#lp-tools-category-lp">LP tools (category: <code>lp</code>)</a></h2>
+<p>LP tools follow the <strong>API-first / SDK-fallback</strong> pattern. When the API key is set and <code>enable_lp</code> is true, these tools route through the Uniswap API. If the API returns a fallback-eligible error (429, 503, 504, network timeout), they fall back to the TypeScript sidecar running the Uniswap SDK.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn api_first_with_fallback&lt;T&gt;(
+    api: &amp;TradingApiClient,
+    sidecar: &amp;SidecarClient,
+    api_call: impl Future&lt;Output = Result&lt;T&gt;&gt;,
+    sdk_call: impl Future&lt;Output = Result&lt;T&gt;&gt;,
+) -&gt; Result&lt;T&gt; {
+    match api_call.await {
+        Ok(result) =&gt; Ok(result),
+        Err(e) if TradingApiClient::is_fallback_eligible_error(&amp;e) =&gt; sdk_call.await,
+        Err(e) =&gt; Err(e),
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h3 id="uniswap_api_create_lp_position"><a class="header" href="#uniswap_api_create_lp_position"><code>uniswap_api_create_lp_position</code></a></h3>
+<p>Creates a new LP position.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address creating the position</td></tr>
+<tr><td><code>token0</code></td><td><code>String</code></td><td>Yes</td><td>Token 0 address or symbol</td></tr>
+<tr><td><code>token1</code></td><td><code>String</code></td><td>Yes</td><td>Token 1 address or symbol</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>fee_tier</code></td><td><code>u32</code></td><td>Yes</td><td>Fee tier in bps (100, 500, 3000, 10000)</td></tr>
+<tr><td><code>amount0</code></td><td><code>String</code></td><td>Yes</td><td>Amount of token0 in base units</td></tr>
+<tr><td><code>amount1</code></td><td><code>String</code></td><td>Yes</td><td>Amount of token1 in base units</td></tr>
+<tr><td><code>tick_lower</code></td><td><code>Option&lt;i32&gt;</code></td><td>No</td><td>Lower tick (V3/V4 only)</td></tr>
+<tr><td><code>tick_upper</code></td><td><code>Option&lt;i32&gt;</code></td><td>No</td><td>Upper tick (V3/V4 only)</td></tr>
+<tr><td><code>protocol</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td><code>"V2"</code>, <code>"V3"</code>, <code>"V4"</code>. Default: <code>"V4"</code></td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas estimate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct CreateLpResult {
+    pub txs: Vec&lt;TransactionCalldata&gt;,
+    pub position_id: Option&lt;String&gt;,
+    pub pool_address: String,
+    pub gas_estimate: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Checking approvals", "Building position calldata", "Simulating"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Creates a new LP position via the Uniswap API. API-first with SDK fallback. Supports V2, V3, V4. Default: V4.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Create positions in V4 pools for best efficiency. Set tick ranges based on strategy.</li>
+<li><strong>cautious</strong>: No new LP positions.</li>
+<li><strong>declining</strong>: Blocked.</li>
+<li><strong>terminal</strong>: Blocked.</li>
+</ul>
+<p><strong>Ground truth:</strong> <code>expected_outcome</code> = position created at specified tick range. <code>actual_outcome</code> = simulation result. <code>ground_truth_source</code> = <code>"api_simulation"</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ token0, token1, protocol, fee_tier }</code> -&gt; <code>tool:end</code> -&gt; <code>{ position_id, pool_address }</code></p>
+<hr>
+<h3 id="uniswap_api_increase_lp_position"><a class="header" href="#uniswap_api_increase_lp_position"><code>uniswap_api_increase_lp_position</code></a></h3>
+<p>Adds liquidity to an existing LP position.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address</td></tr>
+<tr><td><code>position_id</code></td><td><code>String</code></td><td>Yes</td><td>Position token ID or NFT ID</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>amount0</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Additional amount of token0</td></tr>
+<tr><td><code>amount1</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Additional amount of token1</td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas estimate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct IncreaseLpResult {
+    pub txs: Vec&lt;TransactionCalldata&gt;,
+    pub new_liquidity: String,
+    pub gas_estimate: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer2</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building increase calldata"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Adds liquidity to an existing LP position. API-first with SDK fallback. Phase-gated: blocked in declining/terminal.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ position_id }</code> -&gt; <code>tool:end</code> -&gt; <code>{ new_liquidity }</code></p>
+<hr>
+<h3 id="uniswap_api_decrease_lp_position"><a class="header" href="#uniswap_api_decrease_lp_position"><code>uniswap_api_decrease_lp_position</code></a></h3>
+<p>Removes liquidity from an existing LP position.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address</td></tr>
+<tr><td><code>position_id</code></td><td><code>String</code></td><td>Yes</td><td>Position token ID or NFT ID</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>liquidity_pct</code></td><td><code>Option&lt;u32&gt;</code></td><td>No</td><td>Percent of liquidity to remove (1-100). Default: <code>100</code></td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas estimate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct DecreaseLpResult {
+    pub txs: Vec&lt;TransactionCalldata&gt;,
+    pub amount0_out: String,
+    pub amount1_out: String,
+    pub gas_estimate: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer2</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building decrease calldata"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Removes liquidity from an LP position. Default: remove 100%. Allowed at any phase.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Remove to rebalance or capture fees.</li>
+<li><strong>cautious</strong>: Remove from out-of-range positions.</li>
+<li><strong>declining</strong>: Remove all liquidity. Mandatory.</li>
+<li><strong>terminal</strong>: Remove any remaining.</li>
+</ul>
+<p><strong>Ground truth:</strong> <code>expected_outcome</code> = liquidity_pct% removed. <code>actual_outcome</code> = amounts returned. <code>ground_truth_source</code> = <code>"api_simulation"</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ position_id, liquidity_pct }</code> -&gt; <code>tool:end</code> -&gt; <code>{ amount0_out, amount1_out }</code></p>
+<hr>
+<h3 id="uniswap_api_claim_lp_fees"><a class="header" href="#uniswap_api_claim_lp_fees"><code>uniswap_api_claim_lp_fees</code></a></h3>
+<p>Claims accrued trading fees from an LP position.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address</td></tr>
+<tr><td><code>position_id</code></td><td><code>String</code></td><td>Yes</td><td>Position token ID or NFT ID</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas estimate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct ClaimFeesResult {
+    pub txs: Vec&lt;TransactionCalldata&gt;,
+    pub fee0_amount: String,
+    pub fee1_amount: String,
+    pub gas_estimate: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building claim calldata"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Claims accrued trading fees from an LP position. API-first with SDK fallback. Allowed at any phase.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ position_id }</code> -&gt; <code>tool:end</code> -&gt; <code>{ fee0_amount, fee1_amount }</code></p>
+<hr>
+<h3 id="uniswap_api_migrate_liquidity"><a class="header" href="#uniswap_api_migrate_liquidity"><code>uniswap_api_migrate_liquidity</code></a></h3>
+<p>Generates calldata to migrate an LP position between protocol versions. Supports V2-&gt;V3, V3-&gt;V4. The migration is atomic – single transaction, no position downtime.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address</td></tr>
+<tr><td><code>position_id</code></td><td><code>String</code></td><td>Yes</td><td>Current position ID</td></tr>
+<tr><td><code>from_protocol</code></td><td><code>String</code></td><td>Yes</td><td><code>"V2"</code> or <code>"V3"</code></td></tr>
+<tr><td><code>to_protocol</code></td><td><code>String</code></td><td>Yes</td><td><code>"V3"</code> or <code>"V4"</code></td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas estimate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct MigrateLiquidityResult {
+    pub txs: Vec&lt;TransactionCalldata&gt;,
+    pub new_position_id: Option&lt;String&gt;,
+    pub gas_estimate: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Slow</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Checking migration path", "Building exit calldata", "Building enter calldata", "Simulating atomic migration"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Atomically migrates an LP position between protocol versions (V2-&gt;V3, V3-&gt;V4). Single transaction, no position downtime. Requires API.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Migrate V3-&gt;V4 when V4 pool shows better fee yield. Use uniswap_api_get_lp_pool_info to compare.</li>
+<li><strong>cautious</strong>: Only migrate if V4 fee yield exceeds V3 by &gt;20%.</li>
+<li><strong>declining</strong>: Do not migrate. Focus on removing liquidity.</li>
+<li><strong>terminal</strong>: Do not migrate.</li>
+</ul>
+<p><strong>Ground truth:</strong> <code>expected_outcome</code> = position migrated to target protocol. <code>actual_outcome</code> = new position ID. <code>ground_truth_source</code> = <code>"api_simulation"</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ position_id, from_protocol, to_protocol }</code> -&gt; <code>tool:end</code> -&gt; <code>{ new_position_id }</code></p>
+<hr>
+<h3 id="uniswap_api_claim_rewards"><a class="header" href="#uniswap_api_claim_rewards"><code>uniswap_api_claim_rewards</code></a></h3>
+<p>Claims protocol incentive rewards for an LP position.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address</td></tr>
+<tr><td><code>position_id</code></td><td><code>String</code></td><td>Yes</td><td>Position ID</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>simulate_transaction</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Simulate and return gas estimate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct ClaimRewardsResult {
+    pub txs: Vec&lt;TransactionCalldata&gt;,
+    pub reward_amounts: Vec&lt;TokenAmount&gt;,
+    pub gas_estimate: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Medium</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building claim calldata"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Claims protocol incentive rewards for an LP position. Allowed at any phase.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ position_id }</code> -&gt; <code>tool:end</code> -&gt; <code>{ reward_amounts }</code></p>
+<hr>
+<h3 id="uniswap_api_get_lp_pool_info"><a class="header" href="#uniswap_api_get_lp_pool_info"><code>uniswap_api_get_lp_pool_info</code></a></h3>
+<p>Returns detailed pool information. More complete than <code>uniswap_get_pool_info</code>: includes fee income rates and reward program info.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>pool_address</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>Pool contract address</td></tr>
+<tr><td><code>pair_address</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>V2 pair address</td></tr>
+<tr><td><code>pool_id</code></td><td><code>Option&lt;String&gt;</code></td><td>No</td><td>V4 pool ID</td></tr>
+</tbody>
+</table>
+</div>
+<p>At least one of <code>pool_address</code>, <code>pair_address</code>, or <code>pool_id</code> is required.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct LpPoolInfoResult {
+    pub pool_id: String,
+    pub token0: TokenMeta,
+    pub token1: TokenMeta,
+    pub fee_tier: u32,
+    pub protocol: String,
+    pub tvl: f64,
+    pub volume_24h: f64,
+    pub fees_24h: f64,
+    pub current_tick: i32,
+    pub sqrt_price_x96: String,
+    pub liquidity: String,
+    pub reward_programs: Option&lt;Vec&lt;serde_json::Value&gt;&gt;,
+    pub hooks: Option&lt;Vec&lt;String&gt;&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Fetching pool info"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Returns detailed pool info: TVL, volume, fee rates, current tick, reward programs, hooks. More complete than uniswap_get_pool_info. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ pool_address }</code> -&gt; <code>tool:end</code> -&gt; <code>{ tvl, fees_24h }</code></p>
+<hr>
+<h2 id="reference-tools-category-data"><a class="header" href="#reference-tools-category-data">Reference tools (category: <code>data</code>)</a></h2>
+<h3 id="uniswap_api_get_bridgeable_tokens"><a class="header" href="#uniswap_api_get_bridgeable_tokens"><code>uniswap_api_get_bridgeable_tokens</code></a></h3>
+<p>Returns all destination chains where a given token can be bridged, with bridge protocol for each route.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>token_in</code></td><td><code>String</code></td><td>Yes</td><td>Token address on source chain</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Source chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct BridgeableTokensResult {
+    pub destinations: Vec&lt;BridgeDestination&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BridgeDestination {
+    pub chain_id: u64,
+    pub bridge_token: String,
+    pub bridge_token_address: String,
+    pub bridge_protocol: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Querying bridge routes"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Returns all destination chains where a token can be bridged, with bridge protocol for each route. Use for cross-chain arbitrage discovery. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ token_in, chain_id }</code> -&gt; <code>tool:end</code> -&gt; <code>{ destination_count }</code></p>
+<hr>
+<h2 id="wallet-utility-tools-category-wallet"><a class="header" href="#wallet-utility-tools-category-wallet">Wallet utility tools (category: <code>wallet</code>)</a></h2>
+<h3 id="uniswap_api_create_token_transfer"><a class="header" href="#uniswap_api_create_token_transfer"><code>uniswap_api_create_token_transfer</code></a></h3>
+<p>Generates calldata for an ERC-20 token transfer with server-side gas estimation.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>sender</code></td><td><code>String</code></td><td>Yes</td><td>Sending wallet address</td></tr>
+<tr><td><code>recipient</code></td><td><code>String</code></td><td>Yes</td><td>Recipient address</td></tr>
+<tr><td><code>token</code></td><td><code>String</code></td><td>Yes</td><td>ERC-20 token address</td></tr>
+<tr><td><code>amount</code></td><td><code>String</code></td><td>Yes</td><td>Amount in token base units</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct TokenTransferResult {
+    pub calldata: String,
+    pub to: String,
+    pub value: String,
+    pub chain_id: u64,
+    pub gas_estimate: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Write</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer3</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Building transfer calldata"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Executing</code></td></tr>
+<tr><td>prompt_snippet</td><td>Generates ERC-20 transfer calldata with server-side gas estimation. Does not execute – returns calldata for commit_action.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>promptGuidelines:</strong></p>
+<ul>
+<li><strong>thriving</strong>: Transfer as needed for strategy execution.</li>
+<li><strong>cautious</strong>: Transfer only for operating needs. Smaller amounts.</li>
+<li><strong>declining</strong>: Transfer only to owner wallet for settlement.</li>
+<li><strong>terminal</strong>: Transfer only for Death Protocol asset sweep.</li>
+</ul>
+<p><strong>Ground truth:</strong> <code>expected_outcome</code> = transfer of amount to recipient. <code>actual_outcome</code> = calldata generated. <code>ground_truth_source</code> = <code>"api_gas_simulation"</code>.</p>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ token, amount, recipient }</code> -&gt; <code>tool:end</code> -&gt; <code>{ calldata_length, gas_estimate }</code></p>
+<hr>
+<h3 id="uniswap_api_check_wallet_delegation"><a class="header" href="#uniswap_api_check_wallet_delegation"><code>uniswap_api_check_wallet_delegation</code></a></h3>
+<p>Gets current EIP-7702 delegation status for a wallet across multiple chains.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Smart wallet address to check</td></tr>
+<tr><td><code>chain_ids</code></td><td><code>Vec&lt;u64&gt;</code></td><td>Yes</td><td>Chain IDs to check</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct DelegationStatusResult {
+    pub delegations: Vec&lt;DelegationEntry&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct DelegationEntry {
+    pub chain_id: u64,
+    pub delegated: bool,
+    pub delegation_address: Option&lt;String&gt;,
+    pub message: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ToolDef:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>capability</td><td><code>Read</code></td></tr>
+<tr><td>risk_tier</td><td><code>Layer1</code></td></tr>
+<tr><td>tick_budget</td><td><code>Fast</code></td></tr>
+<tr><td>progress_steps</td><td><code>["Checking delegations"]</code></td></tr>
+<tr><td>sprite_trigger</td><td><code>Thinking</code></td></tr>
+<tr><td>prompt_snippet</td><td>Gets EIP-7702 delegation status for a wallet across multiple chains. Returns re-delegation info if any chain is stale. Read-only.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Event Fabric events:</strong> <code>tool:start</code> -&gt; <code>{ wallet_address, chain_count }</code> -&gt; <code>tool:end</code> -&gt; <code>{ delegations }</code></p>
+<hr>
+<h2 id="shared-types"><a class="header" href="#shared-types">Shared types</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize, Deserialize)]
+pub struct TransactionCalldata {
+    pub to: String,
+    pub data: String,
+    pub value: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenAmount {
+    pub token: String,
+    pub amount: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenMeta {
+    pub address: String,
+    pub symbol: String,
+    pub decimals: u8,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="custody-implications-api-write-tools"><a class="header" href="#custody-implications-api-write-tools">Custody implications (API write tools)</a></h2>
+<p>Write tools that submit orders or execute transactions via the Uniswap Trading API:</p>
+<ul>
+<li><strong>Delegation</strong>: Session key signs Permit2 messages or order structs. The API handles routing and gas. CaveatEnforcer must whitelist the Permit2 contract and Universal Router. Spending limits apply to order amounts.</li>
+<li><strong>Embedded</strong>: Privy server wallet signs. PolicyCage validates order parameters and spending limits.</li>
+<li><strong>Local Key</strong>: Local keypair signs. On-chain delegation bounds constrain Permit2 allowances and router targets.</li>
+</ul>
+<p>Read-only API tools (quotes, order status, pool queries) require no signing — only the <code>BARDO_UNISWAP_API_KEY</code> environment variable.</p>
+<hr>
+<h2 id="capability-gates"><a class="header" href="#capability-gates">Capability gates</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Capability</th><th>Tools gated</th><th>Config flag</th></tr>
+</thead>
+<tbody>
+<tr><td><code>uniswap_api</code></td><td>All 21 tools in this file</td><td><code>api_key</code> present</td></tr>
+<tr><td><code>smart_wallet</code></td><td><code>uniswap_api_batch_swap</code>, <code>uniswap_api_create_delegated_swap</code></td><td><code>enable_smart_wallet = true</code></td></tr>
+<tr><td><code>wallet</code></td><td><code>uniswap_api_submit_order</code>, <code>uniswap_api_migrate_liquidity</code></td><td>Wallet configured</td></tr>
+<tr><td><code>limit_orders</code></td><td><code>uniswap_api_get_limit_order_quote</code></td><td><code>enable_limit_orders = true</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="tool-summary"><a class="header" href="#tool-summary">Tool summary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tool</th><th>Category</th><th>Capability</th><th>Risk</th><th>Budget</th></tr>
+</thead>
+<tbody>
+<tr><td><code>uniswap_api_get_quote</code></td><td>trading</td><td>Read</td><td>Layer 1</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_check_approval</code></td><td>trading</td><td>Read</td><td>Layer 1</td><td>Fast</td></tr>
+<tr><td><code>uniswap_api_create_swap_calldata</code></td><td>trading</td><td>Write</td><td>Layer 3</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_batch_swap</code></td><td>trading</td><td>Write</td><td>Layer 3</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_create_delegated_swap</code></td><td>trading</td><td>Write</td><td>Layer 3</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_submit_order</code></td><td>trading</td><td>Write</td><td>Layer 3</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_get_orders</code></td><td>trading</td><td>Read</td><td>Layer 1</td><td>Fast</td></tr>
+<tr><td><code>uniswap_api_check_swap_status</code></td><td>trading</td><td>Read</td><td>Layer 1</td><td>Fast</td></tr>
+<tr><td><code>uniswap_api_get_limit_order_quote</code></td><td>trading</td><td>Read</td><td>Layer 2</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_create_lp_position</code></td><td>lp</td><td>Write</td><td>Layer 3</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_increase_lp_position</code></td><td>lp</td><td>Write</td><td>Layer 2</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_decrease_lp_position</code></td><td>lp</td><td>Write</td><td>Layer 2</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_claim_lp_fees</code></td><td>lp</td><td>Write</td><td>Layer 1</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_migrate_liquidity</code></td><td>lp</td><td>Write</td><td>Layer 3</td><td>Slow</td></tr>
+<tr><td><code>uniswap_api_claim_rewards</code></td><td>lp</td><td>Write</td><td>Layer 1</td><td>Medium</td></tr>
+<tr><td><code>uniswap_api_get_lp_pool_info</code></td><td>lp</td><td>Read</td><td>Layer 1</td><td>Fast</td></tr>
+<tr><td><code>uniswap_api_get_bridgeable_tokens</code></td><td>data</td><td>Read</td><td>Layer 1</td><td>Fast</td></tr>
+<tr><td><code>uniswap_api_create_token_transfer</code></td><td>wallet</td><td>Write</td><td>Layer 3</td><td>Fast</td></tr>
+<tr><td><code>uniswap_api_check_wallet_delegation</code></td><td>wallet</td><td>Read</td><td>Layer 1</td><td>Fast</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Consolidation notes (24 -&gt; 21):</strong></p>
+<ul>
+<li><code>uniswap_api_check_swap_approval</code> + <code>uniswap_api_check_lp_approval</code> merged into <code>uniswap_api_check_approval</code>. Both hit the same API endpoint; the only difference was which tokens to check. Now accepts a <code>tokens</code> array.</li>
+<li><code>uniswap_api_submit_uniswapx_order</code> renamed to <code>uniswap_api_submit_order</code>. Cleaner name, same semantics.</li>
+<li><code>uniswap_api_get_uniswapx_orders</code> renamed to <code>uniswap_api_get_orders</code>. Cleaner name, same semantics.</li>
+<li><code>uniswap_api_encode_eip7702</code> removed. It was a thin wrapper around transaction encoding that <code>uniswap_api_create_delegated_swap</code> already handles internally. Exposing raw EIP-7702 encoding as a separate tool added no value – the Golem never needs to encode arbitrary transaction batches outside the swap flow.</li>
+</ul>
+<p><strong>Relationship to core trading/LP tools:</strong> The <code>uniswap_</code> prefix tools in <a href="02-tools-onchain-data.html">02-tools-onchain-data.md</a> and <a href="04-tools-trading.html">04-tools-trading.md</a> read on-chain state directly via Alloy. The <code>uniswap_api_</code> prefix tools in this file call the Uniswap Trading API via <code>reqwest</code>. Both coexist. The API tools provide routing, gasless execution, and cross-chain orchestration that on-chain reads cannot. The on-chain tools provide raw data access that doesn’t require an API key.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/16-tools-testnet.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/18-tools-metamask.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/16-tools-testnet.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/18-tools-metamask.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

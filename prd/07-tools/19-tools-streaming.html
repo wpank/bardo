@@ -1,0 +1,937 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Streaming - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/19-tools-streaming.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--streaming-tools-pi-event-subscriptions-spec"><a class="header" href="#bardo-tools--streaming-tools-pi-event-subscriptions-spec">Bardo Tools – Streaming tools (Pi event subscriptions) [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles), <a href="21-profiles.html">21-profiles.md</a> (profile-based tool loading system with 12+ profiles)</p>
+<p>Pi replaces SSE/WebSocket transports with native event subscriptions via <code>session.on()</code>. Tools register event handlers that fire on chain events, price updates, and position changes. Category: <code>streaming</code>. 6 tools.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies 6 streaming tools in <code>bardo-tools</code> for real-time event subscriptions. These tools register handlers on the Event Fabric’s broadcast channel for chain events, price updates, and position changes. No WebSocket or SSE connections – events flow through Bardo’s native <code>tokio::broadcast</code> system. You should be familiar with async event-driven patterns and EVM log subscriptions. Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="architecture"><a class="header" href="#architecture">Architecture</a></h2>
+<p>Streaming tools translate on-chain and off-chain real-time data into typed GolemEvent variants. No WebSocket connections. No SSE streams. The agent calls a tool that registers a handler on the Event Fabric’s <code>tokio::broadcast</code> channel. Events fire asynchronously into the ring buffer. Cleanup happens automatically via <code>on_unmount</code> when the session ends, or explicitly via <code>stream_unsubscribe</code>.</p>
+<p>Each streaming tool:</p>
+<ol>
+<li>Spawns a <code>tokio::task</code> that produces events (log subscription or polling loop)</li>
+<li>Emits typed <code>GolemEvent</code> variants through the Event Fabric’s broadcast channel</li>
+<li>Creates <code>session_state</code> entries tracking the active subscription</li>
+<li>Defines <code>on_unmount</code> cleanup that aborts the task and removes the subscription</li>
+</ol>
+<p>All streaming tools are in category <code>streaming</code> and included in profiles: <code>data</code>, <code>trader</code>, <code>lp</code>, <code>golem</code>, <code>full</code>, <code>dev</code>.</p>
+<h3 id="event-fabric-integration"><a class="header" href="#event-fabric-integration">Event Fabric integration</a></h3>
+<p>The Event Fabric (see <code>14-events.md</code>) is a <code>tokio::broadcast</code> channel with a ring buffer of 10,000 entries for reconnection replay. Every event carries a monotonic <code>sequence: u64</code> – gaps indicate the subscriber lagged behind channel capacity. The surface can request replay from the ring buffer using <code>resume_from</code>.</p>
+<p>Streaming tools emit two kinds of events:</p>
+<ul>
+<li><strong>Tool lifecycle events</strong> (<code>GolemEvent::ToolExecutionStart</code>, <code>GolemEvent::ToolExecutionEnd</code>) – standard pattern, emitted once when the subscription is created or destroyed.</li>
+<li><strong>Stream data events</strong> – continuous, emitted every time new data arrives. These flow through the broadcast channel to the TUI panes and to the agent’s event queue.</li>
+</ul>
+<p>Serialization cost is paid only when a subscriber exists. The <code>emit()</code> path checks subscriber count first; zero subscribers means zero work beyond the function call overhead.</p>
+<h3 id="golemevent-mapping"><a class="header" href="#golemevent-mapping">GolemEvent mapping</a></h3>
+<p>Each streaming tool produces a specific GolemEvent variant:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tool</th><th>GolemEvent variant</th><th>TUI pane</th><th>Rendering</th></tr>
+</thead>
+<tbody>
+<tr><td><code>stream_pool_events</code></td><td><code>GolemEvent::PoolEventReceived</code></td><td>Pool Explorer</td><td>Appends swap/mint/burn row to live event log</td></tr>
+<tr><td><code>stream_pool_state</code></td><td><code>GolemEvent::PoolStateSnapshot</code></td><td>Pool Explorer</td><td>Updates price ticker, liquidity gauge, fee growth counters</td></tr>
+<tr><td><code>stream_position_alerts</code></td><td><code>GolemEvent::PositionAlert</code></td><td>Position Monitor</td><td>Flashes alert row, updates out-of-range indicator</td></tr>
+<tr><td><code>stream_price_feed</code></td><td><code>GolemEvent::PriceUpdate</code></td><td>Price Dashboard</td><td>Updates price chart data point, recalculates portfolio value</td></tr>
+<tr><td><code>stream_tokenjar</code></td><td><code>GolemEvent::TokenJarUpdate</code></td><td>Fee Dashboard</td><td>Updates jar balance bars, burn countdown</td></tr>
+<tr><td><code>stream_trades</code></td><td><code>GolemEvent::SwapExecuted</code></td><td>Trade History</td><td>Appends trade confirmation row with P&amp;L</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="sprite-animation-triggers"><a class="header" href="#sprite-animation-triggers">Sprite animation triggers</a></h3>
+<p>Stream data events trigger sprite state transitions on the TUI Golem character:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event condition</th><th>Sprite trigger</th><th>Duration</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pool:event</code> with type <code>swap</code></td><td><code>SpriteTrigger::Thinking</code></td><td>500ms</td></tr>
+<tr><td><code>position:alert</code> with type <code>out_of_range</code></td><td><code>SpriteTrigger::Failure</code></td><td>2000ms</td></tr>
+<tr><td><code>position:alert</code> with type <code>back_in_range</code></td><td><code>SpriteTrigger::Success</code></td><td>1000ms</td></tr>
+<tr><td><code>trade:executed</code> with positive P&amp;L</td><td><code>SpriteTrigger::Success</code></td><td>1500ms</td></tr>
+<tr><td><code>trade:executed</code> with negative P&amp;L</td><td><code>SpriteTrigger::Failure</code></td><td>1500ms</td></tr>
+<tr><td><code>price:update</code> with &gt;5% move</td><td><code>SpriteTrigger::Executing</code></td><td>1000ms</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="subscription-lifecycle"><a class="header" href="#subscription-lifecycle">Subscription lifecycle</a></h2>
+<p>Each subscription spawns a <code>tokio::task</code> that either calls <code>provider.subscribe_logs()</code> (for event-driven tools) or runs a <code>tokio::time::interval</code> loop (for polling tools). The task emits GolemEvent variants to the Event Fabric’s broadcast channel via <code>event_fabric.emit(event)</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Shared subscription state tracked in session state.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SubscriptionEntry {
+    pub subscription_id: String,
+    pub tool_name: &amp;'static str,
+    pub event_variant: &amp;'static str,
+    pub params_hash: String,
+    pub started_at: u64,
+    pub last_event_at: Option&lt;u64&gt;,
+    pub event_count: u64,
+}
+
+/// Registry of active subscriptions within a session.
+pub struct SubscriptionRegistry {
+    entries: HashMap&lt;String, SubscriptionEntry&gt;,
+    handles: HashMap&lt;String, tokio::task::JoinHandle&lt;()&gt;&gt;,
+    event_tx: tokio::sync::broadcast::Sender&lt;GolemEvent&gt;,
+}
+
+impl SubscriptionRegistry {
+    pub fn new(event_tx: tokio::sync::broadcast::Sender&lt;GolemEvent&gt;) -&gt; Self {
+        Self {
+            entries: HashMap::new(),
+            handles: HashMap::new(),
+            event_tx,
+        }
+    }
+
+    pub fn register(&amp;mut self, entry: SubscriptionEntry, handle: JoinHandle&lt;()&gt;) -&gt; String {
+        let id = entry.subscription_id.clone();
+        self.entries.insert(id.clone(), entry);
+        self.handles.insert(id.clone(), handle);
+        id
+    }
+
+    pub fn unsubscribe(&amp;mut self, id: &amp;str) -&gt; bool {
+        if let Some(handle) = self.handles.remove(id) {
+            handle.abort();
+            self.entries.remove(id);
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn unsubscribe_all(&amp;mut self) -&gt; usize {
+        let count = self.handles.len();
+        for (_, handle) in self.handles.drain() {
+            handle.abort();
+        }
+        self.entries.clear();
+        count
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>on_unmount</code> hook calls <code>registry.unsubscribe_all()</code> when the session ends. All spawned tasks are aborted, and the broadcast channel naturally cleans up when all senders are dropped.</p>
+<hr>
+<h2 id="tool-specifications"><a class="header" href="#tool-specifications">Tool specifications</a></h2>
+<h3 id="stream_pool_events"><a class="header" href="#stream_pool_events"><code>stream_pool_events</code></a></h3>
+<p>Subscribes to on-chain events for a specific pool: swaps, mints, burns, fee parameter changes. Uses Alloy’s <code>subscribe_logs</code> with a filter matching the pool address and relevant event signatures.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pool_address</code></td><td><code>String</code></td><td>Yes</td><td>Pool contract address</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>events</code></td><td><code>Option&lt;Vec&lt;String&gt;&gt;</code></td><td>No</td><td>Filter to specific events: <code>["swap", "mint", "burn"]</code>. Default: all</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamPoolEventsParams {
+    pub pool_address: String,
+    pub chain_id: u64,
+    #[serde(default)]
+    pub events: Option&lt;Vec&lt;String&gt;&gt;,
+}
+
+/// Emitted on Pi event bus as `pool:event`.
+#[derive(Debug, Serialize)]
+pub struct PoolEvent {
+    pub pool_address: String,
+    pub chain_id: u64,
+    pub event_type: String,  // "swap", "mint", "burn"
+    pub data: serde_json::Value,
+    pub block_number: u64,
+    pub tx_hash: String,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamPoolEventsResult {
+    pub subscription_id: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The handler spawns a <code>tokio::task</code> that calls <code>provider.subscribe_logs(filter)</code> and forwards decoded events to the Pi event bus via <code>session.emit("pool:event", event)</code>. The task handle is stored in the <code>SubscriptionRegistry</code> for cleanup.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_pool_events",
+    description: concat!(
+        "Subscribes to real-time pool events (swaps, mints, burns) via Pi session.on('pool:event'). ",
+        "Events fire asynchronously. Call once to set up, events arrive continuously. ",
+        "Unsubscribe via stream_unsubscribe or automatic session cleanup.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Setting up log subscription"],
+    sprite_trigger: SpriteTrigger::Thinking,
+    prompt_snippet: "Subscribes to real-time pool events (swaps, mints, burns) via Pi session.on('pool:event'). Call once to set up, events arrive continuously.",
+    prompt_guidelines: &amp;[
+        "thriving: Subscribe to pools relevant to active strategies. Monitor swap volume and liquidity changes.",
+        "cautious: Keep existing subscriptions. Do not add new ones unless replacing a closed position's pool.",
+        "declining: Reduce to pools with active positions only. Unsubscribe from watch-only pools.",
+        "terminal: Unsubscribe all via stream_unsubscribe.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ pool_address, chain_id }</code></td><td>Once</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ subscription_id }</code></td><td>Once</td></tr>
+<tr><td><code>pool:event</code></td><td><code>PoolEvent</code> struct</td><td>Continuous</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (validate pool exists on chain). <code>tool_result</code> (register subscription in session_state).</p>
+<p><strong>TUI mapping:</strong> Pool Explorer – appends each event as a row in the live event log. Swap events show token amounts and price impact. Mint/burn events show liquidity delta.</p>
+<hr>
+<h3 id="stream_pool_state"><a class="header" href="#stream_pool_state"><code>stream_pool_state</code></a></h3>
+<p>Subscribes to pool state snapshots at a configurable interval. Emits current tick, sqrtPriceX96, liquidity, and fee growth. Unlike <code>stream_pool_events</code> (which uses log subscriptions), this tool polls via <code>eth_call</code> on an interval because pool state is not emitted as events – it must be read from contract storage.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pool_address</code></td><td><code>String</code></td><td>Yes</td><td>Pool contract address</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>interval_ms</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Polling interval in ms. Default: <code>15000</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamPoolStateParams {
+    pub pool_address: String,
+    pub chain_id: u64,
+    #[serde(default = "default_15s")]
+    pub interval_ms: u64,
+}
+
+/// Emitted on Pi event bus as `pool:state`.
+#[derive(Debug, Serialize)]
+pub struct PoolStateSnapshot {
+    pub pool_address: String,
+    pub chain_id: u64,
+    pub tick: i32,
+    pub sqrt_price_x96: String,
+    pub liquidity: String,
+    pub fee_growth_0: String,
+    pub fee_growth_1: String,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamPoolStateResult {
+    pub subscription_id: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The handler spawns a <code>tokio::task</code> with a <code>tokio::time::interval</code> that reads <code>slot0()</code> and <code>liquidity()</code> via Alloy <code>sol!</code> bindings, then emits the snapshot to the Pi event bus.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_pool_state",
+    description: concat!(
+        "Subscribes to periodic pool state snapshots (tick, price, liquidity) via Pi session.on('pool:state'). ",
+        "Configurable interval, default 15s. Polls via eth_call, not log subscription.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Setting up state poller"],
+    sprite_trigger: SpriteTrigger::Thinking,
+    prompt_snippet: "Subscribes to periodic pool state snapshots (tick, price, liquidity) via Pi session.on('pool:state'). Configurable interval, default 15s.",
+    prompt_guidelines: &amp;[
+        "thriving: Subscribe to pools backing active positions. Use default 15s interval.",
+        "cautious: Increase interval to 30s to reduce RPC load. Keep only active-position pools.",
+        "declining: Increase interval to 60s. Monitor only pools with positions pending exit.",
+        "terminal: Unsubscribe all.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ pool_address, interval_ms }</code></td><td>Once</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ subscription_id }</code></td><td>Once</td></tr>
+<tr><td><code>pool:state</code></td><td><code>PoolStateSnapshot</code> struct</td><td>Every interval_ms</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (validate pool, validate interval &gt;= 5000ms). <code>tool_result</code> (register in session_state).</p>
+<p><strong>TUI mapping:</strong> Pool Explorer – updates the price ticker in the header, the liquidity depth gauge, and fee growth counters. Each snapshot replaces the previous values (no accumulation).</p>
+<hr>
+<h3 id="stream_position_alerts"><a class="header" href="#stream_position_alerts"><code>stream_position_alerts</code></a></h3>
+<p>Subscribes to alerts for an LP position: out-of-range, fee accumulation thresholds, back-in-range. Polls position state at a configurable interval and checks conditions.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>position_id</code></td><td><code>String</code></td><td>Yes</td><td>Position token ID or NFT ID</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>out_of_range_alert</code></td><td><code>Option&lt;bool&gt;</code></td><td>No</td><td>Alert when position goes out of range. Default: <code>true</code></td></tr>
+<tr><td><code>fee_threshold_usd</code></td><td><code>Option&lt;f64&gt;</code></td><td>No</td><td>Alert when uncollected fees exceed this USD value</td></tr>
+<tr><td><code>check_interval_ms</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Check interval in ms. Default: <code>30000</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamPositionAlertsParams {
+    pub position_id: String,
+    pub chain_id: u64,
+    #[serde(default = "default_true")]
+    pub out_of_range_alert: bool,
+    pub fee_threshold_usd: Option&lt;f64&gt;,
+    #[serde(default = "default_30s")]
+    pub check_interval_ms: u64,
+}
+
+/// Emitted on Pi event bus as `position:alert`.
+#[derive(Debug, Serialize)]
+pub struct PositionAlert {
+    pub position_id: String,
+    pub chain_id: u64,
+    pub alert_type: String,  // "out_of_range", "fee_threshold", "back_in_range"
+    pub data: serde_json::Value,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamPositionAlertsResult {
+    pub subscription_id: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The handler reads the position’s tick range and the pool’s current tick each interval. When the current tick exits or re-enters the position’s range, it emits the appropriate alert. Fee threshold alerts compare accumulated fees (from position state) against the configured USD value.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_position_alerts",
+    description: concat!(
+        "Subscribes to LP position alerts (out-of-range, fee threshold, back-in-range) via ",
+        "Pi session.on('position:alert'). Configurable thresholds. Events fire when conditions are met.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Setting up position monitor"],
+    sprite_trigger: SpriteTrigger::Thinking,
+    prompt_snippet: "Subscribes to LP position alerts (out-of-range, fee threshold) via Pi session.on('position:alert'). Events fire when conditions are met.",
+    prompt_guidelines: &amp;[
+        "thriving: Subscribe to all active positions. Set fee thresholds based on compounding strategy.",
+        "cautious: Keep existing alerts. Lower fee thresholds to collect sooner.",
+        "declining: Alert on out-of-range only. Ignore fee thresholds (collecting all fees manually).",
+        "terminal: Unsubscribe all.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ position_id }</code></td><td>Once</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ subscription_id }</code></td><td>Once</td></tr>
+<tr><td><code>position:alert</code></td><td><code>PositionAlert</code> struct</td><td>On condition match</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (verify position ownership). <code>tool_result</code> (register in session_state).</p>
+<p><strong>TUI mapping:</strong> Position Monitor – flashes the alert row with the position ID. Out-of-range alerts switch the position’s range indicator from green to red. Back-in-range switches it back. Fee threshold alerts show a “Collect fees” action badge.</p>
+<p><strong>Sprite triggers:</strong> <code>out_of_range</code> -&gt; <code>SpriteTrigger::Failure</code> (2s). <code>back_in_range</code> -&gt; <code>SpriteTrigger::Success</code> (1s).</p>
+<hr>
+<h3 id="stream_price_feed"><a class="header" href="#stream_price_feed"><code>stream_price_feed</code></a></h3>
+<p>Subscribes to price updates for a token pair. Sources: pool slot0 reads, with optional Trading API fallback for tokens not in any pool.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>token_a</code></td><td><code>String</code></td><td>Yes</td><td>Token address or symbol</td></tr>
+<tr><td><code>token_b</code></td><td><code>String</code></td><td>Yes</td><td>Token address or symbol</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>interval_ms</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Update interval in ms. Default: <code>15000</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamPriceFeedParams {
+    pub token_a: String,
+    pub token_b: String,
+    pub chain_id: u64,
+    #[serde(default = "default_15s")]
+    pub interval_ms: u64,
+}
+
+/// Emitted on Pi event bus as `price:update`.
+#[derive(Debug, Serialize)]
+pub struct PriceUpdate {
+    pub token_a: String,
+    pub token_b: String,
+    pub chain_id: u64,
+    pub price: f64,
+    pub source: String,  // "pool" or "api"
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamPriceFeedResult {
+    pub subscription_id: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The handler first resolves the best pool for the token pair (highest TVL). If no pool exists on-chain for the pair, falls back to <code>TradingApiClient::get_price()</code> if available. Emits <code>price:update</code> events with the source field indicating which path was used.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_price_feed",
+    description: concat!(
+        "Subscribes to token pair price updates via Pi session.on('price:update'). ",
+        "Sources from pool slot0 reads, with API fallback. Configurable interval, default 15s.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Resolving price source", "Setting up price poller"],
+    sprite_trigger: SpriteTrigger::Thinking,
+    prompt_snippet: "Subscribes to token pair price updates via Pi session.on('price:update'). Sources from pool slot0 reads. Configurable interval, default 15s.",
+    prompt_guidelines: &amp;[
+        "thriving: Subscribe to pairs relevant to active strategies. Use default interval.",
+        "cautious: Increase interval to 30s. Keep only pairs with active positions.",
+        "declining: Increase interval to 60s. Monitor only settlement pairs.",
+        "terminal: Unsubscribe all.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ token_a, token_b, interval_ms }</code></td><td>Once</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ subscription_id }</code></td><td>Once</td></tr>
+<tr><td><code>price:update</code></td><td><code>PriceUpdate</code> struct</td><td>Every interval_ms</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (validate tokens exist on chain). <code>tool_result</code> (register in session_state).</p>
+<p><strong>TUI mapping:</strong> Price Dashboard – updates the price chart with each data point. Recalculates portfolio value if the token is held.</p>
+<p><strong>Sprite triggers:</strong> &gt;5% price move -&gt; <code>SpriteTrigger::Executing</code> (1s).</p>
+<hr>
+<h3 id="stream_tokenjar"><a class="header" href="#stream_tokenjar"><code>stream_tokenjar</code></a></h3>
+<p>Subscribes to TokenJar balance updates and burn events. Monitors fee accumulation across managed positions.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>jar_address</code></td><td><code>String</code></td><td>Yes</td><td>TokenJar contract address</td></tr>
+<tr><td><code>chain_id</code></td><td><code>u64</code></td><td>Yes</td><td>Chain ID</td></tr>
+<tr><td><code>interval_ms</code></td><td><code>Option&lt;u64&gt;</code></td><td>No</td><td>Polling interval in ms. Default: <code>60000</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamTokenJarParams {
+    pub jar_address: String,
+    pub chain_id: u64,
+    #[serde(default = "default_60s")]
+    pub interval_ms: u64,
+}
+
+/// Emitted on Pi event bus as `tokenjar:update`.
+#[derive(Debug, Serialize)]
+pub struct TokenJarUpdate {
+    pub jar_address: String,
+    pub chain_id: u64,
+    pub balances: Vec&lt;TokenBalance&gt;,
+    pub last_burn_at: u64,
+    pub total_burned: String,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TokenBalance {
+    pub token: String,
+    pub amount: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamTokenJarResult {
+    pub subscription_id: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The handler reads the jar’s token balances and burn history via Alloy <code>sol!</code> bindings at each interval.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_tokenjar",
+    description: concat!(
+        "Subscribes to TokenJar balance and burn event updates via Pi session.on('tokenjar:update'). ",
+        "Monitors fee accumulation. Default interval: 60s.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Setting up jar monitor"],
+    sprite_trigger: SpriteTrigger::Thinking,
+    prompt_snippet: "Subscribes to TokenJar balance and burn event updates via Pi session.on('tokenjar:update'). Monitors fee accumulation. Default interval: 60s.",
+    prompt_guidelines: &amp;[
+        "thriving: Subscribe to TokenJars relevant to fee strategies. Monitor accumulation rate.",
+        "cautious: Keep existing subscriptions. Reduce to 120s interval.",
+        "declining: Reduce to jars approaching burn threshold only.",
+        "terminal: Unsubscribe all.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ jar_address }</code></td><td>Once</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ subscription_id }</code></td><td>Once</td></tr>
+<tr><td><code>tokenjar:update</code></td><td><code>TokenJarUpdate</code> struct</td><td>Every interval_ms</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (validate jar address). <code>tool_result</code> (register in session_state).</p>
+<p><strong>TUI mapping:</strong> Fee Dashboard – updates jar balance bars and the burn countdown timer.</p>
+<hr>
+<h3 id="stream_trades"><a class="header" href="#stream_trades"><code>stream_trades</code></a></h3>
+<p>Subscribes to trade execution confirmations for the agent’s wallet. Fires when any swap, limit order fill, or UniswapX order settlement completes. Uses Alloy’s <code>subscribe_logs</code> with Transfer event filters on known token addresses, combined with Swap event filters on Uniswap routers.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet_address</code></td><td><code>String</code></td><td>Yes</td><td>Wallet address to monitor</td></tr>
+<tr><td><code>chain_ids</code></td><td><code>Option&lt;Vec&lt;u64&gt;&gt;</code></td><td>No</td><td>Chain IDs to monitor. Default: all configured</td></tr>
+<tr><td><code>trade_types</code></td><td><code>Option&lt;Vec&lt;String&gt;&gt;</code></td><td>No</td><td>Filter: <code>["swap", "limit_fill", "uniswapx"]</code>. Default: all</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamTradesParams {
+    pub wallet_address: String,
+    #[serde(default)]
+    pub chain_ids: Option&lt;Vec&lt;u64&gt;&gt;,
+    #[serde(default)]
+    pub trade_types: Option&lt;Vec&lt;String&gt;&gt;,
+}
+
+/// Emitted on Pi event bus as `trade:executed`.
+#[derive(Debug, Serialize)]
+pub struct TradeExecuted {
+    pub wallet_address: String,
+    pub chain_id: u64,
+    pub trade_type: String,  // "swap", "limit_fill", "uniswapx"
+    pub tx_hash: String,
+    pub token_in: String,
+    pub token_out: String,
+    pub amount_in: String,
+    pub amount_out: String,
+    pub gas_used: String,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamTradesResult {
+    pub subscription_id: String,
+}
+<span class="boring">}</span></code></pre>
+<p>For multi-chain monitoring, the handler spawns one <code>tokio::task</code> per chain, each with its own log subscription. All tasks share the same subscription ID; unsubscribing cancels all of them.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_trades",
+    description: concat!(
+        "Subscribes to trade execution confirmations (swaps, limit fills, UniswapX settlements) via ",
+        "Pi session.on('trade:executed'). Monitors the agent's wallet across configured chains.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Setting up trade monitors"],
+    sprite_trigger: SpriteTrigger::Thinking,
+    prompt_snippet: "Subscribes to trade execution confirmations (swaps, limit fills, UniswapX settlements) via Pi session.on('trade:executed'). Monitors the agent's wallet.",
+    prompt_guidelines: &amp;[
+        "thriving: Subscribe on session start. Monitor all trade types for performance tracking.",
+        "cautious: Keep subscription active. Focus on unexpected trades (possible compromise indicator).",
+        "declining: Keep for settlement trade confirmation.",
+        "terminal: Keep until final trades confirmed, then unsubscribe.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ wallet_address, chain_ids }</code></td><td>Once</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ subscription_id }</code></td><td>Once</td></tr>
+<tr><td><code>trade:executed</code></td><td><code>TradeExecuted</code> struct</td><td>On trade confirmation</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (verify wallet ownership). <code>tool_result</code> (register in session_state).</p>
+<p><strong>TUI mapping:</strong> Trade History – appends each trade as a row with token amounts, gas cost, and computed P&amp;L (comparing amount_out value against amount_in value).</p>
+<p><strong>Sprite triggers:</strong> Positive P&amp;L -&gt; <code>SpriteTrigger::Success</code> (1.5s). Negative P&amp;L -&gt; <code>SpriteTrigger::Failure</code> (1.5s).</p>
+<hr>
+<h3 id="stream_unsubscribe"><a class="header" href="#stream_unsubscribe"><code>stream_unsubscribe</code></a></h3>
+<p>Explicitly tears down one or more streaming subscriptions. Pi session cleanup handles this automatically on session end, but this tool allows selective unsubscription during a session.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>subscription_ids</code></td><td><code>Option&lt;Vec&lt;String&gt;&gt;</code></td><td>No</td><td>Specific subscription IDs to cancel. Omit to cancel ALL.</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct StreamUnsubscribeParams {
+    #[serde(default)]
+    pub subscription_ids: Option&lt;Vec&lt;String&gt;&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StreamUnsubscribeResult {
+    pub unsubscribed: u32,
+    pub remaining: u32,
+}
+<span class="boring">}</span></code></pre>
+<p>When <code>subscription_ids</code> is omitted, calls <code>registry.unsubscribe_all()</code>. When specific IDs are provided, calls <code>registry.unsubscribe(id)</code> for each. Returns the count of actually cancelled subscriptions and the count remaining.</p>
+<p><strong>ToolDef fields:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "stream_unsubscribe",
+    description: concat!(
+        "Cancels streaming subscriptions. Pass specific IDs to cancel selectively, ",
+        "or omit to cancel all. Pi session cleanup handles this automatically on session end -- ",
+        "use this for mid-session cleanup.",
+    ),
+    category: Category::Streaming,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,
+    progress_steps: &amp;["Cancelling subscriptions"],
+    sprite_trigger: SpriteTrigger::Executing,
+    prompt_snippet: "Cancels streaming subscriptions. Pass specific IDs to cancel selectively, or omit to cancel all. Use for mid-session cleanup.",
+    prompt_guidelines: &amp;[
+        "thriving: Unsubscribe from pools/positions no longer relevant.",
+        "cautious: Unsubscribe from watch-only subscriptions. Keep position-related ones.",
+        "declining: Unsubscribe from everything except position alerts for active exits.",
+        "terminal: Unsubscribe all. Called as part of Death Protocol sequence.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric events:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ subscription_ids, cancel_all: bool }</code></td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ unsubscribed, remaining }</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pi hooks:</strong> <code>tool_call</code> (validate subscription IDs exist in session_state). <code>tool_result</code> (clean session_state).</p>
+<hr>
+<h2 id="tool-summary"><a class="header" href="#tool-summary">Tool summary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tool</th><th>Capability</th><th>Risk</th><th>Budget</th><th>GolemEvent variant</th><th>TUI pane</th></tr>
+</thead>
+<tbody>
+<tr><td><code>stream_pool_events</code></td><td>Read</td><td>Layer 1</td><td>Fast</td><td><code>PoolEventReceived</code></td><td>Pool Explorer</td></tr>
+<tr><td><code>stream_pool_state</code></td><td>Read</td><td>Layer 1</td><td>Fast</td><td><code>PoolStateSnapshot</code></td><td>Pool Explorer</td></tr>
+<tr><td><code>stream_position_alerts</code></td><td>Read</td><td>Layer 1</td><td>Fast</td><td><code>PositionAlert</code></td><td>Position Monitor</td></tr>
+<tr><td><code>stream_price_feed</code></td><td>Read</td><td>Layer 1</td><td>Fast</td><td><code>PriceUpdate</code></td><td>Price Dashboard</td></tr>
+<tr><td><code>stream_tokenjar</code></td><td>Read</td><td>Layer 1</td><td>Fast</td><td><code>TokenJarUpdate</code></td><td>Fee Dashboard</td></tr>
+<tr><td><code>stream_trades</code></td><td>Read</td><td>Layer 1</td><td>Fast</td><td><code>SwapExecuted</code></td><td>Trade History</td></tr>
+</tbody>
+</table>
+</div>
+<p>All 6 tools are Read-only (no state modification). The <code>stream_unsubscribe</code> tool is technically a cleanup operation but classified as Read because it only modifies session state, not on-chain state. All events flow through the Event Fabric’s <code>tokio::broadcast</code> channel with the 51-variant <code>GolemEvent</code> enum (see <code>14-events.md</code>).</p>
+<p>Profiles: <code>data</code>, <code>trader</code>, <code>lp</code>, <code>golem</code>, <code>full</code>, <code>dev</code>. Not included in: <code>vault</code>, <code>intelligence</code>, <code>learning</code>, <code>identity</code>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/18-tools-metamask.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/20-config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/18-tools-metamask.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/20-config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

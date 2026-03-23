@@ -1,0 +1,2558 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Predictive Geometry - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/23-ta/05-predictive-geometry.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <!-- prd2/23-ta/05-predictive-geometry.md -->
+<!-- Source: tmp/research/witness-research/new/ta/05-predictive-geometry.md -->
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Active | <strong>Section</strong>: 23-ta</p>
+<p><strong>Crates</strong>: <code>bardo-ta-predictive-geometry</code></p>
+<p><strong>Cross-references</strong>:</p>
+<ul>
+<li><a href="../01-golem/18-cortical-state.html">01-golem/18-cortical-state.md</a> – the 32-signal perception surface where <code>trajectory_confidence</code> and <code>topology_signal</code> are written for decision-making</li>
+<li><a href="../01-golem/02-heartbeat.html">01-golem/02-heartbeat.md</a> – the 9-step decision cycle whose Theta ticks run full topological analysis and trajectory forecasting</li>
+<li><a href="../01-golem/17-prediction-engine.html">01-golem/17-prediction-engine.md</a> – the Oracle prediction pipeline that consumes topological features as inputs to trajectory forecasts</li>
+<li><a href="../shared/hdc-vsa.html">shared/hdc-vsa.md</a> – HDC foundations for encoding trajectory predictions as hypervectors that support efficient similarity queries</li>
+<li><a href="00-witness-as-technical-analyst.html">23-ta/00-witness-as-technical-analyst.md</a> – Doc 0: system context including the existing TDA pipeline that this document extends into prediction</li>
+<li><a href="01-hyperdimensional-technical-analysis.html">23-ta/01-hyperdimensional-technical-analysis.md</a> – Doc 1: HDC pattern algebra providing the encoding substrate for topological features</li>
+<li><a href="02-spectral-liquidity-manifolds.html">23-ta/02-spectral-liquidity-manifolds.md</a> – Doc 2: Riemannian manifold and geodesics providing geometric constraints on predicted trajectories</li>
+<li><a href="04-causal-microstructure-discovery.html">23-ta/04-causal-microstructure-discovery.md</a> – Doc 4: causal graph edges that constrain which trajectory paths are physically possible</li>
+</ul>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document converts topological data analysis (TDA) into trajectory forecasting for the Golem (mortal autonomous DeFi agent) runtime. It belongs to the <strong>TA research layer</strong> (Doc 5 of 10) and covers persistence landscapes from DeFi state spaces, topological constraints on market trajectories, and how persistent homology features feed into the prediction engine. You should understand algebraic topology basics (Betti numbers, persistent homology) and DeFi execution mechanics. For Bardo-specific terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h1 id="predictive-geometry-from-topological-detection-to-trajectory-forecasting"><a class="header" href="#predictive-geometry-from-topological-detection-to-trajectory-forecasting">Predictive geometry: from topological detection to trajectory forecasting</a></h1>
+<p><strong>Audience:</strong> Researchers and engineers familiar with Rust, algebraic topology, and DeFi. Assumes familiarity with Doc 0 (system architecture), Doc 2 (spectral liquidity manifolds), and the existing TDA pipeline from innovations/01.</p>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>The Golem’s existing TDA pipeline computes persistence diagrams from observation windows at Gamma frequency and classifies the current regime – calm, trending, volatile, crisis – by tracking Betti numbers and Wasserstein distances between consecutive diagrams. This is reactive. The Golem knows where it is but not where it is going.</p>
+<p>Topology constrains dynamics. A manifold with two disconnected components cannot smoothly merge into one without passing through a specific topological event. A space with a persistent 1-cycle implies oscillatory behavior that will continue until the cycle collapses. The shape of the observation space limits what can happen next.</p>
+<p>This document extends TDA from regime detection to trajectory forecasting. We lift persistence diagrams into Bubenik’s persistence landscape representation – a Banach space where statistical operations are well-defined – and learn a mapping from landscape configurations to families of predicted trajectories. Topological constraints filter physically impossible paths. The result is a forecasting engine that does not predict a single future but narrows the space of possible futures based on the current topology. Integration with the heartbeat places landscape computation at Gamma frequency, trajectory forecasting at Theta, model refinement at Delta, and topological replay/counterfactual generation during dream cycles.</p>
+<h2 id="the-problem"><a class="header" href="#the-problem">The problem</a></h2>
+<h3 id="what-the-existing-tda-pipeline-does"><a class="header" href="#what-the-existing-tda-pipeline-does">What the existing TDA pipeline does</a></h3>
+<p>The innovations/01 implementation builds a Vietoris-Rips complex from each observation window and extracts a persistence diagram: a multiset of (birth, death) pairs recording when topological features appear and disappear across filtration scales. The pipeline tracks four Betti numbers (β_0 through β_3) and computes the Wasserstein distance between consecutive diagrams. When that distance exceeds a threshold, the system flags a regime transition.</p>
+<p>This works. It detects regime changes 10 to 100 ticks ahead of statistical methods because topological features shift before statistical moments do. A brewing crisis shows up as an increase in β_0 (the observation space fragmenting into disconnected clusters) before the variance of returns spikes.</p>
+<p>But detection is not prediction.</p>
+<h3 id="the-gap"><a class="header" href="#the-gap">The gap</a></h3>
+<p>Knowing “we just entered a volatile regime” is better than not knowing. It is not enough. The Golem needs to know what happens <em>inside</em> the regime. What trajectories are possible? How long will this regime persist? What topological events would signal a transition to the next regime, and how far away are those events?</p>
+<p>A persistence diagram is a snapshot. It tells you the topology at time t. It does not tell you the topology at time t+1, or what path the system will trace between now and then.</p>
+<p>The gap is between topological state (what the shape is) and topological dynamics (how the shape evolves and what that evolution implies for observable quantities like price, liquidity, and volatility).</p>
+<h3 id="why-topology-constrains-trajectories"><a class="header" href="#why-topology-constrains-trajectories">Why topology constrains trajectories</a></h3>
+<p>Consider a persistence diagram with β_0 = 2 at time t. The observation space has two disconnected components. For the system to reach β_0 = 1 (a single connected component), something must bridge the gap between the components. In DeFi terms, if liquidity has fragmented into two separate clusters – say concentrated around two distant tick ranges in a Uniswap v3 pool – the price cannot smoothly transition from one cluster to the other without either new liquidity connecting the ranges or existing liquidity migrating.</p>
+<p>This is not a statistical correlation. It is a topological constraint. The space of possible trajectories is bounded by the current topology.</p>
+<p>Similarly, β_1 &gt; 0 means a loop exists in the observation space. In fee-IL (impermanent loss) space for an LP position, a persistent loop means fee accrual and IL are cycling: IL increases, fees compensate, IL increases again, fees compensate again. The loop constrains the trajectory to oscillatory paths. If the loop collapses (β_1 drops to 0), the oscillation breaks and one-directional IL accumulation becomes possible.</p>
+<p>The key insight is that these constraints are <em>qualitative</em>, not quantitative. A statistical model might predict that price will stay within a range with 70% probability. A topological constraint says that certain transitions are <em>impossible</em> without intermediate events. The constraint does not give you a probability; it gives you a logical boundary on the set of reachable states. This is a different kind of information, and it composes well with statistical predictions: the topology restricts the domain, and statistics operate within that restricted domain.</p>
+<p>The existing TDA pipeline throws away this predictive information. It detects that β_0 changed or β_1 changed, but it does not ask: given the current β values and the full persistence diagram, what trajectories are topologically compatible?</p>
+<h3 id="what-prediction-means-here"><a class="header" href="#what-prediction-means-here">What prediction means here</a></h3>
+<p>This document does not attempt to predict the future price of ETH. That would be silly.</p>
+<p>What we predict is a <em>family</em> of trajectories – a set of possible paths through the observation space, each carrying a probability weight. The family is constrained by topology (impossible paths are removed) and shaped by historical precedent (paths that followed similar topological configurations in the past are weighted higher).</p>
+<p>The utility is not point prediction. It is narrowing the space of possibilities. Instead of “anything could happen,” the Golem gets “given the current topological structure, these are the families of behavior that are geometrically possible, and here is how they are weighted by historical analogy.” That is enough to inform position sizing, risk management, and attention allocation – which is what the Oracle actually needs.</p>
+<p>A concrete example: the observation space has β_0 = 1 (connected), β_1 = 2 (two loops), and the landscape derivative is small (topology is stable). The trajectory family might contain: (a) continued oscillation within both loops, probability 0.6; (b) collapse of one loop with continued oscillation in the other, probability 0.25; (c) collapse of both loops, probability 0.1; (d) appearance of a new component (β_0 increase), probability 0.05. The Oracle sees this and knows the most likely future involves oscillation. It positions accordingly.</p>
+<h2 id="mathematical-foundations-spec"><a class="header" href="#mathematical-foundations-spec">Mathematical foundations [SPEC]</a></h2>
+<h3 id="the-problem-with-persistence-diagrams-as-a-feature-space"><a class="header" href="#the-problem-with-persistence-diagrams-as-a-feature-space">The problem with persistence diagrams as a feature space</a></h3>
+<p>A persistence diagram is a multiset of points in the half-plane above the diagonal. It summarizes topology well, but it lives in an awkward mathematical space. The space of persistence diagrams – equipped with the Wasserstein or bottleneck metric – is not a vector space. You cannot add two diagrams. You cannot scale a diagram by a real number. You cannot compute a meaningful mean of two diagrams by averaging their points, because diagrams can have different numbers of points, and the correspondence between points across diagrams is not canonical.</p>
+<p>This is a serious problem for prediction. All standard statistical methods (regression, PCA, hypothesis testing, time-series modeling) assume the data lives in a vector space, or at least in a space where arithmetic operations are well-defined. The Wasserstein distance gives us a metric, but a metric alone does not support the operations we need: averaging topological summaries over time windows, computing rates of change, or defining a regression target.</p>
+<p>Several approaches exist for vectorizing persistence diagrams: persistence images (Adams et al., 2017), Betti curves, persistence entropy. We use persistence landscapes because they are the only representation that is simultaneously stable, invertible, and lives in a Banach space with a well-defined inner product.</p>
+<h3 id="persistence-landscapes"><a class="header" href="#persistence-landscapes">Persistence landscapes</a></h3>
+<p>Bubenik (2015) solved the vectorization problem with persistence landscapes: a stable, invertible transformation that maps persistence diagrams into a Banach space of functions where linear algebra works.</p>
+<p>Given a persistence diagram D with features {(b_i, d_i)}, define a tent function for each feature:</p>
+<pre><code>Λ_i(t) = max(0, min(t - b_i, d_i - t))
+</code></pre>
+<p>This is a triangle centered at (b_i + d_i)/2 with height (d_i - b_i)/2. Long-lived features produce tall, wide tents. Short-lived features produce small tents. Features on the diagonal (b = d) produce zero tents.</p>
+<p>The k-th persistence landscape function is:</p>
+<pre><code>λ_k(t) = k-max{Λ_i(t) : (b_i, d_i) ∈ D}
+</code></pre>
+<p>where k-max denotes the k-th largest value. So λ_1(t) is the upper envelope of all tent functions. λ_2(t) is the second-highest value at each t. And so on.</p>
+<p>The full persistence landscape is the sequence (λ_1, λ_2, λ_3, …). In practice, we truncate to the first K layers, where K is chosen based on the complexity of the diagrams we expect.</p>
+<p>Why landscapes over diagrams? Four properties matter:</p>
+<p><strong>Vector space structure.</strong> Landscapes live in L^p function space. You can add them, scale them, compute norms and inner products. The mean of N landscapes is just (1/N) times the sum, computed pointwise. Try doing that with raw persistence diagrams.</p>
+<p><strong>Stability.</strong> Small perturbations in the input data produce small perturbations in the landscape (Bubenik 2015, Theorem 13). The L^p distance between landscapes is bounded by the p-Wasserstein distance between the underlying diagrams. Noisy data does not produce wild landscape oscillations.</p>
+<p><strong>Invertibility.</strong> The persistence diagram can be recovered from the landscape. No information is lost in the transformation, only reorganized into a more tractable form.</p>
+<p><strong>Separability.</strong> Different topological regimes produce geometrically distinct landscapes. A regime with one large persistent loop produces a landscape dominated by a single tall tent in dimension 1. A regime with many small loops produces a landscape with many small tents spread across the parameter range. These are easy to distinguish in L^p distance, even when the raw persistence diagrams look superficially similar.</p>
+<h3 id="the-landscape-banach-space"><a class="header" href="#the-landscape-banach-space">The landscape Banach space</a></h3>
+<p>The space of persistence landscapes inherits Banach space structure from L^p:</p>
+<pre><code>||λ||_p = (Σ_{k=1}^{K} ∫ |λ_k(t)|^p dt)^{1/p}
+</code></pre>
+<p>For p = 2, this is a Hilbert space with inner product:</p>
+<pre><code>⟨λ, μ⟩ = Σ_{k=1}^{K} ∫ λ_k(t) · μ_k(t) dt
+</code></pre>
+<p>This inner product enables:</p>
+<ul>
+<li><strong>Distance:</strong> ||λ - μ||_2 measures how different two topological configurations are.</li>
+<li><strong>Mean:</strong> λ̄ = (1/N) Σ_i λ_i computes an average topology over a window.</li>
+<li><strong>Variance:</strong> Var(λ) = (1/N) Σ_i ||λ_i - λ̄||_2^2 measures topological stability.</li>
+<li><strong>Derivative:</strong> dλ/dt ≈ (λ(t) - λ(t-1)) / Δt captures the rate of topological change.</li>
+</ul>
+<p>The derivative is the critical one for prediction. A persistence landscape that is changing rapidly (large ||dλ/dt||) signals an impending regime transition. The direction of the change (which layers are growing, which are shrinking) constrains what transitions are possible.</p>
+<h3 id="discretization"><a class="header" href="#discretization">Discretization</a></h3>
+<p>For computation, we discretize landscapes. Sample each λ_k at N evenly spaced points t_0, t_1, …, t_{N-1} over the range [t_min, t_max]. The landscape becomes a matrix L ∈ R^{K × N}, where L[k][i] = λ_k(t_i).</p>
+<p>This matrix is the feature vector for all downstream computation. Distances become matrix norms. Means become element-wise averages. The landscape library stores these matrices for nearest-neighbor retrieval.</p>
+<p>The choice of K and N matters. K = 5 layers capture the five most prominent topological features at each parameter value. N = 64 samples provide sufficient resolution for the filtration ranges we encounter in DeFi observation windows. These are configurable; the implementation accepts both as parameters.</p>
+<h3 id="topology-to-trajectory-mapping"><a class="header" href="#topology-to-trajectory-mapping">Topology-to-trajectory mapping</a></h3>
+<p>Define the prediction problem. Given a persistence landscape λ(t) at time t, predict a distribution over trajectories for the observation space over the horizon [t, t+H], where H is measured in Gamma ticks.</p>
+<p>A trajectory here is a sequence of observation vectors: (x_{t+1}, x_{t+2}, …, x_{t+H}). In DeFi context, each x is a vector of pool metrics: price, liquidity depth, volume, fee rate, utilization, and so on.</p>
+<p>The mapping:</p>
+<pre><code>Φ: λ(t) → P(Trajectory | λ(t))
+</code></pre>
+<p>is learned from historical data. The learning procedure:</p>
+<ol>
+<li>Compute persistence landscapes for each observation window in the historical record.</li>
+<li>Record the actual trajectory that followed each landscape.</li>
+<li>Build a library of (landscape, trajectory) pairs.</li>
+<li>For a new landscape λ(t), find the K nearest neighbors in the library (by L^2 distance), and construct the predicted trajectory distribution from their associated trajectories.</li>
+</ol>
+<p>This is deliberately non-parametric. We are not fitting a neural network or even a linear model to the landscape-trajectory relationship. The topology of DeFi observation spaces shifts qualitatively over time (new pool types, new protocol mechanics, new participant behaviors), and a non-parametric approach degrades gracefully when the current landscape has no close historical matches: the nearest-neighbor distances are large, the predicted trajectories are diverse, and the confidence is low. This uncertainty is honest rather than hidden inside a model’s confidence calibration.</p>
+<p>Why not a parametric model? Two reasons. First, the relationship between topology and trajectory is not stationary. A given topological configuration in March 2024 might produce different trajectories than the same configuration in September 2024, because the market participants, liquidity conditions, and protocol parameters have all changed. A parametric model trained on March data would need retraining for September data, and the Golem has no concept of “retraining” – it has continuous experience. The non-parametric library naturally adapts: old entries decay in fitness, new entries enter, and the weighted average shifts toward recent experience.</p>
+<p>Second, the landscape space is high-dimensional (K * N dimensions per homology degree, times the number of homology degrees). Parametric models in high dimensions need large training sets to avoid overfitting. The Golem’s library grows one entry per observation window per Delta tick. That is slow. A non-parametric model with adaptive bandwidth handles small datasets gracefully – it just reports low confidence when the library is sparse.</p>
+<p>The kernel regression refinement weights neighbors by landscape similarity:</p>
+<pre><code>P̂(trajectory | λ) = Σ_i w_i · δ(trajectory_i)
+</code></pre>
+<p>where:</p>
+<pre><code>w_i = K_h(||λ - λ_i||_2) / Σ_j K_h(||λ - λ_j||_2)
+</code></pre>
+<p>and K_h is a Gaussian kernel with bandwidth h. Close landscape matches dominate the prediction. Distant matches contribute noise that washes out, leaving the prediction driven by topologically similar historical episodes.</p>
+<h3 id="topological-constraints-on-trajectories"><a class="header" href="#topological-constraints-on-trajectories">Topological constraints on trajectories</a></h3>
+<p>The kernel regression produces a distribution over trajectories. But not all trajectories in that distribution are topologically possible given the current state. Constraints filter the impossible ones.</p>
+<p><strong>Component count constraints (β_0).</strong></p>
+<p>When β_0 = 1 (single connected component), smooth transitions dominate. The observation space is connected, so prices, liquidity, and other metrics can move continuously without jumping.</p>
+<p>When β_0 &gt; 1 (multiple components), the system is fragmented. A trajectory that assumes smooth convergence to a single price level is topologically inconsistent: the components must first merge, which requires specific bridging events (new liquidity connecting the fragmented ranges, or removal of the boundary between clusters). Trajectories that ignore the component structure get filtered.</p>
+<p>When β_0 is increasing over time, fragmentation is in progress. Predict continued divergence until the fragmenting process completes or reverses.</p>
+<p><strong>Loop constraints (β_1).</strong></p>
+<p>When β_1 &gt; 0, loops exist. In the observation space, loops correspond to cyclic dynamics: quantities that return to previous values after excursions. Fee-IL cycles in LP positions, rate-utilization oscillations in lending markets, basis-funding loops in derivatives.</p>
+<p>A persistent loop (high death - birth value in the persistence diagram) constrains trajectories to maintain the oscillatory pattern. The trajectory family should include cyclical paths with period roughly matching the loop’s characteristic scale.</p>
+<p>When β_1 is decreasing, loops are collapsing. The cyclic behavior is weakening. Predict that oscillation amplitude will decrease and mean-reversion will weaken. Trajectories that assume continued strong oscillation should be downweighted.</p>
+<p><strong>Void constraints (β_2).</strong></p>
+<p>Voids in the observation space (β_2 &gt; 0) represent regions that are topologically enclosed but empty. In DeFi terms, these are combinations of observables that <em>used to be reachable</em> but are no longer accessible. A void in price-liquidity space means there is a price range where liquidity once existed but has been completely withdrawn.</p>
+<p>Trajectories that pass through void regions should be filtered or heavily penalized. The topology says those states are unreachable under current conditions.</p>
+<p><strong>Rate-of-change constraints.</strong></p>
+<p>The Morse inequalities provide lower bounds on the number of critical points (transitions) required to change the Betti numbers by specified amounts. If the current β_0 is 3 and the predicted trajectory implies β_0 = 1, at least 2 merging events must occur. Each merging event corresponds to a concrete market action (new liquidity bridging two clusters). The time required for those events provides a minimum time-to-transition.</p>
+<p>This is where the connection to Doc 2’s manifold becomes load-bearing. The spectral liquidity manifold provides geodesic distances between states. A topological transition that requires merging two components corresponds to a geodesic connecting two points on the manifold. The geodesic length (measured in the Riemannian metric from Doc 2) gives a lower bound on the time-to-transition, because the system must traverse that geodesic distance in state space.</p>
+<h3 id="defi-specific-topological-features"><a class="header" href="#defi-specific-topological-features">DeFi-specific topological features</a></h3>
+<p>The abstract topological constraints become concrete when applied to specific DeFi primitives.</p>
+<p><strong>LP positions in concentrated liquidity (Uniswap v3).</strong></p>
+<p>The observation space for an LP position lives in (price, liquidity_depth, fee_rate, IL) coordinates. Topological features in this space have direct market interpretations:</p>
+<p>β_0 increase in price-liquidity space: concentrated liquidity is fragmenting. Some LPs are abandoning the current price range and repositioning elsewhere. The pool’s liquidity is splitting into disconnected clusters around different tick ranges. This predicts increased slippage for swaps that cross the gaps between clusters.</p>
+<p>β_1 in fee-IL space: a persistent loop means fee accrual and IL are locked in a compensating cycle. Fees increase as volume passes through the position’s range, IL increases as price moves away, fees compensate on the return. This loop is the healthy state for an active LP position. It constrains trajectories to oscillatory P&amp;L patterns.</p>
+<p>β_1 collapse in fee-IL space: the compensating cycle broke. Either volume dried up (fees stopped accruing) or price moved away permanently (IL became one-directional). The trajectory constraint shifts from oscillatory to monotonically deteriorating. This is an exit signal for the position.</p>
+<p><strong>Lending markets (Aave, Compound).</strong></p>
+<p>The observation space includes (utilization_rate, borrow_rate, supply_rate, health_factor_distribution).</p>
+<p>β_0 in utilization-rate space: bimodal utilization means some lending markets are stressed (utilization near 100%, rates at the kink) while others are calm (utilization below 50%, rates at the base level). Two disconnected clusters in this space predict that the stressed and calm markets will evolve independently unless a common shock (ETH price move, stablecoin depeg) forces them to converge.</p>
+<p>β_1 in rate-borrow space: oscillatory borrowing patterns. Borrowers enter when rates drop, driving utilization up, which pushes rates up, which drives borrowers out, which drops utilization and rates. A persistent loop here means the lending market is self-regulating. Trajectory prediction: rates will oscillate within the loop’s characteristic amplitude and frequency.</p>
+<p>β_2 (void) in utilization-rate-health space: a region of utilization-rate combinations that used to exist but no longer does. This signals a regime shift in the lending market. Trajectories that assume the market can return to that region should be filtered.</p>
+<p><strong>Derivatives (perpetuals, options).</strong></p>
+<p>The observation space includes (funding_rate, open_interest, basis, implied_volatility).</p>
+<p>β_0 in funding-OI space: fragmented derivatives markets. Some contracts are heavily long-biased (positive funding, high OI) while others are neutral or short-biased. Predict that these fragments will evolve independently unless a liquidation cascade or large directional trade bridges them.</p>
+<p>β_1 in basis-funding space: the basis trade cycle. Arbitrageurs go long spot / short perp when basis is positive, collecting funding. Their activity compresses basis, which reduces funding, which causes some arbs to exit, which widens basis again. A persistent loop constrains trajectories to continued basis oscillation within the loop’s bounds.</p>
+<p>β_1 collapse in basis-funding: the arbitrage loop broke. This happens when funding becomes too volatile for arbs to hold positions, or when basis widens beyond the arb’s capital constraints. Predict one-directional basis movement.</p>
+<h2 id="architecture-spec"><a class="header" href="#architecture-spec">Architecture [SPEC]</a></h2>
+<h3 id="system-overview"><a class="header" href="#system-overview">System overview</a></h3>
+<p>The <code>PredictiveTopology</code> engine wraps the existing <code>TdaAnalyzer</code> and extends it with four new capabilities:</p>
+<ol>
+<li><strong>Landscape computation.</strong> Transforms persistence diagrams into persistence landscape matrices.</li>
+<li><strong>Landscape library.</strong> An indexed historical collection of landscapes paired with the trajectories that followed them.</li>
+<li><strong>Trajectory regression.</strong> K-nearest-neighbor lookup in landscape space with kernel-weighted trajectory combination.</li>
+<li><strong>Constraint engine.</strong> Filters predicted trajectories against topological feasibility.</li>
+</ol>
+<p>The engine implements the <code>TaAnalyzer</code> trait from Doc 0:</p>
+<pre><code>gamma_tick:  Compute persistence diagram (via TdaAnalyzer)
+             → transform to landscape
+             → look up trajectory family
+             → write trajectory_confidence to TaCorticalExtension
+
+theta_tick:  Aggregate Gamma-rate landscapes
+             → produce TopologicalForecast for Oracle
+             → report constraint-filtered trajectory families as TaInsights
+
+delta_tick:  Update regression model with new (landscape, trajectory) pairs
+             → prune stale library entries
+             → recompute kernel bandwidth via cross-validation
+
+dream_nrem:  Replay topological transitions
+             → sequences of landscapes with outcomes
+             → reinforce accurate predictions, decay inaccurate ones
+
+dream_rem:   Deform landscapes into novel configurations
+             → predict trajectories for never-seen topologies
+             → expand library with synthetic entries
+</code></pre>
+<h3 id="integration-with-doc-2s-manifold"><a class="header" href="#integration-with-doc-2s-manifold">Integration with Doc 2’s manifold</a></h3>
+<p>The spectral liquidity manifold from Doc 2 provides a Riemannian metric on the DeFi state space. The predictive geometry engine uses this metric in two ways:</p>
+<p><strong>Geodesic distance as transition time lower bound.</strong> When the constraint engine determines that a topological transition requires merging two components, it queries the manifold for the geodesic distance between the components. The geodesic distance, divided by the historical rate of state-space traversal, gives a minimum time-to-transition. This is a hard lower bound: the system cannot traverse the state space faster than its dynamics allow, and the geodesic is the shortest possible path. If the geodesic distance between two liquidity clusters is large (they occupy distant regions of the manifold), merging will take many ticks even under optimistic assumptions.</p>
+<p><strong>Curvature-aware trajectory weighting.</strong> Trajectories that pass through high-curvature regions of the manifold are less likely than trajectories through flat regions, because high curvature means small perturbations cause large state changes – the system is unstable there and tends to move through quickly. The trajectory regression weights neighbors by both landscape similarity and manifold curvature along the predicted path.</p>
+<p>The connection between topology and geometry runs deeper than these two pragmatic uses. The manifold’s curvature tensor determines the local topology via the Gauss-Bonnet theorem (for 2-manifolds) and its higher-dimensional generalizations. Regions of high positive curvature tend to be topologically simple (sphere-like). Regions of negative curvature tend to be topologically complex (hyperbolic, with potential for high Betti numbers). The predictive geometry engine can use curvature as a leading indicator of topological change: if the manifold’s curvature is becoming more negative in a region, expect increased topological complexity (higher Betti numbers, more features in the persistence diagram) in upcoming observations.</p>
+<h3 id="integration-with-hdc-encoding-doc-1"><a class="header" href="#integration-with-hdc-encoding-doc-1">Integration with HDC encoding (Doc 1)</a></h3>
+<p>For fast similarity search in the landscape library, each discretized landscape matrix L ∈ R^{K × N} is encoded as a hyperdimensional binary vector. The encoding:</p>
+<ol>
+<li>Quantize each element of L to one of Q levels (Q = 16 in practice).</li>
+<li>Map each (layer_index, sample_index, quantized_value) triple to a random 10,240-bit seed vector.</li>
+<li>XOR-bind the seed vectors for each row.</li>
+<li>Majority-vote bundle across rows.</li>
+</ol>
+<p>The resulting 10,240-bit hypervector captures the landscape’s shape in a fixed-size representation. Hamming distance between hypervectors approximates L^2 distance between landscapes, enabling O(1) approximate nearest-neighbor lookups in the library. The full L^2 distance is computed only for the top-M candidates returned by the HDC filter.</p>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation">Rust implementation</a></h2>
+<h3 id="core-types"><a class="header" href="#core-types">Core types</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::VecDeque;
+
+/// Configuration for the predictive topology engine.
+#[derive(Clone, Debug)]
+pub struct PredictiveConfig {
+    /// Number of landscape layers to compute (K).
+    pub num_layers: usize,
+    /// Number of sample points per layer (N).
+    pub num_samples: usize,
+    /// Filtration range: [t_min, t_max].
+    pub t_min: f64,
+    pub t_max: f64,
+    /// Prediction horizon in Gamma ticks.
+    pub horizon_ticks: u32,
+    /// Number of nearest neighbors for trajectory lookup.
+    pub k_neighbors: usize,
+    /// Kernel bandwidth for trajectory weighting.
+    pub kernel_bandwidth: f64,
+    /// Maximum library size before pruning.
+    pub max_library_size: usize,
+    /// Minimum landscape distance to consider a match "close."
+    pub close_match_threshold: f64,
+    /// Dimensions to compute landscapes for (0 = components, 1 = loops, 2 = voids).
+    pub homology_dimensions: Vec&lt;u8&gt;,
+}
+
+impl Default for PredictiveConfig {
+    fn default() -&gt; Self {
+        Self {
+            num_layers: 5,
+            num_samples: 64,
+            t_min: 0.0,
+            t_max: 1.0,
+            horizon_ticks: 30,
+            k_neighbors: 10,
+            kernel_bandwidth: 0.1,
+            max_library_size: 10_000,
+            close_match_threshold: 0.05,
+            homology_dimensions: vec![0, 1, 2],
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="persistence-landscape"><a class="header" href="#persistence-landscape">Persistence landscape</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A persistence landscape: a sequence of piecewise-linear functions
+/// discretized on a regular grid.
+///
+/// The landscape for homology dimension d summarizes the persistence
+/// diagram restricted to d-dimensional features. layers[k][i] holds
+/// the value of the k-th landscape function at sample point i.
+#[derive(Clone, Debug)]
+pub struct PersistenceLandscape {
+    /// λ_k functions sampled at regular t-intervals.
+    /// layers[k][i] = λ_k(t_i).
+    pub layers: Vec&lt;Vec&lt;f64&gt;&gt;,
+    pub t_min: f64,
+    pub t_max: f64,
+    pub num_samples: usize,
+    pub num_layers: usize,
+    /// The homology dimension this landscape summarizes.
+    pub dimension: u8,
+}
+
+impl PersistenceLandscape {
+    /// Build a landscape from a persistence diagram, restricted to
+    /// features of the given homology dimension.
+    ///
+    /// `diagram` contains (birth, death, dimension) triples.
+    /// We filter to the target dimension, compute tent functions,
+    /// then extract the top-K envelope functions.
+    pub fn from_diagram(
+        diagram: &amp;PersistenceDiagram,
+        dim: u8,
+        num_layers: usize,
+        num_samples: usize,
+        t_min: f64,
+        t_max: f64,
+    ) -&gt; Self {
+        // Filter features to the target dimension.
+        let features: Vec&lt;(f64, f64)&gt; = diagram
+            .features
+            .iter()
+            .filter(|f| f.dimension == dim)
+            .map(|f| (f.birth as f64, f.death as f64))
+            .collect();
+
+        let dt = (t_max - t_min) / (num_samples as f64 - 1.0);
+        let mut layers = vec![vec![0.0; num_samples]; num_layers];
+
+        for i in 0..num_samples {
+            let t = t_min + (i as f64) * dt;
+
+            // Evaluate all tent functions at this t.
+            let mut values: Vec&lt;f64&gt; = features
+                .iter()
+                .map(|&amp;(b, d)| {
+                    let v = f64::min(t - b, d - t);
+                    f64::max(0.0, v)
+                })
+                .collect();
+
+            // Sort descending to extract the k-th largest values.
+            values.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
+
+            for k in 0..num_layers {
+                layers[k][i] = if k &lt; values.len() { values[k] } else { 0.0 };
+            }
+        }
+
+        Self {
+            layers,
+            t_min,
+            t_max,
+            num_samples,
+            num_layers,
+            dimension: dim,
+        }
+    }
+
+    /// L^p distance between two landscapes.
+    ///
+    /// Both landscapes must share the same grid parameters.
+    /// For p = 2, this is the standard Hilbert space distance.
+    pub fn distance(&amp;self, other: &amp;Self, p: f64) -&gt; f64 {
+        debug_assert_eq!(self.num_samples, other.num_samples);
+        debug_assert_eq!(self.num_layers, other.num_layers);
+
+        let dt = (self.t_max - self.t_min) / (self.num_samples as f64 - 1.0);
+        let mut total = 0.0;
+
+        for k in 0..self.num_layers {
+            for i in 0..self.num_samples {
+                let diff = (self.layers[k][i] - other.layers[k][i]).abs();
+                total += diff.powf(p) * dt;
+            }
+        }
+
+        total.powf(1.0 / p)
+    }
+
+    /// Pointwise mean of multiple landscapes.
+    ///
+    /// Returns a landscape where each sample point is the
+    /// arithmetic mean of the corresponding points across inputs.
+    pub fn mean(landscapes: &amp;[&amp;Self]) -&gt; Option&lt;Self&gt; {
+        if landscapes.is_empty() {
+            return None;
+        }
+
+        let first = landscapes[0];
+        let n = landscapes.len() as f64;
+        let mut layers = vec![vec![0.0; first.num_samples]; first.num_layers];
+
+        for ls in landscapes {
+            for k in 0..first.num_layers {
+                for i in 0..first.num_samples {
+                    layers[k][i] += ls.layers[k][i] / n;
+                }
+            }
+        }
+
+        Some(Self {
+            layers,
+            t_min: first.t_min,
+            t_max: first.t_max,
+            num_samples: first.num_samples,
+            num_layers: first.num_layers,
+            dimension: first.dimension,
+        })
+    }
+
+    /// Finite-difference derivative: (self - other) / dt.
+    ///
+    /// Measures how the landscape changed between two time steps.
+    /// Large derivatives signal topological transitions in progress.
+    pub fn derivative(&amp;self, previous: &amp;Self, time_delta: f64) -&gt; Self {
+        debug_assert_eq!(self.num_samples, previous.num_samples);
+        debug_assert_eq!(self.num_layers, previous.num_layers);
+
+        let mut layers = vec![vec![0.0; self.num_samples]; self.num_layers];
+
+        for k in 0..self.num_layers {
+            for i in 0..self.num_samples {
+                layers[k][i] = (self.layers[k][i] - previous.layers[k][i]) / time_delta;
+            }
+        }
+
+        Self {
+            layers,
+            t_min: self.t_min,
+            t_max: self.t_max,
+            num_samples: self.num_samples,
+            num_layers: self.num_layers,
+            dimension: self.dimension,
+        }
+    }
+
+    /// L^p norm of the landscape.
+    pub fn norm(&amp;self, p: f64) -&gt; f64 {
+        let dt = (self.t_max - self.t_min) / (self.num_samples as f64 - 1.0);
+        let mut total = 0.0;
+
+        for k in 0..self.num_layers {
+            for i in 0..self.num_samples {
+                total += self.layers[k][i].abs().powf(p) * dt;
+            }
+        }
+
+        total.powf(1.0 / p)
+    }
+
+    /// Flatten the landscape into a single feature vector for
+    /// regression and similarity search.
+    ///
+    /// Layout: [layer_0_sample_0, layer_0_sample_1, ..., layer_K_sample_N]
+    pub fn to_feature_vector(&amp;self) -&gt; Vec&lt;f64&gt; {
+        let mut v = Vec::with_capacity(self.num_layers * self.num_samples);
+        for k in 0..self.num_layers {
+            v.extend_from_slice(&amp;self.layers[k]);
+        }
+        v
+    }
+
+    /// L^2 inner product between two landscapes.
+    pub fn inner_product(&amp;self, other: &amp;Self) -&gt; f64 {
+        debug_assert_eq!(self.num_samples, other.num_samples);
+        debug_assert_eq!(self.num_layers, other.num_layers);
+
+        let dt = (self.t_max - self.t_min) / (self.num_samples as f64 - 1.0);
+        let mut total = 0.0;
+
+        for k in 0..self.num_layers {
+            for i in 0..self.num_samples {
+                total += self.layers[k][i] * other.layers[k][i] * dt;
+            }
+        }
+
+        total
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="multi-dimensional-landscape-bundle"><a class="header" href="#multi-dimensional-landscape-bundle">Multi-dimensional landscape bundle</a></h3>
+<p>A single persistence diagram produces multiple landscapes, one per homology dimension. The bundle groups them:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A bundle of persistence landscapes across multiple homology dimensions.
+///
+/// For a typical DeFi observation window, we compute landscapes for
+/// dimensions 0 (components), 1 (loops), and 2 (voids). The bundle
+/// is the full topological summary that feeds trajectory prediction.
+#[derive(Clone, Debug)]
+pub struct LandscapeBundle {
+    /// Landscapes keyed by homology dimension.
+    pub landscapes: Vec&lt;PersistenceLandscape&gt;,
+    /// Tick at which this bundle was computed.
+    pub tick: u64,
+    /// Betti numbers extracted from the underlying diagram.
+    pub betti: Vec&lt;u16&gt;,
+}
+
+impl LandscapeBundle {
+    /// Build a bundle from a persistence diagram.
+    pub fn from_diagram(
+        diagram: &amp;PersistenceDiagram,
+        dimensions: &amp;[u8],
+        num_layers: usize,
+        num_samples: usize,
+        t_min: f64,
+        t_max: f64,
+    ) -&gt; Self {
+        let landscapes: Vec&lt;PersistenceLandscape&gt; = dimensions
+            .iter()
+            .map(|&amp;dim| {
+                PersistenceLandscape::from_diagram(
+                    diagram, dim, num_layers, num_samples, t_min, t_max,
+                )
+            })
+            .collect();
+
+        // Extract Betti numbers: count features alive at the midpoint
+        // of the filtration range.
+        let mid = (t_min + t_max) / 2.0;
+        let betti: Vec&lt;u16&gt; = dimensions
+            .iter()
+            .map(|&amp;dim| {
+                diagram
+                    .features
+                    .iter()
+                    .filter(|f| {
+                        f.dimension == dim
+                            &amp;&amp; (f.birth as f64) &lt;= mid
+                            &amp;&amp; (f.death as f64) &gt; mid
+                    })
+                    .count() as u16
+            })
+            .collect();
+
+        Self {
+            landscapes,
+            tick: 0, // Set by caller.
+            betti,
+        }
+    }
+
+    /// Combined L^2 distance across all dimensions.
+    ///
+    /// Weights each dimension equally. A weighted variant could
+    /// prioritize β_0 changes over β_1 changes, but uniform
+    /// weighting works well in practice.
+    pub fn distance(&amp;self, other: &amp;Self) -&gt; f64 {
+        let sum_sq: f64 = self
+            .landscapes
+            .iter()
+            .zip(other.landscapes.iter())
+            .map(|(a, b)| {
+                let d = a.distance(b, 2.0);
+                d * d
+            })
+            .sum();
+
+        sum_sq.sqrt()
+    }
+
+    /// Flatten all landscapes into a single feature vector.
+    pub fn to_feature_vector(&amp;self) -&gt; Vec&lt;f64&gt; {
+        let mut v = Vec::new();
+        for ls in &amp;self.landscapes {
+            v.extend(ls.to_feature_vector());
+        }
+        v
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="trajectory-types"><a class="header" href="#trajectory-types">Trajectory types</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A topological constraint on predicted trajectories.
+///
+/// Derived from the current persistence landscape and Betti numbers.
+/// The constraint engine uses these to filter impossible paths.
+#[derive(Clone, Debug)]
+pub enum TopologicalConstraint {
+    /// β_0 = 1: single connected component.
+    /// Smooth transitions are the norm. Discontinuous jumps are unlikely
+    /// without an external shock.
+    SingleComponent,
+
+    /// β_0 &gt; 1: observation space has multiple disconnected clusters.
+    /// The u16 field records the component count.
+    /// Smooth convergence is impossible; merging events must occur first.
+    Fragmented(u16),
+
+    /// β_1 &gt; 0: loops present in the observation space.
+    /// The u16 field records the number of persistent loops.
+    /// Oscillatory trajectories are topologically favored.
+    Oscillatory(u16),
+
+    /// Betti numbers are decreasing across dimensions.
+    /// Topology is simplifying: features are dying, the space
+    /// is consolidating. Predict convergent behavior.
+    Collapsing,
+
+    /// Betti numbers are increasing across dimensions.
+    /// Topology is gaining features: new components, new loops.
+    /// Predict divergent or complexifying behavior.
+    Complexifying,
+}
+
+/// A single predicted trajectory: a path through observation space
+/// with an associated probability and topological constraint.
+#[derive(Clone, Debug)]
+pub struct PredictedTrajectory {
+    /// Sequence of observation vectors over the prediction horizon.
+    /// path[t][d] = value of dimension d at horizon tick t.
+    pub path: Vec&lt;Vec&lt;f64&gt;&gt;,
+    /// Probability weight assigned to this trajectory.
+    /// Derived from kernel regression weights and constraint filtering.
+    pub probability: f64,
+    /// The topological constraint that this trajectory satisfies.
+    pub constraint: TopologicalConstraint,
+    /// L^2 distance from the query landscape to the library entry
+    /// that produced this trajectory. Lower = more confident match.
+    pub landscape_distance: f64,
+}
+
+/// A family of predicted trajectories spanning the forecast horizon.
+///
+/// The family represents the space of topologically possible futures.
+/// Individual trajectories carry probabilities; the family carries
+/// aggregate statistics about confidence and constraint type.
+#[derive(Clone, Debug)]
+pub struct TrajectoryFamily {
+    /// The predicted trajectories, sorted by probability (descending).
+    pub trajectories: Vec&lt;PredictedTrajectory&gt;,
+    /// Prediction horizon in Gamma ticks.
+    pub horizon_ticks: u32,
+    /// Confidence: 1.0 minus the mean landscape distance of neighbors.
+    /// High confidence means the library had close matches.
+    /// Low confidence means we are in uncharted topological territory.
+    pub confidence: f64,
+    /// The dominant topological constraint for this family.
+    pub dominant_constraint: TopologicalConstraint,
+    /// Betti numbers at the time of prediction.
+    pub current_betti: Vec&lt;u16&gt;,
+}
+
+/// A topological forecast produced at Theta frequency.
+///
+/// Aggregates Gamma-rate trajectory predictions into a single
+/// insight for the Oracle.
+#[derive(Clone, Debug)]
+pub struct TopologicalForecast {
+    /// The trajectory family (already filtered by constraints).
+    pub family: TrajectoryFamily,
+    /// Expected topological transitions in the horizon.
+    /// Each entry: (estimated tick, transition description).
+    pub expected_transitions: Vec&lt;(u32, String)&gt;,
+    /// Landscape derivative norm: rate of topological change.
+    /// High values signal imminent regime transitions.
+    pub landscape_velocity: f64,
+    /// DeFi primitive type this forecast concerns.
+    pub primitive_type: DeFiPrimitive,
+}
+
+/// Enumeration of DeFi primitive types for targeted interpretation.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum DeFiPrimitive {
+    ConcentratedLiquidity,
+    LendingMarket,
+    PerpetualDerivative,
+    OptionsMarket,
+    YieldToken,
+    Vault,
+    Staking,
+}
+
+/// A hypothetical topology generated during REM dreaming.
+///
+/// REM dreams deform existing landscapes into novel configurations
+/// that the Golem has never observed, then predict what trajectories
+/// those configurations would produce.
+#[derive(Clone, Debug)]
+pub struct HypotheticalTopology {
+    /// The deformed landscape bundle.
+    pub landscape: LandscapeBundle,
+    /// The predicted trajectory family for this hypothetical topology.
+    pub predicted_family: TrajectoryFamily,
+    /// Description of the deformation applied.
+    pub deformation: String,
+    /// How different this hypothetical is from any historical landscape.
+    pub novelty_score: f64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="landscape-library"><a class="header" href="#landscape-library">Landscape library</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// An indexed collection of historical landscape bundles paired
+/// with the trajectories that followed.
+///
+/// The library supports two retrieval modes:
+/// - HDC-accelerated approximate nearest neighbor (for Gamma-rate queries)
+/// - Exact L^2 nearest neighbor (for Theta-rate refinement)
+pub struct LandscapeLibrary {
+    /// Historical entries: (tick, landscape_bundle, observed_trajectory).
+    entries: Vec&lt;LibraryEntry&gt;,
+    /// HDC index: hypervectors for approximate nearest neighbor.
+    hdc_index: Vec&lt;(usize, Vec&lt;u64&gt;)&gt;,
+    /// Configuration.
+    config: PredictiveConfig,
+    /// Running statistics for adaptive kernel bandwidth.
+    distance_stats: DistanceStats,
+}
+
+struct LibraryEntry {
+    tick: u64,
+    bundle: LandscapeBundle,
+    trajectory: Vec&lt;Vec&lt;f64&gt;&gt;,
+    /// Fitness score: how well did predictions based on this
+    /// entry perform? Entries with low fitness get pruned.
+    fitness: f64,
+    /// Number of times this entry was used as a neighbor.
+    retrieval_count: u32,
+}
+
+/// Running mean and variance of nearest-neighbor distances,
+/// used to adaptively set the kernel bandwidth.
+struct DistanceStats {
+    count: u64,
+    mean: f64,
+    m2: f64, // Welford's online variance accumulator.
+}
+
+impl DistanceStats {
+    fn new() -&gt; Self {
+        Self {
+            count: 0,
+            mean: 0.0,
+            m2: 0.0,
+        }
+    }
+
+    fn update(&amp;mut self, distance: f64) {
+        self.count += 1;
+        let delta = distance - self.mean;
+        self.mean += delta / self.count as f64;
+        let delta2 = distance - self.mean;
+        self.m2 += delta * delta2;
+    }
+
+    fn variance(&amp;self) -&gt; f64 {
+        if self.count &lt; 2 {
+            return 1.0;
+        }
+        self.m2 / (self.count as f64 - 1.0)
+    }
+
+    /// Adaptive kernel bandwidth: Silverman's rule of thumb
+    /// applied to the distribution of nearest-neighbor distances.
+    fn adaptive_bandwidth(&amp;self) -&gt; f64 {
+        let sigma = self.variance().sqrt();
+        let n = self.count as f64;
+        if n &lt; 2.0 {
+            return 1.0;
+        }
+        // Silverman's rule: h = 1.06 * σ * n^(-1/5)
+        1.06 * sigma * n.powf(-0.2)
+    }
+}
+
+impl LandscapeLibrary {
+    pub fn new(config: PredictiveConfig) -&gt; Self {
+        Self {
+            entries: Vec::new(),
+            hdc_index: Vec::new(),
+            config,
+            distance_stats: DistanceStats::new(),
+        }
+    }
+
+    /// Add a new (landscape, trajectory) pair to the library.
+    ///
+    /// Called during Delta ticks when the trajectory following a
+    /// landscape has been fully observed.
+    pub fn insert(&amp;mut self, bundle: LandscapeBundle, trajectory: Vec&lt;Vec&lt;f64&gt;&gt;) {
+        let hdc = self.encode_hdc(&amp;bundle);
+        let idx = self.entries.len();
+
+        self.entries.push(LibraryEntry {
+            tick: bundle.tick,
+            bundle,
+            trajectory,
+            fitness: 1.0, // Neutral initial fitness.
+            retrieval_count: 0,
+        });
+
+        self.hdc_index.push((idx, hdc));
+
+        // Prune if over capacity.
+        if self.entries.len() &gt; self.config.max_library_size {
+            self.prune();
+        }
+    }
+
+    /// Find the K nearest neighbors by L^2 distance.
+    ///
+    /// Two-stage retrieval:
+    /// 1. HDC filter: compute Hamming distances to all entries, keep top 4K candidates.
+    /// 2. Exact L^2: compute full landscape distance on candidates, keep top K.
+    pub fn nearest_neighbors(
+        &amp;mut self,
+        query: &amp;LandscapeBundle,
+        k: usize,
+    ) -&gt; Vec&lt;(usize, f64)&gt; {
+        let query_hdc = self.encode_hdc(query);
+        let candidate_count = (4 * k).min(self.entries.len());
+
+        // Stage 1: HDC approximate filter.
+        let mut hdc_distances: Vec&lt;(usize, u32)&gt; = self
+            .hdc_index
+            .iter()
+            .map(|(idx, hdc)| (*idx, hamming_distance(&amp;query_hdc, hdc)))
+            .collect();
+
+        hdc_distances.sort_by_key(|&amp;(_, d)| d);
+        let candidates: Vec&lt;usize&gt; = hdc_distances
+            .iter()
+            .take(candidate_count)
+            .map(|&amp;(idx, _)| idx)
+            .collect();
+
+        // Stage 2: exact L^2 distance on candidates.
+        let mut exact: Vec&lt;(usize, f64)&gt; = candidates
+            .iter()
+            .map(|&amp;idx| {
+                let dist = query.distance(&amp;self.entries[idx].bundle);
+                (idx, dist)
+            })
+            .collect();
+
+        exact.sort_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap_or(std::cmp::Ordering::Equal));
+        exact.truncate(k);
+
+        // Update distance statistics for adaptive bandwidth.
+        for &amp;(_, dist) in &amp;exact {
+            self.distance_stats.update(dist);
+        }
+
+        // Update retrieval counts.
+        for &amp;(idx, _) in &amp;exact {
+            self.entries[idx].retrieval_count += 1;
+        }
+
+        exact
+    }
+
+    /// Encode a landscape bundle as a 10,240-bit HDC hypervector.
+    ///
+    /// The encoding quantizes landscape values, maps (layer, sample, level)
+    /// triples to seed vectors via deterministic hashing, and bundles
+    /// them with majority vote.
+    fn encode_hdc(&amp;self, bundle: &amp;LandscapeBundle) -&gt; Vec&lt;u64&gt; {
+        let dim_words = 10_240 / 64; // 160 u64 words.
+        let mut accumulator = vec![0i32; 10_240];
+
+        for ls in &amp;bundle.landscapes {
+            for k in 0..ls.num_layers {
+                for i in 0..ls.num_samples {
+                    // Quantize to 16 levels.
+                    let level = quantize(ls.layers[k][i], 16);
+
+                    // Deterministic seed from (dimension, layer, sample, level).
+                    let seed = hash_triple(ls.dimension, k as u32, i as u32, level);
+                    let seed_vec = generate_seed_vector(seed, 10_240);
+
+                    // XOR-bind within a layer row, then accumulate.
+                    for bit in 0..10_240 {
+                        if seed_vec[bit] {
+                            accumulator[bit] += 1;
+                        } else {
+                            accumulator[bit] -= 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Majority vote: positive -&gt; 1, non-positive -&gt; 0.
+        let mut result = vec![0u64; dim_words];
+        for bit in 0..10_240 {
+            if accumulator[bit] &gt; 0 {
+                result[bit / 64] |= 1u64 &lt;&lt; (bit % 64);
+            }
+        }
+
+        result
+    }
+
+    /// Prune the library to max_library_size.
+    ///
+    /// Eviction priority (lowest fitness first):
+    /// - Low fitness score (predictions based on this entry were wrong).
+    /// - Low retrieval count (this entry was rarely the nearest neighbor).
+    /// - Old tick (older entries are less relevant to current market conditions).
+    fn prune(&amp;mut self) {
+        let target = self.config.max_library_size * 3 / 4;
+
+        // Score each entry for eviction.
+        let max_tick = self.entries.iter().map(|e| e.tick).max().unwrap_or(0);
+        let mut scores: Vec&lt;(usize, f64)&gt; = self
+            .entries
+            .iter()
+            .enumerate()
+            .map(|(idx, entry)| {
+                let recency = if max_tick &gt; 0 {
+                    entry.tick as f64 / max_tick as f64
+                } else {
+                    1.0
+                };
+                let retrieval = (entry.retrieval_count as f64).ln_1p();
+                let score = entry.fitness * 0.5 + recency * 0.3 + retrieval * 0.2;
+                (idx, score)
+            })
+            .collect();
+
+        scores.sort_by(|a, b| b.1.partial_cmp(&amp;a.1).unwrap_or(std::cmp::Ordering::Equal));
+
+        let keep: std::collections::HashSet&lt;usize&gt; =
+            scores.iter().take(target).map(|&amp;(idx, _)| idx).collect();
+
+        // Rebuild entries and HDC index.
+        let mut new_entries = Vec::with_capacity(target);
+        let mut new_hdc = Vec::with_capacity(target);
+        let mut remap = std::collections::HashMap::new();
+
+        for (old_idx, entry) in self.entries.drain(..).enumerate() {
+            if keep.contains(&amp;old_idx) {
+                let new_idx = new_entries.len();
+                remap.insert(old_idx, new_idx);
+                new_entries.push(entry);
+            }
+        }
+
+        for (old_idx, hdc) in self.hdc_index.drain(..) {
+            if let Some(&amp;new_idx) = remap.get(&amp;old_idx) {
+                new_hdc.push((new_idx, hdc));
+            }
+        }
+
+        self.entries = new_entries;
+        self.hdc_index = new_hdc;
+    }
+
+    /// Update fitness scores based on prediction outcomes.
+    ///
+    /// For each entry that was used as a neighbor, compare the
+    /// predicted trajectory to the actual trajectory and adjust fitness.
+    pub fn update_fitness(
+        &amp;mut self,
+        neighbor_indices: &amp;[usize],
+        actual_trajectory: &amp;[Vec&lt;f64&gt;],
+    ) {
+        for &amp;idx in neighbor_indices {
+            if idx &gt;= self.entries.len() {
+                continue;
+            }
+            let entry = &amp;mut self.entries[idx];
+            let predicted = &amp;entry.trajectory;
+
+            // Trajectory similarity: mean L^2 distance across time steps.
+            let steps = predicted.len().min(actual_trajectory.len());
+            if steps == 0 {
+                continue;
+            }
+
+            let mut total_dist = 0.0;
+            for t in 0..steps {
+                let dims = predicted[t].len().min(actual_trajectory[t].len());
+                let step_dist: f64 = (0..dims)
+                    .map(|d| {
+                        let diff = predicted[t][d] - actual_trajectory[t][d];
+                        diff * diff
+                    })
+                    .sum::&lt;f64&gt;()
+                    .sqrt();
+                total_dist += step_dist;
+            }
+            let mean_dist = total_dist / steps as f64;
+
+            // Fitness update: exponential moving average.
+            // Accuracy = 1 / (1 + mean_dist) maps distance to [0, 1].
+            let accuracy = 1.0 / (1.0 + mean_dist);
+            entry.fitness = 0.9 * entry.fitness + 0.1 * accuracy;
+        }
+    }
+}
+
+/// Hamming distance between two HDC vectors (packed as u64 words).
+fn hamming_distance(a: &amp;[u64], b: &amp;[u64]) -&gt; u32 {
+    a.iter()
+        .zip(b.iter())
+        .map(|(x, y)| (x ^ y).count_ones())
+        .sum()
+}
+
+/// Quantize a floating-point value to one of `levels` discrete levels.
+/// Assumes input is non-negative (landscape values are always &gt;= 0).
+fn quantize(value: f64, levels: u32) -&gt; u32 {
+    // Clamp to [0, max_expected] then map to [0, levels-1].
+    // The max_expected is estimated from the data; 1.0 works for
+    // normalized landscapes.
+    let clamped = value.clamp(0.0, 1.0);
+    let level = (clamped * (levels - 1) as f64).round() as u32;
+    level.min(levels - 1)
+}
+
+/// Deterministic hash for (dimension, layer, sample, level) -&gt; u64 seed.
+fn hash_triple(dim: u8, layer: u32, sample: u32, level: u32) -&gt; u64 {
+    // FNV-1a hash for simplicity. Not cryptographic, but sufficient
+    // for generating pseudo-random seed vectors.
+    let mut hash: u64 = 0xcbf29ce484222325;
+    let prime: u64 = 0x100000001b3;
+
+    for byte in &amp;[dim] {
+        hash ^= *byte as u64;
+        hash = hash.wrapping_mul(prime);
+    }
+    for byte in &amp;layer.to_le_bytes() {
+        hash ^= *byte as u64;
+        hash = hash.wrapping_mul(prime);
+    }
+    for byte in &amp;sample.to_le_bytes() {
+        hash ^= *byte as u64;
+        hash = hash.wrapping_mul(prime);
+    }
+    for byte in &amp;level.to_le_bytes() {
+        hash ^= *byte as u64;
+        hash = hash.wrapping_mul(prime);
+    }
+
+    hash
+}
+
+/// Generate a pseudo-random bit vector from a seed.
+/// Uses a simple xorshift64 PRNG seeded from the input.
+fn generate_seed_vector(seed: u64, bits: usize) -&gt; Vec&lt;bool&gt; {
+    let mut state = seed;
+    let mut vec = Vec::with_capacity(bits);
+
+    for _ in 0..bits {
+        // xorshift64
+        state ^= state &lt;&lt; 13;
+        state ^= state &gt;&gt; 7;
+        state ^= state &lt;&lt; 17;
+        vec.push(state &amp; 1 == 1);
+    }
+
+    vec
+}
+<span class="boring">}</span></code></pre>
+<h3 id="topological-constraint-engine"><a class="header" href="#topological-constraint-engine">Topological constraint engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Determines topological constraints from a landscape bundle
+/// and its recent history, then filters trajectory families
+/// to remove topologically impossible paths.
+pub struct TopologicalConstraintEngine {
+    /// Recent Betti number history for trend detection.
+    betti_history: VecDeque&lt;(u64, Vec&lt;u16&gt;)&gt;,
+    /// Maximum history length.
+    max_history: usize,
+}
+
+impl TopologicalConstraintEngine {
+    pub fn new(max_history: usize) -&gt; Self {
+        Self {
+            betti_history: VecDeque::with_capacity(max_history),
+            max_history,
+        }
+    }
+
+    /// Record the current Betti numbers.
+    pub fn record(&amp;mut self, tick: u64, betti: Vec&lt;u16&gt;) {
+        self.betti_history.push_back((tick, betti));
+        if self.betti_history.len() &gt; self.max_history {
+            self.betti_history.pop_front();
+        }
+    }
+
+    /// Derive the current topological constraint from Betti numbers
+    /// and their recent trend.
+    pub fn current_constraint(&amp;self) -&gt; TopologicalConstraint {
+        let current = match self.betti_history.back() {
+            Some((_, betti)) =&gt; betti.clone(),
+            None =&gt; return TopologicalConstraint::SingleComponent,
+        };
+
+        let beta_0 = current.first().copied().unwrap_or(1);
+        let beta_1 = current.get(1).copied().unwrap_or(0);
+
+        // Check for fragmentation.
+        if beta_0 &gt; 1 {
+            return TopologicalConstraint::Fragmented(beta_0);
+        }
+
+        // Check for oscillatory constraints.
+        if beta_1 &gt; 0 {
+            return TopologicalConstraint::Oscillatory(beta_1);
+        }
+
+        // Check trends over history.
+        if self.betti_history.len() &gt;= 3 {
+            let trend = self.betti_trend();
+            if trend &lt; -0.5 {
+                return TopologicalConstraint::Collapsing;
+            }
+            if trend &gt; 0.5 {
+                return TopologicalConstraint::Complexifying;
+            }
+        }
+
+        TopologicalConstraint::SingleComponent
+    }
+
+    /// Compute a scalar trend over recent Betti number history.
+    ///
+    /// Positive = topology gaining features (complexifying).
+    /// Negative = topology losing features (collapsing).
+    /// Near zero = stable.
+    fn betti_trend(&amp;self) -&gt; f64 {
+        if self.betti_history.len() &lt; 2 {
+            return 0.0;
+        }
+
+        let n = self.betti_history.len();
+        let half = n / 2;
+
+        // Compare mean total Betti in the recent half vs. older half.
+        let older_mean: f64 = self.betti_history
+            .iter()
+            .take(half)
+            .map(|(_, b)| b.iter().map(|&amp;x| x as f64).sum::&lt;f64&gt;())
+            .sum::&lt;f64&gt;()
+            / half as f64;
+
+        let recent_mean: f64 = self.betti_history
+            .iter()
+            .skip(n - half)
+            .map(|(_, b)| b.iter().map(|&amp;x| x as f64).sum::&lt;f64&gt;())
+            .sum::&lt;f64&gt;()
+            / half as f64;
+
+        recent_mean - older_mean
+    }
+
+    /// Filter a set of candidate trajectories against topological constraints.
+    ///
+    /// Trajectories incompatible with the current constraint are removed.
+    /// Trajectories partially compatible have their probability downweighted.
+    pub fn filter_trajectories(
+        &amp;self,
+        candidates: Vec&lt;PredictedTrajectory&gt;,
+        constraint: &amp;TopologicalConstraint,
+    ) -&gt; Vec&lt;PredictedTrajectory&gt; {
+        candidates
+            .into_iter()
+            .filter_map(|mut traj| {
+                let weight = self.constraint_compatibility(&amp;traj, constraint);
+                if weight &lt; 0.01 {
+                    return None; // Incompatible: remove.
+                }
+                traj.probability *= weight;
+                traj.constraint = constraint.clone();
+                Some(traj)
+            })
+            .collect()
+    }
+
+    /// Score how compatible a trajectory is with a topological constraint.
+    ///
+    /// Returns a weight in [0, 1]. Zero means incompatible.
+    fn constraint_compatibility(
+        &amp;self,
+        trajectory: &amp;PredictedTrajectory,
+        constraint: &amp;TopologicalConstraint,
+    ) -&gt; f64 {
+        match constraint {
+            TopologicalConstraint::SingleComponent =&gt; {
+                // Penalize trajectories with large jumps (discontinuities).
+                let max_jump = self.max_step_size(trajectory);
+                if max_jump &gt; 2.0 {
+                    0.1 // Heavy penalty but not elimination.
+                } else {
+                    1.0
+                }
+            }
+            TopologicalConstraint::Fragmented(components) =&gt; {
+                // Penalize trajectories that assume smooth convergence.
+                // The more components, the harder convergence is.
+                let smoothness = self.trajectory_smoothness(trajectory);
+                if smoothness &gt; 0.8 &amp;&amp; *components &gt; 2 {
+                    0.2 // Too smooth for a fragmented space.
+                } else {
+                    1.0
+                }
+            }
+            TopologicalConstraint::Oscillatory(loops) =&gt; {
+                // Favor trajectories that show oscillatory behavior.
+                let osc = self.oscillation_score(trajectory);
+                // More loops = stronger oscillation expected.
+                let expected_osc = (*loops as f64 * 0.2).min(1.0);
+                if osc &lt; expected_osc * 0.5 {
+                    0.3 // Insufficient oscillation for topology.
+                } else {
+                    1.0
+                }
+            }
+            TopologicalConstraint::Collapsing =&gt; {
+                // Favor trajectories that converge.
+                let convergence = self.convergence_score(trajectory);
+                if convergence &lt; 0.3 {
+                    0.4 // Not converging in a collapsing topology.
+                } else {
+                    1.0
+                }
+            }
+            TopologicalConstraint::Complexifying =&gt; {
+                // Favor trajectories that diverge or show increasing variance.
+                let divergence = self.divergence_score(trajectory);
+                if divergence &lt; 0.3 {
+                    0.4 // Not diverging in a complexifying topology.
+                } else {
+                    1.0
+                }
+            }
+        }
+    }
+
+    /// Maximum Euclidean step size between consecutive points in a trajectory.
+    fn max_step_size(&amp;self, trajectory: &amp;PredictedTrajectory) -&gt; f64 {
+        let path = &amp;trajectory.path;
+        let mut max_step = 0.0f64;
+
+        for t in 1..path.len() {
+            let step: f64 = path[t]
+                .iter()
+                .zip(path[t - 1].iter())
+                .map(|(a, b)| (a - b).powi(2))
+                .sum::&lt;f64&gt;()
+                .sqrt();
+            max_step = max_step.max(step);
+        }
+
+        max_step
+    }
+
+    /// Smoothness: fraction of steps below the median step size.
+    fn trajectory_smoothness(&amp;self, trajectory: &amp;PredictedTrajectory) -&gt; f64 {
+        let path = &amp;trajectory.path;
+        if path.len() &lt; 2 {
+            return 1.0;
+        }
+
+        let mut steps: Vec&lt;f64&gt; = (1..path.len())
+            .map(|t| {
+                path[t]
+                    .iter()
+                    .zip(path[t - 1].iter())
+                    .map(|(a, b)| (a - b).powi(2))
+                    .sum::&lt;f64&gt;()
+                    .sqrt()
+            })
+            .collect();
+
+        steps.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        let median = steps[steps.len() / 2];
+        let below = steps.iter().filter(|&amp;&amp;s| s &lt;= median * 1.5).count();
+
+        below as f64 / steps.len() as f64
+    }
+
+    /// Oscillation score: measures how much a trajectory reverses direction.
+    fn oscillation_score(&amp;self, trajectory: &amp;PredictedTrajectory) -&gt; f64 {
+        let path = &amp;trajectory.path;
+        if path.len() &lt; 3 {
+            return 0.0;
+        }
+
+        // Count direction reversals in each dimension, average across dimensions.
+        let dims = path[0].len();
+        if dims == 0 {
+            return 0.0;
+        }
+
+        let mut total_reversals = 0usize;
+        let max_reversals = (path.len() - 2) * dims;
+
+        for d in 0..dims {
+            for t in 2..path.len() {
+                let prev_delta = path[t - 1][d] - path[t - 2][d];
+                let curr_delta = path[t][d] - path[t - 1][d];
+                if prev_delta * curr_delta &lt; 0.0 {
+                    total_reversals += 1;
+                }
+            }
+        }
+
+        if max_reversals == 0 {
+            return 0.0;
+        }
+
+        total_reversals as f64 / max_reversals as f64
+    }
+
+    /// Convergence score: do the trajectory dimensions narrow over time?
+    fn convergence_score(&amp;self, trajectory: &amp;PredictedTrajectory) -&gt; f64 {
+        let path = &amp;trajectory.path;
+        if path.len() &lt; 4 {
+            return 0.5;
+        }
+
+        let half = path.len() / 2;
+        let dims = path[0].len();
+        if dims == 0 {
+            return 0.5;
+        }
+
+        // Compare variance in the first half vs. second half.
+        let first_var = self.window_variance(&amp;path[..half]);
+        let second_var = self.window_variance(&amp;path[half..]);
+
+        if first_var &lt; 1e-10 {
+            return 0.5;
+        }
+
+        // Ratio &lt; 1 means converging, &gt; 1 means diverging.
+        let ratio = second_var / first_var;
+        (1.0 - ratio).clamp(0.0, 1.0)
+    }
+
+    /// Divergence score: inverse of convergence.
+    fn divergence_score(&amp;self, trajectory: &amp;PredictedTrajectory) -&gt; f64 {
+        1.0 - self.convergence_score(trajectory)
+    }
+
+    /// Variance of observation vectors in a window.
+    fn window_variance(&amp;self, window: &amp;[Vec&lt;f64&gt;]) -&gt; f64 {
+        if window.len() &lt; 2 {
+            return 0.0;
+        }
+
+        let dims = window[0].len();
+        let n = window.len() as f64;
+
+        let mean: Vec&lt;f64&gt; = (0..dims)
+            .map(|d| window.iter().map(|v| v[d]).sum::&lt;f64&gt;() / n)
+            .collect();
+
+        let var: f64 = window
+            .iter()
+            .map(|v| {
+                v.iter()
+                    .zip(mean.iter())
+                    .map(|(x, m)| (x - m).powi(2))
+                    .sum::&lt;f64&gt;()
+            })
+            .sum::&lt;f64&gt;()
+            / n;
+
+        var
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="topology-trajectory-regression"><a class="header" href="#topology-trajectory-regression">Topology-trajectory regression</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Kernel regression from persistence landscapes to trajectory families.
+///
+/// Given a query landscape, finds nearest neighbors in the library,
+/// weights them by a Gaussian kernel, and constructs a trajectory family
+/// from the weighted combination.
+pub struct TopologyTrajectoryRegression {
+    library: LandscapeLibrary,
+    constraint_engine: TopologicalConstraintEngine,
+    config: PredictiveConfig,
+}
+
+impl TopologyTrajectoryRegression {
+    pub fn new(config: PredictiveConfig) -&gt; Self {
+        Self {
+            library: LandscapeLibrary::new(config.clone()),
+            constraint_engine: TopologicalConstraintEngine::new(100),
+            config,
+        }
+    }
+
+    /// Predict a trajectory family from a landscape bundle.
+    ///
+    /// Steps:
+    /// 1. Find K nearest neighbors in the library.
+    /// 2. Compute Gaussian kernel weights.
+    /// 3. Build candidate trajectories from neighbors.
+    /// 4. Apply topological constraints.
+    /// 5. Normalize probabilities and return.
+    pub fn predict(&amp;mut self, query: &amp;LandscapeBundle) -&gt; TrajectoryFamily {
+        // Record Betti numbers for constraint tracking.
+        self.constraint_engine
+            .record(query.tick, query.betti.clone());
+
+        let neighbors = self
+            .library
+            .nearest_neighbors(query, self.config.k_neighbors);
+
+        if neighbors.is_empty() {
+            return self.empty_family(query);
+        }
+
+        // Kernel bandwidth: use adaptive bandwidth from library statistics,
+        // falling back to the configured value if insufficient data.
+        let bandwidth = if self.library.distance_stats.count &gt; 10 {
+            self.library.distance_stats.adaptive_bandwidth()
+        } else {
+            self.config.kernel_bandwidth
+        };
+
+        // Compute kernel weights.
+        let weights: Vec&lt;f64&gt; = neighbors
+            .iter()
+            .map(|&amp;(_, dist)| gaussian_kernel(dist, bandwidth))
+            .collect();
+
+        let weight_sum: f64 = weights.iter().sum();
+        if weight_sum &lt; 1e-15 {
+            return self.empty_family(query);
+        }
+
+        // Build candidate trajectories.
+        let mut candidates: Vec&lt;PredictedTrajectory&gt; = neighbors
+            .iter()
+            .zip(weights.iter())
+            .map(|(&amp;(idx, dist), &amp;w)| {
+                let entry_traj = &amp;self.library.entries[idx].trajectory;
+                PredictedTrajectory {
+                    path: entry_traj.clone(),
+                    probability: w / weight_sum,
+                    constraint: TopologicalConstraint::SingleComponent, // Overwritten by filter.
+                    landscape_distance: dist,
+                }
+            })
+            .collect();
+
+        // Apply topological constraints.
+        let constraint = self.constraint_engine.current_constraint();
+        candidates = self
+            .constraint_engine
+            .filter_trajectories(candidates, &amp;constraint);
+
+        // Re-normalize probabilities after filtering.
+        let total_prob: f64 = candidates.iter().map(|t| t.probability).sum();
+        if total_prob &gt; 1e-15 {
+            for traj in &amp;mut candidates {
+                traj.probability /= total_prob;
+            }
+        }
+
+        // Sort by probability descending.
+        candidates.sort_by(|a, b| {
+            b.probability
+                .partial_cmp(&amp;a.probability)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        // Compute confidence from mean landscape distance.
+        let mean_dist: f64 = neighbors.iter().map(|&amp;(_, d)| d).sum::&lt;f64&gt;()
+            / neighbors.len() as f64;
+        let confidence = 1.0 / (1.0 + mean_dist / self.config.close_match_threshold);
+
+        TrajectoryFamily {
+            trajectories: candidates,
+            horizon_ticks: self.config.horizon_ticks,
+            confidence,
+            dominant_constraint: constraint,
+            current_betti: query.betti.clone(),
+        }
+    }
+
+    /// Record an observed trajectory for a past landscape.
+    /// Called during Delta tick when the horizon has elapsed.
+    pub fn record_observation(
+        &amp;mut self,
+        bundle: LandscapeBundle,
+        trajectory: Vec&lt;Vec&lt;f64&gt;&gt;,
+    ) {
+        self.library.insert(bundle, trajectory);
+    }
+
+    /// Update fitness scores based on prediction accuracy.
+    pub fn update_fitness(
+        &amp;mut self,
+        neighbor_indices: &amp;[usize],
+        actual: &amp;[Vec&lt;f64&gt;],
+    ) {
+        self.library.update_fitness(neighbor_indices, actual);
+    }
+
+    /// Cross-validate kernel bandwidth on the library.
+    ///
+    /// Leave-one-out: for each entry, predict its trajectory using
+    /// all other entries, measure error, find the bandwidth that
+    /// minimizes mean error.
+    pub fn cross_validate_bandwidth(&amp;mut self) {
+        if self.library.entries.len() &lt; 20 {
+            return; // Not enough data for meaningful CV.
+        }
+
+        let bandwidths = [0.01, 0.05, 0.1, 0.2, 0.5, 1.0];
+        let mut best_bw = self.config.kernel_bandwidth;
+        let mut best_error = f64::MAX;
+
+        for &amp;bw in &amp;bandwidths {
+            let error = self.loo_error(bw);
+            if error &lt; best_error {
+                best_error = error;
+                best_bw = bw;
+            }
+        }
+
+        self.config.kernel_bandwidth = best_bw;
+    }
+
+    /// Leave-one-out prediction error for a given bandwidth.
+    fn loo_error(&amp;self, bandwidth: f64) -&gt; f64 {
+        let n = self.library.entries.len();
+        let sample_size = n.min(50); // Subsample for speed.
+        let step = n / sample_size;
+        let mut total_error = 0.0;
+        let mut count = 0;
+
+        for i in (0..n).step_by(step.max(1)) {
+            let query = &amp;self.library.entries[i].bundle;
+            let actual = &amp;self.library.entries[i].trajectory;
+
+            // Find neighbors excluding self.
+            let mut weighted_traj = vec![vec![0.0; actual[0].len()]; actual.len()];
+            let mut weight_sum = 0.0;
+
+            for (j, entry) in self.library.entries.iter().enumerate() {
+                if j == i {
+                    continue;
+                }
+                let dist = query.distance(&amp;entry.bundle);
+                let w = gaussian_kernel(dist, bandwidth);
+                weight_sum += w;
+
+                let steps = entry.trajectory.len().min(actual.len());
+                for t in 0..steps {
+                    let dims = entry.trajectory[t].len().min(actual[0].len());
+                    for d in 0..dims {
+                        weighted_traj[t][d] += w * entry.trajectory[t][d];
+                    }
+                }
+            }
+
+            if weight_sum &lt; 1e-15 {
+                continue;
+            }
+
+            // Normalize and compute error.
+            let mut error = 0.0;
+            for t in 0..actual.len() {
+                for d in 0..actual[t].len() {
+                    let predicted = weighted_traj[t][d] / weight_sum;
+                    error += (predicted - actual[t][d]).powi(2);
+                }
+            }
+
+            total_error += error;
+            count += 1;
+        }
+
+        if count == 0 {
+            return f64::MAX;
+        }
+
+        total_error / count as f64
+    }
+
+    fn empty_family(&amp;self, query: &amp;LandscapeBundle) -&gt; TrajectoryFamily {
+        TrajectoryFamily {
+            trajectories: Vec::new(),
+            horizon_ticks: self.config.horizon_ticks,
+            confidence: 0.0,
+            dominant_constraint: TopologicalConstraint::SingleComponent,
+            current_betti: query.betti.clone(),
+        }
+    }
+}
+
+/// Gaussian kernel: K_h(d) = exp(-d^2 / (2h^2)).
+fn gaussian_kernel(distance: f64, bandwidth: f64) -&gt; f64 {
+    (-distance.powi(2) / (2.0 * bandwidth.powi(2))).exp()
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-main-engine"><a class="header" href="#the-main-engine">The main engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The predictive topology engine.
+///
+/// Wraps TdaAnalyzer with persistence landscape computation,
+/// trajectory prediction, and topological constraint filtering.
+/// Implements the TaAnalyzer trait for integration with the heartbeat.
+pub struct PredictiveTopology {
+    /// The underlying TDA engine for persistence diagram computation.
+    tda: TdaAnalyzer,
+    /// Persistence landscape history for derivative computation.
+    landscape_history: VecDeque&lt;LandscapeBundle&gt;,
+    /// Observation history for recording trajectories.
+    observation_history: VecDeque&lt;(u64, Vec&lt;Vec&lt;f64&gt;&gt;)&gt;,
+    /// The trajectory regression model.
+    regression: TopologyTrajectoryRegression,
+    /// Configuration.
+    config: PredictiveConfig,
+    /// Most recent trajectory family (for CorticalState writing).
+    latest_family: Option&lt;TrajectoryFamily&gt;,
+    /// Pending landscape-trajectory pairs waiting for trajectory completion.
+    /// (start_tick, landscape_bundle, partial_trajectory)
+    pending: VecDeque&lt;(u64, LandscapeBundle, Vec&lt;Vec&lt;f64&gt;&gt;)&gt;,
+    /// Neighbor indices from the most recent prediction (for fitness updates).
+    last_neighbor_indices: Vec&lt;usize&gt;,
+}
+
+impl PredictiveTopology {
+    pub fn new(tda: TdaAnalyzer, config: PredictiveConfig) -&gt; Self {
+        let regression = TopologyTrajectoryRegression::new(config.clone());
+        Self {
+            tda,
+            landscape_history: VecDeque::with_capacity(100),
+            observation_history: VecDeque::with_capacity(
+                config.horizon_ticks as usize * 2,
+            ),
+            regression,
+            config,
+            latest_family: None,
+            pending: VecDeque::new(),
+            last_neighbor_indices: Vec::new(),
+        }
+    }
+
+    /// Gamma tick: perception-rate update.
+    ///
+    /// 1. Feed observations to TDA and get a persistence diagram.
+    /// 2. Transform diagram into a landscape bundle.
+    /// 3. Predict trajectory family.
+    /// 4. Write confidence to CorticalState.
+    pub fn gamma_tick(
+        &amp;mut self,
+        observations: &amp;[Vec&lt;f32&gt;],
+        tick: u64,
+    ) -&gt; Option&lt;TrajectoryFamily&gt; {
+        // Convert f32 observations to f64 for internal computation.
+        let obs_f64: Vec&lt;Vec&lt;f64&gt;&gt; = observations
+            .iter()
+            .map(|v| v.iter().map(|&amp;x| x as f64).collect())
+            .collect();
+
+        // Record observations for trajectory tracking.
+        self.observation_history.push_back((tick, obs_f64.clone()));
+        if self.observation_history.len() &gt; self.config.horizon_ticks as usize * 2 {
+            self.observation_history.pop_front();
+        }
+
+        // Compute persistence diagram via existing TDA pipeline.
+        let diagram = self.tda.compute_diagram(observations)?;
+
+        // Transform to landscape bundle.
+        let mut bundle = LandscapeBundle::from_diagram(
+            &amp;diagram,
+            &amp;self.config.homology_dimensions,
+            self.config.num_layers,
+            self.config.num_samples,
+            self.config.t_min,
+            self.config.t_max,
+        );
+        bundle.tick = tick;
+
+        // Store for derivative computation.
+        self.landscape_history.push_back(bundle.clone());
+        if self.landscape_history.len() &gt; 100 {
+            self.landscape_history.pop_front();
+        }
+
+        // Check if any pending entries have complete trajectories.
+        self.complete_pending_entries(tick);
+
+        // Start tracking a new pending entry.
+        self.pending.push_back((tick, bundle.clone(), Vec::new()));
+        if self.pending.len() &gt; 50 {
+            self.pending.pop_front();
+        }
+
+        // Predict trajectory family.
+        let family = self.regression.predict(&amp;bundle);
+        self.latest_family = Some(family.clone());
+
+        Some(family)
+    }
+
+    /// Theta tick: cognition-rate analysis.
+    ///
+    /// Aggregates recent Gamma-rate landscapes and produces
+    /// TopologicalForecast values for the Oracle.
+    pub fn theta_tick(&amp;mut self) -&gt; Vec&lt;TopologicalForecast&gt; {
+        let family = match &amp;self.latest_family {
+            Some(f) =&gt; f.clone(),
+            None =&gt; return Vec::new(),
+        };
+
+        // Compute landscape velocity from history.
+        let velocity = self.landscape_velocity();
+
+        // Detect expected transitions from Betti trends and velocity.
+        let transitions = self.expected_transitions(&amp;family, velocity);
+
+        // Produce forecasts per DeFi primitive.
+        // In practice, the engine would maintain separate observation
+        // streams per primitive type. Here we produce a single forecast.
+        vec![TopologicalForecast {
+            family,
+            expected_transitions: transitions,
+            landscape_velocity: velocity,
+            primitive_type: DeFiPrimitive::ConcentratedLiquidity,
+        }]
+    }
+
+    /// Delta tick: consolidation-rate update.
+    ///
+    /// 1. Complete all pending trajectory recordings.
+    /// 2. Cross-validate kernel bandwidth.
+    /// 3. Update fitness scores.
+    pub fn delta_tick(&amp;mut self) {
+        // Force-complete any old pending entries.
+        self.force_complete_pending();
+
+        // Cross-validate bandwidth every Delta tick.
+        self.regression.cross_validate_bandwidth();
+    }
+
+    /// NREM dreaming: replay topological transitions.
+    ///
+    /// Receives a sequence of (tick, landscape, trajectory) triples
+    /// representing historical topological transitions. Replays them
+    /// through the regression model to reinforce accurate predictions
+    /// and decay inaccurate ones.
+    pub fn dream_nrem(
+        &amp;mut self,
+        replay: &amp;[(u64, LandscapeBundle, Vec&lt;Vec&lt;f64&gt;&gt;)],
+    ) {
+        for (_, bundle, trajectory) in replay {
+            // Re-predict using current model.
+            let predicted_family = self.regression.predict(bundle);
+
+            // Compare predicted trajectories to actual.
+            if !predicted_family.trajectories.is_empty() {
+                let neighbor_indices: Vec&lt;usize&gt; = (0..predicted_family.trajectories.len())
+                    .collect();
+                self.regression
+                    .update_fitness(&amp;neighbor_indices, trajectory);
+            }
+
+            // Re-insert with updated context.
+            self.regression
+                .record_observation(bundle.clone(), trajectory.clone());
+        }
+    }
+
+    /// REM dreaming: generate novel topological configurations.
+    ///
+    /// Deforms existing landscapes to create configurations the Golem
+    /// has never seen, predicts trajectories for them, and adds
+    /// the hypotheticals to the library as synthetic entries.
+    pub fn dream_rem(
+        &amp;mut self,
+        rng: &amp;mut impl rand::Rng,
+    ) -&gt; Vec&lt;HypotheticalTopology&gt; {
+        let mut hypotheticals = Vec::new();
+
+        // Sample random historical landscapes to deform.
+        let history_len = self.landscape_history.len();
+        if history_len &lt; 2 {
+            return hypotheticals;
+        }
+
+        let num_dreams = 5.min(history_len);
+
+        for _ in 0..num_dreams {
+            let idx = rng.gen_range(0..history_len);
+            let base = &amp;self.landscape_history[idx];
+
+            // Deformation 1: scale a random layer.
+            let mut deformed = base.clone();
+            if let Some(ls) = deformed.landscapes.first_mut() {
+                let layer = rng.gen_range(0..ls.num_layers);
+                let scale = rng.gen_range(0.5..2.0);
+                for i in 0..ls.num_samples {
+                    ls.layers[layer][i] *= scale;
+                }
+            }
+
+            let description = "layer amplitude scaling".to_string();
+            let novelty = base.distance(&amp;deformed);
+            let predicted_family = self.regression.predict(&amp;deformed);
+
+            hypotheticals.push(HypotheticalTopology {
+                landscape: deformed.clone(),
+                predicted_family,
+                deformation: description,
+                novelty_score: novelty,
+            });
+
+            // Deformation 2: shift the landscape in parameter space.
+            let mut shifted = base.clone();
+            let shift_amount = rng.gen_range(-0.1..0.1);
+            for ls in &amp;mut shifted.landscapes {
+                for k in 0..ls.num_layers {
+                    let n = ls.num_samples;
+                    if shift_amount &gt; 0.0 {
+                        // Shift right: drop rightmost samples, pad left with zero.
+                        let shift_bins = ((shift_amount * n as f64) as usize).min(n - 1);
+                        ls.layers[k].rotate_right(shift_bins);
+                        for i in 0..shift_bins {
+                            ls.layers[k][i] = 0.0;
+                        }
+                    } else {
+                        // Shift left: drop leftmost samples, pad right with zero.
+                        let shift_bins =
+                            ((-shift_amount * n as f64) as usize).min(n - 1);
+                        ls.layers[k].rotate_left(shift_bins);
+                        for i in (n - shift_bins)..n {
+                            ls.layers[k][i] = 0.0;
+                        }
+                    }
+                }
+            }
+
+            let description = "parameter space translation".to_string();
+            let novelty = base.distance(&amp;shifted);
+            let predicted_family = self.regression.predict(&amp;shifted);
+
+            hypotheticals.push(HypotheticalTopology {
+                landscape: shifted,
+                predicted_family,
+                deformation: description,
+                novelty_score: novelty,
+            });
+
+            // Deformation 3: interpolate between two historical landscapes.
+            let other_idx = rng.gen_range(0..history_len);
+            if other_idx != idx {
+                let other = &amp;self.landscape_history[other_idx];
+                let alpha = rng.gen_range(0.0..1.0);
+
+                let mut interpolated = base.clone();
+                for (ls_a, ls_b) in interpolated
+                    .landscapes
+                    .iter_mut()
+                    .zip(other.landscapes.iter())
+                {
+                    for k in 0..ls_a.num_layers.min(ls_b.num_layers) {
+                        for i in 0..ls_a.num_samples.min(ls_b.num_samples) {
+                            ls_a.layers[k][i] = (1.0 - alpha) * ls_a.layers[k][i]
+                                + alpha * ls_b.layers[k][i];
+                        }
+                    }
+                }
+
+                let description = format!(
+                    "interpolation (alpha={:.2}) between ticks {} and {}",
+                    alpha, base.tick, other.tick
+                );
+                let novelty = base.distance(&amp;interpolated);
+                let predicted_family = self.regression.predict(&amp;interpolated);
+
+                hypotheticals.push(HypotheticalTopology {
+                    landscape: interpolated,
+                    predicted_family,
+                    deformation: description,
+                    novelty_score: novelty,
+                });
+            }
+        }
+
+        hypotheticals
+    }
+
+    /// Compute the rate of topological change from recent history.
+    fn landscape_velocity(&amp;self) -&gt; f64 {
+        if self.landscape_history.len() &lt; 2 {
+            return 0.0;
+        }
+
+        let n = self.landscape_history.len();
+        let current = &amp;self.landscape_history[n - 1];
+        let previous = &amp;self.landscape_history[n - 2];
+
+        current.distance(previous)
+    }
+
+    /// Predict expected topological transitions based on current
+    /// Betti numbers, their trend, and landscape velocity.
+    fn expected_transitions(
+        &amp;self,
+        family: &amp;TrajectoryFamily,
+        velocity: f64,
+    ) -&gt; Vec&lt;(u32, String)&gt; {
+        let mut transitions = Vec::new();
+
+        let betti = &amp;family.current_betti;
+        let beta_0 = betti.first().copied().unwrap_or(1);
+        let beta_1 = betti.get(1).copied().unwrap_or(0);
+
+        // If fragmented and velocity is high, predict merging.
+        if beta_0 &gt; 1 &amp;&amp; velocity &gt; 0.1 {
+            let estimated_ticks = ((beta_0 as f64 - 1.0) / velocity * 10.0) as u32;
+            transitions.push((
+                estimated_ticks.min(self.config.horizon_ticks),
+                format!("component merger: beta_0 {} -&gt; 1", beta_0),
+            ));
+        }
+
+        // If loops present and landscape is changing, predict loop collapse.
+        if beta_1 &gt; 0 &amp;&amp; velocity &gt; 0.05 {
+            let estimated_ticks = (beta_1 as f64 / velocity * 5.0) as u32;
+            transitions.push((
+                estimated_ticks.min(self.config.horizon_ticks),
+                format!("loop collapse: beta_1 {} -&gt; 0", beta_1),
+            ));
+        }
+
+        // If single component with low velocity, predict stability.
+        if beta_0 == 1 &amp;&amp; beta_1 == 0 &amp;&amp; velocity &lt; 0.02 {
+            transitions.push((
+                self.config.horizon_ticks,
+                "topological stability: no transitions expected".to_string(),
+            ));
+        }
+
+        transitions
+    }
+
+    /// Complete pending entries whose trajectories have been fully observed.
+    fn complete_pending_entries(&amp;mut self, current_tick: u64) {
+        let horizon = self.config.horizon_ticks as u64;
+        let mut completed = Vec::new();
+
+        for (i, (start_tick, bundle, partial)) in self.pending.iter_mut().enumerate() {
+            // Accumulate observations into the partial trajectory.
+            for (obs_tick, obs) in &amp;self.observation_history {
+                if *obs_tick &gt; *start_tick
+                    &amp;&amp; *obs_tick &lt;= *start_tick + horizon
+                    &amp;&amp; partial.len() &lt; self.config.horizon_ticks as usize
+                {
+                    // Use the mean observation vector across points.
+                    if !obs.is_empty() {
+                        let dims = obs[0].len();
+                        let mean: Vec&lt;f64&gt; = (0..dims)
+                            .map(|d| {
+                                obs.iter().map(|v| v[d]).sum::&lt;f64&gt;() / obs.len() as f64
+                            })
+                            .collect();
+                        partial.push(mean);
+                    }
+                }
+            }
+
+            // Check if trajectory is complete.
+            if current_tick &gt;= *start_tick + horizon
+                &amp;&amp; !partial.is_empty()
+            {
+                completed.push(i);
+            }
+        }
+
+        // Record completed entries in the library.
+        // Process in reverse order to maintain valid indices during removal.
+        for &amp;i in completed.iter().rev() {
+            if let Some((_, bundle, trajectory)) = self.pending.remove(i) {
+                self.regression.record_observation(bundle, trajectory);
+            }
+        }
+    }
+
+    /// Force-complete all pending entries (called during Delta tick).
+    fn force_complete_pending(&amp;mut self) {
+        while let Some((_, bundle, trajectory)) = self.pending.pop_front() {
+            if !trajectory.is_empty() {
+                self.regression.record_observation(bundle, trajectory);
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="taanalyzer-trait-implementation"><a class="header" href="#taanalyzer-trait-implementation">TaAnalyzer trait implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Integration with the Bardo heartbeat via the TaAnalyzer trait.
+///
+/// The PredictiveTopology engine maps cleanly onto the three-timescale
+/// architecture defined in Doc 0.
+impl TaAnalyzer for PredictiveTopology {
+    fn gamma_tick(
+        &amp;mut self,
+        cortical: &amp;CorticalState,
+        ta_ext: &amp;TaCorticalExtension,
+    ) {
+        // Read current observations from CorticalState.
+        // In practice, observations come from the triage pipeline
+        // via the event fabric. Here we show the CorticalState integration.
+        let arousal = f32::from_bits(cortical.arousal.load(Ordering::Relaxed));
+
+        // Adaptive observation window: higher arousal = more data points.
+        let window_size = if arousal &gt; 0.7 {
+            128 // High arousal: wide observation window.
+        } else if arousal &gt; 0.4 {
+            64
+        } else {
+            32 // Low arousal: narrow window, conserve compute.
+        };
+
+        // The actual observations would come from the event fabric.
+        // This is a placeholder showing the interface.
+        // let observations = self.collect_observations(window_size);
+        // if let Some(family) = self.gamma_tick(&amp;observations, current_tick) {
+        //     let confidence_bits = (family.confidence as f32).to_bits();
+        //     ta_ext.trajectory_confidence.store(confidence_bits, Ordering::Relaxed);
+        // }
+    }
+
+    fn theta_tick(
+        &amp;mut self,
+        _cortical: &amp;CorticalState,
+        _ta_ext: &amp;TaCorticalExtension,
+    ) -&gt; Vec&lt;TaInsight&gt; {
+        let forecasts = self.theta_tick();
+
+        forecasts
+            .into_iter()
+            .map(|forecast| {
+                let confidence = forecast.family.confidence as f32;
+                let action_bias = match &amp;forecast.family.dominant_constraint {
+                    TopologicalConstraint::Collapsing =&gt; -0.3, // Caution: simplifying topology.
+                    TopologicalConstraint::Complexifying =&gt; 0.2, // Opportunity: new features emerging.
+                    TopologicalConstraint::Fragmented(_) =&gt; -0.5, // Strong caution: fragmented space.
+                    TopologicalConstraint::Oscillatory(_) =&gt; 0.0, // Neutral: follow the cycle.
+                    TopologicalConstraint::SingleComponent =&gt; 0.1, // Mild positive: stable space.
+                };
+
+                TaInsight {
+                    kind: InsightKind::TopologicalForecast,
+                    confidence,
+                    targets: Vec::new(), // Filled by the event fabric.
+                    action_bias,
+                    horizon: forecast.family.horizon_ticks,
+                    source: TaSubsystem::PredictiveGeometry,
+                }
+            })
+            .collect()
+    }
+
+    fn delta_tick(
+        &amp;mut self,
+        _cortical: &amp;CorticalState,
+        _ta_ext: &amp;TaCorticalExtension,
+    ) {
+        self.delta_tick();
+    }
+
+    fn dream_nrem(&amp;mut self, replay_buffer: &amp;[TaEpisode]) {
+        // Extract landscape-trajectory triples from episodes.
+        let replay: Vec&lt;(u64, LandscapeBundle, Vec&lt;Vec&lt;f64&gt;&gt;)&gt; = replay_buffer
+            .iter()
+            .filter_map(|episode| {
+                // Episodes contain raw observation data.
+                // We recompute landscapes from observations.
+                let observations = &amp;episode.observation;
+                let tick = episode.block_range.0;
+
+                // Recompute diagram and landscape from the episode's observations.
+                let obs_f32: Vec&lt;Vec&lt;f32&gt;&gt; = observations.to_f32_vecs();
+                let diagram = self.tda.compute_diagram(&amp;obs_f32)?;
+
+                let mut bundle = LandscapeBundle::from_diagram(
+                    &amp;diagram,
+                    &amp;self.config.homology_dimensions,
+                    self.config.num_layers,
+                    self.config.num_samples,
+                    self.config.t_min,
+                    self.config.t_max,
+                );
+                bundle.tick = tick;
+
+                let trajectory = episode.outcome.as_ref()?.to_trajectory_vec();
+                Some((tick, bundle, trajectory))
+            })
+            .collect();
+
+        self.dream_nrem(&amp;replay);
+    }
+
+    fn dream_rem(&amp;mut self, rng: &amp;mut impl rand::Rng) {
+        let hypotheticals = self.dream_rem(rng);
+
+        // Store novel hypotheticals with high novelty scores
+        // as synthetic library entries.
+        for hyp in hypotheticals {
+            if hyp.novelty_score &gt; 0.5 &amp;&amp; !hyp.predicted_family.trajectories.is_empty() {
+                // Use the most probable predicted trajectory as the
+                // "observed" trajectory for the synthetic entry.
+                if let Some(best) = hyp.predicted_family.trajectories.first() {
+                    self.regression
+                        .record_observation(hyp.landscape, best.path.clone());
+                }
+            }
+        }
+    }
+
+    fn death_testament(&amp;self) -&gt; TaTestament {
+        // The predictive geometry subsystem contributes:
+        // - High-fitness library entries as semantic patterns.
+        // - The constraint engine's Betti trend model.
+        // - Kernel bandwidth (learned from cross-validation).
+        //
+        // The actual testament construction is handled by the
+        // TaTestament framework. This method extracts the
+        // subsystem-specific knowledge.
+        TaTestament {
+            patterns: Vec::new(), // Filled by the testament framework.
+            signal_families: Vec::new(),
+            causal_skeleton: CausalGraph::empty(),
+            somatic_associations: Vec::new(),
+            metadata: TestamentMetadata {
+                subsystem: TaSubsystem::PredictiveGeometry,
+                library_size: self.regression.library.entries.len(),
+                mean_fitness: self
+                    .regression
+                    .library
+                    .entries
+                    .iter()
+                    .map(|e| e.fitness)
+                    .sum::&lt;f64&gt;()
+                    / self.regression.library.entries.len().max(1) as f64,
+                kernel_bandwidth: self.config.kernel_bandwidth,
+            },
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h2 id="subsystem-interactions-spec"><a class="header" href="#subsystem-interactions-spec">Subsystem interactions [SPEC]</a></h2>
+<p>The predictive geometry engine does not operate alone. It reads from and writes to other TA subsystems through CorticalState, and its outputs feed the Golem’s decision-making pipeline.</p>
+<h3 id="corticalstate-integration-spec"><a class="header" href="#corticalstate-integration-spec">CorticalState integration [SPEC]</a></h3>
+<p><strong>Writes:</strong></p>
+<ul>
+<li><code>trajectory_confidence</code> (AtomicU32): the confidence score from the most recent trajectory family prediction. Stored as f32 bit pattern. Range [0.0, 1.0]. Updated every Gamma tick. Other subsystems read this to assess how well the Golem can forecast the near future.</li>
+</ul>
+<p><strong>Reads:</strong></p>
+<ul>
+<li><code>topology_signal</code> (AtomicU32): Wasserstein distance from the base TDA pipeline. When this spikes, the predictive geometry engine knows a regime transition is in progress and should weight recent library entries more heavily.</li>
+<li><code>betti_0</code>, <code>betti_1</code> (AtomicU16): raw Betti numbers from TDA. The constraint engine uses these directly.</li>
+<li><code>liquidity_curvature</code> (AtomicU32): from Doc 2’s manifold analyzer. High curvature regions constrain geodesics, which constrains the physical realizability of predicted trajectories.</li>
+<li><code>pattern_confidence</code> (AtomicU32): from Doc 1’s HDC pattern matcher. When pattern confidence is high, the current market state matches a known pattern, and trajectory predictions conditioned on that pattern should receive a confidence boost.</li>
+<li><code>causal_density</code> (AtomicU32): from Doc 4’s causal discovery engine. A sudden drop in causal density weakens the predictive geometry engine’s confidence, because the causal structure that trajectory predictions relied on is breaking down.</li>
+</ul>
+<h3 id="oracle-interaction"><a class="header" href="#oracle-interaction">Oracle interaction</a></h3>
+<p>The Oracle receives <code>TopologicalForecast</code> values from Theta ticks and uses them as priors in its prediction pipeline. The interaction:</p>
+<ol>
+<li>Predictive geometry produces a trajectory family with probabilities and constraints.</li>
+<li>The Oracle combines this with its own statistical predictions (from historical data, causal models, and other TA subsystems).</li>
+<li>Where the topology-derived and statistics-derived predictions agree, the Oracle’s confidence increases.</li>
+<li>Where they disagree, the Oracle investigates the source of disagreement. A high-confidence topological forecast that contradicts a statistical prediction suggests the statistical model is missing structural information.</li>
+</ol>
+<p>The Oracle feeds approximately 15,000 prediction corrections per day back through the pipeline. Topological forecasts that systematically disagree with reality (the Oracle’s corrections show the topology-derived predictions were wrong) trigger fitness decay in the landscape library. The predictive geometry engine self-corrects through this feedback.</p>
+<h3 id="dream-integration"><a class="header" href="#dream-integration">Dream integration</a></h3>
+<p><strong>NREM:</strong> The consolidation engine selects high-surprise episodes involving topological transitions. These are replayed through the predictive geometry engine, which recomputes landscapes and compares predicted trajectories to observed ones. Episodes where the topology predicted the trajectory correctly reinforce the library entries that supported that prediction. Episodes where the topology failed to predict the trajectory decay those entries.</p>
+<p>This is especially useful for rare events. A liquidity fragmentation event (β_0 jumping from 1 to 3) might happen only a few times in a Golem’s lifetime. Without replay, the library would have one or two entries for that topological configuration, producing low-confidence predictions. With NREM replay, each occurrence is processed multiple times from slightly different angles (different consolidation contexts, different combinations with other replayed episodes), producing multiple library entries with varied fitness scores. The library’s coverage of rare topological configurations improves without requiring those configurations to recur in the live market.</p>
+<p><strong>REM:</strong> The counterfactual engine generates novel landscape configurations by deforming historical landscapes. Three deformation types (documented in the implementation above):</p>
+<ol>
+<li><strong>Amplitude scaling:</strong> amplify or dampen individual landscape layers. This simulates “what if the most prominent topological feature were twice as strong?”</li>
+<li><strong>Parameter translation:</strong> shift the landscape along the filtration axis. This simulates “what if the topological features occurred at different scales?”</li>
+<li><strong>Interpolation:</strong> blend two historical landscapes. This simulates topological configurations that are intermediate between observed states.</li>
+</ol>
+<p>The Golem predicts trajectories for these hypothetical topologies and stores the results as synthetic library entries. When a real market configuration eventually resembles a previously dreamed hypothetical, the Golem has a head start on trajectory prediction.</p>
+<h3 id="attention-auction-interaction"><a class="header" href="#attention-auction-interaction">Attention auction interaction</a></h3>
+<p>The predictive geometry engine’s forecast uncertainty feeds into the attention auction as a bid modifier. Specifically:</p>
+<ul>
+<li><strong>High confidence, low uncertainty:</strong> the Golem already knows what to expect. Attention bids from the predictive geometry subsystem are low. Other subsystems can claim those attention slots.</li>
+<li><strong>Low confidence, high uncertainty:</strong> the Golem is in uncharted topological territory. Attention bids spike. The Golem pays more attention to the items driving the unfamiliar topology, gathering more data to improve the prediction.</li>
+<li><strong>High landscape velocity:</strong> a topological transition is in progress. The predictive geometry subsystem bids aggressively for attention on the items involved in the transition, because observing the transition closely provides the highest information gain.</li>
+</ul>
+<h3 id="mortality-interaction"><a class="header" href="#mortality-interaction">Mortality interaction</a></h3>
+<p>Forecast accuracy feeds the epistemic death clock. The predictive geometry engine maintains a rolling accuracy score: for each trajectory prediction, how close was the most probable trajectory to the actual outcome? A declining accuracy score means the engine’s topological model of the market is drifting from reality. This is exactly the condition the epistemic clock is designed to detect.</p>
+<p>If the predictive geometry engine’s accuracy falls below a threshold for an extended period, the epistemic clock decays faster. The Golem is losing its ability to understand the topological structure of the market. If it cannot recover (by gathering new data, replaying relevant episodes, or dreaming about the gap), this contributes to death.</p>
+<p>Conversely, a predictive geometry engine with consistently high accuracy slows epistemic decay. The Golem understands the topology of its environment and can forecast where it is heading. This is a survival advantage.</p>
+<h2 id="defi-primitive-coverage"><a class="header" href="#defi-primitive-coverage">DeFi primitive coverage</a></h2>
+<p>The mathematical framework applies uniformly across DeFi primitives. The observation vectors change, the topological features change their interpretation, but the landscape-to-trajectory machinery is identical.</p>
+<h3 id="concentrated-liquidity-uniswap-v3-v4"><a class="header" href="#concentrated-liquidity-uniswap-v3-v4">Concentrated liquidity (Uniswap v3, v4)</a></h3>
+<p><strong>Observation space:</strong> (current_tick, liquidity_at_tick, fee_growth, swap_volume, tick_bitmap_density).</p>
+<p><strong>Topological signatures:</strong></p>
+<ul>
+<li>β_0 = 1, strong λ_1 peak: single concentrated liquidity cluster. Trajectories predict continued price oscillation within the cluster’s range.</li>
+<li>β_0 &gt; 1: liquidity has fragmented. Two or more tick ranges with concentrated liquidity separated by dead zones. Trajectory prediction: price will oscillate within one cluster until a large swap pushes it across the dead zone.</li>
+<li>β_1 in (price, fee_accrual) space: the pool is in a healthy cycling state. Price moves generate fees, attracting liquidity, which dampens price moves, which reduces fees, which thins liquidity, which amplifies price moves. The loop predicts continued cycling at a characteristic frequency.</li>
+</ul>
+<h3 id="lending-markets-aave-compound-morpho"><a class="header" href="#lending-markets-aave-compound-morpho">Lending markets (Aave, Compound, Morpho)</a></h3>
+<p><strong>Observation space:</strong> (utilization, borrow_rate, supply_rate, total_borrows, health_factor_distribution_quartiles).</p>
+<p><strong>Topological signatures:</strong></p>
+<ul>
+<li>β_0 in utilization-rate space: bimodal markets. Some pools near the rate kink, others far below. Trajectory: the two modes will persist until a correlated shock (ETH price move, stablecoin depeg) forces convergence.</li>
+<li>β_1 in rate-utilization space: the self-regulating loop. Borrowers respond to rates, rates respond to utilization, utilization responds to borrowing. Persistent β_1 predicts continued rate oscillation. β_1 collapse predicts one-directional utilization movement (either a rush to borrow or a mass repayment).</li>
+<li>β_2 void near health_factor = 1.0: a liquidation-cleared zone. Positions that were near liquidation have been liquidated. The void constrains trajectories: re-entry into this zone requires new borrowers to deliberately take on risk.</li>
+</ul>
+<h3 id="perpetual-derivatives"><a class="header" href="#perpetual-derivatives">Perpetual derivatives</a></h3>
+<p><strong>Observation space:</strong> (funding_rate, open_interest, mark_price, basis, liquidation_levels).</p>
+<p><strong>Topological signatures:</strong></p>
+<ul>
+<li>β_0 in (funding, OI) space: market fragmentation. Some contracts carry positive funding with high OI (long-heavy), others carry negative funding (short-heavy). Predict independent evolution until a directional move forces convergence.</li>
+<li>β_1 in (basis, funding) space: the basis arbitrage loop. Arbs compress basis, reducing funding, causing arbs to exit, widening basis. Persistent β_1 predicts that the basis trade remains profitable and self-correcting. Collapse predicts a dislocation where the arb breaks down (capital constraints, exchange risk, or extreme directional pressure overwhelming the arb flow).</li>
+</ul>
+<h3 id="yield-tokens-pendle"><a class="header" href="#yield-tokens-pendle">Yield tokens (Pendle)</a></h3>
+<p><strong>Observation space:</strong> (PT_price, YT_price, implied_yield, maturity_remaining, underlying_yield).</p>
+<p><strong>Topological signatures:</strong></p>
+<ul>
+<li>β_0 in (implied_yield, maturity) space: a fragmented yield curve. Different maturities are pricing wildly different yield expectations. Predict that the curve will steepen or flatten depending on which fragment carries more volume.</li>
+<li>β_1 in (PT_price, underlying_yield) space: PT pricing is cycling around the underlying. The market is repricing yield expectations back and forth. Persistent β_1 predicts continued PT price volatility around the fair value implied by underlying yield.</li>
+</ul>
+<h3 id="vaults-erc-4626"><a class="header" href="#vaults-erc-4626">Vaults (ERC-4626)</a></h3>
+<p><strong>Observation space:</strong> (share_price, total_assets, redemption_queue_depth, strategy_allocation_vector).</p>
+<p><strong>Topological signatures:</strong></p>
+<ul>
+<li>β_0 &gt; 1 in (share_price, total_assets) space: the vault’s share price has decoupled from NAV. Two clusters: one around fair value, one at a discount. Predict a potential bank-run dynamic where the discount cluster attracts more redemptions.</li>
+<li>β_1 in (share_price, strategy_return) space: the vault is cycling between strategies. Persistent β_1 means the vault operator is actively rotating, and the rotation has a characteristic period. Trajectory prediction follows the rotation cycle.</li>
+</ul>
+<h3 id="staking-and-restaking"><a class="header" href="#staking-and-restaking">Staking and restaking</a></h3>
+<p><strong>Observation space:</strong> (stake_amount, reward_rate, delegation_flow, queue_depth, operator_concentration).</p>
+<p><strong>Topological signatures:</strong></p>
+<ul>
+<li>β_0 in (stake_amount, reward_rate) space: fragmented staking landscape. Validators or operators occupy distinct clusters of stake-reward combinations. High-stake/low-reward operators (established, trusted) and low-stake/high-reward operators (new, speculative) form separate components. Trajectory prediction: the components evolve independently unless a slashing event or protocol change forces convergence.</li>
+<li>β_1 in (delegation_flow, reward_rate) space: a delegation-reward cycle. High rewards attract delegation, diluting rewards, causing withdrawal, concentrating rewards, attracting delegation again. Persistent β_1 predicts continued oscillation in delegation flows.</li>
+</ul>
+<h3 id="cross-primitive-topology"><a class="header" href="#cross-primitive-topology">Cross-primitive topology</a></h3>
+<p>The most interesting topological features appear when we combine observation spaces across primitives. An LP position on Uniswap v3, a borrow on Aave against the LP token, and a hedge via a perpetual on the same asset create a three-primitive observation space. The topology of this combined space captures correlations that no single-primitive analysis can see.</p>
+<p>For example, β_1 in the combined (LP_fee_rate, borrow_rate, funding_rate) space indicates a cross-primitive cycle: LP fees and borrow costs and perp funding are locked in a feedback loop. This happens in practice when arbitrageurs use all three primitives simultaneously. A persistent cross-primitive loop predicts stability in the strategy (the arb is self-sustaining). Collapse of the loop predicts that one leg of the strategy is breaking down.</p>
+<p>The predictive geometry engine handles cross-primitive observation spaces the same way as single-primitive ones. The observation vectors are wider, the persistence diagrams are richer, and the landscape library needs more entries to cover the space. But the mathematical machinery is identical.</p>
+<h2 id="cybernetic-feedback-loop"><a class="header" href="#cybernetic-feedback-loop">Cybernetic feedback loop</a></h2>
+<p>The predictive geometry engine participates in a tight feedback loop:</p>
+<pre><code>Observe topology (Gamma: persistence diagram → landscape)
+    |
+    v
+Predict trajectory (Gamma: landscape → trajectory family via KNN)
+    |
+    v
+Constrain predictions (Gamma: topological constraint filtering)
+    |
+    v
+Act on predictions (Theta: Oracle uses forecast as prior)
+    |
+    v
+Observe outcome (Gamma: record actual trajectory)
+    |
+    v
+Update model (Delta: insert (landscape, trajectory) into library)
+    |
+    v
+Refine kernel (Delta: cross-validate bandwidth)
+    |
+    v
+Replay transitions (NREM: reinforce accurate predictions)
+    |
+    v
+Imagine novel topologies (REM: deform landscapes, predict trajectories)
+    |
+    v
+(back to Observe, with expanded library, refined kernel,
+ and dream-generated coverage of unseen topologies)
+</code></pre>
+<p>Each iteration tightens the topology-trajectory association. Early in the Golem’s life, the library is sparse and predictions are low-confidence. The constraint engine does most of the work, eliminating impossible trajectories based on Betti numbers alone. As the library fills, kernel regression takes over, producing targeted predictions weighted by topological similarity.</p>
+<p>The dream cycle is what separates this from a static lookup table. NREM replay means every topological transition the Golem experiences gets replayed multiple times, each replay refining the library entries that supported the prediction. REM dreaming means the Golem explores topological configurations it has never seen, building up library entries for hypothetical futures. When one of those hypothetical futures actually occurs, the Golem is not encountering it for the first time.</p>
+<p>The dream cycle is what makes this system different from a static lookup table or a trained model deployed and left alone. Static systems degrade as markets shift. Trained models need periodic retraining. The predictive geometry engine, embedded in the dream cycle, continuously self-corrects. NREM sharpens the existing library. REM expands it into hypothetical territory. Together, they keep the engine calibrated to whatever the market is doing now, not what it was doing when the library was initialized.</p>
+<p>There is a risk of overfitting through this process. If REM dreams generate synthetic entries that are too similar to existing entries, the library becomes biased toward the already-known topology space. The novelty score threshold (0.5 in the implementation) prevents this: only genuinely novel hypotheticals enter the library. But the threshold itself should be subject to cross-validation during Delta ticks.</p>
+<p>The mortality pressure sharpens this loop. A Golem with low epistemic vitality (poor prediction accuracy) needs the predictive geometry engine to work well. If it does not, the Golem dies faster. The Golem that builds the best topology-trajectory library lives longest and transfers that library to its successors via the death testament. Across generations, the predictive geometry engine improves through evolutionary selection on its knowledge base, not on its code.</p>
+<p>The inter-generational transfer of library entries is particularly interesting for the predictive geometry engine. Most TA subsystems transfer parameters or model weights. This subsystem transfers actual data points: historical topology-trajectory pairs that survived fitness selection over an entire Golem lifetime. A successor Golem boots with a library that already covers the topological configurations its predecessor encountered. It does not need to observe those configurations again to predict their trajectories. The successor’s first topological regime transition might already have library coverage from the predecessor’s death testament.</p>
+<p>This is Lamarckian inheritance applied to topological knowledge. The Golem does not evolve its topology-trajectory mapping through random mutation and natural selection alone. It actively curates its library, selects the fittest entries, and passes them to the next generation. Acquired knowledge – specifically, acquired topological knowledge – is heritable.</p>
+<h2 id="evaluation-protocol-spec"><a class="header" href="#evaluation-protocol-spec">Evaluation protocol [SPEC]</a></h2>
+<h3 id="hypothesis"><a class="header" href="#hypothesis">Hypothesis</a></h3>
+<p>Topology-derived trajectory predictions provide information that purely statistical methods miss. The topological constraints narrow the trajectory space in ways that improve forecast accuracy, especially around regime transitions.</p>
+<h3 id="metrics"><a class="header" href="#metrics">Metrics</a></h3>
+<p><strong>Trajectory prediction accuracy.</strong></p>
+<p>For each prediction, compute the weighted mean trajectory (probability-weighted average of paths in the family) and compare to the actual trajectory via mean squared error (MSE) normalized by trajectory variance:</p>
+<pre><code>NMSE = MSE(predicted, actual) / Var(actual)
+</code></pre>
+<p>NMSE &lt; 1.0 means the topology-derived prediction is better than predicting the mean. Compare against:</p>
+<ul>
+<li>Naive baseline: predict the most recent observation repeated forward.</li>
+<li>Statistical baseline: autoregressive model (AR(p)) fitted on the observation series.</li>
+<li>TDA-only baseline: use the existing regime detection (calm/trending/volatile/crisis) and pick the historical average trajectory for that regime.</li>
+</ul>
+<p><strong>Topological constraint filtering effectiveness.</strong></p>
+<p>Measure the fraction of filtered trajectories that would have been wrong:</p>
+<pre><code>Filter precision = |{filtered trajectories that were wrong}| / |{all filtered trajectories}|
+</code></pre>
+<p>High filter precision means the constraint engine is correctly removing bad predictions. Low filter precision means it is removing predictions that would have been fine, and the constraints are too strict.</p>
+<p>Also measure filter recall:</p>
+<pre><code>Filter recall = |{filtered trajectories that were wrong}| / |{all trajectories that were wrong}|
+</code></pre>
+<p>High recall means the constraint engine catches most of the bad predictions. Low recall means bad predictions survive filtering.</p>
+<p><strong>Lead time.</strong></p>
+<p>Compare how early the predictive geometry engine detects an upcoming regime transition versus the base TDA pipeline (which detects transitions by Wasserstein distance threshold) and versus statistical change-point detection (CUSUM, BOCPD).</p>
+<p>Measure lead time as the number of Gamma ticks between the first trajectory family that assigns &gt; 50% probability to a regime transition and the actual transition.</p>
+<p><strong>Library efficiency.</strong></p>
+<p>Track the library size over time and the mean fitness of entries. An efficient library is compact (old or useless entries pruned) with high mean fitness (remaining entries produce good predictions).</p>
+<p>Track the fraction of trajectory predictions that had at least one “close” neighbor (landscape distance below the threshold). A library that frequently returns only distant neighbors is not covering the topological space well.</p>
+<h3 id="experimental-design"><a class="header" href="#experimental-design">Experimental design</a></h3>
+<p>Two Golem populations on 6 months of historical mainnet data:</p>
+<ul>
+<li><strong>Control:</strong> base TDA pipeline (regime detection only), no predictive geometry.</li>
+<li><strong>Treatment:</strong> full predictive geometry engine with landscape library, KNN regression, constraint filtering, and dream integration.</li>
+</ul>
+<p>Both populations share all other subsystems (HDC, manifold, causal discovery, signal metabolism).</p>
+<p>Primary comparison: risk-adjusted returns (Sharpe ratio) and prediction accuracy (Brier score for regime transitions, NMSE for trajectories).</p>
+<p>Secondary comparison: survival time (Kaplan-Meier curves) and epistemic clock trajectory (does the treatment population maintain higher epistemic vitality?).</p>
+<h3 id="expected-outcomes"><a class="header" href="#expected-outcomes">Expected outcomes</a></h3>
+<p>The strongest gains should appear during regime transitions. When the market shifts from calm to volatile, the base TDA pipeline detects the shift after it happens. The predictive geometry engine, tracking landscape derivatives and Betti trends, should forecast the shift before it completes. This lead time translates directly into better positioning (reducing exposure before volatility arrives, increasing exposure before a trending regime).</p>
+<p>During stable regimes, the gains should be smaller. The topology is not changing, the constraint engine adds little value (all trajectories are compatible with a stable topology), and the KNN regression degenerates to local statistical forecasting.</p>
+<p>The most informative scenarios for evaluation are the transitions that Gidea and Katz (2018) studied in equity markets: pre-crash topological signatures. Their work showed that persistence landscape norms spike 50-100 trading days before major market drawdowns. In DeFi, the timescales compress. A “crash” in a Uniswap pool (liquidity exodus after a large IL event) might develop over hours, not months. The question is whether landscape norm spikes in DeFi observation spaces provide comparable lead times, compressed to the Gamma/Theta timescale.</p>
+<p>We expect that cross-primitive topological features will provide the strongest predictive signal. Single-primitive topology (one pool, one lending market) is useful but limited. The DeFi-specific value comes from topological features that span multiple primitives – the cross-primitive loops described in the DeFi coverage section. These features capture systemic dependencies that no single-market analysis can detect.</p>
+<p>An honest concern: the non-parametric approach might not scale. If the Golem monitors 50 pools, 20 lending markets, and 10 derivative contracts, the combined observation space is high-dimensional and the landscape library needs exponentially more entries to cover it. The HDC encoding helps with retrieval speed, but coverage remains a cold-start problem. The evaluation should track library coverage (fraction of queries with at least one close neighbor) as a function of Golem lifetime. If coverage plateaus below 80% after a month of operation, the approach needs dimensionality reduction (project the observation space onto its principal topological directions before computing landscapes).</p>
+<h3 id="ablation-study"><a class="header" href="#ablation-study">Ablation study</a></h3>
+<p>The predictive geometry engine has four distinct components. Each can be disabled independently to measure its marginal contribution:</p>
+<ol>
+<li>
+<p><strong>Landscape computation only</strong> (no regression, no constraints, no dreams). The Golem computes landscapes and writes landscape velocity to CorticalState, but produces no trajectory predictions. Does landscape velocity alone improve Oracle decisions?</p>
+</li>
+<li>
+<p><strong>Landscape + KNN regression</strong> (no constraints, no dreams). The Golem predicts trajectories from the library but does not filter them by topological constraints. Does constraint filtering add value or mostly remove valid trajectories?</p>
+</li>
+<li>
+<p><strong>Full engine without dreams</strong> (landscapes, regression, constraints, but no NREM replay or REM counterfactuals). Does the dream cycle improve prediction accuracy, or does the library fill adequately from waking experience alone?</p>
+</li>
+<li>
+<p><strong>Full engine</strong> (all components). The hypothesis is that this outperforms all ablations, but the margin between (3) and (4) quantifies the dream cycle’s contribution.</p>
+</li>
+</ol>
+<h3 id="failure-criteria"><a class="header" href="#failure-criteria">Failure criteria</a></h3>
+<p>If NMSE does not improve over the AR(p) baseline by at least 10% during regime transitions after 6 months of simulation, the complexity of the landscape-trajectory machinery is not justified. A simpler approach (direct Betti number trend extrapolation) might suffice.</p>
+<p>If filter precision falls below 60%, the constraint engine is too aggressive and should be loosened or removed.</p>
+<p>If the library exceeds the maximum configured size repeatedly despite pruning, the kernel bandwidth is too wide (too many entries are considered “close”) and cross-validation should adjust.</p>
+<p>If the ablation study shows that component (1) alone (landscape velocity, no trajectory prediction) captures 80% or more of the full engine’s benefit, the KNN regression machinery is dead weight and should be stripped. This is a real possibility: landscape velocity is cheap to compute and may carry most of the topological predictive information. The regression, constraint filtering, and dream integration might be second-order effects. The evaluation must be honest about this.</p>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ol>
+<li>
+<p>Bubenik, P. (2015). “Statistical topological data analysis using persistence landscapes.” <em>Journal of Machine Learning Research,</em> 16(1), 77-102. The foundational paper: defines persistence landscapes, proves stability and invertibility, introduces the Banach space framework.</p>
+</li>
+<li>
+<p>Perea, J.A. and Harer, J. (2015). “Sliding windows and persistence: an application of topological methods to signal analysis.” <em>Foundations of Computational Mathematics,</em> 15(3), 799-838. Time-delay embeddings + persistent homology for periodic signal detection. Relevant to the oscillatory trajectory constraints derived from β_1.</p>
+</li>
+<li>
+<p>Gidea, M. and Katz, Y. (2018). “Topological data analysis of financial time series: landscapes of crashes.” <em>Physica A,</em> 491, 820-834. Empirical validation: persistence landscapes applied to S&amp;P 500, DJIA, NASDAQ, and Russell 2000 data detect critical transitions preceding crashes. Landscape norms spike before major drawdowns.</p>
+</li>
+<li>
+<p>Chazal, F., Fasy, B.T., Lecci, F., Rinaldo, A., and Wasserman, L. (2014). “Stochastic convergence of persistence landscapes and silhouettes.” <em>Proceedings of the 30th Symposium on Computational Geometry (SoCG),</em> 474-483. Proves that the mean persistence landscape converges to its population counterpart at rate O(1/sqrt(n)). Justifies the use of sample means in the landscape Banach space.</p>
+</li>
+<li>
+<p>Cohen-Steiner, D., Edelsbrunner, H., and Harer, J. (2007). “Stability of persistence diagrams.” <em>Discrete &amp; Computational Geometry,</em> 37(1), 103-120. The foundational stability result for persistent homology. Small perturbations in the input produce small perturbations in the diagram (and therefore in the landscape, by composition with Bubenik’s stability theorem).</p>
+</li>
+<li>
+<p>Silverman, B.W. (1986). <em>Density Estimation for Statistics and Data Analysis.</em> Chapman and Hall. The source of the bandwidth selection rule used in the adaptive kernel regression.</p>
+</li>
+<li>
+<p>Edelsbrunner, H. and Harer, J.L. (2010). <em>Computational Topology: An Introduction.</em> American Mathematical Society. Background on Betti numbers, persistence diagrams, and the algebraic topology underlying the constraint engine.</p>
+</li>
+<li>
+<p>Carlsson, G. (2009). “Topology and data.” <em>Bulletin of the American Mathematical Society,</em> 46(2), 255-308. Survey paper motivating the application of algebraic topology to data analysis. Establishes that topological features are coordinate-free invariants, meaning they capture shape properties that survive reparametrization of the observation space.</p>
+</li>
+<li>
+<p>Kanatani, K. (1990). <em>Group-Theoretical Methods in Image Understanding.</em> Springer. The connection between topological invariants and trajectory constraints draws on the invariant-theoretic perspective: topological features constrain the group of allowable transformations of the observation space, and trajectories are orbits under those transformations.</p>
+</li>
+<li>
+<p>Morse, M. (1934). <em>The Calculus of Variations in the Large.</em> American Mathematical Society. Morse theory: the relationship between critical points of a function and the topology of its level sets. The Morse inequalities used in the rate-of-change constraints are a direct application.</p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/23-ta/04-causal-microstructure-discovery.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/23-ta/06-resonant-pattern-ecosystem.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/23-ta/04-causal-microstructure-discovery.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/23-ta/06-resonant-pattern-ecosystem.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

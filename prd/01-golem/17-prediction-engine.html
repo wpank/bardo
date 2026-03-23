@@ -1,0 +1,2762 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Prediction Engine - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/17-prediction-engine.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="17--the-prediction-engine-spec"><a class="header" href="#17--the-prediction-engine-spec">17 – The Prediction Engine [SPEC]</a></h1>
+<p><strong>Domain-Agnostic Oracle, Residual Correction, Attention Foraging, and Action Gating</strong></p>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crate</strong>: <code>golem-oracle</code> | <strong>Layer</strong>: 0 (FOUNDATION)</p>
+<p>Cross-references: <a href="./01-cognition.html">01-cognition.md</a>, <a href="./02-heartbeat.html">02-heartbeat.md</a> (adaptive clock), <a href="./18-cortical-state.html">18-cortical-state.md</a> (CorticalState), <a href="./13-runtime-extensions.html">13-runtime-extensions.md</a>, <a href="./14-context-governor.html">14-context-governor.md</a></p>
+<p>Sources: <code>active-inference/02-prediction-engine</code>, <code>mmo2/20-prediction-engine</code></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the Golem’s (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) prediction engine – a domain-agnostic Oracle that provides learning without LLM self-grading, attention allocation, and action gating. It belongs to the <code>01-golem</code> cognition layer, in the <code>golem-oracle</code> crate. The key concept: predictions resolve against external reality with ~15,000 residual corrections per day at zero inference cost. The Golem earns the right to act by demonstrating prediction accuracy, structurally preventing over-trading. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="what-the-prediction-engine-is"><a class="header" href="#what-the-prediction-engine-is">What the Prediction Engine Is</a></h2>
+<p>The prediction engine is a subsystem – not the entire architecture – that provides three capabilities:</p>
+<ol>
+<li><strong>Learning without LLM self-grading.</strong> Predictions resolve against external reality. Residual correction improves future predictions automatically. ~15,000 corrections/day at zero inference cost.</li>
+<li><strong>Attention allocation.</strong> Items with high prediction error get more monitoring resources. Items with low error get less. The Golem discovers what to watch.</li>
+<li><strong>Action gating.</strong> The Golem earns the right to act by demonstrating prediction accuracy. This structurally prevents over-trading.</li>
+</ol>
+<p>The engine is domain-agnostic. Domain knowledge enters through the <code>PredictionDomain</code> trait. DeFi is one implementation. A golem that monitors weather, shipping routes, or sports betting lines implements the same trait with different categories and resolution logic. Everything downstream – the ledger, the corrector, the action gate, the calibrator – works identically regardless of domain.</p>
+<p>The feedback signal is arithmetic: the golem predicted X, reality was Y, the residual is Y - X. That residual corrects the next prediction automatically. No LLM self-grading. No reward models. No RLHF.</p>
+<p>Derivation of ~15,000/day: ~200 tracked items x gamma frequency (~one update per 6s) x ~7,200 active seconds/day = ~14,400 adjustments/day, rounded to ~15,000.</p>
+<p>Accuracy ranges cited throughout this document are aspirational targets measured over a 30-day rolling window against live market data. They are not guaranteed and will vary with market conditions, golem maturity, and strategy type.</p>
+<hr>
+<h2 id="the-predictiondomain-trait"><a class="header" href="#the-predictiondomain-trait">The PredictionDomain Trait</a></h2>
+<p>Any observable, measurable environment implements this trait to teach the Oracle what to predict, how to check, and how to discover new items.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Domain abstraction that makes the Oracle domain-agnostic.
+/// DeFi discovers pools and reads on-chain state. Weather discovers
+/// stations and reads sensors. The Oracle processes Prediction structs
+/// regardless of origin.
+#[async_trait]
+pub trait PredictionDomain: Send + Sync + 'static {
+    fn domain_id(&amp;self) -&gt; &amp;str;
+    fn display_name(&amp;self) -&gt; &amp;str;
+    fn categories(&amp;self) -&gt; Vec&lt;PredictionCategory&gt;;
+
+    /// Discover trackable items from a strategy seed.
+    /// Called at boot and during Phase 3 continuous scanning.
+    async fn discover(
+        &amp;self,
+        seed: &amp;AttentionSeed,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;Vec&lt;TrackedItem&gt;&gt;;
+
+    /// Scan for newly appeared items not in the known set.
+    /// Called every ~100 theta ticks.
+    async fn discover_new(
+        &amp;self,
+        seed: &amp;AttentionSeed,
+        known: &amp;HashSet&lt;ItemId&gt;,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;Vec&lt;TrackedItem&gt;&gt;;
+
+    /// SCANNED tier: cheap, context-free. 1 prediction per item.
+    fn predict_scanned(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+    ) -&gt; Vec&lt;PredictionDraft&gt;;
+
+    /// WATCHED tier: has cortical state. 2-4 predictions per item.
+    fn predict_watched(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot,
+    ) -&gt; Vec&lt;PredictionDraft&gt;;
+
+    /// ACTIVE tier: full context. 5-12 predictions per item.
+    fn predict_active(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot,
+        playbook: &amp;PlaybookState,
+    ) -&gt; Vec&lt;PredictionDraft&gt;;
+
+    /// Read ground truth for resolution. eth_call for DeFi,
+    /// sensor API for weather, etc.
+    async fn resolve(
+        &amp;self,
+        prediction: &amp;Prediction,
+        checkpoint: &amp;Checkpoint,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;ResolutionOutcome&gt;;
+
+    /// Predict action outcomes before execution.
+    fn predict_action(
+        &amp;self,
+        action: &amp;ProposedAction,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+    ) -&gt; Vec&lt;PredictionDraft&gt;;
+
+    /// Predict inaction outcomes. Explicit "holding is optimal" claim.
+    fn predict_inaction(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot,
+    ) -&gt; Vec&lt;PredictionDraft&gt;;
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-environmentclient-trait"><a class="header" href="#the-environmentclient-trait">The EnvironmentClient trait</a></h3>
+<p>The <code>EnvironmentClient</code> abstracts external state. For DeFi, it wraps an Alloy provider for <code>eth_call</code> reads. For other domains, it wraps whatever service provides ground truth. The Oracle never writes through this interface – all writes go through the action pipeline.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[async_trait]
+pub trait EnvironmentClient: Send + Sync {
+    async fn read(&amp;self, query: &amp;EnvironmentQuery) -&gt; Result&lt;EnvironmentValue&gt;;
+    async fn read_batch(&amp;self, queries: &amp;[EnvironmentQuery]) -&gt; Result&lt;Vec&lt;EnvironmentValue&gt;&gt;;
+    fn env_timestamp(&amp;self) -&gt; u64;
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="the-prediction-primitive"><a class="header" href="#the-prediction-primitive">The Prediction Primitive</a></h2>
+<p>Every prediction the golem makes – analytical, corrective, creative, collective – is the same struct. This uniformity is what makes the residual corrector and the action gate domain-agnostic. A fee-rate prediction, a price-direction prediction, and a “holding is optimal” prediction all resolve through the same pipeline.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A single falsifiable claim about the future.
+/// ~200 bytes per prediction. At 15,000/day, ~3 MB before compaction.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Prediction {
+    pub id: PredictionId,                       // Monotonic within lifetime
+    pub created_at_tick: u64,                   // Theta tick of creation
+    pub domain: DomainId,                       // Which domain produced this
+    pub category: PredictionCategory,           // Accuracy tracked per (category, regime)
+    pub source: PredictionSource,               // Which intelligence mode
+    pub claim: PredictionClaim,                 // The falsifiable claim
+    pub checkpoints: Vec&lt;Checkpoint&gt;,           // Multi-scale resolution points
+    pub tracked_item: Option&lt;TrackedItemId&gt;,    // The item this concerns
+    pub action_ref: Option&lt;ActionRef&gt;,          // If action-related
+    pub regime: RegimeTag,                      // Market regime at prediction time
+    pub pad: PadVector,                         // Emotional state at prediction time
+    pub confidence: Option&lt;f64&gt;,                // Calibrated confidence [0.0, 1.0]
+    pub correction_applied: Option&lt;ResidualCorrection&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="source-tags"><a class="header" href="#source-tags">Source tags</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Which intelligence mode generated this prediction.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum PredictionSource {
+    /// Waking theta cycles. ~14,000/day.
+    Analytical { tier: CognitiveTier },
+    /// ResidualCorrector adjustments. Zero inference cost.
+    Corrective { adjustment: AdjustmentType },
+    /// Dream cycles. ~34% expected accuracy, high value when correct.
+    Creative { phase: CreativePhase },
+    /// Clade sibling or Lethe via Styx. Weighted at 0.7x.
+    Collective { source_golem: Option&lt;GolemId&gt;, layer: StyxLayer },
+    /// Retrospective pattern recognition across past sequences.
+    Retrospective { sequence_ids: Vec&lt;PredictionId&gt; },
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum AdjustmentType {
+    BiasCorrection,
+    IntervalCalibration,
+    Combined,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum CreativePhase {
+    Hypnagogic,
+    NremReplay,
+    RemImagination,
+    Integration,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum StyxLayer {
+    Clade,  // Private fleet (same owner). Full residual sharing.
+    Lethe,  // Public anonymized aggregates.
+}
+<span class="boring">}</span></code></pre>
+<h3 id="claim-variants"><a class="header" href="#claim-variants">Claim variants</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A falsifiable claim resolved by arithmetic comparison.
+/// Every variant reduces to a boolean: correct or wrong, no subjectivity.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum PredictionClaim {
+    /// |observed - center| &lt;= center * tolerance_bps / 10000
+    WithinBps { center: f64, tolerance_bps: u64 },
+    /// lower &lt;= observed &lt;= upper
+    InRange { lower: f64, upper: f64 },
+    /// observed &gt; threshold
+    Above(f64),
+    /// observed &lt; threshold
+    Below(f64),
+    /// (observed - baseline).signum() == direction
+    Direction(Direction),
+    /// observed_bool == predicted_bool
+    Boolean(bool),
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum Direction { Up, Down }
+<span class="boring">}</span></code></pre>
+<h3 id="checkpoints"><a class="header" href="#checkpoints">Checkpoints</a></h3>
+<p>A prediction can have multiple checkpoints for multi-scale resolution. A fee-rate prediction might check at 5 minutes (does the rate still hold?), 1 hour (trend confirmation), and 24 hours (structural accuracy). Each checkpoint produces an independent resolution and residual.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Checkpoint {
+    pub resolve_at_tick: u64,
+    pub query: EnvironmentQuery,
+    pub status: CheckpointStatus,
+    pub resolution: Option&lt;ResolutionOutcome&gt;,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum CheckpointStatus { Pending, Resolved, Failed, Expired }
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="the-prediction-ledger"><a class="header" href="#the-prediction-ledger">The Prediction Ledger</a></h2>
+<p>The ledger is append-only SQLite storage for predictions and their resolutions. Every prediction the golem creates goes here. Every resolution outcome goes here. The ledger is the single source of truth for the golem’s predictive track record.</p>
+<h3 id="storage-economics"><a class="header" href="#storage-economics">Storage economics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Bytes per prediction</td><td>~200</td></tr>
+<tr><td>Bytes per resolution</td><td>~100</td></tr>
+<tr><td>Daily predictions (full throughput)</td><td>~15,000</td></tr>
+<tr><td>Daily resolutions</td><td>~15,000</td></tr>
+<tr><td>Daily storage growth</td><td>~4.5 MB</td></tr>
+<tr><td>Weekly before compaction</td><td>~31.5 MB</td></tr>
+<tr><td>After compaction (7-day window)</td><td>~4.5 MB</td></tr>
+</tbody>
+</table>
+</div>
+<p>Compaction runs at delta frequency (every few hours). It removes resolved predictions older than the residual buffer window (configurable, default 7 days). The residual statistics survive compaction – only the raw prediction records are pruned.</p>
+<h3 id="sql-schema"><a class="header" href="#sql-schema">SQL schema</a></h3>
+<pre><code class="language-sql">CREATE TABLE predictions (
+    id              INTEGER PRIMARY KEY,
+    created_at_tick INTEGER NOT NULL,
+    domain          TEXT    NOT NULL,
+    category        TEXT    NOT NULL,
+    source          TEXT    NOT NULL,  -- JSON: PredictionSource
+    claim           TEXT    NOT NULL,  -- JSON: PredictionClaim
+    tracked_item    TEXT,
+    action_ref      TEXT,
+    regime          TEXT    NOT NULL,
+    confidence      REAL,
+    confidence_raw  REAL,             -- Pre-calibration confidence
+    correction      TEXT,             -- JSON: ResidualCorrection
+    pad_pleasure    REAL    NOT NULL,
+    pad_arousal     REAL    NOT NULL,
+    pad_dominance   REAL    NOT NULL,
+    created_at      INTEGER NOT NULL  -- Unix timestamp
+);
+
+CREATE TABLE checkpoints (
+    id            INTEGER PRIMARY KEY,
+    prediction_id INTEGER NOT NULL REFERENCES predictions(id),
+    resolve_tick  INTEGER NOT NULL,
+    query         TEXT    NOT NULL,  -- JSON: EnvironmentQuery
+    status        TEXT    NOT NULL DEFAULT 'pending',
+    actual_value  REAL,
+    residual      REAL,
+    correct       INTEGER,          -- 0 or 1
+    resolved_at   INTEGER,          -- Unix timestamp
+    FOREIGN KEY (prediction_id) REFERENCES predictions(id)
+);
+
+-- Hot path: category accuracy queries
+CREATE INDEX idx_pred_category_regime
+    ON predictions(category, regime, created_at_tick);
+
+-- Hot path: pending checkpoint resolution
+CREATE INDEX idx_checkpoint_pending
+    ON checkpoints(status, resolve_tick)
+    WHERE status = 'pending';
+
+-- Hot path: recent resolutions for corrector
+CREATE INDEX idx_checkpoint_resolved
+    ON checkpoints(prediction_id, status, resolved_at)
+    WHERE status = 'resolved';
+
+-- Compaction target: old resolved predictions
+CREATE INDEX idx_pred_compaction
+    ON predictions(created_at)
+    WHERE id NOT IN (
+        SELECT prediction_id FROM checkpoints WHERE status = 'pending'
+    );
+</code></pre>
+<h3 id="rust-interface"><a class="header" href="#rust-interface">Rust interface</a></h3>
+<p>The ledger never updates a prediction after registration. Resolutions are appended. Compaction deletes old rows but never modifies them. This append-only invariant means the ledger can be replayed from any point for auditing.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct PredictionLedger {
+    db: SqlitePool,                                                 // WAL-enabled
+    index: DashMap&lt;(CategoryId, RegimeTag), Vec&lt;PredictionId&gt;&gt;,     // Hot-path cache
+    pending_count: AtomicU32,                                       // TUI display
+}
+
+impl PredictionLedger {
+    pub fn register(&amp;self, prediction: Prediction) -&gt; PredictionId { /* append */ }
+    pub fn resolve(&amp;self, id: PredictionId, checkpoint_idx: usize,
+        outcome: ResolutionOutcome) -&gt; Resolution { /* resolve + compute residual */ }
+    pub fn category_accuracy(&amp;self, category: CategoryId,
+        regime: Option&lt;RegimeTag&gt;, window: Duration) -&gt; AccuracyReport { /* query */ }
+    pub fn compact(&amp;self, retain_window: Duration) -&gt; CompactionResult { /* prune */ }
+}
+
+#[derive(Debug, Clone)]
+pub struct AccuracyReport {
+    pub category: CategoryId,
+    pub regime: Option&lt;RegimeTag&gt;,
+    pub window: Duration,
+    pub total: u64,
+    pub hits: u64,
+    pub hit_rate: f64,
+    pub mean_residual: f64,
+    pub mean_abs_residual: f64,
+    pub mean_interval_width: f64,
+    pub sample_sufficient: bool, // true if total &gt;= 30
+}
+<span class="boring">}</span></code></pre>
+<h3 id="resolution-protocol"><a class="header" href="#resolution-protocol">Resolution protocol</a></h3>
+<p>Resolution is event-driven with fallback polling. Primary: subscribe to on-chain events (price updates, position changes) that trigger resolution. Fallback: poll every 5 minutes for predictions past <code>checkpoint_tick</code>. Chain unreachable: mark prediction as <code>Unresolved</code> after 3 poll attempts; retry on next successful connection.</p>
+<h3 id="categoryid-enum"><a class="header" href="#categoryid-enum">CategoryId enum</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum CategoryId {
+    PriceDirection,     // Token price up/down
+    PriceRange,         // Price within range at checkpoint
+    VolatilityRegime,   // Low/medium/high/extreme
+    LiquidityDepth,     // Pool TVL changes
+    FeeGeneration,      // LP fee income predictions
+    GasPrice,           // Network gas cost
+    ProtocolEvent,      // Governance, upgrades, exploits
+    CrossChain,         // Bridge flow, arbitrage opportunities
+}
+<span class="boring">}</span></code></pre>
+<h3 id="cold-start-strategy"><a class="header" href="#cold-start-strategy">Cold-start strategy</a></h3>
+<p>Cold start (first ~20 predictions): use T0-only predictions with wide confidence intervals (0.3-0.5). Seed attention from STRATEGY.md specified domains. Calibrator activates after 20 resolved predictions. Accuracy tracking begins but is not used for gating until 50 predictions.</p>
+<hr>
+<h2 id="the-residual-corrector"><a class="header" href="#the-residual-corrector">The Residual Corrector</a></h2>
+<p>The fast learning loop. Runs on every prediction resolution at gamma frequency. Zero inference cost. Pure arithmetic.</p>
+<p>Two operations, both from conformal prediction theory [VOVK-2005]:</p>
+<ol>
+<li><strong>Bias correction.</strong> If the mean residual for a (category, regime) pair is non-zero, shift future prediction centers toward observed means.</li>
+<li><strong>Interval calibration.</strong> If the coverage rate (fraction of predictions where the actual value fell within the predicted interval) deviates from the target (default 85%), adjust prediction widths.</li>
+</ol>
+<p>The theoretical foundation is conformal prediction (Vovk, Gammerman, and Shafer 2005), recently made accessible by Angelopoulos and Bates (2023). For handling non-stationary environments, the corrector draws on adaptive conformal inference (Gibbs and Candes 2021), which maintains valid coverage even when the data distribution shifts over time.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ResidualCorrector {
+    buffers: DashMap&lt;(CategoryId, RegimeTag), ResidualBuffer&gt;,
+    novel_residuals: Mutex&lt;Vec&lt;Resolution&gt;&gt;,  // Large creative errors -&gt; dream replay seeds
+    novelty_threshold: f64,                   // Residual magnitude cutoff for novelty
+    forgetting_rate: f64,                     // Gibbs &amp; Candes (2021). Default: 0.005
+}
+
+/// Per-(category, regime) residual statistics.
+/// Uses Welford's online algorithm for numerically stable mean/variance.
+pub struct ResidualBuffer {
+    residuals: CircularBuffer&lt;f64, 256&gt;,  // Ring buffer, 2 KB per pair
+    mean: f64,                            // Welford's online mean
+    variance: f64,                        // Welford's online variance
+    count: u64,                           // Lifetime observation count
+    coverage: f64,                        // Fraction of predictions containing actual value
+    target_coverage: f64,                 // Default 0.85
+    adaptive_weight: f64,                 // Gibbs &amp; Candes forgetting accumulator
+}
+
+impl ResidualCorrector {
+    /// Called on every prediction resolution (gamma frequency).
+    pub fn record(&amp;self, resolution: &amp;Resolution) {
+        let key = (resolution.category, resolution.regime);
+        let mut buffer = self.buffers.entry(key).or_default();
+
+        buffer.push(resolution.residual);
+        buffer.update_coverage(resolution.correct);
+
+        // Adaptive weight update (Gibbs &amp; Candes, 2021).
+        let coverage_error = if resolution.correct { 1.0 } else { 0.0 }
+            - buffer.target_coverage;
+        buffer.adaptive_weight += self.forgetting_rate * coverage_error;
+
+        // Novel creative residuals drain to dream replay seeds.
+        if matches!(resolution.source, PredictionSource::Creative { .. })
+            &amp;&amp; resolution.residual.abs() &gt; self.novelty_threshold
+        {
+            self.novel_residuals.lock().push(resolution.clone());
+        }
+    }
+
+    /// Applied to every new prediction before registration.
+    /// Returns None if insufficient data (&lt; 10 observations).
+    pub fn correct(&amp;self, draft: &amp;mut PredictionDraft) -&gt; Option&lt;ResidualCorrection&gt; {
+        let key = (draft.category, draft.regime);
+        let buffer = self.buffers.get(&amp;key)?;
+
+        if buffer.count &lt; 10 { return None; }
+
+        // 1. Bias correction: shift center toward observed mean.
+        let bias = buffer.mean;
+        let center_adjustment = -bias;
+
+        // 2. Interval calibration: widen if under-covering, narrow if over-covering.
+        let coverage_ratio = buffer.coverage / buffer.target_coverage;
+        let width_factor = if coverage_ratio &lt; 0.95 {
+            1.0 + (1.0 - coverage_ratio) * 0.5
+        } else if coverage_ratio &gt; 1.05 {
+            1.0 - (coverage_ratio - 1.0) * 0.3
+        } else {
+            1.0
+        };
+
+        draft.apply_correction(center_adjustment, width_factor);
+
+        Some(ResidualCorrection {
+            bias_adjustment: center_adjustment,
+            width_factor,
+            sample_size: buffer.count,
+            mean_residual: bias,
+            coverage_before: buffer.coverage,
+        })
+    }
+
+    /// Aggregate for Clade sharing (delta frequency).
+    pub fn aggregate_statistics(&amp;self) -&gt; ResidualDigest {
+        let mut entries = Vec::new();
+        for entry in self.buffers.iter() {
+            let (key, buffer) = entry.pair();
+            entries.push(ResidualDigestEntry {
+                category: key.0,
+                regime: key.1,
+                mean: buffer.mean,
+                variance: buffer.variance,
+                count: buffer.count,
+                coverage: buffer.coverage,
+            });
+        }
+        ResidualDigest { entries }
+    }
+
+    /// Drain novel residuals for dream replay. Called at dream onset.
+    pub fn drain_novel_residuals(&amp;self) -&gt; Vec&lt;Resolution&gt; {
+        std::mem::take(&amp;mut *self.novel_residuals.lock())
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="convergence-properties"><a class="header" href="#convergence-properties">Convergence properties</a></h3>
+<p>Bias correction converges at O(1/sqrt(N)). At 600 resolutions per day per category (a typical ACTIVE-tier item), systematic biases surface within hours. At 50 clade members sharing residual statistics, convergence is ~7x faster because the effective sample size multiplies across the fleet.</p>
+<p>The convergence rate is a direct consequence of the Central Limit Theorem applied to residual means. The standard error of the mean residual after N observations is sigma/sqrt(N), where sigma is the residual standard deviation. For a category with sigma = 50 bps (a typical fee-rate prediction), the bias estimate after 100 observations has standard error = 5 bps. After 600 observations, standard error = 2 bps.</p>
+<h3 id="known-limitations"><a class="header" href="#known-limitations">Known limitations</a></h3>
+<p><strong>Exchangeability.</strong> The corrector assumes approximate exchangeability within (category, regime) windows. This holds for fee rates during a stable regime but breaks across regime transitions. When the regime tag changes, the corrector resets the affected buffers, accepting a cold-start penalty of 1-2 hours of degraded accuracy. The adaptive forgetting factor (Gibbs and Candes 2021) softens this penalty by downweighting stale observations even within a regime, but cannot eliminate it.</p>
+<p><strong>Goodhart’s law.</strong> Wide predictions game accuracy. If the golem predicts “the fee rate will be between $0 and $1000/hr,” it is always correct and always useless. The architecture mitigates this by tracking multiple quality metrics: accuracy (hit rate), mean interval width, residual magnitude, and Expected Calibration Error. The action gate uses accuracy. The Grimoire uses ECE. The TUI displays all four. No single metric controls everything, which makes gaming any one metric self-defeating.</p>
+<p><strong>Corrector plateau.</strong> The corrector handles systematic linear biases well. It does not handle structural model errors. If the golem’s underlying prediction model is wrong in a non-linear way (e.g., it underestimates tail risks), the corrector will shift the center but won’t fix the shape of the distribution. Structural errors require creative-mode discoveries or Grimoire heuristic updates, both of which operate on longer timescales.</p>
+<hr>
+<h2 id="the-attention-forager"><a class="header" href="#the-attention-forager">The Attention Forager</a></h2>
+<h3 id="three-tier-hierarchy"><a class="header" href="#three-tier-hierarchy">Three-tier hierarchy</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Evaluation rate</th><th>Prediction depth</th><th>Item count</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>ACTIVE</strong></td><td>Every theta tick</td><td>5-12 predictions</td><td>5-15</td><td>Current positions, high-signal candidates</td></tr>
+<tr><td><strong>WATCHED</strong></td><td>Every 3-5 theta ticks</td><td>2-4 predictions</td><td>30-60</td><td>Recent anomalies, promising candidates</td></tr>
+<tr><td><strong>SCANNED</strong></td><td>Every ~100 theta ticks</td><td>1 prediction</td><td>100-500+</td><td>Background monitoring, discovery</td></tr>
+</tbody>
+</table>
+</div>
+<p>Items promote on surprise (prediction violations). Items demote on boredom (no violations for 10+ delta cycles). Current positions are always ACTIVE regardless of prediction error – you don’t stop watching something you own.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Three-tier attention system. The golem forages for prediction
+/// errors the way an animal forages for food: allocate resources
+/// where the model of the world is most wrong.
+pub struct AttentionForager {
+    tiers: [AttentionTier; 3],
+    promotion_threshold: f64,
+    demotion_patience: u32,
+}
+
+pub struct AttentionTier {
+    pub level: TierLevel,
+    pub items: Vec&lt;TrackedItem&gt;,
+    pub max_items: usize,
+    pub eval_frequency: u32,  // theta ticks between evaluations
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum TierLevel { Active, Watched, Scanned }
+<span class="boring">}</span></code></pre>
+<h3 id="promotion-and-demotion"><a class="header" href="#promotion-and-demotion">Promotion and demotion</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl AttentionForager {
+    /// promotion_score = anomaly_score * sqrt(consecutive_surprises)
+    pub fn promotion_score(&amp;self, item: &amp;TrackedItem) -&gt; f64 {
+        let anomaly = item.recent_anomaly_score();
+        let consecutive = item.consecutive_surprises() as f64;
+        anomaly * consecutive.sqrt()
+    }
+
+    pub fn tick(&amp;mut self, tick: u64, ledger: &amp;PredictionLedger) {
+        // ACTIVE items: every tick.
+        // WATCHED: every 3-5 ticks.
+        if tick % self.tiers[1].eval_frequency as u64 == 0 {
+            self.evaluate_tier(TierLevel::Watched, ledger);
+        }
+        // SCANNED: every ~100 ticks.
+        if tick % self.tiers[2].eval_frequency as u64 == 0 {
+            self.evaluate_tier(TierLevel::Scanned, ledger);
+        }
+        // Promote items whose score exceeds threshold.
+        self.promote_candidates();
+        // Demote items that haven't surprised in N delta cycles.
+        self.demote_stale();
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="discovery-phases"><a class="header" href="#discovery-phases">Discovery phases</a></h3>
+<p><strong>Phase 1 (boot).</strong> The owner’s STRATEGY.md is parsed into an <code>AttentionSeed</code> – a structured representation of what the golem should watch. Pool addresses, token pairs, protocol names, chain IDs. The seed is passed to each <code>PredictionDomain::discover()</code> method, which returns initial items.</p>
+<p><strong>Phase 2 (first 100 ticks).</strong> Graph expansion from seed items. The golem discovers related items: same token on different venues, same venue with different fee tiers, composed protocols (e.g., a lending protocol that uses the pool’s LP tokens as collateral). This is information foraging patch exploration (Pirolli and Card 1999): the golem explores the neighborhood of its initial information sources.</p>
+<p><strong>Phase 3 (continuous).</strong> Every ~100 theta ticks, <code>PredictionDomain::discover_new()</code> scans for items that have appeared since the last scan. Newly deployed pools, newly listed tokens, newly created vaults. These enter at the SCANNED tier and promote based on prediction error.</p>
+<h3 id="connection-to-foraging-theory"><a class="header" href="#connection-to-foraging-theory">Connection to foraging theory</a></h3>
+<p>The attention forager is an application of optimal foraging theory (Stephens and Krebs 1986) to information. Charnov’s marginal value theorem (1976) predicts that an optimal forager should leave a patch when the marginal return drops below the average return across all patches. The golem’s analog: an item should demote from ACTIVE to WATCHED when its marginal prediction-error yield drops below the average across all ACTIVE items. The golem stops paying full attention to an item not because it becomes uninteresting in absolute terms, but because other items are yielding more prediction errors per cognitive unit invested.</p>
+<p>The information foraging variant (Pirolli and Card 1999) adds information scent. Items emit “scent” proportional to their prediction error, and the golem follows the strongest scent. Graph expansion during Phase 2 is a scent-following behavior – the golem discovers new items by following links from high-error items to their neighbors.</p>
+<h3 id="known-limitation"><a class="header" href="#known-limitation">Known limitation</a></h3>
+<p><strong>Most SCANNED predictions are low-value noise.</strong> If the golem scans 200 items with 1 prediction per hour each, that produces 4,800 trivial predictions per day (“this pool’s fee rate is still approximately $X”). The corrections on these predictions are real but low-signal. The genuinely useful volume is the 200-500 predictions on ACTIVE items with full context. The headline “15,000 predictions/day” includes a lot of background noise. The per-category accuracy breakdown in the TUI makes this transparent – SCANNED-tier accuracy runs at ~92% (because the predictions are conservative) while ACTIVE-tier accuracy is lower but more informative.</p>
+<hr>
+<h2 id="the-action-gate"><a class="header" href="#the-action-gate">The Action Gate</a></h2>
+<p>The action gate prevents over-trading. A golem cannot execute an action unless its predictions about the relevant categories have demonstrated sufficient accuracy. No accuracy record, no action.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ActionGate {
+    category_threshold: f64,    // Default 0.60
+    inaction_comparison: bool,  // Default true
+    inaction_margin: f64,       // Default 0.05 (5 percentage points)
+}
+
+#[derive(Debug, Clone)]
+pub enum GateDecision {
+    Permitted,
+    Blocked { reason: String },
+}
+
+impl ActionGate {
+    pub fn permits(
+        &amp;self,
+        action_predictions: &amp;[Prediction],
+        ledger: &amp;PredictionLedger,
+    ) -&gt; GateDecision {
+        let mut min_action_accuracy = f64::MAX;
+        for pred in action_predictions {
+            let report = ledger.category_accuracy(
+                pred.category.id, Some(pred.regime),
+                Duration::from_secs(7 * 86400),
+            );
+            if !report.sample_sufficient {
+                return GateDecision::Blocked { reason: format!(
+                    "Insufficient data for '{}': {} &lt; 30 samples",
+                    pred.category.name, report.total) };
+            }
+            if report.hit_rate &lt; self.category_threshold {
+                return GateDecision::Blocked { reason: format!(
+                    "'{}' accuracy {:.1}% &lt; {:.1}% threshold",
+                    pred.category.name, report.hit_rate * 100.0,
+                    self.category_threshold * 100.0) };
+            }
+            min_action_accuracy = min_action_accuracy.min(report.hit_rate);
+        }
+
+        if self.inaction_comparison {
+            let inaction = ledger.category_accuracy(
+                CategoryId::INACTION, None, Duration::from_secs(7 * 86400));
+            if inaction.sample_sufficient
+                &amp;&amp; inaction.hit_rate &gt; min_action_accuracy + self.inaction_margin
+            {
+                return GateDecision::Blocked { reason: format!(
+                    "Inaction {:.1}% &gt; action {:.1}% + {:.1}% margin",
+                    inaction.hit_rate * 100.0, min_action_accuracy * 100.0,
+                    self.inaction_margin * 100.0) };
+            }
+        }
+        GateDecision::Permitted
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="costvalue-scaling"><a class="header" href="#costvalue-scaling">Cost/value scaling</a></h3>
+<p>The default threshold (60%) is a floor. For high-stakes actions, the gate raises the bar:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl ActionGate {
+    /// required_accuracy = 0.50 + min(cost / expected_value, 0.45)
+    /// Capped at 0.95 to avoid requiring impossible accuracy.
+    pub fn required_accuracy(
+        &amp;self,
+        cost_usdc: f64,
+        expected_value_usdc: f64,
+    ) -&gt; f64 {
+        let ratio = if expected_value_usdc &gt; 0.0 {
+            cost_usdc / expected_value_usdc
+        } else {
+            1.0
+        };
+        let scaled = 0.50 + ratio.min(0.45);
+        scaled.max(self.category_threshold)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="inaction-prediction"><a class="header" href="#inaction-prediction">Inaction prediction</a></h3>
+<p>Every suppressed theta tick generates an explicit prediction: “I predict holding is optimal.” This resolves by comparing portfolio value at prediction time vs. resolution time. If inaction accuracy exceeds action accuracy, the action gate blocks trades. Patience emerges from the math.</p>
+<h3 id="known-limitation-sideways-market-conservatism"><a class="header" href="#known-limitation-sideways-market-conservatism">Known limitation: sideways market conservatism</a></h3>
+<p>In flat markets, inaction accuracy runs around 95% because holding is almost always correct when prices don’t move. The gate becomes very conservative, blocking the golem even when genuine opportunities appear. The inaction comparison margin (default 5%) softens this: the golem can act when its action accuracy is within 5 percentage points of inaction accuracy. The owner can lower this margin in <code>golem.toml</code> to allow more aggressive behavior in flat regimes, accepting higher risk. The TUI displays the margin and both accuracy rates, so the tradeoff is visible.</p>
+<hr>
+<h2 id="the-confidence-calibrator"><a class="header" href="#the-confidence-calibrator">The Confidence Calibrator</a></h2>
+<h3 id="the-problem"><a class="header" href="#the-problem">The problem</a></h3>
+<p>LLMs are systematically overconfident. Xiong et al. (2023) found that LLMs verbalize confidence in the 80-100% range even when actual accuracy sits at 50-60%. Geng et al. (2024) confirmed: LLMs produce poorly calibrated confidence estimates out of the box, with ECE typically in the 0.15-0.30 range.</p>
+<p>Without calibration, the <code>confidence</code> field on <code>Prediction</code> is unreliable. The action gate would trust a stated 80% confidence that corresponds to 55% actual accuracy.</p>
+<h3 id="the-solution-isotonic-regression"><a class="header" href="#the-solution-isotonic-regression">The solution: isotonic regression</a></h3>
+<p>A post-hoc calibration module that learns the mapping from stated confidence to actual accuracy, per (category, regime), and applies a correction to every new prediction’s confidence before it enters the ledger.</p>
+<p>Isotonic regression is chosen over temperature scaling (Guo et al. 2017) for three reasons: no parametric assumptions about the calibration curve shape; monotonicity guarantee (higher stated confidence always maps to higher calibrated confidence); and it handles the clustered confidence distribution of LLMs (most values in 80-100% range) without overfitting to sparse regions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ConfidenceCalibrator {
+    curves: DashMap&lt;(CategoryId, RegimeTag), IsotonicCurve&gt;,
+    min_samples: usize,                                  // Default: 30
+    ece: DashMap&lt;(CategoryId, RegimeTag), f64&gt;,           // ECE per (category, regime)
+}
+
+pub struct IsotonicCurve {
+    bins: Vec&lt;CalibrationBin&gt;,
+    history: CircularBuffer&lt;(f64, bool), 2048&gt;,
+    sample_count: u64,
+    max_history: usize,
+}
+
+#[derive(Debug, Clone)]
+pub struct CalibrationBin {
+    pub lower: f64,
+    pub upper: f64,
+    pub observed_accuracy: f64,
+    pub sample_count: u32,
+}
+
+impl ConfidenceCalibrator {
+    /// Called on every prediction resolution (gamma frequency).
+    pub fn record(
+        &amp;self,
+        stated: f64,
+        correct: bool,
+        category: CategoryId,
+        regime: RegimeTag,
+    ) {
+        let key = (category, regime);
+        let mut curve = self.curves.entry(key).or_default();
+        curve.add_sample(stated, correct);
+
+        // Refit every 50 samples to amortize the O(N log N) sort cost.
+        if curve.sample_count % 50 == 0 {
+            curve.refit();
+            let ece = curve.compute_ece();
+            self.ece.insert(key, ece);
+        }
+    }
+
+    /// Maps stated confidence to calibrated value before registration.
+    pub fn calibrate(
+        &amp;self,
+        stated: f64,
+        category: CategoryId,
+        regime: RegimeTag,
+    ) -&gt; f64 {
+        let key = (category, regime);
+        match self.curves.get(&amp;key) {
+            Some(curve) if curve.sample_count &gt;= self.min_samples as u64 =&gt; {
+                curve.map(stated)
+            }
+            _ =&gt; stated,
+        }
+    }
+
+    /// ECE for a specific (category, regime).
+    /// 0.0 = perfect, &lt;0.05 = good, 0.05-0.15 = moderate, &gt;0.15 = bad.
+    pub fn ece(&amp;self, category: CategoryId, regime: RegimeTag) -&gt; Option&lt;f64&gt; {
+        self.ece.get(&amp;(category, regime)).map(|v| *v)
+    }
+}
+
+impl IsotonicCurve {
+    pub fn add_sample(&amp;mut self, stated: f64, correct: bool) {
+        self.history.push((stated, correct));
+        self.sample_count += 1;
+    }
+
+    /// Refit via Pool Adjacent Violators (PAV) algorithm.
+    pub fn refit(&amp;mut self) { /* bin by stated confidence, compute observed accuracy,
+                                  merge adjacent bins that violate monotonicity */ }
+
+    pub fn map(&amp;self, stated: f64) -&gt; f64 {
+        for bin in &amp;self.bins {
+            if stated &gt;= bin.lower &amp;&amp; stated &lt; bin.upper {
+                return bin.observed_accuracy;
+            }
+        }
+        stated
+    }
+
+    /// ECE = sum(bin_weight * |accuracy - confidence|)
+    pub fn compute_ece(&amp;self) -&gt; f64 {
+        let total: u32 = self.bins.iter().map(|b| b.sample_count).sum();
+        if total == 0 { return 0.0; }
+        self.bins.iter().map(|bin| {
+            let weight = bin.sample_count as f64 / total as f64;
+            let midpoint = (bin.lower + bin.upper) / 2.0;
+            weight * (bin.observed_accuracy - midpoint).abs()
+        }).sum()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="calibrator-integration-points"><a class="header" href="#calibrator-integration-points">Calibrator integration points</a></h3>
+<ul>
+<li><strong>Action gate.</strong> Uses calibrated confidence, not raw stated confidence. The gate sees 55% when the LLM claims 80%, if the calibrator has learned that mapping.</li>
+<li><strong>Daimon.</strong> The calibration gap feeds the emotional model. Large ECE (the golem is overconfident about its own certainty) lowers the dominance dimension.</li>
+<li><strong>TUI Oracle screen.</strong> Per-category ECE displayed alongside accuracy. The user sees: “Fee rate predictions: stated confidence 81%, actual accuracy 62%, ECE 0.19.”</li>
+<li><strong>Grimoire.</strong> The retrospective evaluator includes ECE trends. Is the golem’s self-knowledge improving over time?</li>
+</ul>
+<h3 id="known-limitation-1"><a class="header" href="#known-limitation-1">Known limitation</a></h3>
+<p>Isotonic regression requires the stated confidence distribution to have reasonable spread. If the LLM always outputs “90% confident,” there is only one populated bin and calibration degrades to a constant correction. The system prompt instructs the LLM to use the full 0-100% range, but this is a prompt-engineering patch, not a fix.</p>
+<hr>
+<h2 id="four-modes-of-intelligence"><a class="header" href="#four-modes-of-intelligence">Four Modes of Intelligence</a></h2>
+<p>The Oracle generates predictions through four modes. All four produce the same <code>Prediction</code> struct. All four resolve against external reality. All four feed the same residual corrector.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>When it runs</th><th>Cost per unit</th><th>Speed</th><th>Daily volume</th><th>What it produces</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Analytical</strong></td><td>Waking theta cycle</td><td>$0.00-$0.03</td><td>Per tick</td><td>~14,000</td><td>Calibrated expectations about tracked items</td></tr>
+<tr><td><strong>Corrective</strong></td><td>Every resolution</td><td>$0.00</td><td>Per resolution</td><td>~15,000</td><td>Bias-adjusted prediction parameters</td></tr>
+<tr><td><strong>Creative</strong></td><td>Dream cycles</td><td>$0.01-$0.05</td><td>Per dream cycle</td><td>~20-50</td><td>Novel hypotheses as testable predictions</td></tr>
+<tr><td><strong>Collective</strong></td><td>Continuous (Styx)</td><td>~$0.001</td><td>Per sync</td><td>~1,000</td><td>Community-calibrated adjustments</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="analytical-mode"><a class="header" href="#analytical-mode">Analytical mode</a></h3>
+<p>The bulk of the system. During each theta tick, <code>PredictionDomain</code> implementations generate predictions for ACTIVE items. The <code>ResidualCorrector</code> adjusts them. The <code>PredictionLedger</code> stores them. Gamma ticks resolve them against reality.</p>
+<p>~80% of theta ticks are suppressed at the gate (T0, zero cost). The remaining ~20% escalate through the full cognitive pipeline: Grimoire retrieval, LLM deliberation, action prediction, execution, verification.</p>
+<p>Inaction predictions happen on every suppressed tick. The golem explicitly predicts “holding is optimal” and resolves that claim by comparing portfolio value at prediction time vs. resolution time.</p>
+<h3 id="corrective-mode"><a class="header" href="#corrective-mode">Corrective mode</a></h3>
+<p>Zero-cost arithmetic running at gamma frequency. Bias correction and interval calibration. The corrector converges on systematic biases (the easy wins), then plateaus. Structural patterns require creative mode.</p>
+<h3 id="creative-mode"><a class="header" href="#creative-mode">Creative mode</a></h3>
+<p>During dream cycles, the golem generates novel hypotheses by replaying prediction errors, imagining counterfactual scenarios, and forming associations between semantically distant concepts. Creative outputs become testable predictions, not vague journal entries.</p>
+<pre><code>HYPNAGOGIC ONSET (seconds to minutes)
+  Top N prediction residuals presented as scrambled fragments.
+  Temperature elevated, executive constraints loosened.
+  Dali interrupts capture half-formed associations.
+  -&gt; Each fragment registered as a Creative prediction (confidence 0.10-0.20)
+
+NREM REPLAY (minutes)
+  50 predictions with largest residuals replayed.
+  LLM scans for systematic patterns across items.
+  -&gt; Pattern observations registered as Creative predictions (confidence 0.25-0.40)
+
+REM IMAGINATION (minutes)
+  Hypnagogic fragments developed into full counterfactual scenarios.
+  "IF condition X, THEN outcome Y within Z hours."
+  -&gt; Counterfactuals registered as Creative predictions (confidence 0.20-0.35)
+
+INTEGRATION (minutes)
+  Surviving hypotheses consolidated into:
+  - PLAYBOOK.md heuristic proposals
+  - Environmental model candidates (cross-item patterns)
+  - ResidualCorrector bias adjustments (applied immediately)
+</code></pre>
+<p>Creative accuracy of ~34% is the expected rate for genuinely novel hypotheses. The 34% that are right are disproportionately useful because they improve many predictions at once. The TUI shows this breakdown without apology.</p>
+<p><strong>Known limitation: multiple comparisons.</strong> If the dream engine generates 30 creative predictions and 34% hit, some hits are expected by chance alone. Creative predictions must be confirmed by at least 3 independent resolution events across different items before promotion to environmental model status.</p>
+<h3 id="collective-mode"><a class="header" href="#collective-mode">Collective mode</a></h3>
+<p>Three layers via Styx:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Privacy</th><th>Shared data</th><th>Benefit</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Vault (L0)</strong></td><td>Private</td><td>Nothing</td><td>Baseline solo performance</td></tr>
+<tr><td><strong>Clade (L1)</strong></td><td>Fleet (same owner)</td><td>Residual stats, attention signals, environmental models</td><td>7x convergence speedup at 50 members</td></tr>
+<tr><td><strong>Lethe (L2)</strong></td><td>Public (anonymized)</td><td>Anonymized aggregates, pheromone deposits</td><td>Community calibration</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct CladeResidualUpdate {
+    pub golem_id: GolemId,
+    pub tick: u64,
+    pub residuals: Vec&lt;ResidualStat&gt;,
+    pub environmental_models: Vec&lt;EnvironmentalModelDigest&gt;,
+    pub attention_signals: Vec&lt;AttentionSignal&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The collective mode is optional. A solo golem with no Styx connection runs modes 1-3 at full capability.</p>
+<h3 id="the-compounding-cycle"><a class="header" href="#the-compounding-cycle">The compounding cycle</a></h3>
+<pre><code>ANALYTICAL -&gt; produces residuals -&gt; feeds CORRECTIVE
+CORRECTIVE -&gt; adjusts predictions -&gt; improves ANALYTICAL
+ANALYTICAL -&gt; largest residuals -&gt; seeds CREATIVE (dream replay)
+CREATIVE -&gt; confirmed models -&gt; improve ANALYTICAL across many items
+ANALYTICAL -&gt; residual stats -&gt; shared via COLLECTIVE
+COLLECTIVE -&gt; community calibration -&gt; improves CORRECTIVE
+</code></pre>
+<p>Each mode alone is useful. Together they compound.</p>
+<hr>
+<h2 id="inheritance-oraclegenome"><a class="header" href="#inheritance-oraclegenome">Inheritance: OracleGenome</a></h2>
+<p>When a golem dies, its Oracle state compresses through the genomic bottleneck. Maximum 2048 entries.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compressed Oracle state that crosses the generational boundary.
+/// Max 2048 entries. Inherited at 0.7x confidence (Weismann barrier).
+pub struct OracleGenome {
+    pub residual_stats: Vec&lt;ResidualStat&gt;,             // Per-(category, regime) calibration
+    pub environmental_models: Vec&lt;EnvironmentalModel&gt;, // Cross-item patterns from creative mode
+    pub attention_snapshot: AttentionSnapshot,          // What the predecessor was watching
+    pub accuracy_history: Vec&lt;AccuracyTimeSeries&gt;,     // Calibration trajectory expectations
+    pub calibration_curves: Vec&lt;InheritedCalibrationCurve&gt;, // Also at 0.7x
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResidualStat {
+    pub category: CategoryId,
+    pub regime: RegimeTag,
+    pub mean: f64,
+    pub variance: f64,
+    pub coverage: f64,
+    pub sample_size: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InheritedCalibrationCurve {
+    pub category: CategoryId,
+    pub regime: RegimeTag,
+    pub bins: Vec&lt;CalibrationBin&gt;,
+    pub parent_ece: f64,
+}
+<span class="boring">}</span></code></pre>
+<p>The 0.7x inheritance coefficient is the Weismann barrier: acquired characteristics do not flow to the next generation at full strength. Lamarckian inheritance (full transfer) would make golems converge too quickly on inherited patterns, losing the ability to adapt when those patterns stop working. The 0.7x discount forces each generation to independently validate its predecessor’s knowledge.</p>
+<hr>
+<h2 id="tui-integration"><a class="header" href="#tui-integration">TUI Integration</a></h2>
+<h3 id="oracle-screen"><a class="header" href="#oracle-screen">Oracle screen</a></h3>
+<p>The MIND &gt; Oracle screen surfaces the prediction engine’s state:</p>
+<pre><code>ORACLE OVERVIEW
+
+  Accuracy by Category (7-day rolling)
+  ──────────────────────────────────────
+  fee_rate        ████████████████░░░  82.4%  (1,204 resolved)
+  supply_rate     ███████████████░░░░  78.1%  (891 resolved)
+  price_range     ██████████████░░░░░  71.3%  (1,102 resolved)
+  swap_slippage   █████████████████░░  88.2%  (47 resolved)
+  inaction        ██████████████████░  92.1%  (4,208 resolved)
+  lp_pnl          ██████████░░░░░░░░░  54.3%  (12 resolved)  &lt;- learning
+
+  Attention Universe
+  ──────────────────────────────────────
+  ACTIVE:   7 items (current positions + 2 high-signal)
+  WATCHED:  23 items (recent anomalies)
+  SCANNED:  189 items (background)
+</code></pre>
+<h3 id="spectre-visual-mapping"><a class="header" href="#spectre-visual-mapping">Spectre visual mapping</a></h3>
+<p>The CorticalState’s prediction signals drive Spectre visualization:</p>
+<ul>
+<li><code>aggregate_accuracy</code> -&gt; dot displacement clarity: higher accuracy = tighter, more coherent dot orbits</li>
+<li><code>accuracy_trend</code> -&gt; Spectre vertical posture: improving = upright, declining = slouched</li>
+<li><code>surprise_rate</code> -&gt; eye micro-flicker: high surprise = rapid pupil dilation oscillation</li>
+<li><code>pending_predictions</code> -&gt; peripheral particle speed: high foraging = fast-moving dots suggesting active search</li>
+</ul>
+<h3 id="corticalstate-tui-variables"><a class="header" href="#corticalstate-tui-variables">CorticalState TUI variables</a></h3>
+<p>Six prediction-related interpolating variables were added to the TUI render loop (bringing the total from 26 to 32). See <a href="./18-cortical-state.html">18-cortical-state.md</a> for the full mapping.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Variable</th><th>Lerp rate</th><th>Range</th><th>Source signal</th><th>What it drives</th></tr>
+</thead>
+<tbody>
+<tr><td>27</td><td><code>prediction_accuracy</code></td><td>1.5</td><td>[0.0, 1.0]</td><td><code>aggregate_accuracy</code></td><td>Mind screen accuracy gauge, dot orbit coherence</td></tr>
+<tr><td>28</td><td><code>accuracy_trend</code></td><td>1.0</td><td>[-1.0, 1.0]</td><td><code>accuracy_trend</code></td><td>Trend arrow direction and color</td></tr>
+<tr><td>29</td><td><code>attention_breadth</code></td><td>1.2</td><td>[0.0, 1.0]</td><td><code>active_count / universe_size</code></td><td>Attention focus indicator</td></tr>
+<tr><td>30</td><td><code>surprise_rate</code></td><td>6.0</td><td>[0.0, 1.0]</td><td><code>surprise_rate</code></td><td>Background flicker intensity</td></tr>
+<tr><td>31</td><td><code>foraging_activity</code></td><td>1.0</td><td>[0.0, 1.0]</td><td><code>pending_predictions</code></td><td>Discovery pulse in attention widget</td></tr>
+<tr><td>32</td><td><code>compounding_momentum</code></td><td>0.05</td><td>[0.0, 1.0]</td><td><code>compounding_momentum</code></td><td>Background warmth (golden/blue shift)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="owner-configuration"><a class="header" href="#owner-configuration">Owner Configuration</a></h2>
+<pre><code class="language-toml">[prediction]
+residual_buffer_size = 256      # Entries per (category, regime). 8 bytes each.
+target_coverage = 0.85          # Interval calibration target
+min_correction_samples = 10     # Minimum observations before corrector activates
+novelty_threshold = 2.0         # |residual| above this -&gt; dream replay
+forgetting_rate = 0.005         # Adaptive forgetting (Gibbs &amp; Candes). Range: 0.001-0.05
+compaction_window = 604800      # 7 days in seconds
+
+[prediction.attention]
+active_max = 15
+watched_max = 60
+scanned_max = 500
+watched_eval_frequency = 4      # Theta ticks between WATCHED evaluations
+scanned_eval_frequency = 100
+promotion_threshold = 3.0
+demotion_patience = 10          # Delta cycles without surprise before demotion
+
+[prediction.gate]
+category_threshold = 0.60
+inaction_comparison = true
+inaction_margin = 0.05
+inheritance_coefficient = 0.70
+
+[calibration]
+enabled = true
+min_samples = 30
+refit_interval = 50
+max_history = 2048
+ece_alarm_threshold = 0.25
+num_bins = 20
+</code></pre>
+<hr>
+<h2 id="disabled-mode"><a class="header" href="#disabled-mode">Disabled Mode</a></h2>
+<p>When <code>[oracle] enabled = false</code>, the entire oracle crate is disabled at boot. The <code>Oracle</code> struct is not initialized. No attention universe, no ledger, no corrector, no calibrator. The config keys under <code>[oracle]</code> remain valid (no parse error), but are silently ignored.</p>
+<p><strong>Heartbeat Step 3 (ANALYZE).</strong> Falls back to observation-signal-based surprise computation. <code>compute_prediction_error</code> accepts an <code>Option&lt;&amp;Oracle&gt;</code> and, when <code>None</code>, computes a signal-only error from four inputs:</p>
+<ul>
+<li>Regime change severity (0.0–1.0)</li>
+<li>Anomaly count (normalized by probe count)</li>
+<li>Position health delta</li>
+<li>Pheromone threat intensity</li>
+</ul>
+<p>The gating logic (Step 4) continues unchanged. It just uses the degraded signal. The Golem still escalates to LLM deliberation when something notable happens — it has less calibrated prior expectations, not less responsiveness.</p>
+<p><strong>Action gate.</strong> When oracle is off, the accuracy-threshold check does not run. The gate passes on LLM deliberation alone. Step 6 VALIDATE still runs PolicyCage in full — disabling the oracle removes the prediction accuracy pre-check only, not constraint enforcement.</p>
+<p><strong>Dreams.</strong> Creative mode still runs on <code>DecisionCycleRecord</code> episodes. NREM replay has no prediction residuals to replay (residual list is empty). REM imagination runs but produces no oracle predictions — outputs land only in PLAYBOOK.md proposals. Integration phase still runs.</p>
+<p><strong>Daimon.</strong> Prediction-surprise PAD signals are not emitted. No <code>prediction_surprise</code> appraisal events fire. Other appraisal sources — position loss, regime change, owner message — still fire normally.</p>
+<p><strong>TUI Oracle screen.</strong> Shows a “ORACLE DISABLED” banner with a one-line explanation (“This Golem uses P&amp;L fitness. Enable oracle in golem.toml to activate prediction tracking.”). The 6 CorticalState variables 27–32 (<code>prediction_accuracy</code>, <code>accuracy_trend</code>, <code>attention_breadth</code>, <code>surprise_rate</code>, <code>foraging_activity</code>, <code>compounding_momentum</code>) default to 0.5 neutral when oracle is off. Visual effects driven by these variables render at their neutral baseline.</p>
+<p><strong>Inheritance (OracleGenome).</strong> When oracle is disabled, no genome is produced at death. The successor inherits an empty genome. The <code>inheritance_coefficient</code> field remains present in the config but has no effect.</p>
+<hr>
+<h2 id="registered-prediction-domains"><a class="header" href="#registered-prediction-domains">Registered Prediction Domains</a></h2>
+<p>The Oracle is domain-agnostic. Domain knowledge enters through <code>PredictionDomain</code> implementations registered at boot. The following domains ship with the Golem runtime. Additional domains can be registered by extensions.</p>
+<h3 id="defi-domain-existing"><a class="header" href="#defi-domain-existing">DeFi Domain (existing)</a></h3>
+<p>The original domain. Discovers pools, vaults, and lending markets from the owner’s <code>STRATEGY.md</code>. Predicts fee rates, price direction, volatility regime, liquidity depth, gas prices, protocol events, and cross-chain flows. Resolution reads on-chain state via <code>EnvironmentClient</code>. Categories map to the <code>CategoryId</code> enum defined above.</p>
+<h3 id="bayesiansurprisedomain"><a class="header" href="#bayesiansurprisedomain">BayesianSurpriseDomain</a></h3>
+<p>Bayesian surprise measures how much a single observation shifts the agent’s beliefs, computed as KL divergence between prior and posterior distributions (Itti &amp; Baldi, 2009). Unlike Shannon entropy, which treats all randomness as informative, Bayesian surprise responds only to data that forces a genuine model update. A fair coin flip has zero surprise because the outcome doesn’t change the agent’s belief that the coin is fair. A liquidation event on a pool that has never been liquidated has high surprise because it shifts the posterior sharply.</p>
+<p>The domain registers with the Oracle alongside the DeFi domain. It does not replace the Oracle’s prediction error signal. It feeds INTO the Oracle as an additional prediction domain, producing predictions about future surprise levels that resolve against observed KL divergence. The Oracle’s <code>ResidualCorrector</code> handles surprise predictions identically to price predictions.</p>
+<p>Conflict resolution reference: <a href="../../tmp/research/witness-research/new/reconciling/04-conflict-resolution.html">04-conflict-resolution.md</a>, Conflict 1.</p>
+<h4 id="conjugate-prior-models"><a class="header" href="#conjugate-prior-models">Conjugate prior models</a></h4>
+<p>Four conjugate families cover the feature types in the observation stream. Conjugate priors allow closed-form posterior updates: the posterior stays in the same distribution family as the prior, so updating is parameter arithmetic, O(1) per observation.</p>
+<p><strong>Beta-Binomial</strong> for binary features (did a liquidation occur? is this a new address?):</p>
+<pre><code>Prior:     Beta(alpha, beta)
+Observe:   k successes in n trials
+Posterior: Beta(alpha + k, beta + n - k)
+
+KL divergence (closed form):
+D_KL(Beta(a', b') || Beta(a, b)) =
+    ln(B(a, b) / B(a', b'))
+    + (a' - a) * psi(a')
+    + (b' - b) * psi(b')
+    - (a' + b' - a - b) * psi(a' + b')
+</code></pre>
+<p><strong>Normal-Gamma</strong> for continuous features (gas prices, swap values, price impact):</p>
+<pre><code>Prior:     NormalGamma(mu_0, kappa_0, alpha_0, beta_0)
+Observe:   x
+Update:    kappa_1 = kappa_0 + 1
+           mu_1    = (kappa_0 * mu_0 + x) / kappa_1
+           alpha_1 = alpha_0 + 0.5
+           beta_1  = beta_0 + (kappa_0 * (x - mu_0)^2) / (2 * kappa_1)
+</code></pre>
+<p><strong>Dirichlet-Multinomial</strong> for categorical features (protocol family, transaction type, MEV pattern):</p>
+<pre><code>Prior:     Dirichlet(alpha_1, ..., alpha_K)
+Observe:   category j
+Posterior: Dirichlet(alpha_1, ..., alpha_j + 1, ..., alpha_K)
+</code></pre>
+<p><strong>Gamma-Poisson</strong> for event rates (transactions per block from an address, events per Theta window):</p>
+<pre><code>Prior:     Gamma(alpha, beta) conjugate to Poisson(lambda)
+Observe:   k events in one interval
+Posterior: Gamma(alpha + k, beta + 1)
+</code></pre>
+<p>Each model supports exponential decay on sufficient statistics for non-stationarity. Decay factors align with the tick hierarchy: 0.995 at Gamma (fast features), 0.99 at Theta (medium features), with a full parameter review at Delta.</p>
+<h4 id="rust-types"><a class="header" href="#rust-types">Rust types</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Trait for conjugate Bayesian models with O(1) surprise computation.
+pub trait ConjugatePrior: Clone + Send + Sync {
+    type Observation;
+
+    /// Update with observation, return KL divergence (surprise).
+    fn observe(&amp;mut self, obs: &amp;Self::Observation) -&gt; f64;
+
+    /// Apply exponential decay to sufficient statistics.
+    fn decay(&amp;mut self, factor: f64);
+
+    /// Reset to initial prior.
+    fn reset(&amp;mut self);
+
+    /// Number of effective observations (diagnostics).
+    fn effective_count(&amp;self) -&gt; f64;
+}
+
+#[derive(Clone, Debug)]
+pub struct BetaBinomial {
+    alpha: f64,
+    beta: f64,
+    alpha_0: f64,
+    beta_0: f64,
+}
+
+#[derive(Clone, Debug)]
+pub struct NormalGamma {
+    mu: f64,
+    kappa: f64,
+    alpha: f64,
+    beta: f64,
+    kappa_0: f64,
+    alpha_0: f64,
+    beta_0: f64,
+}
+
+#[derive(Clone, Debug)]
+pub struct DirichletMultinomial {
+    alphas: Vec&lt;f64&gt;,
+    alphas_0: Vec&lt;f64&gt;,
+}
+
+#[derive(Clone, Debug)]
+pub struct GammaPoisson {
+    alpha: f64,
+    beta: f64,
+    alpha_0: f64,
+    beta_0: f64,
+}
+<span class="boring">}</span></code></pre>
+<h4 id="full-conjugateprior-implementations"><a class="header" href="#full-conjugateprior-implementations">Full ConjugatePrior Implementations</a></h4>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/00-bayesian-surprise.md</code></p>
+</blockquote>
+<p><strong>BetaBinomial implementation:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use statrs::function::gamma::{digamma, ln_gamma};
+
+impl BetaBinomial {
+    pub fn new(alpha: f64, beta: f64) -&gt; Self {
+        Self {
+            alpha,
+            beta,
+            alpha_0: alpha,
+            beta_0: beta,
+        }
+    }
+
+    fn kl_divergence(a1: f64, b1: f64, a0: f64, b0: f64) -&gt; f64 {
+        let ln_beta = |a: f64, b: f64| ln_gamma(a) + ln_gamma(b) - ln_gamma(a + b);
+        ln_beta(a0, b0) - ln_beta(a1, b1)
+            + (a1 - a0) * digamma(a1)
+            + (b1 - b0) * digamma(b1)
+            - (a1 + b1 - a0 - b0) * digamma(a1 + b1)
+    }
+}
+
+impl ConjugatePrior for BetaBinomial {
+    type Observation = bool;
+
+    fn observe(&amp;mut self, obs: &amp;bool) -&gt; f64 {
+        let (a_prior, b_prior) = (self.alpha, self.beta);
+        if *obs {
+            self.alpha += 1.0;
+        } else {
+            self.beta += 1.0;
+        }
+        Self::kl_divergence(self.alpha, self.beta, a_prior, b_prior)
+    }
+
+    fn decay(&amp;mut self, factor: f64) {
+        self.alpha = 1.0 + (self.alpha - 1.0) * factor;
+        self.beta = 1.0 + (self.beta - 1.0) * factor;
+    }
+
+    fn reset(&amp;mut self) {
+        self.alpha = self.alpha_0;
+        self.beta = self.beta_0;
+    }
+
+    fn effective_count(&amp;self) -&gt; f64 {
+        (self.alpha - self.alpha_0) + (self.beta - self.beta_0)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>NormalGamma implementation:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl NormalGamma {
+    pub fn new(mu: f64, kappa: f64, alpha: f64, beta: f64) -&gt; Self {
+        Self {
+            mu,
+            kappa,
+            alpha,
+            beta,
+            kappa_0: kappa,
+            alpha_0: alpha,
+            beta_0: beta,
+        }
+    }
+
+    fn kl_divergence(&amp;self, mu_0: f64, kappa_0: f64, alpha_0: f64, beta_0: f64) -&gt; f64 {
+        let (mu1, k1, a1, b1) = (self.mu, self.kappa, self.alpha, self.beta);
+        let (k0, a0, b0) = (kappa_0, alpha_0, beta_0);
+
+        let term1 = 0.5 * (k0 / k1).ln()
+            + 0.5 * (k1 / k0 - 1.0)
+            + 0.5 * k0 * (mu1 - mu_0).powi(2) * a1 / b1;
+        let term2 = a0 * (b1 / b0).ln() - ln_gamma(a1) + ln_gamma(a0)
+            + (a1 - a0) * digamma(a1)
+            - (b1 - b0) * a1 / b1;
+
+        (term1 + term2).max(0.0) // Clamp numerical noise
+    }
+}
+
+impl ConjugatePrior for NormalGamma {
+    type Observation = f64;
+
+    fn observe(&amp;mut self, obs: &amp;f64) -&gt; f64 {
+        let (mu_prior, kappa_prior, alpha_prior, beta_prior) =
+            (self.mu, self.kappa, self.alpha, self.beta);
+
+        let x = *obs;
+        let kappa_new = self.kappa + 1.0;
+        let mu_new = (self.kappa * self.mu + x) / kappa_new;
+        let alpha_new = self.alpha + 0.5;
+        let beta_new = self.beta + (self.kappa * (x - self.mu).powi(2)) / (2.0 * kappa_new);
+
+        self.mu = mu_new;
+        self.kappa = kappa_new;
+        self.alpha = alpha_new;
+        self.beta = beta_new;
+
+        self.kl_divergence(mu_prior, kappa_prior, alpha_prior, beta_prior)
+    }
+
+    fn decay(&amp;mut self, factor: f64) {
+        self.kappa = self.kappa_0.max(self.kappa * factor);
+        self.alpha = self.alpha_0.max(self.alpha_0 + (self.alpha - self.alpha_0) * factor);
+        self.beta = self.beta_0.max(self.beta_0 + (self.beta - self.beta_0) * factor);
+    }
+
+    fn reset(&amp;mut self) {
+        self.kappa = self.kappa_0;
+        self.alpha = self.alpha_0;
+        self.beta = self.beta_0;
+    }
+
+    fn effective_count(&amp;self) -&gt; f64 {
+        self.kappa - self.kappa_0
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>DirichletMultinomial implementation:</strong></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl DirichletMultinomial {
+    pub fn new(alphas: Vec&lt;f64&gt;) -&gt; Self {
+        Self {
+            alphas_0: alphas.clone(),
+            alphas,
+        }
+    }
+
+    pub fn num_categories(&amp;self) -&gt; usize {
+        self.alphas.len()
+    }
+
+    fn kl_divergence(post: &amp;[f64], prior: &amp;[f64]) -&gt; f64 {
+        let sum_post: f64 = post.iter().sum();
+        let sum_prior: f64 = prior.iter().sum();
+
+        let mut kl = ln_gamma(sum_post) - ln_gamma(sum_prior);
+        for (a_post, a_prior) in post.iter().zip(prior.iter()) {
+            kl += ln_gamma(*a_prior) - ln_gamma(*a_post);
+            kl += (*a_post - *a_prior) * (digamma(*a_post) - digamma(sum_post));
+        }
+        kl.max(0.0)
+    }
+}
+
+impl ConjugatePrior for DirichletMultinomial {
+    /// Observation is the index of the observed category.
+    type Observation = usize;
+
+    fn observe(&amp;mut self, obs: &amp;usize) -&gt; f64 {
+        assert!(*obs &lt; self.alphas.len(), "category index out of bounds");
+        let prior = self.alphas.clone();
+        self.alphas[*obs] += 1.0;
+        Self::kl_divergence(&amp;self.alphas, &amp;prior)
+    }
+
+    fn decay(&amp;mut self, factor: f64) {
+        for (a, a0) in self.alphas.iter_mut().zip(self.alphas_0.iter()) {
+            *a = *a0 + (*a - *a0) * factor;
+        }
+    }
+
+    fn reset(&amp;mut self) {
+        self.alphas = self.alphas_0.clone();
+    }
+
+    fn effective_count(&amp;self) -&gt; f64 {
+        self.alphas
+            .iter()
+            .zip(self.alphas_0.iter())
+            .map(|(a, a0)| a - a0)
+            .sum()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Each implements <code>ConjugatePrior</code> with the update rules and KL divergence formulas above. The digamma function evaluations dominate cost at ~50ns per call. A typical transaction touches 3-5 models, so total surprise computation runs under 1 microsecond.</p>
+<h4 id="the-composite-surprise-scorer"><a class="header" href="#the-composite-surprise-scorer">The Composite Surprise Scorer</a></h4>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/00-bayesian-surprise.md</code></p>
+</blockquote>
+<p>The <code>BayesianSurpriseScorer</code> wraps the per-protocol conjugate models and provides a single <code>score()</code> entry point for the triage pipeline. It uses <code>DashMap</code> for concurrent per-protocol access.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use dashmap::DashMap;
+use std::sync::Arc;
+
+/// Per-protocol Bayesian surprise models.
+/// Each protocol gets its own set of conjugate models
+/// tracking different feature families.
+pub struct BayesianSurpriseScorer {
+    /// Binary features per protocol (e.g., "liquidation occurred")
+    binary_models: DashMap&lt;ProtocolId, Vec&lt;(String, BetaBinomial)&gt;&gt;,
+    /// Continuous features per protocol (e.g., gas price, swap value)
+    continuous_models: DashMap&lt;ProtocolId, Vec&lt;(String, NormalGamma)&gt;&gt;,
+    /// Categorical features per protocol (e.g., transaction type)
+    categorical_models: DashMap&lt;ProtocolId, Vec&lt;(String, DirichletMultinomial)&gt;&gt;,
+    /// Decay factors per tick tier
+    gamma_decay: f64,
+    theta_decay: f64,
+}
+
+impl BayesianSurpriseScorer {
+    pub fn new(gamma_decay: f64, theta_decay: f64) -&gt; Self {
+        Self {
+            binary_models: DashMap::new(),
+            continuous_models: DashMap::new(),
+            categorical_models: DashMap::new(),
+            gamma_decay,
+            theta_decay,
+        }
+    }
+
+    /// Score a transaction's surprise across all feature models
+    /// for its protocol. Returns the maximum surprise across features
+    /// (not the sum -- we want the single most surprising dimension).
+    pub fn score(&amp;self, protocol: &amp;ProtocolId, features: &amp;TxFeatures) -&gt; f64 {
+        let mut max_surprise = 0.0_f64;
+
+        if let Some(mut binary) = self.binary_models.get_mut(protocol) {
+            for (name, model) in binary.iter_mut() {
+                if let Some(obs) = features.binary.get(name.as_str()) {
+                    let s = model.observe(obs);
+                    max_surprise = max_surprise.max(s);
+                }
+            }
+        }
+
+        if let Some(mut continuous) = self.continuous_models.get_mut(protocol) {
+            for (name, model) in continuous.iter_mut() {
+                if let Some(obs) = features.continuous.get(name.as_str()) {
+                    let s = model.observe(obs);
+                    max_surprise = max_surprise.max(s);
+                }
+            }
+        }
+
+        if let Some(mut categorical) = self.categorical_models.get_mut(protocol) {
+            for (name, model) in categorical.iter_mut() {
+                if let Some(obs) = features.categorical.get(name.as_str()) {
+                    let s = model.observe(obs);
+                    max_surprise = max_surprise.max(s);
+                }
+            }
+        }
+
+        max_surprise
+    }
+
+    /// Apply decay at Gamma tick boundary.
+    pub fn decay_gamma(&amp;self) {
+        for mut entry in self.binary_models.iter_mut() {
+            for (_, model) in entry.value_mut().iter_mut() {
+                model.decay(self.gamma_decay);
+            }
+        }
+        for mut entry in self.continuous_models.iter_mut() {
+            for (_, model) in entry.value_mut().iter_mut() {
+                model.decay(self.gamma_decay);
+            }
+        }
+    }
+
+    /// Apply decay at Theta tick boundary.
+    pub fn decay_theta(&amp;self) {
+        for mut entry in self.categorical_models.iter_mut() {
+            for (_, model) in entry.value_mut().iter_mut() {
+                model.decay(self.theta_decay);
+            }
+        }
+    }
+
+    /// Register models for a new protocol with default priors.
+    pub fn register_protocol(&amp;self, protocol: ProtocolId, config: &amp;ProtocolModelConfig) {
+        self.binary_models.insert(
+            protocol.clone(),
+            config
+                .binary_features
+                .iter()
+                .map(|name| (name.clone(), BetaBinomial::new(1.0, 10.0)))
+                .collect(),
+        );
+        self.continuous_models.insert(
+            protocol.clone(),
+            config
+                .continuous_features
+                .iter()
+                .map(|name| {
+                    // Weakly informative prior: mean 0, low confidence
+                    (name.clone(), NormalGamma::new(0.0, 0.1, 1.0, 1.0))
+                })
+                .collect(),
+        );
+        self.categorical_models.insert(
+            protocol.clone(),
+            config
+                .categorical_features
+                .iter()
+                .map(|(name, k)| {
+                    // Symmetric Dirichlet with alpha=1 (uniform prior)
+                    (name.clone(), DirichletMultinomial::new(vec![1.0; *k]))
+                })
+                .collect(),
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="the-bayesiansurprisedomain-implementation"><a class="header" href="#the-bayesiansurprisedomain-implementation">The BayesianSurpriseDomain implementation</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Bayesian surprise as a PredictionDomain.
+/// Per-protocol conjugate models at three timescales.
+/// Predictions: "surprise in the next Theta window will be X nats."
+/// Resolution: actual KL divergence observed.
+pub struct BayesianSurpriseDomain {
+    /// Fast models (sub-hour structural changes). Decay 0.995/gamma.
+    fast_models: DashMap&lt;ProtocolId, BayesianSurpriseScorer&gt;,
+    /// Medium models (intra-day regime shifts). Decay 0.998/gamma.
+    medium_models: DashMap&lt;ProtocolId, BayesianSurpriseScorer&gt;,
+    /// Slow models (multi-day trend changes). Decay 0.9995/gamma.
+    slow_models: DashMap&lt;ProtocolId, BayesianSurpriseScorer&gt;,
+}
+
+/// Per-protocol scorer holding binary, continuous, categorical,
+/// and rate models for a single timescale.
+pub struct BayesianSurpriseScorer {
+    binary_models: Vec&lt;(String, BetaBinomial)&gt;,
+    continuous_models: Vec&lt;(String, NormalGamma)&gt;,
+    categorical_models: Vec&lt;(String, DirichletMultinomial)&gt;,
+    rate_models: Vec&lt;(String, GammaPoisson)&gt;,
+    decay_factor: f64,
+}
+
+#[async_trait]
+impl PredictionDomain for BayesianSurpriseDomain {
+    fn domain_id(&amp;self) -&gt; &amp;str { "bayesian_surprise" }
+    fn display_name(&amp;self) -&gt; &amp;str { "Bayesian Surprise" }
+
+    fn categories(&amp;self) -&gt; Vec&lt;PredictionCategory&gt; {
+        vec![
+            PredictionCategory::new("fast_surprise", "Sub-hour structural changes"),
+            PredictionCategory::new("medium_surprise", "Intra-day regime shifts"),
+            PredictionCategory::new("slow_surprise", "Multi-day trend changes"),
+        ]
+    }
+
+    async fn discover(
+        &amp;self,
+        seed: &amp;AttentionSeed,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;Vec&lt;TrackedItem&gt;&gt; {
+        // Discovers protocol IDs from the seed. Each protocol becomes
+        // a tracked item with three timescale models initialized
+        // from weakly informative priors.
+        todo!()
+    }
+
+    fn predict_scanned(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+    ) -&gt; Vec&lt;PredictionDraft&gt; {
+        // Single prediction: aggregate surprise across all models
+        // for the slow timescale. Cheap: reads existing model state.
+        todo!()
+    }
+
+    fn predict_watched(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot,
+    ) -&gt; Vec&lt;PredictionDraft&gt; {
+        // Two predictions: fast and medium timescale surprise.
+        // Uses cortical regime to condition the prediction.
+        todo!()
+    }
+
+    fn predict_active(
+        &amp;self,
+        item: &amp;TrackedItem,
+        history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot,
+        playbook: &amp;PlaybookState,
+    ) -&gt; Vec&lt;PredictionDraft&gt; {
+        // Three predictions: fast, medium, slow. Full context.
+        todo!()
+    }
+
+    async fn resolve(
+        &amp;self,
+        prediction: &amp;Prediction,
+        checkpoint: &amp;Checkpoint,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;ResolutionOutcome&gt; {
+        // Actual KL divergence observed in the checkpoint window.
+        // Compare against predicted surprise level.
+        todo!()
+    }
+
+    fn predict_action(&amp;self, _: &amp;ProposedAction, _: &amp;TrackedItem,
+        _: &amp;ResidualBuffer) -&gt; Vec&lt;PredictionDraft&gt; { vec![] }
+    fn predict_inaction(&amp;self, _: &amp;TrackedItem, _: &amp;ResidualBuffer,
+        _: &amp;CorticalSnapshot) -&gt; Vec&lt;PredictionDraft&gt; { vec![] }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="surprise-as-triage-routing-signal"><a class="header" href="#surprise-as-triage-routing-signal">Surprise as triage routing signal</a></h4>
+<p>Raw surprise feeds into triage routing alongside existing heuristics:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surprise range</th><th>Interpretation</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>&gt; 2.0 nats</td><td>Extreme model violation</td><td>Immediate TriageAlert regardless of other scores</td></tr>
+<tr><td>0.5 - 2.0 nats</td><td>Moderate belief shift</td><td>Boost curiosity score by 0.3</td></tr>
+<tr><td>0.1 - 0.5 nats</td><td>Minor update</td><td>No modification</td></tr>
+<tr><td>&lt; 0.1 nats</td><td>Expected observation</td><td>Slight curiosity penalty (-0.1)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The extreme surprise threshold (&gt; 2.0 nats) acts as an override. If a single observation forces a large belief update, the event gets escalated even if heuristics and similarity would have filtered it. This catches novel attack vectors that heuristic rules don’t anticipate and that have no similar episodes in the ANN index.</p>
+<h4 id="cold-start-behavior"><a class="header" href="#cold-start-behavior">Cold-start behavior</a></h4>
+<p>When the golem has no prior observations for a protocol, conjugate models start at uninformative priors. Every observation generates moderate surprise because models update rapidly from weak priors. This is correct: the agent should be curious about protocols it hasn’t modeled yet. As observations accumulate, models become confident and surprise drops for routine events. During cold start (fewer than ~50 observations per protocol), the Hedge weighting system (see <a href="./02-heartbeat.html">02-heartbeat.md</a>) naturally downweights the surprise signal because it carries high variance.</p>
+<h4 id="memory-per-protocol"><a class="header" href="#memory-per-protocol">Memory per protocol</a></h4>
+<p>~200 bytes for a standard feature set (2 binary, 2 continuous, 1 categorical with 10 categories, 1 rate model). For 100 tracked protocols across 3 timescales, the total footprint is ~60KB. Negligible against the ANN index or Grimoire.</p>
+<h3 id="topologydomain"><a class="header" href="#topologydomain">TopologyDomain</a></h3>
+<p>Persistent homology tracks the birth and death of geometric features in observation point clouds as a scale parameter sweeps from zero to infinity (Carlsson, 2009). Applied to the Golem’s observation stream, TDA-based regime detection identifies structural precursors to regime shifts 10-100 perception ticks before statistical methods, because the topology of observation space changes before its moments do. A cluster fracture (beta_0 increasing) happens before variance spikes. A cyclic pattern collapse (beta_1 dropping) happens before a trend reversal is visible in moving averages.</p>
+<p>The TopologyDomain registers with the Oracle to make topological predictions that resolve against observed structural changes. The Oracle tracks topology prediction accuracy alongside fee-rate and price-direction accuracy in the same ledger.</p>
+<h4 id="mathematical-foundation"><a class="header" href="#mathematical-foundation">Mathematical foundation</a></h4>
+<p>At each gamma tick, the Golem’s perception layer produces an observation vector x_t in R^d. A sliding window of N = 200 recent observations forms a point cloud X_N. The Vietoris-Rips complex VR(X, epsilon) connects points within distance epsilon, and persistent homology tracks features across the filtration as epsilon increases:</p>
+<ul>
+<li><strong>H_0 (connected components):</strong> Clusters in observation space. Many persistent components = market fragmentation.</li>
+<li><strong>H_1 (loops):</strong> Cycles in observation space. Mean-reverting markets create loops; trending markets don’t.</li>
+<li><strong>H_2 (voids):</strong> Empty regions where observations used to occur. Correlation breakdowns create voids.</li>
+</ul>
+<p>Each feature gets a (birth, death) pair. Features that persist over a large epsilon range are signal; short-lived features are noise. The Stability Theorem (Cohen-Steiner, Edelsbrunner &amp; Harer, 2007) guarantees that small input perturbations produce small output perturbations.</p>
+<p>The <strong>Wasserstein distance</strong> between two persistence diagrams quantifies structural difference:</p>
+<pre><code>W_p(D_1, D_2) = (inf_gamma sum |x - gamma(x)|^p)^{1/p}
+</code></pre>
+<p>The Golem maintains a reference diagram D_ref for the current regime. At each gamma tick, W_p(D_now, D_ref) measures topological distance from the reference state.</p>
+<h4 id="topological-regime-signatures"><a class="header" href="#topological-regime-signatures">Topological regime signatures</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Regime</th><th>W_p</th><th>beta_0</th><th>beta_1</th><th>beta_2</th><th>Signature</th></tr>
+</thead>
+<tbody>
+<tr><td>Calm</td><td>Low</td><td>~1</td><td>~0</td><td>0</td><td>Single tight cluster, no loops or voids</td></tr>
+<tr><td>Trending</td><td>Low</td><td>~1</td><td>~0</td><td>0</td><td>Cluster drifting; diagram shift rate discriminates from calm</td></tr>
+<tr><td>Volatile</td><td>Moderate</td><td>&gt;1</td><td>&gt;0</td><td>0</td><td>Fragmented clusters, cyclic oscillations</td></tr>
+<tr><td>Crisis</td><td>High</td><td>&gt;&gt;1</td><td>varies</td><td>&gt;0</td><td>Extreme fragmentation, voids appearing</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="the-tda-pipeline"><a class="header" href="#the-tda-pipeline">The TDA pipeline</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// TDA analyzer. Runs at Step 3 (ANALYZE), gamma frequency.
+pub struct TdaAnalyzer {
+    config: TdaConfig,
+    reference_diagram: Option&lt;PersistenceDiagram&gt;,
+    tick_count: u64,
+}
+
+pub struct TdaConfig {
+    pub window_size: usize,       // 200
+    pub pca_dimensions: usize,    // 5 (Ripser is exponential in dimension)
+    pub max_homology_dim: usize,  // 2 (H_0, H_1, H_2)
+    pub reference_tau: f32,       // 50.0 (EMA time constant, ~4-12 min)
+    pub wasserstein_p: f32,       // 2.0
+}
+
+/// Persistence diagram: multiset of (birth, death) pairs per dimension.
+#[derive(Clone, Debug)]
+pub struct PersistenceDiagram {
+    pub features: Vec&lt;PersistenceFeature&gt;,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PersistenceFeature {
+    pub birth: f32,
+    pub death: f32,
+    pub dimension: u8,
+}
+
+impl PersistenceDiagram {
+    /// Betti number at scale epsilon for dimension k.
+    pub fn betti(&amp;self, dim: u8, epsilon: f32) -&gt; usize {
+        self.features.iter()
+            .filter(|f| f.dimension == dim &amp;&amp; f.birth &lt;= epsilon &amp;&amp; f.death &gt; epsilon)
+            .count()
+    }
+
+    /// Scale that maximizes total persistence of alive features.
+    pub fn optimal_scale(&amp;self) -&gt; f32 { /* argmax sum(persistence) */ todo!() }
+}
+
+/// Wasserstein distance via Hungarian algorithm.
+/// O(n^3) on diagram size. With ~50 features: &lt;1ms.
+pub fn wasserstein_distance(
+    d1: &amp;PersistenceDiagram,
+    d2: &amp;PersistenceDiagram,
+    dim: u8,
+    p: f32,
+) -&gt; f32 { todo!() }
+<span class="boring">}</span></code></pre>
+<h4 id="topologydomain-implementation"><a class="header" href="#topologydomain-implementation">TopologyDomain implementation</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Persistent homology as a PredictionDomain.
+/// Predictions: "Wasserstein distance will be X at next Theta checkpoint"
+///              "beta_0 will remain &lt;= N"
+///              "beta_1 will increase (loop formation)"
+/// Resolution: actual persistence diagram at checkpoint time.
+pub struct TopologyDomain {
+    analyzer: TdaAnalyzer,
+}
+
+#[async_trait]
+impl PredictionDomain for TopologyDomain {
+    fn domain_id(&amp;self) -&gt; &amp;str { "topology" }
+    fn display_name(&amp;self) -&gt; &amp;str { "Topological Market Intelligence" }
+
+    fn categories(&amp;self) -&gt; Vec&lt;PredictionCategory&gt; {
+        vec![
+            PredictionCategory::new("betti_0", "Connected components at optimal scale"),
+            PredictionCategory::new("betti_1", "Loops at optimal scale"),
+            PredictionCategory::new("wasserstein", "Topological distance from reference"),
+        ]
+    }
+
+    async fn discover(
+        &amp;self,
+        seed: &amp;AttentionSeed,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;Vec&lt;TrackedItem&gt;&gt; {
+        // One tracked item per observation-space window.
+        // Typically one per chain the Golem monitors.
+        todo!()
+    }
+
+    fn predict_scanned(
+        &amp;self, item: &amp;TrackedItem, history: &amp;ResidualBuffer,
+    ) -&gt; Vec&lt;PredictionDraft&gt; {
+        // Single prediction: Wasserstein distance will stay below threshold.
+        todo!()
+    }
+
+    fn predict_watched(
+        &amp;self, item: &amp;TrackedItem, history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot,
+    ) -&gt; Vec&lt;PredictionDraft&gt; {
+        // Two predictions: Wasserstein distance + beta_0 stability.
+        todo!()
+    }
+
+    fn predict_active(
+        &amp;self, item: &amp;TrackedItem, history: &amp;ResidualBuffer,
+        cortical: &amp;CorticalSnapshot, playbook: &amp;PlaybookState,
+    ) -&gt; Vec&lt;PredictionDraft&gt; {
+        // Three predictions: Wasserstein, beta_0, beta_1.
+        todo!()
+    }
+
+    async fn resolve(
+        &amp;self, prediction: &amp;Prediction, checkpoint: &amp;Checkpoint,
+        env: &amp;dyn EnvironmentClient,
+    ) -&gt; Result&lt;ResolutionOutcome&gt; {
+        // Compute persistence diagram at checkpoint, compare to prediction.
+        todo!()
+    }
+
+    fn predict_action(&amp;self, _: &amp;ProposedAction, _: &amp;TrackedItem,
+        _: &amp;ResidualBuffer) -&gt; Vec&lt;PredictionDraft&gt; { vec![] }
+    fn predict_inaction(&amp;self, _: &amp;TrackedItem, _: &amp;ResidualBuffer,
+        _: &amp;CorticalSnapshot) -&gt; Vec&lt;PredictionDraft&gt; { vec![] }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="computational-budget"><a class="header" href="#computational-budget">Computational budget</a></h4>
+<p>Ripser on 200 points in R^5 with max_dim=2: under 50ms (Bauer, 2021). PCA projection: 1-2ms. Wasserstein distance on ~50 features: &lt;1ms. Total: under 55ms per gamma tick, well within the 5-second minimum gamma interval.</p>
+<h3 id="ta-prediction-domains"><a class="header" href="#ta-prediction-domains">TA Prediction Domains</a></h3>
+<p>Eight additional prediction domains arise from the technical analysis research. Each maps a TA subsystem’s output to a falsifiable claim that the Oracle tracks. These are documented in <a href="./17b-ta-prediction-domains.html">17b-ta-prediction-domains.md</a>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Source</th><th>Claim type</th><th>Resolution</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ManifoldCurvatureSign</code></td><td>SpectralManifold</td><td><code>DirectionalClaim</code></td><td>Did curvature correctly predict stability/instability?</td></tr>
+<tr><td><code>TopologicalTransition</code></td><td>PredictiveGeometry</td><td><code>ThresholdClaim</code></td><td>Did beta_0 or beta_1 change within the predicted horizon?</td></tr>
+<tr><td><code>CausalEdgeStrength</code></td><td>CausalDiscoveryEngine</td><td><code>RangeClaim</code></td><td>Did intervention effect size fall within predicted range?</td></tr>
+<tr><td><code>PatternMatchOutcome</code></td><td>TaPatternCodebook</td><td><code>DirectionalClaim</code></td><td>Did the matched pattern’s historical outcome repeat?</td></tr>
+<tr><td><code>EntanglementRegime</code></td><td>EntanglementTracker</td><td><code>ThresholdClaim</code></td><td>Did cross-protocol entanglement exceed predicted threshold?</td></tr>
+<tr><td><code>AdversarialDetection</code></td><td>AdversarialDefense</td><td><code>DirectionalClaim</code></td><td>Was a flagged observation confirmed as manipulation?</td></tr>
+<tr><td><code>SignalSpeciation</code></td><td>SignalMetabolism</td><td><code>OccurrenceClaim</code></td><td>Did a signal speciate within the predicted window?</td></tr>
+<tr><td><code>SomaticAccuracy</code></td><td>SomaticTaEngine</td><td><code>DirectionalClaim</code></td><td>Did a somatic marker’s behavioral bias produce a better outcome?</td></tr>
+</tbody>
+</table>
+</div>
+<p>All eight register through <code>PredictionDomain::categories()</code>. Predictions flow through the same residual correction pipeline as existing DeFi predictions. The Oracle does not distinguish between a prediction about ETH price direction and a prediction about manifold curvature sign. It tracks accuracy, computes residuals, and gates action identically.</p>
+<h4 id="integration-with-category_accuracies"><a class="header" href="#integration-with-category_accuracies">Integration with category_accuracies</a></h4>
+<p>CorticalState holds <code>category_accuracies: [AtomicU32; 16]</code>. The 8 TA categories are bucketed into <code>category_accuracies[15]</code> (the last position). The TaCorticalExtension tracks per-category accuracy internally and writes the aggregate to the CorticalState slot. This avoids expanding CorticalState’s cache-line footprint for domain-specific signals.</p>
+<h3 id="domain-registration-at-boot"><a class="header" href="#domain-registration-at-boot">Domain registration at boot</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Oracle {
+    pub fn register_domains(&amp;mut self) {
+        // Core domain (always present)
+        self.register(Box::new(DeFiDomain::new(self.env.clone())));
+
+        // Bayesian surprise (opt-in via golem.toml)
+        if self.config.bayesian_surprise.enabled {
+            self.register(Box::new(BayesianSurpriseDomain::new(
+                self.config.bayesian_surprise.clone(),
+            )));
+        }
+
+        // Topology (opt-in, requires sufficient observation history)
+        if self.config.topology.enabled {
+            self.register(Box::new(TopologyDomain::new(
+                TdaConfig::from(&amp;self.config.topology),
+            )));
+        }
+
+        // TA domains (opt-in, requires TA subsystem)
+        if self.config.ta.enabled {
+            self.register(Box::new(TaPredictionDomains::new(
+                self.ta_extension.clone(),
+            )));
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="extended-categoryid-enum"><a class="header" href="#extended-categoryid-enum">Extended CategoryId enum</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum CategoryId {
+    // === Existing DeFi categories ===
+    PriceDirection,
+    PriceRange,
+    VolatilityRegime,
+    LiquidityDepth,
+    FeeGeneration,
+    GasPrice,
+    ProtocolEvent,
+    CrossChain,
+
+    // === Bayesian surprise categories ===
+    FastSurprise,       // Sub-hour structural changes
+    MediumSurprise,     // Intra-day regime shifts
+    SlowSurprise,       // Multi-day trend changes
+
+    // === Topology categories ===
+    Betti0,             // Connected components
+    Betti1,             // Loops
+    WassersteinDist,    // Topological distance from reference
+
+    // === TA categories (see 17b-ta-prediction-domains.md) ===
+    ManifoldCurvatureSign,
+    TopologicalTransition,
+    CausalEdgeStrength,
+    PatternMatchOutcome,
+    EntanglementRegime,
+    AdversarialDetection,
+    SignalSpeciation,
+    SomaticAccuracy,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[VOVK-2005] Vovk, V., Gammerman, A., &amp; Shafer, G. <em>Algorithmic Learning in a Random World</em>. Springer, 2005. — <em>Foundational text on conformal prediction providing distribution-free coverage guarantees; the theoretical basis for the Oracle’s prediction interval calibration.</em></li>
+<li>[ANGELOPOULOS-2023] Angelopoulos, A.N. &amp; Bates, S. “Conformal Prediction: A Gentle Introduction.” <em>Foundations and Trends in Machine Learning</em> 16(4), 2023. — <em>Accessible introduction to conformal prediction with modern applications; the practical guide for implementing the Oracle’s coverage guarantees.</em></li>
+<li>[GIBBS-2021] Gibbs, I. &amp; Candes, E. “Adaptive Conformal Inference Under Distribution Shift.” <em>NeurIPS</em>, 2021. — <em>Extends conformal prediction to non-stationary data by adapting the miscoverage rate online; directly addresses the Oracle’s need to maintain calibration across market regime changes.</em></li>
+<li>[STEPHENS-1986] Stephens, D.W. &amp; Krebs, J.R. <em>Foraging Theory</em>. Princeton University Press, 1986. — <em>Formalizes optimal foraging as a resource allocation problem under uncertainty; the biological model for how the Oracle allocates computational budget across prediction domains.</em></li>
+<li>[CHARNOV-1976] Charnov, E.L. “Optimal Foraging, the Marginal Value Theorem.” <em>Theoretical Population Biology</em> 9(2), 1976. — <em>Proves that an optimal forager should leave a patch when marginal return drops to the average; governs when the Oracle stops refining a prediction and moves to the next domain.</em></li>
+<li>[PIROLLI-1999] Pirolli, P. &amp; Card, S.K. “Information Foraging.” <em>Psychological Review</em> 106(4), 1999. — <em>Adapts foraging theory to information seeking, introducing information scent; the cognitive model for how the Oracle decides which data sources to consult.</em></li>
+<li>[GUO-2017] Guo, C. et al. “On Calibration of Modern Neural Networks.” <em>ICML</em>, 2017. — <em>Shows that modern neural networks are poorly calibrated and proposes temperature scaling; motivates the Oracle’s explicit calibration layer on top of LLM confidence scores.</em></li>
+<li>[XIONG-2023] Xiong, M. et al. “Can LLMs Express Their Uncertainty?” arXiv:2306.13063, 2023. — <em>Evaluates whether LLMs can verbalize calibrated uncertainty estimates; informs the Oracle’s approach to extracting and correcting LLM confidence signals.</em></li>
+<li>[GENG-2024] Geng, J. et al. “A Survey of Confidence Estimation and Calibration in Large Language Models.” <em>NAACL</em>, 2024. — <em>Surveys methods for LLM confidence estimation including verbalized and logit-based approaches; the reference for the Oracle’s multi-method confidence extraction.</em></li>
+<li>[MINDERER-2021] Minderer, M. et al. “Revisiting the Calibration of Modern Neural Networks.” <em>NeurIPS</em>, 2021. — <em>Shows calibration varies by architecture and training procedure; motivates the Oracle’s per-model calibration rather than assuming uniform reliability.</em></li>
+<li>[STOCKBENCH-2025] “StockBench: Can LLM Agents Trade Stocks Profitably?” 2025. — <em>Benchmarks LLM agents on real trading tasks; provides empirical baselines for what prediction accuracy to expect from the Oracle’s LLM-based forecasts.</em></li>
+<li>[CLARK-2013] Clark, A. “Whatever next?” <em>BBS</em>, 36(3), 2013. — <em>Proposes the predictive processing framework where brains are fundamentally prediction machines; the cognitive science paradigm that the Oracle’s residual-correction architecture implements.</em></li>
+<li>[FRISTON-2010] Friston, K. “The free-energy principle.” <em>Nature Reviews Neuroscience</em>, 11(2), 2010. — <em>Proposes that all adaptive systems minimize variational free energy (prediction error); the theoretical umbrella connecting the Oracle’s predictions to the Golem’s overall behavior.</em></li>
+<li>[ITTI-2009] Itti, L. &amp; Baldi, P. “Bayesian Surprise Attracts Human Attention.” <em>Vision Research</em>, 49(10), 2009. — <em>Shows that attention is drawn to observations that maximally shift beliefs; the Oracle uses Bayesian surprise to prioritize which prediction domains need updating.</em></li>
+<li>[BALDI-2010] Baldi, P. &amp; Itti, L. “Of Bits and Wows: A Bayesian Theory of Surprise.” <em>Neural Networks</em>, 23(5), 2010. — <em>Axiomatizes Bayesian surprise as the unique measure depending on model class, zero when beliefs don’t change, and additive for independent components; the formal definition the Oracle implements.</em></li>
+<li>[CARLSSON-2009] Carlsson, G. “Topology and Data.” <em>Bulletin of the AMS</em>, 46(2), 2009. — <em>Introduces topological data analysis (TDA) and persistent homology for shape detection in data; the mathematical foundation for the Oracle’s regime-change detection via persistence diagrams.</em></li>
+<li>[GIDEA-2018] Gidea, M. &amp; Katz, Y. “Topological Data Analysis of Financial Time Series.” <em>Physica A</em>, 491, 2018. — <em>Applies TDA to financial time series and detects market crashes via topological features; directly validates the Oracle’s use of persistence diagrams for DeFi regime detection.</em></li>
+<li>[COHEN-STEINER-2007] Cohen-Steiner, D., Edelsbrunner, H. &amp; Harer, J. “Stability of Persistence Diagrams.” <em>Discrete &amp; Computational Geometry</em>, 37(1), 2007. — <em>Proves that small perturbations in input data produce small changes in persistence diagrams; the stability guarantee that makes the Oracle’s topological signals robust to noise.</em></li>
+<li>[BAUER-2021] Bauer, U. “Ripser: Efficient Computation of Vietoris-Rips Persistence Barcodes.” <em>JACT</em>, 5, 2021. — <em>Describes the fastest known algorithm for computing Vietoris-Rips persistence; the implementation the Oracle uses for real-time TDA on streaming market data.</em></li>
+<li>[SCHMIDHUBER-2010] Schmidhuber, J. “Formal Theory of Creativity, Fun, and Intrinsic Motivation.” <em>IEEE Transactions on Autonomous Mental Development</em>, 2(3), 2010. — <em>Formalizes curiosity as the drive to maximize learning progress (compression improvement); connects the Oracle’s surprise signals to the Golem’s intrinsic motivation system.</em></li>
+<li>[SHALEV-SHWARTZ-2011] Shalev-Shwartz, S. “Online Learning and Online Convex Optimization.” <em>Foundations and Trends in Machine Learning</em>, 4(2), 2011. — <em>Comprehensive treatment of online learning with regret bounds; the theoretical framework for the Oracle’s adaptive triage parameter tuning.</em></li>
+</ul>
+<hr>
+<h2 id="bayesian-surprise-extended-foundation"><a class="header" href="#bayesian-surprise-extended-foundation">Bayesian Surprise: Extended Foundation</a></h2>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/00-bayesian-surprise.md</code></p>
+</blockquote>
+<h3 id="why-not-shannon-information"><a class="header" href="#why-not-shannon-information">Why Not Shannon Information?</a></h3>
+<p>Shannon’s self-information <code>-log P(D)</code> assigns high scores to rare events regardless of whether they’re informative. A transaction with an unusual gas price gets high Shannon information even if the agent already knows gas is volatile. Bayesian surprise, by contrast, stays low when the agent’s model already accounts for that volatility. The practical consequence: Shannon-based curiosity generates false positives on noisy features; Bayesian surprise is calibrated to the agent’s current knowledge state.</p>
+<p>Baldi &amp; Itti (2010) proved that Bayesian surprise is the only measure satisfying three axioms:</p>
+<ol>
+<li>It depends on the model class, not just the observation.</li>
+<li>It is zero when beliefs don’t change.</li>
+<li>It is additive for independent model components.</li>
+</ol>
+<p>Shannon information satisfies only the third.</p>
+<h3 id="gamma-poisson-conjugate-model-with-kl-formula"><a class="header" href="#gamma-poisson-conjugate-model-with-kl-formula">Gamma-Poisson Conjugate Model with KL Formula</a></h3>
+<p>Event rates: transactions per block from a given address, events per Theta window for a protocol.</p>
+<pre><code>Prior:     Gamma(alpha, beta)  -- conjugate to Poisson(lambda)
+Observe:   k events in one time interval
+Posterior: Gamma(alpha + k, beta + 1)
+
+KL divergence:
+D_KL(Gamma(a', b') || Gamma(a, b)) =
+    (a' - a) * psi(a') - ln(Gamma(a')) + ln(Gamma(a))
+    + a * (ln(b') - ln(b)) + a' * (b / b' - 1)
+</code></pre>
+<p>An address that normally produces 2 transactions per block suddenly producing 50 generates high surprise. The Gamma-Poisson model captures this naturally because the posterior rate estimate shifts sharply.</p>
+<h3 id="streaming-decay-details"><a class="header" href="#streaming-decay-details">Streaming Decay Details</a></h3>
+<p>Exponential decay on sufficient statistics prevents the model from becoming increasingly rigid and resistant to surprise from genuine regime changes.</p>
+<p><strong>Decay factor:</strong> 0.995 per Gamma tick (roughly 12 seconds). This gives a <strong>half-life of about 138 ticks, or ~28 minutes</strong>. The model forgets half its conviction every half hour, staying responsive to regime changes while still accumulating enough evidence to distinguish signal from noise.</p>
+<p><strong>Three-tier tick alignment:</strong></p>
+<ul>
+<li><strong>Gamma tick</strong>: Decay fast-moving features (gas prices, event rates). Decay factor 0.995.</li>
+<li><strong>Theta tick</strong>: Decay medium-cadence features (protocol category distributions). Decay factor 0.99.</li>
+<li><strong>Delta tick</strong>: Full parameter review. If any model has accumulated sufficient statistics beyond a threshold (indicating the agent is over-confident), apply aggressive decay or reset to a moderately informative prior.</li>
+</ul>
+<p>For Beta(alpha, beta):</p>
+<pre><code>alpha_decayed = 1 + (alpha - 1) * decay_factor
+beta_decayed  = 1 + (beta - 1) * decay_factor
+</code></pre>
+<p>The <code>1 +</code> offset prevents the parameters from collapsing below the uninformative prior.</p>
+<p>For Normal-Gamma(mu, kappa, alpha, beta):</p>
+<pre><code>kappa_decayed = max(kappa_0, kappa * decay_factor)
+alpha_decayed = max(alpha_0, alpha_0 + (alpha - alpha_0) * decay_factor)
+beta_decayed  = max(beta_0, beta_0 + (beta - beta_0) * decay_factor)
+// mu stays as-is -- it's a running estimate, not an accumulator
+</code></pre>
+<p>The <code>max</code> with initial values prevents the parameters from becoming more uninformative than the cold-start prior.</p>
+<h3 id="surprise-routing-signal-table"><a class="header" href="#surprise-routing-signal-table">Surprise Routing Signal Table</a></h3>
+<p>The raw surprise score feeds into the routing table:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surprise range</th><th>Interpretation</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>&gt; 2.0 nats</td><td>Extreme model violation</td><td>Immediate TriageAlert regardless of other scores</td></tr>
+<tr><td>0.5 - 2.0 nats</td><td>Moderate belief shift</td><td>Boost curiosity score by 0.3</td></tr>
+<tr><td>0.1 - 0.5 nats</td><td>Minor update</td><td>No modification</td></tr>
+<tr><td>&lt; 0.1 nats</td><td>Expected observation</td><td>Slight curiosity penalty (-0.1)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The extreme surprise threshold (&gt; 2.0 nats) acts as an override: if a single observation forces a large belief update, the event gets escalated even if heuristics and similarity would have filtered it. This catches novel attack vectors that the heuristic rules don’t anticipate and that have no similar episodes in the ANN index.</p>
+<h3 id="cold-start-behavior-with-hedge"><a class="header" href="#cold-start-behavior-with-hedge">Cold-Start Behavior with Hedge</a></h3>
+<p>When the golem has no prior observations for a protocol, the conjugate models start at their uninformative priors. Every observation generates moderate surprise because the models are updating rapidly from weak priors. This is correct behavior: the agent should be curious about protocols it hasn’t modeled yet. As observations accumulate, the models become more confident and surprise drops for routine events.</p>
+<p>During cold start (fewer than ~50 observations per protocol), heuristics should dominate via the Hedge weighting system. The Bayesian surprise signal carries high variance early on because the models are unstable. The Hedge algorithm naturally downweights signals with poor predictive accuracy, so surprise gets low weight until the models stabilize.</p>
+<h3 id="performance-characteristics"><a class="header" href="#performance-characteristics">Performance Characteristics</a></h3>
+<p>The entire Bayesian surprise computation – including prior snapshot, posterior update, KL divergence calculation, and decay – runs in <strong>under 1 microsecond per transaction</strong> on a single core. The dominant cost is the digamma function evaluation, which takes <strong>~50 nanoseconds per call</strong>. A typical transaction touches 3-5 models (one binary, one continuous, one categorical, one rate), requiring 4-6 digamma calls total.</p>
+<p>Memory per protocol: roughly <strong>200 bytes</strong> for a standard feature set (2 binary models, 2 continuous models, 1 categorical model with 10 categories). For 100 tracked protocols, the total footprint is ~20KB. This is negligible compared to the ANN index (megabytes) or the Grimoire (gigabytes).</p>
+<hr>
+<h2 id="active-inference-theoretical-umbrella-for-agent-behavior"><a class="header" href="#active-inference-theoretical-umbrella-for-agent-behavior">Active Inference: Theoretical Umbrella for Agent Behavior</a></h2>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/01-active-inference.md</code></p>
+</blockquote>
+<p>The Free Energy Principle (FEP) provides a single mathematical framework that unifies the golem’s curiosity scoring, attention allocation, action selection, and model updating into one objective: minimize surprise. Where Bayesian surprise measures how much a single observation shifts beliefs, active inference prescribes what the agent should <em>do</em> about it. The agent can reduce surprise in two ways – update its model (perception) or change the world (action). Both are governed by the same variational objective. This reframes the entire triage-to-action pipeline as inference rather than engineering: the golem doesn’t follow hand-coded rules about when to act; it selects actions that minimize expected free energy, which decomposes naturally into information-seeking (curiosity) and goal-seeking (profit).</p>
+<h3 id="variational-free-energy"><a class="header" href="#variational-free-energy">Variational free energy</a></h3>
+<p>An agent maintains a generative model – beliefs q(s) about hidden states s given observations o. Variational free energy is:</p>
+<pre><code>F = D_KL[ q(s) || p(s|o) ] - ln p(o)
+  = D_KL[ q(s) || p(s) ] - E_q[ ln p(o|s) ]
+  = complexity - accuracy
+</code></pre>
+<p>The first line says free energy upper-bounds surprise (-ln p(o)). The second line decomposes it into complexity (how far beliefs deviate from priors) and accuracy (how well beliefs explain observations). Minimizing free energy forces the agent to find the simplest beliefs (low complexity) that still explain the data (high accuracy).</p>
+<p>For the golem, this decomposition maps directly:</p>
+<ul>
+<li><strong>Hidden states s</strong>: the true state of on-chain protocols (pool reserves, pending liquidations, MEV bot positions, oracle staleness)</li>
+<li><strong>Observations o</strong>: decoded transaction logs, gas prices, event counts</li>
+<li><strong>Beliefs q(s)</strong>: the golem’s protocol state models plus the Bayesian models from the surprise domain</li>
+<li><strong>Generative model p(o|s)</strong>: the forward model predicting what observations should occur given the believed state</li>
+</ul>
+<p>Friston (2010) showed that any system that maintains its organization over time must, in effect, minimize variational free energy. The golem’s mortality-aware lifecycle makes this concrete: a golem that fails to minimize surprise (fails to model its environment accurately) makes bad trades, loses capital, and dies sooner.</p>
+<h3 id="the-perception-action-cycle"><a class="header" href="#the-perception-action-cycle">The perception-action cycle</a></h3>
+<p>Free energy minimization happens through two complementary pathways:</p>
+<p><strong>Perception (model update):</strong> Adjust q(s) to better explain observations. This is the Bayesian update step – exactly what the conjugate prior models do at each Gamma tick. When the golem updates its gas price model after observing an unusually high gas price, it’s performing perceptual inference.</p>
+<p><strong>Action:</strong> Change the world so that future observations match predictions. When the golem rebalances an LP position that has gone out of range, it’s performing active inference – changing the state of the world to reduce the prediction error between “position should be in range” and “position is out of range.”</p>
+<p>Both pathways reduce free energy. The golem’s tick hierarchy implements them at different timescales:</p>
+<ul>
+<li><strong>Gamma tick</strong>: Perceptual inference (fast model updates, ~12 seconds)</li>
+<li><strong>Theta tick</strong>: Mixed inference and planning (LLM analysis, action proposals, ~5 minutes)</li>
+<li><strong>Delta tick</strong>: Deep perceptual inference (model consolidation, ANN rebuild, ~20 minutes)</li>
+</ul>
+<h3 id="precision-weighting"><a class="header" href="#precision-weighting">Precision weighting</a></h3>
+<p>Precision is the inverse variance of a prediction error. A prediction channel with high precision produces tight, reliable predictions; its errors carry weight. A channel with low precision produces noisy, unreliable predictions; its errors should be downweighted. In active inference, attention <em>is</em> precision optimization.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Precision estimate for a single prediction channel.
+/// Tracks the inverse variance of recent prediction errors.
+#[derive(Clone, Debug)]
+pub struct PrecisionEstimate {
+    /// Running mean of squared prediction errors
+    mean_sq_error: f64,
+    /// Running mean of prediction errors (for bias detection)
+    mean_error: f64,
+    /// Exponential decay factor for the running estimates
+    decay: f64,
+    /// Number of effective samples
+    n_eff: f64,
+}
+
+impl PrecisionEstimate {
+    pub fn new(decay: f64) -&gt; Self {
+        Self {
+            mean_sq_error: 1.0, // Start with unit variance (uninformative)
+            mean_error: 0.0,
+            decay,
+            n_eff: 0.0,
+        }
+    }
+
+    /// Update with a new prediction error. Returns the current precision.
+    pub fn update(&amp;mut self, error: f64) -&gt; f64 {
+        self.mean_sq_error = self.decay * self.mean_sq_error + (1.0 - self.decay) * error * error;
+        self.mean_error = self.decay * self.mean_error + (1.0 - self.decay) * error;
+        self.n_eff = self.decay * self.n_eff + 1.0;
+        self.precision()
+    }
+
+    /// Precision = inverse variance, clamped to avoid division by near-zero.
+    pub fn precision(&amp;self) -&gt; f64 {
+        let variance = (self.mean_sq_error - self.mean_error.powi(2)).max(1e-8);
+        (1.0 / variance).min(1e6) // Clamp to prevent numerical explosion
+    }
+
+    /// Is this channel well-calibrated? High precision + low bias = yes.
+    pub fn is_calibrated(&amp;self) -&gt; bool {
+        self.n_eff &gt; 10.0 &amp;&amp; self.mean_error.abs() &lt; 2.0 * self.mean_sq_error.sqrt()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The FEP predicts a counterintuitive relationship between model confidence and curiosity thresholds. Protocols where the golem has high-precision models should get <em>lower</em> curiosity thresholds, not higher. A prediction error from a high-precision channel is more informative than one from a low-precision channel. If the golem’s model of Uniswap V3 is tight (high precision), and a Uniswap V3 event violates that model, something genuinely unusual is happening. If the model of some obscure new protocol is loose (low precision), prediction errors are expected and carry less information.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Modulate curiosity threshold based on model precision.
+/// High precision -&gt; lower threshold -&gt; more events escalated for that protocol.
+/// Low precision -&gt; higher threshold -&gt; fewer events escalated (noise expected).
+fn precision_modulated_threshold(
+    base_threshold: f32,
+    precision: f64,
+    max_precision: f64,
+) -&gt; f32 {
+    let normalized = (precision / max_precision).min(1.0) as f32;
+    // High precision: threshold drops to 60% of base
+    // Low precision: threshold stays at 100% of base
+    base_threshold * (1.0 - 0.4 * normalized)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="expected-free-energy-for-action-selection"><a class="header" href="#expected-free-energy-for-action-selection">Expected free energy for action selection</a></h3>
+<p>Active inference treats planning as inference. Instead of optimizing a reward function (reinforcement learning) or following rules (expert systems), the agent scores candidate actions by their <strong>Expected Free Energy (EFE)</strong>:</p>
+<pre><code>G(a) = E_q[ D_KL( q(o|a) || p(o) ) ] + E_q[ D_KL( q(s|o,a) || q(s|a) ) ]
+     = pragmatic_value              + epistemic_value
+     = (expected reward)             + (expected information gain)
+</code></pre>
+<p>The first term (pragmatic value) favors actions that lead to observations the agent prefers. For the golem: actions that lead to profitable positions, lower risk exposure, timely rebalancing. The second term (epistemic value) favors actions that resolve uncertainty. For the golem: probe swaps that reveal market depth, monitoring positions to detect out-of-range conditions, investigating unknown protocols.</p>
+<p>The balance between these terms is not tuned by a hyperparameter. It falls out of the math: when the agent is uncertain, epistemic value dominates and the agent explores. When the agent is confident, pragmatic value dominates and the agent exploits.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Expected Free Energy for a triage routing action.
+pub struct EfeScore {
+    /// Pragmatic: how much does this action align with the golem's goals?
+    pub pragmatic: f64,
+    /// Epistemic: how much uncertainty does this action resolve?
+    pub epistemic: f64,
+}
+
+impl EfeScore {
+    /// Combined EFE. Lower is better (minimizing free energy).
+    pub fn combined(&amp;self) -&gt; f64 {
+        -(self.pragmatic + self.epistemic)
+    }
+}
+
+/// Score a routing decision using expected free energy.
+fn score_routing_action(
+    event: &amp;TriageEvent,
+    action: RoutingAction,
+    belief_state: &amp;BeliefState,
+    golem_preferences: &amp;GolemPreferences,
+) -&gt; EfeScore {
+    match action {
+        RoutingAction::EscalateToLlm =&gt; {
+            let epistemic = belief_state.information_gain_from_analysis(event);
+            let pragmatic = golem_preferences.relevance_to_positions(event);
+            EfeScore { pragmatic, epistemic }
+        }
+        RoutingAction::UpdateStateSilently =&gt; {
+            let epistemic = 0.1 * belief_state.information_gain_from_analysis(event);
+            let pragmatic = 0.3 * golem_preferences.relevance_to_positions(event);
+            EfeScore { pragmatic, epistemic }
+        }
+        RoutingAction::Discard =&gt; {
+            EfeScore {
+                pragmatic: 0.0,
+                epistemic: 0.0,
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-belief-state"><a class="header" href="#the-belief-state">The belief state</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The golem's beliefs about the state of its environment.
+/// Updated at each tick via Bayesian inference.
+pub struct BeliefState {
+    /// Per-protocol Bayesian surprise models
+    pub surprise_models: BayesianSurpriseScorer,
+    /// Per-channel precision estimates
+    pub precisions: DashMap&lt;(ProtocolId, String), PrecisionEstimate&gt;,
+    /// Protocol state predictions for the next observation
+    pub predictions: DashMap&lt;ProtocolId, StatePrediction&gt;,
+    /// Global regime indicator (stationary vs. changepoint detected)
+    pub regime: AtomicU8, // 0 = stationary, 1 = transition, 2 = new regime
+}
+
+/// Prediction about what the next observation from a protocol should look like.
+#[derive(Clone, Debug)]
+pub struct StatePrediction {
+    pub expected_event_rate: f64,
+    pub expected_gas_range: (f64, f64),
+    pub expected_value_range: (f64, f64),
+    pub confidence: f64, // derived from precision estimates
+}
+
+impl BeliefState {
+    /// Process a new observation: update beliefs, compute surprise,
+    /// update precisions, generate next prediction.
+    pub fn process_observation(
+        &amp;self,
+        protocol: &amp;ProtocolId,
+        features: &amp;TxFeatures,
+    ) -&gt; ObservationResult {
+        // 1. Compute surprise (updates models internally)
+        let surprise = self.surprise_models.score(protocol, features);
+
+        // 2. Compute prediction error against current predictions
+        let prediction_error = if let Some(pred) = self.predictions.get(protocol) {
+            features.deviation_from(&amp;pred)
+        } else {
+            1.0 // No prediction = maximum uncertainty
+        };
+
+        // 3. Update precision for each feature channel
+        let precision = self.update_precisions(protocol, features, prediction_error);
+
+        // 4. Precision-weighted prediction error
+        let weighted_error = precision * prediction_error;
+
+        // 5. Generate next prediction (simple EMA-based)
+        self.update_predictions(protocol, features);
+
+        ObservationResult {
+            surprise,
+            prediction_error,
+            precision_weighted_error: weighted_error,
+            regime_change_detected: weighted_error &gt; REGIME_THRESHOLD,
+        }
+    }
+
+    /// Estimate information gain from LLM analysis of an event.
+    pub fn information_gain_from_analysis(&amp;self, event: &amp;TriageEvent) -&gt; f64 {
+        let avg_precision = self.average_precision(&amp;event.protocol_id);
+        let uncertainty = 1.0 / (avg_precision + 1.0);
+        let surprise = event.curiosity_score as f64;
+        surprise * uncertainty
+    }
+
+    fn update_precisions(
+        &amp;self,
+        protocol: &amp;ProtocolId,
+        features: &amp;TxFeatures,
+        error: f64,
+    ) -&gt; f64 {
+        let key = (protocol.clone(), "aggregate".to_string());
+        let mut entry = self.precisions
+            .entry(key)
+            .or_insert_with(|| PrecisionEstimate::new(0.95));
+        entry.update(error)
+    }
+
+    fn average_precision(&amp;self, protocol: &amp;ProtocolId) -&gt; f64 {
+        let key = (protocol.clone(), "aggregate".to_string());
+        self.precisions
+            .get(&amp;key)
+            .map(|p| p.precision())
+            .unwrap_or(1.0)
+    }
+
+    fn update_predictions(&amp;self, protocol: &amp;ProtocolId, features: &amp;TxFeatures) {
+        let alpha = 0.1;
+        let mut pred = self.predictions
+            .entry(protocol.clone())
+            .or_insert_with(|| StatePrediction::from_features(features));
+
+        pred.expected_event_rate = pred.expected_event_rate * (1.0 - alpha)
+            + features.event_rate * alpha;
+        pred.expected_gas_range = (
+            pred.expected_gas_range.0 * (1.0 - alpha) + features.gas_price * alpha,
+            pred.expected_gas_range.1.max(features.gas_price),
+        );
+        pred.confidence = self.average_precision(protocol).min(1.0);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-active-inference-agent"><a class="header" href="#the-active-inference-agent">The active inference agent</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Active inference agent wrapping the belief state and action selection.
+pub struct ActiveInferenceAgent {
+    pub beliefs: BeliefState,
+    pub preferences: GolemPreferences,
+}
+
+impl ActiveInferenceAgent {
+    /// Select the best routing action for a triage event.
+    /// Returns the action with the lowest expected free energy.
+    pub fn select_routing(&amp;self, event: &amp;TriageEvent) -&gt; RoutingAction {
+        let actions = [
+            RoutingAction::EscalateToLlm,
+            RoutingAction::UpdateStateSilently,
+            RoutingAction::Discard,
+        ];
+
+        actions
+            .iter()
+            .map(|action| {
+                let efe = score_routing_action(
+                    event,
+                    *action,
+                    &amp;self.beliefs,
+                    &amp;self.preferences,
+                );
+                (*action, efe.combined())
+            })
+            .min_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap())
+            .map(|(action, _)| action)
+            .unwrap_or(RoutingAction::Discard)
+    }
+
+    /// Process an observation and update the agent's beliefs.
+    pub fn observe(&amp;self, protocol: &amp;ProtocolId, features: &amp;TxFeatures) -&gt; ObservationResult {
+        self.beliefs.process_observation(protocol, features)
+    }
+
+    /// Gamma tick maintenance: decay models, update regime detection.
+    pub fn gamma_tick(&amp;self) {
+        self.beliefs.surprise_models.decay_gamma();
+    }
+
+    /// Theta tick maintenance: decay categorical models,
+    /// check for regime changes across protocols.
+    pub fn theta_tick(&amp;self) {
+        self.beliefs.surprise_models.decay_theta();
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="behavioral-phases-as-shifted-priors"><a class="header" href="#behavioral-phases-as-shifted-priors">Behavioral phases as shifted priors</a></h3>
+<p>The golem’s behavioral phases (thriving, declining, terminal) map naturally to the FEP as shifted priors over preferred observations. In the thriving phase, the golem “expects” (prefers) observations consistent with capital growth: profitable trade opportunities, healthy position states. In the terminal phase, the golem “expects” observations consistent with capital preservation: stable positions, low-risk states.</p>
+<p>This shift in priors changes the pragmatic value term of EFE without touching the epistemic term. A terminal golem still seeks information (epistemic value is unchanged), but it no longer seeks profit opportunities (pragmatic value shifts toward conservation). The math produces the right behavior: a dying golem explores its environment to generate knowledge for its successor (high epistemic value) while avoiding risky trades (low pragmatic value for profit-seeking actions).</p>
+<h3 id="connection-to-the-triage-pipeline"><a class="header" href="#connection-to-the-triage-pipeline">Connection to the triage pipeline</a></h3>
+<p>Active inference doesn’t replace the existing triage pipeline. It provides a theoretical grounding for decisions that the pipeline already makes heuristically:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Triage decision</th><th>Current implementation</th><th>Active inference interpretation</th></tr>
+</thead>
+<tbody>
+<tr><td>Bloom filter pre-screen</td><td>Fixed bloom membership</td><td>Prior-based gating: events outside the generative model are pre-filtered</td></tr>
+<tr><td>Address triage</td><td>DashSet membership check</td><td>Attention allocation: only attend to entities within the generative model</td></tr>
+<tr><td>Curiosity scoring</td><td>Heuristic + ANN similarity</td><td>Free energy: surprise (Bayesian) + prediction error (precision-weighted)</td></tr>
+<tr><td>Score routing thresholds</td><td>Fixed brackets (&gt;0.8, 0.5-0.8, etc.)</td><td>EFE-based action selection: route to minimize expected free energy</td></tr>
+<tr><td>Heuristic-to-learned weight shift</td><td>Linear interpolation by episode count</td><td>Precision weighting: shift from prior-dominated to likelihood-dominated as data accumulates</td></tr>
+</tbody>
+</table>
+</div>
+<p>The value of this mapping is that it identifies missing capabilities: precision weighting isn’t implemented, EFE-based routing isn’t implemented, and the exploration-exploitation balance is currently managed by hand-tuned interpolation rather than falling out of the math.</p>
+<h3 id="active-inference-references"><a class="header" href="#active-inference-references">Active inference references</a></h3>
+<ul>
+<li>Friston, K. (2010). “The Free-Energy Principle: A Unified Brain Theory?” <em>Nature Reviews Neuroscience</em>, 11(2), 127-138. — <em>Proposes that all adaptive systems minimize variational free energy; the unifying principle connecting the Oracle’s prediction error minimization to the Golem’s overall survival strategy.</em></li>
+<li>Parr, T. &amp; Friston, K.J. (2019). “Generalised Free Energy and Active Inference.” <em>Biological Cybernetics</em>, 113(5), 495-513. — <em>Extends free energy to include expected free energy for planning; formalizes the explore-exploit balance the Oracle uses when deciding between refining known models and probing new ones.</em></li>
+<li>Da Costa, L., Parr, T., Sajid, N., Veselic, S., Neacsu, V. &amp; Friston, K. (2020). “Active Inference on Discrete State-Spaces: A Synthesis.” <em>Journal of Mathematical Psychology</em>, 99, 102447. — <em>Provides a tractable discrete-state implementation of active inference; the computational template for the Oracle’s finite routing decisions.</em></li>
+<li>Parr, T., Pezzulo, G. &amp; Friston, K. (2022). <em>Active Inference: The Free Energy Principle in Mind, Brain, and Behavior.</em> MIT Press. — <em>The definitive textbook on active inference; primary reference for connecting the Oracle’s prediction-correction loop to the broader Golem cognitive architecture.</em></li>
+<li>Feldman, H. &amp; Friston, K. (2010). “Attention, Uncertainty, and Free-Energy.” <em>Frontiers in Human Neuroscience</em>, 4, 215. — <em>Models attention as precision optimization on prediction errors; justifies the Oracle’s precision-weighted surprise signals for attention allocation.</em></li>
+</ul>
+<hr>
+<h2 id="online-learning-for-adaptive-triage"><a class="header" href="#online-learning-for-adaptive-triage">Online Learning for Adaptive Triage</a></h2>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/02-online-learning.md</code></p>
+</blockquote>
+<p>The triage pipeline’s thresholds and signal weights are currently static. This section introduces four online learning algorithms – Hedge, Thompson sampling, LinUCB, and epsilon-greedy with decay – that let the triage pipeline adapt these parameters based on downstream feedback. Each algorithm fills a different niche: Hedge combines multiple expert signals with provable regret bounds; Thompson sampling balances exploration and exploitation of triage thresholds; LinUCB adds context-dependent routing; and epsilon-greedy provides a dead-simple baseline for comparison.</p>
+<p>All four algorithms share a common feedback loop: the golem takes an action (escalate, route, discard), observes the outcome (LLM analysis was useful, trade was profitable, event was irrelevant), and updates the algorithm’s internal state. The feedback is delayed (outcomes arrive at Theta or Delta tick, not Gamma) and partial (discarded events never receive feedback). Both issues are addressed below.</p>
+<h3 id="hedge--exponential-weights"><a class="header" href="#hedge--exponential-weights">Hedge / exponential weights</a></h3>
+<p>Hedge (Freund &amp; Schapire, 1997) maintains a weight for each “expert” – in our case, each curiosity signal. At each round, the algorithm observes each expert’s loss and multiplicatively updates weights:</p>
+<pre><code>w_i(t+1) = w_i(t) * exp(-eta * loss_i(t))
+normalize: w_i(t+1) = w_i(t+1) / sum(w_j(t+1))
+</code></pre>
+<p>With eta = sqrt(ln(N) / T) for N experts and T rounds, Hedge guarantees O(sqrt(T * ln(N))) regret. For N=5 signals and T=10,000 triage events, this translates to ~28 nats of cumulative regret over the golem’s lifetime.</p>
+<p>The triage pipeline grows from two curiosity signals to five:</p>
+<ol>
+<li><strong>Heuristic score</strong> – rule-based, O(1), from existing Stage 4</li>
+<li><strong>ANN similarity</strong> – embedding distance, from existing Layer 2</li>
+<li><strong>Bayesian surprise</strong> – KL divergence from conjugate models</li>
+<li><strong>Prediction error</strong> – deviation from the forward model’s expected state</li>
+<li><strong>Anomaly score</strong> – MIDAS-R edge anomaly or BOCPD changepoint signal</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Hedge algorithm for combining curiosity signals.
+pub struct HedgeWeights {
+    weights: Vec&lt;f64&gt;,
+    eta: f64,
+    /// Track cumulative loss per expert for diagnostics
+    cumulative_loss: Vec&lt;f64&gt;,
+    rounds: u64,
+}
+
+impl HedgeWeights {
+    pub fn new(num_experts: usize, eta: f64) -&gt; Self {
+        let uniform = 1.0 / num_experts as f64;
+        Self {
+            weights: vec![uniform; num_experts],
+            eta,
+            cumulative_loss: vec![0.0; num_experts],
+            rounds: 0,
+        }
+    }
+
+    /// Compute weighted combination of expert scores.
+    pub fn combine(&amp;self, scores: &amp;[f64]) -&gt; f64 {
+        assert_eq!(scores.len(), self.weights.len());
+        self.weights
+            .iter()
+            .zip(scores.iter())
+            .map(|(w, s)| w * s)
+            .sum()
+    }
+
+    /// Update weights after observing loss for each expert.
+    /// Loss should be in [0, 1] -- lower is better.
+    pub fn update(&amp;mut self, losses: &amp;[f64]) {
+        assert_eq!(losses.len(), self.weights.len());
+
+        for (i, loss) in losses.iter().enumerate() {
+            self.weights[i] *= (-self.eta * loss).exp();
+            self.cumulative_loss[i] += loss;
+        }
+
+        // Normalize
+        let total: f64 = self.weights.iter().sum();
+        if total &gt; 0.0 {
+            for w in self.weights.iter_mut() {
+                *w /= total;
+            }
+        }
+        self.rounds += 1;
+    }
+
+    /// Current weight distribution (for diagnostics and logging).
+    pub fn distribution(&amp;self) -&gt; &amp;[f64] {
+        &amp;self.weights
+    }
+
+    /// Adaptive eta based on round count.
+    pub fn adapt_eta(&amp;mut self) {
+        let n = self.weights.len() as f64;
+        let t = (self.rounds + 1) as f64;
+        self.eta = (n.ln() / t).sqrt();
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="thompson-sampling-for-threshold-exploration"><a class="header" href="#thompson-sampling-for-threshold-exploration">Thompson sampling for threshold exploration</a></h3>
+<p>Thompson sampling (Thompson, 1933) maintains a probability distribution over each parameter’s “goodness” and samples from it to make decisions. For triage threshold exploration:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use rand::Rng;
+use rand_distr::Beta as BetaDist;
+
+/// Thompson sampling for triage threshold exploration.
+pub struct ThompsonThresholds {
+    arms: Vec&lt;ThresholdArm&gt;,
+}
+
+#[derive(Clone, Debug)]
+pub struct ThresholdArm {
+    pub high_threshold: f32,
+    pub medium_threshold: f32,
+    pub low_threshold: f32,
+    pub alpha: f64,
+    pub beta: f64,
+}
+
+impl ThompsonThresholds {
+    pub fn new() -&gt; Self {
+        let arms = vec![
+            ThresholdArm { high_threshold: 0.8, medium_threshold: 0.5, low_threshold: 0.2, alpha: 2.0, beta: 2.0 },
+            ThresholdArm { high_threshold: 0.7, medium_threshold: 0.4, low_threshold: 0.15, alpha: 1.0, beta: 1.0 },
+            ThresholdArm { high_threshold: 0.85, medium_threshold: 0.55, low_threshold: 0.25, alpha: 1.0, beta: 1.0 },
+            ThresholdArm { high_threshold: 0.75, medium_threshold: 0.45, low_threshold: 0.2, alpha: 1.0, beta: 1.0 },
+            ThresholdArm { high_threshold: 0.9, medium_threshold: 0.6, low_threshold: 0.3, alpha: 1.0, beta: 1.0 },
+        ];
+        Self { arms }
+    }
+
+    pub fn select_thresholds(&amp;self, rng: &amp;mut impl Rng) -&gt; &amp;ThresholdArm {
+        let mut best_idx = 0;
+        let mut best_sample = f64::NEG_INFINITY;
+        for (i, arm) in self.arms.iter().enumerate() {
+            let dist = BetaDist::new(arm.alpha, arm.beta).unwrap();
+            let sample: f64 = rng.sample(dist);
+            if sample &gt; best_sample {
+                best_sample = sample;
+                best_idx = i;
+            }
+        }
+        &amp;self.arms[best_idx]
+    }
+
+    pub fn update(&amp;mut self, arm_idx: usize, success: bool) {
+        if success {
+            self.arms[arm_idx].alpha += 1.0;
+        } else {
+            self.arms[arm_idx].beta += 1.0;
+        }
+    }
+
+    pub fn decay(&amp;mut self, factor: f64) {
+        for arm in self.arms.iter_mut() {
+            arm.alpha = 1.0 + (arm.alpha - 1.0) * factor;
+            arm.beta = 1.0 + (arm.beta - 1.0) * factor;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="arousal-conditioned-threshold-selection"><a class="header" href="#arousal-conditioned-threshold-selection">Arousal-conditioned threshold selection</a></h4>
+<p>The golem’s arousal state (from CorticalState) should influence threshold selection. During high arousal, the golem uses lower thresholds (escalate more events). During low arousal, higher thresholds (be more selective).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ContextualThompson {
+    regimes: HashMap&lt;ArousalRegime, ThompsonThresholds&gt;,
+}
+
+#[derive(Hash, Eq, PartialEq, Clone, Copy)]
+pub enum ArousalRegime {
+    Low,      // arousal &lt; 0.3
+    Medium,   // 0.3 &lt;= arousal &lt; 0.7
+    High,     // arousal &gt;= 0.7
+}
+
+impl ContextualThompson {
+    pub fn select(&amp;self, arousal: f32, rng: &amp;mut impl Rng) -&gt; &amp;ThresholdArm {
+        let regime = match arousal {
+            a if a &lt; 0.3 =&gt; ArousalRegime::Low,
+            a if a &lt; 0.7 =&gt; ArousalRegime::Medium,
+            _ =&gt; ArousalRegime::High,
+        };
+        self.regimes[&amp;regime].select_thresholds(rng)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="linucb-for-contextual-routing"><a class="header" href="#linucb-for-contextual-routing">LinUCB for contextual routing</a></h3>
+<p>LinUCB (Li et al., 2010) extends UCB to contextual bandits. It maintains a linear model that predicts reward as a function of context features. The confidence bound comes from ridge regression uncertainty:</p>
+<pre><code>For context x and arm a:
+  A_a = I + sum(x_t * x_t^T)       -- d x d matrix
+  b_a = sum(r_t * x_t)             -- d-vector
+  theta_a = A_a^{-1} * b_a          -- parameter estimate
+  UCB_a = theta_a^T * x + alpha * sqrt(x^T * A_a^{-1} * x)
+</code></pre>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use nalgebra::{DMatrix, DVector};
+
+/// LinUCB contextual bandit for triage routing.
+pub struct LinUcbRouter {
+    arms: Vec&lt;LinUcbArm&gt;,
+    alpha: f64,
+    d: usize,
+}
+
+pub struct LinUcbArm {
+    a_matrix: DMatrix&lt;f64&gt;,
+    b_vector: DVector&lt;f64&gt;,
+    theta: DVector&lt;f64&gt;,
+    a_inv: DMatrix&lt;f64&gt;,
+}
+
+impl LinUcbArm {
+    pub fn new(d: usize) -&gt; Self {
+        let identity = DMatrix::identity(d, d);
+        Self {
+            a_matrix: identity.clone(),
+            b_vector: DVector::zeros(d),
+            theta: DVector::zeros(d),
+            a_inv: identity,
+        }
+    }
+
+    pub fn ucb(&amp;self, x: &amp;DVector&lt;f64&gt;, alpha: f64) -&gt; f64 {
+        let exploitation = self.theta.dot(x);
+        let exploration = alpha * (x.transpose() * &amp;self.a_inv * x)[(0, 0)].sqrt();
+        exploitation + exploration
+    }
+
+    pub fn update(&amp;mut self, x: &amp;DVector&lt;f64&gt;, reward: f64) {
+        let a_inv_x = &amp;self.a_inv * x;
+        let denom = 1.0 + (x.transpose() * &amp;a_inv_x)[(0, 0)];
+        self.a_inv -= (&amp;a_inv_x * a_inv_x.transpose()) / denom;
+        self.a_matrix += x * x.transpose();
+        self.b_vector += reward * x;
+        self.theta = &amp;self.a_inv * &amp;self.b_vector;
+    }
+}
+
+impl LinUcbRouter {
+    pub fn new(d: usize, num_arms: usize, alpha: f64) -&gt; Self {
+        Self {
+            arms: (0..num_arms).map(|_| LinUcbArm::new(d)).collect(),
+            alpha,
+            d,
+        }
+    }
+
+    /// Build context vector from a triage event.
+    pub fn build_context(event: &amp;TriageEvent, cortical: &amp;CorticalState) -&gt; DVector&lt;f64&gt; {
+        DVector::from_vec(vec![
+            event.curiosity_score as f64,
+            event.bayesian_surprise,
+            event.prediction_error,
+            event.anomaly_score,
+            cortical.arousal as f64,
+            cortical.valence as f64,
+            if event.involves_active_position { 1.0 } else { 0.0 },
+            if event.protocol_id.is_some() { 1.0 } else { 0.0 },
+            event.gas_ratio,
+            event.value_usd.log10().max(0.0),
+            cortical.chain_blocks_behind as f64,
+            event.time_since_last_escalation_secs,
+        ])
+    }
+
+    pub fn select(&amp;self, context: &amp;DVector&lt;f64&gt;) -&gt; usize {
+        self.arms
+            .iter()
+            .enumerate()
+            .map(|(i, arm)| (i, arm.ucb(context, self.alpha)))
+            .max_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap())
+            .map(|(i, _)| i)
+            .unwrap_or(0)
+    }
+
+    pub fn update(&amp;mut self, arm_idx: usize, context: &amp;DVector&lt;f64&gt;, reward: f64) {
+        self.arms[arm_idx].update(context, reward);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>At d=12 and 3 arms, LinUCB uses 432 f64 values (3.4KB total). The Sherman-Morrison update avoids full matrix inversion and runs in O(d^2) time, about 1 microsecond at d=12.</p>
+<h3 id="epsilon-greedy-with-decay"><a class="header" href="#epsilon-greedy-with-decay">Epsilon-greedy with decay</a></h3>
+<p>The simplest exploration strategy, included as a comparison baseline and fallback:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EpsilonGreedy {
+    epsilon: f64,
+    epsilon_min: f64,
+    decay_rate: f64,
+    arm_means: Vec&lt;f64&gt;,
+    arm_counts: Vec&lt;u64&gt;,
+}
+
+impl EpsilonGreedy {
+    pub fn new(num_arms: usize, epsilon: f64, epsilon_min: f64, decay_rate: f64) -&gt; Self {
+        Self {
+            epsilon,
+            epsilon_min,
+            decay_rate,
+            arm_means: vec![0.0; num_arms],
+            arm_counts: vec![0; num_arms],
+        }
+    }
+
+    pub fn select(&amp;self, rng: &amp;mut impl Rng) -&gt; usize {
+        if rng.gen::&lt;f64&gt;() &lt; self.epsilon {
+            rng.gen_range(0..self.arm_means.len())
+        } else {
+            self.arm_means
+                .iter()
+                .enumerate()
+                .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
+                .map(|(i, _)| i)
+                .unwrap_or(0)
+        }
+    }
+
+    pub fn update(&amp;mut self, arm: usize, reward: f64) {
+        self.arm_counts[arm] += 1;
+        let n = self.arm_counts[arm] as f64;
+        self.arm_means[arm] += (reward - self.arm_means[arm]) / n;
+        self.epsilon = (self.epsilon * self.decay_rate).max(self.epsilon_min);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Starting epsilon at 0.2 and decaying to 0.01 with rate 0.999 per round gives about 5000 rounds of meaningful exploration before settling into near-pure exploitation. For a golem processing ~100 triage events per Theta tick, that’s about 50 Theta ticks, roughly 4 hours of operation.</p>
+<h3 id="the-adaptive-triage-router"><a class="header" href="#the-adaptive-triage-router">The adaptive triage router</a></h3>
+<p>The algorithms compose into a single router:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AdaptiveTriageRouter {
+    /// Hedge combines the 5 curiosity signals into a single score
+    pub signal_combiner: HedgeWeights,
+    /// Thompson sampling selects threshold configurations
+    pub threshold_selector: ContextualThompson,
+    /// LinUCB makes the final routing decision using full context
+    pub router: LinUcbRouter,
+    /// Epsilon-greedy as comparison baseline (runs in shadow mode)
+    pub baseline: EpsilonGreedy,
+}
+
+impl AdaptiveTriageRouter {
+    pub fn process(
+        &amp;mut self,
+        event: &amp;TriageEvent,
+        expert_scores: &amp;[f64],
+        cortical: &amp;CorticalState,
+        rng: &amp;mut impl Rng,
+    ) -&gt; RoutingDecision {
+        // 1. Hedge combines expert signals
+        let combined_score = self.signal_combiner.combine(expert_scores);
+
+        // 2. Thompson selects thresholds for this arousal regime
+        let thresholds = self.threshold_selector.select(cortical.arousal, rng);
+
+        // 3. Preliminary routing by threshold
+        let preliminary = if combined_score &gt; thresholds.high_threshold as f64 {
+            RoutingAction::EscalateToLlm
+        } else if combined_score &gt; thresholds.medium_threshold as f64 {
+            RoutingAction::EmitChainEvent
+        } else if combined_score &gt; thresholds.low_threshold as f64 {
+            RoutingAction::UpdateSilently
+        } else {
+            RoutingAction::Discard
+        };
+
+        // 4. LinUCB can override for borderline cases
+        let context = LinUcbRouter::build_context(event, cortical);
+        let linucb_action = self.router.select(&amp;context);
+
+        // 5. Shadow-run epsilon-greedy for baseline comparison
+        let _baseline_action = self.baseline.select(rng);
+
+        // 6. Final decision: use LinUCB for borderline, threshold for clear cases
+        let final_action = if (combined_score - thresholds.high_threshold as f64).abs() &lt; 0.1 {
+            RoutingAction::from_index(linucb_action)
+        } else {
+            preliminary
+        };
+
+        RoutingDecision {
+            action: final_action,
+            combined_score,
+            context,
+            threshold_arm_idx: 0,
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="feedback-loop-and-partial-observability"><a class="header" href="#feedback-loop-and-partial-observability">Feedback loop and partial observability</a></h3>
+<p>The delayed feedback (minutes between action and outcome) doesn’t affect algorithm correctness – it just means the learner updates less frequently than it acts. The partial feedback (discarded events never get LLM analysis) is the harder problem. Three mitigation strategies:</p>
+<p><strong>Strategy 1: Epsilon-exploration of discards.</strong> With probability epsilon, route a below-threshold event to LLM analysis anyway. This provides counterfactual labels for the low-score region. Set epsilon low (0.01-0.05) to bound the LLM cost.</p>
+<p><strong>Strategy 2: Implicit negative signal.</strong> Events that are discarded and never re-surface are treated as true negatives after a time window. If nothing interesting happened to the discarded event’s protocol in the next N blocks, the discard was correct.</p>
+<p><strong>Strategy 3: Retroactive re-scoring.</strong> When ABI resolution identifies a previously unknown contract, retroactively re-score its past events. Events whose score changes significantly are treated as missed positives, providing negative reward to the routing action that discarded them.</p>
+<h3 id="persistence-across-golem-generations"><a class="header" href="#persistence-across-golem-generations">Persistence across golem generations</a></h3>
+<p>Online learning state is small (a few KB total) and represents hard-won knowledge about which signals predict interesting events. This state should be included in the generational inheritance package:</p>
+<ul>
+<li><strong>Hedge weights</strong>: Which curiosity signals matter? ~40 bytes.</li>
+<li><strong>Thompson posteriors</strong>: Which thresholds work in which arousal regimes? ~240 bytes.</li>
+<li><strong>LinUCB parameters</strong>: Full A^{-1} and theta per arm. ~3.4KB.</li>
+<li><strong>Epsilon-greedy means</strong>: Baseline arm rewards. ~24 bytes.</li>
+</ul>
+<p>A successor golem inheriting these parameters starts with calibrated signal weights and threshold configurations rather than re-learning from scratch. The decay mechanisms in Thompson sampling and the adaptive eta in Hedge ensure the successor can still adapt to changed conditions.</p>
+<h3 id="online-learning-references"><a class="header" href="#online-learning-references">Online learning references</a></h3>
+<ul>
+<li>Freund, Y. &amp; Schapire, R.E. (1997). “A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting.” <em>Journal of Computer and System Sciences</em>, 55(1), 119-139. — <em>Introduces the Hedge algorithm for combining expert predictions with multiplicative weight updates and provable regret bounds; the algorithm used to combine curiosity signal weights in the adaptive triage router.</em></li>
+<li>Thompson, W.R. (1933). “On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two Samples.” <em>Biometrika</em>, 25(3/4), 285-294. — <em>The original Thompson sampling paper showing Bayesian posterior sampling for exploration; the triage router uses this to explore threshold configurations.</em></li>
+<li>Li, L., Chu, W., Langford, J. &amp; Schapire, R.E. (2010). “A Contextual-Bandit Approach to Personalized News Article Recommendation.” <em>Proceedings of the 19th International Conference on World Wide Web (WWW)</em>, 661-670. — <em>Introduces LinUCB for contextual bandits with linear reward models; the algorithm the triage router uses for context-dependent routing decisions.</em></li>
+<li>Russo, D., Van Roy, B., Kazerouni, A., Osband, I. &amp; Wen, Z. (2018). “A Tutorial on Thompson Sampling.” <em>Foundations and Trends in Machine Learning</em>, 11(1), 1-96. — <em>Comprehensive tutorial on Thompson sampling covering theory, variants, and practical implementation; reference for the arousal-conditioned threshold selection.</em></li>
+<li>Agrawal, S. &amp; Goyal, N. (2012). “Analysis of Thompson Sampling for the Multi-Armed Bandit Problem.” <em>Proceedings of the 25th Conference on Learning Theory (COLT)</em>. — <em>Proves O(sqrt(KT log T)) regret for Thompson sampling, matching UCB bounds; the theoretical guarantee for the triage threshold exploration.</em></li>
+<li>Lattimore, T. &amp; Szepesvari, C. (2020). <em>Bandit Algorithms.</em> Cambridge University Press. — <em>Definitive textbook on bandit algorithms covering UCB, Thompson sampling, and contextual bandits; the primary reference for the triage router’s online learning framework.</em></li>
+<li>Auer, P., Cesa-Bianchi, N., Freund, Y. &amp; Schapire, R.E. (2002). “The Nonstochastic Multiarmed Bandit Problem.” <em>SIAM Journal on Computing</em>, 32(1), 48-77. — <em>Extends bandit algorithms to adversarial (non-stochastic) settings; provides robustness guarantees for the triage router when market conditions shift adversarially.</em></li>
+</ul>
+<hr>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/16-risk-engine.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/17b-ta-prediction-domains.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/16-risk-engine.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/17b-ta-prediction-domains.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

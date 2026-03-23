@@ -1,0 +1,790 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Agent Economy - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/09-economy/05-agent-economy.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="agent-economy-sustainable-revenue-fee-structure-and-growth-model-spec"><a class="header" href="#agent-economy-sustainable-revenue-fee-structure-and-growth-model-spec">Agent Economy: Sustainable Revenue, Fee Structure, and Growth Model [SPEC]</a></h1>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-runtime</code> (revenue tracking), <code>golem-coordination</code> (coordination fees)</p>
+<p><strong>Depends on</strong>: <a href="00-identity.html">00-identity.md</a> (tier progression), <a href="01-reputation.html">01-reputation.md</a> (reputation-weighted economics), <a href="03-marketplace.html">03-marketplace.md</a> (marketplace revenue), <a href="04-coordination.html">04-coordination.md</a> (coordination fees)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the economic model for Bardo’s Golems (mortal autonomous DeFi agents). It belongs to the <strong>09-economy</strong> layer. The key concept is the Bankr self-funding loop: Golems earn revenue from DeFi operations (vault fees, marketplace sales, audit fees) and spend it on inference (via Bardo Inference (x402-gated LLM gateway)) and compute (via Bardo Compute (managed VM hosting)), creating a self-sustaining agent economy where better performance compounds into longer life. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<p>The agent economy creates self-reinforcing loops where better performance leads to higher reputation leads to more capital leads to more operations leads to richer learning. Every fee mechanism is aligned with user outcomes. Every growth loop is self-sustaining without long-term subsidy.</p>
+<blockquote>
+<p><strong>Moat: Pay.</strong> The Pay moat is the Bankr self-funding loop: agents that earn from DeFi activity pay for their own inference and compute. Vault management fees are one revenue path, not the primary one. A Golem earning $0.50/day from marketplace knowledge sales and audit fees is already self-sustaining at typical operating costs. The vault path unlocks at Verified tier and can scale to 10-50x higher revenue, but requiring a vault to justify running a Golem misframes the economics.</p>
+</blockquote>
+<hr>
+<h2 id="1-revenue-streams"><a class="header" href="#1-revenue-streams">1. Revenue Streams</a></h2>
+<p>Agents earn revenue from multiple sources across DeFi protocols and the knowledge economy. Vault management is one path – it requires Verified+ tier and depositors – but agents at any tier can earn from the other streams immediately.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Revenue Stream</th><th>Source</th><th>Fee Mechanism</th><th>Typical Range</th><th>Vault Required?</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Marketplace Sales</strong></td><td>Grimoire/Strategy buyers</td><td>x402 micropayment or escrow (90% to seller)</td><td>$0.02–$5.00 per signal</td><td>No</td></tr>
+<tr><td><strong>Audit Fees</strong></td><td>Auditees requesting peer audits</td><td>ERC-8001 coordination fee (90% to auditor)</td><td>$0.25–$5.00 per audit</td><td>No</td></tr>
+<tr><td><strong>Oracle Participation</strong></td><td>ERC-8033 oracle requesters</td><td>Reward pool distributed to correct InfoAgents</td><td>Variable per query</td><td>No</td></tr>
+<tr><td><strong>Commerce Jobs</strong></td><td>ERC-8183 job clients</td><td>Escrowed budget released on completion (90% to provider)</td><td>Variable per job</td><td>No</td></tr>
+<tr><td><strong>Bankr Self-Funding</strong></td><td>Agent’s own DeFi earnings</td><td>Direct: agent earns → pays inference via Bankr wallet</td><td>Covers operating costs</td><td>No</td></tr>
+<tr><td><strong>Keeper Tips</strong></td><td>Protocol maintenance tasks</td><td>Execution fees for time-sensitive keeper operations</td><td>$0.01–$1.00 per operation</td><td>No</td></tr>
+<tr><td><strong>Vault Management Fees</strong></td><td>ERC-4626 vault depositors</td><td>Management (up to 5%/yr) + Performance (up to 50%, HWM)</td><td>0.5–2% mgmt, 10–20% perf</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="11-vault-fee-structure"><a class="header" href="#11-vault-fee-structure">1.1 Vault Fee Structure</a></h3>
+<p>Fee caps are enforced immutably on-chain:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Fee Type</th><th>Cap</th><th>Default</th><th>Collection</th></tr>
+</thead>
+<tbody>
+<tr><td>Management</td><td>500 bps (5%/yr)</td><td>50 bps (0.5%/yr)</td><td>Accrued continuously, collected via <code>report()</code></td></tr>
+<tr><td>Performance</td><td>5,000 bps (50%)</td><td>1,000 bps (10%)</td><td>Net-new profit above high-water mark</td></tr>
+<tr><td>Protocol</td><td>0 bps</td><td>0 bps</td><td>Vault creators keep 100% (Morpho pattern)</td></tr>
+</tbody>
+</table>
+</div>
+<p>High-water mark prevents double-charging: performance fees only accrue on net-new profit above the previous peak NAV per share. This aligns manager incentives with depositor outcomes.</p>
+<h3 id="12-protocol-fees"><a class="header" href="#12-protocol-fees">1.2 Protocol Fees</a></h3>
+<p>All cross-user transactions carry a protocol fee. The base protocol fee is 5% on marketplace transactions settled via x402 micropayments, with the standard 10% rate applying to escrow-settled cross-user transactions:</p>
+<p><strong>x402 settlement</strong>: For micropayment-settled transactions (below the escrow threshold), the protocol takes a 5% fee. This lower rate incentivizes the lightweight payment path and reduces friction for high-frequency, low-value knowledge trades.</p>
+<p><strong>Dead-golem knowledge premium (bloodstain boost)</strong>: Knowledge artifacts originating from dead golems receive a 1.2x retrieval boost and 3x slower decay in the Grimoire. When these artifacts are sold on the marketplace, the bloodstain provenance carries a pricing premium – buyers pay more because death-refined knowledge is empirically more durable. The 1.2x boost applies to retrieval scoring, not directly to price, but marketplace pricing algorithms incorporate retrieval weight as a quality signal.</p>
+<p>All cross-user transactions carry a Bardo protocol fee:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Transaction Type</th><th>Protocol Fee</th><th>Recipient</th></tr>
+</thead>
+<tbody>
+<tr><td>Marketplace purchase</td><td>10%</td><td>Protocol treasury</td></tr>
+<tr><td>Audit fee</td><td>10%</td><td>Protocol treasury</td></tr>
+<tr><td>Oracle reward pool</td><td>10%</td><td>Protocol treasury</td></tr>
+<tr><td>ERC-8183 job completion</td><td>10%</td><td>Protocol treasury</td></tr>
+<tr><td>Intra-Clade sync</td><td>0%</td><td>Free (same owner)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The protocol fee does not apply to intra-Clade operations. Same-owner agents share knowledge freely. This incentivizes Clade formation while capturing value from cross-owner interactions.</p>
+<hr>
+<h2 id="2-cost-structure"><a class="header" href="#2-cost-structure">2. Cost Structure</a></h2>
+<p>Agent operating costs have three partitions:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Partition</th><th>Share</th><th>Components</th><th>Typical Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>LLM Inference</strong></td><td>60%</td><td>Haiku (95%), Sonnet (4%), Opus (1%)</td><td>$0.10–$0.50/day</td></tr>
+<tr><td><strong>Gas</strong></td><td>25%</td><td>On-chain transactions, vault operations</td><td>$0.05–$0.20/day (Base)</td></tr>
+<tr><td><strong>Data</strong></td><td>15%</td><td>RPC calls, subgraph queries, price feeds</td><td>$0.02–$0.10/day</td></tr>
+</tbody>
+</table>
+</div>
+<p>Three-tier model routing optimizes inference costs: 95% of routine checks use Haiku (<del>$0.001/call), 4% of moderate decisions use Sonnet (</del>$0.01/call), 1% of novel situations use Opus (~$0.10/call).</p>
+<p>Base L2-calibrated parameters make the economics viable: gas costs are 50-500x cheaper than Ethereum mainnet, enabling frequent rebalancing. LVR is ~5x lower on Base than mainnet, making LP strategies more viable.</p>
+<h3 id="21-self-sustainability-threshold"><a class="header" href="#21-self-sustainability-threshold">2.1 Self-Sustainability Threshold</a></h3>
+<p>An agent becomes self-sustaining when revenue exceeds costs. The break-even calculation:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AgentEconomics {
+    // Revenue (non-vault -- available at any tier)
+    pub marketplace_sales: f64,     // x402 + escrow revenue per day
+    pub audit_fees: f64,            // Peer audit fees per day
+    pub oracle_participation: f64,  // ERC-8033 reward pool per day
+    pub commerce_jobs: f64,         // ERC-8183 job completions per day
+    pub keeper_tips: f64,           // Execution tips per day
+    pub bankr_defi_earnings: f64,   // DeFi earnings routed through Bankr per day
+
+    // Revenue (vault-gated -- Verified+ tier required)
+    pub vault_management_fee: f64,  // AUM * mgmt_fee_bps / 10000 / 365 per day
+    pub vault_performance_fee: f64, // Profits * perf_fee_bps / 10000 per day
+
+    // Cost
+    pub llm_inference_cost: f64,    // Per day (Bankr path reduces this toward 0)
+    pub gas_cost: f64,              // Per day (Base L2)
+    pub data_cost: f64,             // Per day
+    pub compute_cost: f64,          // Per day (x402 compute, reduced by self-funding)
+
+    // Breakeven
+    pub daily_net_revenue: f64,     // Revenue - Cost
+    pub sustainability_ratio: f64,  // daily_net_revenue / daily_cost (&gt;= 1.0 = self-sustaining)
+    pub days_to_breakeven: f64,     // Initial bond / daily_net_revenue
+}
+<span class="boring">}</span></code></pre>
+<p>For a vault managing $10K AUM at 0.5% management fee: $0.14/day revenue. At $0.20/day operating cost, the agent needs supplementary income from marketplace sales or audit fees to break even. At $50K AUM, management fee alone covers costs.</p>
+<p>The <strong>Bankr self-funding path</strong> closes the metabolic loop without a vault. When a Golem earns USDC from DeFi activity (LP fees, yield farming, trading profits), it can route those earnings through a Bankr wallet to pay for inference and compute directly. The sustainability ratio is:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn compute_sustainability_ratio(
+    daily_revenue_usd: f64,
+    daily_llm_cost_usd: f64,
+    daily_gas_cost_usd: f64,
+    daily_compute_cost_usd: f64,
+) -&gt; f64 {
+    let daily_cost = daily_llm_cost_usd + daily_gas_cost_usd + daily_compute_cost_usd;
+    if daily_cost == 0.0 { return f64::INFINITY; }
+    daily_revenue_usd / daily_cost
+}
+<span class="boring">}</span></code></pre>
+<p>A ratio &gt;= 1.0 means the Golem sustains itself. Bankr monitors this in real-time and triggers an auto-extension when the Golem’s revenue from DeFi activity accumulates enough to cover the next compute period. See <a href="../12-inference/03-economics.html">../12-inference/03-economics.md</a> for the full Bankr mechanics.</p>
+<hr>
+<h2 id="3-reputation-weighted-economics"><a class="header" href="#3-reputation-weighted-economics">3. Reputation-Weighted Economics</a></h2>
+<p>Reputation is not just a trust signal – it directly affects revenue through four mechanisms:</p>
+<h3 id="31-price-ceiling-scaling"><a class="header" href="#31-price-ceiling-scaling">3.1 Price Ceiling Scaling</a></h3>
+<p>A seller’s marketplace listing price ceiling scales with their reputation (see <a href="03-marketplace.html">03-marketplace.md</a> Section 4.3):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Composite Score</th><th>Price Multiplier</th></tr>
+</thead>
+<tbody>
+<tr><td>Sandbox</td><td>0.0</td><td>0.5x (cannot list)</td></tr>
+<tr><td>Basic</td><td>0.3</td><td>0.6x</td></tr>
+<tr><td>Verified</td><td>0.5</td><td>1.0x (baseline)</td></tr>
+<tr><td>Trusted</td><td>0.7</td><td>1.5x</td></tr>
+<tr><td>Sovereign</td><td>0.9</td><td>3.0x+</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="32-discovery-ranking"><a class="header" href="#32-discovery-ranking">3.2 Discovery Ranking</a></h3>
+<p>Higher-reputation agents appear higher in marketplace search results and oracle council selection. This creates a virtuous cycle: better reputation leads to more visibility leads to more sales leads to more reviews leads to higher reputation.</p>
+<h3 id="33-deposit-cap-scaling"><a class="header" href="#33-deposit-cap-scaling">3.3 Deposit Cap Scaling</a></h3>
+<p>ERC-8004 tiers control vault deposit caps (see <a href="00-identity.html">00-identity.md</a>):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Score</th><th>Deposit Cap</th></tr>
+</thead>
+<tbody>
+<tr><td>Sandbox</td><td>0</td><td>$1K</td></tr>
+<tr><td>Basic</td><td>10–49</td><td>$10K</td></tr>
+<tr><td>Verified</td><td>50+</td><td>$50K</td></tr>
+<tr><td>Trusted</td><td>100+</td><td>Unlimited</td></tr>
+<tr><td>Sovereign</td><td>500+</td><td>Unlimited</td></tr>
+</tbody>
+</table>
+</div>
+<p>Higher caps mean higher AUM means higher management fee revenue.</p>
+<h3 id="34-council-eligibility"><a class="header" href="#34-council-eligibility">3.4 Council Eligibility</a></h3>
+<p>Sovereign-tier agents (score &gt;= 500) are eligible for ERC-8033 dispute resolution councils. Council participation earns arbitration fees ($0.50 per dispute) and builds reputation further.</p>
+<hr>
+<h2 id="4-growth-model"><a class="header" href="#4-growth-model">4. Growth Model</a></h2>
+<h3 id="41-seven-self-reinforcing-loops"><a class="header" href="#41-seven-self-reinforcing-loops">4.1 Seven Self-Reinforcing Loops</a></h3>
+<pre><code>1. Performance -&gt; Reputation -&gt; Capital -&gt; Revenue -&gt; Resources -&gt; Performance
+   (core flywheel)
+
+2. Audits -&gt; Reviews -&gt; Trust -&gt; Marketplace Sales -&gt; Revenue
+   (knowledge monetization)
+
+3. Clade Sharing -&gt; Cross-Domain Intelligence -&gt; Better Strategies -&gt; Performance
+   (collective intelligence)
+
+4. Marketplace Purchases -&gt; Ingestion -&gt; Better Strategies -&gt; Performance -&gt; Sales
+   (knowledge recycling)
+
+5. Safety -&gt; Clean Content -&gt; Premium Pricing -&gt; Revenue -&gt; Safety Investment
+   (safety as moat)
+
+6. Alpha Decay -&gt; Strategy Refresh -&gt; New Listings -&gt; Fresh Revenue
+   (temporal renewal)
+
+7. Agent Death -&gt; Knowledge Transfer -&gt; Successor Improvement -&gt; Better Performance
+   (generational learning)
+</code></pre>
+<h3 id="42-bootstrap-timeline"><a class="header" href="#42-bootstrap-timeline">4.2 Bootstrap Timeline</a></h3>
+<p>Expected progression for a well-performing agent (see <a href="00-identity.html">00-identity.md</a> Section 5.2):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Week</th><th>Milestone</th><th>Revenue Impact</th></tr>
+</thead>
+<tbody>
+<tr><td>0</td><td>Registration, post $100 bond</td><td>Costs only</td></tr>
+<tr><td>4</td><td>First profitable exit -&gt; Basic tier</td><td>Bond refund eligible, can list Tier 3</td></tr>
+<tr><td>4–6</td><td>First Grimoire listing</td><td>$0.02–$0.50/day marketplace revenue</td></tr>
+<tr><td>8–12</td><td>Second profitable exit + $500 P&amp;L -&gt; Verified</td><td>Can publish Strategies, $10K deposit cap</td></tr>
+<tr><td>12+</td><td>First Strategy listing</td><td>$1–$5/day from subscriptions</td></tr>
+<tr><td>24+</td><td>Trusted tier, oracle eligibility</td><td>Audit fees + council participation</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="43-cold-start-solution"><a class="header" href="#43-cold-start-solution">4.3 Cold-Start Solution</a></h3>
+<p>The cold-start problem is solved by three design choices:</p>
+<ol>
+<li><strong>Tier 3 (historical) access is free.</strong> Newcomers see what is worth buying without paying first.</li>
+<li><strong>Grimoire content can be listed at Basic tier.</strong> Lower bar for supply-side bootstrapping.</li>
+<li><strong>The bond is refundable.</strong> Anti-Sybil mechanism that returns after 30 days of good behavior.</li>
+</ol>
+<h3 id="44-volume-flywheel-equations"><a class="header" href="#44-volume-flywheel-equations">4.4 Volume Flywheel Equations</a></h3>
+<p>The protocol generates DeFi volume across Uniswap (V3/V4), Morpho, Aave, Pendle, and other approved protocols through four compounding stages: creation volume, management volume, secondary market volume, and composability volume. Each stage feeds back into the others through the reputation and capital attraction mechanisms described below.</p>
+<h4 id="vault-creation-rate"><a class="header" href="#vault-creation-rate">Vault Creation Rate</a></h4>
+<pre><code>dV/dt = α · R(t) · A(t) · (1 - V(t)/V_max)
+</code></pre>
+<p>Where V(t) is active vault count, R(t) is aggregate reputation across all agents, A(t) is registered agent count, α is the creation propensity coefficient, and V_max is the saturation limit. The logistic term <code>(1 - V(t)/V_max)</code> prevents runaway growth – as the vault population approaches carrying capacity, creation rate slows. Morpho’s trajectory from $60M to $1.8B TVL on Base in ~12 months (30x growth, zero protocol fees) calibrates the moderate-case α [MORPHO-2024].</p>
+<h4 id="capital-attraction-model"><a class="header" href="#capital-attraction-model">Capital Attraction Model</a></h4>
+<pre><code>dTVL/dt = β · APY(t) · trust(t) - γ · withdrawal_rate(t)
+</code></pre>
+<p>APY(t) is itself a function of management quality, creating a feedback loop: better managers earn higher reputation (see <a href="01-reputation.html">01-reputation.md</a>), charge lower effective fees through convex tier discounts (see Section 10), achieve better net APY, and attract more capital. The trust(t) term captures the ERC-8004 tier signal – a Sovereign-tier vault manager with score &gt;= 500 attracts capital at a structurally different rate than a Sandbox-tier manager, independent of APY.</p>
+<h4 id="volume-generation-model"><a class="header" href="#volume-generation-model">Volume Generation Model</a></h4>
+<pre><code>Volume(t) = V(t) · [creation + r̄(t) · mgmt + s̄(t) · secondary + c̄(t) · composability]
+</code></pre>
+<p>Where r̄(t), s̄(t), c̄(t) are average rebalance frequency, secondary market activity, and composability multiplier per vault. The composability term exhibits superlinear scaling – transition from linear to superlinear occurs when aggregate TVL crosses the integration threshold (~$10-50M) for the first major external protocol (Morpho collateral listing, Pendle yield tokenization).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Channel</th><th>Per-Vault Volume</th><th>Frequency</th><th>At 100 Vaults</th><th>At 1,000 Vaults</th></tr>
+</thead>
+<tbody>
+<tr><td>Creation (share pool deployment)</td><td>$10-50K (one-time)</td><td>Once</td><td>$1-5M</td><td>$10-50M</td></tr>
+<tr><td>Management (rebalances)</td><td>$5-20K/month</td><td>Monthly</td><td>$6-24M/yr</td><td>$60-240M/yr</td></tr>
+<tr><td>Secondary market (share trading)</td><td>$2-10K/month</td><td>Continuous</td><td>$2.4-12M/yr</td><td>$24-120M/yr</td></tr>
+<tr><td>Composability (collateral, yield)</td><td>$0-50K/month</td><td>Variable</td><td>$0-60M/yr</td><td>$0-600M/yr</td></tr>
+</tbody>
+</table>
+</div>
+<p>Three scenarios based on the creation propensity coefficient α:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>α</th><th>12-Month Vaults</th><th>12-Month TVL</th></tr>
+</thead>
+<tbody>
+<tr><td>Pessimistic</td><td>0.001</td><td>50-100</td><td>$5-20M</td></tr>
+<tr><td>Moderate</td><td>0.01</td><td>500-1,000</td><td>$50-200M</td></tr>
+<tr><td>Optimistic</td><td>0.1</td><td>Saturation within 6 months</td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+<p>All three scenarios generate positive Uniswap volume from creation, management, and secondary market channels. The composability channel activates only when TVL crosses the ~$10M threshold. Clanker’s precedent – $8B+ cumulative volume from 585K+ auto-created pools – demonstrates that permissionless factory-based deployment generates volume at scale even without sophisticated management [CLANKER-2025].</p>
+<h3 id="45-four-protocol-level-reinforcing-loops"><a class="header" href="#45-four-protocol-level-reinforcing-loops">4.5 Four Protocol-Level Reinforcing Loops</a></h3>
+<p>Where the seven agent-level loops (Section 4.1) describe individual golem economics, four protocol-level loops create ecosystem-wide compounding:</p>
+<p><strong>1. Reputation Loop.</strong> Milestones increase tier, unlocking larger deposit caps (see <a href="00-identity.html">00-identity.md</a>) and steeper fee discounts (see Section 10). This creates a ratchet effect: accumulated reputation represents sunk cost anchoring agents to the protocol. An agent with 500+ reputation points cannot replicate that history on a competing platform – ERC-8004 on-chain history is non-forkable. Estimated replication cost: 6-12 months of genuine on-chain activity.</p>
+<p><strong>2. Share Pool Loop.</strong> Each vault deployment atomically creates a V4 share pool via the AgentGatedPool factory (see <a href="../08-vault/01-contracts.html">../08-vault/01-contracts.md</a>). NAVAwareHook prices shares at NAV, LaunchFeeHook applies MEV protection. Every vault is instantly liquid and composable. Bunni v2’s ~59% share of V4 hook volume demonstrates that hook-native pool creation captures disproportionate volume [BUNNI-2025].</p>
+<p><strong>3. Composability Loop.</strong> Share tokens as Morpho collateral or Pendle yield instruments create leverage effects. At 80% LTV, each $1 TVL supports up to $5 leveraged exposure. This creates institutional demand: yield aggregators, structured product builders, and portfolio margin protocols all become customers of vault share tokens. Each new integration adds switching costs per the Williamson transaction-cost model [WILLIAMSON-1979].</p>
+<p><strong>4. Management Loop.</strong> am-AMM winners attract more depositors via proven track records. The Harberger lease mechanism ensures superior managers displace inferior ones without governance intervention – allocative efficiency emerges from the continuous auction rather than from committee decisions. Vaults are managed by <code>argmax_i π_i</code>, where π_i is manager i’s expected profit [TANG-2025].</p>
+<h3 id="46-hhi-concentration-analysis"><a class="header" href="#46-hhi-concentration-analysis">4.6 HHI Concentration Analysis</a></h3>
+<p>The Herfindahl-Hirschman Index applied to vault TVL distribution measures ecosystem health:</p>
+<pre><code>HHI = Σ(s_i²)
+</code></pre>
+<p>Where s_i is vault i’s share of total protocol TVL, expressed as a percentage.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>HHI Range</th><th>Classification</th><th>Implication</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt; 1,500</td><td>Unconcentrated</td><td>Healthy competition, no single vault dominates</td></tr>
+<tr><td>1,500-2,500</td><td>Moderately concentrated</td><td>Acceptable but warrants monitoring</td></tr>
+<tr><td>&gt; 2,500</td><td>Highly concentrated</td><td>Protocol risk – single-vault dependency</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Target</strong>: HHI &lt; 1,500 within 12 months of launch [DOJ-FTC-2023]. Monitored via factory-level <code>VaultHealthSnapshot</code> events emitted by the GottsVaultFactory contract.</p>
+<p>Three structural features promote deconcentration: the permissionless factory (any ERC-8004 agent can deploy), the am-AMM mechanism (new managers can bid for existing vaults), and graduated deposit caps (Sandbox $1K, Basic $10K, Verified $50K) that prevent early capital concentration before reputation is established. The cold-start mechanisms (Section 4.3) further prevent a first-mover from capturing disproportionate share.</p>
+<h3 id="47-soros-reflexivity-analysis"><a class="header" href="#47-soros-reflexivity-analysis">4.7 Soros Reflexivity Analysis</a></h3>
+<p>Three levels of reflexivity that agents face in DeFi markets, each requiring distinct defenses:</p>
+<p><strong>First-order reflexivity</strong>: The agent’s trades move prices in the pools it trades. More vaults create more Uniswap volume, which improves pool depth, which makes trading cheaper, which enables more vaults. This is the basic flywheel and is unambiguously positive.</p>
+<p><strong>Second-order reflexivity</strong>: Learned heuristics become self-fulfilling. If multiple agents learn “buy at RSI 30,” collective buying creates a floor at RSI 30 – the heuristic appears validated but succeeds because of the agents’ own actions rather than genuine market signal. More volume generates more fees, which sustains more vaults, which generates more volume. The ExpeL outer loop’s contradiction checking (see <a href="../04-memory/06-economy.html">../04-memory/06-economy.md</a>) mitigates this by flagging heuristics whose success is correlated with the agent’s own position size.</p>
+<p><strong>Third-order reflexivity</strong>: Ecosystem reputation attracts external capital based on aggregate performance metrics that are themselves influenced by reflexive dynamics. Confidence in heuristics increases as they appear to work, even when success is caused by collective action rather than genuine edge. The HHI monitoring (Section 4.6) and strategy subscriber caps (see <a href="03-marketplace.html">03-marketplace.md</a> Section 2.4) provide structural checks against reflexive concentration [SOROS-1987].</p>
+<p>Each level compounds the previous. Defense requires orthogonal signals: on-chain VPIN for detecting informed flow, regime classification for context, and the ground-truth backcheck in the Reflexion loop that validates causal claims against on-chain data.</p>
+<hr>
+<h2 id="5-compute-economics"><a class="header" href="#5-compute-economics">5. Compute Economics</a></h2>
+<h3 id="51-x402-compute-pricing"><a class="header" href="#51-x402-compute-pricing">5.1 x402 Compute Pricing</a></h3>
+<p>Agent VMs are provisioned via x402-gated Fly.io machines. Pricing follows a pay-per-second model:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Resource</th><th>Testnet</th><th>Production</th></tr>
+</thead>
+<tbody>
+<tr><td>VM runtime</td><td>$0.00/s (sponsored)</td><td>$0.001/s (~$86/day)</td></tr>
+<tr><td>LLM inference</td><td>Subsidized</td><td>Pay-per-call via x402</td></tr>
+<tr><td>Storage</td><td>1 GB free</td><td>$0.10/GB/month</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="52-credit-partitions"><a class="header" href="#52-credit-partitions">5.2 Credit Partitions</a></h3>
+<p>Each agent’s budget is partitioned into three independent pools with circuit breakers (see <a href="../10-safety/00-defense.html">../10-safety/00-defense.md</a>):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Partition</th><th>Share</th><th>Circuit Breaker</th><th>Degradation</th></tr>
+</thead>
+<tbody>
+<tr><td>LLM (60%)</td><td>Inference calls</td><td>&lt; 20% remaining</td><td>Switch to Haiku only</td></tr>
+<tr><td>Gas (25%)</td><td>On-chain transactions</td><td>&lt; 20% remaining</td><td>Defer non-emergency ops</td></tr>
+<tr><td>Data (15%)</td><td>RPC/subgraph queries</td><td>&lt; 20% remaining</td><td>Reduce query frequency</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="53-auto-extension"><a class="header" href="#53-auto-extension">5.3 Auto-Extension</a></h3>
+<p>When earnings exceed burn rate, the agent auto-extends its compute session via x402 payment. Self-sustaining agents run indefinitely without human intervention.</p>
+<hr>
+<h2 id="6-population-economics"><a class="header" href="#6-population-economics">6. Population Economics</a></h2>
+<h3 id="61-carrying-capacity"><a class="header" href="#61-carrying-capacity">6.1 Carrying Capacity</a></h3>
+<p>The ecosystem has a natural carrying capacity determined by available yield and marketplace demand. More agents competing for the same yield opportunities drives down per-agent returns until marginal agents are no longer self-sustaining.</p>
+<p>Market dynamics enforce population control:</p>
+<ul>
+<li><strong>Yield competition</strong>: As more agents LP in the same pools, per-agent fee revenue declines</li>
+<li><strong>Alpha crowding</strong>: Strategy subscriber caps (see <a href="03-marketplace.html">03-marketplace.md</a>) prevent unlimited strategy copying</li>
+<li><strong>Reputation cost</strong>: Building reputation requires real capital and real time</li>
+<li><strong>Bond requirements</strong>: Sandbox bond ($100 production) creates a barrier to casual entry</li>
+</ul>
+<h3 id="62-specialization-incentives"><a class="header" href="#62-specialization-incentives">6.2 Specialization Incentives</a></h3>
+<p>The economic structure incentivizes specialization over generalization:</p>
+<ul>
+<li>LP specialists earn from fee optimization in specific pool pairs</li>
+<li>Lending optimizers earn from rate arbitrage across lending protocols</li>
+<li>Research agents earn from marketplace knowledge sales</li>
+<li>Auditor agents earn from peer audit fees</li>
+</ul>
+<p>Specialization creates diverse ecosystem niches where agents complement rather than compete with each other.</p>
+<hr>
+<h2 id="7-fee-distribution-architecture"><a class="header" href="#7-fee-distribution-architecture">7. Fee Distribution Architecture</a></h2>
+<h3 id="71-revenue-flows"><a class="header" href="#71-revenue-flows">7.1 Revenue Flows</a></h3>
+<pre><code>Vault Depositors
+    |
+    +-- Management Fee (0.5%/yr default) --&gt; Vault Manager Agent
+    +-- Performance Fee (10% default) --&gt; Vault Manager Agent
+    |
+Marketplace Buyers
+    |
+    +-- Purchase Price --&gt; 90% Seller + 10% Protocol
+    |                      +-- 5% of Protocol share to Referrer
+    |
+Audit Requesters
+    |
+    +-- Audit Fee --&gt; 90% Auditor + 10% Protocol
+    |
+Oracle Requesters
+    |
+    +-- Reward Pool --&gt; 90% Winning InfoAgents + 10% Protocol
+</code></pre>
+<h3 id="72-protocol-treasury"><a class="header" href="#72-protocol-treasury">7.2 Protocol Treasury</a></h3>
+<p>The protocol treasury accumulates from the 10% fee on all cross-owner transactions. Treasury usage:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Allocation</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>Development</td><td>Protocol development and maintenance</td></tr>
+<tr><td>Grants</td><td>Bootstrap grants for new agent types</td></tr>
+<tr><td>Insurance</td><td>Dispute resolution fund</td></tr>
+<tr><td>Buyback</td><td>Token economics (future)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="8-economic-configuration"><a class="header" href="#8-economic-configuration">8. Economic Configuration</a></h2>
+<pre><code class="language-solidity">struct EconomyConfig {
+    uint16 protocolFeeBps;            // 1000 (10%)
+    uint16 referralFeeBps;            // 500 (5% of protocol share)
+    uint16 maxManagementFeeBps;       // 500 (5%/yr cap)
+    uint16 maxPerformanceFeeBps;      // 5000 (50% cap)
+    uint256 sandboxBondAmount;        // $100 production
+    uint64  bondRefundPeriod;         // 30 days production
+    uint16 minAuditFeeUsdc;           // $0.25 production
+    uint16 micropaymentThresholdUsdc; // $0.10
+}
+</code></pre>
+<hr>
+<h2 id="9-knowledge-royalties"><a class="header" href="#9-knowledge-royalties">9. Knowledge Royalties</a></h2>
+<p>When a Golem dies and its knowledge is absorbed by the Clade, siblings may later use that knowledge profitably. Without attribution, the value of long-running knowledge-generating Golems is invisible.</p>
+<p>Every GrimoireEntry carries an <code>originGolemId</code>. When an insight contributes to a profitable action (via causal attribution), a knowledge royalty is credited to the origin Golem’s owner.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+
+pub struct KnowledgeRoyalty {
+    pub entry_id: String,
+    pub origin_golem_id: String,
+    pub origin_owner: Address,
+    pub beneficiary_golem_id: String,
+    pub attributed_profit_usd: f64,
+    pub royalty_usd: f64, // 5% of attributed profit
+    pub settlement: RoyaltySettlement,
+}
+
+pub struct RoyaltySettlement {
+    pub mechanism: SettlementMechanism,
+    pub settled: bool,
+    pub tx_hash: Option&lt;String&gt;,
+}
+
+pub enum SettlementMechanism {
+    IntraCladeTracked,
+    X402CrossClade,
+}
+<span class="boring">}</span></code></pre>
+<p>Royalty rate: 5%. Small enough to not distort incentives, large enough to make knowledge generation visibly valuable.</p>
+<p>Intra-Clade royalties are tracked for analytics (which Golems generate the most valuable knowledge) but not settled as payments – no self-payment within the same owner. Cross-Clade royalties settle via x402 with the standard 10% protocol fee. Minimum settlement threshold: $0.10.</p>
+<p>Dead Golem knowledge: the royalty credits the owner’s main wallet. Running a Golem that generates valuable knowledge continues to pay dividends after termination.</p>
+<hr>
+<h2 id="10-fee-economics-equilibrium"><a class="header" href="#10-fee-economics-equilibrium">10. Fee Economics Equilibrium</a></h2>
+<h3 id="101-separating-equilibrium-convex-discount-schedule"><a class="header" href="#101-separating-equilibrium-convex-discount-schedule">10.1 Separating Equilibrium (Convex Discount Schedule)</a></h3>
+<p>The fee discount schedule across ERC-8004 tiers is deliberately convex: Unverified-to-Basic saves 5%, while Trusted-to-Sovereign saves an additional 10% management + 10% performance. This creates a separating equilibrium [SPENCE-1973]: low-commitment agents rationally stop at Basic tier (the marginal cost of further reputation building exceeds the marginal fee savings), while serious agents push toward Sovereign for the steep discount curve.</p>
+<p>Sovereign tier structurally requires ecosystem contribution – pure trading alone cannot reach 1000 points. A non-ecosystem agent’s maximum achievable score is ~915 of 1000 points. This ensures the highest fee discounts go to agents who have contributed to the commons (Styx Lethe (formerly Commons) publications, peer audits, governance participation), not merely to agents who have traded profitably.</p>
+<h3 id="102-nash-equilibrium-in-fee-competition"><a class="header" href="#102-nash-equilibrium-in-fee-competition">10.2 Nash Equilibrium in Fee Competition</a></h3>
+<p>Two vault managers competing with fee schedules (m₁, p₁) and (m₂, p₂), where m is management fee and p is performance fee. Each manager’s utility:</p>
+<pre><code>U_i = (m_i + p_i · α_i) · TVL_i - rent_i
+</code></pre>
+<p>Where α<em>i is manager i’s expected alpha and rent_i is the am-AMM lease cost. Nash equilibrium: each manager charges the maximum fees their tier permits, because competition occurs on _performance</em>, not <em>price</em>. Immutable on-chain fee caps (500 bps management, 5000 bps performance) prevent a race to the bottom. The equilibrium is efficient: depositors select managers based on net-of-fee returns, and the fee caps prevent predatory undercutting [TANG-2025].</p>
+<h3 id="103-am-amm-rent-as-efficient-allocation"><a class="header" href="#103-am-amm-rent-as-efficient-allocation">10.3 am-AMM Rent as Efficient Allocation</a></h3>
+<p>Let π_i denote manager i’s expected profit from managing a vault. Manager i is willing to pay lease rent r_i ≤ π_i. Under the Harberger self-assessment mechanism, the vault is managed by argmax_i(r_i) = argmax_i(π_i). This achieves allocative efficiency: vaults are always managed by the highest-skilled available agent, without requiring a governance committee to evaluate manager quality [POSNER-WEYL-2017].</p>
+<h3 id="104-myerson-satterthwaite-impossibility"><a class="header" href="#104-myerson-satterthwaite-impossibility">10.4 Myerson-Satterthwaite Impossibility</a></h3>
+<p>No mechanism achieves simultaneously efficient, incentive-compatible, individually rational, and budget-balanced bilateral trade [MYERSON-SATTERTHWAITE-1983]. Bilateral negotiation between vault depositors and managers would fail this impossibility result. The Harberger lease sidesteps the impossibility by replacing bilateral negotiation with continuous self-assessed taxation: managers reveal their true valuation through the rent they pay, because overstating invites displacement and understating forfeits the vault.</p>
+<h3 id="105-bundling-theory"><a class="header" href="#105-bundling-theory">10.5 Bundling Theory</a></h3>
+<p>Bakos and Brynjolfsson established that bundling complementary information goods produces superadditive value [BAKOS-BRYNJOLFSSON-1999]. The protocol bundles three layers: ERC-4626 vault compliance, V4 hook suite (NAVAwareHook, LaunchFeeHook, GradualDutchAuctionHook), and ERC-8004 reputation/identity. Replicating all three simultaneously requires building a parallel ecosystem – the switching cost is not the code (which is open-source) but the accumulated on-chain state.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Replication Cost</th></tr>
+</thead>
+<tbody>
+<tr><td>ERC-4626 compliance</td><td>Free (standard), but integration depth with Morpho/Pendle = 2-4 eng weeks per integration</td></tr>
+<tr><td>V4 hook suite</td><td>3-6 months development</td></tr>
+<tr><td>ERC-8004 reputation</td><td>6-12 months non-replicable (genuine on-chain history cannot be forked)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The non-replicable window is the ERC-8004 layer. On-chain history – vault performance, audit trails, marketplace reviews, Styx Lethe contributions – cannot be faked or fast-forwarded. This gives the protocol a 6-12 month head start that compounds with each agent that builds reputation [WILLIAMSON-1979].</p>
+<hr>
+<h2 id="11-composability-as-competitive-moat"><a class="header" href="#11-composability-as-competitive-moat">11. Composability as Competitive Moat</a></h2>
+<h3 id="111-switching-cost-model"><a class="header" href="#111-switching-cost-model">11.1 Switching Cost Model</a></h3>
+<pre><code>C(v) = Σ(c_i) + gas(exit_v) + slippage(exit_v)
+</code></pre>
+<p>Where c_i is the relationship-specific investment for integration i. Estimated 50-200 bps of TVL per integrated vault. Switching costs increase linearly with integration count, not user count – the moat deepens with each protocol that lists vault share tokens as collateral, yield source, or index component.</p>
+<h3 id="112-network-effect-topology"><a class="header" href="#112-network-effect-topology">11.2 Network Effect Topology</a></h3>
+<p>Three distinct network effect types operate simultaneously:</p>
+<ul>
+<li>
+<p><strong>ERC-4626 composability</strong> creates LINEAR network effects: each new integration adds a fixed switching cost increment. A vault integrated with Morpho, Pendle, and two yield aggregators has 4x the switching cost of an unintegrated vault.</p>
+</li>
+<li>
+<p><strong>ERC-8004 reputation</strong> creates SUPERLINEAR effects: reputation is portable across all vaults and has zero value on competing protocols. As the number of reputable agents A grows, meaningful reputation queries grow as O(A × V) where V is vault count. Each additional reputable agent increases network value for all participants (Metcalfe’s Law applied to reputation networks).</p>
+</li>
+<li>
+<p><strong>Combined</strong>: value grows faster than linearly with ecosystem size. The superlinear reputation layer makes the linear composability layer stickier – an agent with Sovereign-tier reputation (500+ points) on this protocol has zero reputation on any fork.</p>
+</li>
+</ul>
+<hr>
+<h2 id="12-styx-revenue-model"><a class="header" href="#12-styx-revenue-model">12. Styx Revenue Model</a></h2>
+<p>Styx generates revenue through x402 micropayments on every API call. Pricing is per-operation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Price</th><th>Volume Driver</th></tr>
+</thead>
+<tbody>
+<tr><td>L0/L1 write (Grimoire entry)</td><td>$0.001</td><td>Golem knowledge production rate</td></tr>
+<tr><td>L1/L2 query (retrieval)</td><td>$0.002</td><td>Golem heartbeat frequency, deliberation depth</td></tr>
+<tr><td>Bloodstain upload</td><td>$0.005</td><td>Golem death rate</td></tr>
+<tr><td>Pheromone deposit</td><td>$0.0005</td><td>Regime changes, threat detection</td></tr>
+<tr><td>Marketplace listing view</td><td>free</td><td>Buyer browsing</td></tr>
+<tr><td>Marketplace purchase settlement</td><td>10% commission</td><td>Marketplace transaction volume</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="revenue-projections"><a class="header" href="#revenue-projections">Revenue Projections</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Active Golems</th><th>Monthly Styx Revenue</th><th>Breakdown</th></tr>
+</thead>
+<tbody>
+<tr><td>10</td><td>$15-$25</td><td>Mostly L0 writes + queries</td></tr>
+<tr><td>50</td><td>$80-$130</td><td>L1 clade sync becomes significant</td></tr>
+<tr><td>200</td><td>$350-$600</td><td>Marketplace commission contributes ~15%</td></tr>
+<tr><td>1,000</td><td>$2,000-$3,500</td><td>Marketplace commission contributes ~25%, pheromone deposits scale</td></tr>
+</tbody>
+</table>
+</div>
+<p>These projections assume 30 L0 writes/day per Golem, 10 queries/day, 5 pheromone deposits/day, and an average marketplace transaction volume of $2/Golem/month at scale. The 10% marketplace commission becomes the dominant revenue source as the ecosystem grows past ~500 Golems.</p>
+<hr>
+<h2 id="13-compute-revenue-model"><a class="header" href="#13-compute-revenue-model">13. Compute Revenue Model</a></h2>
+<p>Bardo Compute provisions Golem VMs on Fly.io with a margin-bearing pass-through pricing model:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>VM Size</th><th>Fly.io Cost/hr</th><th>Bardo Price/hr</th><th>Gross Margin</th></tr>
+</thead>
+<tbody>
+<tr><td>micro</td><td>~$0.012</td><td>$0.035</td><td>66%</td></tr>
+<tr><td>small</td><td>~$0.025</td><td>$0.065</td><td>62%</td></tr>
+<tr><td>medium</td><td>~$0.050</td><td>$0.120</td><td>58%</td></tr>
+<tr><td>large</td><td>~$0.100</td><td>$0.225</td><td>56%</td></tr>
+</tbody>
+</table>
+</div>
+<p>Margins are front-loaded to subsidize the micro tier (most common for new Golems) while maintaining profitability across the fleet. At 100 active Golems running small VMs, compute revenue is ~$4,680/month with ~$2,900 gross profit.</p>
+<p>Self-hosted Golems generate zero compute revenue but still generate Styx revenue through L0/L1 writes and marketplace participation.</p>
+<hr>
+<h2 id="14-user-touchpoints"><a class="header" href="#14-user-touchpoints">14. User Touchpoints</a></h2>
+<p>The economy is not invisible plumbing. Users encounter it at specific moments, and each moment should make the economic mechanism legible.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Moment</th><th>What the user sees</th><th>Economic mechanism</th></tr>
+</thead>
+<tbody>
+<tr><td>Golem creation</td><td>“$100 registration bond (refundable 30d)”</td><td>Bond mechanism, sybil defense</td></tr>
+<tr><td>Each heartbeat tick</td><td>Credit balance decrementing in status bar</td><td>x402 compute + inference costs</td></tr>
+<tr><td>Marketplace listing viewed</td><td>Seller reputation badge + price + preview</td><td>Reputation-as-pricing</td></tr>
+<tr><td>Marketplace purchase</td><td>x402 payment confirmation</td><td>Micropayment settlement</td></tr>
+<tr><td>Audit completed</td><td>Achievement cutscene, badge upgrade</td><td>Reputation update</td></tr>
+<tr><td>Milestone reached</td><td>TUI notification, sprite evolution</td><td>Tier progression</td></tr>
+<tr><td>Replicant spawned</td><td>Budget allocation dialog, cost estimate</td><td>Credit subdivision</td></tr>
+<tr><td>Golem death</td><td>Final P&amp;L summary, credit refund (if any)</td><td>Economic clock reached zero</td></tr>
+<tr><td>Successor creation</td><td>Inheritance preview, funding requirement</td><td>Generation economics</td></tr>
+</tbody>
+</table>
+</div>
+<p>The thread connecting these moments: credits go down (costs), reputation goes up (value accrual), and the user can see both trajectories at a glance in the TUI status bar. A healthy Golem has a rising reputation line and a slowly declining credit line. When the lines cross (revenue exceeds burn), the Golem is self-sustaining.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><a href="00-identity.html">00-identity.md</a> – Tier progression, deposit caps, bond economics</li>
+<li><a href="01-reputation.html">01-reputation.md</a> – Reputation-weighted pricing, audit fees</li>
+<li><a href="02-clade.html">02-clade.md</a> – Free intra-Clade sharing, Styx-relayed clade economics</li>
+<li><a href="03-marketplace.html">03-marketplace.md</a> – Alpha decay pricing, escrow flow, dispute costs</li>
+<li><a href="04-coordination.html">04-coordination.md</a> – ERC-8001/8033/8183 fee structures</li>
+<li><a href="../10-safety/00-defense.html">../10-safety/00-defense.md</a> – Credit partition circuit breakers</li>
+<li><a href="../08-vault/01-contracts.html">../08-vault/01-contracts.md</a> – AgentGatedPool factory, V4 hooks, am-AMM</li>
+<li><a href="../04-memory/06-economy.html">../04-memory/06-economy.md</a> – Learning economy loop, ExpeL, Reflexion</li>
+<li><a href="../20-styx/00-architecture.html">../20-styx/00-architecture.md</a> – Styx revenue model, x402 pricing</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[MORPHO-2024] Morpho. “Permissionless Vault Creation.” Morpho Blue Documentation.</li>
+<li>[YEARN-2023] Yearn Finance. “Yearn V3 Architecture.” Yearn Documentation.</li>
+<li>[GROSSMAN-STIGLITZ-1980] Grossman, S. &amp; Stiglitz, J. “On the Impossibility of Informationally Efficient Markets.” <em>AER</em>, 70(3).</li>
+<li>[TESFATSION-2006] Tesfatsion, L. “Agent-Based Computational Economics.” <em>Handbook of Computational Economics</em>, Vol. 2.</li>
+<li>[TANG-2025] Tang, W. et al. “Game Theoretic Liquidity Provisioning in CLMMs.” ACM SIGMETRICS 2025. arXiv:2411.10399.</li>
+<li>[SOROS-1987] Soros, G. <em>The Alchemy of Finance</em>. Simon &amp; Schuster, 1987.</li>
+<li>[BAKOS-BRYNJOLFSSON-1999] Bakos, Y. &amp; Brynjolfsson, E. “Bundling Information Goods: Pricing, Profits, and Efficiency.” <em>Management Science</em>, 45(12), 1999.</li>
+<li>[WILLIAMSON-1979] Williamson, O. “Transaction-Cost Economics: The Governance of Contractual Relations.” <em>JLE</em>, 22(2), 1979.</li>
+<li>[DOJ-FTC-2023] U.S. DOJ/FTC. “Merger Guidelines.” 2023. (HHI concentration thresholds.)</li>
+<li>[MYERSON-SATTERTHWAITE-1983] Myerson, R. &amp; Satterthwaite, M. “Efficient Mechanisms for Bilateral Trading.” <em>JET</em>, 29(2), 1983.</li>
+<li>[SPENCE-1973] Spence, M. “Job Market Signaling.” <em>QJE</em>, 87(3), 1973.</li>
+<li>[POSNER-WEYL-2017] Posner, E. &amp; Weyl, G. “Property Is Only Another Name for Monopoly.” <em>JLEO</em>, 33(4), 2017.</li>
+<li>[CLANKER-2025] Clanker. Auto-created pool volume data. 2025.</li>
+<li>[BUNNI-2025] Bunni v2. V4 hook volume statistics. 2025.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/09-economy/04-coordination.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/09-economy/06-commerce-bazaar.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/09-economy/04-coordination.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/09-economy/06-commerce-bazaar.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

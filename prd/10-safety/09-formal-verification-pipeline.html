@@ -1,0 +1,961 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Formal Verification Pipeline - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/10-safety/09-formal-verification-pipeline.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="formal-verification-pipeline-spec"><a class="header" href="#formal-verification-pipeline-spec">Formal Verification Pipeline [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Last Updated</strong>: 2026-03-18</p>
+<p><strong>Crates</strong>: <code>bardo-verify</code>, <code>bardo-chain</code></p>
+<p><strong>Depends on</strong>: <a href="00-defense.html">00-defense.md</a> (defense layers), <a href="05-threat-model.html">05-threat-model.md</a> (threat taxonomy), <code>../14-chain/02-triage.md</code> (triage pipeline)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the formal verification pipeline that a Golem (mortal autonomous DeFi agent) uses to verify smart contract behavior before committing capital. It belongs to the <strong>Safety</strong> layer of Bardo (the Rust runtime for these agents). The key concept before diving in: the pipeline chains five complementary tools (Echidna fuzzing, hevm symbolic execution, Certora/Kontrol formal proofs, Slither static analysis, Heimdall-rs decompilation) in sequence, matching verification depth to available time and risk magnitude. Terms like PolicyCage, Grimoire, and Heartbeat are defined inline on first use; a full glossary lives in <code>prd2/11-compute/00-overview.md § Terminology</code>.</p>
+</blockquote>
+<p>Smart contracts manage billions of dollars with no recourse for bugs. An autonomous chain intelligence system that simulates, triages, and acts on DeFi transactions needs verification woven into its pipeline, not bolted on after the fact. This document covers five tools – Echidna, hevm, Certora/Kontrol, Slither, and Heimdall-rs – and how each integrates with a Rust-based agent that must verify contract behavior before committing capital.</p>
+<p>The core tension: formal methods are slow and thorough, fuzzing is fast and probabilistic, static analysis is instant and shallow. A production pipeline uses all three in sequence, matching verification depth to available time and risk magnitude.</p>
+<hr>
+<h2 id="echidna-property-based-fuzzing-for-solidity"><a class="header" href="#echidna-property-based-fuzzing-for-solidity">Echidna: property-based fuzzing for Solidity</a></h2>
+<p>[SPEC] Echidna is a property-based fuzzer built by Trail of Bits for Solidity smart contracts. It generates semi-random transaction sequences, executes them against a contract, and checks whether user-defined invariants hold. When an invariant breaks, Echidna reports a minimal reproducing sequence.</p>
+<p><strong>How it works.</strong> Echidna uses grammar-based fuzzing guided by coverage feedback. It constructs sequences of contract function calls with random arguments, biasing generation toward inputs that explore new code paths. Properties are Solidity functions prefixed with <code>echidna_</code> that return <code>bool</code> – the fuzzer tries to make them return <code>false</code>. Echidna also supports assertion-based testing (where <code>assert()</code> failures count as bugs) and optimization mode (where it maximizes a numeric return value, useful for finding worst-case gas consumption or maximal extractable value).</p>
+<p>Since version 2.1, Echidna supports <strong>on-chain forking</strong> via RPC endpoints. This means it can fuzz against actual mainnet state – the same state your mirage-rs fork simulation uses. Properties can reference real pool reserves, real token balances, real protocol configurations.</p>
+<p><strong>Configuration.</strong> Echidna reads a YAML config file controlling test limits, shrink steps, corpus directory, and RPC settings:</p>
+<pre><code class="language-yaml"># echidna-config.yaml
+testLimit: 50000
+shrinkLimit: 5000
+seqLen: 10
+corpusDir: "corpus"
+cryticArgs: ["--compile-force-framework", "foundry"]
+rpcUrl: "http://localhost:8545"
+rpcBlock: "latest"
+deployer: "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF"
+</code></pre>
+<h3 id="rust-integration"><a class="header" href="#rust-integration">Rust integration</a></h3>
+<p>[SPEC] Echidna is a Haskell binary. Calling it from Rust means spawning a subprocess and parsing its JSON output.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::process::Command;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct EchidnaResult {
+    pub name: String,
+    pub status: EchidnaStatus,
+    pub reproducer: Option&lt;Vec&lt;EchidnaCall&gt;&gt;,
+    pub coverage: f64,
+}
+
+#[derive(Debug, Deserialize)]
+pub enum EchidnaStatus {
+    Passed,
+    Failed,
+    Fuzzing,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct EchidnaCall {
+    pub function: String,
+    pub args: Vec&lt;String&gt;,
+    pub value: String,
+    pub sender: String,
+}
+
+pub struct EchidnaRunner {
+    binary_path: String,
+    config_path: String,
+    working_dir: String,
+}
+
+impl EchidnaRunner {
+    pub fn new(binary_path: &amp;str, config_path: &amp;str, working_dir: &amp;str) -&gt; Self {
+        Self {
+            binary_path: binary_path.to_string(),
+            config_path: config_path.to_string(),
+            working_dir: working_dir.to_string(),
+        }
+    }
+
+    /// Run Echidna against a contract file with a given config.
+    /// Returns parsed results for each property tested.
+    pub fn run(&amp;self, contract_file: &amp;str, contract_name: &amp;str) -&gt; anyhow::Result&lt;Vec&lt;EchidnaResult&gt;&gt; {
+        let output = Command::new(&amp;self.binary_path)
+            .arg(contract_file)
+            .arg("--contract")
+            .arg(contract_name)
+            .arg("--config")
+            .arg(&amp;self.config_path)
+            .arg("--format")
+            .arg("json")
+            .current_dir(&amp;self.working_dir)
+            .output()?;
+
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&amp;output.stderr);
+            anyhow::bail!("Echidna failed: {}", stderr);
+        }
+
+        let results: Vec&lt;EchidnaResult&gt; = serde_json::from_slice(&amp;output.stdout)?;
+        Ok(results)
+    }
+
+    /// Check whether any property failed, returning the first failure found.
+    pub fn find_violations(&amp;self, results: &amp;[EchidnaResult]) -&gt; Vec&lt;&amp;EchidnaResult&gt; {
+        results
+            .iter()
+            .filter(|r| matches!(r.status, EchidnaStatus::Failed))
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration-with-mirage-rs-fork-testing"><a class="header" href="#integration-with-mirage-rs-fork-testing">Integration with mirage-rs fork testing</a></h3>
+<p>The key insight: Echidna and mirage-rs can share the same forked state. Point Echidna’s <code>rpcUrl</code> at the same Anvil or Reth node your simulation layer uses. Write Echidna properties that encode the invariants your agent cares about:</p>
+<pre><code class="language-solidity">// Property: a swap on this pool should never drain more than 5% of reserves
+function echidna_swap_bounded() public returns (bool) {
+    uint256 reserveBefore = pool.getReserve0();
+    // Echidna will try random swap amounts
+    pool.swap(amount0, amount1, address(this), "");
+    uint256 reserveAfter = pool.getReserve0();
+    return reserveAfter &gt;= (reserveBefore * 95) / 100;
+}
+</code></pre>
+<p>When the agent encounters an unfamiliar contract, it can deploy Echidna properties against the forked state, fuzz for a bounded time (say 30 seconds), and flag the contract if any property breaks. This is faster than symbolic execution and catches a different class of bugs – sequence-dependent state corruption that single-transaction analysis misses.</p>
+<p><strong>Academic context.</strong> Grieco et al. (“Echidna: effective, usable, and fast fuzzing for smart contracts,” ISSTA 2020) demonstrated that Echidna found bugs in contracts that Mythril and Manticore missed, particularly bugs requiring multi-transaction sequences. The grammar-based approach achieves higher coverage than blackbox fuzzing because it generates valid ABI-encoded calls rather than random byte sequences.</p>
+<hr>
+<h2 id="hevm-symbolic-execution-with-smt-solving"><a class="header" href="#hevm-symbolic-execution-with-smt-solving">hevm: symbolic execution with SMT solving</a></h2>
+<p>[SPEC] hevm, maintained by the Ethereum Foundation, is a symbolic EVM implementation that proves properties hold for <em>all</em> possible inputs rather than checking specific ones. Where Echidna asks “can I find an input that breaks this?”, hevm asks “does any input exist that breaks this?”</p>
+<p><strong>How it works.</strong> hevm executes EVM bytecode symbolically, representing unknown values (function arguments, msg.sender, block.timestamp) as symbolic variables. When execution branches on a symbolic condition, hevm forks into both paths, accumulating path constraints. At each <code>assert</code> or property check, it queries an SMT solver (typically Z3 or CVC5) to determine whether any assignment of symbolic variables can violate the assertion. If the solver returns SAT, a concrete counterexample exists. If UNSAT, the property holds for all inputs on that execution path.</p>
+<p><strong>RPC state fetching.</strong> Unlike Halmos (a16z’s symbolic testing tool, which cannot fork mainnet because symbolic keccak256 is incompatible with concrete storage lookups), hevm supports <strong>RPC state fetching</strong>. It can consume state from a forked environment, making it the strongest candidate for integration with the mirage-rs simulation layer. You run symbolic analysis against real mainnet state – real balances, real pool configurations, real access control settings.</p>
+<p><strong>Equivalence checking.</strong> hevm can prove that two bytecodes behave identically for all inputs. This is valuable when a protocol upgrades a contract: verify that the new implementation preserves all behaviors of the old one, or identify exactly where they diverge.</p>
+<h3 id="rust-integration-1"><a class="header" href="#rust-integration-1">Rust integration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::process::Command;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct HevmResult {
+    pub property: String,
+    pub outcome: HevmOutcome,
+    pub counterexample: Option&lt;HevmCounterexample&gt;,
+    pub solver_time_ms: u64,
+    pub paths_explored: u64,
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
+pub enum HevmOutcome {
+    Proved,
+    Counterexample,
+    Timeout,
+    Unknown,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct HevmCounterexample {
+    pub calldata: String,
+    pub msg_value: String,
+    pub msg_sender: String,
+}
+
+pub struct HevmRunner {
+    binary_path: String,
+    rpc_url: String,
+    solver_timeout_ms: u64,
+}
+
+impl HevmRunner {
+    pub fn new(binary_path: &amp;str, rpc_url: &amp;str, solver_timeout_ms: u64) -&gt; Self {
+        Self {
+            binary_path: binary_path.to_string(),
+            rpc_url: rpc_url.to_string(),
+            solver_timeout_ms,
+        }
+    }
+
+    /// Run symbolic execution against a Foundry test contract.
+    /// hevm discovers all `prove_*` prefixed functions and attempts
+    /// to find counterexamples for each.
+    pub fn prove(
+        &amp;self,
+        project_dir: &amp;str,
+        contract_name: &amp;str,
+    ) -&gt; anyhow::Result&lt;Vec&lt;HevmResult&gt;&gt; {
+        let output = Command::new(&amp;self.binary_path)
+            .arg("test")
+            .arg("--match")
+            .arg(format!("prove_{}", contract_name))
+            .arg("--rpc")
+            .arg(&amp;self.rpc_url)
+            .arg("--smttimeout")
+            .arg(self.solver_timeout_ms.to_string())
+            .arg("--json")
+            .current_dir(project_dir)
+            .output()?;
+
+        let results: Vec&lt;HevmResult&gt; = serde_json::from_slice(&amp;output.stdout)?;
+        Ok(results)
+    }
+
+    /// Check equivalence between two contract bytecodes.
+    /// Returns true if they behave identically for all inputs.
+    pub fn check_equivalence(
+        &amp;self,
+        bytecode_a: &amp;str,
+        bytecode_b: &amp;str,
+    ) -&gt; anyhow::Result&lt;HevmOutcome&gt; {
+        let output = Command::new(&amp;self.binary_path)
+            .arg("equivalence")
+            .arg("--code-a")
+            .arg(bytecode_a)
+            .arg("--code-b")
+            .arg(bytecode_b)
+            .arg("--smttimeout")
+            .arg(self.solver_timeout_ms.to_string())
+            .output()?;
+
+        let stdout = String::from_utf8_lossy(&amp;output.stdout);
+        if stdout.contains("No differences found") {
+            Ok(HevmOutcome::Proved)
+        } else if stdout.contains("Counterexample") {
+            Ok(HevmOutcome::Counterexample)
+        } else {
+            Ok(HevmOutcome::Unknown)
+        }
+    }
+
+    /// Verify a specific property against forked state at a given block.
+    pub fn verify_property(
+        &amp;self,
+        project_dir: &amp;str,
+        test_function: &amp;str,
+        block_number: u64,
+    ) -&gt; anyhow::Result&lt;HevmResult&gt; {
+        let output = Command::new(&amp;self.binary_path)
+            .arg("test")
+            .arg("--match")
+            .arg(test_function)
+            .arg("--rpc")
+            .arg(&amp;self.rpc_url)
+            .arg("--block")
+            .arg(block_number.to_string())
+            .arg("--smttimeout")
+            .arg(self.solver_timeout_ms.to_string())
+            .arg("--json")
+            .current_dir(project_dir)
+            .output()?;
+
+        let results: Vec&lt;HevmResult&gt; = serde_json::from_slice(&amp;output.stdout)?;
+        results
+            .into_iter()
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("No results returned from hevm"))
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>When to use hevm vs. Echidna.</strong> Use Echidna first – it runs faster and catches sequence-dependent bugs. Use hevm when you need a proof, not just high confidence. If Echidna’s 50,000 test runs all pass, hevm can prove the property holds unconditionally. In the verification pipeline, Echidna acts as a fast filter and hevm provides the formal guarantee.</p>
+<p><strong>Academic context.</strong> The symbolic execution approach builds on work by Mossberg et al. (“Manticore: A User-Friendly Symbolic Execution Framework for Binaries and Smart Contracts,” ASE 2019), which established the pattern of symbolic EVM analysis with SMT backends. hevm improves on Manticore’s approach with better EVM spec compliance, parallel solver queries, and the RPC forking capability that Manticore lacks.</p>
+<hr>
+<h2 id="certora-and-kontrol-formal-verification-at-scale"><a class="header" href="#certora-and-kontrol-formal-verification-at-scale">Certora and Kontrol: formal verification at scale</a></h2>
+<p>Certora and Kontrol represent the upper end of verification rigor. They prove invariants about contract behavior using mathematical specifications, not testing.</p>
+<h3 id="certora"><a class="header" href="#certora">Certora</a></h3>
+<p>[SPEC] Certora uses the <strong>Certora Verification Language (CVL)</strong>, a specification language for writing rules about Solidity contracts. CVL rules describe relationships between pre-states and post-states, and the Certora Prover checks whether any execution path violates them.</p>
+<p><strong>How CVL works.</strong> A CVL spec file defines rules, invariants, and ghost variables:</p>
+<pre><code class="language-cvl">// spec/Pool.spec
+
+methods {
+    function getReserve0() external returns (uint256) envfree;
+    function getReserve1() external returns (uint256) envfree;
+    function totalSupply() external returns (uint256) envfree;
+    function swap(uint256, uint256, address, bytes) external;
+}
+
+// Ghost variable tracking cumulative swap volume
+ghost mathint cumulativeVolume {
+    init_state axiom cumulativeVolume == 0;
+}
+
+// Hook: update ghost on every swap
+hook Sstore reserves[0] uint256 newVal (uint256 oldVal) {
+    cumulativeVolume = cumulativeVolume + (newVal &gt; oldVal ?
+        newVal - oldVal : oldVal - newVal);
+}
+
+// Rule: swaps preserve the constant product invariant (within rounding)
+rule swap_preserves_k(uint256 amount0, uint256 amount1, address to) {
+    env e;
+
+    mathint k_before = getReserve0() * getReserve1();
+
+    swap(e, amount0, amount1, to, "");
+
+    mathint k_after = getReserve0() * getReserve1();
+
+    // k should not decrease (fees increase it)
+    assert k_after &gt;= k_before,
+        "Swap violated constant product invariant";
+}
+
+// Invariant: total supply is zero iff reserves are zero
+invariant liquidity_consistency()
+    (totalSupply() == 0) &lt;=&gt; (getReserve0() == 0 &amp;&amp; getReserve1() == 0);
+</code></pre>
+<p><strong>Scale and track record.</strong> Certora has verified contracts securing over $100B in total value locked, including Aave, MakerDAO, Uniswap, Lido, and EigenLayer. The Certora Prover found an invariant violation in MakerDAO that put $10B at risk. Over 70,000 verification rules have been written by the community. The prover was recently open-sourced (github.com/Certora/CertoraProver).</p>
+<h3 id="certora-rust-integration"><a class="header" href="#certora-rust-integration">Certora Rust integration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::process::Command;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct CertoraJobResult {
+    pub job_id: String,
+    pub rules: Vec&lt;CertoraRuleResult&gt;,
+    pub overall_status: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CertoraRuleResult {
+    pub name: String,
+    pub status: String, // "verified", "violated", "timeout"
+    pub violation_trace: Option&lt;String&gt;,
+}
+
+pub struct CertoraRunner {
+    cli_path: String,
+    api_key: String,
+}
+
+impl CertoraRunner {
+    pub fn new(cli_path: &amp;str, api_key: &amp;str) -&gt; Self {
+        Self {
+            cli_path: cli_path.to_string(),
+            api_key: api_key.to_string(),
+        }
+    }
+
+    /// Submit a verification job to Certora.
+    /// Returns a job ID for polling results.
+    pub fn submit(
+        &amp;self,
+        contract_path: &amp;str,
+        spec_path: &amp;str,
+        contract_name: &amp;str,
+    ) -&gt; anyhow::Result&lt;String&gt; {
+        let output = Command::new(&amp;self.cli_path)
+            .arg(contract_path)
+            .arg("--verify")
+            .arg(format!("{}:{}", contract_name, spec_path))
+            .arg("--key")
+            .arg(&amp;self.api_key)
+            .arg("--json_output")
+            .output()?;
+
+        let result: serde_json::Value = serde_json::from_slice(&amp;output.stdout)?;
+        let job_id = result["jobId"]
+            .as_str()
+            .ok_or_else(|| anyhow::anyhow!("No job ID in response"))?;
+        Ok(job_id.to_string())
+    }
+
+    /// Poll for job completion and parse results.
+    pub fn poll_result(&amp;self, job_id: &amp;str) -&gt; anyhow::Result&lt;CertoraJobResult&gt; {
+        let output = Command::new(&amp;self.cli_path)
+            .arg("--get_results")
+            .arg(job_id)
+            .arg("--key")
+            .arg(&amp;self.api_key)
+            .output()?;
+
+        let result: CertoraJobResult = serde_json::from_slice(&amp;output.stdout)?;
+        Ok(result)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="kontrol"><a class="header" href="#kontrol">Kontrol</a></h3>
+<p>[SPEC] Kontrol, built by Runtime Verification, takes a different approach. It uses <strong>KEVM</strong> – a mathematically formalized EVM semantics written in the K Framework (Hildenbrandt et al., “KEVM: A Complete Formal Semantics of the Ethereum Virtual Machine,” CSF 2018). Where Certora abstracts the EVM into its own IR, Kontrol reasons about the actual EVM bytecode semantics, making its proofs closer to ground truth.</p>
+<p>Kontrol integrates with Foundry test suites. You write Foundry tests with <code>prove_</code> prefixes, and Kontrol symbolically executes them using compositional reasoning – breaking large proofs into smaller lemmas that compose. Optimism uses Kontrol to validate codebase changes before production merges.</p>
+<p><strong>When to use which.</strong> Certora is faster to write specs for and has a larger ecosystem of existing rules. Kontrol is more thorough because it reasons about actual EVM semantics rather than an abstraction. For the chain intelligence pipeline, Certora handles the common case (verifying known protocol invariants), while Kontrol handles the hard case (proving properties about novel contract interactions where the abstraction gap matters).</p>
+<hr>
+<h2 id="slither-static-analysis-at-the-speed-of-compilation"><a class="header" href="#slither-static-analysis-at-the-speed-of-compilation">Slither: static analysis at the speed of compilation</a></h2>
+<p>[SPEC] Slither, also from Trail of Bits, is a static analysis framework for Solidity. It does not execute code. It parses Solidity into <strong>SlithIR</strong> (an intermediate representation), builds control flow graphs, and runs detectors over the IR.</p>
+<p><strong>What it catches.</strong> Slither ships 90+ vulnerability detectors covering reentrancy, unprotected selfdestruct, arbitrary send, unchecked low-level calls, shadowed state variables, unused return values, and more. It also includes “printers” that output contract summaries, inheritance graphs, function call graphs, and storage layouts.</p>
+<p><strong>Custom analysis passes.</strong> Slither’s plugin architecture lets you write custom detectors in Python. For an on-chain intelligence system, custom detectors can flag patterns specific to DeFi: unguarded flash loan callbacks, missing slippage checks, oracle manipulation vulnerabilities, uncapped minting functions.</p>
+<p><strong>Speed.</strong> Slither runs in seconds on most contracts. It is the right first pass in any verification pipeline – catch the obvious issues before spending compute on fuzzing or symbolic execution.</p>
+<h3 id="rust-integration-2"><a class="header" href="#rust-integration-2">Rust integration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::process::Command;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+pub struct SlitherOutput {
+    pub success: bool,
+    pub results: SlitherResults,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SlitherResults {
+    pub detectors: Vec&lt;SlitherDetection&gt;,
+    pub printers: Vec&lt;serde_json::Value&gt;,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SlitherDetection {
+    pub check: String,
+    pub impact: String,          // "High", "Medium", "Low", "Informational"
+    pub confidence: String,      // "High", "Medium", "Low"
+    pub description: String,
+    pub elements: Vec&lt;SlitherElement&gt;,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SlitherElement {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub element_type: String,
+    pub source_mapping: Option&lt;serde_json::Value&gt;,
+}
+
+pub struct SlitherRunner {
+    binary_path: String,
+}
+
+impl SlitherRunner {
+    pub fn new(binary_path: &amp;str) -&gt; Self {
+        Self {
+            binary_path: binary_path.to_string(),
+        }
+    }
+
+    /// Run Slither analysis on a contract, returning all detections.
+    pub fn analyze(&amp;self, contract_path: &amp;str) -&gt; anyhow::Result&lt;SlitherOutput&gt; {
+        let output = Command::new(&amp;self.binary_path)
+            .arg(contract_path)
+            .arg("--json")
+            .arg("-")
+            .output()?;
+
+        let result: SlitherOutput = serde_json::from_slice(&amp;output.stdout)?;
+        Ok(result)
+    }
+
+    /// Filter detections to only high-impact, high-confidence findings.
+    pub fn critical_findings(output: &amp;SlitherOutput) -&gt; Vec&lt;&amp;SlitherDetection&gt; {
+        output
+            .results
+            .detectors
+            .iter()
+            .filter(|d| d.impact == "High" &amp;&amp; d.confidence == "High")
+            .collect()
+    }
+
+    /// Run a specific set of detectors (faster than running all 90+).
+    pub fn analyze_targeted(
+        &amp;self,
+        contract_path: &amp;str,
+        detectors: &amp;[&amp;str],
+    ) -&gt; anyhow::Result&lt;SlitherOutput&gt; {
+        let detector_list = detectors.join(",");
+        let output = Command::new(&amp;self.binary_path)
+            .arg(contract_path)
+            .arg("--detect")
+            .arg(&amp;detector_list)
+            .arg("--json")
+            .arg("-")
+            .output()?;
+
+        let result: SlitherOutput = serde_json::from_slice(&amp;output.stdout)?;
+        Ok(result)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Academic context.</strong> Feist, Grieco, and Groce (“Slither: A Static Analysis Framework for Smart Contracts,” WETSEB 2019) describe the SlithIR design and detector architecture. The key contribution is that SlithIR preserves enough semantic information for cross-function analysis while remaining simple enough for fast traversal.</p>
+<hr>
+<h2 id="heimdall-rs-bytecode-decompilation-in-rust"><a class="header" href="#heimdall-rs-bytecode-decompilation-in-rust">Heimdall-rs: bytecode decompilation in Rust</a></h2>
+<p>[SPEC] Heimdall-rs (github.com/Jon-Becker/heimdall-rs) is the only tool in this section written natively in Rust. It decompiles EVM bytecode – turning raw hex into readable function signatures, control flow graphs, and approximate Solidity source.</p>
+<p><strong>Why it matters for chain intelligence.</strong> The agent constantly encounters unverified contracts. Etherscan has source code for a fraction of deployed contracts. When the triage pipeline flags an interesting transaction involving an unverified contract, Heimdall-rs can:</p>
+<ol>
+<li><strong>Disassemble</strong> bytecode into EVM opcodes</li>
+<li><strong>Recover control flow</strong> – identify basic blocks, loops, and branches</li>
+<li><strong>Resolve function signatures</strong> – match 4-byte selectors to known function names via signature databases</li>
+<li><strong>Decompile</strong> into pseudo-Solidity that humans (or LLMs) can reason about</li>
+<li><strong>Dump storage layout</strong> – identify storage slot assignments</li>
+</ol>
+<h3 id="rust-integration-3"><a class="header" href="#rust-integration-3">Rust integration</a></h3>
+<p>Since Heimdall-rs is a Rust crate, integration is direct – no subprocess spawning needed:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+use std::str::FromStr;
+
+/// Represents a decompiled contract with recovered structure.
+pub struct DecompiledContract {
+    pub address: Address,
+    pub functions: Vec&lt;DecompiledFunction&gt;,
+    pub storage_layout: Vec&lt;StorageSlot&gt;,
+    pub bytecode_size: usize,
+}
+
+pub struct DecompiledFunction {
+    pub selector: [u8; 4],
+    pub signature: Option&lt;String&gt;,  // e.g., "transfer(address,uint256)"
+    pub decompiled_body: String,     // pseudo-Solidity
+    pub state_mutability: StateMutability,
+}
+
+#[derive(Debug)]
+pub enum StateMutability {
+    Pure,
+    View,
+    Nonpayable,
+    Payable,
+}
+
+pub struct StorageSlot {
+    pub slot: u64,
+    pub inferred_type: String,
+    pub label: Option&lt;String&gt;,
+}
+
+/// Wrapper around Heimdall-rs CLI for bytecode analysis.
+/// In production, you would use Heimdall's library crate directly;
+/// this shows the subprocess pattern for clarity.
+pub struct HeimdallRunner {
+    binary_path: String,
+    rpc_url: String,
+}
+
+impl HeimdallRunner {
+    pub fn new(binary_path: &amp;str, rpc_url: &amp;str) -&gt; Self {
+        Self {
+            binary_path: binary_path.to_string(),
+            rpc_url: rpc_url.to_string(),
+        }
+    }
+
+    /// Decompile a contract at the given address.
+    pub fn decompile(&amp;self, address: &amp;str) -&gt; anyhow::Result&lt;String&gt; {
+        let output = std::process::Command::new(&amp;self.binary_path)
+            .arg("decompile")
+            .arg("--target")
+            .arg(address)
+            .arg("--rpc-url")
+            .arg(&amp;self.rpc_url)
+            .output()?;
+
+        Ok(String::from_utf8_lossy(&amp;output.stdout).to_string())
+    }
+
+    /// Disassemble bytecode into raw opcodes.
+    pub fn disassemble(&amp;self, bytecode: &amp;str) -&gt; anyhow::Result&lt;String&gt; {
+        let output = std::process::Command::new(&amp;self.binary_path)
+            .arg("disassemble")
+            .arg("--target")
+            .arg(bytecode)
+            .output()?;
+
+        Ok(String::from_utf8_lossy(&amp;output.stdout).to_string())
+    }
+
+    /// Resolve function selectors from bytecode to known signatures.
+    pub fn resolve_selectors(&amp;self, address: &amp;str) -&gt; anyhow::Result&lt;Vec&lt;(String, String)&gt;&gt; {
+        let output = std::process::Command::new(&amp;self.binary_path)
+            .arg("decompile")
+            .arg("--target")
+            .arg(address)
+            .arg("--rpc-url")
+            .arg(&amp;self.rpc_url)
+            .arg("--include-sol")
+            .output()?;
+
+        // Parse selector -&gt; signature mappings from output
+        let stdout = String::from_utf8_lossy(&amp;output.stdout);
+        let mut selectors = Vec::new();
+        for line in stdout.lines() {
+            if line.contains("function ") {
+                // Extract selector and signature from decompiled output
+                if let Some(sig) = line.strip_prefix("function ") {
+                    let selector = sig
+                        .split('(')
+                        .next()
+                        .unwrap_or("")
+                        .to_string();
+                    selectors.push((selector, sig.to_string()));
+                }
+            }
+        }
+        Ok(selectors)
+    }
+
+    /// Generate a control flow graph for visual analysis.
+    pub fn generate_cfg(&amp;self, address: &amp;str, output_path: &amp;str) -&gt; anyhow::Result&lt;()&gt; {
+        std::process::Command::new(&amp;self.binary_path)
+            .arg("cfg")
+            .arg("--target")
+            .arg(address)
+            .arg("--rpc-url")
+            .arg(&amp;self.rpc_url)
+            .arg("--output")
+            .arg(output_path)
+            .output()?;
+
+        Ok(())
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>In the pipeline.</strong> Heimdall-rs sits at the front of the verification chain. When triage flags a transaction involving an unknown contract, Heimdall-rs decompiles it. The decompiled output feeds into Slither for static analysis (if close enough to valid Solidity) and into the LLM for semantic understanding. If the contract looks interesting enough, Echidna and hevm take over for deeper verification.</p>
+<hr>
+<h2 id="the-five-stage-verification-pipeline"><a class="header" href="#the-five-stage-verification-pipeline">The five-stage verification pipeline</a></h2>
+<p>[SPEC] These tools compose into a pipeline ordered by speed and depth. Each stage gates the next – there is no point running symbolic execution on a contract that Slither already flagged as having an unprotected selfdestruct.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::time::Duration;
+
+/// Verification confidence levels, ordered by rigor.
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub enum VerificationLevel {
+    /// No verification performed.
+    Unknown,
+    /// Heimdall-rs decompiled the bytecode; basic structure recovered.
+    Decompiled,
+    /// Slither static analysis found no high-severity issues.
+    StaticClean,
+    /// Echidna fuzzing passed N iterations with no property violations.
+    FuzzPassed { iterations: u64 },
+    /// hevm symbolic execution proved properties for all inputs.
+    SymbolicProved { properties: Vec&lt;String&gt; },
+    /// Certora/Kontrol formal verification of invariants.
+    FormallyVerified { rules: Vec&lt;String&gt; },
+}
+
+/// A contract verification report aggregating all pipeline stages.
+pub struct VerificationReport {
+    pub address: String,
+    pub level: VerificationLevel,
+    pub slither_findings: Vec&lt;String&gt;,
+    pub echidna_results: Vec&lt;String&gt;,
+    pub hevm_results: Vec&lt;String&gt;,
+    pub certora_results: Vec&lt;String&gt;,
+    pub decompiled_abi: Option&lt;Vec&lt;String&gt;&gt;,
+    pub total_duration: Duration,
+}
+
+/// Configuration for the verification pipeline.
+/// Time budgets control how long each stage can run before
+/// the pipeline moves on.
+pub struct PipelineConfig {
+    pub slither_timeout: Duration,
+    pub echidna_time_budget: Duration,
+    pub echidna_iterations: u64,
+    pub hevm_solver_timeout: Duration,
+    pub certora_enabled: bool,
+    pub rpc_url: String,
+}
+
+impl Default for PipelineConfig {
+    fn default() -&gt; Self {
+        Self {
+            slither_timeout: Duration::from_secs(30),
+            echidna_time_budget: Duration::from_secs(60),
+            echidna_iterations: 50_000,
+            hevm_solver_timeout: Duration::from_secs(120),
+            certora_enabled: false, // expensive; opt-in
+            rpc_url: "http://localhost:8545".to_string(),
+        }
+    }
+}
+
+/// Run the full verification pipeline against a contract.
+/// Each stage produces findings that feed into the next.
+/// Stages are ordered: decompile -&gt; static -&gt; fuzz -&gt; symbolic -&gt; formal.
+pub fn run_pipeline(
+    address: &amp;str,
+    bytecode: &amp;str,
+    config: &amp;PipelineConfig,
+) -&gt; VerificationReport {
+    let start = std::time::Instant::now();
+    let mut report = VerificationReport {
+        address: address.to_string(),
+        level: VerificationLevel::Unknown,
+        slither_findings: vec![],
+        echidna_results: vec![],
+        hevm_results: vec![],
+        certora_results: vec![],
+        decompiled_abi: None,
+        total_duration: Duration::ZERO,
+    };
+
+    // Stage 1: Decompile with Heimdall-rs.
+    // Recover ABI, function signatures, and approximate source.
+    // This runs in milliseconds and gates all subsequent stages.
+    let heimdall = HeimdallRunner::new("heimdall", &amp;config.rpc_url);
+    if let Ok(decompiled) = heimdall.decompile(address) {
+        report.level = VerificationLevel::Decompiled;
+        // Parse function signatures from decompiled output
+        let functions: Vec&lt;String&gt; = decompiled
+            .lines()
+            .filter(|l| l.contains("function "))
+            .map(|l| l.to_string())
+            .collect();
+        report.decompiled_abi = Some(functions);
+    }
+
+    // Stage 2: Static analysis with Slither.
+    // Catches obvious vulnerabilities in seconds.
+    let slither = SlitherRunner::new("slither");
+    // In practice, you'd feed the decompiled source or the original
+    // Solidity if available. Slither needs source, not just bytecode.
+    // For unverified contracts, skip to stage 3.
+
+    // Stage 3: Property-based fuzzing with Echidna.
+    // Runs for the configured time budget.
+    // Properties are drawn from a library of common DeFi invariants.
+
+    // Stage 4: Symbolic execution with hevm.
+    // Proves properties that fuzzing validated probabilistically.
+
+    // Stage 5 (optional): Formal verification with Certora.
+    // Only for high-value interactions where proof is worth the cost.
+
+    report.total_duration = start.elapsed();
+    report
+}
+<span class="boring">}</span></code></pre>
+<p>The pipeline in the autonomous agent runs on a separate thread from the main triage loop. When triage scores a transaction above a threshold, it enqueues the involved contracts for verification. The verification thread works through the pipeline stages, updating the contract’s verification level as each stage completes. Trading decisions gate on the verification level: the agent won’t commit capital to an interaction involving a contract below <code>StaticClean</code> unless the expected value overwhelms the verification gap.</p>
+<hr>
+<h2 id="defi-verification-properties"><a class="header" href="#defi-verification-properties">DeFi verification properties</a></h2>
+<p>[SPEC] The properties worth verifying for an autonomous trading agent (referenced in Babel et al., “Clockwork Finance,” IEEE S&amp;P 2023):</p>
+<ul>
+<li><strong>Position bounds</strong>: exposure to any single protocol stays within configured limits</li>
+<li><strong>Slippage bounds</strong>: maximum output deviation from expected, provable symbolically</li>
+<li><strong>Composability safety</strong>: adding the agent’s transaction to a block does not create new extractable value for third parties (Clockwork Finance’s epsilon-composability)</li>
+<li><strong>Liquidation safety</strong>: the agent’s positions remain above liquidation thresholds under a range of price movements</li>
+<li><strong>Reentrancy freedom</strong>: no callback path can re-enter the agent’s contracts in an unexpected state</li>
+</ul>
+<p>Tolmach et al. (“Formal Analysis of Composable DeFi Protocols,” FC Workshops 2021) used process algebra (CSP#) to model composed protocol interactions (Curve + Compound), demonstrating that formal methods can reason about cross-protocol behavior. VerX (Permenev et al., IEEE S&amp;P 2020) extends temporal safety specifications with <code>always</code> and <code>once</code> operators, verifying properties like “once a loan is repaid, the collateral is always unlocked.” These temporal patterns map to the agent’s need to verify multi-step DeFi strategies.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Grieco, G., Song, W., Cygan, A., Feist, J., &amp; Groce, A. (2020). “Echidna: effective, usable, and fast fuzzing for smart contracts.” ISSTA 2020. The primary paper on Echidna: grammar-based fuzzing with coverage feedback for Solidity. Directly used as Stage 1 of the verification pipeline.</li>
+<li>Mossberg, M., Manzano, F., Hennenfent, E., Groce, A., Grieco, G., Feist, J., Brunson, T., &amp; Dinaburg, A. (2019). “Manticore: A User-Friendly Symbolic Execution Framework for Binaries and Smart Contracts.” ASE 2019. Introduces Manticore for symbolic execution of EVM bytecode. Relevant as an alternative to hevm for Stage 2 symbolic execution.</li>
+<li>Hildenbrandt, E., Saxena, M., Rodrigues, N., Zhu, X., Daian, P., Guth, D., Moore, B., Park, D., Zhang, Y., Stefanescu, A., &amp; Rosu, G. (2018). “KEVM: A Complete Formal Semantics of the Ethereum Virtual Machine.” CSF 2018. Provides a complete formal semantics for the EVM in the K framework. Foundation for hevm’s symbolic execution and Kontrol’s formal verification.</li>
+<li>Babel, K., Daian, P., Kelkar, M., &amp; Juels, A. (2023). “Clockwork Finance: Automated Analysis of Economic Security in Smart Contracts.” IEEE S&amp;P 2023. Automates economic security analysis by modeling DeFi protocols as composable financial primitives. Relevant to verifying economic properties of vault strategies.</li>
+<li>Tolmach, P., Li, Y., Lin, S.-W., Liu, Y., &amp; Li, Z. (2021). “Formal Analysis of Composable DeFi Protocols.” FC Workshops 2021. Formalizes composability risks in DeFi protocol interactions. Directly relevant to verifying cross-protocol strategy safety.</li>
+<li>Permenev, A., Dimitrov, D., Tsankov, P., Drachsler-Cohen, D., &amp; Vechev, M. (2020). “VerX: Safety Verification of Smart Contracts.” IEEE S&amp;P 2020. Proposes temporal safety verification for smart contracts using delayed predicate abstraction. Related to the temporal logic verification in <code>07-temporal-logic-verification.md</code>.</li>
+<li>Feist, J., Grieco, G., &amp; Groce, A. (2019). “Slither: A Static Analysis Framework for Smart Contracts.” WETSEB 2019. The primary paper on Slither: fast static analysis with 99%+ detection rate for common vulnerabilities. Used as Stage 4 of the verification pipeline.</li>
+<li>Torres, C. F., Iannillo, A. K., Gervais, A., &amp; State, R. (2021). “ConFuzzius: A Data Dependency-Aware Hybrid Fuzzer for Ethereum Smart Contracts.” IEEE EuroS&amp;P 2021. Combines fuzzing with data dependency analysis for deeper coverage. Informs the hybrid approach of combining Echidna fuzzing with hevm symbolic execution.</li>
+<li>He, J., Balunovic, M., Ambroladze, N., Tsankov, P., &amp; Vechev, M. (2019). “Learning to Fuzz from Symbolic Execution with Application to Smart Contracts.” CCS 2019. Uses symbolic execution to guide fuzzer input generation. Relevant to the fuzzing-then-symbolic-execution pipeline ordering.</li>
+<li>Kim, Y., Lee, S., Yoo, H., Yun, J., &amp; Kang, S. (2021). “An Off-The-Chain Execution Environment for Scalable Testing and Profiling of Smart Contracts.” USENIX ATC 2021. Proposes off-chain execution environments for efficient contract testing. Conceptually related to the revm fork simulation used for pre-execution verification.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/10-safety/08-witness-dag.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/10-safety/10-mev-protection.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/10-safety/08-witness-dag.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/10-safety/10-mev-protection.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

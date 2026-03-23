@@ -1,0 +1,958 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Realtime Subscriptions - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/13-runtime/12-realtime-subscriptions.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="realtime-subscriptions-spec"><a class="header" href="#realtime-subscriptions-spec">Realtime subscriptions [SPEC]</a></h1>
+<p><strong>Version:</strong> 3.0.0
+<strong>Last Updated:</strong> 2026-03-14
+<strong>Status:</strong> Draft</p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the real-time event subscription system for a running Golem (a mortal autonomous DeFi agent): the full GolemEvent enum (50+ variants), how clients subscribe over WebSocket, reconnection replay from the ring buffer, bandwidth estimates, and sprite animation triggers. It sits in the <strong>Runtime</strong> layer of the Bardo specification. Key prerequisites: the Event Fabric (tokio::broadcast channel carrying all Golem events) and the state model from <code>11-state-model.md</code>. For any unfamiliar term, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The Event Fabric subscription model. Clients subscribe to event categories (not individual types) over WebSocket. The Golem runtime emits typed <code>GolemEvent</code> variants in Rust (CamelCase); a bridge layer serializes them to JSON for external consumers. 10,000-event ring buffer for reconnection replay. 50+ event variants across 16 subsystems.</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-core</code> (event_fabric.rs, events.rs), <code>bardo-terminal</code> (event consumer)</p>
+<p><strong>Cross-references:</strong></p>
+<ul>
+<li><code>./11-state-model.md</code> — GolemState (mutable internal state) and GolemSnapshot (read-only projection), the structures whose transitions produce events</li>
+<li><code>./09-observability.md</code> — Event Fabric architecture: how events flow to Prometheus metrics, structured logging, and OpenTelemetry traces</li>
+<li><code>./02-communication-channels.md</code> — surface multiplexer: how TUI, web portal, and social connectors consume the same event stream</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="1-golemevent-enum"><a class="header" href="#1-golemevent-enum">1. GolemEvent enum</a></h2>
+<p>The complete event catalog. Rust CamelCase variants, serialized with <code>#[serde(tag = "type")]</code> for discriminated union dispatch.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
+
+// ── Shared types ────────────────────────────────────────────────
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum HeartbeatPhase {
+    Observe, Retrieve, Analyze, Decide, Simulate, Validate, Execute, Verify, Reflect,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Tier { T0, T1, T2, T3 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ToolResult { Success, Failure, Blocked }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum DreamPhase { Nrem, Rem, Integration }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Provenance { Own, Clade, Replicant, Marketplace, Inherited }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ProbeSummaryEntry {
+    pub name: String,
+    pub severity: String,
+    pub value: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Pad {
+    pub pleasure: f64,
+    pub arousal: f64,
+    pub dominance: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VitalityClocks {
+    pub economic: f64,
+    pub epistemic: f64,
+    pub stochastic: f64,
+}
+
+// ── Event enum ──────────────────────────────────────────────────
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum GolemEvent {
+    // ── Heartbeat ───────────────────────────────────────────────
+    HeartbeatTick {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tick: u64,
+        phase: HeartbeatPhase,
+        tier: Tier,
+        probe_summary: Vec&lt;ProbeSummaryEntry&gt;,
+        cost: f64,
+    },
+    HeartbeatSuppressed {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tick: u64,
+        reason: String,   // "all_clear" | "cost_cap" | "conservation_mode"
+    },
+
+    // ── Tool execution ──────────────────────────────────────────
+    ToolStart {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tool_name: String,
+        action_kind: Option&lt;String&gt;,
+        permit_id: Option&lt;String&gt;,
+    },
+    ToolUpdate {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tool_name: String,
+        progress: Option&lt;f64&gt;,  // 0.0-1.0
+    },
+    ToolEnd {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tool_name: String,
+        tx_hash: Option&lt;String&gt;,
+        result: Option&lt;ToolResult&gt;,
+        block_reason: Option&lt;String&gt;,
+    },
+
+    // ── LLM inference ───────────────────────────────────────────
+    LlmStart {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        model: String,
+        tier: Tier,
+    },
+    LlmToken {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        model: String,
+        tier: Tier,
+        token_count: Option&lt;u64&gt;,  // cumulative
+    },
+    LlmEnd {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        model: String,
+        tier: Tier,
+        token_count: Option&lt;u64&gt;,
+        cost: Option&lt;f64&gt;,
+        decision: Option&lt;String&gt;,
+    },
+
+    // ── Model selection ─────────────────────────────────────────
+    ModelSelected {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        model: String,
+        provider: String,
+        subsystem: String,      // "heartbeat" | "dream" | "reflection"
+        reason: String,
+    },
+
+    // ── Inference token streaming ───────────────────────────────
+    InferenceToken {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        content: String,         // token text
+        done: bool,
+        tokens_so_far: u64,
+    },
+
+    // ── Dream ───────────────────────────────────────────────────
+    DreamStart {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        cycle_id: String,
+    },
+    DreamPhaseTransition {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        cycle_id: String,
+        phase: Option&lt;DreamPhase&gt;,
+    },
+    DreamHypothesis {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        cycle_id: String,
+        hypothesis: Option&lt;String&gt;,
+        validated: Option&lt;bool&gt;,
+    },
+    DreamOutcome {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        cycle_id: String,
+        quality_score: f64,
+        insights_promoted: u32,
+        playbook_revisions_staged: u32,
+    },
+    DreamEnd {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        cycle_id: String,
+        heuristics_proposed: Option&lt;u64&gt;,
+    },
+
+    // ── Daimon (affect) ─────────────────────────────────────────
+    DaimonAppraisal {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        pad: Pad,
+        plutchik: String,
+        mortality_emotion: Option&lt;String&gt;,
+        intensity: f64,
+    },
+
+    // ── Vitality ────────────────────────────────────────────────
+    VitalityUpdate {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        vitality: f64,
+        phase: String,
+        credit_balance: f64,
+        projected_life_hours: f64,
+        clocks: VitalityClocks,
+    },
+
+    // ── Mortality ───────────────────────────────────────────────
+    MortalityWarning {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        clock: String,       // "economic" | "epistemic" | "stochastic"
+        level: String,       // "notice" | "warning" | "critical"
+        value: f64,
+        threshold: f64,
+    },
+    DeathImminent {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        estimated_ticks_to_death: u64,
+        primary_cause: String,
+        composite: f64,
+    },
+    StochasticCheck {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        hazard_rate: f64,
+        survived: bool,
+        survival_probability: f64,
+    },
+    Senescence {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        stage: u8,
+        fitness: f64,
+        failing_domains: Vec&lt;String&gt;,
+    },
+    DeathProtocolStep {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        phase: String,            // "acceptance" | "settlement" | "reflection" | "legacy"
+        previous_phase: String,
+        estimated_remaining_ticks: u64,
+        detail: String,
+    },
+
+    // ── Clade ───────────────────────────────────────────────────
+    CladeSync {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        source_golem_id: Option&lt;String&gt;,
+        entry_count: Option&lt;u64&gt;,
+    },
+    CladeAlert {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        source_golem_id: Option&lt;String&gt;,
+        alert_kind: Option&lt;String&gt;,
+    },
+    CladeSiblingDeath {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        source_golem_id: Option&lt;String&gt;,
+    },
+
+    // ── Grimoire ────────────────────────────────────────────────
+    GrimoireInsight {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        entry_id: String,
+        confidence: f64,
+        summary: String,
+        provenance: Provenance,
+    },
+    GrimoireHeuristic {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        entry_id: String,
+        confidence: f64,
+        summary: String,
+        provenance: Provenance,
+    },
+    GrimoireWarning {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        entry_id: String,
+        confidence: f64,
+        summary: String,
+        provenance: Provenance,
+    },
+    GrimoireCausalLink {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        entry_id: String,
+        confidence: f64,
+        summary: String,
+        provenance: Provenance,
+    },
+
+    // ── Action permits ──────────────────────────────────────────
+    PermitCreated {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        permit_id: String,
+        action_kind: String,
+        risk_tier: String,
+        simulation_hash: Option&lt;String&gt;,
+    },
+    PermitCommitted {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        permit_id: String,
+        action_kind: String,
+        risk_tier: String,
+        tx_hash: Option&lt;String&gt;,
+    },
+    PermitExpired {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        permit_id: String,
+        action_kind: String,
+        risk_tier: String,
+    },
+    PermitCancelled {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        permit_id: String,
+        action_kind: String,
+        risk_tier: String,
+    },
+    PermitBlocked {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        permit_id: String,
+        action_kind: String,
+        risk_tier: String,
+        block_reason: Option&lt;String&gt;,
+    },
+
+    // ── Context ─────────────────────────────────────────────────
+    ContextAssembled {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        bundle_size: u64,
+        category_sizes: HashMap&lt;String, u64&gt;,
+        policy_revision: u64,
+        steer_present: bool,
+    },
+
+    // ── Compaction ──────────────────────────────────────────────
+    CompactionTriggered {
+        timestamp: u64,
+        golem_id: String,
+        sequence: u64,
+        tokens_before: u64,
+        tokens_after: u64,
+        invariants_preserved: Vec&lt;String&gt;,
+    },
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="2-typescript-to-rust-mapping-table"><a class="header" href="#2-typescript-to-rust-mapping-table">2. TypeScript to Rust mapping table</a></h2>
+<p>The bridge layer translates between TypeScript dot-notation event names (used on the JSON wire protocol for backward compatibility) and Rust CamelCase enum variants.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>TypeScript wire name</th><th>Rust variant</th><th>Category</th></tr>
+</thead>
+<tbody>
+<tr><td><code>heartbeat.tick</code></td><td><code>HeartbeatTick</code></td><td>heartbeat</td></tr>
+<tr><td><code>heartbeat.suppressed</code></td><td><code>HeartbeatSuppressed</code></td><td>heartbeat</td></tr>
+<tr><td><code>tool.start</code></td><td><code>ToolStart</code></td><td>tool</td></tr>
+<tr><td><code>tool.update</code></td><td><code>ToolUpdate</code></td><td>tool</td></tr>
+<tr><td><code>tool.end</code></td><td><code>ToolEnd</code></td><td>tool</td></tr>
+<tr><td><code>llm.start</code></td><td><code>LlmStart</code></td><td>llm</td></tr>
+<tr><td><code>llm.token</code></td><td><code>LlmToken</code></td><td>llm</td></tr>
+<tr><td><code>llm.end</code></td><td><code>LlmEnd</code></td><td>llm</td></tr>
+<tr><td><code>model.selected</code></td><td><code>ModelSelected</code></td><td>llm</td></tr>
+<tr><td><code>inference.token</code></td><td><code>InferenceToken</code></td><td>llm</td></tr>
+<tr><td><code>dream.start</code></td><td><code>DreamStart</code></td><td>dream</td></tr>
+<tr><td><code>dream.phase</code></td><td><code>DreamPhaseTransition</code></td><td>dream</td></tr>
+<tr><td><code>dream.hypothesis</code></td><td><code>DreamHypothesis</code></td><td>dream</td></tr>
+<tr><td><code>dream.outcome</code></td><td><code>DreamOutcome</code></td><td>dream</td></tr>
+<tr><td><code>dream.end</code></td><td><code>DreamEnd</code></td><td>dream</td></tr>
+<tr><td><code>daimon.appraisal</code></td><td><code>DaimonAppraisal</code></td><td>daimon</td></tr>
+<tr><td><code>vitality.update</code></td><td><code>VitalityUpdate</code></td><td>vitality</td></tr>
+<tr><td><code>mortality.warning</code></td><td><code>MortalityWarning</code></td><td>mortality</td></tr>
+<tr><td><code>mortality.death_imminent</code></td><td><code>DeathImminent</code></td><td>mortality</td></tr>
+<tr><td><code>mortality.stochastic_check</code></td><td><code>StochasticCheck</code></td><td>mortality</td></tr>
+<tr><td><code>mortality.senescence</code></td><td><code>Senescence</code></td><td>mortality</td></tr>
+<tr><td><code>death.protocol_step</code></td><td><code>DeathProtocolStep</code></td><td>death</td></tr>
+<tr><td><code>clade.sync</code></td><td><code>CladeSync</code></td><td>clade</td></tr>
+<tr><td><code>clade.alert</code></td><td><code>CladeAlert</code></td><td>clade</td></tr>
+<tr><td><code>clade.sibling_death</code></td><td><code>CladeSiblingDeath</code></td><td>clade</td></tr>
+<tr><td><code>grimoire.insight</code></td><td><code>GrimoireInsight</code></td><td>grimoire</td></tr>
+<tr><td><code>grimoire.heuristic</code></td><td><code>GrimoireHeuristic</code></td><td>grimoire</td></tr>
+<tr><td><code>grimoire.warning</code></td><td><code>GrimoireWarning</code></td><td>grimoire</td></tr>
+<tr><td><code>grimoire.causal_link</code></td><td><code>GrimoireCausalLink</code></td><td>grimoire</td></tr>
+<tr><td><code>permit.created</code></td><td><code>PermitCreated</code></td><td>permit</td></tr>
+<tr><td><code>permit.committed</code></td><td><code>PermitCommitted</code></td><td>permit</td></tr>
+<tr><td><code>permit.expired</code></td><td><code>PermitExpired</code></td><td>permit</td></tr>
+<tr><td><code>permit.cancelled</code></td><td><code>PermitCancelled</code></td><td>permit</td></tr>
+<tr><td><code>permit.blocked</code></td><td><code>PermitBlocked</code></td><td>permit</td></tr>
+<tr><td><code>context.assembled</code></td><td><code>ContextAssembled</code></td><td>context</td></tr>
+<tr><td><code>compaction.triggered</code></td><td><code>CompactionTriggered</code></td><td>compaction</td></tr>
+</tbody>
+</table>
+</div>
+<p>The bridge serializes with <code>#[serde(rename = "heartbeat.tick")]</code> annotations on each variant for JSON compatibility, while the internal Rust code uses native CamelCase.</p>
+<hr>
+<h2 id="3-subscription-model"><a class="header" href="#3-subscription-model">3. Subscription model</a></h2>
+<p>Clients subscribe to <strong>categories</strong>, not individual event types. This keeps the protocol simple and avoids per-event subscription overhead.</p>
+<h3 id="categories"><a class="header" href="#categories">Categories</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Events included</th><th>Typical subscriber</th></tr>
+</thead>
+<tbody>
+<tr><td><code>heartbeat</code></td><td>HeartbeatTick, HeartbeatSuppressed</td><td>TUI main screen, dashboard</td></tr>
+<tr><td><code>tool</code></td><td>ToolStart, ToolUpdate, ToolEnd</td><td>TUI pipeline view</td></tr>
+<tr><td><code>llm</code></td><td>LlmStart, LlmToken, LlmEnd, ModelSelected, InferenceToken</td><td>TUI reasoning view</td></tr>
+<tr><td><code>dream</code></td><td>DreamStart, DreamPhaseTransition, DreamHypothesis, DreamOutcome, DreamEnd</td><td>TUI dream pane</td></tr>
+<tr><td><code>daimon</code></td><td>DaimonAppraisal</td><td>TUI feel pane</td></tr>
+<tr><td><code>vitality</code></td><td>VitalityUpdate</td><td>Status bar, health gauge</td></tr>
+<tr><td><code>mortality</code></td><td>MortalityWarning, DeathImminent, StochasticCheck, Senescence</td><td>Alert system</td></tr>
+<tr><td><code>death</code></td><td>DeathProtocolStep</td><td>Death protocol UI</td></tr>
+<tr><td><code>clade</code></td><td>CladeSync, CladeAlert, CladeSiblingDeath</td><td>Clade panel</td></tr>
+<tr><td><code>grimoire</code></td><td>GrimoireInsight, GrimoireHeuristic, GrimoireWarning, GrimoireCausalLink</td><td>Knowledge log</td></tr>
+<tr><td><code>permit</code></td><td>PermitCreated, PermitCommitted, PermitExpired, PermitCancelled, PermitBlocked</td><td>Action permit UI</td></tr>
+<tr><td><code>context</code></td><td>ContextAssembled</td><td>Debug view</td></tr>
+<tr><td><code>compaction</code></td><td>CompactionTriggered</td><td>Debug view</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="subscribe-message"><a class="header" href="#subscribe-message">Subscribe message</a></h3>
+<pre><code class="language-json">{
+  "type": "subscribe",
+  "categories": ["heartbeat", "tool", "llm", "dream", "daimon", "vitality"],
+  "auth": "Bearer &lt;jwt&gt;"
+}
+</code></pre>
+<p>Clients can update subscriptions at any time. For example, mute <code>llm</code> when not viewing the reasoning pane (reduces bandwidth during active inference).</p>
+<h3 id="composite-subscriptions"><a class="header" href="#composite-subscriptions">Composite subscriptions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Composite</th><th>Includes</th><th>Use case</th></tr>
+</thead>
+<tbody>
+<tr><td><code>dashboard</code></td><td>heartbeat, vitality, daimon, tool, permit</td><td>Main dashboard</td></tr>
+<tr><td><code>all</code></td><td>Every category</td><td>Debug / development</td></tr>
+<tr><td><code>vitals</code></td><td>vitality, daimon, mortality</td><td>Health monitoring</td></tr>
+<tr><td><code>activity</code></td><td>heartbeat, tool, llm, grimoire</td><td>Activity feed</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="4-connection-lifecycle"><a class="header" href="#4-connection-lifecycle">4. Connection lifecycle</a></h2>
+<h3 id="websocket-endpoint"><a class="header" href="#websocket-endpoint">WebSocket endpoint</a></h3>
+<pre><code>ws://localhost:8402/events          # Local self-hosted
+wss://g-7f3a.bardo.run/events      # Remote hosted (TLS)
+wss://styx.bardo.run/v1/relay/events?golem=&lt;id&gt;  # Through Styx (NAT traversal)
+</code></pre>
+<h3 id="handshake"><a class="header" href="#handshake">Handshake</a></h3>
+<ol>
+<li>Client connects with auth token</li>
+<li>Server validates auth, determines visibility tier (public/owner/internal)</li>
+<li>Server sends <code>connection.established</code> with available categories</li>
+<li>Client sends <code>subscribe</code> with desired categories</li>
+<li>Server sends full <code>GolemSnapshot</code> for subscribed components</li>
+<li>Server begins streaming events</li>
+</ol>
+<h3 id="keepalive"><a class="header" href="#keepalive">Keepalive</a></h3>
+<p>Server sends <code>ping</code> every 30 seconds. Client must respond with <code>pong</code> within 10 seconds. Two missed pongs trigger disconnect.</p>
+<hr>
+<h2 id="5-reconnection-protocol"><a class="header" href="#5-reconnection-protocol">5. Reconnection protocol</a></h2>
+<h3 id="automatic-reconnection"><a class="header" href="#automatic-reconnection">Automatic reconnection</a></h3>
+<ol>
+<li>On disconnect, client waits 1s, then reconnects with exponential backoff (1s, 2s, 4s, max 30s)</li>
+<li>On reconnect, client sends:</li>
+</ol>
+<pre><code class="language-json">{
+  "type": "resync",
+  "lastSequence": 4217,
+  "auth": "Bearer &lt;jwt&gt;"
+}
+</code></pre>
+<ol start="3">
+<li>
+<p>Server evaluates the gap:</p>
+<ul>
+<li><strong>Gap &lt;= 10,000 events</strong> (ring buffer): replay missed events in order, then resume live</li>
+<li><strong>Gap &gt; 10,000 events</strong>: send fresh <code>GolemSnapshot</code>, then resume live</li>
+</ul>
+</li>
+<li>
+<p>Server sends <code>reconnect.replay_start</code> before replay and <code>reconnect.replay_end</code> after</p>
+</li>
+</ol>
+<h3 id="ring-buffer"><a class="header" href="#ring-buffer">Ring buffer</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EventRingBuffer {
+    events: VecDeque&lt;GolemEvent&gt;,
+    capacity: usize,  // 10,000
+}
+
+impl EventRingBuffer {
+    pub fn push(&amp;mut self, event: GolemEvent) {
+        if self.events.len() &gt;= self.capacity {
+            self.events.pop_front();
+        }
+        self.events.push_back(event);
+    }
+
+    pub fn replay_from(&amp;self, last_sequence: u64) -&gt; Vec&lt;&amp;GolemEvent&gt; {
+        self.events.iter()
+            .filter(|e| e.sequence() &gt; last_sequence)
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="6-sprite-animation-triggers"><a class="header" href="#6-sprite-animation-triggers">6. Sprite animation triggers</a></h2>
+<p>The TUI’s sprite engine subscribes to the event stream and maps events to animation states:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl SpriteEngine {
+    pub fn handle_event(&amp;mut self, event: &amp;GolemEvent) {
+        match event {
+            GolemEvent::HeartbeatTick { tier, .. } =&gt; match tier {
+                Tier::T0 =&gt; self.set_animation(Animation::Idle),
+                Tier::T1 =&gt; self.set_animation(Animation::Thinking),
+                Tier::T2 =&gt; {
+                    self.set_animation(Animation::Thinking);
+                    self.set_intensity(1.5);
+                }
+                _ =&gt; {}
+            },
+            GolemEvent::ToolStart { action_kind, .. } =&gt; {
+                if action_kind.is_some() {
+                    self.set_animation(Animation::Executing);
+                }
+            }
+            GolemEvent::ToolEnd { result, .. } =&gt; match result {
+                Some(ToolResult::Success) =&gt; self.play_once(Animation::Success),
+                Some(ToolResult::Failure) | Some(ToolResult::Blocked) =&gt; {
+                    self.play_once(Animation::Failure);
+                }
+                None =&gt; {}
+            },
+            GolemEvent::DaimonAppraisal { pad, mortality_emotion, .. } =&gt; {
+                self.update_expression(pad);
+                if let Some(emotion) = mortality_emotion {
+                    self.set_mortality_overlay(emotion);
+                }
+            }
+            GolemEvent::DreamStart { .. } =&gt; self.set_animation(Animation::Dreaming),
+            GolemEvent::DreamEnd { .. } =&gt; self.play_once(Animation::Waking),
+            GolemEvent::VitalityUpdate { phase, .. } =&gt; self.set_phase_overlay(phase),
+            GolemEvent::GrimoireInsight { .. } =&gt; {
+                self.emit_particles(ParticleEffect::KnowledgePulse);
+            }
+            GolemEvent::CladeSync { .. } =&gt; self.play_once(Animation::CladePulse),
+            _ =&gt; {}
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="7-bandwidth-estimates"><a class="header" href="#7-bandwidth-estimates">7. Bandwidth estimates</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event category</th><th>Frequency (normal)</th><th>Frequency (volatile)</th><th>Avg size</th></tr>
+</thead>
+<tbody>
+<tr><td><code>heartbeat</code></td><td>1/min</td><td>2-4/min</td><td>500B</td></tr>
+<tr><td><code>tool</code></td><td>0-3/tick</td><td>2-8/tick</td><td>200B</td></tr>
+<tr><td><code>llm</code></td><td>0-1/tick</td><td>1-3/tick</td><td>300B</td></tr>
+<tr><td><code>daimon</code></td><td>1/tick</td><td>1/tick</td><td>150B</td></tr>
+<tr><td><code>vitality</code></td><td>1/tick</td><td>1/tick</td><td>200B</td></tr>
+<tr><td><code>grimoire</code></td><td>0-1/tick</td><td>0-2/tick</td><td>300B</td></tr>
+<tr><td><code>permit</code></td><td>0-1/tick</td><td>1-3/tick</td><td>250B</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Normal market</strong>: ~5 events/min, ~2.5 KB/min, ~150 KB/hour.
+<strong>Volatile market</strong>: ~30 events/min, ~9 KB/min, ~540 KB/hour.</p>
+<p>Negligible bandwidth. Even metered connections see &lt;1 MB/hour.</p>
+<hr>
+<h2 id="8-backpressure"><a class="header" href="#8-backpressure">8. Backpressure</a></h2>
+<p>If the WebSocket send buffer exceeds thresholds:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Buffer size</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>1 MB</td><td>Drop <code>HeartbeatSuppressed</code> events (lowest priority)</td></tr>
+<tr><td>2 MB</td><td>Drop <code>HeartbeatTick</code> events (keep only phase changes)</td></tr>
+<tr><td>4 MB</td><td>Send <code>backpressure.warning</code>, pause non-critical categories</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Serialize)]
+pub struct BackpressureWarning {
+    pub buffer_size_bytes: u64,
+    pub paused_categories: Vec&lt;String&gt;,
+    pub recommendation: String,  // "reduce_subscriptions" | "process_faster"
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="9-client-commands"><a class="header" href="#9-client-commands">9. Client commands</a></h2>
+<p>Commands flow from clients to the server over the same WebSocket connection.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Deserialize)]
+#[serde(tag = "type")]
+pub enum ClientCommand {
+    Steer {
+        request_id: String,
+        instruction: String,
+        priority: String,  // "normal" | "urgent"
+    },
+    FollowUp {
+        request_id: String,
+        message: String,
+    },
+    Halt {
+        request_id: String,
+        reason: String,
+    },
+    Resume {
+        request_id: String,
+    },
+    Snapshot {
+        request_id: String,
+        components: Vec&lt;String&gt;,
+    },
+    Wake {
+        request_id: String,
+        reason: String,
+    },
+    Confirm {
+        request_id: String,
+        permit_id: String,
+        confirmed: bool,
+    },
+}
+<span class="boring">}</span></code></pre>
+<p>Server acknowledges all commands:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Serialize)]
+pub struct CommandAck {
+    pub request_id: String,
+    pub status: String,  // "accepted" | "rejected" | "queued"
+    pub reason: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="10-sse-fallback"><a class="header" href="#10-sse-fallback">10. SSE fallback</a></h2>
+<p>For environments where WebSocket is unavailable, a subset of events is available via Server-Sent Events:</p>
+<pre><code>GET /api/v1/events?categories=vitality,mortality,death
+Accept: text/event-stream
+Authorization: Bearer &lt;privy-jwt&gt;
+</code></pre>
+<p>SSE limitations:</p>
+<ul>
+<li>Read-only (no client commands)</li>
+<li>No delta encoding (full event payload each time)</li>
+<li>No backpressure management</li>
+<li>Event ID corresponds to <code>sequence</code> for reconnection via <code>Last-Event-ID</code></li>
+<li>Maximum 5 categories per connection</li>
+</ul>
+<hr>
+<h2 id="11-surface-specific-rendering"><a class="header" href="#11-surface-specific-rendering">11. Surface-specific rendering</a></h2>
+<p>Different surfaces consume the same event stream but render differently:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>Transport</th><th>Format</th><th>Rendering</th></tr>
+</thead>
+<tbody>
+<tr><td>TUI (Ratatui)</td><td>Unix socket or WebSocket</td><td>NDJSON, 60fps target</td><td>Full sprite animation, multi-pane layout</td></tr>
+<tr><td>Web dashboard</td><td>WebSocket <code>:8402/events</code></td><td>JSON frames</td><td>React components, charts, status badges</td></tr>
+<tr><td>Telegram</td><td>HTTP polling via Bott gateway</td><td>Batched text, 1 edit/sec rate limit</td><td>Condensed summaries, inline keyboard</td></tr>
+<tr><td>Discord</td><td>HTTP via Bott gateway</td><td>Rich embeds, color-coded sidebars</td><td>Embed fields, bot presence status</td></tr>
+<tr><td>API consumer</td><td>SSE</td><td>Standard SSE format</td><td>Raw event data</td></tr>
+</tbody>
+</table>
+</div>
+<p>The TUI is the highest-fidelity consumer. Every event maps to a visual: sprite animation, progress bar, gauge update, or particle effect. The other surfaces degrade gracefully, batching and summarizing where the medium demands it.</p>
+<hr>
+<blockquote>
+<p><strong>Design system binding:</strong> Event-to-visual trigger mappings are documented in the design system §24 (Data-to-Visual Binding), §7 (Animation Library), and the sprite runtime spec (v3.1 §1.3 Variable Channels). See <code>tmp/research/design-inspo/bardo-design-system-v2.md</code>.</p>
+</blockquote>
+<hr>
+<p><em>End of document.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/13-runtime/11-state-model.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/13-runtime/13-engagement-loops.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/13-runtime/11-state-model.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/13-runtime/13-engagement-loops.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

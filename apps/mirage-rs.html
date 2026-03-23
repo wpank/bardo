@@ -1,0 +1,809 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>mirage-rs - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/apps/mirage-rs.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="mirage-rs"><a class="header" href="#mirage-rs">mirage-rs</a></h1>
+<h2 id="what-it-is"><a class="header" href="#what-it-is">What It Is</a></h2>
+<p>mirage-rs is Bardo’s local Ethereum fork sidecar and embeddable Rust library. It keeps local mutations in-process, lazily reads untouched state from an upstream RPC, exposes an Anvil- and Hardhat-compatible JSON-RPC surface, and adds Bardo-specific helpers for watch lists, scenarios, position inspection, and resource management.</p>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<ul>
+<li>Three-tier fork state: dirty overrides, TTL read cache, and upstream lazy reads</li>
+<li>Synthetic local chain state with receipts, blocks, timestamps, snapshots, and revert support</li>
+<li>Standard <code>eth_*</code> JSON-RPC methods for balances, storage, code, calls, transactions, receipts, and synthetic blocks</li>
+<li>Hardhat, Anvil, and <code>evm_*</code> compatibility helpers for impersonation, direct state writes, mining, and time control</li>
+<li><code>mirage_*</code> extensions for watch lists, token minting, position views, resource inspection, event subscriptions, and scenario jobs</li>
+<li>Copy-on-write helpers and speculative execution for isolated planning paths</li>
+<li>Targeted follower support that replays upstream transactions touching watched contracts</li>
+<li>Resource-pressure handling with cache eviction, slot-only demotion, and proxy-mode fallback</li>
+<li>Async client and spawned-process helpers for tests and other Bardo components</li>
+</ul>
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>Start <code>mirage-rs</code> as a standalone sidecar:</p>
+<pre><code class="language-bash">cargo run -p mirage-rs -- \
+  --port 8545 \
+  --rpc-url https://your-mainnet-rpc.example \
+  --ws-url wss://your-mainnet-ws.example
+</code></pre>
+<p>Port <code>8545</code> matches Bardo’s canonical local EVM slot from the shared port allocation reference. For test harnesses that should not collide with a development instance, use <code>18545</code>:</p>
+<pre><code class="language-bash">cargo run -p mirage-rs -- --port 18545
+</code></pre>
+<p>Connect from Rust code through <code>MirageClient</code>:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::time::Duration;
+
+use mirage_rs::{MirageClient, MirageConfig};
+
+let client = MirageClient::new(MirageConfig::default_local()).await?;
+client.wait_ready(Duration::from_secs(10)).await?;
+<span class="boring">}</span></code></pre>
+<p>The binary writes <code>/tmp/mirage-&lt;port&gt;.pid</code> and <code>/tmp/mirage-&lt;port&gt;-status.json</code> at startup, exposes <code>/health</code>, and shuts down on <code>mirage_shutdown</code>, watchdog timeout, or process signal.</p>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<h3 id="cli-flags"><a class="header" href="#cli-flags">CLI Flags</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Flag</th><th>Description</th><th>Default</th></tr>
+</thead>
+<tbody>
+<tr><td><code>--host</code></td><td>Bind host</td><td><code>127.0.0.1</code></td></tr>
+<tr><td><code>--port</code></td><td>JSON-RPC and health/event port</td><td><code>8545</code></td></tr>
+<tr><td><code>--rpc-url</code></td><td>Upstream HTTP RPC endpoint</td><td>unset</td></tr>
+<tr><td><code>--ws-url</code></td><td>Upstream WebSocket endpoint for follower mode</td><td>unset</td></tr>
+<tr><td><code>--upstream-rps</code></td><td>Upstream requests per second budget</td><td><code>100</code></td></tr>
+<tr><td><code>--upstream-burst</code></td><td>Upstream burst allowance</td><td><code>200</code></td></tr>
+<tr><td><code>--chain-id</code></td><td>Chain ID reported by the fork</td><td><code>1</code></td></tr>
+<tr><td><code>--cache-size</code></td><td>Read-cache capacity</td><td><code>10000</code></td></tr>
+<tr><td><code>--cache-ttl-secs</code></td><td>Read-cache TTL in seconds</td><td><code>12</code></td></tr>
+<tr><td><code>--profile</code></td><td>Resource profile (<code>micro</code>, <code>standard</code>, <code>power</code>)</td><td><code>standard</code></td></tr>
+<tr><td><code>--watchdog-timeout</code></td><td>Exit after this many idle seconds</td><td>unset</td></tr>
+<tr><td><code>--strict-nonce</code></td><td>Reject low or high nonces</td><td><code>false</code></td></tr>
+<tr><td><code>--strict-balance</code></td><td>Reject transactions that exceed balance</td><td><code>false</code></td></tr>
+<tr><td><code>--verify-signatures</code></td><td>Validate raw transaction signatures</td><td><code>false</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="golemtoml"><a class="header" href="#golemtoml"><code>golem.toml</code></a></h3>
+<p><code>MirageConfig::from_golem_config</code> reads the <code>mirage</code> section:</p>
+<pre><code class="language-toml">[mirage]
+host = "127.0.0.1"
+port = 8545
+timeout_ms = 30000
+retry_attempts = 3
+retry_backoff_ms = 500
+</code></pre>
+<p>You can also provide a fully qualified URL:</p>
+<pre><code class="language-toml">[mirage]
+url = "http://127.0.0.1:18545"
+</code></pre>
+<p>Environment overrides are available through the <code>BARDO_MIRAGE_*</code> prefix:</p>
+<ul>
+<li><code>BARDO_MIRAGE_URL</code></li>
+<li><code>BARDO_MIRAGE_HOST</code></li>
+<li><code>BARDO_MIRAGE_PORT</code></li>
+<li><code>BARDO_MIRAGE_TIMEOUT_MS</code></li>
+<li><code>BARDO_MIRAGE_RETRY_ATTEMPTS</code></li>
+<li><code>BARDO_MIRAGE_RETRY_BACKOFF_MS</code></li>
+</ul>
+<h2 id="module-overview"><a class="header" href="#module-overview">Module Overview</a></h2>
+<ul>
+<li><code>fork</code>: <code>ReadCache</code>, <code>DirtyStore</code>, <code>HybridDB</code>, <code>ForkState</code>, <code>MirageFork</code>, <code>MirageStatus</code>, and the local execution entrypoints</li>
+<li><code>provider</code>: <code>UpstreamRpc</code> and <code>BlockTag</code> for upstream reads, block fetches, transaction fetches, mock mode, retries, and rate limiting</li>
+<li><code>cow</code>: <code>CowState</code>, <code>BytecodeCache</code>, <code>MultiVersionStore</code>, and <code>VersionEntry</code></li>
+<li><code>replay</code>: <code>StateDiff</code>, <code>AccountDiff</code>, <code>LogEntry</code>, <code>TargetedFollower</code>, <code>TxReplay</code>, and <code>SpeculativeExecutor</code></li>
+<li><code>scenario</code>: <code>Scenario</code>, <code>ScenarioAssertions</code>, <code>ScenarioSet</code>, <code>ScenarioRunner</code>, <code>ScenarioResult</code>, <code>ScenarioJob</code>, and ranking helpers</li>
+<li><code>resources</code>: <code>ResourceModel</code>, <code>ResourceUsage</code>, <code>Profile</code>, <code>MirageMode</code>, and pressure-tier evaluation</li>
+<li><code>integration</code>: <code>MirageConfig</code>, <code>MirageClient</code>, <code>MirageTestInstance</code>, position helpers, and event-subscription helpers</li>
+<li><code>rpc</code>: JSON-RPC registration, health handler, and <code>/events/{stream_id}</code> WebSocket delivery</li>
+</ul>
+<h2 id="api"><a class="header" href="#api">API</a></h2>
+<h3 id="core-library-types"><a class="header" href="#core-library-types">Core Library Types</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub type Result&lt;T&gt; = std::result::Result&lt;T, MirageError&gt;;
+
+pub struct TransactionRequest {
+    pub from: Option&lt;Address&gt;,
+    pub to: Option&lt;Address&gt;,
+    pub gas: Option&lt;u64&gt;,
+    pub value: Option&lt;U256&gt;,
+    pub data: Option&lt;Bytes&gt;,
+    pub gas_price: Option&lt;u128&gt;,
+    pub nonce: Option&lt;u64&gt;,
+    pub chain_id: Option&lt;u64&gt;,
+}
+
+pub struct Bytecode(Bytes);
+impl Bytecode {
+    pub fn new_raw(bytes: Bytes) -&gt; Self;
+    pub fn hash_slow(&amp;self) -&gt; B256;
+    pub fn bytecode(&amp;self) -&gt; &amp;Bytes;
+}
+
+pub struct AccountInfo {
+    pub balance: U256,
+    pub nonce: u64,
+    pub code_hash: B256,
+    pub code: Option&lt;Bytecode&gt;,
+}
+
+pub struct ExecutionResult {
+    pub success: bool,
+    pub gas_used: u64,
+    pub output: Bytes,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="fork-and-replay-surface"><a class="header" href="#fork-and-replay-surface">Fork and Replay Surface</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct HybridDB;
+impl HybridDB {
+    pub fn new(
+        upstream: Arc&lt;UpstreamRpc&gt;,
+        cache_capacity: usize,
+        cache_ttl: Duration,
+        bytecode_capacity: NonZeroUsize,
+        chain_id: u64,
+    ) -&gt; Self;
+    pub fn resolve_block(&amp;self) -&gt; BlockTag;
+    pub fn set_balance(&amp;mut self, address: Address, balance: U256);
+    pub fn set_nonce(&amp;mut self, address: Address, nonce: u64);
+    pub fn set_code(&amp;mut self, address: Address, code: Bytecode);
+    pub fn set_storage(&amp;mut self, address: Address, slot: U256, value: U256);
+    pub fn reset(&amp;mut self);
+    pub fn erc20_balance_of(&amp;mut self, token: Address, owner: Address) -&gt; Result&lt;U256&gt;;
+    pub fn set_erc20_balance(
+        &amp;mut self,
+        token: Address,
+        owner: Address,
+        balance: U256,
+    ) -&gt; Result&lt;U256&gt;;
+}
+
+pub struct ForkState;
+impl ForkState {
+    pub fn new(db: HybridDB, local_block_number: u64, chain_id: u64) -&gt; Self;
+    pub fn snapshot(&amp;mut self) -&gt; u64;
+    pub fn revert(&amp;mut self, id: u64) -&gt; Result&lt;bool&gt;;
+    pub fn status(&amp;self, mode: MirageMode) -&gt; MirageStatus;
+    pub fn resource_usage(&amp;self, model: &amp;ResourceModel, mode: MirageMode) -&gt; ResourceUsage;
+}
+
+pub struct MirageFork;
+impl MirageFork {
+    pub fn new(fork: ForkState, resource_model: ResourceModel, mode: MirageMode) -&gt; Self;
+    pub fn idle_for(&amp;self) -&gt; Duration;
+}
+
+pub struct DirtyAccount {
+    pub balance: Option&lt;U256&gt;,
+    pub nonce: Option&lt;u64&gt;,
+    pub code: Option&lt;Bytecode&gt;,
+    pub code_hash: Option&lt;B256&gt;,
+    pub storage: HashMap&lt;U256, U256&gt;,
+}
+
+pub enum WatchSource {
+    AutoClassified,
+    Contagion { parent: Address },
+    Manual,
+}
+
+pub struct WatchEntry {
+    pub source: WatchSource,
+    pub added_at_block: u64,
+    pub initial_slot_count: usize,
+    pub replay_count: u64,
+}
+
+pub struct DirtyStore {
+    pub accounts: HashMap&lt;Address, DirtyAccount&gt;,
+    pub watch_list: HashMap&lt;Address, WatchEntry&gt;,
+    pub unwatch_list: HashSet&lt;Address&gt;,
+    pub total_dirty_slots: u64,
+}
+impl DirtyStore {
+    pub fn snapshot(&amp;mut self, block_number: u64, tx_index: u64) -&gt; u64;
+    pub fn revert(&amp;mut self, id: u64) -&gt; Result&lt;(u64, u64)&gt;;
+    pub fn clear(&amp;mut self);
+    pub fn apply_state_diff(&amp;mut self, diff: &amp;StateDiff);
+}
+
+pub struct TxReplay {
+    pub tx_hash: B256,
+}
+impl TxReplay {
+    pub fn execute(
+        &amp;self,
+        upstream: &amp;UpstreamRpc,
+        state: &amp;mut ForkState,
+    ) -&gt; Result&lt;(ExecutionResult, StateDiff)&gt;;
+}
+
+pub struct SpeculativeExecutor;
+impl SpeculativeExecutor {
+    pub fn execute(
+        &amp;mut self,
+        state: &amp;ForkState,
+        request: &amp;TransactionRequest,
+    ) -&gt; Result&lt;SpeculativeResult&gt;;
+    pub fn invalidate_for_writes(&amp;mut self, writes: &amp;HashSet&lt;(Address, U256)&gt;);
+    pub fn invalidate_for_block(&amp;mut self, block_number: u64);
+}
+
+pub struct StateDiff {
+    pub accounts: HashMap&lt;Address, AccountDiff&gt;,
+    pub logs: Vec&lt;LogEntry&gt;,
+    pub gas_used: u64,
+    pub success: bool,
+    pub output: Bytes,
+}
+
+pub struct AccountDiff {
+    pub info_changed: bool,
+    pub new_balance: Option&lt;U256&gt;,
+    pub new_nonce: Option&lt;u64&gt;,
+    pub new_code: Option&lt;Bytecode&gt;,
+    pub storage_written: HashMap&lt;U256, U256&gt;,
+    pub storage_read: HashSet&lt;U256&gt;,
+}
+
+pub struct CowState;
+impl CowState {
+    pub fn branch(baseline: Arc&lt;HashMap&lt;(Address, U256), U256&gt;&gt;) -&gt; Self;
+    pub fn read(&amp;self, address: Address, slot: U256) -&gt; Option&lt;U256&gt;;
+    pub fn write(&amp;mut self, address: Address, slot: U256, value: U256);
+    pub fn overlay_size(&amp;self) -&gt; usize;
+}
+<span class="boring">}</span></code></pre>
+<h3 id="scenarios-resources-and-integration"><a class="header" href="#scenarios-resources-and-integration">Scenarios, Resources, and Integration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct Scenario {
+    pub id: String,
+    pub name: String,
+    pub transactions: Vec&lt;TransactionRequest&gt;,
+    pub track_addresses: Vec&lt;Address&gt;,
+    pub max_gas: Option&lt;u64&gt;,
+    pub timeout: Duration,
+    pub assertions: ScenarioAssertions,
+}
+impl Scenario {
+    pub fn from_toml(id: impl Into&lt;String&gt;, input: &amp;str) -&gt; Result&lt;Self&gt;;
+    pub fn evaluate_assertions(&amp;self, state: &amp;mut ForkState) -&gt; Result&lt;()&gt;;
+}
+
+pub struct ScenarioRunner;
+impl ScenarioRunner {
+    pub async fn run_sequential(&amp;self, set: &amp;ScenarioSet) -&gt; Vec&lt;ScenarioResult&gt;;
+    pub async fn run_parallel(&amp;self, set: &amp;ScenarioSet) -&gt; Vec&lt;ScenarioResult&gt;;
+}
+
+pub struct ResourceModel {
+    pub profile: Profile,
+    pub max_memory_bytes: u64,
+    pub max_watched_contracts: usize,
+    pub cache_capacity: usize,
+    pub cache_ttl: Duration,
+}
+impl ResourceModel {
+    pub fn for_profile(profile: Profile, cache_ttl: Duration) -&gt; Self;
+    pub fn ensure_spawn_budget(&amp;self) -&gt; Result&lt;()&gt;;
+    pub fn current_process_memory_bytes() -&gt; u64;
+}
+
+pub struct ResourceUsage {
+    pub memory_bytes: u64,
+    pub memory_limit_bytes: u64,
+    pub resource_pressure: f64,
+    pub cache_hit_rate: f64,
+    pub cache_entries: usize,
+    pub cache_capacity: usize,
+    pub watch_list_size: usize,
+    pub dirty_slot_count: u64,
+    pub upstream_rpc_calls: u64,
+    pub upstream_rpc_errors: u64,
+    pub mode: MirageMode,
+    pub disk_usage_bytes: u64,
+}
+impl ResourceUsage {
+    pub fn is_warning(&amp;self) -&gt; bool;
+    pub fn is_throttled(&amp;self) -&gt; bool;
+    pub fn is_emergency(&amp;self) -&gt; bool;
+}
+
+pub struct MirageConfig {
+    pub url: String,
+    pub timeout: Duration,
+    pub retry_attempts: u32,
+    pub retry_backoff: Duration,
+}
+impl MirageConfig {
+    pub fn from_golem_config(config: &amp;GolemConfig) -&gt; Self;
+    pub fn default_local() -&gt; Self;
+}
+
+pub struct PositionRequest {
+    pub owner: Address,
+    pub protocol_type: String,
+    pub contract: Option&lt;Address&gt;,
+    pub token_addresses: Vec&lt;Address&gt;,
+}
+
+pub struct PositionSnapshot {
+    pub owner: Address,
+    pub protocol_type: String,
+    pub data: serde_json::Value,
+}
+
+pub struct EventFilter {
+    pub addresses: Option&lt;Vec&lt;Address&gt;&gt;,
+    pub topics: Option&lt;Vec&lt;B256&gt;&gt;,
+}
+
+pub enum EventSource {
+    LocalTx,
+    FollowerReplay,
+}
+
+pub struct MirageEvent {
+    pub block_number: u64,
+    pub tx_hash: B256,
+    pub log_index: u32,
+    pub contract: Address,
+    pub topics: Vec&lt;B256&gt;,
+    pub data: Bytes,
+    pub source: EventSource,
+    pub decoded: Option&lt;serde_json::Value&gt;,
+}
+
+pub struct MirageClient;
+impl MirageClient {
+    pub async fn new(config: MirageConfig) -&gt; Result&lt;Self&gt;;
+    pub async fn eth_call(&amp;self, req: TransactionRequest) -&gt; Result&lt;Bytes&gt;;
+    pub async fn eth_send_transaction(&amp;self, req: TransactionRequest) -&gt; Result&lt;B256&gt;;
+    pub async fn evm_snapshot(&amp;self) -&gt; Result&lt;u64&gt;;
+    pub async fn evm_revert(&amp;self, id: u64) -&gt; Result&lt;bool&gt;;
+    pub async fn mirage_watch_contract(&amp;self, addr: Address) -&gt; Result&lt;()&gt;;
+    pub async fn mirage_get_position(&amp;self, req: PositionRequest) -&gt; Result&lt;PositionSnapshot&gt;;
+    pub async fn mirage_status(&amp;self) -&gt; Result&lt;MirageStatus&gt;;
+    pub async fn mirage_get_resource_usage(&amp;self) -&gt; Result&lt;ResourceUsage&gt;;
+    pub async fn mirage_begin_scenario_set(&amp;self, baseline: &amp;str) -&gt; Result&lt;String&gt;;
+    pub async fn mirage_define_scenario(&amp;self, set_id: &amp;str, scenario: &amp;Scenario) -&gt; Result&lt;String&gt;;
+    pub async fn mirage_run_scenario_set(&amp;self, set_id: &amp;str, mode: RunMode) -&gt; Result&lt;String&gt;;
+    pub async fn mirage_get_scenario_results(&amp;self, job_id: &amp;str) -&gt; Result&lt;ScenarioJob&gt;;
+    pub async fn wait_ready(&amp;self, timeout: Duration) -&gt; Result&lt;()&gt;;
+    pub async fn subscribe_events(
+        &amp;self,
+        filter: EventFilter,
+    ) -&gt; Result&lt;BoxStream&lt;'static, MirageEvent&gt;&gt;;
+    pub async fn shutdown(&amp;self) -&gt; Result&lt;bool&gt;;
+}
+
+pub struct ScenarioResult {
+    pub scenario_id: String,
+    pub name: String,
+    pub status: ScenarioStatus,
+    pub gas_used: u64,
+    pub wall_time_ms: u64,
+    pub peak_memory_bytes: u64,
+    pub pnl_wei: i128,
+    pub state_diff_accounts: usize,
+    pub state_diff_storage_slots: usize,
+    pub final_balances: HashMap&lt;Address, U256&gt;,
+    pub position_state: serde_json::Value,
+    pub logs: Vec&lt;LogEntry&gt;,
+    pub revert_reason: Option&lt;String&gt;,
+}
+
+pub struct ScenarioJob {
+    pub job_id: String,
+    pub set_id: String,
+    pub status: JobStatus,
+    pub results: Option&lt;Vec&lt;ScenarioResult&gt;&gt;,
+    pub total_wall_time_ms: Option&lt;u64&gt;,
+}
+
+pub struct MirageTestInstance;
+impl MirageTestInstance {
+    pub fn config(&amp;self) -&gt; MirageConfig;
+    pub async fn shutdown(&amp;mut self) -&gt; Result&lt;()&gt;;
+}
+
+pub async fn spawn_mirage_test_instance(
+    rpc_url: Option&lt;&amp;str&gt;,
+    port: Option&lt;u16&gt;,
+) -&gt; Result&lt;MirageTestInstance&gt;;
+<span class="boring">}</span></code></pre>
+<h3 id="json-rpc-surface"><a class="header" href="#json-rpc-surface">JSON-RPC Surface</a></h3>
+<p>Standard Ethereum methods:</p>
+<ul>
+<li><code>web3_clientVersion</code></li>
+<li><code>net_version</code></li>
+<li><code>eth_chainId</code></li>
+<li><code>eth_blockNumber</code></li>
+<li><code>eth_gasPrice</code></li>
+<li><code>eth_maxPriorityFeePerGas</code></li>
+<li><code>eth_feeHistory</code></li>
+<li><code>eth_getBalance</code></li>
+<li><code>eth_getTransactionCount</code></li>
+<li><code>eth_getStorageAt</code></li>
+<li><code>eth_getCode</code></li>
+<li><code>eth_call</code></li>
+<li><code>eth_estimateGas</code></li>
+<li><code>eth_sendTransaction</code></li>
+<li><code>eth_sendRawTransaction</code></li>
+<li><code>eth_getTransactionReceipt</code></li>
+<li><code>eth_getTransactionByHash</code></li>
+<li><code>eth_getLogs</code></li>
+<li><code>eth_getBlockByNumber</code></li>
+<li><code>eth_getBlockByHash</code></li>
+</ul>
+<p>Compatibility and test helpers:</p>
+<ul>
+<li><code>hardhat_impersonateAccount</code> and <code>anvil_impersonateAccount</code></li>
+<li><code>hardhat_stopImpersonatingAccount</code> and <code>anvil_stopImpersonatingAccount</code></li>
+<li><code>hardhat_setBalance</code>, <code>anvil_setBalance</code>, <code>mirage_setBalance</code></li>
+<li><code>hardhat_setStorageAt</code>, <code>anvil_setStorageAt</code>, <code>mirage_setStorageAt</code></li>
+<li><code>hardhat_setCode</code>, <code>anvil_setCode</code>, <code>mirage_setCode</code></li>
+<li><code>anvil_setNonce</code></li>
+<li><code>hardhat_mine</code>, <code>anvil_mine</code>, <code>evm_mine</code></li>
+<li><code>hardhat_reset</code>, <code>anvil_reset</code></li>
+<li><code>hardhat_setNextBlockBaseFeePerGas</code>, <code>anvil_setNextBlockBaseFeePerGas</code></li>
+<li><code>hardhat_setCoinbase</code>, <code>anvil_setCoinbase</code></li>
+<li><code>anvil_setPrevRandao</code></li>
+<li><code>evm_snapshot</code></li>
+<li><code>evm_revert</code></li>
+<li><code>evm_increaseTime</code></li>
+<li><code>evm_setNextBlockTimestamp</code></li>
+</ul>
+<p>mirage extensions:</p>
+<ul>
+<li><code>mirage_mintERC20</code></li>
+<li><code>mirage_prefetchAccount</code></li>
+<li><code>mirage_prefetchSlots</code></li>
+<li><code>mirage_watchContract</code></li>
+<li><code>mirage_unwatchContract</code></li>
+<li><code>mirage_getWatchList</code></li>
+<li><code>mirage_getDirtySlots</code></li>
+<li><code>mirage_status</code></li>
+<li><code>mirage_getResourceUsage</code></li>
+<li><code>mirage_setResourceLimits</code></li>
+<li><code>mirage_getPosition</code></li>
+<li><code>mirage_subscribeEvents</code></li>
+<li><code>mirage_beginScenarioSet</code></li>
+<li><code>mirage_defineScenario</code></li>
+<li><code>mirage_runScenarioSet</code></li>
+<li><code>mirage_getScenarioResults</code></li>
+<li><code>mirage_compareScenarios</code></li>
+<li><code>mirage_computeDomainSeparator</code></li>
+<li><code>mirage_cleanup</code></li>
+<li><code>mirage_shutdown</code></li>
+</ul>
+<p>Current compatibility notes:</p>
+<ul>
+<li><code>eth_getLogs</code> currently returns an empty array.</li>
+<li><code>mirage_setResourceLimits</code> switches runtime profile presets instead of accepting arbitrary numeric caps.</li>
+<li><code>mirage_subscribeEvents</code> registers a stream over JSON-RPC and delivers events over WebSocket at <code>/events/{stream_id}</code>.</li>
+<li>Event publication currently comes from locally committed transaction receipts.</li>
+<li><code>mirage_cleanup</code> is presently a compatibility stub that returns <code>true</code>.</li>
+</ul>
+<h2 id="usage-examples"><a class="header" href="#usage-examples">Usage Examples</a></h2>
+<h3 id="local-transfer-with-snapshot-and-revert"><a class="header" href="#local-transfer-with-snapshot-and-revert">Local Transfer With Snapshot and Revert</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::time::Duration;
+
+use alloy_primitives::U256;
+use mirage_rs::{MirageClient, MirageConfig, TransactionRequest};
+
+let client = MirageClient::new(MirageConfig::default_local()).await?;
+client.wait_ready(Duration::from_secs(10)).await?;
+
+let snapshot = client.evm_snapshot().await?;
+let tx_hash = client
+    .eth_send_transaction(TransactionRequest {
+        from: Some("0x1000000000000000000000000000000000000001".parse()?),
+        to: Some("0x1000000000000000000000000000000000000002".parse()?),
+        gas: Some(21_000),
+        value: Some(U256::from(25_u64)),
+        data: Some(Default::default()),
+        gas_price: None,
+        nonce: None,
+        chain_id: Some(1),
+    })
+    .await?;
+
+let _ = tx_hash;
+client.evm_revert(snapshot).await?;
+<span class="boring">}</span></code></pre>
+<h3 id="scenario-set-execution"><a class="header" href="#scenario-set-execution">Scenario Set Execution</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::time::Duration;
+
+use alloy_primitives::U256;
+use mirage_rs::{
+    JobStatus, MirageClient, MirageConfig, RunMode, Scenario, ScenarioAssertions,
+    TransactionRequest,
+};
+
+let client = MirageClient::new(MirageConfig::default_local()).await?;
+let set_id = client.mirage_begin_scenario_set("latest").await?;
+
+let scenario = Scenario {
+    id: "transfer-branch".to_owned(),
+    name: "transfer branch".to_owned(),
+    transactions: vec![TransactionRequest {
+        from: Some("0x3000000000000000000000000000000000000001".parse()?),
+        to: Some("0x3000000000000000000000000000000000000002".parse()?),
+        gas: Some(21_000),
+        value: Some(U256::from(4_u64)),
+        data: Some(Default::default()),
+        gas_price: None,
+        nonce: None,
+        chain_id: Some(1),
+    }],
+    track_addresses: vec![
+        "0x3000000000000000000000000000000000000001".parse()?,
+        "0x3000000000000000000000000000000000000002".parse()?,
+    ],
+    max_gas: Some(30_000),
+    timeout: Duration::from_secs(1),
+    assertions: ScenarioAssertions::default(),
+};
+
+client.mirage_define_scenario(&amp;set_id, &amp;scenario).await?;
+let job_id = client.mirage_run_scenario_set(&amp;set_id, RunMode::Parallel).await?;
+
+loop {
+    let job = client.mirage_get_scenario_results(&amp;job_id).await?;
+    if matches!(job.status, JobStatus::Complete | JobStatus::Failed) {
+        break;
+    }
+    tokio::time::sleep(Duration::from_millis(100)).await;
+}
+<span class="boring">}</span></code></pre>
+<h3 id="spawned-test-sidecar"><a class="header" href="#spawned-test-sidecar">Spawned Test Sidecar</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::time::Duration;
+
+use mirage_rs::{MirageClient, spawn_mirage_test_instance};
+
+let mut instance = spawn_mirage_test_instance(None, Some(18_545)).await?;
+let client = MirageClient::new(instance.config()).await?;
+
+client.wait_ready(Duration::from_secs(10)).await?;
+
+// Run JSON-RPC calls through `client`.
+
+instance.shutdown().await?;
+<span class="boring">}</span></code></pre>
+<h2 id="architecture"><a class="header" href="#architecture">Architecture</a></h2>
+<p>mirage-rs is organized around four runtime layers.</p>
+<p>The state layer is centered on <code>HybridDB</code>. Reads prefer <code>DirtyStore</code>, then <code>ReadCache</code>, then the upstream RPC. Dirty state is never evicted, while the read cache is trimmed under pressure and bytecode is cached separately by code hash.</p>
+<p>The execution layer runs through <code>ForkState</code> and <code>EvmExecutor</code>. Local transactions update dirty balances, nonces, storage, receipts, synthetic blocks, and watch-list classification. The current executor implements simplified transfer, ERC-20, contract-touch, and contract-creation paths while keeping the public fork surface stable.</p>
+<p>The replay and scenario layer builds on the same fork core. <code>TargetedFollower</code> replays only upstream transactions that match the watch list or configured filters. <code>SpeculativeExecutor</code> clones state for non-committing execution, and <code>ScenarioRunner</code> executes sequential or parallel branches from a baseline fork snapshot.</p>
+<p>The server layer exposes JSON-RPC through the root endpoint, <code>/health</code> for readiness checks, and <code>/events/{stream_id}</code> for WebSocket event delivery. Resource sampling can evict cache entries, demote newly classified protocols to slot-only handling, or push the instance into proxy mode when pressure reaches the emergency tier.</p>
+<h2 id="specification-references"><a class="header" href="#specification-references">Specification References</a></h2>
+<ul>
+<li><code>prd2/15-dev/01-mirage-rs.md</code>: <code>Concept</code>, <code>Architecture Diagram</code>, <code>HybridDB</code>, <code>DirtyStore</code></li>
+<li><code>prd2/15-dev/01b-mirage-rpc.md</code>: <code>Standard eth_* Methods</code>, <code>Hardhat/Anvil Compatibility Methods</code>, <code>evm_* Methods</code>, <code>mirage_* Resource Management</code>, <code>mirage_* Position Helpers</code>, <code>mirage_* Scenario Runner</code>, <code>Error Code Reference</code></li>
+<li><code>prd2/15-dev/01c-mirage-scenarios.md</code>: <code>Targeted Follower</code>, classification rules, and scenario execution model</li>
+<li><code>prd2/15-dev/01d-mirage-integration.md</code>: <code>Golem Sidecar Lifecycle</code>, <code>Resource Model</code>, <code>Core Golem Workflows</code></li>
+<li><code>prd2/shared/port-allocation.md</code>: <code>Port Map (Normative)</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../apps/bardo-compute.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../prd/SUMMARY.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../apps/bardo-compute.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../prd/SUMMARY.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

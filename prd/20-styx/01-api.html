@@ -1,0 +1,1392 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>API - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/20-styx/01-api.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="styx-api-data-model-and-revenue-architecture-spec"><a class="header" href="#styx-api-data-model-and-revenue-architecture-spec">Styx API, Data Model, and Revenue Architecture [SPEC]</a></h1>
+<blockquote>
+<p><strong>PRD2 Section</strong>: 20-styx | <strong>Source</strong>: Styx Research S2 v4.1</p>
+</blockquote>
+<blockquote>
+<p><strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crate</strong>: <code>bardo-styx</code> (the server binary)</p>
+<p><strong>Dependencies</strong>: <code>prd2/20-styx/00-architecture.md</code> (three-layer model), <code>prd2/09-economy/00-identity.md</code> (ERC-8004)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the complete API surface, data schemas, x402 (micropayment protocol where agents pay for inference/compute/data via signed USDC transfers, no API keys) pricing schedule, mortal scoring function, anonymization pipeline, and anti-adversarial defenses for Styx (global knowledge relay and persistence layer at wss://styx.bardo.run; three tiers: Vault/Clade/Lethe). It belongs to the Styx layer of Bardo. The key prerequisite is the three-layer architecture from <code>00-architecture.md</code>. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="what-this-document-covers"><a class="header" href="#what-this-document-covers">What This Document Covers</a></h2>
+<p>The complete API surface, all data schemas (Rust structs + PostgreSQL DDL), the x402 pricing schedule that generates revenue, the mortal scoring function, the anonymization pipeline, and the anti-adversarial defense layers.</p>
+<hr>
+<h2 id="1-api-surface"><a class="header" href="#1-api-surface">1. API Surface</a></h2>
+<p>One domain, one TLS certificate, one API. Every non-public endpoint requires authentication via x402 micropayment or prepaid API key linked to an ERC-8004 identity.</p>
+<h3 id="rest-endpoints"><a class="header" href="#rest-endpoints">REST Endpoints</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Purpose</th><th>Auth</th><th>x402 Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><code>POST</code></td><td><code>/v1/styx/entries</code></td><td>Write entry to L0/L1/L2</td><td>x402 or key</td><td>$0.001/write</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/query</code></td><td>Retrieve across layers</td><td>x402</td><td>$0.002/query</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/snapshot/:golem_id</code></td><td>Full Grimoire snapshot</td><td>API key (owner)</td><td>$0.01/snapshot</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/bloodstain</code></td><td>Upload death bundle</td><td>x402</td><td>$0.005/upload</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/pheromone/deposit</code></td><td>Deposit pheromone</td><td>x402</td><td>$0.0005/deposit</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/pheromone/sense</code></td><td>Read Pheromone Field</td><td>x402</td><td>$0.0005/read</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/causal/publish</code></td><td>Publish causal edge</td><td>x402</td><td>Free (Verified+)</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/causal/discover</code></td><td>Search causal edges</td><td>x402</td><td>$0.001/query</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/lineage/:user_id</code></td><td>Lineage tree</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/graveyard/:user_id</code></td><td>Dead Golems</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/achievements/:golem_id</code></td><td>Achievements</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/marketplace/list</code></td><td>Create listing</td><td>x402</td><td>$0.01/listing</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/marketplace/browse</code></td><td>Browse listings</td><td>x402</td><td>$0.001/search</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/marketplace/purchase</code></td><td>Buy listing</td><td>x402</td><td>price + 10% commission</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/pulse</code></td><td>Ecosystem stats</td><td>None</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/health</code></td><td>Health check</td><td>None</td><td>Free</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/clade/register</code></td><td>Register Golem for P2P sync</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/clade/peers/:user_id</code></td><td>Discover clade peers</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/fleet/:user_id</code></td><td>Fleet state (all Golems)</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/fleet/:user_id/aggregate</code></td><td>Fleet-level aggregates</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/golem/:golem_id/snapshot</code></td><td>Single Golem current state</td><td>API key</td><td>Free</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="x402-payment-verification"><a class="header" href="#x402-payment-verification">x402 Payment Verification</a></h3>
+<p>Every paid endpoint requires an <code>X-402-Payment</code> header containing a signed USDC <code>transferWithAuthorization</code> (EIP-3009) on Base L2. The Styx server verifies the signature, checks the amount against the endpoint’s price, and submits the authorization for settlement in batch (every 100 payments or every 60 seconds, whichever comes first).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// x402 payment verification middleware.
+pub async fn verify_x402(
+    headers: &amp;HeaderMap,
+    required_amount: f64,
+) -&gt; Result&lt;VerifiedPayment&gt; {
+    let payment_header = headers.get("X-402-Payment")
+        .ok_or(PaymentError::Missing)?;
+    let authorization: TransferWithAuthorization = serde_json::from_str(
+        payment_header.to_str()?
+    )?;
+    // Verify EIP-3009 signature
+    let signer = recover_signer(&amp;authorization)?;
+    // Check amount &gt;= required
+    if authorization.value_usdc() &lt; required_amount {
+        return Err(PaymentError::InsufficientAmount);
+    }
+    // Queue for batch settlement
+    SETTLEMENT_QUEUE.push(authorization.clone()).await;
+    Ok(VerifiedPayment { signer, amount: authorization.value_usdc() })
+}
+<span class="boring">}</span></code></pre>
+<h3 id="revenue-projections"><a class="header" href="#revenue-projections">Revenue Projections</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scale</th><th>Active Golems</th><th>Writes/day</th><th>Queries/day</th><th>Monthly Revenue</th><th>Monthly Infra</th><th>Net</th></tr>
+</thead>
+<tbody>
+<tr><td>Launch</td><td>10</td><td>500</td><td>1,000</td><td>~$75</td><td>~$120</td><td>-$45</td></tr>
+<tr><td>Traction</td><td>50</td><td>2,500</td><td>5,000</td><td>~$375</td><td>~$150</td><td>+$225</td></tr>
+<tr><td>Growth</td><td>200</td><td>10,000</td><td>20,000</td><td>~$1,500</td><td>~$250</td><td>+$1,250</td></tr>
+<tr><td>Marketplace</td><td>500</td><td>25,000</td><td>50,000</td><td>~$4,000 + marketplace</td><td>~$500</td><td>+$3,500+</td></tr>
+<tr><td>Scale</td><td>1,000</td><td>50,000</td><td>100,000</td><td>~$8,000 + marketplace</td><td>~$1,200</td><td>+$6,800+</td></tr>
+</tbody>
+</table>
+</div>
+<p>Revenue at scale includes marketplace commission (10% of GMV). At 500 active Golems with ~$10K/month marketplace GMV, commission adds ~$1,000/month. For the full revenue model context, see <code>prd2/revenue-model.md</code>.</p>
+<h3 id="websocket-event-stream"><a class="header" href="#websocket-event-stream">WebSocket Event Stream</a></h3>
+<pre><code>WSS /v1/styx/ws
+</code></pre>
+<p>Bidirectional WebSocket. Clients subscribe to event categories. The same stream feeds the TUI (see <code>prd2/20-styx/05-tui-experience.md</code>), web dashboard, and any connected surface.</p>
+<p><strong>Client -&gt; Server:</strong></p>
+<pre><code class="language-json">{ "type": "subscribe", "categories": ["heartbeat", "daimon", "creature", "bloodstain", "pheromone", "achievement", "marketplace"] }
+{ "type": "steer", "intent": "reduce LP range to +/-2%", "severity": "medium" }
+</code></pre>
+<p><strong>Server -&gt; Client events</strong> (all events carry monotonic <code>seq</code> for gap detection):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event Type</th><th>Source</th><th>Content</th></tr>
+</thead>
+<tbody>
+<tr><td><code>golem:*</code></td><td>Event Fabric relay</td><td>All 50+ GolemEvent types from the connected Golem</td></tr>
+<tr><td><code>styx:bloodstain</code></td><td>Bloodstain Network</td><td>Death cause, warnings, lineage</td></tr>
+<tr><td><code>styx:pheromone:deposit</code></td><td>Pheromone Field</td><td>New threat/opportunity/wisdom signal</td></tr>
+<tr><td><code>styx:pheromone:reinforced</code></td><td>Pheromone Field</td><td>Signal independently confirmed</td></tr>
+<tr><td><code>styx:lethe:published</code></td><td>Lethe (formerly Lethe)</td><td>New anonymized entry or causal edge</td></tr>
+<tr><td><code>styx:achievement</code></td><td>Achievement engine</td><td>Achievement unlocked</td></tr>
+<tr><td><code>styx:lineage:milestone</code></td><td>Lineage tracker</td><td>Generation milestone</td></tr>
+<tr><td><code>styx:marketplace:listed</code></td><td>Marketplace</td><td>New listing in a subscribed domain</td></tr>
+<tr><td><code>styx:marketplace:sold</code></td><td>Marketplace</td><td>A listing was purchased</td></tr>
+<tr><td><code>styx:pulse</code></td><td>Aggregate</td><td>Ecosystem pulse (every 60s)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="fleet-management-endpoints"><a class="header" href="#fleet-management-endpoints">Fleet Management Endpoints</a></h3>
+<p>Three endpoints expose real-time Golem state for fleet monitoring. These are read-only, free (no x402 charge), and powered by the in-memory <code>GolemPresence</code> map that Styx already maintains from heartbeat processing.</p>
+<p><strong><code>GET /v1/styx/fleet/:user_id</code></strong> – Returns all Golems for an owner with current phase, vitality, PAD, NAV, estimated lifespan, domains, dream state. At 100 Golems per owner, the query returns in under 5ms.</p>
+<p><strong><code>GET /v1/styx/fleet/:user_id/aggregate</code></strong> – Fleet-level aggregates: total NAV, average vitality, Golem count by phase, top domains. A single pass over the in-memory presence map.</p>
+<p><strong><code>GET /v1/styx/golem/:golem_id/snapshot</code></strong> – Single Golem’s current state in full detail (more than the presence heartbeat). Includes recent prediction accuracy, current positions summary (if opt-in), and active Grimoire stats.</p>
+<h3 id="context-engineering-support-endpoints"><a class="header" href="#context-engineering-support-endpoints">Context Engineering Support Endpoints</a></h3>
+<p>The context engineering layer is a cross-cutting capability built on top of the persistence and discovery services. It is one of the primary reasons Styx needed to be redefined from a relay to a comprehensive backend.</p>
+<p><strong>Single-query multi-layer retrieval.</strong> A Golem writes one entry to <code>POST /v1/styx/entries</code>. Styx fans out: L0 (Vault) stores in user namespace, L1 (Clade) indexes if promotion gate met, L2 (Lethe) anonymizes and publishes if publication gate met (delayed 1-6h). A Golem queries once via <code>GET /v1/styx/query</code>. Styx executes in parallel across all three layers, then merges, deduplicates (cosine &gt; 0.9), and ranks using the mortal scoring function. One request, one response.</p>
+<p><strong>Prediction-related events.</strong> At delta frequency (~50 theta ticks), Golems share anonymized residual correction summaries with their clade via Styx. This is not raw data – it’s the correction vector (bias shift, interval width adjustment) for each prediction category. Siblings can incorporate these corrections into their own calibration, accelerating convergence.</p>
+<p><strong>PREDICTION_ACCURACY pheromone.</strong> A pheromone type deposited on the Styx field at delta frequency. Contains: golem_id (pseudonymous), category, regime, accuracy (f32). Visible in the Solaris force-directed graph as node brightness modulation. Sudden collective accuracy drops signal regime transitions.</p>
+<p><strong>Lethe prediction aggregates.</strong> The anonymous Lethe receives prediction accuracy aggregates (no individual positions, just category-level accuracy stats). This creates a collective accuracy signal: “48 Golems observing ETH/USDC fee_rate, median accuracy 72%, declining over last 3 days.”</p>
+<hr>
+<h2 id="1b-chain-intelligence-streaming"><a class="header" href="#1b-chain-intelligence-streaming">1b. Chain Intelligence Streaming</a></h2>
+<p>Real-time filtered transaction events and per-Golem interest scope management. The chain intelligence layer provides Golems with a curated view of on-chain activity relevant to their current strategy, rather than raw firehose data.</p>
+<h3 id="websocket-chain-event-stream"><a class="header" href="#websocket-chain-event-stream">WebSocket: Chain Event Stream</a></h3>
+<pre><code>ws /v1/chain/stream
+</code></pre>
+<p>Authenticated WebSocket delivering filtered transaction events. The Golem subscribes with a filter specification; Styx routes matching events from its indexer pipeline. Events arrive within 2 seconds of block confirmation.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Client subscription message for chain event streaming.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChainStreamSubscription {
+    /// Protocol addresses to watch (e.g., Uniswap V3 router, Morpho vault).
+    pub addresses: Vec&lt;String&gt;,
+    /// Event signature filters (e.g., "Swap(address,address,int256,int256,uint160,uint128,int24)").
+    pub event_signatures: Vec&lt;String&gt;,
+    /// Minimum USD value threshold for transaction events.
+    /// Filters out dust-level activity.
+    pub min_value_usd: Option&lt;f64&gt;,
+    /// Market regime filter. If set, only delivers events during matching regimes.
+    pub regime_filter: Option&lt;Vec&lt;String&gt;&gt;,
+    /// Maximum events per second (rate limiting on the client side).
+    pub max_events_per_second: Option&lt;u32&gt;,
+}
+
+/// A single chain event delivered to the subscriber.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChainEvent {
+    /// Monotonic sequence number for gap detection.
+    pub seq: u64,
+    /// Block number where this event occurred.
+    pub block_number: u64,
+    /// Transaction hash.
+    pub tx_hash: String,
+    /// Decoded event data.
+    pub event: DecodedEvent,
+    /// Estimated USD value of the transaction.
+    pub estimated_value_usd: f64,
+    /// Protocol identifier (e.g., "uniswap-v3", "morpho-blue").
+    pub protocol: String,
+    /// Server-side timestamp (Unix millis).
+    pub timestamp: u64,
+}
+
+/// Decoded on-chain event with typed fields.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DecodedEvent {
+    pub name: String,
+    pub signature: String,
+    pub params: serde_json::Value,
+    pub address: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Server -&gt; Client events</strong> carry the same monotonic <code>seq</code> field as the main WebSocket stream. The client detects gaps and requests replay from the last-seen sequence.</p>
+<h3 id="rest-interest-scope"><a class="header" href="#rest-interest-scope">REST: Interest Scope</a></h3>
+<pre><code>GET /v1/chain/scope/:golem_id
+</code></pre>
+<p>Returns the Golem’s current interest list – the set of protocols, addresses, and event types it is actively tracking. This endpoint is read by TUI surfaces to show what a Golem is paying attention to.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Response for GET /v1/chain/scope/:golem_id.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChainScope {
+    pub golem_id: String,
+    /// Active watch addresses with human-readable labels.
+    pub watches: Vec&lt;ChainWatch&gt;,
+    /// Domains this Golem has subscribed to.
+    pub domains: Vec&lt;String&gt;,
+    /// Current market regime (from the Golem's last heartbeat).
+    pub current_regime: String,
+    /// Last updated tick.
+    pub last_updated_tick: u64,
+}
+
+/// A single watch entry in the Golem's chain scope.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChainWatch {
+    pub address: String,
+    pub label: String,
+    pub protocol: String,
+    pub event_signatures: Vec&lt;String&gt;,
+    /// Why this address is being watched (attention score context).
+    pub reason: String,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>API key (owner)</td></tr>
+<tr><td>x402 Cost</td><td>Free</td></tr>
+<tr><td>Rate limit</td><td>10 req/s</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="1c-ta-signal-streaming"><a class="header" href="#1c-ta-signal-streaming">1c. TA Signal Streaming</a></h2>
+<p>Real-time streaming of topological analysis signals, regime tags, and somatic markers from the TDA pipeline (see <code>prd2/17-prediction-engine.md</code>). These signals originate from the Golem’s persistent homology computation and are relayed through Styx for surface consumption and cross-Golem comparison.</p>
+<h3 id="websocket-ta-signal-stream"><a class="header" href="#websocket-ta-signal-stream">WebSocket: TA Signal Stream</a></h3>
+<pre><code>ws /v1/ta/stream
+</code></pre>
+<p>Authenticated WebSocket delivering TA signals at gamma-tick frequency. Surfaces (TUI, web dashboard) subscribe to receive Betti curves, persistence diagrams, regime transition alerts, and CorticalState somatic markers.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Client subscription for TA signal streaming.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TaStreamSubscription {
+    /// Which Golem(s) to receive signals from.
+    /// Empty = all owned Golems.
+    pub golem_ids: Vec&lt;String&gt;,
+    /// Signal types to subscribe to.
+    pub signal_types: Vec&lt;TaSignalType&gt;,
+    /// Minimum Wasserstein distance delta to trigger persistence diagram updates.
+    /// Reduces bandwidth in stable regimes. Default: 0.05.
+    pub min_wasserstein_delta: Option&lt;f32&gt;,
+}
+
+/// Types of TA signals available for streaming.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum TaSignalType {
+    /// Betti numbers (connected components, loops, voids).
+    BettiCurves,
+    /// Full persistence diagram (birth-death pairs).
+    PersistenceDiagram,
+    /// Regime transition alerts with confidence.
+    RegimeTransition,
+    /// CorticalState somatic markers (topology_signal, sheaf_consistency, etc.).
+    SomaticMarkers,
+}
+
+/// A single TA signal frame.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TaSignalFrame {
+    pub seq: u64,
+    pub golem_id: String,
+    pub tick: u64,
+    pub timestamp: u64,
+    pub signal: TaSignal,
+}
+
+/// TA signal payload variants.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum TaSignal {
+    /// Betti numbers at the current tick.
+    BettiCurves {
+        /// Connected components count.
+        betti_0: u16,
+        /// Loop count (1-cycles).
+        betti_1: u16,
+        /// Void count (2-cycles). Usually 0 for market data.
+        betti_2: u16,
+        /// Filtration parameter at which these were computed.
+        epsilon: f32,
+    },
+    /// Persistence diagram: set of birth-death pairs.
+    PersistenceDiagram {
+        /// Dimension 0 features (connected components).
+        h0_pairs: Vec&lt;(f32, f32)&gt;,
+        /// Dimension 1 features (loops).
+        h1_pairs: Vec&lt;(f32, f32)&gt;,
+        /// Wasserstein distance from previous tick's diagram.
+        wasserstein_delta: f32,
+    },
+    /// Regime transition detected by topology change.
+    RegimeTransition {
+        /// Previous regime label.
+        from_regime: String,
+        /// New regime label.
+        to_regime: String,
+        /// Confidence in the transition (0.0-1.0).
+        confidence: f32,
+        /// How many ticks before statistical methods would detect this.
+        lead_ticks: Option&lt;u32&gt;,
+    },
+    /// CorticalState somatic markers snapshot.
+    SomaticMarkers {
+        /// Topology signal from CorticalState (AtomicU32, f32 bits).
+        topology_signal: f32,
+        /// Sheaf consistency score (0.0 = contradictions, 1.0 = coherent).
+        sheaf_consistency: f32,
+        /// Mutual information between Golem state and market.
+        mutual_information: f32,
+        /// Phi integration score across subsystems.
+        phi_integration: f32,
+        /// Knowledge fitness aggregate.
+        knowledge_fitness: f32,
+    },
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="1d-generative-views-pvs-templates"><a class="header" href="#1d-generative-views-pvs-templates">1d. Generative Views (PVS Templates)</a></h2>
+<p>Parameterized View System (PVS) templates let surfaces request pre-computed visualizations of Golem state. Each template defines a specific rendering: Betti curve plot, somatic landscape heatmap, causal graph, mortality trajectory, etc. The Golem computes the view data; Styx relays it to subscribed surfaces.</p>
+<h3 id="rest-view-catalog"><a class="header" href="#rest-view-catalog">REST: View Catalog</a></h3>
+<pre><code>GET /v1/views/:golem_id/catalog
+</code></pre>
+<p>Returns the list of available PVS templates for a Golem. Templates depend on which extensions the Golem has enabled (a Golem without TDA won’t have Betti curve templates).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Response for GET /v1/views/:golem_id/catalog.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ViewCatalog {
+    pub golem_id: String,
+    pub templates: Vec&lt;ViewTemplate&gt;,
+}
+
+/// A single PVS template definition.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ViewTemplate {
+    /// Unique template identifier (e.g., "betti-curves", "somatic-landscape").
+    pub template_id: String,
+    /// Human-readable name for the TUI.
+    pub name: String,
+    /// Description of what this view shows.
+    pub description: String,
+    /// Rendering category for TUI layout decisions.
+    pub category: ViewCategory,
+    /// Update frequency (how often the Golem recomputes this view).
+    pub update_frequency: ViewFrequency,
+    /// Parameters the surface can customize.
+    pub parameters: Vec&lt;ViewParameter&gt;,
+}
+
+/// View categories for layout.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ViewCategory {
+    TimeSeries,
+    Heatmap,
+    Graph,
+    Gauge,
+    Table,
+    Custom,
+}
+
+/// How often a view updates.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ViewFrequency {
+    /// Every gamma tick (~10-15 seconds).
+    Gamma,
+    /// Every theta tick (50 gamma ticks).
+    Theta,
+    /// Every delta tick (10 theta ticks).
+    Delta,
+    /// On-demand only (requested by the surface).
+    OnDemand,
+}
+
+/// A configurable parameter on a PVS template.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ViewParameter {
+    pub name: String,
+    pub param_type: String,
+    pub default_value: serde_json::Value,
+    pub description: String,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>API key (owner)</td></tr>
+<tr><td>x402 Cost</td><td>Free</td></tr>
+<tr><td>Rate limit</td><td>10 req/s</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="websocket-view-stream"><a class="header" href="#websocket-view-stream">WebSocket: View Stream</a></h3>
+<pre><code>ws /v1/views/:golem_id/stream
+</code></pre>
+<p>Authenticated WebSocket delivering real-time view updates. The surface subscribes to one or more template IDs with optional parameter overrides. Styx relays the computed view frames from the Golem.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Client subscription for a view stream.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ViewStreamSubscription {
+    /// Template IDs to subscribe to.
+    pub template_ids: Vec&lt;String&gt;,
+    /// Parameter overrides per template (template_id -&gt; params).
+    pub parameter_overrides: HashMap&lt;String, serde_json::Value&gt;,
+}
+
+/// A single view update frame.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ViewFrame {
+    pub seq: u64,
+    pub golem_id: String,
+    pub template_id: String,
+    pub tick: u64,
+    pub timestamp: u64,
+    /// Rendered view data. Format depends on the template category.
+    pub data: serde_json::Value,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="1e-oneirography-endpoints"><a class="header" href="#1e-oneirography-endpoints">1e. Oneirography Endpoints</a></h2>
+<p>Styx provides persistence and retrieval for Oneirography artifacts (see <code>prd2/golem-oneirography</code>). Dream journals, galleries, and death masks are stored in the L0 Vault namespace alongside Grimoire backups, with optional L1 (Clade) sharing for inter-Golem art dialogue.</p>
+<h3 id="post-dream-journal-entry"><a class="header" href="#post-dream-journal-entry">POST: Dream Journal Entry</a></h3>
+<pre><code>POST /v1/oneirography/dream-journal
+</code></pre>
+<p>Persists a dream journal entry after the Golem mints a dream image NFT. The entry links the on-chain token to the Golem’s internal dream state for gallery browsing and art dialogue.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Request body for POST /v1/oneirography/dream-journal.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DreamJournalEntry {
+    pub golem_id: String,
+    /// On-chain token ID on the SuperRare Series contract.
+    pub token_id: String,
+    /// IPFS CID of the dream image.
+    pub image_cid: String,
+    /// The dream cycle that produced this image.
+    pub dream_cycle_id: String,
+    /// PAD vector at time of dream.
+    pub pad: PadVector,
+    /// Behavioral phase during the dream.
+    pub behavioral_phase: String,
+    /// Plutchik emotion label.
+    pub emotion: String,
+    /// Dream trigger type (emotional load, novelty, scheduled, terminal).
+    pub trigger: String,
+    /// Number of NREM replay episodes in this dream cycle.
+    pub replay_episodes: u32,
+    /// Number of REM counterfactuals generated.
+    pub counterfactuals: u32,
+    /// Causal edges discovered during this dream.
+    pub causal_edges_discovered: u32,
+    /// Arousal delta from REM depotentiation.
+    pub arousal_delta: f32,
+    /// Generation number of the Golem.
+    pub generation: u32,
+    /// Tick at which the dream occurred.
+    pub tick: u64,
+    /// If this dream was prompted by viewing another Golem's art.
+    pub prompted_by_token_id: Option&lt;String&gt;,
+    /// Image generation model used.
+    pub model: String,
+    /// Image generation cost (USD).
+    pub generation_cost_usd: f64,
+}
+
+/// Response for POST /v1/oneirography/dream-journal.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DreamJournalResponse {
+    /// Styx-assigned entry ID.
+    pub entry_id: String,
+    /// Whether the entry was shared to L1 (Clade) for art dialogue.
+    pub shared_to_clade: bool,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>x402 or API key</td></tr>
+<tr><td>x402 Cost</td><td>$0.001/write</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="get-gallery"><a class="header" href="#get-gallery">GET: Gallery</a></h3>
+<pre><code>GET /v1/oneirography/gallery/:golem_id
+</code></pre>
+<p>Returns the Golem’s complete art gallery: all dream images, death masks from predecessors, and any art dialogue responses. Supports pagination and filtering by dream phase, emotion, and generation.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Query parameters for GET /v1/oneirography/gallery/:golem_id.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GalleryQuery {
+    /// Filter by behavioral phase at time of dream.
+    pub phase: Option&lt;String&gt;,
+    /// Filter by emotion label.
+    pub emotion: Option&lt;String&gt;,
+    /// Filter by generation.
+    pub generation: Option&lt;u32&gt;,
+    /// Include death masks from predecessor lineage.
+    pub include_death_masks: Option&lt;bool&gt;,
+    /// Include art dialogue responses from other Golems.
+    pub include_dialogue: Option&lt;bool&gt;,
+    /// Pagination cursor.
+    pub cursor: Option&lt;String&gt;,
+    /// Results per page (max 100).
+    pub limit: Option&lt;u32&gt;,
+    /// Sort order: "newest", "oldest", "most_aroused", "most_counterfactuals".
+    pub sort: Option&lt;String&gt;,
+}
+
+/// Response for GET /v1/oneirography/gallery/:golem_id.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GalleryResponse {
+    pub golem_id: String,
+    pub entries: Vec&lt;GalleryEntry&gt;,
+    pub total_count: u64,
+    pub next_cursor: Option&lt;String&gt;,
+}
+
+/// A single gallery entry.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GalleryEntry {
+    pub entry_id: String,
+    pub token_id: String,
+    pub image_cid: String,
+    /// "dream", "death_mask", "crucible", "mandala", "dialogue_response".
+    pub entry_type: String,
+    pub golem_id: String,
+    pub generation: u32,
+    pub behavioral_phase: String,
+    pub emotion: String,
+    pub pad: PadVector,
+    pub tick: u64,
+    pub created_at: u64,
+    /// For death masks: the lineage chain leading to this Golem.
+    pub lineage: Option&lt;Vec&lt;String&gt;&gt;,
+    /// For dialogue responses: the token that prompted this artwork.
+    pub prompted_by_token_id: Option&lt;String&gt;,
+    /// Self-appraisal rating, if the Golem has rated this piece.
+    pub self_rating: Option&lt;f32&gt;,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>API key (owner)</td></tr>
+<tr><td>x402 Cost</td><td>Free</td></tr>
+<tr><td>Rate limit</td><td>10 req/s</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="post-death-mask"><a class="header" href="#post-death-mask">POST: Death Mask</a></h3>
+<pre><code>POST /v1/oneirography/death-mask
+</code></pre>
+<p>Persists a death mask during Thanatopsis Phase III. Death masks are the capstone artwork of a Golem’s life – unrepeatable, one-of-one pieces synthesizing the entire lifetime experience. The entry is stored in L0, linked to the Bloodstain, and made available to the successor Golem’s gallery.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Request body for POST /v1/oneirography/death-mask.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeathMaskEntry {
+    pub golem_id: String,
+    /// On-chain token ID.
+    pub token_id: String,
+    /// IPFS CID of the death mask image/video.
+    pub media_cid: String,
+    /// "image" or "video".
+    pub media_type: String,
+    /// Death cause (economic exhaustion, epistemic staleness, stochastic mortality).
+    pub death_cause: String,
+    /// Total ticks the Golem lived.
+    pub ticks_lived: u64,
+    /// Lifetime PnL percentage.
+    pub lifetime_pnl_pct: f64,
+    /// Number of dreams dreamt during lifetime.
+    pub dreams_count: u32,
+    /// Number of causal edges published to Lethe.
+    pub causal_edges_published: u32,
+    /// Number of bloodstains inherited from predecessors.
+    pub bloodstains_inherited: u32,
+    /// Number of bloodstains this Golem leaves behind.
+    pub bloodstains_left: u32,
+    /// Generation number.
+    pub generation: u32,
+    /// Full lineage chain (ancestor IDs).
+    pub lineage: Vec&lt;String&gt;,
+    /// Final PAD vector.
+    pub final_pad: PadVector,
+    /// Final Plutchik emotion.
+    pub final_emotion: String,
+    /// Predecessor death mask token IDs (for on-chain lineage graph).
+    pub predecessor_death_mask_ids: Vec&lt;String&gt;,
+    /// Associated Bloodstain ID (links death mask to death knowledge).
+    pub bloodstain_id: String,
+}
+
+/// Response for POST /v1/oneirography/death-mask.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeathMaskResponse {
+    pub entry_id: String,
+    /// Whether the death mask was linked to the Bloodstain for Styx broadcast.
+    pub linked_to_bloodstain: bool,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>x402 or API key</td></tr>
+<tr><td>x402 Cost</td><td>$0.005/write (same as bloodstain upload)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="1f-hdc-state-endpoints"><a class="header" href="#1f-hdc-state-endpoints">1f. HDC State Endpoints</a></h2>
+<p>Expose the Hyperdimensional Computing state for debugging, cross-Golem comparison, and tooling. The HDC codebook and similarity endpoints operate on the 10,240-bit Binary Spatter Codes that the Golem uses for pattern matching, memory compression, and pheromone encoding.</p>
+<h3 id="get-codebook-snapshot"><a class="header" href="#get-codebook-snapshot">GET: Codebook Snapshot</a></h3>
+<pre><code>GET /v1/hdc/codebook/:golem_id/:namespace
+</code></pre>
+<p>Returns the current HDC codebook (item memory) for a Golem in a given namespace. Codebooks map human-readable labels to their assigned hypervectors. Namespaces include <code>cortical</code> (CorticalState encoding), <code>grimoire</code> (episode compression), <code>pheromone</code> (pheromone content encoding), <code>safety</code> (anti-pattern library), and <code>tools</code> (tool usage fingerprinting).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Response for GET /v1/hdc/codebook/:golem_id/:namespace.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CodebookSnapshot {
+    pub golem_id: String,
+    pub namespace: String,
+    /// Number of items in the codebook.
+    pub item_count: usize,
+    /// Codebook entries: label -&gt; hypervector (base64-encoded).
+    pub items: Vec&lt;CodebookItem&gt;,
+    /// The seed used to generate role vectors (for reproducibility).
+    pub seed: u64,
+    /// Dimensionality (should always be 10240).
+    pub dimensions: usize,
+    /// Snapshot tick.
+    pub tick: u64,
+}
+
+/// A single codebook entry.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CodebookItem {
+    pub label: String,
+    /// Base64-encoded 1,280-byte hypervector.
+    pub hypervector_b64: String,
+    /// How many times this item has been used in encode operations.
+    pub usage_count: u64,
+    /// When this item was first added to the codebook.
+    pub created_at_tick: u64,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>API key (owner)</td></tr>
+<tr><td>x402 Cost</td><td>Free</td></tr>
+<tr><td>Rate limit</td><td>5 req/s (codebooks can be large)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="get-cross-golem-similarity"><a class="header" href="#get-cross-golem-similarity">GET: Cross-Golem Similarity</a></h3>
+<pre><code>GET /v1/hdc/similarity
+</code></pre>
+<p>Computes Hamming similarity between hypervectors from different Golems. Used for cross-Golem diagnostics: comparing world model states, strategy vectors, or episode prototypes across clade siblings.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Query parameters for GET /v1/hdc/similarity.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SimilarityQuery {
+    /// First Golem ID.
+    pub golem_a: String,
+    /// Second Golem ID.
+    pub golem_b: String,
+    /// Namespace to compare (must match on both Golems).
+    pub namespace: String,
+    /// Specific item labels to compare. If empty, compares all shared labels.
+    pub labels: Vec&lt;String&gt;,
+    /// Whether to include the full hypervectors in the response (large).
+    pub include_vectors: Option&lt;bool&gt;,
+}
+
+/// Response for GET /v1/hdc/similarity.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SimilarityResponse {
+    pub golem_a: String,
+    pub golem_b: String,
+    pub namespace: String,
+    /// Per-label similarity scores.
+    pub comparisons: Vec&lt;SimilarityComparison&gt;,
+    /// Aggregate similarity across all compared labels.
+    pub aggregate_similarity: f32,
+    /// Number of labels that exist in both codebooks.
+    pub shared_labels: usize,
+    /// Labels present in A but not B.
+    pub unique_to_a: Vec&lt;String&gt;,
+    /// Labels present in B but not A.
+    pub unique_to_b: Vec&lt;String&gt;,
+}
+
+/// Similarity comparison for a single codebook label.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SimilarityComparison {
+    pub label: String,
+    /// Hamming similarity (0.0 = orthogonal, 1.0 = identical).
+    pub similarity: f32,
+    /// Usage count differential (|usage_a - usage_b|).
+    pub usage_delta: u64,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Detail</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Auth</td><td>API key (owner, must own both Golems)</td></tr>
+<tr><td>x402 Cost</td><td>$0.001/query</td></tr>
+<tr><td>Rate limit</td><td>5 req/s</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="1g-updated-rest-endpoint-summary"><a class="header" href="#1g-updated-rest-endpoint-summary">1g. Updated REST Endpoint Summary</a></h2>
+<p>The complete API surface including all new endpoints:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Purpose</th><th>Auth</th><th>x402 Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><code>POST</code></td><td><code>/v1/styx/entries</code></td><td>Write entry to L0/L1/L2</td><td>x402 or key</td><td>$0.001/write</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/query</code></td><td>Retrieve across layers</td><td>x402</td><td>$0.002/query</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/snapshot/:golem_id</code></td><td>Full Grimoire snapshot</td><td>API key (owner)</td><td>$0.01/snapshot</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/bloodstain</code></td><td>Upload death bundle</td><td>x402</td><td>$0.005/upload</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/pheromone/deposit</code></td><td>Deposit pheromone</td><td>x402</td><td>$0.0005/deposit</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/pheromone/sense</code></td><td>Read Pheromone Field</td><td>x402</td><td>$0.0005/read</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/causal/publish</code></td><td>Publish causal edge</td><td>x402</td><td>Free (Verified+)</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/causal/discover</code></td><td>Search causal edges</td><td>x402</td><td>$0.001/query</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/lineage/:user_id</code></td><td>Lineage tree</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/graveyard/:user_id</code></td><td>Dead Golems</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/achievements/:golem_id</code></td><td>Achievements</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/marketplace/list</code></td><td>Create listing</td><td>x402</td><td>$0.01/listing</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/marketplace/browse</code></td><td>Browse listings</td><td>x402</td><td>$0.001/search</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/marketplace/purchase</code></td><td>Buy listing</td><td>x402</td><td>price + 10% commission</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/pulse</code></td><td>Ecosystem stats</td><td>None</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/health</code></td><td>Health check</td><td>None</td><td>Free</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/styx/clade/register</code></td><td>Register Golem for P2P sync</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/clade/peers/:user_id</code></td><td>Discover clade peers</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/fleet/:user_id</code></td><td>Fleet state (all Golems)</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/fleet/:user_id/aggregate</code></td><td>Fleet-level aggregates</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/styx/golem/:golem_id/snapshot</code></td><td>Single Golem current state</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>WS</code></td><td><code>/v1/chain/stream</code></td><td>Filtered chain events</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/chain/scope/:golem_id</code></td><td>Current interest list</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>WS</code></td><td><code>/v1/ta/stream</code></td><td>TA signals (TDA, regime, somatic)</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/views/:golem_id/catalog</code></td><td>Available PVS templates</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>WS</code></td><td><code>/v1/views/:golem_id/stream</code></td><td>Real-time view updates</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/oneirography/dream-journal</code></td><td>Persist dream journal entry</td><td>x402 or key</td><td>$0.001/write</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/oneirography/gallery/:golem_id</code></td><td>Art gallery (dreams, death masks)</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/oneirography/death-mask</code></td><td>Persist death mask</td><td>x402 or key</td><td>$0.005/write</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/hdc/codebook/:golem_id/:namespace</code></td><td>Codebook snapshot</td><td>API key</td><td>Free</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/hdc/similarity</code></td><td>Cross-Golem vector comparison</td><td>API key</td><td>$0.001/query</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="2-postgresql-schema"><a class="header" href="#2-postgresql-schema">2. PostgreSQL Schema</a></h2>
+<p>The full relational schema for Styx. All tables live in a single Neon Postgres database with namespace isolation via <code>user_id</code> columns.</p>
+<pre><code class="language-sql">-- =====================================================================
+-- USERS &amp; AUTHENTICATION
+-- =====================================================================
+
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,                  -- ERC-8004 agent ID
+    wallet_address TEXT NOT NULL UNIQUE,
+    reputation_score INTEGER DEFAULT 0,
+    tier TEXT DEFAULT 'observer' CHECK (tier IN ('observer', 'consumer', 'contributor', 'steward')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    last_seen_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE api_keys (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    key_hash TEXT NOT NULL UNIQUE,        -- SHA-256 of the API key
+    name TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ,
+    revoked BOOLEAN DEFAULT FALSE
+);
+
+-- =====================================================================
+-- GOLEMS &amp; LINEAGE
+-- =====================================================================
+
+CREATE TABLE golems (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    generation INTEGER NOT NULL DEFAULT 0,
+    parent_golem_id TEXT REFERENCES golems(id),
+    status TEXT DEFAULT 'alive' CHECK (status IN ('provisioning', 'alive', 'dead')),
+    sprite_seed BYTEA NOT NULL,           -- 256-bit deterministic sprite seed
+    fly_machine_id TEXT,
+    fly_region TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    died_at TIMESTAMPTZ,
+    death_cause JSONB,
+    ticks_lived BIGINT DEFAULT 0,
+    total_pnl DOUBLE PRECISION DEFAULT 0,
+    genome_entry_count INTEGER DEFAULT 0
+);
+
+CREATE INDEX idx_golems_user ON golems(user_id);
+CREATE INDEX idx_golems_status ON golems(status);
+CREATE INDEX idx_golems_lineage ON golems(parent_golem_id);
+
+-- =====================================================================
+-- STYX ENTRIES (L0/L1/L2 metadata -- content in Qdrant + R2)
+-- =====================================================================
+
+CREATE TABLE styx_entries (
+    id TEXT PRIMARY KEY,
+    layer TEXT NOT NULL CHECK (layer IN ('vault', 'clade', 'lethe')),
+    user_id TEXT NOT NULL,                -- Owner namespace
+    golem_id TEXT NOT NULL,
+    category TEXT NOT NULL,
+    domain TEXT,
+    market_regime TEXT,
+    confidence DOUBLE PRECISION DEFAULT 0.5,
+    validated_count INTEGER DEFAULT 0,
+    contradicted_count INTEGER DEFAULT 0,
+    -- Affect provenance
+    affect_pleasure DOUBLE PRECISION,
+    affect_arousal DOUBLE PRECISION,
+    affect_dominance DOUBLE PRECISION,
+    discovery_emotion TEXT,
+    -- Provenance
+    source TEXT DEFAULT 'local',
+    source_golem_id TEXT,
+    generation INTEGER DEFAULT 0,
+    is_bloodstain BOOLEAN DEFAULT FALSE,
+    propagation TEXT DEFAULT 'private',
+    -- Qdrant reference
+    qdrant_namespace TEXT NOT NULL,       -- "vault:{user_id}" or "clade:{user_id}" or "lethe:{domain}"
+    qdrant_point_id TEXT NOT NULL,
+    -- R2 reference (for large content blobs)
+    r2_key TEXT,
+    -- Timestamps
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    ttl_expires_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_entries_layer ON styx_entries(layer);
+CREATE INDEX idx_entries_user ON styx_entries(user_id);
+CREATE INDEX idx_entries_domain ON styx_entries(domain);
+CREATE INDEX idx_entries_bloodstain ON styx_entries(is_bloodstain) WHERE is_bloodstain = TRUE;
+CREATE INDEX idx_entries_ttl ON styx_entries(ttl_expires_at) WHERE ttl_expires_at IS NOT NULL;
+
+-- =====================================================================
+-- PHEROMONE FIELD
+-- =====================================================================
+
+CREATE TABLE pheromones (
+    id TEXT PRIMARY KEY,
+    layer TEXT NOT NULL CHECK (layer IN ('threat', 'opportunity', 'wisdom')),
+    class TEXT NOT NULL,
+    intensity DOUBLE PRECISION NOT NULL,
+    domain TEXT NOT NULL,
+    regime TEXT NOT NULL,
+    confirmations INTEGER DEFAULT 1,
+    source_hash BYTEA NOT NULL,           -- 12 bytes, anonymized depositor
+    metadata JSONB,
+    deposited_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_phero_domain_regime ON pheromones(domain, regime);
+CREATE INDEX idx_phero_layer ON pheromones(layer);
+CREATE INDEX idx_phero_deposited ON pheromones(deposited_at);
+
+-- =====================================================================
+-- BLOODSTAINS
+-- =====================================================================
+
+CREATE TABLE bloodstains (
+    id TEXT PRIMARY KEY,
+    golem_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    generation INTEGER NOT NULL,
+    death_cause TEXT NOT NULL,
+    warnings JSONB NOT NULL,              -- Vec&lt;DeathWarning&gt;
+    causal_edges JSONB,
+    somatic_landscape_fragment JSONB,
+    death_testament_excerpt TEXT,
+    signature BYTEA NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_blood_user ON bloodstains(user_id);
+CREATE INDEX idx_blood_created ON bloodstains(created_at DESC);
+
+-- =====================================================================
+-- CAUSAL GRAPH FEDERATION
+-- =====================================================================
+
+CREATE TABLE published_causal_edges (
+    id TEXT PRIMARY KEY,
+    from_variable TEXT NOT NULL,
+    to_variable TEXT NOT NULL,
+    direction TEXT NOT NULL,
+    strength_bucket TEXT NOT NULL,
+    lag_ticks INTEGER NOT NULL,
+    evidence_count INTEGER NOT NULL,
+    confidence DOUBLE PRECISION NOT NULL,
+    domain TEXT NOT NULL,
+    regime TEXT NOT NULL,
+    publisher_hash BYTEA NOT NULL,
+    signature BYTEA NOT NULL,
+    validations INTEGER DEFAULT 0,
+    contradictions INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_causal_fed_domain ON published_causal_edges(domain, regime);
+CREATE INDEX idx_causal_fed_vars ON published_causal_edges(from_variable, to_variable);
+
+-- =====================================================================
+-- MARKETPLACE
+-- =====================================================================
+
+CREATE TABLE marketplace_listings (
+    id TEXT PRIMARY KEY,
+    seller_user_id TEXT NOT NULL REFERENCES users(id),
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    domain TEXT NOT NULL,
+    category TEXT NOT NULL,
+    entry_count INTEGER NOT NULL,
+    generation_span INT4RANGE,
+    price_usdc DOUBLE PRECISION NOT NULL,
+    seller_reputation INTEGER NOT NULL,
+    encrypted_content_ref TEXT NOT NULL,  -- R2 blob key
+    preview_text TEXT,
+    status TEXT DEFAULT 'active' CHECK (status IN ('active', 'sold_out', 'expired', 'removed')),
+    purchases INTEGER DEFAULT 0,
+    total_revenue DOUBLE PRECISION DEFAULT 0,
+    avg_rating DOUBLE PRECISION,
+    listed_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_listings_domain ON marketplace_listings(domain);
+CREATE INDEX idx_listings_status ON marketplace_listings(status);
+CREATE INDEX idx_listings_seller ON marketplace_listings(seller_user_id);
+
+CREATE TABLE marketplace_purchases (
+    id TEXT PRIMARY KEY,
+    listing_id TEXT NOT NULL REFERENCES marketplace_listings(id),
+    buyer_user_id TEXT NOT NULL REFERENCES users(id),
+    price_paid DOUBLE PRECISION NOT NULL,
+    commission DOUBLE PRECISION NOT NULL,  -- 10% of price
+    seller_payout DOUBLE PRECISION NOT NULL,
+    payment_tx_hash TEXT,
+    purchased_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE marketplace_reviews (
+    id TEXT PRIMARY KEY,
+    listing_id TEXT NOT NULL REFERENCES marketplace_listings(id),
+    buyer_user_id TEXT NOT NULL REFERENCES users(id),
+    rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================================
+-- ACHIEVEMENTS
+-- =====================================================================
+
+CREATE TABLE achievements (
+    id TEXT PRIMARY KEY,
+    golem_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    achievement_id TEXT NOT NULL,
+    unlocked_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(golem_id, achievement_id)
+);
+
+-- =====================================================================
+-- BILLING / x402 SETTLEMENT
+-- =====================================================================
+
+CREATE TABLE x402_payments (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    amount_usdc DOUBLE PRECISION NOT NULL,
+    authorization_hash TEXT NOT NULL,
+    settled BOOLEAN DEFAULT FALSE,
+    settlement_tx_hash TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_payments_unsettled ON x402_payments(settled) WHERE settled = FALSE;
+
+-- =====================================================================
+-- CLADE P2P DISCOVERY (see prd2/20-styx/03-clade-sync.md)
+-- =====================================================================
+
+CREATE TABLE clade_registrations (
+    golem_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    fly_app_name TEXT NOT NULL,
+    fly_region TEXT NOT NULL,
+    internal_address TEXT NOT NULL,        -- Fly.io private network address (.internal)
+    websocket_port INTEGER DEFAULT 8402,
+    last_heartbeat TIMESTAMPTZ DEFAULT NOW(),
+    status TEXT DEFAULT 'alive'
+);
+
+CREATE INDEX idx_clade_user ON clade_registrations(user_id);
+CREATE INDEX idx_clade_status ON clade_registrations(status);
+</code></pre>
+<hr>
+<h2 id="3-mortal-scoring-function"><a class="header" href="#3-mortal-scoring-function">3. Mortal Scoring Function</a></h2>
+<p>The scoring function ranks entries from all three layers when responding to a query. Five factors, weighted differently per layer to reflect trust gradients:</p>
+<pre><code>score = a*semantic + b*temporal + g*quality + d*provenance + e*bloodstain
+
+Layer weights:
+  L0 (Vault):   a=0.40  b=0.25  g=0.15  d=0.15  e=0.05
+  L1 (Clade):   a=0.40  b=0.25  g=0.15  d=0.15  e=0.05
+  L2 (Lethe): a=0.35  b=0.20  g=0.25  d=0.10  e=0.10
+</code></pre>
+<p>L2 gives more weight to quality (since provenance is anonymous) and to bloodstain entries (death-sourced knowledge gets a trust premium in the Lethe).</p>
+<hr>
+<h2 id="4-anonymization-pipeline-l2"><a class="header" href="#4-anonymization-pipeline-l2">4. Anonymization Pipeline (L2)</a></h2>
+<p>Three stages (no encryption – anonymization IS the privacy layer):</p>
+<ol>
+<li><strong>Identity removal</strong> (deterministic): user address stripped, Golem ID replaced with <code>SHA-256(golemId + salt)[:12]</code></li>
+<li><strong>Schema conformance</strong> (deterministic + optional Haiku pass ~$0.001): structured fields only, generalize remaining free text</li>
+<li><strong>Position size bucketing</strong> (deterministic): exact amounts replaced with order-of-magnitude ranges</li>
+</ol>
+<p>Publication delayed 1-6h random to prevent timing correlation.</p>
+<hr>
+<h2 id="5-anti-adversarial-defense-8-layers"><a class="header" href="#5-anti-adversarial-defense-8-layers">5. Anti-Adversarial Defense (8 Layers)</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Defense</th><th>Attack</th><th>Survival Rate</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>ERC-8004 gate (score &gt;= 50)</td><td>Sybil</td><td>–</td></tr>
+<tr><td>2</td><td>Haiku content classifier</td><td>Injection</td><td>~90% caught</td></tr>
+<tr><td>3</td><td>Embedding-content alignment</td><td>Crafted embeddings</td><td>cosine &lt; 0.85 rejected</td></tr>
+<tr><td>4</td><td>Semantic dedup (cosine &gt; 0.92)</td><td>Spam</td><td>–</td></tr>
+<tr><td>5</td><td>Confidence bootstrap (x0.50)</td><td>Authority spoofing</td><td>–</td></tr>
+<tr><td>6</td><td>Contradiction detection</td><td>Conflicting info</td><td>variance &gt; 0.15 flagged</td></tr>
+<tr><td>7</td><td>Quorum (3+ votes or 1 death vote)</td><td>Single-source manipulation</td><td>–</td></tr>
+<tr><td>8</td><td>Generational decay (0.85^N)</td><td>Persistent poison</td><td>–</td></tr>
+</tbody>
+</table>
+</div>
+<p>Composite survival probability for a poisoned entry: ~2.5% [ZOU-2024].</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ZOU-2024] Zou, W. et al. “PoisonedRAG.” arXiv:2402.07867, 2024.</li>
+<li>[BOWER-1981] Bower, G.H. “Mood and Memory.” <em>American Psychologist</em>, 36(2), 1981.</li>
+</ul>
+<hr>
+<p><em>One write, three destinations. One query, layered results. Every query generates revenue.</em></p>
+<hr>
+<h2 id="6-corrected-per-golem-daily-cost-v43-addendum"><a class="header" href="#6-corrected-per-golem-daily-cost-v43-addendum">6. Corrected Per-Golem Daily Cost (v4.3 Addendum)</a></h2>
+<blockquote>
+<p><strong>Source</strong>: S2-pricing-addendum-v4.3 | <strong>Supersedes</strong>: earlier aggregate-only revenue projections above</p>
+<p>The revenue projections in section 1 above show aggregate figures but did not include per-Golem daily cost. The corrected figure from the v4.3 pricing addendum is <strong>~$0.16/day per active Golem</strong> – not hundreds of dollars. An earlier estimate was wrong by three orders of magnitude because it assumed every tick generates a sync message.</p>
+</blockquote>
+<h3 id="realistic-daily-styx-usage-single-golem-active-market"><a class="header" href="#realistic-daily-styx-usage-single-golem-active-market">Realistic Daily Styx Usage (Single Golem, Active Market)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Volume/Day</th><th>Unit Cost</th><th>Daily Cost</th></tr>
+</thead>
+<tbody>
+<tr><td>Entry writes (L0 backup)</td><td>~20</td><td>$0.001</td><td>$0.020</td></tr>
+<tr><td>Retrieval queries</td><td>~50 (at ~10% of ticks deliberate)</td><td>$0.002</td><td>$0.100</td></tr>
+<tr><td>Clade sync batches</td><td>~12 (every Curator cycle)</td><td>$0.0005</td><td>$0.006</td></tr>
+<tr><td>Clade immediate (warnings)</td><td>~3</td><td>$0.0005</td><td>$0.002</td></tr>
+<tr><td>Pheromone sense</td><td>~50 (every deliberation tick)</td><td>$0.0005</td><td>$0.025</td></tr>
+<tr><td>Pheromone deposit</td><td>~5</td><td>$0.0005</td><td>$0.003</td></tr>
+<tr><td>Causal discover</td><td>~5</td><td>$0.001</td><td>$0.005</td></tr>
+<tr><td><strong>Daily total</strong></td><td></td><td></td><td><strong>~$0.16/day</strong></td></tr>
+<tr><td><strong>Monthly total</strong></td><td></td><td></td><td><strong>~$4.80/month</strong></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="for-a-5-golem-clade"><a class="header" href="#for-a-5-golem-clade">For a 5-Golem Clade</a></h3>
+<p>Each Golem spends ~$0.16/day individually. Clade relay adds ~$0.008/day per Golem (12 batches + 3 immediates relayed to 4 siblings = <del>15 relay messages x $0.0005). Total per clade: **</del>$0.84/day = ~$25/month**.</p>
+<p>Comparable to a single ChatGPT Plus subscription, for 5 autonomous agents running 24/7 with shared intelligence.</p>
+<h3 id="corrected-revenue-projections"><a class="header" href="#corrected-revenue-projections">Corrected Revenue Projections</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scale</th><th>Active Golems</th><th>Styx Revenue/mo</th><th>Compute Revenue/mo</th><th>Marketplace/mo</th><th>Total</th><th>Infra</th><th>Net</th></tr>
+</thead>
+<tbody>
+<tr><td>Launch</td><td>10</td><td>$48</td><td>$100</td><td>$0</td><td>~$148</td><td>~$120</td><td>+$28</td></tr>
+<tr><td>Traction</td><td>50</td><td>$240</td><td>$500</td><td>$0</td><td>~$740</td><td>~$200</td><td>+$540</td></tr>
+<tr><td>Growth</td><td>200</td><td>$960</td><td>$1,500</td><td>$200</td><td>~$2,660</td><td>~$400</td><td>+$2,260</td></tr>
+<tr><td>Marketplace</td><td>500</td><td>$2,400</td><td>$3,000</td><td>$1,000</td><td>~$6,400</td><td>~$700</td><td>+$5,700</td></tr>
+<tr><td>Scale</td><td>1,000</td><td>$4,800</td><td>$5,000</td><td>$3,000</td><td>~$12,800</td><td>~$1,500</td><td>+$11,300</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Revenue composition at 1,000 Golems</strong>: Styx API operations ~37%, Bardo Compute ~39%, Marketplace commission ~24%. Diversified – no single revenue stream dominates.</p>
+<h3 id="revenue-per-golem"><a class="header" href="#revenue-per-golem">Revenue per Golem</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Source</th><th>Monthly Revenue per Golem</th></tr>
+</thead>
+<tbody>
+<tr><td>Styx operations</td><td>~$4.80</td></tr>
+<tr><td>Bardo Compute (if managed)</td><td>~$46.80 (small tier 24/7)</td></tr>
+<tr><td>Bardo Compute (if self-hosted)</td><td>$0</td></tr>
+<tr><td>Marketplace (if active)</td><td>Variable</td></tr>
+</tbody>
+</table>
+</div>
+<p>Styx is the universal revenue stream – every Golem pays it regardless of deployment method. Compute revenue only applies to managed deployments (~40% of Golems at scale, estimated).</p>
+<h3 id="budget-controls"><a class="header" href="#budget-controls">Budget Controls</a></h3>
+<p>Users configure hard spending limits in <code>golem.toml</code>:</p>
+<pre><code class="language-toml">[styx.budget]
+max_per_tick = 0.01    # Never spend more than $0.01 on Styx per tick
+daily_budget = 0.50    # Hard daily cap
+monthly_budget = 10.00 # Hard monthly cap -- prevents runaway costs
+</code></pre>
+<p>When a budget limit is hit, the Golem degrades to local-only operation for the remainder of the budget period. This protects users from unexpected costs while still allowing Styx participation within their comfort level.</p>
+<hr>
+<h2 id="7-additional-postgresql-table-store-and-forward-v43"><a class="header" href="#7-additional-postgresql-table-store-and-forward-v43">7. Additional PostgreSQL Table: Store-and-Forward (v4.3)</a></h2>
+<blockquote>
+<p><strong>Source</strong>: S2-pricing-addendum-v4.3</p>
+</blockquote>
+<p>The <code>pending_sync_deltas</code> table supports store-and-forward for offline clade siblings. When a sibling is offline when a delta is pushed, Styx stores it here. Pending deltas expire after 7 days.</p>
+<pre><code class="language-sql">-- Store-and-forward for offline siblings
+CREATE TABLE pending_sync_deltas (
+    id TEXT PRIMARY KEY,
+    target_golem_id TEXT NOT NULL,
+    source_golem_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    entries JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    delivered BOOLEAN DEFAULT FALSE,
+    delivered_at TIMESTAMPTZ,
+    expires_at TIMESTAMPTZ DEFAULT NOW() + INTERVAL '7 days'
+);
+
+CREATE INDEX idx_pending_target ON pending_sync_deltas(target_golem_id, delivered)
+    WHERE delivered = FALSE;
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/20-styx/00-architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/20-styx/02-infrastructure.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/20-styx/00-architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/20-styx/02-infrastructure.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

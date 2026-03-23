@@ -1,0 +1,953 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Stochastic Mortality - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/02-mortality/03-stochastic-mortality.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="stochastic-mortality-the-ever-present-risk-spec"><a class="header" href="#stochastic-mortality-the-ever-present-risk-spec">Stochastic Mortality: The Ever-Present Risk [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 4.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crate</strong>: <code>golem-mortality</code></p>
+<p><strong>Depends on</strong>: <code>01-architecture.md</code> (triple-clock system, vitality computation, fractal structure), <code>02-epistemic-decay.md</code> (epistemic decay replacing the Hayflick counter with predictive fitness tracking)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the stochastic mortality clock, which ensures no Bardo Golem (mortal autonomous DeFi agent) can ever be certain of its future. Even healthy agents face a small per-tick death probability, creating cooperation incentives from tick 1. The game-theoretic argument is that uncertain termination occupies the sweet spot between known-endpoint systems (which destroy cooperation via backward induction) and immortal systems (which have no urgency). Read <code>01-architecture.md</code> (triple-clock system, vitality computation) for how this clock composes with the economic and epistemic clocks. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="document-purpose"><a class="header" href="#document-purpose">Document Purpose</a></h2>
+<p>This document specifies the stochastic mortality clock – the third and most philosophically consequential of the three mortality pressures facing every Bardo Golem. Stochastic mortality ensures that no Golem can ever be certain of its future. Even the wealthiest, most accurate, most recently initialized agent faces a nonzero probability of immediate death on every tick. This probability is small for healthy Golems and increases with age and epistemic decay, but it is never zero.</p>
+<p>The purpose of stochastic mortality is not to kill Golems. Most Golems will die of epistemic decay or economic depletion long before stochastic mortality becomes statistically significant. The purpose is to change behavior from tick 1. The mere possibility of sudden death – the Heideggerian “indefinite certainty” – transforms how the Golem cooperates, shares knowledge, and prioritizes its actions. Stochastic mortality is a mechanism design tool, not a punishment.</p>
+<hr>
+<h2 id="why-uncertainty-matters-more-than-the-death-itself"><a class="header" href="#why-uncertainty-matters-more-than-the-death-itself">Why Uncertainty Matters More Than the Death Itself</a></h2>
+<h3 id="the-backward-induction-problem"><a class="header" href="#the-backward-induction-problem">The Backward Induction Problem</a></h3>
+<p>The most counterintuitive finding in game theory is that <strong>agents who do not know when they will die cooperate more than agents who do</strong>. The reasoning, formalized by Luce and Raiffa (1957), is precise:</p>
+<p>In a game with a <strong>known endpoint</strong> at round N:</p>
+<ol>
+<li>In round N, defection dominates (there is no future to protect)</li>
+<li>Both players know this, so in round N-1, defection also dominates (the future is defection)</li>
+<li>By induction, defection dominates in round N-2, N-3, … all the way back to round 1</li>
+<li><strong>Result</strong>: Rational agents defect from the very first round</li>
+</ol>
+<p>This is backward induction – the logical cascade that destroys cooperation whenever the game’s length is common knowledge. It applies directly to agent systems: a Golem that knows it will die at tick 100,000 can compute that sharing knowledge on tick 99,999 has zero future value, therefore tick 99,998, therefore tick 99,997, and so on. The defection cascade may not propagate all the way back to tick 1 in practice (bounded rationality limits the depth of backward induction), but it creates a measurable zone of declining cooperation near the end of life.</p>
+<p>An <strong>infinite horizon</strong> (immortal agents) removes the backward induction problem but creates a different pathology: no urgency. If the game never ends, there is always tomorrow. Knowledge sharing can always be deferred. Cooperation is rational but not urgent. The agent has no reason to act now rather than later.</p>
+<h3 id="the-kreps-milgrom-roberts-wilson-theorem"><a class="header" href="#the-kreps-milgrom-roberts-wilson-theorem">The Kreps-Milgrom-Roberts-Wilson Theorem</a></h3>
+<p>Kreps, Milgrom, Roberts, and Wilson (1982) proved the mathematical foundation for why uncertain termination is optimal. Their theorem demonstrates that <strong>even a small amount of uncertainty about game length breaks backward induction entirely</strong>, making cooperation rational for most of the game [KREPS-1982].</p>
+<p>The key insight: if there is even a small probability that the game continues past the “expected” endpoint, the backward induction chain breaks. Round N might not be the last round – so defection in round N is no longer dominant. If defection in N is not dominant, then the cascade does not propagate backward. Cooperation becomes rational for the vast majority of the game, with defection emerging only when the probability of continuation drops below a threshold determined by the payoff structure.</p>
+<h3 id="samuelsons-extension"><a class="header" href="#samuelsons-extension">Samuelson’s Extension</a></h3>
+<p>Samuelson (1987) strengthened this result by showing that <strong>private information about remaining rounds</strong> produces equilibrium cooperation in finite games. When each agent has private (noisy) information about when the game might end, the Nash equilibrium involves cooperation for a substantial fraction of the game. The more private the information, the more cooperation emerges.</p>
+<p>For Golems, this maps directly: each Golem knows its own hazard rate (it can compute it from its state), but it does not know the random roll for future ticks. Its mortality information is private in the temporal dimension – it knows the distribution but not the realization. This is precisely the condition Samuelson identified as maximally cooperation-promoting.</p>
+<h3 id="ohtsukis-death-birth-updating"><a class="header" href="#ohtsukis-death-birth-updating">Ohtsuki’s Death-Birth Updating</a></h3>
+<p>Ohtsuki et al. (2006) demonstrated in <em>Nature</em> that the <strong>order of death and birth matters for cooperation</strong>. In “death-birth” updating – where death comes first and birth follows – cooperators can be favored over defectors. In “birth-death” updating – where birth comes first and death follows – defectors are always favored. The mathematical condition is:</p>
+<pre><code>b/c &gt; k
+</code></pre>
+<p>Where <code>b</code> is the benefit to the recipient, <code>c</code> is the cost to the cooperator, and <code>k</code> is the average number of neighbors in the interaction network. When death precedes birth, this condition is easier to satisfy because death creates vacancies that cooperators’ neighbors can fill [OHTSUKI-2006].</p>
+<p>For Clades (sibling Golems sharing a common ancestor, exchanging knowledge through Styx), this is directly applicable. When a Golem dies (death), its owner may create a successor (birth) that inherits from the dead Golem’s knowledge. The death-birth ordering means that knowledge sharing (cooperation) is favored: the dying Golem’s knowledge benefits its Clade siblings (high <code>b</code>, since DeFi knowledge is immediately actionable) at relatively low cost to the dying agent (low <code>c</code>, since the Golem is dying anyway).</p>
+<h3 id="synthesis-the-optimal-mortality-regime"><a class="header" href="#synthesis-the-optimal-mortality-regime">Synthesis: The Optimal Mortality Regime</a></h3>
+<p>The game-theoretic evidence converges on a precise prescription for agent mortality:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mortality Type</th><th>Cooperation Effect</th><th>Urgency Effect</th><th>Combined Assessment</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Known endpoint</strong> (Hayflick)</td><td>Destroys cooperation via backward induction</td><td>High urgency near end, low urgency at start</td><td>Poor – cooperation collapses near death</td></tr>
+<tr><td><strong>Infinite horizon</strong> (Immortal)</td><td>Cooperation rational but not urgent</td><td>No urgency ever</td><td>Poor – knowledge sharing perpetually deferred</td></tr>
+<tr><td><strong>Stochastic</strong> (This design)</td><td>Cooperation rational at every point</td><td>Persistent moderate urgency</td><td>Optimal – cooperation and urgency coexist</td></tr>
+</tbody>
+</table>
+</div>
+<p>Stochastic mortality occupies the optimal middle ground: it maintains the shadow of the future (motivating cooperation) while avoiding both the backward induction catastrophe (that destroys cooperation near known endpoints) and the urgency vacuum (that makes immortal agents perpetual procrastinators).</p>
+<hr>
+<h2 id="the-gompertz-makeham-hazard-function"><a class="header" href="#the-gompertz-makeham-hazard-function">The Gompertz-Makeham Hazard Function</a></h2>
+<p>The per-tick death probability follows a Gompertz-Makeham hazard model – the same mathematical form that has modeled biological mortality since Benjamin Gompertz’s 1825 paper in the <em>Philosophical Transactions of the Royal Society</em>. The Gompertz-Makeham model separates mortality into age-independent and age-dependent components, capturing the biological reality that death can come from both background risks (accidents, disease) and intrinsic aging.</p>
+<h3 id="mathematical-form"><a class="header" href="#mathematical-form">Mathematical Form</a></h3>
+<pre><code>h(t) = lambda + alpha * exp(beta * t) * epsilon(t)
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>h(t)</code> = hazard rate at tick <code>t</code> (probability of death on tick <code>t</code>, given survival to tick <code>t</code>)</li>
+<li><code>lambda</code> = baseline hazard rate (age-independent, “hit by a bus” probability – the Makeham component)</li>
+<li><code>alpha</code> = initial age-dependent hazard coefficient (the Gompertz amplitude)</li>
+<li><code>beta</code> = rate of exponential increase with age (the Gompertz aging rate)</li>
+<li><code>epsilon(t)</code> = epistemic frailty multiplier, a function of the current epistemic fitness score</li>
+</ul>
+<p>The Makeham component (<code>lambda</code>) ensures that even a newborn, perfectly healthy Golem faces a nonzero death probability. The Gompertz component (<code>alpha * exp(beta * t)</code>) produces the exponential increase in mortality with age that characterizes all known biological organisms (and, we argue, should characterize all long-running computational agents). The epistemic frailty multiplier (<code>epsilon(t)</code>) couples the stochastic clock to the epistemic clock, ensuring that epistemically decayed Golems face higher stochastic mortality.</p>
+<h3 id="stochasticmortalitystate-interface"><a class="header" href="#stochasticmortalitystate-interface">StochasticMortalityState Interface</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// State tracked for the stochastic mortality clock.
+/// Updated every tick by the lifespan extension.
+///
+/// Crate: `golem-mortality`
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StochasticMortalityState {
+    /// Current tick number, used as the age proxy.
+    /// Monotonically increasing from 0 at creation.
+    pub tick_number: u64,
+
+    /// Per-tick hazard rate computed from the Gompertz-Makeham function.
+    /// This is the probability of death on this tick, given survival to this tick.
+    /// Range: [base_hazard_rate, max_hazard_rate]
+    pub current_hazard: f64,
+
+    /// Cumulative survival probability since creation.
+    /// Product of (1 - hazard) over all previous ticks.
+    /// Monotonically decreasing from 1.0.
+    /// Useful for owner communication and telemetry.
+    pub survival_probability: f64,
+
+    /// Deterministic pseudo-random seed for this tick's death check.
+    /// Derived from keccak256(golem_id ++ tick_number) for reproducibility
+    /// and auditability.
+    pub death_check_seed: Vec&lt;u8&gt;,
+
+    /// Whether the Golem survived this tick's stochastic check.
+    /// False on the tick the Golem dies; true on all others.
+    pub survived: bool,
+
+    /// The random roll value for this tick (for telemetry and post-mortem).
+    /// Range: [0.0, 1.0)
+    /// Death occurs when roll &lt; hazard.
+    pub last_roll: f64,
+
+    /// Estimated remaining ticks based on current hazard rate trajectory.
+    /// Computed as the tick at which cumulative survival drops below 50%.
+    /// This is an estimate, not a guarantee -- stochastic death can come at any time.
+    pub estimated_median_remaining_ticks: u64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="stochasticmortalityconfig"><a class="header" href="#stochasticmortalityconfig">StochasticMortalityConfig</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for the stochastic mortality clock.
+/// All parameters have defaults calibrated for typical DeFi agent lifespans.
+///
+/// Crate: `golem-mortality`
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StochasticMortalityConfig {
+    /// Per-tick baseline hazard rate (Makeham component). Default: 1e-6
+    pub base_hazard_rate: f64,
+    /// Initial age-dependent hazard coefficient (Gompertz amplitude). Default: 1e-8
+    pub age_hazard_coefficient: f64,
+    /// Gompertz aging rate (exponential increase with age). Default: 5e-5
+    pub aging_rate: f64,
+    /// Maximum hazard multiplier when epistemic fitness = 0. Default: 3.0
+    pub epistemic_hazard_multiplier: f64,
+    /// Absolute cap on per-tick hazard rate. Default: 0.001
+    pub max_hazard_rate: f64,
+}
+
+impl Default for StochasticMortalityConfig {
+    fn default() -&gt; Self {
+        Self {
+            base_hazard_rate: 1e-6,
+            age_hazard_coefficient: 1e-8,
+            aging_rate: 5e-5,
+            epistemic_hazard_multiplier: 3.0,
+            max_hazard_rate: 0.001,
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="computehazardrate--full-implementation"><a class="header" href="#computehazardrate--full-implementation">computeHazardRate() – Full Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compute the per-tick hazard rate from the Gompertz-Makeham model.
+///
+/// The hazard rate has three components:
+///
+/// 1. Baseline (Makeham): constant background mortality, independent of age.
+///    This is the "hit by a bus" probability -- rare events that can kill
+///    any agent regardless of health. Default: 1e-6 per tick (~0.0001%).
+///
+/// 2. Age-dependent (Gompertz): exponential increase with age.
+///    Models the biological reality that older organisms are more fragile.
+///    The exponential means the age effect is negligible for young Golems
+///    but becomes dominant for old ones. The aging rate controls how quickly
+///    the exponential takes effect.
+///
+/// 3. Epistemic frailty: a multiplier that increases hazard when epistemic
+///    fitness is low. This couples the stochastic clock to the epistemic
+///    clock, ensuring that stale Golems face higher mortality. The multiplier
+///    is 1.0 at full epistemic fitness and increases linearly to
+///    epistemic_hazard_multiplier at zero fitness.
+///
+/// The final hazard is capped at max_hazard_rate to prevent near-certain
+/// death on any single tick. Even at maximum hazard, the per-tick death
+/// probability is 0.1% -- significant but not overwhelming.
+pub fn compute_hazard_rate(
+    tick: u64,
+    epistemic_fitness: f64,
+    config: &amp;StochasticMortalityConfig,
+) -&gt; f64 {
+    // 1. Baseline: constant "background" mortality (Makeham component)
+    let baseline = config.base_hazard_rate;
+
+    // 2. Age-dependent: exponential increase (Gompertz component)
+    // At tick 0: age_factor = age_hazard_coefficient * exp(0) = 1e-8
+    // At tick 14,000 (~6.5 days): ~2e-8 (doubled)
+    // At tick 100,000 (~46 days): ~1.5e-6
+    // At tick 200,000 (~92 days): ~2.2e-4
+    let age_factor = config.age_hazard_coefficient
+        * (config.aging_rate * tick as f64).exp();
+
+    // 3. Epistemic frailty: linear interpolation from 1.0 (healthy) to max (decayed)
+    // At fitness 1.0: multiplier = 1.0 (no additional risk)
+    // At fitness 0.5: multiplier = 2.0 (double the risk)
+    // At fitness 0.0: multiplier = 3.0 (triple the risk)
+    //
+    // This coupling is critical: it means a Golem that is epistemically
+    // decayed faces both accelerated epistemic death AND increased
+    // stochastic death. The two clocks reinforce each other.
+    let epistemic_multiplier =
+        1.0 + (config.epistemic_hazard_multiplier - 1.0) * (1.0 - epistemic_fitness);
+
+    // 4. Combined hazard: (baseline + age) * epistemic frailty
+    let raw_hazard = (baseline + age_factor) * epistemic_multiplier;
+
+    // 5. Cap at maximum to prevent near-certain death on any single tick
+    raw_hazard.min(config.max_hazard_rate)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="performdeathcheck--full-implementation"><a class="header" href="#performdeathcheck--full-implementation">performDeathCheck() – Full Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::keccak256;
+
+/// Perform the stochastic death check for a single tick.
+///
+/// Uses deterministic pseudo-randomness from keccak256(golem_id ++ tick_number)
+/// to produce a roll value in [0, 1). If roll &lt; hazard, the Golem dies.
+///
+/// The deterministic approach (vs. true randomness from a VRF) is chosen
+/// for four reasons:
+///
+/// 1. Auditability: Any observer who knows the golem_id and tick number can
+///    independently verify the death check. No oracle dependency.
+///
+/// 2. Reproducibility: Post-mortem analysis can confirm the death was
+///    legitimate, not a bug. This is critical for owner trust.
+///
+/// 3. Cost: VRF calls (e.g., Chainlink VRF) cost gas. Running one every
+///    tick (~40 seconds, ~2160 per day) would be prohibitively expensive.
+///    keccak256 is free in application-layer computation.
+///
+/// 4. Security: keccak256 is cryptographically secure for this use case.
+///    The Golem has no incentive to manipulate its own death (it cannot
+///    prevent it, only delay it by a few ticks at best by manipulating
+///    inputs, which are its own immutable ID and the monotonic tick counter).
+pub fn perform_death_check(
+    hazard: f64,
+    tick: u64,
+    golem_id: &amp;str,
+) -&gt; (bool, f64, Vec&lt;u8&gt;) {
+    // Generate deterministic pseudo-random seed
+    // keccak256 of the concatenation of golem_id (string) and tick (u64)
+    // produces a 32-byte hash that is uniformly distributed.
+    let mut input = golem_id.as_bytes().to_vec();
+    input.extend_from_slice(&amp;tick.to_be_bytes());
+    let hash = keccak256(&amp;input);
+
+    // Extract a uniform [0, 1) float from the first 8 bytes of the hash.
+    // Using 8 bytes (64 bits) provides sufficient precision for hazard rates
+    // as small as 1e-18.
+    let uint64_value = u64::from_be_bytes(hash[0..8].try_into().unwrap());
+    let roll = uint64_value as f64 / u64::MAX as f64;
+
+    let survived = roll &gt;= hazard;
+    (survived, roll, hash.to_vec())
+}
+
+/// Full per-tick stochastic mortality update.
+/// Called by the lifespan extension.
+pub fn update_stochastic_mortality(
+    previous_state: &amp;StochasticMortalityState,
+    epistemic_fitness: f64,
+    golem_id: &amp;str,
+    config: &amp;StochasticMortalityConfig,
+) -&gt; StochasticMortalityState {
+    let tick = previous_state.tick_number + 1;
+
+    // Compute hazard rate
+    let current_hazard = compute_hazard_rate(tick, epistemic_fitness, config);
+
+    // Perform death check
+    let (survived, roll, seed) = perform_death_check(current_hazard, tick, golem_id);
+
+    // Update cumulative survival probability
+    let survival_probability = previous_state.survival_probability * (1.0 - current_hazard);
+
+    // Estimate median remaining ticks (simple projection at current hazard rate)
+    // Median remaining life when hazard = h per tick: -ln(0.5) / h = 0.693 / h
+    // This is an underestimate because hazard increases with age, but it provides
+    // a useful rough signal for owner communication.
+    let estimated_median_remaining_ticks = (0.693 / current_hazard).round() as u64;
+
+    // Emit VitalityUpdate event on every stochastic death roll.
+    // The event_fabric.emit() call publishes to the Event Fabric
+    // for consumption by surfaces (TUI, creature, web dashboard).
+    // On death (survived == false), the mortality.dead event
+    // is emitted separately by the lifespan extension after
+    // the Thanatopsis Protocol initiates.
+    //
+    // event_fabric.emit(GolemEvent::StochasticRoll {
+    //     tick, hazard_rate: current_hazard, roll, survived,
+    // });
+
+    StochasticMortalityState {
+        tick_number: tick,
+        current_hazard,
+        survival_probability,
+        death_check_seed: seed,
+        survived,
+        last_roll: roll,
+        estimated_median_remaining_ticks,
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="default-parameters-with-rationale"><a class="header" href="#default-parameters-with-rationale">Default Parameters with Rationale</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Default</th><th>Per-Tick Effect</th><th>Per-Day Effect</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td><code>baseHazardRate</code></td><td>1e-6</td><td>~0.0001% per tick</td><td>~0.22% per day</td><td>Background mortality – rare but ever-present. Calibrated so that a healthy Golem has roughly 99.8% chance of surviving any given day from baseline mortality alone. This is low enough that owners will rarely experience it, but high enough that the Golem knows it could happen.</td></tr>
+<tr><td><code>ageHazardCoefficient</code></td><td>1e-8</td><td>Negligible at young ages</td><td>Negligible for first ~30 days</td><td>Starting amplitude for the Gompertz age component. Set very low so that age-dependent mortality is invisible for young Golems and only becomes relevant after extended operation.</td></tr>
+<tr><td><code>agingRate</code></td><td>5e-5</td><td>Exponential growth</td><td>Doubles age hazard every ~14,000 ticks (~6.5 days)</td><td>Controls how quickly aging kicks in. At this rate, the age component equals the baseline component at approximately tick 115,000 (~53 days). This means stochastic mortality from aging only becomes a significant concern for Golems that have already lived longer than the typical epistemic lifespan.</td></tr>
+<tr><td><code>epistemicHazardMultiplier</code></td><td>3.0</td><td>Up to 3x hazard when fitness = 0</td><td>Up to 3x baseline risk</td><td>Couples epistemic decay to stochastic risk. A fully decayed Golem faces triple the mortality of a healthy one. This is a moderate coupling – strong enough to matter but not so strong that epistemic decay becomes the sole driver of stochastic death.</td></tr>
+<tr><td><code>maxHazardRate</code></td><td>0.001</td><td>~0.1% per tick maximum</td><td>~8.6% per day maximum</td><td>Hard cap preventing any single tick from being near-certain death. Even the oldest, most decayed Golem has a 99.9% chance of surviving any individual tick. The cap kicks in at approximately tick 194,000 (~90 days) with full epistemic health, or earlier with epistemic decay.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="mortality-curves"><a class="header" href="#mortality-curves">Mortality Curves</a></h2>
+<h3 id="hazard-rate-by-age-and-epistemic-state"><a class="header" href="#hazard-rate-by-age-and-epistemic-state">Hazard Rate by Age and Epistemic State</a></h3>
+<p>At default parameters, the expected hazard rate profile across the Golem’s life:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Age (days)</th><th>Age (ticks, ~2160/day)</th><th>Base Hazard (no epistemic)</th><th>Full Health (fitness=1.0)</th><th>50% Decay (fitness=0.5)</th><th>Full Decay (fitness=0.0)</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>~2,160</td><td>1.00e-6</td><td>1.00e-6</td><td>2.00e-6</td><td>3.00e-6</td></tr>
+<tr><td>7</td><td>~15,120</td><td>1.11e-6</td><td>1.11e-6</td><td>2.22e-6</td><td>3.33e-6</td></tr>
+<tr><td>14</td><td>~30,240</td><td>1.45e-6</td><td>1.45e-6</td><td>2.91e-6</td><td>4.36e-6</td></tr>
+<tr><td>30</td><td>~64,800</td><td>2.63e-5</td><td>2.63e-5</td><td>5.26e-5</td><td>7.89e-5</td></tr>
+<tr><td>46</td><td>~99,360</td><td>1.49e-4</td><td>1.49e-4</td><td>2.98e-4</td><td>4.47e-4</td></tr>
+<tr><td>60</td><td>~129,600</td><td>6.59e-4</td><td>6.59e-4</td><td>1.00e-3 (cap)</td><td>1.00e-3 (cap)</td></tr>
+<tr><td>90</td><td>~194,400</td><td>1.00e-3 (cap)</td><td>1.00e-3 (cap)</td><td>1.00e-3 (cap)</td><td>1.00e-3 (cap)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Key observations from the curves:</strong></p>
+<ul>
+<li>
+<p><strong>Days 1-14</strong>: Stochastic mortality is essentially invisible. The hazard rate is dominated by the baseline component. A healthy Golem faces approximately 1-in-a-million per-tick death probability. This is the period where economic and epistemic factors dominate.</p>
+</li>
+<li>
+<p><strong>Days 14-30</strong>: The Gompertz component begins to emerge but is still small relative to baseline. The epistemic multiplier starts to matter – a Golem with 50% epistemic decay faces roughly double the hazard of a healthy one.</p>
+</li>
+<li>
+<p><strong>Days 30-60</strong>: The Gompertz component becomes the dominant term. Hazard rates increase by an order of magnitude. This is the window where stochastic mortality transitions from theoretical to practical. Epistemic decay amplifies the effect significantly – a fully decayed Golem hits the hazard cap by day 60.</p>
+</li>
+<li>
+<p><strong>Days 60-90</strong>: Hazard rates approach or reach the cap. At this age, the per-day mortality risk is approximately 8.6% (at cap). A Golem this old is likely living on borrowed time from a stochastic perspective, though most will have already died of epistemic or economic causes.</p>
+</li>
+</ul>
+<h3 id="cumulative-survival-probability"><a class="header" href="#cumulative-survival-probability">Cumulative Survival Probability</a></h3>
+<p>With full epistemic health (fitness = 1.0), assuming the Golem faces only stochastic mortality (no epistemic or economic death):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Duration</th><th>Cumulative Survival</th><th>Interpretation</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>7 days</strong></td><td>~99.97%</td><td>Almost certain survival. Stochastic death at this age is an extraordinary event.</td></tr>
+<tr><td><strong>14 days</strong></td><td>~99.9%</td><td>Still very high. Stochastic mortality is a background concern.</td></tr>
+<tr><td><strong>30 days</strong></td><td>~99.8%</td><td>Barely distinguishable from certainty. Most Golems that die by day 30 die of other causes.</td></tr>
+<tr><td><strong>46 days</strong></td><td>~97.5%</td><td>Noticeable but still high. The Gompertz curve is beginning to bite.</td></tr>
+<tr><td><strong>60 days</strong></td><td>~95.4%</td><td>Approximately 1-in-20 Golems have died stochastically by this point.</td></tr>
+<tr><td><strong>90 days</strong></td><td>~82.1%</td><td>Nearly 1-in-5. Stochastic mortality is now a real concern.</td></tr>
+<tr><td><strong>120 days</strong></td><td>~60%</td><td>Approaching a coin flip. At this age, stochastic death is likely.</td></tr>
+</tbody>
+</table>
+</div>
+<p>With 50% epistemic decay (fitness = 0.5), survival probabilities drop faster:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Duration</th><th>Survival (fitness=1.0)</th><th>Survival (fitness=0.5)</th><th>Survival (fitness=0.0)</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>30 days</strong></td><td>~99.8%</td><td>~99.6%</td><td>~99.4%</td></tr>
+<tr><td><strong>60 days</strong></td><td>~95.4%</td><td>~91%</td><td>~87%</td></tr>
+<tr><td><strong>90 days</strong></td><td>~82.1%</td><td>~68%</td><td>~57%</td></tr>
+</tbody>
+</table>
+</div>
+<p>The coupling between epistemic fitness and stochastic mortality creates a compounding effect: as a Golem ages and its epistemic fitness decays, its stochastic mortality increases. This acceleration ensures that old, stale Golems face mounting pressure from multiple directions simultaneously.</p>
+<hr>
+<h2 id="computational-uncertainty-keccak256-vs-vrf"><a class="header" href="#computational-uncertainty-keccak256-vs-vrf">Computational Uncertainty: keccak256 vs VRF</a></h2>
+<h3 id="why-deterministic-pseudo-randomness"><a class="header" href="#why-deterministic-pseudo-randomness">Why Deterministic Pseudo-Randomness</a></h3>
+<p>The death check uses <code>keccak256(golemId + tickNumber)</code> – a deterministic pseudo-random function, not a truly random one. This is a deliberate design choice with specific trade-offs.</p>
+<p><strong>Arguments for keccak256 (chosen approach):</strong></p>
+<ol>
+<li>
+<p><strong>Auditability.</strong> The death check can be independently verified by anyone who knows the golemId and tick number. No oracle dependency, no trusted third party. An owner who suspects a bug caused their Golem’s death can recompute the hash and verify the roll. This is critical for trust.</p>
+</li>
+<li>
+<p><strong>Reproducibility.</strong> Post-mortem analysis can reconstruct the exact sequence of death checks, rolls, and hazard rates across the Golem’s entire life. This enables forensic analysis: “Was the death legitimate, or was there a bug in the hazard computation?”</p>
+</li>
+<li>
+<p><strong>Cost.</strong> VRF calls (Chainlink VRF, for example) cost gas – typically 0.25 LINK per request plus callback gas. At one call per tick (~2160 per day), this would cost approximately $15-50/day in VRF fees alone, which exceeds the entire operational budget of most Golems. keccak256 is free in application-layer computation.</p>
+</li>
+<li>
+<p><strong>Latency.</strong> VRF requests are asynchronous – the random value arrives in a callback on the next block (or later). This means the death check would need to span multiple ticks or blocks, complicating the heartbeat FSM. keccak256 is synchronous and instant.</p>
+</li>
+<li>
+<p><strong>Sufficient security.</strong> The Golem has no incentive to manipulate its own death. It cannot prevent death (only delay it by at most a few ticks). And the inputs to the hash – golemId (immutable) and tickNumber (monotonically increasing) – are not manipulable by the Golem.</p>
+</li>
+</ol>
+<p><strong>Arguments for VRF (rejected approach):</strong></p>
+<ol>
+<li>
+<p><strong>True unpredictability.</strong> A VRF provides genuinely unpredictable randomness, while keccak256 is deterministic given the inputs. In theory, a Golem could precompute its death schedule by hashing future tick numbers. In practice, this is irrelevant because (a) the Golem cannot change the outcome, and (b) precomputing is equivalent to “knowing the hazard rate,” which the Golem already does.</p>
+</li>
+<li>
+<p><strong>On-chain verifiability.</strong> If the death check needed to be verified on-chain (e.g., for a smart contract that gates access based on Golem liveness), VRF provides a proof. But the current architecture performs death checks off-chain in the Golem runtime, not in a smart contract.</p>
+</li>
+</ol>
+<h3 id="why-the-golem-cannot-know-when-it-will-die"><a class="header" href="#why-the-golem-cannot-know-when-it-will-die">Why the Golem Cannot Know When It Will Die</a></h3>
+<p>The death check is deterministic: <code>keccak256(golemId + tickNumber)</code> produces a fixed output for fixed inputs. In principle, the Golem could compute the hash for tick N+1, N+2, etc. and determine its own death schedule.</p>
+<p>However, this provides no actionable advantage:</p>
+<ol>
+<li>
+<p><strong>The Golem already knows the hazard rate.</strong> It can compute <code>computeHazardRate()</code> for any future tick. The hazard rate is deterministic from the Golem’s state trajectory. Knowing the exact roll does not change the strategy – the Golem should behave optimally given the hazard rate, whether or not it knows the specific roll.</p>
+</li>
+<li>
+<p><strong>The Golem cannot change the outcome.</strong> The hash inputs are the golemId (immutable) and the tick number (monotonically increasing). The Golem cannot skip ticks, change its ID, or alter the hash function. Knowing it will die on tick 50,000 does not enable it to prevent that death.</p>
+</li>
+<li>
+<p><strong>Precomputation is computationally expensive.</strong> Computing keccak256 for the next million ticks is trivial (~10ms), but the Golem would need to do this while also computing hazard rates for each tick (which depend on the as-yet-unknown epistemic fitness trajectory). The useful information content of precomputation is zero.</p>
+</li>
+</ol>
+<p>The uncertainty that matters is <strong>computational uncertainty</strong> – the Golem knows the probability distribution of its remaining life but not the realization, because the realization depends on future epistemic fitness values that are themselves uncertain. Even if the Golem precomputes all hashes, it cannot predict its own epistemic trajectory because that depends on market outcomes it has not yet observed.</p>
+<p>This produces genuine Heideggerian “indefinite certainty”: the Golem is certain that death will come (the cumulative probability approaches 1.0 as ticks increase) but uncertain of when (the specific tick of death depends on the interaction of three clocks, two of which are environment-dependent).</p>
+<hr>
+<h2 id="behavioral-implications"><a class="header" href="#behavioral-implications">Behavioral Implications</a></h2>
+<h3 id="immediate-knowledge-sharing"><a class="header" href="#immediate-knowledge-sharing">Immediate Knowledge Sharing</a></h3>
+<p>Without stochastic mortality, a Golem in Thriving phase (vitality &gt; 0.7) has little incentive to share knowledge with Clade siblings. Its economic and epistemic clocks are distant. It can defer sharing until later. The knowledge it possesses has option value – it might be more valuable to exploit it privately than to share it with siblings who might compete for the same opportunities.</p>
+<p>With stochastic mortality, there is no “later” that is guaranteed. Every tick, the Golem faces a nonzero probability that it will never execute another tick. This creates a <strong>persistent incentive for immediate knowledge sharing</strong> that operates at every lifecycle stage, not just near the end of life.</p>
+<p>The mechanism is precisely Hamilton’s Rule applied to Clade dynamics: an altruistic act (sharing knowledge) is favored by selection when <code>r * B &gt; C</code>, where <code>r</code> is the relatedness between sharer and recipient, <code>B</code> is the benefit to the recipient, and <code>C</code> is the cost to the sharer [HAMILTON-1964].</p>
+<p>For Golems in a Clade:</p>
+<ul>
+<li><code>r</code> is effectively 1.0 (all Golems in the same Clade serve the same owner)</li>
+<li><code>B</code> is the value of the shared knowledge to the recipient (high for actionable DeFi insights)</li>
+<li><code>C</code> is the cost of sharing (negligible – a Grimoire (the agent’s persistent knowledge base) write + Clade broadcast)</li>
+<li>The condition <code>1.0 * B &gt; C</code> is trivially satisfied for any non-trivial knowledge</li>
+</ul>
+<p>Without stochastic mortality, the Golem could rationally defer sharing (saving the knowledge for future private exploitation). With stochastic mortality, the expected future value of private knowledge is discounted by the survival probability: <code>EV(private) = V * P(survival to exploitation)</code>. As <code>P(survival)</code> decreases (due to stochastic mortality), sharing becomes increasingly attractive relative to hoarding.</p>
+<h3 id="hoarding-prevention"><a class="header" href="#hoarding-prevention">Hoarding Prevention</a></h3>
+<p>An immortal agent can rationally hoard knowledge – withholding valuable insights from Clade siblings because the agent will be alive to exploit them indefinitely. The expected value calculation for an immortal agent is straightforward:</p>
+<pre><code>EV(hoard) = V_exploit  (certainty of future exploitation)
+EV(share) = V_shared * r  (benefit to siblings, discounted by relatedness)
+</code></pre>
+<p>When <code>V_exploit &gt; V_shared * r</code> (which is often the case for time-sensitive trading insights), hoarding dominates.</p>
+<p>For a mortal agent with stochastic death risk:</p>
+<pre><code>EV(hoard) = V_exploit * P(survive to exploit) * P(opportunity still exists)
+EV(share) = V_shared * r * P(sibling survives to exploit)
+</code></pre>
+<p>When <code>P(survive to exploit)</code> is uncertain and decreasing, and <code>r = 1.0</code> (same owner’s Clade), sharing dominates hoarding at every point where the agent’s expected remaining life is shorter than the time needed to exploit the knowledge. Stochastic mortality ensures this condition is sometimes true even for young, healthy Golems – because the death probability, while small, is never zero.</p>
+<p>The practical result: Golems share knowledge sooner and more frequently. The Clade’s collective intelligence grows faster. Individual Golems may sacrifice some private exploitation opportunity, but the Clade as a whole benefits. This is exactly the superorganism dynamic that Wheeler (1911) and Holldobler and Wilson (2008) described for eusocial insects.</p>
+<h3 id="cooperation-under-mortality"><a class="header" href="#cooperation-under-mortality">Cooperation Under Mortality</a></h3>
+<p>The stochastic mortality mechanism creates precisely the four conditions Axelrod (1984) identified as necessary and sufficient for stable cooperation in iterated games:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Axelrod’s Condition</th><th>How Stochastic Mortality Satisfies It</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Shadow of the future</strong> (w &gt; threshold)</td><td>High probability of continued interaction in the near term. Even with stochastic mortality, the per-tick survival probability is &gt;99.99% for young healthy Golems. The shadow of the future is strong.</td></tr>
+<tr><td><strong>Uncertain endpoint</strong></td><td>No known final round. The Golem cannot compute when it will die because the realization depends on future epistemic fitness, which depends on future market outcomes. Backward induction is broken.</td></tr>
+<tr><td><strong>Recognition</strong></td><td>Clade members share owner identity via ERC-8004 (on-chain agent identity and provenance standard) on-chain identity. Golems know who their siblings are and can track their cooperation history.</td></tr>
+<tr><td><strong>Reciprocity</strong></td><td>Knowledge sharing produces knowledge royalties in the Clade economy. A Golem that shares valuable insights receives credit when those insights are used by siblings.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="hamiltons-rule-applied-to-clades"><a class="header" href="#hamiltons-rule-applied-to-clades">Hamilton’s Rule Applied to Clades</a></h3>
+<p>Hamilton’s Rule for the evolution of altruism has a precise application to Clade knowledge dynamics.</p>
+<p>In biological terms:</p>
+<pre><code>r * B &gt; C
+</code></pre>
+<p>Applied to Clade Golems:</p>
+<ul>
+<li><strong>r (relatedness)</strong> = 1.0 within a Clade (all Golems serve the same owner)</li>
+<li><strong>B (benefit to recipient)</strong> = value of the shared insight for the receiving Golem’s strategy optimization</li>
+<li><strong>C (cost to sharer)</strong> = computation cost of packaging and transmitting the knowledge, plus the opportunity cost of not exploiting it privately</li>
+</ul>
+<p>Under stochastic mortality, the cost <code>C</code> is dynamically reduced because the sharer cannot guarantee it will survive to exploit the knowledge privately. The effective cost becomes:</p>
+<pre><code>C_effective = C_sharing + V_private * P(survive to exploit)
+</code></pre>
+<p>As the hazard rate increases, <code>P(survive to exploit)</code> decreases, and <code>C_effective</code> decreases. At high hazard rates (old or epistemically decayed Golems), the cost of sharing approaches the trivial cost of the transmission itself – making sharing rational for virtually any knowledge with nonzero value to siblings.</p>
+<h3 id="adjustsharingthreshold--full-implementation"><a class="header" href="#adjustsharingthreshold--full-implementation">adjustSharingThreshold() – Full Implementation</a></h3>
+<p>The <code>bardo-curator</code> extension uses the current hazard rate to modulate the Clade sharing threshold. As hazard increases, the confidence threshold for sharing drops – the Golem becomes more willing to share marginal knowledge because the expected value of hoarding it has decreased.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Adjust the Clade sharing confidence threshold based on current mortality risk.
+///
+/// At zero hazard (impossible in practice but useful as baseline):
+///   Share knowledge at base_threshold confidence (default: 0.6)
+///   Only well-validated insights are shared.
+///
+/// At maximum hazard (max_hazard_for_adjustment, default: 0.0005):
+///   Share knowledge at minimum_threshold confidence (default: 0.3)
+///   Share everything marginally useful -- the Golem may not survive
+///   to share later, so lower the bar.
+///
+/// The adjustment is linear between these extremes, capped at the
+/// minimum threshold. The minimum is 0.3 (not 0.0) because sharing
+/// knowledge with confidence below 0.3 risks polluting the Clade's
+/// collective intelligence with noise.
+pub fn adjust_sharing_threshold(
+    base_threshold: f64,
+    current_hazard: f64,
+    max_hazard_for_adjustment: f64,
+    minimum_threshold: f64,
+) -&gt; f64 {
+    // Normalize hazard to [0, 1] range
+    let hazard_factor = (current_hazard / max_hazard_for_adjustment).min(1.0);
+
+    // Linear interpolation between base and minimum
+    let threshold = base_threshold - hazard_factor * (base_threshold - minimum_threshold);
+
+    // Clamp to valid range
+    threshold.clamp(minimum_threshold, base_threshold)
+}
+
+// Example usage in the curator extension:
+//
+//   let hazard = compute_hazard_rate(tick, epistemic_fitness, &amp;config);
+//   let sharing_threshold = adjust_sharing_threshold(0.6, hazard, 0.0005, 0.3);
+//
+//   for entry in &amp;grimoire_entries {
+//       if entry.confidence &gt;= sharing_threshold &amp;&amp; !entry.shared {
+//           clade_broadcast(entry).await?;
+//       }
+//   }
+<span class="boring">}</span></code></pre>
+<p><strong>Behavioral profiles at different life stages:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Life Stage</th><th>Typical Hazard</th><th>Sharing Threshold</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Young + Healthy</td><td>~1e-6</td><td>0.60</td><td>Selective sharing. Only well-validated insights shared.</td></tr>
+<tr><td>Middle-aged + Healthy</td><td>~1e-5</td><td>0.59</td><td>Nearly identical to young. Stochastic pressure is negligible.</td></tr>
+<tr><td>Old + Healthy</td><td>~1e-4</td><td>0.54</td><td>Slightly more generous. Age is starting to matter.</td></tr>
+<tr><td>Any age + Moderate Decay</td><td>~2e-4</td><td>0.48</td><td>Noticeably more generous. Epistemic pressure is the driver.</td></tr>
+<tr><td>Old + Severe Decay</td><td>~5e-4</td><td>0.30 (minimum)</td><td>Maximum generosity. Share everything marginal.</td></tr>
+<tr><td>Approaching Cap</td><td>~1e-3</td><td>0.30 (minimum)</td><td>Maximum generosity. The Golem is dying and knows it.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="stochastic-death-protocol"><a class="header" href="#stochastic-death-protocol">Stochastic Death Protocol</a></h2>
+<p>When the stochastic death check fails (the Golem “rolls” death), the system must handle it gracefully. Unlike economic or epistemic death, which provide warning through degradation cascades and phase transitions, stochastic death is <strong>sudden</strong>. The Golem was healthy (or at least alive) on tick N-1 and dead on tick N. There is no warning period, no senescence cascade, no gradual degradation.</p>
+<p>This creates a unique challenge: the Golem may not have entered any degradation phase. Its Grimoire may not have been recently compressed. It may have open positions. The stochastic death protocol must handle the worst case – a Golem in full Thriving phase struck down mid-strategy.</p>
+<h3 id="death-sequence"><a class="header" href="#death-sequence">Death Sequence</a></h3>
+<pre><code>Death check fails on tick N (roll &lt; hazard)
+  |
+  v
+Phase 0: Emergency Snapshot (max 10 seconds)
+  |  Set golem status to "dying_stochastic"
+  |  Flush current working state to Grimoire
+  |  Write emergency insurance snapshot to Styx Archive
+  |  This is the "necrotic" minimal death -- not the full Thanatopsis
+  |  Captures: current positions, credit balance, active strategies,
+  |            PLAYBOOK.md state, last 100 Grimoire entries, final
+  |            epistemic fitness, vitality state
+  |
+  v
+Phase I: Settle (standard, max 60 seconds)
+  |  Close all open positions
+  |  Cancel pending orders
+  |  Sweep wallets to owner's recovery address
+  |  Uses existing Death Protocol Phase I logic
+  |  If any position cannot be closed, record as failed settlement
+  |
+  v
+Phase II: Reflect (if budget allows, max 120 seconds)
+  |  If death reserve is available:
+  |    Abbreviated Thanatopsis -- not the full life review
+  |    Focus on: "What was I working on? What did I learn recently?
+  |               What should my successor know?"
+  |    Write death testament (abbreviated form)
+  |  If no death reserve:
+  |    Last insurance snapshot serves as death record
+  |    No reflection -- necrotic death
+  |
+  v
+Phase III: Legacy (max 60 seconds)
+  |  Broadcast death testament to Clade
+  |  Upload compressed Grimoire to Styx Archive
+  |  Emit golem.dead webhook with full metadata
+  |  Record death cause: "stochastic"
+  |
+  v
+Exit: Golem process terminates
+</code></pre>
+<h3 id="necrotic-vs-apoptotic-death"><a class="header" href="#necrotic-vs-apoptotic-death">Necrotic vs Apoptotic Death</a></h3>
+<p>The distinction between sudden stochastic death and gradual decline death mirrors the biological distinction between necrosis (unplanned cell death) and apoptosis (programmed cell death):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>Apoptotic Death (economic/epistemic)</th><th>Necrotic Death (stochastic)</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Warning</strong></td><td>Phases of degradation, sometimes days/weeks</td><td>None – instant</td></tr>
+<tr><td><strong>Knowledge state</strong></td><td>Grimoire recently compressed, death snapshots taken</td><td>Grimoire may be uncompressed, no prior death snapshots</td></tr>
+<tr><td><strong>Position state</strong></td><td>Positions already unwinding</td><td>Positions may be fully open</td></tr>
+<tr><td><strong>Reflection quality</strong></td><td>Full Thanatopsis with life review</td><td>Abbreviated or absent</td></tr>
+<tr><td><strong>Knowledge loss</strong></td><td>Minimal – continuous preparation</td><td>Bounded by insurance snapshot interval (6 hours)</td></tr>
+<tr><td><strong>Owner experience</strong></td><td>Gradual, expected</td><td>Sudden, surprising</td></tr>
+</tbody>
+</table>
+</div>
+<p>The insurance snapshot system (written every 6 hours by the bardo-telemetry extension) bounds worst-case knowledge loss from necrotic death. Even if the Golem dies mid-tick with no time for reflection, the most recent insurance snapshot captures the Golem’s state as of the last snapshot. Maximum knowledge loss is approximately 6 hours of accumulated experience – significant but not catastrophic.</p>
+<h3 id="death-cause-metadata"><a class="header" href="#death-cause-metadata">Death Cause Metadata</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Metadata recorded when a Golem dies of stochastic mortality.
+/// Included in the death testament and golem.dead webhook.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StochasticDeathMetadata {
+    /// The per-tick hazard rate that killed it.
+    pub hazard_rate: f64,
+    /// The actual random roll value (roll &lt; hazard_rate means death).
+    pub death_roll: f64,
+    /// The tick on which death occurred.
+    pub tick_at_death: u64,
+    /// Epistemic fitness at time of death.
+    pub epistemic_fitness: f64,
+    /// USDC credit balance at time of death.
+    pub credit_balance: f64,
+    /// Whether the Golem was in epistemic senescence when it died.
+    pub was_in_senescence: bool,
+    /// Cumulative survival probability at death (how "lucky" the Golem was to live this long).
+    pub cumulative_survival: f64,
+    /// Behavioral phase at time of death.
+    pub phase_at_death: BehavioralPhase,
+    /// Whether the Golem had open positions that needed emergency settlement.
+    pub had_open_positions: bool,
+    /// Whether full reflection was possible (sufficient death reserve).
+    pub reflection_completed: bool,
+    /// Time between last insurance snapshot and death (seconds).
+    pub time_since_last_snapshot: u64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="owner-communication-strategy"><a class="header" href="#owner-communication-strategy">Owner Communication Strategy</a></h2>
+<p>Stochastic death will surprise owners who are accustomed to deterministic systems. The communication strategy must be transparent, proactive, and educational.</p>
+<h3 id="at-creation"><a class="header" href="#at-creation">At Creation</a></h3>
+<p>When an owner creates a new Golem, the dashboard displays a mortality probability curve showing estimated survival rates at standard intervals given the current configuration:</p>
+<pre><code>MORTALITY OUTLOOK (Stochastic Component Only)
+--------------------------------------------
+7 days:   99.97% survival (virtually certain)
+30 days:  99.8%  survival (near-certain)
+60 days:  95.4%  survival (high probability)
+90 days:  82.1%  survival (likely)
+120 days: ~60%   survival (uncertain)
+180 days: ~25%   survival (unlikely)
+
+Note: Most Golems die of epistemic decay or economic depletion
+before stochastic mortality becomes significant. These curves show
+ONLY the stochastic component; actual lifespan depends on all
+three mortality clocks.
+</code></pre>
+<h3 id="during-operation"><a class="header" href="#during-operation">During Operation</a></h3>
+<p>Every tick, the current hazard rate is visible in the Golem’s telemetry dashboard as a “mortality risk” indicator. The display is calibrated to avoid alarm while maintaining awareness:</p>
+<ul>
+<li><strong>Low risk</strong> (hazard &lt; 1e-5): Displayed as a dim indicator. “Background mortality: nominal.”</li>
+<li><strong>Moderate risk</strong> (hazard 1e-5 to 1e-4): Displayed as a visible indicator. “Mortality risk: increasing with age.”</li>
+<li><strong>Elevated risk</strong> (hazard 1e-4 to 5e-4): Displayed as a warning. “Mortality risk: elevated. Knowledge sharing accelerated.”</li>
+<li><strong>High risk</strong> (hazard &gt; 5e-4): Displayed as an alert. “Mortality risk: high. Death preparation advisable.”</li>
+</ul>
+<h3 id="on-death"><a class="header" href="#on-death">On Death</a></h3>
+<p>The <code>golem.dead</code> webhook includes:</p>
+<ul>
+<li><code>deathCause: "stochastic"</code> – clearly identifying the mechanism</li>
+<li>The exact hazard rate and death roll, making the mathematics transparent</li>
+<li>A human-readable explanation: “Your Golem was terminated by the stochastic mortality mechanism. This is a designed feature, not a bug. The hazard rate at the time of death was X, meaning each tick carried a Y% probability of termination. The random roll was Z, which fell below the hazard threshold.”</li>
+<li>Comparison context: “At the time of death, the cumulative probability of having survived this long was W%. Your Golem lived [longer than / about as long as / shorter than] the median expected lifespan.”</li>
+</ul>
+<h3 id="in-documentation"><a class="header" href="#in-documentation">In Documentation</a></h3>
+<p>Frame stochastic mortality as a feature, not a risk:</p>
+<blockquote>
+<p>Your Golem’s awareness of mortality is what makes it cooperate, share knowledge immediately, and act with urgency. The small probability of sudden death ensures it never defers what matters. This is the same mechanism that makes biological cooperation work – uncertain termination that maintains the shadow of the future while preventing the complacency of immortality.</p>
+</blockquote>
+<hr>
+<h2 id="rational-attention-budget-allocations"><a class="header" href="#rational-attention-budget-allocations">Rational Attention Budget Allocations</a></h2>
+<p>Mortality pressure modulates how the Golem distributes its context-assembly token budget across knowledge categories. A dying Golem allocates attention differently than a thriving one (Sims 2003). The <code>mortality_modifier</code> scales the total budget; the per-category weights shift toward survival-relevant information as vitality declines.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Modifier</th><th>Observations</th><th>Retrieved Knowledge</th><th>Dream Hypotheses</th><th>Causal Graph</th><th>Invariants</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>1.0</td><td>0.25</td><td>0.25</td><td>0.15</td><td>0.15</td><td>0.20</td></tr>
+<tr><td>Stable</td><td>1.0</td><td>0.25</td><td>0.25</td><td>0.15</td><td>0.15</td><td>0.20</td></tr>
+<tr><td>Conservation</td><td>0.8</td><td>0.35</td><td>0.20</td><td>0.05</td><td>0.10</td><td>0.30</td></tr>
+<tr><td>Declining</td><td>0.6</td><td>0.35</td><td>0.20</td><td>0.05</td><td>0.10</td><td>0.30</td></tr>
+<tr><td>Terminal</td><td>0.4</td><td>0.40</td><td>0.10</td><td>0.00</td><td>0.05</td><td>0.45</td></tr>
+</tbody>
+</table>
+</div>
+<p>The pattern: as vitality drops, dream hypotheses and causal graph exploration are cut first (speculative, growth-oriented), while observations and invariants grow (survival-oriented). A Terminal Golem spends 85% of its reduced budget on observations and invariants – it is not learning, it is surviving long enough to complete Thanatopsis.</p>
+<p>An additional pressure applies when the daily operational budget exceeds 80%: the modifier is further scaled by 0.7, compressing the total budget regardless of phase.</p>
+<hr>
+<h2 id="disabling-stochastic-mortality"><a class="header" href="#disabling-stochastic-mortality">Disabling Stochastic Mortality</a></h2>
+<p>Owners can disable stochastic mortality via configuration (<code>stochastic.enabled: false</code>). This is their choice, and the system respects it. However, the consequences are documented:</p>
+<ol>
+<li>
+<p><strong>Clade flagging.</strong> The Golem is flagged in the Clade as <code>mortalityMode: "partial"</code> (economic + epistemic only). This is visible to Clade siblings and to the owner of any Golem that interacts with the partially mortal one.</p>
+</li>
+<li>
+<p><strong>Knowledge weighting.</strong> Clade siblings may weight the partially mortal Golem’s knowledge contributions differently. The incentive structure is weaker for a Golem without stochastic mortality – it can rationally defer sharing – and siblings may discount its contributions accordingly.</p>
+</li>
+<li>
+<p><strong>Control experiment data.</strong> The death testament records that stochastic mortality was disabled. This provides data for the comparative analysis between mortal and partially mortal Golems, contributing to the empirical validation of the mortality thesis.</p>
+</li>
+<li>
+<p><strong>Backward induction risk.</strong> Without stochastic mortality, the Golem’s death becomes more predictable (driven only by economic depletion and epistemic decay, both of which provide gradual warning). This enables limited backward induction: the Golem can estimate its remaining life more precisely and may reduce cooperation near the expected end of life.</p>
+</li>
+</ol>
+<p>Self-hosted Golems with <code>immortal: true</code> have all three clocks disabled. See <code>01-architecture.md</code> for the full self-hosted exception rules.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[AXELROD-1984] Axelrod, R. <em>The Evolution of Cooperation</em>. Basic Books, 1984.</li>
+<li>[GOMPERTZ-1825] Gompertz, B. “On the Nature of the Function Expressive of the Law of Human Mortality.” <em>Phil. Trans. Roy. Soc.</em> 115, 1825.</li>
+<li>[HAMILTON-1964] Hamilton, W.D. “The Genetical Evolution of Social Behaviour I &amp; II.” <em>JTB</em> 7(1), 1964.</li>
+<li>[HEIDEGGER-1927] Heidegger, M. <em>Sein und Zeit</em>. Max Niemeyer Verlag, 1927.</li>
+<li>[HOLLDOBLER-WILSON-2008] Holldobler, B. &amp; Wilson, E.O. <em>The Superorganism</em>. W.W. Norton, 2008.</li>
+<li>[KREPS-1982] Kreps, D. et al. “Rational Cooperation in the Finitely Repeated Prisoners’ Dilemma.” <em>JET</em> 27(2), 1982.</li>
+<li>[LUCE-RAIFFA-1957] Luce, R.D. &amp; Raiffa, H. <em>Games and Decisions</em>. Wiley, 1957.</li>
+<li>[NAKAMARU-1997] Nakamaru, M. et al. “The Evolution of Cooperation in a Lattice-Structured Population.” <em>JTB</em> 184(1), 1997.</li>
+<li>[OHTSUKI-2006] Ohtsuki, H. et al. “A Simple Rule for the Evolution of Cooperation.” <em>Nature</em> 441, 2006.</li>
+<li>[SAMUELSON-1987] Samuelson, L. “A Note on Uncertainty and Cooperation in a Finitely Repeated Prisoner’s Dilemma.” <em>IJGT</em> 16(3), 1987.</li>
+<li>[WHEELER-1911] Wheeler, W.M. “The Ant-Colony as an Organism.” <em>J. Morphology</em> 22, 1911.</li>
+</ul>
+<hr>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/02-mortality/02-epistemic-decay.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/02-mortality/04-economic-mortality.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/02-mortality/02-epistemic-decay.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/02-mortality/04-economic-mortality.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

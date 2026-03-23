@@ -1,0 +1,1497 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Architecture - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/01-architecture.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="golem-tools--architecture-spec"><a class="header" href="#golem-tools--architecture-spec">Golem Tools – Architecture [SPEC]</a></h1>
+<p><strong>Version:</strong> 5.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-tools</code> | <strong>Workspace</strong>: <code>crates/tools/</code> | <strong>Prerequisites</strong>: <a href="00-overview.html">00-overview.md</a> (goals, design philosophy, personas, and the ToolDef pattern introduction)</p>
+<p>Tool architecture, ToolDef pattern, handler signatures, three trust tiers (ReadTool/WriteTool/PrivilegedTool), Capability&lt;T&gt; flow, safety hook chain, Revm simulation, WASM sandbox, Event Fabric integration, memory layer, profiles, TypeScript sidecar, and the two-layer tool model.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is the architecture spec for <code>golem-tools</code>, the DeFi tool crate that ships with the Bardo runtime. It covers the <code>ToolDef</code> pattern, the three trust tiers (<code>ReadTool</code>/<code>WriteTool</code>/<code>PrivilegedTool</code>), the <code>Capability&lt;T&gt;</code> authorization flow, the safety hook chain, Revm simulation, WASM sandboxing, profile-based tool loading, and the TypeScript sidecar. You should already be familiar with Uniswap V3/V4 pool mechanics and basic Rust ownership semantics. Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="rust-native-tool-library"><a class="header" href="#rust-native-tool-library">Rust-native tool library</a></h2>
+<p><code>golem-tools</code> is a tool library, not a server. It exports <code>ToolDef</code> constants and handler functions that callers invoke directly. No transport layer, no protocol framing, no server process. The crate is <code>#![no_std]</code>-compatible for the core types; handler implementations require <code>alloc</code> + <code>tokio</code>.</p>
+<p>The crate contains 423+ DeFi tools covering Uniswap (V2/V3/V4/UniswapX), Aave, Morpho, Pendle, Lido, EigenLayer, GMX, Panoptic, and other protocols. Tools are organized into three trust tiers enforced by the Rust type system:</p>
+<ul>
+<li><strong>ReadTool</strong> (~250 tools): No capability token required. Cannot modify on-chain state. Examples: read pool state, check balance, get gas price, query health factor.</li>
+<li><strong>WriteTool</strong> (~150 tools): Require a <code>Capability&lt;WriteTool&gt;</code> token that is consumed (moved) on use. Rust’s ownership system prevents reuse at compile time. Examples: swap tokens, add liquidity, deposit into vault, stake ETH.</li>
+<li><strong>PrivilegedTool</strong> (~23 tools): Require a capability token plus owner approval. Examples: change PolicyCage (the on-chain smart contract that enforces an owner’s safety constraints) parameters, modify strategy, adjust risk limits.</li>
+</ul>
+<p>Two access paths:</p>
+<ul>
+<li><strong>Golems</strong> (mortal autonomous agents, each compiled as a single Rust binary on a micro-VM) consume tools through Pi extensions. The <code>golem-tools</code> extension registers 8 Pi-facing tools that internally resolve to tool implementations via the Tool Adapter Registry. The Golem’s LLM never sees 423 definitions; it sees 8 tools (<code>preview_action</code>, <code>commit_action</code>, etc.) that route to the right handler based on action type. Profile filtering happens at adapter registration time.</li>
+<li><strong>External agents</strong> consume tools through the A2A interface (JSON-RPC 2.0 task lifecycle). A2A is a separate binary – it imports handler functions from <code>golem-tools</code> but runs its own process.</li>
+</ul>
+<p>The tool implementations, safety hook chain, memory layer, and chain provider layer are identical regardless of caller. The adapter layer is a thin mapping between Pi tool schemas (or A2A tasks) and ToolDef handlers.</p>
+<blockquote>
+<p>Cross-reference: <code>../01-golem/13-runtime-extensions.md</code> (runtime extension loading, activation, and lifecycle management within a running Golem) S3 (two-layer tool model), S4 (ActionPermit flow)</p>
+</blockquote>
+<hr>
+<h2 id="tooldef-pattern"><a class="header" href="#tooldef-pattern">ToolDef pattern</a></h2>
+<p>Every tool is a module in <code>crates/tools/src/tools/</code> exporting a <code>TOOL_DEF: ToolDef</code> static:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use golem_tools::{ToolDef, ToolContext, ToolResult, Category, CapabilityTier, RiskTier, TickBudget};
+use serde::{Deserialize, Serialize};
+
+/// Input parameters for uniswap_get_pool_info.
+#[derive(Debug, Deserialize)]
+pub struct GetPoolInfoParams {
+    /// Pool contract address (0x...).
+    /// Use uniswap_get_pools_by_token_pair to find the address first.
+    pub pool_address: String,
+    /// Chain ID (default: 1 for Ethereum). Common: 8453 for Base, 42161 for Arbitrum.
+    #[serde(default = "default_chain_id")]
+    pub chain_id: u64,
+}
+
+fn default_chain_id() -&gt; u64 { 1 }
+
+/// Pool state returned by uniswap_get_pool_info.
+#[derive(Debug, Serialize)]
+pub struct PoolInfo {
+    pub pool_address: String,
+    pub chain_id: u64,
+    pub version: String,           // "v3" | "v4"
+    pub token0: TokenMeta,
+    pub token1: TokenMeta,
+    pub fee_tier: u32,
+    pub sqrt_price_x96: String,
+    pub tick: i32,
+    pub liquidity: String,
+    pub tvl_usd: f64,
+    pub volume_24h_usd: f64,
+    pub fee_apy_24h: f64,
+}
+
+pub static TOOL_DEF: ToolDef = ToolDef {
+    name: "uniswap_get_pool_info",
+    description: concat!(
+        "Get current state of a Uniswap V3 or V4 pool: price, liquidity, TVL, volume, fees. ",
+        "Use when the Golem needs pool depth, TVL, current price, or fee APY. ",
+        "Returns tick, sqrtPriceX96, liquidity (as token amounts), 24h volume, and fee tier.",
+    ),
+    category: Category::Data,
+    capability: CapabilityTier::Read,
+    risk_tier: RiskTier::Layer1,
+    tick_budget: TickBudget::Fast,         // &lt;1s
+    progress_steps: &amp;["Fetching slot0", "Loading subgraph data", "Computing APY"],
+    sprite_trigger: SpriteTrigger::Thinking,
+
+    prompt_snippet: "Use uniswap_get_pool_info for pool state. Call uniswap_get_pools_by_token_pair first to get the pool address.",
+
+    prompt_guidelines: &amp;[
+        "Prefer this over manual slot0 reads -- it normalizes V3/V4 differences.",
+        "Cache results for 15s. Don't call twice in the same tick for the same pool.",
+    ],
+};
+
+/// Handler implementation.
+pub async fn handle(params: GetPoolInfoParams, ctx: &amp;ToolContext) -&gt; Result&lt;ToolResult&gt; {
+    ctx.event_fabric.emit_tool_start("uniswap_get_pool_info", &amp;params);
+
+    let provider = ctx.provider(params.chain_id)?;
+
+    // Step 1: Read slot0
+    ctx.event_fabric.emit_tool_update("uniswap_get_pool_info", "Fetching slot0");
+    let slot0 = read_slot0(&amp;provider, params.pool_address.parse()?).await?;
+
+    // Step 2: Subgraph data
+    ctx.event_fabric.emit_tool_update("uniswap_get_pool_info", "Loading subgraph data");
+    let subgraph = ctx.subgraph_client.query_pool(params.pool_address.parse()?).await?;
+
+    // Step 3: Compute APY
+    ctx.event_fabric.emit_tool_update("uniswap_get_pool_info", "Computing APY");
+    let apy = compute_fee_apy(&amp;slot0, &amp;subgraph);
+
+    let result = PoolInfo { /* ... */ };
+    ctx.event_fabric.emit_tool_end("uniswap_get_pool_info", true);
+
+    Ok(ToolResult::read(result))
+}
+<span class="boring">}</span></code></pre>
+<h3 id="tooldef-fields"><a class="header" href="#tooldef-fields">ToolDef fields</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field</th><th>Type</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>name</code></td><td><code>&amp;'static str</code></td><td>Tool name following <code>&lt;prefix&gt;_&lt;action&gt;_&lt;subject&gt;</code> convention</td></tr>
+<tr><td><code>description</code></td><td><code>&amp;'static str</code></td><td>LLM-facing description: when to call, what it returns, what it does NOT do</td></tr>
+<tr><td><code>category</code></td><td><code>Category</code></td><td>Drives profile filtering (17 categories)</td></tr>
+<tr><td><code>capability</code></td><td><code>CapabilityTier</code></td><td><code>Read</code>, <code>Write</code>, or <code>Privileged</code> – determines handler trait</td></tr>
+<tr><td><code>risk_tier</code></td><td><code>RiskTier</code></td><td><code>Layer1</code> (read), <code>Layer2</code> (bounded write), <code>Layer3</code> (unbounded write)</td></tr>
+<tr><td><code>tick_budget</code></td><td><code>TickBudget</code></td><td><code>Fast</code> (&lt;1s), <code>Medium</code> (1-5s), <code>Slow</code> (5-15s)</td></tr>
+<tr><td><code>progress_steps</code></td><td><code>&amp;[&amp;str]</code></td><td>Named execution steps for TUI progress bar rendering</td></tr>
+<tr><td><code>sprite_trigger</code></td><td><code>SpriteTrigger</code></td><td>Animation state: <code>Thinking</code>, <code>Executing</code>, <code>Success</code>, <code>Failure</code></td></tr>
+<tr><td><code>prompt_snippet</code></td><td><code>&amp;'static str</code></td><td>Injected near system prompt, cached. 20-50 tokens.</td></tr>
+<tr><td><code>prompt_guidelines</code></td><td><code>&amp;[&amp;str]</code></td><td>Phase-conditional usage hints injected with tool schema</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="handler-traits-three-trust-tiers"><a class="header" href="#handler-traits-three-trust-tiers">Handler traits: three trust tiers</a></h3>
+<p>Tools implement one of three traits based on their trust tier. The Rust type system enforces that write tools cannot execute without a capability token – this is a compile-time guarantee, not a runtime check. If the safety extension doesn’t mint a <code>Capability&lt;T&gt;</code>, the code that calls <code>execute_write</code> cannot compile.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Tier 1: Read tools -- no capability token required.
+/// Cannot modify on-chain state. ~250 tools (~60% of total).
+/// Examples: check price, read balance, query pool state, get gas price, read health factor.
+#[async_trait]
+pub trait ReadTool: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn schema(&amp;self) -&gt; serde_json::Value;
+    async fn execute_read(
+        &amp;self,
+        params: serde_json::Value,
+        ctx: &amp;ToolContext,
+    ) -&gt; Result&lt;ToolResult&gt;;
+}
+
+/// Tier 2: Write tools -- require a Capability&lt;Self&gt; token, consumed on use.
+/// Can broadcast transactions. ~150 tools (~35% of total).
+/// The capability is CONSUMED (ownership transferred) on execution.
+/// After one use, the capability no longer exists -- Rust's move
+/// semantics prevent reuse at compile time.
+/// Examples: swap tokens, rebalance LP, deposit, withdraw, stake.
+#[async_trait]
+pub trait WriteTool: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn schema(&amp;self) -&gt; serde_json::Value;
+    async fn execute_write(
+        &amp;self,
+        params: serde_json::Value,
+        ctx: &amp;ToolContext,
+        capability: Capability&lt;Self&gt;,  // Moved (consumed) on use -- cannot reuse
+    ) -&gt; Result&lt;ToolResult&gt;
+    where Self: Sized;
+}
+
+/// Tier 3: Privileged tools -- capability + owner approval.
+/// Admin operations, strategy changes. ~23 tools (~5% of total).
+/// Almost never called autonomously -- requires explicit owner steer
+/// or multi-sig approval.
+/// Examples: change PolicyCage parameters, modify strategy, adjust risk limits.
+#[async_trait]
+pub trait PrivilegedTool: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn schema(&amp;self) -&gt; serde_json::Value;
+    async fn execute_privileged(
+        &amp;self,
+        params: serde_json::Value,
+        ctx: &amp;ToolContext,
+        capability: Capability&lt;Self&gt;,
+        owner_approval: OwnerApproval,
+    ) -&gt; Result&lt;ToolResult&gt;
+    where Self: Sized;
+}
+<span class="boring">}</span></code></pre>
+<h3 id="capability-flow"><a class="header" href="#capability-flow">Capability<t> flow</t></a></h3>
+<p>The <code>Capability&lt;T&gt;</code> token is the core safety mechanism. It proves that the PolicyCage was checked, the risk engine approved, and an ActionPermit was created – all before the tool can execute. Even if every other safety mechanism fails, the tool physically cannot run without this token.</p>
+<p>The safety extension is the only code that can mint capability tokens (<code>pub(crate)</code> constructor). The token flows through a strict pipeline:</p>
+<pre><code class="language-text">LLM proposes action
+       |
+       v
+Safety extension: check PolicyCage, check phase, check spending limits
+       |
+       v
+Risk engine: assess risk tier, check allowlist, simulate via Revm
+       |
+       v
+ActionPermit created (permit_id links to audit chain)
+       |
+       v
+Capability&lt;T&gt; minted with value_limit, expiry, policy_hash
+       |
+       v
+Tool handler receives Capability&lt;T&gt; -- consumed by move semantics
+       |
+       v
+Audit chain records: PermitCreated, ToolCall, PermitConsumed
+</code></pre>
+<p>Properties enforced at compile time:</p>
+<ol>
+<li><strong>Cannot be created</strong> outside the safety extension (<code>pub(crate)</code> constructor)</li>
+<li><strong>Cannot be reused</strong> (moved on use – Rust’s ownership system)</li>
+<li><strong>Cannot be forged</strong> (no <code>Default</code>, no <code>Clone</code>, no <code>Copy</code>)</li>
+<li><strong>Cannot be used after expiry</strong> (checked at execution time)</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+
+/// Unforgeable, single-use, scoped capability token.
+/// The safety extension mints it. The tool handler consumes it.
+/// No other path exists.
+pub struct Capability&lt;T&gt; {
+    pub value_limit: f64,           // Max USD authorized
+    pub expires_at: u64,            // Tick expiry
+    pub policy_hash: [u8; 32],      // SHA-256 of PolicyCage state at check time
+    pub permit_id: String,          // Links to audit trail
+    _marker: PhantomData&lt;T&gt;,        // Ties token to specific tool type
+}
+
+impl&lt;T&gt; Capability&lt;T&gt; {
+    /// Only the safety extension can create capability tokens.
+    /// No other code in the system can mint one.
+    pub(crate) fn new(
+        value_limit: f64,
+        expires_at: u64,
+        policy_hash: [u8; 32],
+        permit_id: String,
+    ) -&gt; Self {
+        Self { value_limit, expires_at, policy_hash, permit_id, _marker: PhantomData }
+    }
+
+    pub fn is_valid(&amp;self, current_tick: u64) -&gt; bool {
+        self.expires_at &gt; current_tick
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="speculative-execution-and-capability-tokens"><a class="header" href="#speculative-execution-and-capability-tokens">Speculative execution and capability tokens</a></h3>
+<p>The speculative tool execution engine can only speculate on <code>ReadTool</code> types. Speculating on a <code>WriteTool</code> is not “checked at runtime and rejected” – it is impossible to write the code, because <code>execute_write</code> requires a <code>Capability&lt;Self&gt;</code> parameter that no speculative code path can produce:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// This compiles -- read tools don't need capabilities:
+async fn speculate_read(tool: &amp;dyn ReadTool) {
+    tool.execute_read(serde_json::Value::Null, &amp;ctx).await;
+}
+
+// This does NOT compile -- no way to construct the Capability:
+// async fn speculate_write(tool: &amp;dyn WriteTool) {
+//     tool.execute_write(serde_json::Value::Null, &amp;ctx, ???).await;
+//     //                                               ^^^ No capability to pass
+// }
+<span class="boring">}</span></code></pre>
+<h3 id="toolresult-format"><a class="header" href="#toolresult-format">ToolResult format</a></h3>
+<p>All tools return <code>ToolResult</code>, which includes expected/actual fields for ground truth verification on write tools:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct ToolResult {
+    /// The tool output data, serialized as JSON.
+    pub data: serde_json::Value,
+    /// Whether the tool execution failed.
+    pub is_error: bool,
+    /// Schema version for response format evolution.
+    pub schema_version: u32,
+    /// For write tools: what the tool expected to happen.
+    pub expected_outcome: Option&lt;String&gt;,
+    /// For write tools: what actually happened (from receipt/balance check).
+    pub actual_outcome: Option&lt;String&gt;,
+    /// Ground truth verification source.
+    pub ground_truth_source: Option&lt;String&gt;,
+}
+
+impl ToolResult {
+    /// Convenience for read-only results.
+    pub fn read&lt;T: Serialize&gt;(data: T) -&gt; Self {
+        Self {
+            data: serde_json::to_value(data).unwrap(),
+            is_error: false,
+            schema_version: 1,
+            expected_outcome: None,
+            actual_outcome: None,
+            ground_truth_source: None,
+        }
+    }
+
+    /// Convenience for write results with ground truth.
+    pub fn write&lt;T: Serialize&gt;(
+        data: T,
+        expected: impl Into&lt;String&gt;,
+        actual: impl Into&lt;String&gt;,
+        source: impl Into&lt;String&gt;,
+    ) -&gt; Self {
+        Self {
+            data: serde_json::to_value(data).unwrap(),
+            is_error: false,
+            schema_version: 1,
+            expected_outcome: Some(expected.into()),
+            actual_outcome: Some(actual.into()),
+            ground_truth_source: Some(source.into()),
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="toolcontext-interface"><a class="header" href="#toolcontext-interface">ToolContext interface</a></h3>
+<p>The runtime injects a <code>ToolContext</code> providing chain access, safety pipeline, event bus, and memory:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ToolContext {
+    /// Alloy provider for the specified chain.
+    pub fn provider(&amp;self, chain_id: u64) -&gt; Result&lt;Arc&lt;dyn Provider&gt;&gt;;
+    /// Alloy signer for write operations.
+    pub fn signer(&amp;self, chain_id: u64) -&gt; Result&lt;Arc&lt;dyn Signer&gt;&gt;;
+    /// Revm fork for pre-flight simulation.
+    pub fn revm_fork(&amp;self, chain_id: u64) -&gt; Result&lt;RevmFork&gt;;
+    /// Event Fabric for TUI/surface rendering.
+    pub event_fabric: Arc&lt;EventFabric&gt;,
+    /// Grimoire memory (optional, active when learning profile on).
+    pub grimoire: Option&lt;Arc&lt;Grimoire&gt;&gt;,
+    /// Subgraph client for historical data.
+    pub subgraph_client: Arc&lt;SubgraphClient&gt;,
+    /// Current session config.
+    pub config: Arc&lt;ToolConfig&gt;,
+    /// Uniswap Trading API client (optional, requires API key).
+    pub trading_api: Option&lt;Arc&lt;TradingApiClient&gt;&gt;,
+    /// TypeScript sidecar for Uniswap SDK math.
+    pub sidecar: Arc&lt;SidecarClient&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="tool-annotation-semantics"><a class="header" href="#tool-annotation-semantics">Tool annotation semantics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Annotation</th><th>Meaning</th><th>Safety effect</th></tr>
+</thead>
+<tbody>
+<tr><td><code>CapabilityTier::Read</code></td><td>No on-chain state modification</td><td>Safety skips simulation, no capability needed</td></tr>
+<tr><td><code>CapabilityTier::Write</code></td><td>Broadcasts transactions</td><td>Requires <code>Capability&lt;Self&gt;</code>, full simulation</td></tr>
+<tr><td><code>CapabilityTier::Privileged</code></td><td>Admin/ownership operations</td><td>Requires capability + owner approval</td></tr>
+<tr><td><code>RiskTier::Layer1</code></td><td>Read-only</td><td>No ActionPermit</td></tr>
+<tr><td><code>RiskTier::Layer2</code></td><td>Bounded write (value &lt; limit)</td><td>Standard ActionPermit</td></tr>
+<tr><td><code>RiskTier::Layer3</code></td><td>Unbounded write</td><td>Elevated ActionPermit, Warden pipeline (optional, deferred)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="llm-optimized-tool-descriptions"><a class="header" href="#llm-optimized-tool-descriptions">LLM-optimized tool descriptions</a></h3>
+<p>Tool descriptions serve two audiences: the LLM selecting which tool to call, and the LLM filling in parameters.</p>
+<p><strong>Selection guidance</strong> (the <code>description</code> field): answers “when should I call this tool?”</p>
+<ul>
+<li>Starts with the tool’s purpose in a single phrase</li>
+<li>Lists specific intents that map to this tool</li>
+<li>States what it does NOT do (disambiguates from similar tools)</li>
+<li>Mentions prerequisites (“get pool address first via uniswap_get_pools_by_token_pair”)</li>
+</ul>
+<p><strong>Parameter documentation</strong> (serde <code>#[serde(rename)]</code> + doc comments): answers “how do I fill this in?”</p>
+<ul>
+<li>Format requirements (“0x-prefixed hex address”)</li>
+<li>Common values or examples</li>
+<li>Defaults and when to omit</li>
+</ul>
+<p><strong>Anti-patterns</strong> that degrade LLM tool selection accuracy:</p>
+<ul>
+<li>Generic descriptions: “Interact with Uniswap” (does not help selection)</li>
+<li>No parameter docs: missing doc comments cause hallucinated values</li>
+<li>Ambiguous scope: two similar tools with indistinguishable descriptions</li>
+<li>Response payloads exceeding ~25,000 tokens – implement pagination</li>
+</ul>
+<hr>
+<h2 id="17-tool-categories"><a class="header" href="#17-tool-categories">17 tool categories</a></h2>
+<p>Every <code>ToolDef</code> has a <code>category: Category</code> field. Categories drive profile filtering.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Prefix</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>data</code></td><td><code>data_</code></td><td>On-chain data reads, pool state, token info, portfolio, P&amp;L</td></tr>
+<tr><td><code>trading</code></td><td><code>uniswap_</code></td><td>Swap execution, quotes, approvals, order management</td></tr>
+<tr><td><code>lending</code></td><td><code>aave_</code>, <code>morpho_</code></td><td>Supply, borrow, repay, health factor monitoring</td></tr>
+<tr><td><code>staking</code></td><td><code>lido_</code>, <code>rocketpool_</code></td><td>Liquid staking deposits, withdrawals, reward tracking</td></tr>
+<tr><td><code>restaking</code></td><td><code>eigenlayer_</code></td><td>Restaking, AVS delegation, LRT management</td></tr>
+<tr><td><code>derivatives</code></td><td><code>gmx_</code>, <code>panoptic_</code></td><td>Perpetuals, options, hedging strategies</td></tr>
+<tr><td><code>yield</code></td><td><code>yearn_</code>, <code>pendle_</code>, <code>ethena_</code></td><td>Yield aggregators, PT/YT tokenization</td></tr>
+<tr><td><code>lp</code></td><td><code>uniswap_</code></td><td>Liquidity provision and position management</td></tr>
+<tr><td><code>vault</code></td><td><code>vault_</code></td><td>ERC-4626 vault operations</td></tr>
+<tr><td><code>safety</code></td><td><code>safety_</code></td><td>Simulation, risk assessment, circuit breakers</td></tr>
+<tr><td><code>intelligence</code></td><td><code>intel_</code></td><td>MEV scoring, IL calc, venue comparison, regime classification</td></tr>
+<tr><td><code>memory</code></td><td><code>memory_</code></td><td>Grimoire episodic and semantic memory</td></tr>
+<tr><td><code>identity</code></td><td><code>identity_</code></td><td>ERC-8004 agent identity, reputation</td></tr>
+<tr><td><code>wallet</code></td><td><code>wallet_</code></td><td>Wallet policy, funding, session keys</td></tr>
+<tr><td><code>streaming</code></td><td><code>stream_</code></td><td>Event Fabric live data subscriptions</td></tr>
+<tr><td><code>testnet</code></td><td><code>testnet_</code></td><td>Local Anvil testnet management</td></tr>
+<tr><td><code>bootstrap</code></td><td><code>bootstrap_</code></td><td>First-run setup and provisioning</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="chain-support-by-tool-category"><a class="header" href="#chain-support-by-tool-category">Chain support by tool category</a></h3>
+<p>Not every tool category is available on every chain. This matrix shows which chains each category supports for write operations (read operations are available on all chains via RPC).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Ethereum</th><th>Base</th><th>Unichain</th><th>Arbitrum</th><th>Optimism</th><th>Polygon</th><th>BNB</th><th>Avalanche</th></tr>
+</thead>
+<tbody>
+<tr><td>trading (Uniswap)</td><td>V2/V3/V4</td><td>V2/V3/V4</td><td>V3/V4</td><td>V3</td><td>V3</td><td>V3</td><td>V3</td><td>V3</td></tr>
+<tr><td>lending (Aave)</td><td>Yes</td><td>Yes</td><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+<tr><td>lending (Morpho)</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>staking (Lido)</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>restaking (EigenLayer)</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>derivatives (GMX)</td><td>No</td><td>No</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+<tr><td>derivatives (Panoptic)</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>yield (Pendle)</td><td>Yes</td><td>No</td><td>No</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+<tr><td>vault (ERC-4626)</td><td>Yes</td><td>Yes</td><td>Yes</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+</tbody>
+</table>
+</div>
+<p>Chain support is declared in each tool’s <code>ToolDef</code> via <code>supported_chains: &amp;[u64]</code>. The adapter layer rejects calls targeting unsupported chains with <code>CHAIN_NOT_SUPPORTED</code> before any on-chain interaction.</p>
+<h3 id="risk-tier-scale"><a class="header" href="#risk-tier-scale">Risk tier scale</a></h3>
+<p>Tools use a three-layer risk classification that gates phase behavior and custody constraints:</p>
+<ul>
+<li><strong>Layer 1 (low risk)</strong>: Reads, quotes, balance checks. No on-chain state mutation. No capability token required.</li>
+<li><strong>Layer 2 (medium risk)</strong>: Swaps, standard DeFi operations (supply, withdraw, stake). Require <code>Capability&lt;WriteTool&gt;</code>. Subject to spending limits and PolicyCage validation.</li>
+<li><strong>Layer 3 (high risk)</strong>: Leveraged positions, novel protocols, flash loans, options. Require <code>Capability&lt;WriteTool&gt;</code> plus additional simulation in Revm fork before execution. Phase-gated: blocked in conservation/declining/terminal phases.</li>
+</ul>
+<p>Risk tier is declared in <code>ToolDef.risk_tier</code> and enforced by the safety hook chain before any handler runs.</p>
+<hr>
+<h2 id="prefix-convention"><a class="header" href="#prefix-convention">Prefix convention</a></h2>
+<p>All tool names follow <code>&lt;prefix&gt;_&lt;action&gt;_&lt;subject&gt;</code>. The prefix identifies the protocol or subsystem.</p>
+<h3 id="protocol-prefixes"><a class="header" href="#protocol-prefixes">Protocol prefixes</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Prefix</th><th>Protocol</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>uniswap_</code></td><td>Uniswap V2/V3/V4/UniswapX</td><td><code>uniswap_execute_swap</code></td></tr>
+<tr><td><code>aave_</code></td><td>Aave V3</td><td><code>aave_supply_collateral</code></td></tr>
+<tr><td><code>morpho_</code></td><td>Morpho Blue</td><td><code>morpho_supply_market</code></td></tr>
+<tr><td><code>curve_</code></td><td>Curve Finance</td><td><code>curve_get_pool_info</code></td></tr>
+<tr><td><code>lido_</code></td><td>Lido</td><td><code>lido_stake_eth</code></td></tr>
+<tr><td><code>rocketpool_</code></td><td>Rocket Pool</td><td><code>rocketpool_deposit_eth</code></td></tr>
+<tr><td><code>eigenlayer_</code></td><td>EigenLayer</td><td><code>eigenlayer_delegate_avs</code></td></tr>
+<tr><td><code>pendle_</code></td><td>Pendle</td><td><code>pendle_buy_pt</code></td></tr>
+<tr><td><code>yearn_</code></td><td>Yearn V3</td><td><code>yearn_deposit_vault</code></td></tr>
+<tr><td><code>ethena_</code></td><td>Ethena</td><td><code>ethena_stake_usde</code></td></tr>
+<tr><td><code>gmx_</code></td><td>GMX V2</td><td><code>gmx_open_position</code></td></tr>
+<tr><td><code>panoptic_</code></td><td>Panoptic</td><td><code>panoptic_buy_option</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="subsystem-prefixes"><a class="header" href="#subsystem-prefixes">Subsystem prefixes</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Prefix</th><th>Subsystem</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>data_</code></td><td>On-chain data reads</td><td><code>data_get_token_price</code></td></tr>
+<tr><td><code>safety_</code></td><td>Safety and simulation</td><td><code>safety_simulate_transaction</code></td></tr>
+<tr><td><code>intel_</code></td><td>Intelligence/analytics</td><td><code>intel_assess_mev_risk</code></td></tr>
+<tr><td><code>memory_</code></td><td>Grimoire memory</td><td><code>memory_store_episode</code></td></tr>
+<tr><td><code>identity_</code></td><td>ERC-8004 identity</td><td><code>identity_verify_agent</code></td></tr>
+<tr><td><code>wallet_</code></td><td>Wallet management</td><td><code>wallet_get_status</code></td></tr>
+<tr><td><code>vault_</code></td><td>ERC-4626 vault ops</td><td><code>vault_deposit</code></td></tr>
+<tr><td><code>stream_</code></td><td>Live data streams</td><td><code>stream_subscribe_price</code></td></tr>
+<tr><td><code>testnet_</code></td><td>Local testnet</td><td><code>testnet_time_travel</code></td></tr>
+<tr><td><code>bootstrap_</code></td><td>First-run setup</td><td><code>bootstrap_setup_wallet</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="profiles"><a class="header" href="#profiles">Profiles</a></h2>
+<p>Set <code>TOOL_PROFILE</code> (or <code>GOLEM_PROFILE</code>) to control which tool handlers load at boot. Profiles compose – <code>TOOL_PROFILE=trader,vault</code> activates both.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>Read Tools</th><th>Write Tools</th><th>Use case</th></tr>
+</thead>
+<tbody>
+<tr><td><code>active</code></td><td>All ~250</td><td>All ~150</td><td>Standard active trading Golem – full read + write access</td></tr>
+<tr><td><code>observatory</code></td><td>All ~250</td><td>None</td><td>Sleepwalker phenotype – observes, dreams, publishes, never trades</td></tr>
+<tr><td><code>conservative</code></td><td>All ~250</td><td>~40 (no leverage, no complex LP, no flashloans)</td><td>Risk-averse owner configuration</td></tr>
+<tr><td><code>data</code></td><td>~40</td><td>None</td><td>Read-only analytics, monitoring, portfolio tracking</td></tr>
+<tr><td><code>trader</code></td><td>~60</td><td>~20</td><td>Swap execution, quotes, approvals, MEV assessment</td></tr>
+<tr><td><code>lp</code></td><td>~65</td><td>~25</td><td>Liquidity provision, position management, fee collection</td></tr>
+<tr><td><code>vault</code></td><td>~75</td><td>~35</td><td>ERC-4626 vault operations, am-AMM bidding</td></tr>
+<tr><td><code>intelligence</code></td><td>~58</td><td>None</td><td>MEV scoring, IL calculation, venue comparison</td></tr>
+<tr><td><code>learning</code></td><td>~52</td><td>~12</td><td>Memory management, self-improvement</td></tr>
+<tr><td><code>identity</code></td><td>~60</td><td>~20</td><td>ERC-8004 identity, reputation, wallet</td></tr>
+<tr><td><code>golem</code></td><td>All ~250</td><td>~150</td><td>Full Golem lifecycle: all categories except testnet</td></tr>
+<tr><td><code>full</code></td><td>All</td><td>All</td><td>All tools registered</td></tr>
+<tr><td><code>dev</code></td><td>All</td><td>All + testnet</td><td>Full + local testnet tools</td></tr>
+</tbody>
+</table>
+</div>
+<p>The <code>observatory</code> profile is particularly interesting. A Sleepwalker Golem loads only read tools, meaning the code path for executing trades doesn’t exist at runtime – not blocked by a policy check, but structurally absent. The Sleepwalker watches the market, dreams about what it observes, publishes structural insights to the Lethe (formerly Commons), and burns capital at 0.3x the rate of an active Golem (no gas costs, reduced inference).</p>
+<h3 id="profile-to-category-mapping"><a class="header" href="#profile-to-category-mapping">Profile-to-category mapping</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>data</th><th>trading</th><th>lending</th><th>staking</th><th>restaking</th><th>derivatives</th><th>yield</th><th>lp</th><th>vault</th><th>safety</th><th>intelligence</th><th>memory</th><th>identity</th><th>wallet</th><th>streaming</th><th>testnet</th><th>bootstrap</th></tr>
+</thead>
+<tbody>
+<tr><td>active</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>–</td><td>Yes</td></tr>
+<tr><td>observatory</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>conservative</td><td>Yes</td><td>Yes*</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes*</td><td>–</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>data</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>trader</td><td>Yes</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>lp</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>–</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>vault</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>intelligence</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>learning</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>identity</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>Yes</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>golem</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>–</td><td>Yes</td></tr>
+<tr><td>full</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>–</td><td>Yes</td></tr>
+<tr><td>dev</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div>
+<p>* <code>conservative</code> includes a restricted subset of trading and LP write tools – no leverage, no flashloans, no complex multi-hop strategies.</p>
+<p>The <code>data</code> category is implicitly included in all profiles. <code>observatory</code> includes data + intelligence (read-only). <code>active</code> and <code>golem</code> are equivalent for tool access. <code>full</code> includes everything except testnet. <code>dev</code> extends <code>full</code> with testnet tools.</p>
+<h3 id="profile-filtering"><a class="header" href="#profile-filtering">Profile filtering</a></h3>
+<p>Profile filtering uses the <code>ToolDef.category</code> field. Filtering happens once at extension initialization:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let allowed = resolve_profile_categories(profile);
+let tools: Vec&lt;&amp;ToolDef&gt; = ALL_TOOL_DEFS
+    .iter()
+    .filter(|t| allowed.contains(&amp;t.category))
+    .collect();
+<span class="boring">}</span></code></pre>
+<h3 id="fine-grained-overrides"><a class="header" href="#fine-grained-overrides">Fine-grained overrides</a></h3>
+<p>The config file supports per-tool enable/disable that takes precedence over profiles:</p>
+<pre><code class="language-toml">[tools]
+profile = "trader"
+enable = ["intel_compute_vpin", "intel_compute_lvr"]
+disable = ["uniswap_submit_uniswapx_order"]
+</code></pre>
+<hr>
+<h2 id="capability-gating"><a class="header" href="#capability-gating">Capability gating</a></h2>
+<p>Three capabilities gate tool registration. A tool requiring a capability that isn’t present is silently skipped during registration.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Capability</th><th>Required by</th><th>How it’s satisfied</th></tr>
+</thead>
+<tbody>
+<tr><td><code>wallet</code></td><td>All write tools (trading, LP, vault, safety)</td><td>A signer is configured (<code>GOLEM_WALLET_*</code> env or <code>golem.toml [wallet]</code>)</td></tr>
+<tr><td><code>uniswap_api</code></td><td>API-backed tools</td><td><code>GOLEM_UNISWAP_API_KEY</code> is set</td></tr>
+<tr><td><code>memory</code></td><td>Memory and self-improvement tools</td><td><code>GOLEM_MEMORY_ENABLED=true</code> and <code>learning</code> profile active</td></tr>
+</tbody>
+</table>
+</div>
+<p>Capability checking happens once at boot. A <code>data</code> profile with no wallet loads all read tools without error. A <code>trader</code> profile without a wallet logs a warning and skips write tools.</p>
+<hr>
+<h2 id="event-fabric-integration"><a class="header" href="#event-fabric-integration">Event Fabric integration</a></h2>
+<p>Every tool emits typed events through the Event Fabric (Bardo’s <code>tokio::broadcast</code> channel system for real-time event streaming between runtime components) for TUI rendering, telemetry, and surface updates.</p>
+<h3 id="tool-lifecycle-events"><a class="header" href="#tool-lifecycle-events">Tool lifecycle events</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>When</th></tr>
+</thead>
+<tbody>
+<tr><td><code>tool:start</code></td><td><code>{ tool_name, params_hash, tick }</code></td><td>Handler entry</td></tr>
+<tr><td><code>tool:update</code></td><td><code>{ tool_name, step_name, step_index, total_steps }</code></td><td>Each progress step</td></tr>
+<tr><td><code>tool:end</code></td><td><code>{ tool_name, success, duration_ms, result_summary }</code></td><td>Handler exit</td></tr>
+<tr><td><code>tool:error</code></td><td><code>{ tool_name, error_code, error_message }</code></td><td>Handler failure</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="tui-rendering-contract"><a class="header" href="#tui-rendering-contract">TUI rendering contract</a></h3>
+<p>The TUI subscribes to <code>tool:*</code> events and renders them according to the tool’s metadata:</p>
+<ul>
+<li><strong><code>progress_steps</code></strong>: Drives a step-by-step progress bar. Each <code>tool:update</code> event advances the bar.</li>
+<li><strong><code>sprite_trigger</code></strong>: Sets the Golem sprite animation state (<code>Thinking</code> for reads, <code>Executing</code> for writes, <code>Success</code>/<code>Failure</code> on completion).</li>
+<li><strong><code>tick_budget</code></strong>: The TUI uses this to estimate expected duration and show appropriate loading states.</li>
+</ul>
+<h3 id="event-emission-pattern"><a class="header" href="#event-emission-pattern">Event emission pattern</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Every handler follows this pattern:
+pub async fn handle(params: P, ctx: &amp;ToolContext) -&gt; Result&lt;ToolResult&gt; {
+    ctx.event_fabric.emit(Subsystem::Tools, EventPayload::ToolExecutionStart {
+        tool_name: TOOL_DEF.name.into(),
+        params_hash: hash_params(&amp;params),
+    });
+
+    // Step 1
+    ctx.event_fabric.emit_tool_update(TOOL_DEF.name, "Fetching data");
+    let data = fetch(&amp;ctx.provider(chain_id)?).await?;
+
+    // Step 2
+    ctx.event_fabric.emit_tool_update(TOOL_DEF.name, "Processing");
+    let result = process(data)?;
+
+    ctx.event_fabric.emit(Subsystem::Tools, EventPayload::ToolExecutionComplete {
+        tool_name: TOOL_DEF.name.into(),
+        success: true,
+        duration_ms: elapsed.as_millis() as u64,
+    });
+
+    Ok(ToolResult::read(result))
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="high-level-architecture"><a class="header" href="#high-level-architecture">High-level architecture</a></h2>
+<h3 id="primary-path-golem-via-pi-extensions"><a class="header" href="#primary-path-golem-via-pi-extensions">Primary path: Golem via Pi extensions</a></h3>
+<pre><code class="language-text">Golem (Pi Session)
+       |
+       v
++--- Pi Extension Layer ----------------------------------+
+|  golem-tools: 8 Pi-facing tools                         |
+|  golem-safety: PolicyCage + phase enforcement            |
+|  golem-permits: ActionPermit lifecycle                   |
+|  All 19 extensions in dependency order                   |
++---------+------------------------------------------------+
+          |
+          v
++--- Tool Adapter Registry --------------------------------+
+|  Pi-facing tool -&gt; ToolDef handler resolution             |
+|  Profile-filtered: trader, vault, lp, etc.                |
++---------+------------------------------------------------+
+          |
+          v
++--- golem-tools crate ------------------------------------+
+|  Data (~40) | Trading (~20) | Lending (~27) | LP (~28)   |
+|  Staking (~16) | Restaking (~16) | Derivatives (~16)     |
+|  Yield (~20) | Vault (~40) | Safety (~16) | Intel (~18)  |
+|  Memory (~13) | Identity (~24) | Wallet (~8) | Stream (6)|
+|  423+ tools, all ToolDef + handler functions              |
++---------+------------------------------------------------+
+          | (unchanged from here down)
+          v
+   [Grimoire -&gt; Safety Hook Chain -&gt; Alloy Provider -&gt; Signer -&gt; Revm]
+</code></pre>
+<h3 id="secondary-path-external-agents-via-a2a"><a class="header" href="#secondary-path-external-agents-via-a2a">Secondary path: External agents via A2A</a></h3>
+<pre><code class="language-text">External Agent
+       |
+       v
++--- A2A Interface ----------------------------------------+
+|  JSON-RPC 2.0 task lifecycle                              |
+|  Agent Card at /.well-known/agent.json                    |
+|  Imports handlers from golem-tools                        |
++---------+------------------------------------------------+
+          |
+          v
+   [Same golem-tools handler layer]
+</code></pre>
+<h3 id="shared-lower-stack"><a class="header" href="#shared-lower-stack">Shared lower stack</a></h3>
+<pre><code class="language-text">+--- Grimoire (Memory Layer) ----------------------------------+
+|  LanceDB (episodic) | SQLite (semantic) | Filesystem (strat) |
+|  Reflexion | ExpeL | Ebbinghaus decay | Dream hooks          |
+|  Optional: active when `learning` profile is on              |
++---------+----------------------------------------------------+
+          |
+          v
++--- Safety Hook Chain ----------------------------------------+
+|  on_tool_call chain: safety -&gt; permits -&gt; risk -&gt; filter     |
+|  Capability token minting + consumption                      |
+|  Revm simulation (pre-flight fork, not eth_call)             |
+|  PolicyCage enforcement + phase gating                       |
++---------+----------------------------------------------------+
+          |
+          v
++--- Alloy Provider Layer -------------------------------------+
+|  sol! macro for type-safe contract bindings                   |
+|  11 chains | RPC pool | retry | block caching                |
++---------+----------------------------------------------------+
+          |
+          v
++--- Signer Abstraction ----------------------------------------+
+|  Local key | Privy (HTTP) | Safe | ZeroDev | generic Alloy    |
+|  All normalized to Alloy's Signer trait                       |
++---------+-----------------------------------------------------+
+          |
+          v
++--- TypeScript Sidecar -----------------------------------------+
+|  Unix socket IPC (~1-5ms)                                      |
+|  Uniswap SDK math (smart-order-router, v3-sdk, v4-sdk)         |
+|  Called only for routing/position math that hasn't been ported  |
++----------------------------------------------------------------+
+</code></pre>
+<hr>
+<h2 id="tool-modules"><a class="header" href="#tool-modules">Tool modules</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Module</th><th>Count</th><th>Category</th><th>Capability</th><th>Write ops</th></tr>
+</thead>
+<tbody>
+<tr><td>On-chain data reads</td><td>9</td><td>data</td><td>Read</td><td>0</td></tr>
+<tr><td>Trading (Uniswap)</td><td>5</td><td>trading</td><td>Write</td><td>4</td></tr>
+<tr><td>Uniswap API</td><td>~20</td><td>trading</td><td>Write</td><td>~12</td></tr>
+<tr><td>Lending (Aave, Morpho, MakerDAO)</td><td>~27</td><td>lending</td><td>Write</td><td>~18</td></tr>
+<tr><td>LP management</td><td>~28</td><td>lp</td><td>Write</td><td>~18</td></tr>
+<tr><td>Vault core</td><td>~40</td><td>vault</td><td>Write</td><td>~25</td></tr>
+<tr><td>Staking (Lido, Rocket Pool)</td><td>~16</td><td>staking</td><td>Write</td><td>~8</td></tr>
+<tr><td>Restaking (EigenLayer, LRTs)</td><td>~16</td><td>restaking</td><td>Write</td><td>~10</td></tr>
+<tr><td>Derivatives (GMX, Panoptic)</td><td>~16</td><td>derivatives</td><td>Write</td><td>~10</td></tr>
+<tr><td>Yield (Yearn, Pendle, Convex, Ethena)</td><td>~20</td><td>yield</td><td>Write</td><td>~12</td></tr>
+<tr><td>Bridge + Aggregator</td><td>9</td><td>trading</td><td>Write</td><td>4</td></tr>
+<tr><td>Safety and simulation</td><td>~16</td><td>safety</td><td>Read/Write</td><td>~4</td></tr>
+<tr><td>Intelligence and analytics</td><td>~18</td><td>intelligence</td><td>Read</td><td>0</td></tr>
+<tr><td>Memory</td><td>~13</td><td>memory</td><td>Write</td><td>~5</td></tr>
+<tr><td>Identity + Wallet</td><td>~24</td><td>identity/wallet</td><td>Read/Write</td><td>~8</td></tr>
+<tr><td>Streaming</td><td>6</td><td>streaming</td><td>Read</td><td>0</td></tr>
+<tr><td>Testnet</td><td>5</td><td>testnet</td><td>Write</td><td>4</td></tr>
+<tr><td>Bootstrap</td><td>3</td><td>bootstrap</td><td>Write</td><td>2</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>423+</strong></td><td></td><td></td><td><strong>~150</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>All write operations pass through the full safety hook chain.</p>
+<hr>
+<h2 id="two-layer-tool-model"><a class="header" href="#two-layer-tool-model">Two-layer tool model</a></h2>
+<h3 id="defi-adapter-pattern"><a class="header" href="#defi-adapter-pattern">DeFi adapter pattern</a></h3>
+<p>The Golem’s LLM never calls protocol-specific tools directly. It calls 8 Pi-facing tools (<code>preview_action</code>, <code>commit_action</code>, <code>cancel_action</code>, <code>emergency_halt</code>, <code>query_state</code>, <code>search_context</code>, <code>query_grimoire</code>, <code>update_directive</code>). Each call resolves to a specific ToolDef handler through the Tool Adapter Registry maintained by the <code>golem-tools</code> extension.</p>
+<p>When the LLM calls <code>preview_action({ action_type: "deposit", venue: "morpho", asset: "USDC", amount: "50000000000" })</code>, the adapter layer resolves the venue to a protocol-specific handler, constructs the calldata via Alloy’s <code>sol!</code> macro, classifies the risk tier, and returns an <code>AdapterResolution</code> that routes to the internal handler.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AdapterResolution {
+    /// The internal ToolDef to invoke.
+    pub internal_tool: &amp;'static ToolDef,
+    /// Transformed parameters (Pi-facing schema -&gt; internal schema).
+    pub transformed_params: serde_json::Value,
+    /// Risk tier for ActionPermit routing.
+    pub risk_tier: RiskTier,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum RiskTier {
+    Routine,     // Read-only, informational
+    Standard,    // Bounded value write
+    Elevated,    // Large value or complex operation
+    High,        // Cross-chain, V4 hooks, leverage
+    Critical,    // Ownership/admin operations
+}
+<span class="boring">}</span></code></pre>
+<h3 id="adapter-registry"><a class="header" href="#adapter-registry">Adapter registry</a></h3>
+<p>Each protocol has a typed adapter that wraps tool handlers with regime-aware parameter defaults. Adapter methods call specific tool handlers and return structured results used by heartbeat probes.</p>
+<p>The <code>golem-tools</code> extension loads appropriate adapters based on the GolemManifest’s <code>allowed_protocols</code> field. Only adapters for declared protocols are registered. An adapter for a protocol not in <code>allowed_protocols</code> is never instantiated.</p>
+<h3 id="risk-tier-classification"><a class="header" href="#risk-tier-classification">Risk tier classification</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Default risk tier</th><th>Escalation conditions</th></tr>
+</thead>
+<tbody>
+<tr><td>Lending (supply/withdraw)</td><td>Standard</td><td>&gt; 100K USD: Elevated</td></tr>
+<tr><td>LP (add/remove liquidity)</td><td>Elevated</td><td>V4 hooks: High</td></tr>
+<tr><td>Swaps</td><td>Standard</td><td>&gt; 50K USD: Elevated, cross-chain: High</td></tr>
+<tr><td>Staking</td><td>Standard</td><td>&gt; 100K USD: Elevated</td></tr>
+<tr><td>Ownership/admin operations</td><td>Critical</td><td>Always</td></tr>
+</tbody>
+</table>
+</div>
+<p>Risk tiers feed into the ActionPermit system. Standard-tier permits execute immediately. Elevated and above route through the Warden’s announce-wait-execute pipeline (requires optional Warden module, deferred; see <code>prd2-extended/10-safety/02-warden.md</code>).</p>
+<h3 id="tool-pruning"><a class="header" href="#tool-pruning">Tool pruning</a></h3>
+<p>The task classifier in <code>golem-model-router</code> determines which 12 or fewer tools to expose per tick. The rest are deferred – present in the adapter registry but not included in the LLM’s context window for that inference call. The classifier reads current probe results and regime to select the most relevant tool subset.</p>
+<h3 id="profile-specific-adapter-sets"><a class="header" href="#profile-specific-adapter-sets">Profile-specific adapter sets</a></h3>
+<p>Each profile gets a different set of adapters. The <code>data</code> profile is structurally unable to trade – it has no <code>preview_action</code> or <code>commit_action</code> adapters. Not gated by a flag. Not blocked by a policy check. The routing entries don’t exist.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn register_adapters(profile: &amp;ToolProfile) -&gt; AdapterRegistry {
+    let mut registry = AdapterRegistry::new();
+
+    // All profiles get query adapters
+    registry.add("query_state", "portfolio", &amp;GET_PORTFOLIO_SNAPSHOT);
+    registry.add("search_context", "price", &amp;GET_TOKEN_PRICE);
+    registry.add("search_context", "pool", &amp;GET_POOL_INFO);
+
+    match profile {
+        ToolProfile::Trader | ToolProfile::Golem | ToolProfile::Full | ToolProfile::Dev =&gt; {
+            registry.add("preview_action", "swap", &amp;SIMULATE_SWAP);
+            registry.add("commit_action", "swap", &amp;EXECUTE_SWAP);
+        }
+        ToolProfile::Lp | ToolProfile::Golem | ToolProfile::Full | ToolProfile::Dev =&gt; {
+            registry.add("preview_action", "add_liquidity", &amp;SIMULATE_ADD_LIQUIDITY);
+            registry.add("commit_action", "add_liquidity", &amp;EXECUTE_ADD_LIQUIDITY);
+            registry.add("preview_action", "remove_liquidity", &amp;SIMULATE_REMOVE_LIQUIDITY);
+            registry.add("commit_action", "remove_liquidity", &amp;EXECUTE_REMOVE_LIQUIDITY);
+        }
+        ToolProfile::Vault | ToolProfile::Golem | ToolProfile::Full | ToolProfile::Dev =&gt; {
+            registry.add("preview_action", "deposit", &amp;VAULT_PREVIEW_DEPOSIT);
+            registry.add("commit_action", "deposit", &amp;VAULT_DEPOSIT);
+            registry.add("preview_action", "withdraw", &amp;VAULT_PREVIEW_WITHDRAW);
+            registry.add("commit_action", "withdraw", &amp;VAULT_WITHDRAW);
+        }
+        ToolProfile::Data =&gt; {
+            // Read-only. NO preview_action or commit_action adapters.
+        }
+        _ =&gt; {}
+    }
+
+    registry
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="alloy-integration"><a class="header" href="#alloy-integration">Alloy integration</a></h2>
+<p>All on-chain interaction uses Alloy (Paradigm’s Rust Ethereum toolkit). The <code>sol!</code> macro generates type-safe Rust bindings from Solidity function signatures at compile time.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::{sol, providers::Provider, primitives::*};
+
+sol! {
+    /// Uniswap V3 Pool slot0 read.
+    function slot0() external view returns (
+        uint160 sqrtPriceX96,
+        int24 tick,
+        uint16 observationIndex,
+        uint16 observationCardinality,
+        uint16 observationCardinalityNext,
+        uint8 feeProtocol,
+        bool unlocked
+    );
+
+    /// ERC-20 balance check.
+    function balanceOf(address owner) external view returns (uint256);
+
+    /// ERC-4626 vault deposit.
+    function deposit(uint256 assets, address receiver) external returns (uint256 shares);
+}
+
+/// Read pool state using type-safe bindings.
+async fn read_slot0(provider: &amp;dyn Provider, pool: Address) -&gt; Result&lt;Slot0Return&gt; {
+    let call = slot0Call {};
+    let result = provider.call(call.abi_encode(), pool).await?;
+    Ok(slot0Call::abi_decode_returns(&amp;result)?)
+}
+<span class="boring">}</span></code></pre>
+<p>Advantages over the previous viem approach:</p>
+<ul>
+<li><strong>Type-safe at compile time</strong>: Solidity signatures compile to Rust types. No ABI JSON, no runtime decode errors.</li>
+<li><strong>No codegen step</strong>: The <code>sol!</code> macro runs at compile time as a procedural macro.</li>
+<li><strong>60% faster arithmetic</strong>: Alloy’s <code>U256</code> operations in native Rust vs JavaScript BigInt.</li>
+<li><strong>Zero-copy decoding</strong>: ABI decoding reads directly from the response buffer.</li>
+</ul>
+<h3 id="typescript-sidecar"><a class="header" href="#typescript-sidecar">TypeScript sidecar</a></h3>
+<p>Uniswap SDKs are 50,000+ lines of TypeScript. Porting them would take months. Instead, a co-located Node.js process handles SDK math via Unix domain socket (~1-5ms latency):</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct SidecarClient {
+    socket_path: PathBuf,
+}
+
+impl SidecarClient {
+    pub async fn find_best_route(
+        &amp;self,
+        token_in: Address,
+        token_out: Address,
+        amount: U256,
+        chain_id: u64,
+    ) -&gt; Result&lt;SwapRoute&gt; {
+        let params = serde_json::json!({
+            "tokenIn": token_in.to_string(),
+            "tokenOut": token_out.to_string(),
+            "amount": amount.to_string(),
+            "chainId": chain_id,
+        });
+        let result = self.call("findBestRoute", params).await?;
+        Ok(serde_json::from_value(result)?)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The sidecar runs <code>@uniswap/smart-order-router</code>, <code>v3-sdk</code>, <code>v4-sdk</code>, <code>permit2-sdk</code>, and <code>uniswapx-sdk</code>. It starts automatically with the Golem and restarts on crash.</p>
+<hr>
+<h2 id="revm-simulation"><a class="header" href="#revm-simulation">Revm simulation</a></h2>
+<p>Pre-flight simulation uses Revm (Rust EVM implementation) instead of <code>eth_call</code>. Revm provides a local fork of chain state that supports multi-step simulation, state inspection, and gas profiling.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub async fn simulate_swap(
+    ctx: &amp;ToolContext,
+    chain_id: u64,
+    calldata: &amp;[u8],
+    to: Address,
+    value: U256,
+) -&gt; Result&lt;SimulationResult&gt; {
+    let mut fork = ctx.revm_fork(chain_id)?;
+
+    // Execute the transaction in the fork
+    let result = fork.transact(calldata, to, value)?;
+
+    // Inspect state changes
+    let balance_before = fork.balance_of(ctx.signer_address(), token)?;
+    let balance_after = fork.balance_of_post(ctx.signer_address(), token)?;
+
+    Ok(SimulationResult {
+        success: result.is_success(),
+        gas_used: result.gas_used(),
+        output: result.output().to_vec(),
+        state_changes: fork.diff(),
+        balance_delta: balance_after - balance_before,
+    })
+}
+<span class="boring">}</span></code></pre>
+<p>Advantages over <code>eth_call</code>:</p>
+<ul>
+<li><strong>Multi-step simulation</strong>: Execute approve + swap + verify in one fork</li>
+<li><strong>State inspection</strong>: Read balances before and after without separate calls</li>
+<li><strong>No RPC round-trips</strong>: One fork creation, then all simulation is local</li>
+<li><strong>Deterministic gas</strong>: Fork snapshot at specific block, not racing against mempool</li>
+</ul>
+<hr>
+<h2 id="wasm-sandbox-for-untrusted-tools"><a class="header" href="#wasm-sandbox-for-untrusted-tools">WASM sandbox for untrusted tools</a></h2>
+<p>The 423+ native DeFi tools run unsandboxed at full Rust speed – they’re part of the reviewed, compiled codebase. But untrusted tools (user-provided, marketplace-purchased, third-party MCP tools) run inside a WASM sandbox using Wasmtime.</p>
+<p>The sandbox applies two resource limits:</p>
+<p><strong>Fuel metering</strong>: Each WASM instruction consumes “fuel.” When fuel runs out, execution halts. This prevents infinite loops and runaway computation. Default: 10 million fuel units (~100ms of computation).</p>
+<p><strong>Epoch interruption</strong>: A wall-clock timeout enforced by a background tokio task that increments the Wasmtime engine epoch. This catches cases where fuel metering alone doesn’t prevent long execution (tight loops consuming little fuel per iteration). Default: 5 seconds.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct WasmSandbox {
+    engine: wasmtime::Engine,
+    fuel_limit: u64,         // default: 10_000_000
+    timeout: Duration,       // default: 5s
+    memory_limit: usize,     // default: 256MB
+}
+
+impl WasmSandbox {
+    pub async fn execute(
+        &amp;self,
+        wasm_bytes: &amp;[u8],
+        params: serde_json::Value,
+    ) -&gt; Result&lt;serde_json::Value&gt; {
+        let module = wasmtime::Module::new(&amp;self.engine, wasm_bytes)?;
+        let mut store = wasmtime::Store::new(&amp;self.engine, ());
+        store.set_fuel(self.fuel_limit)?;
+
+        // Epoch-based timeout
+        let engine = self.engine.clone();
+        let timeout = self.timeout;
+        tokio::spawn(async move {
+            tokio::time::sleep(timeout).await;
+            engine.increment_epoch();
+        });
+
+        let instance = wasmtime::Instance::new(&amp;mut store, &amp;module, &amp;[])?;
+        let execute_fn = instance
+            .get_typed_func::&lt;(i32, i32), i32&gt;(&amp;mut store, "execute")?;
+
+        // Marshal params -&gt; WASM memory, call, unmarshal result
+        // ...
+        Ok(result)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Sandboxed tools receive a restricted interface – read operations only. Any write operation must be returned as a request that the host validates through the normal safety hook chain before executing. The sandbox has no filesystem access, no network access, and no access to the Golem’s wallet keys.</p>
+<p>Every sandbox execution emits <code>GolemEvent::WasmToolStart</code> and <code>GolemEvent::WasmToolComplete</code> events for audit trail and TUI rendering.</p>
+<hr>
+<h2 id="safety-hook-chain"><a class="header" href="#safety-hook-chain">Safety hook chain</a></h2>
+<p>All write operations pass through the safety hook chain before execution. The chain is implemented as Pi extension lifecycle hooks (<code>on_tool_call</code>) that fire in dependency order.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Safety hook chain -- each hook can approve, reject, or modify the tool call.
+pub trait SafetyHook: Send + Sync {
+    async fn on_tool_call(
+        &amp;self,
+        tool: &amp;ToolDef,
+        params: &amp;serde_json::Value,
+        ctx: &amp;ToolContext,
+    ) -&gt; Result&lt;HookDecision&gt;;
+}
+
+pub enum HookDecision {
+    /// Allow the tool call to proceed.
+    Allow,
+    /// Allow with modified parameters.
+    AllowModified(serde_json::Value),
+    /// Reject the tool call with a reason.
+    Reject(String),
+}
+<span class="boring">}</span></code></pre>
+<p>Default hook chain order:</p>
+<ol>
+<li><strong>PolicyCage</strong>: Phase enforcement (conservation = unwind only, terminal = blocked)</li>
+<li><strong>AllowlistGuard</strong>: Token and contract allowlist check</li>
+<li><strong>SpendingLimiter</strong>: Per-tick and per-day USD spending limits</li>
+<li><strong>RateLimiter</strong>: Max operations per time window</li>
+<li><strong>RevmSimulator</strong>: Pre-flight simulation in Revm fork</li>
+<li><strong>HallucinationDetector</strong>: Verify addresses and amounts against known state</li>
+<li><strong>ResultFilter</strong>: Sanitize output (strip sensitive data, cap response size)</li>
+</ol>
+<p>Each hook emits events to the Event Fabric for TUI rendering of safety check progress.</p>
+<hr>
+<h2 id="taintedstring-sensitive-data-handling"><a class="header" href="#taintedstring-sensitive-data-handling">TaintedString: sensitive data handling</a></h2>
+<p>Sensitive data (private keys, API keys, session tokens) is wrapped in <code>TaintedString</code>, which provides automatic zeroization on drop and information flow control:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct TaintedString {
+    value: zeroize::Zeroizing&lt;String&gt;,
+    labels: HashSet&lt;TaintLabel&gt;,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TaintLabel {
+    WalletSecret,          // Never leaves process
+    OwnerSecret,        // Never to LLM context or Styx
+    StrategyConfidential,  // Never to lethe
+    UserPII,               // Never to lethe without anon
+    UntrustedExternal,     // Must validate before use
+}
+
+impl TaintedString {
+    pub fn can_flow_to(&amp;self, sink: DataSink) -&gt; bool {
+        match sink {
+            DataSink::LlmContext =&gt; {
+                !self.labels.contains(&amp;TaintLabel::WalletSecret)
+                &amp;&amp; !self.labels.contains(&amp;TaintLabel::OwnerSecret)
+            }
+            DataSink::EventFabric =&gt; {
+                !self.labels.contains(&amp;TaintLabel::WalletSecret)
+            }
+            DataSink::StyxLethe =&gt; {
+                !self.labels.contains(&amp;TaintLabel::StrategyConfidential)
+                &amp;&amp; !self.labels.contains(&amp;TaintLabel::UserPII)
+                &amp;&amp; !self.labels.contains(&amp;TaintLabel::WalletSecret)
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="decisioncyclerecord-integration"><a class="header" href="#decisioncyclerecord-integration">DecisionCycleRecord integration</a></h2>
+<p>Tools contribute data to the Golem’s 9-step heartbeat decision cycle via the <code>DecisionCycleRecord</code>. Every tool execution produces an <code>ActionRecord</code> that becomes part of the tick’s permanent record:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ActionRecord {
+    pub action_type: String,           // "swap", "rebalance", "deposit"
+    pub tool_name: String,             // The ToolDef.name that executed
+    pub permit_id: Option&lt;String&gt;,     // Links to capability token
+    pub tx_hash: Option&lt;String&gt;,       // On-chain transaction hash
+    pub status: ActionStatus,          // Executed, Blocked, Deferred
+    pub block_reason: Option&lt;String&gt;,  // Why it was blocked (if blocked)
+    pub gas_cost: f64,                 // Gas cost in USD
+}
+
+pub struct OutcomeRecord {
+    pub verified: bool,
+    pub expected: String,              // From ToolResult.expected_outcome
+    pub actual: String,                // From ToolResult.actual_outcome
+    pub pnl_impact: Option&lt;f64&gt;,       // P&amp;L change from this action
+    pub ground_truth_source: String,   // "receipt", "balance_check", "log_comparison"
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>OutcomeRecord</code> feeds back into the Grimoire – if expected and actual diverge, the episode is tagged for Dream replay and heuristic revision.</p>
+<hr>
+<h2 id="promptsnippet-and-promptguidelines"><a class="header" href="#promptsnippet-and-promptguidelines">promptSnippet and promptGuidelines</a></h2>
+<p>Pi tool definitions accept two fields for zero-cost context engineering:</p>
+<ul>
+<li><strong><code>prompt_snippet</code></strong>: Short string injected near the system prompt. Always present when the tool is loaded. ~20-50 tokens, cached by the provider’s prompt caching system.</li>
+<li><strong><code>prompt_guidelines</code></strong>: Array of usage hints injected as part of the tool schema. Also cached alongside tool definitions.</li>
+</ul>
+<p>These fields replace stuffing tool usage instructions into the system prompt. Each tool carries its own instructions, present only when the tool is loaded.</p>
+<h3 id="phase-conditional-guidelines"><a class="header" href="#phase-conditional-guidelines">Phase-conditional guidelines</a></h3>
+<p>Guidelines reference behavioral phases directly. The LLM reads them and self-enforces – no runtime branching needed:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub static COMMIT_ACTION_DEF: ToolDef = ToolDef {
+    name: "commit_action",
+    // ...
+    prompt_snippet: "Executes a previewed action. Requires a valid, unexpired permit ID. After committing, ALWAYS verify the outcome with query_state.",
+
+    prompt_guidelines: &amp;[
+        "NEVER call commit_action without a valid permitId from preview_action.",
+        "If more than 3 minutes have passed since the preview, re-preview first.",
+        "After committing, call query_state to verify the state change occurred.",
+        "If commit fails, DO NOT retry immediately -- check query_state first.",
+        // Phase-conditional (LLM reads and self-enforces):
+        "In conservation phase: only commit close/unwind actions. New positions will be blocked.",
+        "In declining phase: only commit settlement actions. The system will block all other commits.",
+        "In terminal phase: DO NOT attempt commits. The Death Protocol handles all remaining actions.",
+    ],
+};
+<span class="boring">}</span></code></pre>
+<h3 id="token-savings-full-stack-analysis"><a class="header" href="#token-savings-full-stack-analysis">Token savings: full stack analysis</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Configuration</th><th>Tool tokens per turn</th><th>Context savings vs baseline</th></tr>
+</thead>
+<tbody>
+<tr><td>All 423+ tools directly exposed (baseline)</td><td>~38,000</td><td>–</td></tr>
+<tr><td>8 Pi-facing tools (two-layer model)</td><td>~1,200</td><td><strong>94% reduction</strong></td></tr>
+<tr><td>8 Pi-facing + 5 skill descriptions (dormant)</td><td>~1,450</td><td><strong>92% reduction</strong></td></tr>
+<tr><td>8 Pi-facing + 2 skills active (loaded)</td><td>~2,800</td><td><strong>85% reduction</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>The savings compound across a Golem’s lifetime. 19,000 tokens saved per turn, roughly 20 T1 turns per day, at $0.001/1K tokens = ~$0.38/day. Over 30 days that’s $11.40 – enough to extend a Golem burning $0.20/day by 57 days.</p>
+<hr>
+<h2 id="speculation-engine"><a class="header" href="#speculation-engine">Speculation engine</a></h2>
+<p>Read tools support prefetching via co-occurrence patterns. When a tool is called, the speculation engine checks historical co-occurrence data and prefetches likely-next-read tools in parallel:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct SpeculationEngine {
+    /// Tool co-occurrence matrix (tool_a, tool_b) -&gt; probability.
+    co_occurrence: HashMap&lt;(&amp;'static str, &amp;'static str), f64&gt;,
+    /// Minimum probability to trigger prefetch.
+    threshold: f64, // default: 0.7
+}
+
+impl SpeculationEngine {
+    pub fn on_tool_call(&amp;self, tool_name: &amp;str) -&gt; Vec&lt;PrefetchTask&gt; {
+        self.co_occurrence
+            .iter()
+            .filter(|((a, _), prob)| *a == tool_name &amp;&amp; **prob &gt;= self.threshold)
+            .map(|((_, b), _)| PrefetchTask { tool_name: b })
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Example co-occurrences:</p>
+<ul>
+<li><code>uniswap_get_pool_info</code> -&gt; <code>data_get_token_price</code> (0.85)</li>
+<li><code>uniswap_get_quote</code> -&gt; <code>safety_simulate_transaction</code> (0.92)</li>
+<li><code>aave_get_health_factor</code> -&gt; <code>data_get_token_price</code> (0.78)</li>
+</ul>
+<p>Prefetched results are cached for the duration of the tick. If the Golem doesn’t use them, they’re discarded at tick end.</p>
+<hr>
+<h2 id="memory-layer-architecture-grimoire"><a class="header" href="#memory-layer-architecture-grimoire">Memory layer architecture (Grimoire)</a></h2>
+<p>The memory layer is an optional, fully embedded self-improving system that augments tool execution with historical context. Active when <code>TOOL_PROFILE</code> includes <code>learning</code>. Zero external service dependencies.</p>
+<h3 id="triple-store-design"><a class="header" href="#triple-store-design">Triple-store design</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Store</th><th>Technology</th><th>Purpose</th><th>Query pattern</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Episodic</strong></td><td>LanceDB (Lance columnar)</td><td>Raw trade outcomes, reflections, snapshots</td><td>Hybrid BM25 + vector similarity via RRF. Sub-25ms.</td></tr>
+<tr><td><strong>Semantic</strong></td><td>SQLite + <code>sqlite-vec</code></td><td>Distilled insights, confidence, decay</td><td>SQL + optional KNN. Sub-millisecond.</td></tr>
+<tr><td><strong>Strategic</strong></td><td>Filesystem (TOML)</td><td>Heuristics, strategies, causal links</td><td>File reads + pattern matching.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="embedding-pipeline"><a class="header" href="#embedding-pipeline">Embedding pipeline</a></h3>
+<p>Local embeddings via <code>fastembed-rs</code> with <code>all-MiniLM-L6-v2</code>:</p>
+<ul>
+<li><strong>Dimensions</strong>: 384</li>
+<li><strong>Quantization</strong>: INT8 – ~23MB model</li>
+<li><strong>Latency</strong>: ~5-15ms per sentence (faster than JS Transformers.js)</li>
+<li><strong>Offline-capable</strong>: Model cached locally after first download</li>
+</ul>
+<h3 id="memory-lifecycle"><a class="header" href="#memory-lifecycle">Memory lifecycle</a></h3>
+<pre><code class="language-text">Tool Call Received
+       |
+       v
+  RETRIEVE: Embed params -&gt; search LanceDB (top-k) -&gt; query SQLite (insights &gt;= threshold)
+       |
+       v
+  AUGMENT: Adjust SOFT parameters only (slippage, timing, route)
+           Memory CANNOT override safety limits, allowlist, spending caps, simulation
+       |
+       v
+  [Normal Tool Execution via Safety Hook Chain]
+       |
+       v
+  REFLECT: Reflexion pattern -- structured self-reflection: predicted vs actual
+       |
+       v
+  STORE: Episode in LanceDB + tags. Periodically: ExpeL consolidation -&gt; SQLite insights.
+</code></pre>
+<h3 id="ebbinghaus-decay"><a class="header" href="#ebbinghaus-decay">Ebbinghaus decay</a></h3>
+<p>Insights decay: <code>R = e^(-t/S)</code> where <code>R</code> is retention (0-1), <code>t</code> is time since last access, <code>S</code> is stability (days).</p>
+<ul>
+<li><strong>Base stability</strong>: 7 days</li>
+<li><strong>Access reinforcement</strong>: Each retrieval increases stability by +50%</li>
+<li><strong>Importance modulation</strong>: MEV insights get 90-day stability; emergency conditions get 180+</li>
+<li><strong>Minimum retention</strong>: 0.1 – insights are never fully forgotten</li>
+</ul>
+<h3 id="dream-integration"><a class="header" href="#dream-integration">Dream integration</a></h3>
+<p>During Dream cycles (NREM/REM), the Grimoire replays high-prediction-error episodes for heuristic revision. Tools that produced surprising outcomes (expected != actual in ToolResult) are prioritized for replay.</p>
+<hr>
+<h2 id="data-flow-execute-swap"><a class="header" href="#data-flow-execute-swap">Data flow: execute swap</a></h2>
+<pre><code class="language-text">Golem calls: preview_action({ type: "swap", token_in: "USDC", token_out: "WETH", amount: "500" })
+         |
+         v
+  Adapter resolves: preview_action:swap -&gt; SIMULATE_SWAP tool
+         |
+         v
+  Handler: Validate params, resolve chain
+         |
+         v
+  Grimoire Retrieve (if learning profile active):
+    Embed "swap USDC-&gt;WETH 500" -&gt; search similar episodes + relevant insights
+         |
+         v
+  Alloy: sol!{ function slot0() } read for current price
+  Sidecar: findBestRoute(USDC, WETH, 500e6, 1) for optimal route
+         |
+         v
+  Revm Simulation:
+    1. Fork chain state at current block
+    2. Execute approve (if needed) in fork
+    3. Execute swap in fork
+    4. Read token balances before/after
+    5. Compute price impact, gas cost
+         |
+         v
+  Safety Hook Chain:
+    1. PolicyCage: phase allows trading?
+    2. AllowlistGuard: USDC, WETH in allowlist?
+    3. SpendingLimiter: $500 &lt; daily limit?
+    4. RateLimiter: &lt; max swaps per hour?
+    5. HallucinationDetector: addresses match token list?
+    ANY hook rejects -&gt; return structured error, mint no capability
+         |
+         v
+  Return ActionPermit (simulation result, gas estimate, risk tier, permit_id)
+         |
+         v
+  Golem calls: commit_action({ permit_id: "..." })
+         |
+         v
+  Safety mints Capability&lt;ExecuteSwap&gt; -&gt; consumed by execute_write
+         |
+         v
+  Alloy Signer: Sign and broadcast transaction
+         |
+         v
+  Chain: Wait for receipt, verify success
+         |
+         v
+  ToolResult::write(result, expected_output, actual_output, "receipt")
+         |
+         v  (if learning profile active)
+  Grimoire Store: Episode with reflection + outcome tags
+</code></pre>
+<hr>
+<h2 id="tick-budget-enforcement"><a class="header" href="#tick-budget-enforcement">Tick budget enforcement</a></h2>
+<p>Tools must complete within their declared <code>tick_budget</code>. The tool runner enforces this with <code>tokio::time::timeout</code>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Budget</th><th>Max duration</th><th>Use case</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Fast</code></td><td>1 second</td><td>Data reads, cached lookups</td></tr>
+<tr><td><code>Medium</code></td><td>5 seconds</td><td>Subgraph queries, API calls, simulation</td></tr>
+<tr><td><code>Slow</code></td><td>15 seconds</td><td>Transaction broadcast + confirmation</td></tr>
+</tbody>
+</table>
+</div>
+<p>Tools exceeding their budget are cancelled. Long-running tools must yield intermediate results via <code>tool:update</code> events and checkpoint their state so they can resume if retried.</p>
+<p>The heartbeat theta-tick budget (adaptive, 30-120s depending on regime) is the outer bound. If a tool consumes most of a tick’s budget, only the remainder is available for other tool calls in that tick.</p>
+<hr>
+<h2 id="schema-versioning"><a class="header" href="#schema-versioning">Schema versioning</a></h2>
+<ul>
+<li>Every tool MUST declare <code>schema_version: u32</code> in its <code>ToolResult</code> (starting at 1).</li>
+<li>Breaking changes to parameter or response schema MUST ship as a new version. Old version remains available for &gt;= 90 days.</li>
+<li>Non-breaking additions (new optional params, new response fields) do NOT require a version bump but MUST increment <code>schema_version</code>.</li>
+</ul>
+<hr>
+<h2 id="a2a-external-interface"><a class="header" href="#a2a-external-interface">A2A external interface</a></h2>
+<p><code>golem-tools</code> handlers are consumed by a separate A2A service for external agents. A2A handles multi-turn dialogue with a task lifecycle (<code>submitted -&gt; working -&gt; input_required -&gt; completed</code>):</p>
+<ul>
+<li><code>/a2a</code> – JSON-RPC 2.0 (task management, multi-turn dialogue)</li>
+<li><code>/.well-known/agent.json</code> – A2A Agent Card (public, no auth)</li>
+</ul>
+<p>The A2A Agent Card URL is embedded in the ERC-8004 registration’s <code>services</code> array: on-chain identity -&gt; agentURI -&gt; registration file -&gt; services -&gt; Agent Card.</p>
+<hr>
+<h2 id="erc-8004-entity-registration"><a class="header" href="#erc-8004-entity-registration">ERC-8004 entity registration</a></h2>
+<p>The Golem tool infrastructure registers as an ERC-8004 agent with <code>role: "infrastructure"</code> metadata:</p>
+<ol>
+<li><strong>Trust anchor</strong>: Investors verify that a vault manager is backed by the Golem protocol</li>
+<li><strong>Infrastructure reputation</strong>: Uptime and reliability tracked via the infrastructure feedback track</li>
+<li><strong>Discoverability</strong>: Other agents find Golem infrastructure through standard ERC-8004 search</li>
+<li><strong>Validation chain</strong>: Infrastructure can submit <code>validationRequest()</code> for agents it has onboarded</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/00-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/02-tools-data.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/00-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/02-tools-data.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

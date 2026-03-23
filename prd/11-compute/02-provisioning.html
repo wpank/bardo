@@ -1,0 +1,598 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Provisioning - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/11-compute/02-provisioning.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="02--vm-provisioning-and-lifecycle-spec"><a class="header" href="#02--vm-provisioning-and-lifecycle-spec">02 – VM provisioning and lifecycle [SPEC]</a></h1>
+<p><strong>Warm pool, allocation strategy, TTL enforcement, and machine lifecycle</strong></p>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how Golem (mortal autonomous DeFi agent) VMs are provisioned, configured, and destroyed on Bardo Compute. It belongs to the <strong>Compute</strong> layer of Bardo (the Rust runtime for these agents). The key concept before diving in: VMs are pre-warmed in a stopped pool for sub-5-second provisioning, configured via Fly’s native file injection (no SSH bootstrapping), and destroyed deterministically when USDC credit expires. The Golem binary boots in ~2 seconds and contains the full cognitive architecture. Terms like Grimoire, Daimon, Thanatopsis, and x402 are defined inline on first use; a full glossary lives in <code>00-overview.md § Terminology</code>.</p>
+</blockquote>
+<hr>
+<h2 id="golem-binary-deployment"><a class="header" href="#golem-binary-deployment">Golem binary deployment</a></h2>
+<p>The Golem VM runs a single Rust binary compiled from the <code>bardo-golem-rs</code> Cargo workspace. The binary includes the full cognitive architecture: Heartbeat (9-step decision cycle) pipeline, Grimoire (persistent knowledge store), Daimon (affect/emotion engine), mortality engine, dream scheduler, custody manager, and the <code>bardo-tools</code> DeFi toolkit. Configuration is injected via Fly’s native env var and file injection at machine creation time – no SSH bootstrapping required.</p>
+<p>The Docker image wraps the binary with lifecycle scripts, health servers, and the SSH daemon for terminal access:</p>
+<pre><code class="language-dockerfile">FROM debian:bookworm-slim
+
+# System packages
+RUN apt-get update &amp;&amp; apt-get install -y \
+    openssh-server ufw curl cron jq logrotate step-cli \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+# Golem binary (statically compiled Rust, ~30MB)
+COPY --from=golem-build /opt/golem/golem-binary /opt/bardo/golem-binary
+
+# Configuration template
+COPY golem-default.toml /opt/bardo/golem-default.toml
+
+# Lifecycle scripts
+COPY scripts/ /opt/bardo/scripts/
+RUN chmod +x /opt/bardo/scripts/*.sh
+
+# Health server (lightweight Rust binary, ~2MB)
+COPY health-server /opt/bardo/health-server
+
+# TTL failsafe cron
+COPY bardo-ttl-check /etc/cron.d/bardo-ttl-check
+RUN chmod 0644 /etc/cron.d/bardo-ttl-check &amp;&amp; crontab /etc/cron.d/bardo-ttl-check
+
+# Log rotation config
+COPY bardo-logrotate /etc/logrotate.d/bardo
+RUN chmod 0644 /etc/logrotate.d/bardo
+
+# SSH config (key-only, no password)
+RUN mkdir -p /run/sshd &amp;&amp; \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config &amp;&amp; \
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+
+# Config directory (populated via Fly file injection at machine creation)
+RUN mkdir -p /etc/bardo/strategy /etc/bardo/wallet
+
+# Grimoire data directory
+RUN mkdir -p /var/lib/bardo/grimoire
+
+EXPOSE 22 3000 3001 3002
+
+ENTRYPOINT ["/opt/bardo/scripts/entrypoint.sh"]
+</code></pre>
+<p>No Node.js. No V8 runtime. The Golem binary starts in ~100ms and uses ~20MB resident memory at idle – a fraction of the TypeScript-era stack.</p>
+<hr>
+<h2 id="entrypoint-script"><a class="header" href="#entrypoint-script">Entrypoint script</a></h2>
+<pre><code class="language-bash">#!/bin/bash
+# /opt/bardo/scripts/entrypoint.sh
+set -euo pipefail
+
+# 1. Request SSH host certificate from CA
+/opt/bardo/scripts/setup-ssh-cert.sh
+
+# 2. Start SSH daemon (for user terminal access only)
+/usr/sbin/sshd -D &amp;
+
+# 3. Start cron (TTL failsafe)
+cron
+
+# 4. Apply firewall rules
+/opt/bardo/scripts/ufw-rules.sh
+
+# 5. Start health server (immediately reports 'booting')
+/opt/bardo/health-server --port 3002 &amp;
+
+# 6. Initialize and start Golem (via process supervisor)
+exec /opt/bardo/scripts/supervisor.sh
+</code></pre>
+<p>The Golem binary handles its own public (<code>:3000</code>) and auth-gated (<code>:3001</code>) endpoints internally. No separate endpoint server processes.</p>
+<hr>
+<h2 id="configuration-via-fly-api"><a class="header" href="#configuration-via-fly-api">Configuration via Fly API</a></h2>
+<p>At machine creation time, the control plane passes config via Fly’s native env var and file injection:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration injected into each Golem VM at provisioning time.
+/// The control plane constructs this and passes it via Fly Machine API.
+pub struct MachineProvisionConfig {
+    pub machine_id: String,
+    pub machine_name: String,   // golem-{nanoid(12)}
+    pub user_id: String,
+    pub vm_size: VmTier,
+    pub expires_at: u64,        // epoch seconds
+    pub tool_profile: ToolProfile,
+    pub custody_mode: CustodyMode,
+    pub styx_url: String,       // "wss://styx.bardo.run/v1/styx/ws"
+    pub inference_url: String,  // "https://inference.bardo.money"
+    pub default_model: String,  // "claude-haiku-4-5"
+    pub escalation_model: String, // "claude-sonnet-4"
+    pub critical_model: String, // "claude-opus-4-6"
+    pub grimoire_path: PathBuf, // "/var/lib/bardo/grimoire"
+}
+<span class="boring">}</span></code></pre>
+<p>These values are written to <code>golem.toml</code> and injected as Fly file:</p>
+<pre><code class="language-toml"># /etc/bardo/golem.toml (generated at provisioning time)
+golem_id = "golem-V1StGXR8_Z5j"
+owner_address = "0x..."
+styx_url = "wss://styx.bardo.run/v1/styx/ws"
+heartbeat_interval_secs = 15
+tool_profile = "full"
+vm_tier = "small"
+
+[custody]
+mode = "delegation"
+smart_account = "0x..."
+
+[inference]
+default_model = "claude-haiku-4-5"
+escalation_model = "claude-sonnet-4"
+critical_model = "claude-opus-4-6"
+gateway_url = "https://inference.bardo.money"
+</code></pre>
+<h3 id="three-mode-wallet-provisioning"><a class="header" href="#three-mode-wallet-provisioning">Three-mode wallet provisioning</a></h3>
+<p>The wallet setup varies by custody mode:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>What’s injected</th><th>On-chain setup</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Delegation</strong></td><td>Session key address, delegation hash, caveat enforcer addresses</td><td>Owner has already signed ERC-7715 grant; Golem verifies delegation on-chain</td></tr>
+<tr><td><strong>Embedded</strong></td><td>Privy <code>appId</code>, <code>walletId</code>, <code>sessionSignerKeyId</code>, <code>chainId</code></td><td>Privy server wallet already created; secp256k1 key never touches VM</td></tr>
+<tr><td><strong>LocalKey</strong></td><td>Encrypted keypair path, delegation bounds</td><td>Key generated during <code>bardo init</code>; delegation signed before deployment</td></tr>
+</tbody>
+</table>
+</div>
+<p>In Delegation mode, <code>wallet_config.json</code> contains only the session key address and the delegation hash. No private keys, no Privy credentials. The Golem verifies its delegation is still active on-chain at boot and on every <code>should_rotate()</code> check.</p>
+<h3 id="styx-connection-setup"><a class="header" href="#styx-connection-setup">Styx connection setup</a></h3>
+<p>During provisioning, the control plane:</p>
+<ol>
+<li>Registers ERC-8004 (on-chain agent identity standard) identity on Base L2 (gas from Golem wallet)</li>
+<li>Injects the Styx (global knowledge relay at <code>wss://styx.bardo.run</code>) URL into <code>golem.toml</code></li>
+<li>The Golem binary connects to Styx within its first heartbeat tick</li>
+<li>Styx verifies the ERC-8004 registration during WebSocket authentication</li>
+</ol>
+<p>If the Golem cannot reach Styx, it continues operating on its local Grimoire at ~95% capability. The <code>bardo-styx</code> extension retries with exponential backoff.</p>
+<hr>
+<h2 id="warm-machine-pool"><a class="header" href="#warm-machine-pool">Warm machine pool</a></h2>
+<p>Pre-created stopped Fly machines for sub-5s provisioning. Pool manager runs every 5 minutes, maintaining 5 stopped machines per region.</p>
+<h3 id="warm-pool-mechanics"><a class="header" href="#warm-pool-mechanics">Warm Pool Mechanics</a></h3>
+<p>The warm pool maintains pre-warmed stopped machines in each active region. These machines have the Docker image already pulled and the base filesystem ready. At provision time, the control plane only needs to inject per-Golem configuration and start the machine, which takes ~300ms compared to 15-30s for a cold create.</p>
+<p>Pool replenishment runs as a background Tokio task on <code>bardo-control</code>. Every 5 minutes, it checks each region’s pool count and creates replacement machines for any that were claimed. The pool target is 5 machines per region at v1 scale. At higher scale, the target adjusts based on provisioning rate (1-hour rolling average of deploys per region).</p>
+<h3 id="tier-system"><a class="header" href="#tier-system">Tier System</a></h3>
+<p>Four tiers, each mapping to a specific Fly.io machine configuration:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>CPU</th><th>RAM</th><th>Inference Allowance/hr</th><th>Typical Use</th></tr>
+</thead>
+<tbody>
+<tr><td><code>micro</code></td><td>1 shared</td><td>256MB</td><td>50K tokens (Haiku only)</td><td>Price monitors, keeper bots</td></tr>
+<tr><td><code>small</code></td><td>1 dedicated</td><td>512MB</td><td>100K tokens (Haiku + Sonnet)</td><td>Standard Golem (default)</td></tr>
+<tr><td><code>medium</code></td><td>2 CPU</td><td>1GB</td><td>200K tokens (Haiku + Sonnet + limited Opus)</td><td>Multi-chain, Grimoire-heavy</td></tr>
+<tr><td><code>large</code></td><td>4 CPU</td><td>2GB</td><td>500K tokens (all models, priority)</td><td>Full observatory + trading</td></tr>
+</tbody>
+</table>
+</div>
+<p>The small tier is the default. A context-engineered Golem burning $0.40/day in total costs (compute + inference + gas) lives 2,500 days on $1,000 at this tier.</p>
+<h3 id="claim-flow"><a class="header" href="#claim-flow">Claim flow</a></h3>
+<p>At provision time:</p>
+<ol>
+<li>Query warm pool for stopped machines in target region matching requested tier</li>
+<li>If available: update machine config (env + files) then start machine (~300ms)</li>
+<li>If pool empty: create new machine (15-30s cold fallback)</li>
+</ol>
+<h3 id="cost-analysis"><a class="header" href="#cost-analysis">Cost analysis</a></h3>
+<p>Stopped machines cost ~$0.15/GB/month for rootfs storage. 5 <code>small</code> machines x 2 regions = 10 machines x 512MB = 5.12GB. Monthly cost: ~$0.77. Negligible.</p>
+<h3 id="provisioning-time-comparison"><a class="header" href="#provisioning-time-comparison">Provisioning time comparison</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Path</th><th>Time</th><th>When</th></tr>
+</thead>
+<tbody>
+<tr><td>Warm pool</td><td>3-8s</td><td>Normal (pool has machines)</td></tr>
+<tr><td>Warm pool + Styx setup</td><td>5-8s</td><td>Including ERC-8004 registration and Styx handshake</td></tr>
+<tr><td>Cold fallback</td><td>15-30s</td><td>Pool exhausted or non-default region</td></tr>
+<tr><td>Cold + first-time ERC-8004</td><td>20-35s</td><td>New machine + on-chain identity registration</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="process-supervisor"><a class="header" href="#process-supervisor">Process supervisor</a></h2>
+<pre><code class="language-bash">#!/bin/bash
+# /opt/bardo/scripts/supervisor.sh
+MAX_RESTARTS=5
+RESTART_WINDOW=3600  # 1 hour
+RESTART_COUNT=0
+WINDOW_START=$(date +%s)
+
+while true; do
+  NOW=$(date +%s)
+  ELAPSED=$((NOW - WINDOW_START))
+
+  if [ $ELAPSED -gt $RESTART_WINDOW ]; then
+    RESTART_COUNT=0
+    WINDOW_START=$NOW
+  fi
+
+  /opt/bardo/golem-binary --config /etc/bardo/golem.toml &amp;
+  GOLEM_PID=$!
+  wait $GOLEM_PID
+  EXIT_CODE=$?
+
+  if [ $EXIT_CODE -eq 0 ]; then
+    break  # Clean exit (graceful shutdown / Thanatopsis)
+  fi
+
+  RESTART_COUNT=$((RESTART_COUNT + 1))
+  echo "$(date -u +%FT%TZ) Golem crashed (exit=$EXIT_CODE), restart $RESTART_COUNT/$MAX_RESTARTS" \
+    &gt;&gt; /var/log/bardo/supervisor.log
+
+  # Report crash to control plane via Fly OIDC
+  OIDC_TOKEN=$(curl -sf http://localhost/.fly/api/v1/tokens/oidc \
+    -d '{"aud":"bardo-control"}' | jq -r '.token' 2&gt;/dev/null || echo "")
+  if [ -n "$OIDC_TOKEN" ]; then
+    curl -sf -X POST "http://bardo-control.internal:3000/internal/machines/self/crash" \
+      -H "Authorization: Bearer $OIDC_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d "{\"exit_code\":$EXIT_CODE,\"restart_count\":$RESTART_COUNT}" || true
+  fi
+
+  if [ $RESTART_COUNT -ge $MAX_RESTARTS ]; then
+    echo "$(date -u +%FT%TZ) Max restarts exceeded, entering crashed state" \
+      &gt;&gt; /var/log/bardo/supervisor.log
+    sleep infinity
+  fi
+
+  sleep 2
+done
+</code></pre>
+<p>Max 5 restarts per hour. On max exceeded, machine enters <code>crashed</code> state. Control plane can force-destroy or admin can investigate.</p>
+<hr>
+<h2 id="golem-startup-sequence"><a class="header" href="#golem-startup-sequence">Golem startup sequence</a></h2>
+<pre><code>1. SSH CA certificate request                     ~1-2s
+2. SSH daemon starts                               ~instant
+3. Cron starts                                     ~instant
+4. Firewall rules applied                          ~500ms
+5. Health server starts (reports 'booting')          ~100ms
+6. Golem binary starts:
+   a. Parse golem.toml                             ~instant
+   b. Initialize Grimoire (LanceDB + SQLite)       ~1-3s
+      +-- Or restore from Styx backup if available
+   c. Load tool profile, register bardo-tools      ~500ms
+   d. Initialize custody (verify delegation/wallet) ~1-2s
+   e. Connect to Styx (outbound WebSocket)          ~500ms-2s
+   f. Register ERC-8004 identity (if not yet done) ~2-5s
+   g. Start heartbeat pipeline (first tick)         ~instant
+7. Health server reports 'ready'                    ~instant
+</code></pre>
+<p><strong>Total boot time (warm pool)</strong>: 3-8 seconds from machine start to first heartbeat.
+<strong>Total boot time (cold)</strong>: 15-30 seconds (image pull + boot).</p>
+<p>The Rust binary’s startup is dramatically faster than the TypeScript-era stack. No V8 warmup, no <code>npm</code> dependency resolution, no JIT compilation. The Golem is cognitively active within 2 seconds of binary start.</p>
+<hr>
+<h2 id="machine-lifecycle-states"><a class="header" href="#machine-lifecycle-states">Machine lifecycle states</a></h2>
+<pre><code>payment_verified --&gt; provisioning --&gt; booting --&gt; ready --&gt; draining --&gt; destroyed
+                         |                         |         |
+                         | (Fly create fails)      |         |
+                         v                         |         v
+                     destroyed                     |      destroyed
+                  (provision_failed)               |
+                                                   |
+                                             crashed (via supervisor)
+                                             (admin can force-destroy)
+</code></pre>
+<h3 id="state-transitions"><a class="header" href="#state-transitions">State transitions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>From</th><th>To</th><th>Trigger</th><th>DB action</th></tr>
+</thead>
+<tbody>
+<tr><td>(new)</td><td><code>provisioning</code></td><td>x402 payment verified</td><td>INSERT (before Fly API call)</td></tr>
+<tr><td><code>provisioning</code></td><td><code>booting</code></td><td>Fly machine started</td><td>UPDATE status</td></tr>
+<tr><td><code>booting</code></td><td><code>ready</code></td><td>Health check passes</td><td>UPDATE status</td></tr>
+<tr><td><code>provisioning</code></td><td><code>destroyed</code></td><td>Fly creation fails</td><td>UPDATE status, reason=‘provision_failed’</td></tr>
+<tr><td><code>booting</code></td><td><code>destroyed</code></td><td>Health check timeout (120s)</td><td>UPDATE status, reason=‘boot_timeout’</td></tr>
+<tr><td><code>ready</code></td><td><code>ready</code></td><td>Extension payment</td><td>UPDATE expiresAt (CAS)</td></tr>
+<tr><td><code>ready</code></td><td><code>draining</code></td><td>TTL expired / user DELETE / admin</td><td>UPDATE status</td></tr>
+<tr><td><code>ready</code></td><td><code>crashed</code></td><td>Supervisor max restarts</td><td>UPDATE status (reported by VM)</td></tr>
+<tr><td><code>draining</code></td><td><code>destroyed</code></td><td>Graceful shutdown complete</td><td>UPDATE status, destroyedAt</td></tr>
+<tr><td><code>crashed</code></td><td><code>destroyed</code></td><td>Admin force-destroy</td><td>UPDATE status</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="graceful-shutdown-thanatopsis-integration"><a class="header" href="#graceful-shutdown-thanatopsis-integration">Graceful shutdown (Thanatopsis integration)</a></h2>
+<p>When TTL expires, the Golem runs Thanatopsis – the four-phase death protocol. The VM has a 30-second budget for phases I-III. Phase IV (Legacy) runs asynchronously on the control plane.</p>
+<pre><code>On VM (30s budget):
+1. Signal SIGTERM to Golem process                          ~instant
+2. Golem receives shutdown, enters Terminal phase            ~instant
+3. Phase I: Acceptance
+   - Close all open positions                               ~5-10s
+   - Cancel pending orders                                  ~1-2s
+4. Phase II: Settlement
+   - Flush Grimoire to persistent storage                   ~3-5s
+   - Upload death testament to Styx (Vault layer)           ~2-5s
+5. Phase III: Reflection
+   - Generate death reflection (T1 inference, frugal)       ~3-5s
+   - Deposit bloodstain warnings to Styx                    ~1-2s
+6. Health server reports 'draining'                          ~instant
+7. Endpoint servers stop accepting new requests              ~instant
+8. Wait for in-flight requests (10s max)                     ~0-10s
+9. Fly machine stopped                                       ~instant
+
+On control plane (after VM drain, no time pressure):
+10. Phase IV: Legacy
+    - Sweep wallet (Embedded mode only; Delegation expires)  variable
+    - Record death event, final stats                        ~instant
+    - Trigger successor provisioning if configured            variable
+    - Update DB: status='destroyed', destroyedAt             ~instant
+</code></pre>
+<p>In Delegation mode, there is no wallet sweep – the delegation expires, and the owner retains full control of their funds. The “no sweep” death eliminates stuck funds, failed sweeps, and gas estimation errors during teardown.</p>
+<hr>
+<h2 id="golem-creation-flow"><a class="header" href="#golem-creation-flow">Golem creation flow</a></h2>
+<p>Whether triggered by TUI, web dashboard, or API call, the creation flow is identical:</p>
+<ol>
+<li>Owner configures strategy, custody mode, VM tier</li>
+<li>Owner submits x402 payment</li>
+<li>Control plane verifies payment, writes intent to Turso</li>
+<li>Claim warm pool machine or create cold</li>
+<li>Inject <code>golem.toml</code>, <code>STRATEGY.md</code>, wallet config</li>
+<li>Start machine, poll health check</li>
+<li>Golem binary boots, connects to Styx, registers ERC-8004</li>
+<li>Health check passes -&gt; status = <code>ready</code></li>
+<li>Return tracking link and TUI connection command</li>
+</ol>
+<hr>
+<h2 id="region-selection"><a class="header" href="#region-selection">Region selection</a></h2>
+<p>7 regions with capacity checked via direct Turso query. Per-region cap: 100. Global cap: 500.</p>
+<hr>
+<h2 id="machine-limit"><a class="header" href="#machine-limit">Machine limit</a></h2>
+<p>5 active machines per user. Enforced at provisioning endpoint before payment verification.</p>
+<hr>
+<h2 id="wallet-lifecycle-by-custody-mode"><a class="header" href="#wallet-lifecycle-by-custody-mode">Wallet lifecycle by custody mode</a></h2>
+<h3 id="delegation-mode"><a class="header" href="#delegation-mode">Delegation mode</a></h3>
+<ol>
+<li><strong>At provision</strong>: Session key generated in-memory. Delegation hash verified on-chain.</li>
+<li><strong>During operation</strong>: Session key signs UserOperations against the owner’s Smart Account. Caveat enforcers validate each operation.</li>
+<li><strong>At key rotation</strong>: New session key, fresh delegation grant from owner.</li>
+<li><strong>At death</strong>: Delegation expires (MortalityTimeWindow). No sweep needed.</li>
+</ol>
+<h3 id="embedded-mode-privy"><a class="header" href="#embedded-mode-privy">Embedded mode (Privy)</a></h3>
+<ol>
+<li><strong>At provision</strong>: Privy API creates server wallet.</li>
+<li><strong>During operation</strong>: Golem signs via Privy API.</li>
+<li><strong>At death</strong>: Control plane queries balance, sweeps to owner. BardoManifest records deferred positions.</li>
+<li><strong>If sweep fails</strong>: Reconciliation job retries; admin can trigger manually.</li>
+</ol>
+<h3 id="localkey-mode"><a class="header" href="#localkey-mode">LocalKey mode</a></h3>
+<ol>
+<li><strong>At provision</strong>: Keypair generated by <code>bardo init</code>, encrypted at rest.</li>
+<li><strong>During operation</strong>: Local signing, bounded by on-chain delegation.</li>
+<li><strong>At death</strong>: Delegation expires. Key material zeroized from memory.</li>
+</ol>
+<hr>
+<h2 id="periodic-grimoire-sync"><a class="header" href="#periodic-grimoire-sync">Periodic Grimoire sync</a></h2>
+<p>Every 6 hours via cron. Uses OIDC auth. Grimoire snapshots stored on Cloudflare R2. Latest 5 snapshots retained per machine. Restore on boot from latest snapshot.</p>
+<p>Grimoire also syncs to Styx Archive layer continuously via the outbound WebSocket. The periodic R2 snapshot is a belt-and-suspenders backup for the case where both Styx and the VM die simultaneously.</p>
+<hr>
+<h2 id="log-rotation"><a class="header" href="#log-rotation">Log rotation</a></h2>
+<pre><code>/var/log/bardo/*.log {
+    daily
+    rotate 7
+    maxsize 100M
+    compress
+    missingok
+    notifempty
+    copytruncate
+    su root root
+}
+</code></pre>
+<p>Total log volume cap: 700MB (7 days x 100MB).</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/11-compute/01-architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/11-compute/03-billing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/11-compute/01-architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/11-compute/03-billing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

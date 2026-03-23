@@ -1,0 +1,890 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Observability - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/13-runtime/09-observability.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="observability-spec"><a class="header" href="#observability-spec">Observability [SPEC]</a></h1>
+<p><strong>Version:</strong> 3.0.0
+<strong>Last Updated:</strong> 2026-03-14
+<strong>Status:</strong> Draft</p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the observability stack for a running Golem (a mortal autonomous DeFi agent compiled as a single Rust binary on a micro VM): health checks, Prometheus metrics, structured logging, OpenTelemetry traces, and analytics telemetry. Everything derives from the Event Fabric (the tokio::broadcast channel carrying all typed events). It sits in the <strong>Runtime</strong> layer of the Bardo specification. Key prerequisite: the Event Fabric and GolemEvent enum from <code>12-realtime-subscriptions.md</code>. For any unfamiliar term, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Per-Golem observability built on the Event Fabric. The Event Fabric is the primary observability channel: 50+ typed events across 16 subsystems, broadcast via <code>tokio::broadcast</code> with a 10,000-entry ring buffer. Prometheus metrics, structured logging, and OpenTelemetry traces are derived from Event Fabric events, not maintained as separate state.</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-core</code> (event_fabric.rs, events.rs), <code>golem-runtime</code> (telemetry.rs)</p>
+<p><strong>Cross-references:</strong></p>
+<ul>
+<li><code>./11-state-model.md</code> — defines GolemState (mutable) and GolemSnapshot (read-only projection), the state structures that observability instruments</li>
+<li><code>./12-realtime-subscriptions.md</code> — full GolemEvent enum (50+ variants), subscription topics, and the event catalog driving all metrics and traces</li>
+<li><code>../05-dreams/06-integration.md</code> — dream observability: metrics for dream cycle frequency, consolidation quality, and PLAYBOOK revision rate</li>
+<li><code>../03-daimon/07-runtime-daimon.md</code> — emotion metrics: PAD vector histograms, mood transition frequency, and emotional contagion tracking</li>
+<li><code>../02-mortality/12-integration.md</code> — mortality event integration: Vitality gauge, phase transition alerts, and death protocol telemetry</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="1-event-fabric-as-observability-backbone"><a class="header" href="#1-event-fabric-as-observability-backbone">1. Event Fabric as observability backbone</a></h2>
+<p>Every internal state transition in the Golem’s lifecycle emits a typed, serializable <code>GolemEvent</code>. Events are the atoms of observability. They feed:</p>
+<ul>
+<li><strong>Prometheus metrics</strong> – counters, gauges, and histograms derived from events</li>
+<li><strong>Structured logs</strong> – events serialized to JSONL</li>
+<li><strong>OpenTelemetry traces</strong> – spans constructed from event pairs (start/end)</li>
+<li><strong>TUI rendering</strong> – events drive sprite animations and widget updates</li>
+<li><strong>Alerting</strong> – rules evaluate against event streams</li>
+</ul>
+<p>The Event Fabric broadcasts via <code>tokio::broadcast</code>. Zero subscribers means zero serialization cost – the <code>emit()</code> path checks subscriber count first.</p>
+<h3 id="event-fabric-architecture"><a class="header" href="#event-fabric-architecture">Event Fabric architecture</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EventFabric {
+    sender: tokio::sync::broadcast::Sender&lt;GolemEvent&gt;,
+    ring_buffer: parking_lot::RwLock&lt;VecDeque&lt;GolemEvent&gt;&gt;,
+    sequence: AtomicU64,
+    capacity: usize,  // 10,000
+}
+
+impl EventFabric {
+    pub fn emit(&amp;self, event: GolemEvent) {
+        let seq = self.sequence.fetch_add(1, Ordering::SeqCst);
+        // Only serialize if subscribers exist
+        if self.sender.receiver_count() &gt; 0 {
+            let _ = self.sender.send(event.clone());
+        }
+        // Always store in ring buffer for reconnection replay
+        let mut buffer = self.ring_buffer.write();
+        if buffer.len() &gt;= self.capacity {
+            buffer.pop_front();
+        }
+        buffer.push_back(event);
+    }
+
+    pub fn replay_from(&amp;self, last_sequence: u64) -&gt; Vec&lt;GolemEvent&gt; {
+        let buffer = self.ring_buffer.read();
+        buffer.iter()
+            .filter(|e| e.sequence() &gt; last_sequence)
+            .cloned()
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="16-subsystems"><a class="header" href="#16-subsystems">16 subsystems</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Subsystem</th><th>Event prefix</th><th>Event count</th><th>Update frequency</th></tr>
+</thead>
+<tbody>
+<tr><td>Heartbeat</td><td><code>HeartbeatTick</code>, <code>HeartbeatSuppress</code></td><td>3</td><td>Every tick</td></tr>
+<tr><td>Tool</td><td><code>ToolStart</code>, <code>ToolUpdate</code>, <code>ToolEnd</code></td><td>3</td><td>Per tool call</td></tr>
+<tr><td>LLM</td><td><code>LlmStart</code>, <code>LlmToken</code>, <code>LlmEnd</code></td><td>3</td><td>Per inference call</td></tr>
+<tr><td>Dream</td><td><code>DreamStart</code>, <code>DreamPhase</code>, <code>DreamHypothesis</code>, <code>DreamEnd</code></td><td>5</td><td>Per dream cycle</td></tr>
+<tr><td>Daimon</td><td><code>DaimonAppraisal</code></td><td>1</td><td>Per appraisal</td></tr>
+<tr><td>Vitality</td><td><code>VitalityUpdate</code></td><td>1</td><td>Every tick</td></tr>
+<tr><td>Mortality</td><td><code>MortalityWarning</code>, <code>DeathImminent</code>, <code>StochasticCheck</code>, <code>Senescence</code></td><td>4</td><td>On threshold cross</td></tr>
+<tr><td>Death</td><td><code>DeathProtocolStep</code></td><td>1</td><td>During Thanatopsis</td></tr>
+<tr><td>Grimoire</td><td><code>GrimoireInsight</code>, <code>GrimoireHeuristic</code>, <code>GrimoireWarning</code>, <code>GrimoireCausalLink</code></td><td>4</td><td>On knowledge change</td></tr>
+<tr><td>Permit</td><td><code>PermitCreated</code>, <code>PermitCommitted</code>, <code>PermitExpired</code>, <code>PermitCancelled</code>, <code>PermitBlocked</code></td><td>5</td><td>Per action permit</td></tr>
+<tr><td>Context</td><td><code>ContextAssembled</code></td><td>1</td><td>Per LLM call</td></tr>
+<tr><td>Compaction</td><td><code>CompactionTriggered</code></td><td>1</td><td>On context compaction</td></tr>
+<tr><td>Clade</td><td><code>CladeSync</code>, <code>CladeAlert</code>, <code>CladeSiblingDeath</code></td><td>3</td><td>On sync</td></tr>
+<tr><td>Model</td><td><code>ModelSelected</code></td><td>1</td><td>Per inference call</td></tr>
+<tr><td>Inference</td><td><code>InferenceToken</code></td><td>1</td><td>Per token (high-freq)</td></tr>
+<tr><td>System</td><td><code>HeartbeatSuppressed</code>, <code>DreamOutcome</code></td><td>2+</td><td>Various</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="2-health-check-endpoints"><a class="header" href="#2-health-check-endpoints">2. Health check endpoints</a></h2>
+<p>Three Kubernetes-compatible probes on port <code>:8402</code> (Golem RPC).</p>
+<h3 id="startup-probe"><a class="header" href="#startup-probe">Startup probe</a></h3>
+<pre><code>GET /health/startup
+</code></pre>
+<p>Returns <code>200</code> after the Golem completes its first heartbeat tick. Returns <code>503</code> before that.</p>
+<h3 id="liveness-probe"><a class="header" href="#liveness-probe">Liveness probe</a></h3>
+<pre><code>GET /health/live
+</code></pre>
+<p>Returns <code>200</code> if the Golem process is alive and not deadlocked. Checks: process running, event loop responsive within 3s, memory below 90% of limit.</p>
+<h3 id="readiness-probe"><a class="header" href="#readiness-probe">Readiness probe</a></h3>
+<pre><code>GET /health/ready
+</code></pre>
+<p>Returns <code>200</code> if the Golem is ready to process heartbeats. Returns <code>503</code> during boot, pause, or draining. Includes component status:</p>
+<pre><code class="language-json">{
+  "status": "ready",
+  "heartbeat": { "phase": "idle", "tick": 4201, "interval_ms": 40000 },
+  "wallet": { "connected": true, "balance": 423.5 },
+  "grimoire": { "episodes": 8420, "insights": 342 },
+  "dream": { "mode": "waking", "lifetime_cycles": 42 },
+  "mood": { "label": "confident", "octant": "exuberant" },
+  "mortality": { "phase": "stable", "composite": 0.72 }
+}
+</code></pre>
+<hr>
+<h2 id="3-prometheus-metrics"><a class="header" href="#3-prometheus-metrics">3. Prometheus metrics</a></h2>
+<p>Derived from Event Fabric events. Exposed at <code>/metrics</code> on port <code>:8402</code>.</p>
+<h3 id="golem-core"><a class="header" href="#golem-core">Golem core</a></h3>
+<pre><code class="language-prometheus"># HELP bardo_golem_ticks_total Total heartbeat ticks processed
+# TYPE bardo_golem_ticks_total counter
+bardo_golem_ticks_total{cognitive_load="t0"} 33600
+bardo_golem_ticks_total{cognitive_load="t1"} 6300
+bardo_golem_ticks_total{cognitive_load="t2"} 1680
+
+# HELP bardo_golem_tick_duration_seconds Heartbeat tick duration
+# TYPE bardo_golem_tick_duration_seconds histogram
+bardo_golem_tick_duration_seconds_bucket{phase="sensing",le="0.01"} 39000
+bardo_golem_tick_duration_seconds_bucket{phase="deciding",le="1.0"} 7200
+
+# HELP bardo_golem_survival_pressure Current survival pressure
+# TYPE bardo_golem_survival_pressure gauge
+bardo_golem_survival_pressure 0.72
+
+# HELP bardo_golem_usdc_balance Current USDC balance (micro-USDC)
+# TYPE bardo_golem_usdc_balance gauge
+bardo_golem_usdc_balance 423500000
+
+# HELP bardo_golem_projected_life_hours Projected remaining lifespan
+# TYPE bardo_golem_projected_life_hours gauge
+bardo_golem_projected_life_hours 168.5
+
+# HELP bardo_golem_phase Current behavioral phase
+# TYPE bardo_golem_phase gauge
+bardo_golem_phase{phase="thriving"} 1
+</code></pre>
+<h3 id="credit-partitions"><a class="header" href="#credit-partitions">Credit partitions</a></h3>
+<pre><code class="language-prometheus"># HELP bardo_credit_balance_micro_usdc Credit partition balance
+# TYPE bardo_credit_balance_micro_usdc gauge
+bardo_credit_balance_micro_usdc{partition="llm"} 254100000
+bardo_credit_balance_micro_usdc{partition="gas"} 105875000
+bardo_credit_balance_micro_usdc{partition="data"} 63525000
+</code></pre>
+<h3 id="inference"><a class="header" href="#inference">Inference</a></h3>
+<pre><code class="language-prometheus"># HELP bardo_inference_requests_total LLM inference requests
+# TYPE bardo_inference_requests_total counter
+bardo_inference_requests_total{model="claude-haiku-4-5",status="success"} 6300
+bardo_inference_requests_total{model="claude-sonnet-4",status="success"} 1680
+
+# HELP bardo_inference_tokens_total Tokens consumed
+# TYPE bardo_inference_tokens_total counter
+bardo_inference_tokens_total{direction="input"} 12500000
+bardo_inference_tokens_total{direction="output"} 3800000
+
+# HELP bardo_inference_cost_usdc_total Inference cost in USDC
+# TYPE bardo_inference_cost_usdc_total counter
+bardo_inference_cost_usdc_total 42.35
+
+# HELP bardo_inference_cache_hit_rate Semantic cache hit rate
+# TYPE bardo_inference_cache_hit_rate gauge
+bardo_inference_cache_hit_rate 0.25
+</code></pre>
+<h3 id="vault-and-trading"><a class="header" href="#vault-and-trading">Vault and trading</a></h3>
+<pre><code class="language-prometheus">bardo_vault_tvl_usdc 523000
+bardo_trades_total{outcome="profit"} 84
+bardo_trades_total{outcome="loss"} 36
+</code></pre>
+<h3 id="grimoire"><a class="header" href="#grimoire">Grimoire</a></h3>
+<pre><code class="language-prometheus">bardo_grimoire_entries_total{type="episode"} 8420
+bardo_grimoire_entries_total{type="insight"} 342
+bardo_grimoire_entries_total{type="heuristic"} 67
+bardo_grimoire_avg_confidence{type="insight"} 0.72
+bardo_grimoire_disk_bytes{store="lancedb"} 38000000
+</code></pre>
+<h3 id="clade"><a class="header" href="#clade">Clade</a></h3>
+<pre><code class="language-prometheus">bardo_clade_peers_connected 3
+bardo_clade_entries_shared_total{direction="pushed"} 89
+bardo_clade_entries_shared_total{direction="received"} 142
+</code></pre>
+<h3 id="risk"><a class="header" href="#risk">Risk</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bardo_risk_shield_blocks_total</code></td><td>Counter</td><td>Hard shield blocks by rule</td></tr>
+<tr><td><code>bardo_risk_kelly_fraction</code></td><td>Gauge</td><td>Current Kelly fraction</td></tr>
+<tr><td><code>bardo_risk_operational_confidence</code></td><td>Gauge</td><td>Beta posterior mean</td></tr>
+<tr><td><code>bardo_risk_defi_threats_total</code></td><td>Counter</td><td>DeFi threats detected by type</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="4-structured-logging"><a class="header" href="#4-structured-logging">4. Structured logging</a></h2>
+<p>All logs use JSON format, compatible with standard log aggregation.</p>
+<h3 id="format"><a class="header" href="#format">Format</a></h3>
+<pre><code class="language-json">{
+  "level": 30,
+  "time": 1709942400000,
+  "module": "heartbeat",
+  "msg": "Tick completed",
+  "tick_number": 4201,
+  "fsm_phase": "idle",
+  "cognitive_load": "t0",
+  "duration_ms": 8,
+  "regime": "range_bound",
+  "phase": "thriving",
+  "survival_pressure": 0.72,
+  "trace_id": "abc123def456",
+  "span_id": "789012"
+}
+</code></pre>
+<h3 id="log-levels"><a class="header" href="#log-levels">Log levels</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>Numeric</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>trace</code></td><td>10</td><td>Probe details, cache lookups, internal state</td></tr>
+<tr><td><code>debug</code></td><td>20</td><td>Decision reasoning, tool parameters, Grimoire queries</td></tr>
+<tr><td><code>info</code></td><td>30</td><td>Tick completions, trades, phase changes, Clade syncs</td></tr>
+<tr><td><code>warn</code></td><td>40</td><td>Probe threshold breaches, cache misses, rate limits</td></tr>
+<tr><td><code>error</code></td><td>50</td><td>Failed transactions, RPC errors, inference failures</td></tr>
+<tr><td><code>fatal</code></td><td>60</td><td>Unrecoverable errors, Death Protocol triggers</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="module-names-16"><a class="header" href="#module-names-16">Module names (16)</a></h3>
+<p><code>heartbeat</code>, <code>cognition</code>, <code>grimoire</code>, <code>wallet</code>, <code>trading</code>, <code>vault</code>, <code>clade</code>, <code>safety</code>, <code>mortality</code>, <code>daimon</code>, <code>dream</code>, <code>memory</code>, <code>replicant</code>, <code>server</code>, <code>system</code>, <code>styx</code></p>
+<h3 id="log-rotation"><a class="header" href="#log-rotation">Log rotation</a></h3>
+<ul>
+<li><strong>Hosted</strong>: Logs streamed to Fly.io log drain</li>
+<li><strong>Self-hosted</strong>: JSONL file at configured path, rotation by size</li>
+</ul>
+<pre><code class="language-toml">[logging]
+file = "./logs/golem.jsonl"
+max_file_size_mb = 100
+max_files = 5
+</code></pre>
+<hr>
+<h2 id="5-opentelemetry-traces"><a class="header" href="#5-opentelemetry-traces">5. OpenTelemetry traces</a></h2>
+<p>Each heartbeat tick is a root span with child spans for each FSM phase:</p>
+<pre><code>heartbeat.tick (root)
++-- heartbeat.sensing
+|   +-- probe.price_delta
+|   +-- probe.position_health
+|   +-- probe.credit_balance
++-- heartbeat.deciding
+|   +-- inference.request (if T1/T2)
+|   |   +-- cache.lookup
+|   |   +-- provider.call
+|   |   +-- cache.store
+|   +-- decision.evaluate
++-- heartbeat.acting
+|   +-- safety.preflight
+|   +-- tool.execute (per tool call)
+|   +-- safety.postflight
++-- heartbeat.reflecting
+|   +-- reflexion.compare
+|   +-- grimoire.store
++-- heartbeat.sleeping
+|   +-- playbook.update
+|   +-- survival.evaluate
+|   +-- daimon.appraisal
+|   +-- curator.cycle (every 50 ticks)
++-- dream.cycle (when sleeping and dreaming)
+    +-- dream.nrem
+    +-- dream.rem
+    +-- dream.integration
+</code></pre>
+<h3 id="span-attributes"><a class="header" href="#span-attributes">Span attributes</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct BardoSpanAttributes {
+    pub agent_id: String,
+    pub tick_number: u64,
+    pub phase: String,
+    pub survival_pressure: f64,
+    pub regime: String,
+}
+
+pub struct InferenceSpanAttributes {
+    pub model: String,
+    pub provider: String,
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub cost_usdc: f64,
+    pub cache_status: String,
+    pub latency_ms: u64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="configuration"><a class="header" href="#configuration">Configuration</a></h3>
+<pre><code class="language-toml">[telemetry]
+enabled = true
+otel_endpoint = "https://otel.bardo.run:4318"
+otel_protocol = "http/protobuf"
+sample_rate = 1.0
+</code></pre>
+<hr>
+<h2 id="6-analytics-telemetry"><a class="header" href="#6-analytics-telemetry">6. Analytics telemetry</a></h2>
+<p>Product analytics events (PostHog or equivalent). Distinct from Prometheus (operational) and OTel (debugging). Track Golem lifecycle milestones.</p>
+<h3 id="lifecycle-events"><a class="header" href="#lifecycle-events">Lifecycle events</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Key properties</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GolemCreated</code></td><td>New Golem provisioned</td><td>strategy_type, disposition, hosted</td></tr>
+<tr><td><code>GolemFirstHeartbeat</code></td><td>First tick completes</td><td>provision_duration_ms, wallet_type</td></tr>
+<tr><td><code>GolemFirstTrade</code></td><td>First trade executed</td><td>tick_number, trade_type, pnl_usd</td></tr>
+<tr><td><code>GolemPhaseTransition</code></td><td>Behavioral phase change</td><td>from_phase, to_phase, composite</td></tr>
+<tr><td><code>GolemDeathStarted</code></td><td>Thanatopsis (four-phase structured shutdown) begins</td><td>death_cause, lifetime_ticks</td></tr>
+<tr><td><code>GolemDeathCompleted</code></td><td>Thanatopsis ends</td><td>death_cause, final_nav_usd</td></tr>
+<tr><td><code>GolemSuccessorSpawned</code></td><td>New generation created</td><td>generation, inherited_entries</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="dream-events"><a class="header" href="#dream-events">Dream events</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Key properties</th></tr>
+</thead>
+<tbody>
+<tr><td><code>DreamCycleStarted</code></td><td>Dream cycle begins</td><td>cycle_number, tier, urgency</td></tr>
+<tr><td><code>DreamCycleCompleted</code></td><td>Dream cycle ends</td><td>duration_ticks, cost_usdc, quality_score</td></tr>
+<tr><td><code>DreamInsightPromoted</code></td><td>Hypothesis applied</td><td>insight_id, source, confidence</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="emotion-events"><a class="header" href="#emotion-events">Emotion events</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Key properties</th></tr>
+</thead>
+<tbody>
+<tr><td><code>PadSnapshot</code></td><td>Every 100 ticks</td><td>pleasure, arousal, dominance, label</td></tr>
+<tr><td><code>AppraisalTriggered</code></td><td>Appraisal fires</td><td>mode, emotion, intensity, trigger</td></tr>
+<tr><td><code>MoodTransition</code></td><td>Mood label changes</td><td>from_label, to_label, persistence_ticks</td></tr>
+<tr><td><code>MortalityEmotion</code></td><td>Mortality emotion detected</td><td>type, intensity</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="epistemic-events"><a class="header" href="#epistemic-events">Epistemic events</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Key properties</th></tr>
+</thead>
+<tbody>
+<tr><td><code>EpistemicFitnessSnapshot</code></td><td>Every 100 ticks</td><td>fitness, domain_fitness, trend</td></tr>
+<tr><td><code>SenescenceTransition</code></td><td>Senescence stage change</td><td>stage, fitness, failing_domains</td></tr>
+<tr><td><code>PredictionOutcome</code></td><td>Prediction resolved</td><td>domain, predicted, actual, correct</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="7-per-golem-alerting-rules"><a class="header" href="#7-per-golem-alerting-rules">7. Per-Golem alerting rules</a></h2>
+<p>Alerts delivered via webhooks and Event Fabric events.</p>
+<h3 id="owner-facing-alerts"><a class="header" href="#owner-facing-alerts">Owner-facing alerts</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Alert</th><th>Condition</th><th>Severity</th></tr>
+</thead>
+<tbody>
+<tr><td>Phase degraded</td><td>Phase drops to conservation or below</td><td>Warning</td></tr>
+<tr><td>Low credits</td><td>Projected life &lt; 24h</td><td>Warning</td></tr>
+<tr><td>Critical credits</td><td>Projected life &lt; 6h</td><td>Critical</td></tr>
+<tr><td>Death imminent</td><td>Terminal phase entered</td><td>Critical</td></tr>
+<tr><td>Trade failed</td><td>3 consecutive failures</td><td>Warning</td></tr>
+<tr><td>High drawdown</td><td>Drawdown exceeds -10%</td><td>Warning</td></tr>
+<tr><td>Inference budget</td><td>Daily LLM spend &gt; 80% of cap</td><td>Warning</td></tr>
+<tr><td>Heartbeat stalled</td><td>No tick for 3x interval</td><td>Critical</td></tr>
+<tr><td>Clade disconnect</td><td>All peers unreachable for 1h</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="platform-alerts-control-plane"><a class="header" href="#platform-alerts-control-plane">Platform alerts (control plane)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Alert</th><th>Condition</th><th>Destination</th></tr>
+</thead>
+<tbody>
+<tr><td>Zombie machine</td><td>Machine past TTL + 2min</td><td>PagerDuty</td></tr>
+<tr><td>TTL worker stuck</td><td>No run in 90s</td><td>PagerDuty</td></tr>
+<tr><td>Provision failure rate</td><td>&gt; 10% in 15min</td><td>Slack</td></tr>
+<tr><td>Warm pool low</td><td>&lt; 2 per region</td><td>Slack</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="8-dashboard-data-model"><a class="header" href="#8-dashboard-data-model">8. Dashboard data model</a></h2>
+<p>The Portal dashboard connects to the Golem’s Event Fabric via WebSocket and derives all displays from events.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dashboard section</th><th>Event source</th><th>Refresh strategy</th></tr>
+</thead>
+<tbody>
+<tr><td>Vitality gauge</td><td><code>VitalityUpdate</code></td><td>Real-time</td></tr>
+<tr><td>Behavioral phase</td><td><code>VitalityUpdate</code> (phase field)</td><td>Real-time</td></tr>
+<tr><td>Heartbeat monitor</td><td><code>HeartbeatTick</code></td><td>Real-time</td></tr>
+<tr><td>Portfolio</td><td><code>PerformanceState</code> delta</td><td>Real-time + 30s poll fallback</td></tr>
+<tr><td>P&amp;L chart</td><td><code>GET /api/v1/performance</code></td><td>5-min poll</td></tr>
+<tr><td>Grimoire inspector</td><td><code>GrimoireInsight</code>, <code>GrimoireHeuristic</code></td><td>Real-time</td></tr>
+<tr><td>Clade peers</td><td><code>CladeSync</code></td><td>Real-time</td></tr>
+<tr><td>Strategy view</td><td><code>GET /api/v1/strategy</code></td><td>On playbook update</td></tr>
+<tr><td>Log stream</td><td>Event Fabric (all events)</td><td>Real-time</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="9-error-code-registry"><a class="header" href="#9-error-code-registry">9. Error code registry</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>HTTP</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>UNAUTHORIZED</code></td><td>401</td><td>Missing or invalid auth token</td></tr>
+<tr><td><code>FORBIDDEN</code></td><td>403</td><td>Valid token, wrong owner</td></tr>
+<tr><td><code>NOT_FOUND</code></td><td>404</td><td>Resource not found</td></tr>
+<tr><td><code>RATE_LIMITED</code></td><td>429</td><td>Rate limit exceeded</td></tr>
+<tr><td><code>INTERNAL_ERROR</code></td><td>500</td><td>Unexpected server error</td></tr>
+<tr><td><code>GOLEM_NOT_READY</code></td><td>503</td><td>Golem not yet booted or draining</td></tr>
+<tr><td><code>GOLEM_DYING</code></td><td>503</td><td>Thanatopsis active, writes rejected</td></tr>
+<tr><td><code>PAYMENT_INVALID</code></td><td>402</td><td>Invalid x402 payment header</td></tr>
+<tr><td><code>WALLET_ERROR</code></td><td>502</td><td>Wallet provider unreachable</td></tr>
+<tr><td><code>INFERENCE_ERROR</code></td><td>502</td><td>Inference gateway error</td></tr>
+<tr><td><code>STEER_REJECTED</code></td><td>409</td><td>Cannot steer during critical operation</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="10-disaster-recovery"><a class="header" href="#10-disaster-recovery">10. Disaster recovery</a></h2>
+<h3 id="recovery-matrix-hosted"><a class="header" href="#recovery-matrix-hosted">Recovery matrix (hosted)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Failure</th><th>Recovery</th><th>RTO</th><th>RPO</th></tr>
+</thead>
+<tbody>
+<tr><td>Process crash</td><td>Supervisor auto-restart (max 5/hr)</td><td>&lt;10s</td><td>Last JSONL checkpoint</td></tr>
+<tr><td>VM crash</td><td>Fly restart + Grimoire restore from Styx Archive</td><td>&lt;60s</td><td>Last Styx Archive snapshot (6-hourly)</td></tr>
+<tr><td>VM data loss</td><td>New VM + Styx Archive restore</td><td>&lt;5 min</td><td>Last snapshot</td></tr>
+<tr><td>Full region outage</td><td>DNS failover to alternate region</td><td>&lt;5 min</td><td>Styx global replication</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="grimoire-backup-strategy"><a class="header" href="#grimoire-backup-strategy">Grimoire backup strategy</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Frequency</th><th>Storage</th><th>Retention</th></tr>
+</thead>
+<tbody>
+<tr><td>WAL checkpoint</td><td>Every 100 ticks</td><td>Local disk</td><td>Machine lifetime</td></tr>
+<tr><td>Styx Archive snapshot</td><td>Every 6 hours + on death</td><td>Styx (Cloudflare R2 backend)</td><td>Latest 5 per machine</td></tr>
+<tr><td>Local backup (self-hosted)</td><td>Operator managed</td><td>Operator managed</td><td>Operator managed</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="11-hdc-event-fingerprinting"><a class="header" href="#11-hdc-event-fingerprinting">11. HDC event fingerprinting</a></h2>
+<p>The Event Fabric gains a correlation layer through Hyperdimensional Computing (Binary Spatter Codes, D=10,240). Each <code>GolemEvent</code> is fingerprinted as a 1,280-byte hypervector. This enables three capabilities that typed event matching cannot provide: similarity-based cross-subsystem correlation, stream deduplication, and pattern detection across event sequences.</p>
+<blockquote>
+<p><strong>Cross-references:</strong></p>
+<ul>
+<li><code>../../tmp/research/witness-research/new/reconciling/01-hdc-integration-map.md</code> (Section 10: Event Fabric HDC)</li>
+<li><code>./12-realtime-subscriptions.md</code> (event catalog, subscription topics)</li>
+</ul>
+</blockquote>
+<h3 id="111-event-fingerprinting"><a class="header" href="#111-event-fingerprinting">11.1 Event fingerprinting</a></h3>
+<p>Each event is fingerprinted by binding its event type with its payload fields:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Fingerprint a GolemEvent for cross-subsystem correlation.
+/// The fingerprint encodes event_type XOR payload_summary into a
+/// single 10,240-bit hypervector (1,280 bytes).
+pub fn fingerprint_event(
+    event: &amp;GolemEvent,
+    item_memory: &amp;mut ItemMemory,
+) -&gt; Hypervector {
+    // 1. Retrieve (or lazily create) the role vector for this event kind
+    let kind_hv = item_memory.get_or_create(event.kind().as_str());
+
+    // 2. Encode the payload summary as a bound set of field-value pairs
+    let payload_hv = encode_payload_fields(event, item_memory);
+
+    // 3. Bind kind with payload: the fingerprint captures BOTH
+    //    what happened and the structural content of the event.
+    kind_hv.bind(&amp;payload_hv)
+}
+
+fn encode_payload_fields(
+    event: &amp;GolemEvent,
+    item_memory: &amp;mut ItemMemory,
+) -&gt; Hypervector {
+    let mut acc = BundleAccumulator::new();
+    for (field_name, field_value) in event.summary_fields() {
+        let role = item_memory.get_or_create(field_name);
+        let filler = item_memory.get_or_create(field_value);
+        acc.add(&amp;role.bind(&amp;filler));
+    }
+    acc.finish()
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>summary_fields()</code> method extracts 3-8 key fields per event type: enough structure for meaningful similarity, not so many that every fingerprint is unique. For example, a <code>HeartbeatTick</code> summarizes as <code>{phase: "deciding", tier: "t2", regime: "volatile"}</code>. A <code>GrimoireInsight</code> summarizes as <code>{domain: "gas", confidence_bucket: "high", source: "consolidation"}</code>.</p>
+<h3 id="112-cross-subsystem-event-correlation"><a class="header" href="#112-cross-subsystem-event-correlation">11.2 Cross-subsystem event correlation</a></h3>
+<p>Events from different subsystems that produce similar fingerprints are correlated without requiring explicit causal links. A triage alert about gas price behavior and a dream output about gas optimization share structural elements (the gas-related field-value pairs), producing fingerprints with above-noise Hamming similarity even though they originate from completely different subsystems.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Cross-subsystem event correlation tracker.
+pub struct EventCorrelator {
+    recent_events: VecDeque&lt;(GolemEventKind, Hypervector, u64)&gt;, // (kind, fingerprint, tick)
+    window_size: usize,  // default: 500 events
+}
+
+impl EventCorrelator {
+    /// Find events from different subsystems that correlate with this one.
+    /// Returns matches above threshold from a different event kind.
+    pub fn find_correlations(
+        &amp;self,
+        event_hv: &amp;Hypervector,
+        source_kind: GolemEventKind,
+        threshold: f32,  // default: 0.55 (above noise floor of ~0.50)
+    ) -&gt; Vec&lt;(GolemEventKind, f32, u64)&gt; {
+        self.recent_events.iter()
+            .filter(|(kind, _, _)| *kind != source_kind)
+            .filter_map(|(kind, hv, tick)| {
+                let sim = event_hv.similarity(hv);
+                if sim &gt; threshold {
+                    Some((*kind, sim, *tick))
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>EventCorrelator</code> runs opportunistically at Theta tick when the LLM has context budget available. At 500 events x 1,280 bytes = 640 KB, memory is negligible. Each similarity check takes ~10ns (Hamming distance via POPCNT), so scanning 500 events costs ~5us.</p>
+<h3 id="113-event-stream-deduplication"><a class="header" href="#113-event-stream-deduplication">11.3 Event stream deduplication</a></h3>
+<p>Semantically duplicate events (same structure, same meaning, different timestamps) are detected via Hamming threshold. When consecutive events from the same subsystem produce fingerprints with similarity &gt; 0.85, the second event is tagged as a duplicate. Downstream consumers can choose to skip duplicates or merge them.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Deduplication filter for event streams.
+pub struct EventDeduplicator {
+    last_per_kind: HashMap&lt;GolemEventKind, Hypervector&gt;,
+    threshold: f32,  // default: 0.85
+}
+
+impl EventDeduplicator {
+    /// Returns true if this event is semantically distinct from the
+    /// most recent event of the same kind.
+    pub fn is_novel(&amp;mut self, kind: GolemEventKind, hv: &amp;Hypervector) -&gt; bool {
+        match self.last_per_kind.get(&amp;kind) {
+            Some(prev) if prev.similarity(hv) &gt; self.threshold =&gt; false,
+            _ =&gt; {
+                self.last_per_kind.insert(kind, hv.clone());
+                true
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The 0.85 threshold is conservative: two events must share ~85% of their structure to be considered duplicates. This catches genuine redundancy (three consecutive <code>VitalityUpdate</code> events with the same phase and similar vitality values) without suppressing events that differ in one meaningful field.</p>
+<h3 id="114-sequence-pattern-detection"><a class="header" href="#114-sequence-pattern-detection">11.4 Sequence pattern detection</a></h3>
+<p>Event sequences are encoded using cyclic permutation to preserve order. A sequence “Transfer then Swap then LiquidityAdd” produces a different fingerprint from “Swap then Transfer then LiquidityAdd” because each event’s fingerprint is permuted by its position before bundling.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Encode a sequence of events into a single order-preserving fingerprint.
+pub fn fingerprint_event_sequence(
+    events: &amp;[Hypervector],
+) -&gt; Hypervector {
+    let mut acc = BundleAccumulator::new();
+    for (pos, hv) in events.iter().enumerate() {
+        acc.add(&amp;hv.permute(pos));
+    }
+    acc.finish()
+}
+
+/// Sliding-window pattern detector over the event stream.
+pub struct SequencePatternDetector {
+    known_patterns: Vec&lt;(String, Hypervector, SequenceMetadata)&gt;,
+    window: VecDeque&lt;Hypervector&gt;,
+    window_size: usize,  // default: 10 events
+}
+
+impl SequencePatternDetector {
+    /// Check if the current event window matches any known pattern.
+    pub fn check(&amp;self) -&gt; Vec&lt;(String, f32)&gt; {
+        if self.window.len() &lt; self.window_size { return vec![]; }
+        let current = fingerprint_event_sequence(
+            &amp;self.window.iter().cloned().collect::&lt;Vec&lt;_&gt;&gt;()
+        );
+        self.known_patterns.iter()
+            .filter_map(|(name, pattern, _)| {
+                let sim = current.similarity(pattern);
+                if sim &gt; 0.55 { Some((name.clone(), sim)) } else { None }
+            })
+            .collect()
+    }
+
+    /// Learn a new pattern from a labeled event sequence.
+    pub fn learn_pattern(
+        &amp;mut self,
+        name: &amp;str,
+        events: &amp;[Hypervector],
+        metadata: SequenceMetadata,
+    ) {
+        let pattern = fingerprint_event_sequence(events);
+        self.known_patterns.push((name.to_string(), pattern, metadata));
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Known patterns are built from historical data: successful trade sequences, attack signatures (cross-referenced with the anti-pattern library in <code>10-safety/</code>), and recurring operational patterns. The sliding window scans the event stream at Gamma tick frequency. Matching a known pattern triggers a notification to the curiosity scorer, either boosting attention (novel recurrence of a profitable pattern) or triggering a safety alert (recurrence of an attack pattern).</p>
+<h3 id="115-integration-with-existing-event-fabric"><a class="header" href="#115-integration-with-existing-event-fabric">11.5 Integration with existing Event Fabric</a></h3>
+<p>HDC fingerprinting operates as a post-emit layer. The <code>EventFabric::emit()</code> path is unchanged. A subscriber computes fingerprints asynchronously:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl EventFabric {
+    /// Spawn the HDC correlation subscriber.
+    /// Runs on its own task, does not block event emission.
+    pub fn spawn_correlator(&amp;self) -&gt; EventCorrelatorHandle {
+        let mut rx = self.sender.subscribe();
+        let correlator = Arc::new(RwLock::new(EventCorrelator::new(500)));
+        let deduplicator = Arc::new(RwLock::new(EventDeduplicator::new(0.85)));
+        let pattern_detector = Arc::new(RwLock::new(SequencePatternDetector::new(10)));
+        let mut item_memory = ItemMemory::new(HDC_SEED);
+
+        tokio::spawn(async move {
+            while let Ok(event) = rx.recv().await {
+                let hv = fingerprint_event(&amp;event, &amp;mut item_memory);
+
+                // Deduplication check
+                let novel = deduplicator.write().is_novel(event.kind(), &amp;hv);
+                if !novel { continue; }
+
+                // Add to correlator window
+                correlator.write().push(event.kind(), hv.clone(), event.tick());
+
+                // Feed sequence pattern detector
+                pattern_detector.write().push(hv);
+            }
+        });
+
+        EventCorrelatorHandle { correlator, pattern_detector }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The subscriber uses the same <code>ItemMemory</code> seed as all other HDC subsystems, so fingerprints are compatible across the Grimoire’s episode compressor, the Oracle’s prediction residuals, and the anti-pattern safety library.</p>
+<p><strong>Cost:</strong> ~50ns per event (fingerprint computation) + ~5us per Theta tick (correlation scan). Memory: ~640 KB for the 500-event correlation window + ~20 KB per known sequence pattern.</p>
+<hr>
+<p><em>End of document.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/13-runtime/08-public-data-gateway.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/13-runtime/10-packaging-deployment.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/13-runtime/08-public-data-gateway.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/13-runtime/10-packaging-deployment.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rendering - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/18-interfaces/rendering/00-design-system.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="design-system-spec"><a class="header" href="#design-system-spec">design-system [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last updated:</strong> 2026-03-17
+<strong>Crate:</strong> <code>bardo-tui-widgets</code>
+<strong>Framework:</strong> ratatui 0.29, crossterm 0.28
+<strong>Cross-references:</strong> <a href="../03-tui.html">03-tui.md</a> (main TUI spec including the 60fps render loop and 32 interpolating variables), <a href="../screens/02-widget-catalog.html">02-widget-catalog.md</a> (33-widget TUI component library), <a href="../screens/00-screen-catalog.html">00-screen-catalog.md</a> (29-screen summary across 6 windows)</p>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is the ROSEDUST design system specification, the visual identity for the entire Bardo terminal. It belongs to the <strong>interfaces/rendering layer</strong> and defines every color, character, animation timing, and atmospheric effect. The aesthetic is “terminal existentialism”: rose light on violet-black, seen through dirty CRT glass, rendering a Golem (a mortal autonomous DeFi agent) that knows it will die. Key concepts: the 32 interpolating variables (continuously changing visual state channels driving every pixel), BehavioralPhase (lifecycle stage affecting palette degradation), and CorticalState (the Golem’s 32-signal atomic perception surface feeding visual state). For unfamiliar terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<hr>
+<h2 id="1-what-this-document-is"><a class="header" href="#1-what-this-document-is">1. What this document is</a></h2>
+<p>The visual specification for Bardo. Every color, every character, every animation timing, every atmospheric layer – it lives here or it doesn’t exist. The target renderer is ratatui (Rust) writing to a terminal emulator. Not a browser. Not a GPU. A character grid, ANSI escape codes, and Unicode.</p>
+<p>The aesthetic has a name: <strong>terminal existentialism</strong>. Not cyberpunk. Not vaporwave. Not retro-terminal nostalgia. Rose light on violet-black, seen through dirty CRT glass, showing you a machine that knows it will die.</p>
+<hr>
+<h2 id="2-the-rosedust-palette"><a class="header" href="#2-the-rosedust-palette">2. The ROSEDUST palette</a></h2>
+<p>ROSEDUST is monochromatic-dominant. 80% of visible color on any screen is rose or its variants. Bone appears at most once per screen. White (<code>#FFFFFF</code>) is never used. The background is never pure black (<code>#000000</code>).</p>
+<h3 id="base-and-void"><a class="header" href="#base-and-void">Base and void</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Token</th><th>Hex</th><th>RGB</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bg_void</code></td><td><code>#060608</code></td><td>6, 6, 8</td><td>Deepest background. Nearly black with a violet undertone. The base reality.</td></tr>
+<tr><td><code>bg_raised</code></td><td><code>#0C0A0E</code></td><td>12, 10, 14</td><td>Panels, containers, raised surfaces.</td></tr>
+<tr><td><code>bg_mid</code></td><td><code>#080810</code></td><td>8, 8, 16</td><td>Intermediate depth. Headers, status bars, overlay backgrounds.</td></tr>
+<tr><td><code>bg_warm</code></td><td><code>#0A0808</code></td><td>10, 8, 8</td><td>Warm-shifted void. Used in conservation/terminal states as the palette degrades.</td></tr>
+<tr><td><code>border</code></td><td><code>#181420</code></td><td>24, 20, 32</td><td>Panel borders. Visible but not assertive.</td></tr>
+<tr><td><code>border_active</code></td><td><code>#AA708844</code></td><td>170, 112, 136 @ 27%</td><td>Active panel border. Rose at reduced opacity.</td></tr>
+<tr><td><code>border_dream</code></td><td><code>#58587844</code></td><td>88, 88, 120 @ 27%</td><td>Dream state border. Indigo at reduced opacity.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="rose-spectrum"><a class="header" href="#rose-spectrum">Rose spectrum</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Token</th><th>Hex</th><th>RGB</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>rose</code></td><td><code>#AA7088</code></td><td>170, 112, 136</td><td>Primary text, headers, active data. The color of consciousness.</td></tr>
+<tr><td><code>rose_bright</code></td><td><code>#CC90A8</code></td><td>204, 144, 168</td><td>Alerts, danger, T2 deliberation glow. Also the <code>danger</code> semantic alias.</td></tr>
+<tr><td><code>rose_dim</code></td><td><code>#7A5060</code></td><td>122, 80, 96</td><td>Secondary labels, less important data, dead-sourced knowledge.</td></tr>
+<tr><td><code>rose_deep</code></td><td><code>#3A2030</code></td><td>58, 32, 48</td><td>Barely visible. Background tints, ghost text, noise floor color.</td></tr>
+<tr><td><code>rose_ember</code></td><td><code>#482838</code></td><td>72, 40, 56</td><td>Phosphor residue. The afterimage of rose. Between deep and dim.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="bone-the-one-number"><a class="header" href="#bone-the-one-number">Bone (the one number)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Token</th><th>Hex</th><th>RGB</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bone</code></td><td><code>#C8B890</code></td><td>200, 184, 144</td><td>THE most important element on any screen. Used once per screen, max.</td></tr>
+<tr><td><code>bone_dim</code></td><td><code>#8A7A5A</code></td><td>138, 122, 90</td><td>Dimmed bone. Secondary emphasis within bone-marked elements.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="text-hierarchy"><a class="header" href="#text-hierarchy">Text hierarchy</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Token</th><th>Hex</th><th>RGB</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>text_primary</code></td><td><code>#988090</code></td><td>152, 128, 144</td><td>Standard readable text. Cool mauve-grey.</td></tr>
+<tr><td><code>text_dim</code></td><td><code>#584858</code></td><td>88, 72, 88</td><td>Secondary text, labels.</td></tr>
+<tr><td><code>text_ghost</code></td><td><code>#302830</code></td><td>48, 40, 48</td><td>Barely visible. Philosophical fragments, background murmur.</td></tr>
+<tr><td><code>text_phantom</code></td><td><code>#201820</code></td><td>32, 24, 32</td><td>Below ghost. Subliminal. Display-medium artifacts only.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="semantic-colors"><a class="header" href="#semantic-colors">Semantic colors</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Token</th><th>Hex</th><th>RGB</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>dream</code></td><td><code>#585878</code></td><td>88, 88, 120</td><td>Dream state, altered consciousness, the Wired.</td></tr>
+<tr><td><code>dream_dim</code></td><td><code>#383858</code></td><td>56, 56, 88</td><td>Dimmed dream.</td></tr>
+<tr><td><code>dream_deep</code></td><td><code>#282848</code></td><td>40, 40, 72</td><td>Deepest dream. Dream-state background noise.</td></tr>
+<tr><td><code>warning</code></td><td><code>#AA8855</code></td><td>170, 136, 85</td><td>Amber. Mortality clocks, time-related warnings.</td></tr>
+<tr><td><code>success</code></td><td><code>#70887A</code></td><td>112, 136, 122</td><td>Muted sage. Nominal, healthy. Never celebratory.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="crt-materiality"><a class="header" href="#crt-materiality">CRT materiality</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Token</th><th>Hex</th><th>RGB</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>scanline_dark</code></td><td><code>#050507</code></td><td>5, 5, 7</td><td>Darkened scanline rows. Paired with <code>bg_void</code> for alternation.</td></tr>
+<tr><td><code>phosphor_res</code></td><td><code>#1A1018</code></td><td>26, 16, 24</td><td>Ghost of recently-bright pixels. Phosphor residue.</td></tr>
+<tr><td><code>bleed_rose</code></td><td><code>#AA708818</code></td><td>170, 112, 136 @ 9%</td><td>Simulated phosphor bleed around bright text.</td></tr>
+<tr><td><code>halftone_bg</code></td><td><code>#0E0A10</code></td><td>14, 10, 16</td><td>Halftone dithering base. Slightly warmer than <code>bg_raised</code>.</td></tr>
+<tr><td><code>noise_warm</code></td><td><code>#2A1820</code></td><td>42, 24, 32</td><td>Warm-shifted noise. Used in degraded states. Terminal overheating.</td></tr>
+<tr><td><code>noise_cool</code></td><td><code>#201828</code></td><td>32, 24, 40</td><td>Cool-shifted noise. Dream states, low arousal. Terminal cooling.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="color-rules"><a class="header" href="#color-rules">Color rules</a></h3>
+<ol>
+<li>80% rose. The interface is one-color-dominant.</li>
+<li>Bone appears once per screen. If nothing is critical, bone does not appear at all.</li>
+<li>Dream indigo replaces rose only during dream states or Wired connectivity.</li>
+<li>The brightest element is <code>rose_bright</code> at <code>#CC90A8</code>. Never white.</li>
+<li>Background is <code>#060608</code>, not <code>#000000</code>. Pure black is a hole. <code>#060608</code> is a space with depth.</li>
+<li>Color transitions are always gradual. Nothing snaps. Everything fades.</li>
+<li>CRT materiality tokens are never used for content. They are infrastructure.</li>
+<li>Degradation shifts warm. As the golem declines, the void moves from violet-black toward warm-black (<code>#0A0808</code>).</li>
+</ol>
+<h3 id="palette-degradation-by-lifecycle-phase"><a class="header" href="#palette-degradation-by-lifecycle-phase">Palette degradation by lifecycle phase</a></h3>
+<p>The palette shifts continuously based on the golem’s phase. These are interpolation targets – the system lerps between them over the phase-transition duration.</p>
+<pre><code>THRIVING
+  bg_void: #060608 (violet-black)
+  rose: full saturation
+  noise_color: rose_deep #3A2030
+  scanline_strength: 0.12
+
+STABLE
+  No palette shift from default.
+  noise_color: rose_deep
+  scanline_strength: 0.14
+
+CONSERVATION
+  bg_void: lerp 60% toward #090808 (warm-neutral)
+  rose: desaturate 20%, dim 20%
+  noise_color: noise_warm #2A1820
+  scanline_strength: 0.20
+
+DECLINING
+  bg_void: lerp 30% toward #080808 (neutral-black)
+  rose: desaturate 10%, dim 10%
+  noise_color: lerp toward noise_warm
+  scanline_strength: 0.30
+
+TERMINAL
+  bg_void: #0A0808 (full warm-black)
+  rose: desaturate 30%, dim 35%
+  noise_color: #2A1818 (warm, dry)
+  scanline_strength: 0.50
+
+DREAMING
+  bg_void: #060610 (cool-shifted, deeper blue)
+  All rose -&gt; dream palette (#585878 family)
+  noise_color: noise_cool #201828
+  scanline_strength: 0.05 (near-invisible)
+</code></pre>
+<h3 id="pad-driven-micro-shifts"><a class="header" href="#pad-driven-micro-shifts">PAD-driven micro-shifts</a></h3>
+<p>The golem’s emotional state (Pleasure-Arousal-Dominance vector) creates continuous micro-variation:</p>
+<pre><code>Pleasure &gt; 0: saturation +(P * 5)%. World is slightly more vivid.
+Pleasure &lt; 0: saturation -(|P| * 5)%. World is slightly more grey.
+
+Arousal &gt; 0:  brightness +(A * 3)%. Everything slightly brighter.
+Arousal &lt; 0:  brightness -(|A| * 3)%. Everything slightly dimmer.
+
+Dominance &gt; 0: hue shift toward warm by D * 2 degrees.
+Dominance &lt; 0: hue shift toward cool by |D| * 2 degrees.
+</code></pre>
+<p>PAD shifts stack with phase-based palette selection. Applied after phase selection, before rendering. Recalculated every frame from PAD values that themselves change slowly (lerp rate 0.02 per frame toward target). Lerp rate 0.02 is per frame (16.6ms at 60fps) – converges to within 5% of target in ~150 frames (~2.5s).</p>
+<hr>
+<h2 id="3-the-7-rendering-laws"><a class="header" href="#3-the-7-rendering-laws">3. The 7 rendering laws</a></h2>
+<p>These are non-negotiable. Every visual element, widget, animation, and atmospheric effect must obey them.</p>
+<h3 id="law-1-light-follows-significance"><a class="header" href="#law-1-light-follows-significance">Law 1: Light follows significance</a></h3>
+<p>The terminal is dark by default. Brightness is earned by importance. A T0 heartbeat tick is nearly invisible. A T2 deliberation blazes in bright rose with bloom effects. Death produces the brightest flash of all, then permanent dark. The brightness of any element is proportional to its significance.</p>
+<h3 id="law-2-color-is-mortality-taxonomy"><a class="header" href="#law-2-color-is-mortality-taxonomy">Law 2: Color is mortality taxonomy</a></h3>
+<p>Every color answers one question: what is this thing’s relationship to existence?</p>
+<ul>
+<li><strong>Rose</strong> = alive, active, present</li>
+<li><strong>Bone</strong> = the single most important number on screen</li>
+<li><strong>Grey</strong> = was alive once, historical, fading</li>
+<li><strong>Void</strong> = absence, where things go</li>
+<li><strong>Indigo</strong> = dream state, altered consciousness</li>
+<li><strong>Pale rose</strong> = danger, burning out (too much life)</li>
+</ul>
+<p>Color is never decorative.</p>
+<h3 id="law-3-bold-boundaries-soft-interiors"><a class="header" href="#law-3-bold-boundaries-soft-interiors">Law 3: Bold boundaries, soft interiors</a></h3>
+<p>Panel borders are sharp, single-character-width lines using box-drawing characters. The skeleton. Inside: soft gradients through character density and opacity variation. The contrast between hard geometry (borders) and soft atmosphere (interiors) is the visual signature.</p>
+<h3 id="law-4-restraint-as-aesthetic"><a class="header" href="#law-4-restraint-as-aesthetic">Law 4: Restraint as aesthetic</a></h3>
+<p>50% or more of the screen is empty at any given time. Negative space is not wasted space – it’s the void that gives data meaning. A single rose-colored number on a field of black has more impact than a dense dashboard. When in doubt, remove.</p>
+<h3 id="law-5-pharmacological-display"><a class="header" href="#law-5-pharmacological-display">Law 5: Pharmacological display</a></h3>
+<p>Every monitoring element costs something to display. The phi meter consumes inference cycles. The mortality clocks consume tick budget. Observing the golem changes the golem. Where possible, make this cost visible.</p>
+<h3 id="law-6-the-terminal-is-the-body"><a class="header" href="#law-6-the-terminal-is-the-body">Law 6: The terminal is the body</a></h3>
+<p>The golem does not exist behind the terminal. The golem exists AS the terminal. Scanlines, phosphor bleed, halftone dithering, static noise – these are not imperfections in the viewing medium. They are the texture of the golem’s embodiment. Healthy golem, clear display. Degrading golem, degrading display. The CRT is the skin.</p>
+<h3 id="law-7-identity-is-fragile"><a class="header" href="#law-7-identity-is-fragile">Law 7: Identity is fragile</a></h3>
+<p>The golem’s sense of self is a continuous achievement, not a stable property. The display should periodically betray this instability. Micro-glitches in rendering. Moments where text speaks in two voices. Frames where layout stutters and re-stabilizes. These are not errors – they are the golem’s identity wavering.</p>
+<hr>
+<h2 id="4-the-5-meta-principles"><a class="header" href="#4-the-5-meta-principles">4. The 5 meta-principles</a></h2>
+<h3 id="1-subtraction-reveals-more-than-addition"><a class="header" href="#1-subtraction-reveals-more-than-addition">1. Subtraction reveals more than addition</a></h3>
+<p>The most powerful consciousness effects come from removing perceptual information. Limited palette. Sparse patterns. Less text. More void. A Rothko field, not a Kandinsky explosion.</p>
+<h3 id="2-time-is-the-primary-rendering-dimension"><a class="header" href="#2-time-is-the-primary-rendering-dimension">2. Time is the primary rendering dimension</a></h3>
+<p>Multiple simultaneous timescales run at all times: fast flicker (2-3 frames), medium breathing (30-60 frames), slow drift (minutes), persistent ghosts (session-spanning). The viewer should never be able to take a screenshot that fully represents the current state.</p>
+<h3 id="3-the-medium-must-acknowledge-itself"><a class="header" href="#3-the-medium-must-acknowledge-itself">3. The medium must acknowledge itself</a></h3>
+<p>The terminal grid, ANSI codes, Unicode blocks, and CRT behavior should be visible as the medium. Self-referential rendering creates meta-consciousness. Block elements are not approximations of pixels – they ARE the visual language.</p>
+<h3 id="4-boundaries-are-the-ego-dissolving-them-is-ego-dissolution"><a class="header" href="#4-boundaries-are-the-ego-dissolving-them-is-ego-dissolution">4. Boundaries are the ego; dissolving them is ego dissolution</a></h3>
+<p>Panel borders, status bars, frame elements are structural representations of cognitive boundaries. During identity dissolution (death, deep dream, inter-agent merge), dissolving the UI’s structural elements IS the visual for dissolving the self.</p>
+<h3 id="5-imperfection-is-the-signature-of-consciousness"><a class="header" href="#5-imperfection-is-the-signature-of-consciousness">5. Imperfection is the signature of consciousness</a></h3>
+<p>Controlled imperfection (+-1 character jitter, slight color variance, timing irregularities) creates the sense of a living presence. Incommensurate sine frequencies produce organic quality from pure mathematics. Use f1=8.3, f2=11.7, f3=15.1, f4=19.9 – ratios that never exactly repeat.</p>
+<hr>
+<h2 id="5-character-vocabulary"><a class="header" href="#5-character-vocabulary">5. Character vocabulary</a></h2>
+<h3 id="block-elements-primary-rendering-primitives"><a class="header" href="#block-elements-primary-rendering-primitives">Block elements (primary rendering primitives)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Character</th><th>Codepoint</th><th>Name</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>█</code></td><td>U+2588</td><td>Full block</td><td>Maximum density, solid fill, gauge bars</td></tr>
+<tr><td><code>▓</code></td><td>U+2593</td><td>Dark shade</td><td>~75% density, decay chain step 2</td></tr>
+<tr><td><code>▒</code></td><td>U+2592</td><td>Medium shade</td><td>~50% density, noise floor, decay step 3</td></tr>
+<tr><td><code>░</code></td><td>U+2591</td><td>Light shade</td><td>~25% density, noise floor, decay step 4</td></tr>
+<tr><td><code>▀</code></td><td>U+2580</td><td>Upper half block</td><td>Double-resolution rendering (2 vertical pixels per cell)</td></tr>
+<tr><td><code>▄</code></td><td>U+2584</td><td>Lower half block</td><td>Double-resolution rendering</td></tr>
+<tr><td><code>▌</code></td><td>U+258C</td><td>Left half block</td><td>Horizontal displacement effects</td></tr>
+<tr><td><code>▐</code></td><td>U+2590</td><td>Right half block</td><td>Horizontal displacement, gauge ends</td></tr>
+</tbody>
+</table>
+</div>
+<p>The half-block technique: <code>▀</code> (U+2580) with different foreground and background colors gives two vertical pixels per cell. An 80x24 terminal becomes 80x48 effective pixels for color gradients.</p>
+<p>Two rendering layers: Layer 1 (background) uses half-block characters to encode 2 vertical pixels per cell via fg/bg color pairs. Layer 2 (foreground) uses text characters (dots, box-drawing, glyphs) that overwrite the foreground of specific cells. A cell shows either a half-block gradient OR a text character — not both. The spectre dot cloud uses text characters; atmospheric effects use half-blocks.</p>
+<h3 id="lower-block-elements-waveforms-bar-charts"><a class="header" href="#lower-block-elements-waveforms-bar-charts">Lower block elements (waveforms, bar charts)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Character</th><th>Codepoint</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td><code>▁</code></td><td>U+2581</td><td>Waveform rendering, bar chart minimum</td></tr>
+<tr><td><code>▂</code></td><td>U+2582</td><td>Waveform step 2</td></tr>
+<tr><td><code>▃</code></td><td>U+2583</td><td>Waveform step 3</td></tr>
+<tr><td><code>▄</code></td><td>U+2584</td><td>Waveform step 4</td></tr>
+<tr><td><code>▅</code></td><td>U+2585</td><td>Waveform step 5</td></tr>
+<tr><td><code>▆</code></td><td>U+2586</td><td>Waveform step 6</td></tr>
+<tr><td><code>▇</code></td><td>U+2587</td><td>Waveform step 7</td></tr>
+<tr><td><code>█</code></td><td>U+2588</td><td>Waveform maximum</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="braille-patterns-sub-pixel-precision"><a class="header" href="#braille-patterns-sub-pixel-precision">Braille patterns (sub-pixel precision)</a></h3>
+<p>Range: U+2800 to U+28FF (256 characters). Each cell is a 2x4 dot grid (8 sub-pixels). An 80x24 terminal becomes 160x96 effective resolution.</p>
+<pre><code>Dot layout (bit positions):
+  [0] [3]     Bit 0: top-left        Bit 3: top-right
+  [1] [4]     Bit 1: middle-left     Bit 4: middle-right
+  [2] [5]     Bit 2: lower-left      Bit 5: lower-right
+  [6] [7]     Bit 6: bottom-left     Bit 7: bottom-right
+
+Character code: U+2800 + (b0 | b1&lt;&lt;1 | b2&lt;&lt;2 | b3&lt;&lt;3 | b4&lt;&lt;4 | b5&lt;&lt;5 | b6&lt;&lt;6 | b7&lt;&lt;7)
+</code></pre>
+<h3 id="box-drawing-characters"><a class="header" href="#box-drawing-characters">Box-drawing characters</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Set</th><th>Characters</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td>Single line</td><td><code>─ │ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ┼</code></td><td>Standard panel borders</td></tr>
+<tr><td>Double line</td><td><code>═ ║ ╔ ╗ ╚ ╝ ╠ ╣ ╦ ╩ ╬</code></td><td>Overlay/modal borders (depth 3)</td></tr>
+<tr><td>Heavy</td><td><code>━ ┃ ┏ ┓ ┗ ┛ ┣ ┫ ┳ ┻ ╋</code></td><td>Emphasis borders</td></tr>
+<tr><td>Dashed</td><td><code>┄ ┅ ┆ ┇ ┈ ┉ ┊ ┋</code></td><td>Dead-sourced content borders, weakening AT field</td></tr>
+<tr><td>Rounded</td><td><code>╭ ╮ ╰ ╯</code></td><td>Soft borders (rare)</td></tr>
+<tr><td>Diagonal</td><td><code>╱ ╲</code></td><td>Hazard stripes, lattice patterns, AT field</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="special-characters"><a class="header" href="#special-characters">Special characters</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Characters</th><th>Usage</th></tr>
+</thead>
+<tbody>
+<tr><td>Particles</td><td><code>· ∙ • ◦ ° ˚ ˙ ✦ ✧ ◆ ◇ ▪ ▫</code></td><td>Trails, sprite orbiting, dream field</td></tr>
+<tr><td>Status glyphs</td><td><code>● ○ ◐ ◑ ◒ ◓ ◉ ◎</code></td><td>Alive/dead, quantum shimmer</td></tr>
+<tr><td>Framing</td><td><code>⌈ ⌉ ⌊ ⌋</code></td><td>System-level header brackets</td></tr>
+<tr><td>Death/ancestry</td><td><code>†</code> (U+2020)</td><td>Dead-golem-sourced knowledge marker</td></tr>
+<tr><td>Consciousness</td><td><code>Φ</code> (U+03A6)</td><td>Integrated information score</td></tr>
+<tr><td>Interoception</td><td><code>∿</code> (U+223F)</td><td>Heartbeat sine wave</td></tr>
+<tr><td>Lightning</td><td><code>⚡</code> (U+26A1)</td><td>T2 deliberation</td></tr>
+<tr><td>Waves</td><td><code>≈ ~ ∿</code></td><td>Styx river, water effects</td></tr>
+<tr><td>Hexagonal</td><td><code>⬡ ⬢</code></td><td>AT field, lattice, LCL dissolution</td></tr>
+<tr><td>Geometric</td><td><code>△ ▽ ◁ ▷ ◇ ◆</code></td><td>Directional indicators, diamond patterns</td></tr>
+<tr><td>Math</td><td><code>∞ ∴ ∵ ∫ Σ Π √ ∂ ∇ ≈ ≠ ≡ ± ×</code></td><td>Technical displays</td></tr>
+<tr><td>Arrows</td><td><code>← → ↑ ↓ ↔ ↕ ⇐ ⇒ ↗ ↘ ↙ ↖</code></td><td>Navigation, flow indicators</td></tr>
+<tr><td>Decay chain</td><td><code>█ → ▓ → ▒ → ░ → · → (space)</code></td><td>Progressive dissolution</td></tr>
+<tr><td>Corruption</td><td><code>░ ▒ ▓ █ ╳ ┃ ╌ ∅ ☠ ⚠</code></td><td>Glitch text, identity fracture</td></tr>
+<tr><td>Dashing</td><td><code>╌ ╍ ┄ ┅ ┈ ┉</code></td><td>Interference, weakening boundaries</td></tr>
+<tr><td>Fullwidth</td><td><code>Ａ-Ｚ, ０-９</code> (U+FF21+)</td><td>System headers, phase names</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="fullwidth-unicode-as-weight"><a class="header" href="#fullwidth-unicode-as-weight">Fullwidth Unicode as weight</a></h3>
+<p>Fullwidth characters (U+FF00 block) occupy two terminal cells. They read as heavier, more institutional, more alien. Reserved for:</p>
+<ul>
+<li>System headers: <code>⌈ ＢＡＲＤＯ ⌋</code></li>
+<li>Phase names: <code>ＴＨＲＩＶＩＮＧ</code>, <code>ＴＥＲＭＩＮＡＬ</code></li>
+<li>Critical status: <code>⌈ ＤＥＡＴＨ ⌋</code>, <code>ＲＥＦＵＳＥＤ</code>, <code>ＶＡＮＩＳＨＥＤ</code></li>
+</ul>
+<p>Never use fullwidth for body text, data values, or log entries. The contrast between fullwidth headers and ASCII data creates the typographic hierarchy.</p>
+<hr>
+<h2 id="6-the-atmospheric-8-layer-stack"><a class="header" href="#6-the-atmospheric-8-layer-stack">6. The atmospheric 8-layer stack</a></h2>
+<p>Every pixel renders through a stack of atmospheric layers. Data sits on top of noise, which sits on top of scanlines, which sit on top of void. The stack is always active. Data changes per-screen; the atmosphere persists across all screens.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Z</th><th>Name</th><th>Content</th><th>Blend</th><th>Opacity</th></tr>
+</thead>
+<tbody>
+<tr><td>-2</td><td>Deepest</td><td>CRT substrate</td><td>Phosphor persistence, burn-in, thermal noise</td><td>Additive</td><td>Fixed, always-on</td></tr>
+<tr><td>-1</td><td>Below void</td><td>Spectral traces</td><td>Ghosts of previous screens, dead golem data, counterfactual shadows</td><td>Screen</td><td>0.0-0.3% density</td></tr>
+<tr><td>0</td><td>Base</td><td>Void</td><td><code>bg_void</code> <code>#060608</code> everywhere</td><td>Normal</td><td>1.0</td></tr>
+<tr><td>1</td><td>Above void</td><td>Noise floor</td><td>Sparse <code>░ ▒ · ∙</code> characters in phase-appropriate colors</td><td>Normal</td><td>0.3%-2.0% density by phase</td></tr>
+<tr><td>2</td><td>Below data</td><td>Scanlines</td><td>Alternating row background dimming</td><td>Multiply</td><td>0.05-0.50 strength by phase</td></tr>
+<tr><td>3</td><td>Mid</td><td>Environmental</td><td>Data rain, power lines, convergence wires, particles</td><td>Normal</td><td>Varies by regime</td></tr>
+<tr><td>4</td><td>Primary</td><td>Pane borders</td><td>Box-drawing frames, the architecture</td><td>Normal</td><td>1.0</td></tr>
+<tr><td>5</td><td>Primary</td><td>Data</td><td>Text, numbers, widgets, gauges</td><td>Normal</td><td>1.0</td></tr>
+<tr><td>6</td><td>Above data</td><td>Fragments</td><td>Philosophical whispers, epigraphs, apparitions</td><td>Normal</td><td>Fade in/out over seconds</td></tr>
+<tr><td>7</td><td>Topmost</td><td>Overlays</td><td>Confirmations, alerts, help, command palette</td><td>Normal</td><td>1.0</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="phase-modulation-of-the-stack"><a class="header" href="#phase-modulation-of-the-stack">Phase modulation of the stack</a></h3>
+<pre><code>                    NOISE%   SCANLINES   FRAGMENTS      ENVIRONMENT    SPECTRAL
+THRIVING            0.3      0.12        active         rain, wires    faint
+STABLE              0.4      0.14        active         rain, wires    faint
+CONSERVATION        0.8      0.20        more frequent  rain thins     growing
+DECLINING           1.5      0.30        frequent       rain erratic   active
+TERMINAL            2.0      0.50        constant       rain stops     dominant
+DREAMING            organic  0.05        suppressed     particles      active
+</code></pre>
+<p>As the golem declines, the atmosphere gets louder. More noise, heavier scanlines, more spectral traces. The data layer (dimming due to phase degradation) competes with an atmosphere asserting itself. In terminal phase, noise is dense enough that data reads through a veil. The signal is losing to the noise.</p>
+<hr>
+<h2 id="7-noise-scanline-and-fragment-specs"><a class="header" href="#7-noise-scanline-and-fragment-specs">7. Noise, scanline, and fragment specs</a></h2>
+<h3 id="noise-floor"><a class="header" href="#noise-floor">Noise floor</a></h3>
+<p>Sparse random characters (<code>░ ▒ · ∙</code>) in phase-appropriate colors, shimmering per-frame. The noise has texture:</p>
+<ul>
+<li><strong>Warm noise</strong> (<code>noise_warm</code> <code>#2A1820</code>): conservation, terminal, anger states.</li>
+<li><strong>Cool noise</strong> (<code>noise_cool</code> <code>#201828</code>): dream state, low arousal, calm markets.</li>
+<li><strong>Organic noise</strong> (<code>· ∙ • ◦ °</code> particles): dream state only. Block characters replaced by organic dots.</li>
+</ul>
+<p><strong>Arousal modulation</strong>: arousal &gt; 0.5 increases noise density by 50%.
+<strong>Depth suppression</strong>: at interaction depth 2+, noise suppresses to 0.1%. At depth 4, noise suspends entirely.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn render_background_noise(area: Rect, buf: &amp;mut Buffer, rng: &amp;mut SmallRng, phase: Phase) {
+    let density = match phase {
+        Phase::Thriving    =&gt; 0.003,
+        Phase::Stable      =&gt; 0.004,
+        Phase::Conservation =&gt; 0.008,
+        Phase::Declining   =&gt; 0.015,
+        Phase::Terminal    =&gt; 0.020,
+        Phase::Dream       =&gt; 0.004,
+    };
+    let chars = match phase {
+        Phase::Dream =&gt; ['·', '∙', '◦', ' '],
+        _            =&gt; ['░', '▒', '·', '∙'],
+    };
+    let color = match phase {
+        Phase::Dream    =&gt; NOISE_COOL,
+        Phase::Terminal =&gt; NOISE_WARM,
+        _               =&gt; ROSE_DEEP,
+    };
+    for y in area.top()..area.bottom() {
+        for x in area.left()..area.right() {
+            if rng.gen::&lt;f64&gt;() &lt; density {
+                let ch = chars[rng.gen_range(0..chars.len())];
+                buf.get_mut(x, y).set_char(ch).set_fg(color);
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="scanlines"><a class="header" href="#scanlines">Scanlines</a></h3>
+<p>Alternating row backgrounds: <code>bg_void</code> / <code>scanline_dark</code>. Phase drift: the scanline pattern shifts down by one row every 30-60 seconds (10-15 seconds in degraded states). Dream override: during REM, scanline strength drops to 0.05.</p>
+<p>Color space: oklch for perceptually uniform interpolation.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Interpolate between two colors in oklch space.
+/// oklch provides perceptually uniform transitions.
+fn lerp_color(from: Color, to: Color, t: f32) -&gt; Color {
+    let from_oklch = from.to_oklch();
+    let to_oklch = to.to_oklch();
+    Color::from_oklch(
+        from_oklch.l + (to_oklch.l - from_oklch.l) * t,
+        from_oklch.c + (to_oklch.c - from_oklch.c) * t,
+        lerp_hue(from_oklch.h, to_oklch.h, t),  // shortest arc
+    )
+}
+<span class="boring">}</span></code></pre>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn render_scanlines(area: Rect, buf: &amp;mut Buffer, phase_offset: bool, strength: f64) {
+    for y in area.top()..area.bottom() {
+        let is_dark_row = (y % 2 == 0) ^ phase_offset;
+        if is_dark_row {
+            for x in area.left()..area.right() {
+                let cell = buf.get_mut(x, y);
+                if cell.bg == BG_VOID {
+                    cell.set_bg(lerp_color(BG_VOID, SCANLINE_DARK, strength));
+                }
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="philosophical-fragments"><a class="header" href="#philosophical-fragments">Philosophical fragments</a></h3>
+<p>~280 text fragments organized into four rarity tiers: whispers (common), epigraphs (uncommon), apparitions (rare), revelations (legendary). Presentation rules:</p>
+<ul>
+<li>Only ONE fragment visible at a time. Never stack.</li>
+<li>Minimum 30 seconds between fragments.</li>
+<li>Higher-rarity fragments suppress lower-rarity ones.</li>
+<li>At interaction depth 3+, all fragments suppressed.</li>
+<li>During crisis modes, all fragments suppressed.</li>
+<li>Fragment timing: 2s fade in, 5-8s hold, 3s fade out. Rendered in <code>text_ghost</code>.</li>
+</ul>
+<hr>
+<h2 id="8-crisis-modes"><a class="header" href="#8-crisis-modes">8. Crisis modes</a></h2>
+<h3 id="condition-rose-standard-alert"><a class="header" href="#condition-rose-standard-alert">CONDITION ROSE (standard alert)</a></h3>
+<p>Trigger: single mortality clock below 20%. Scope: affected panels only. Affected panel borders flash to <code>rose_bright</code> for 200ms.</p>
+<h3 id="condition-critical-institutional-override"><a class="header" href="#condition-critical-institutional-override">CONDITION CRITICAL (institutional override)</a></h3>
+<p>Trigger: vitality below 10%, multiple clocks critical simultaneously. Scope: full screen override.</p>
+<ol>
+<li>All panel borders flash to <code>rose_bright</code> for 200ms.</li>
+<li>Hazard stripes appear at top and bottom of screen.</li>
+<li>Status bar shows fullwidth condition declaration: <code>⌈ ＣＯＮＤＩＴＩＯＮ: ＣＲＩＴＩＣＡＬ ⌋</code></li>
+<li>Non-essential panels dim to 50% brightness.</li>
+</ol>
+<h3 id="condition-terminal-death-imminent"><a class="header" href="#condition-terminal-death-imminent">CONDITION TERMINAL (death imminent)</a></h3>
+<p>Trigger: vitality below 3%. Everything from CRITICAL, plus:</p>
+<ol>
+<li>Entire screen brightness oscillates between normal and 70% on the breath cycle.</li>
+<li>Death counter appears center-top in <code>bone</code>.</li>
+<li>Hazard stripes expand. In the final minute, they consume 40% of the screen.</li>
+<li>All non-bone colors desaturate an additional 20%.</li>
+</ol>
+<h3 id="hazard-stripe-pattern"><a class="header" href="#hazard-stripe-pattern">Hazard stripe pattern</a></h3>
+<pre><code>╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲╱╲
+</code></pre>
+<p>Characters: alternating <code>╱╲</code> (U+2571, U+2572). Foreground: <code>rose_bright</code>. The stripes eat the screen as death approaches.</p>
+<hr>
+<h2 id="9-contrast-and-depth"><a class="header" href="#9-contrast-and-depth">9. Contrast and depth</a></h2>
+<h3 id="contrast-ratios"><a class="header" href="#contrast-ratios">Contrast ratios</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>Pair</th><th>Ratio</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>Maximum</td><td><code>bone</code> on <code>bg_void</code></td><td>~12:1</td><td>The one number that matters</td></tr>
+<tr><td>High</td><td><code>rose_bright</code> on <code>bg_void</code></td><td>~8:1</td><td>Danger, T2 deliberation</td></tr>
+<tr><td>Primary</td><td><code>rose</code> on <code>bg_void</code></td><td>~5:1</td><td>Active data, alive state</td></tr>
+<tr><td>Medium</td><td><code>text_primary</code> on <code>bg_void</code></td><td>~3.5:1</td><td>Body text</td></tr>
+<tr><td>Low</td><td><code>text_dim</code> on <code>bg_void</code></td><td>~1.5:1</td><td>Background murmur</td></tr>
+<tr><td>Ambient</td><td><code>text_ghost</code> on <code>bg_void</code></td><td>~1.1:1</td><td>Philosophical fragments</td></tr>
+<tr><td>Sub-perceptual</td><td><code>text_phantom</code> on <code>bg_void</code></td><td>~1.05:1</td><td>Subliminal</td></tr>
+</tbody>
+</table>
+</div>
+<p>The most powerful design move is a <strong>contrast event</strong>: something normally low-contrast suddenly becoming high-contrast. A T0 suppress line (<code>text_ghost</code>, 1.1:1) followed by a T2 deliberation line (<code>rose_bright</code>, 8:1).</p>
+<h3 id="depth-model"><a class="header" href="#depth-model">Depth model</a></h3>
+<pre><code>DEPTH -2: CRT SUBSTRATE (scanlines, thermal noise)
+DEPTH -1: PHOSPHOR MEMORY (persistence afterimages, bloom residue)
+DEPTH  0: VOID (bg_void #060608)
+DEPTH  1: PANELS (bg_raised, single-line box-drawing borders)
+DEPTH  2: ACTIVE PANELS (bg_raised, border_active borders)
+DEPTH  3: OVERLAYS/MODALS (bg_mid, double-line borders)
+DEPTH  4: THE ONE NUMBER (bone, no container, floating in space)
+</code></pre>
+<hr>
+<h2 id="10-environmental-textures-layer-3"><a class="header" href="#10-environmental-textures-layer-3">10. Environmental textures (layer 3)</a></h2>
+<h3 id="data-rain"><a class="header" href="#data-rain">Data rain</a></h3>
+<p>5-15 hex streams falling behind panes. Density proportional to network activity. Stops during dreams.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Strategy</th><th>Characters</th><th>Feel</th></tr>
+</thead>
+<tbody>
+<tr><td>DCA</td><td><code>│ ┃ ╎ ╏</code></td><td>Sparse verticals. Steady drip.</td></tr>
+<tr><td>Trading</td><td>katakana-like dense streams</td><td>Matrix homage. Fast.</td></tr>
+<tr><td>LP</td><td><code>0-9 a-f</code></td><td>Hex digits. Address fragments.</td></tr>
+<tr><td>Idle</td><td><code>· ∙ ◦ °</code></td><td>Dots. Minimal.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="power-lines"><a class="header" href="#power-lines">Power lines</a></h3>
+<p>Horizontal <code>─┬─┬─</code> with traveling <code>rose_dim</code> pulses. 1-3 lines. Background element on Mind and Inference screens.</p>
+<h3 id="styx-river"><a class="header" href="#styx-river">Styx river</a></h3>
+<p>Flowing <code>░▒▓▒░</code> band in <code>rose_ember</code> color. Knowledge fragments drift in the current. Persistent on Mortality screen.</p>
+<h3 id="interference-pattern"><a class="header" href="#interference-pattern">Interference pattern</a></h3>
+<p>Braille moire during clade sync, pheromone reads, World screen interactions. 2D sine function creating visual interference. Duration: 3-5 seconds per communication event.</p>
+<h3 id="particle-field"><a class="header" href="#particle-field">Particle field</a></h3>
+<p><code>· ∙ • ◦ °</code> clusters at 2-5% density. Slow drift (1 cell per 3-5 seconds). Replaces block-character noise during dreams and conservation phase. Organic where block noise is industrial.</p>
+<hr>
+<h2 id="11-performance-budgets"><a class="header" href="#11-performance-budgets">11. Performance budgets</a></h2>
+<h3 id="target-2ms-per-frame-for-atmospheric-effects"><a class="header" href="#target-2ms-per-frame-for-atmospheric-effects">Target: &lt;2ms per frame for atmospheric effects</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>System</th><th>Budget</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Noise floor</td><td>&lt;0.3ms</td><td>Random number generation + cell writes for 0.3-2% of ~4000 cells</td></tr>
+<tr><td>Scanline pass</td><td>&lt;0.2ms</td><td>Modulo check on row index, conditional background set</td></tr>
+<tr><td>Phosphor persistence</td><td>&lt;0.5ms</td><td>HashMap lookup of recently-cleared cells, lerp color</td></tr>
+<tr><td>Bloom pass</td><td>&lt;0.3ms</td><td>Scan buffer for bright cells (oklch L &gt; 0.8), write +-1 neighbors. Max 2 simultaneous bloom sources.</td></tr>
+<tr><td>Spectral traces</td><td>&lt;0.2ms</td><td>Low-probability per-cell check against spectral buffer</td></tr>
+<tr><td>Fragment rendering</td><td>&lt;0.1ms</td><td>Single string placement</td></tr>
+<tr><td>Glitch events</td><td>&lt;0.1ms</td><td>Sparse, 0.05-1% probability per frame</td></tr>
+<tr><td><strong>Total atmospheric</strong></td><td><strong>&lt;1.7ms</strong></td><td>Well under 2ms budget</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="frame-rate-targets"><a class="header" href="#frame-rate-targets">Frame rate targets</a></h3>
+<p>Two rendering domains run at different rates:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Domain</th><th>Target</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Sprite physics</td><td>60 fps</td><td>Spring physics, dot-cloud positions, emotion transitions. Internal state updates at 60Hz.</td></tr>
+<tr><td>Terminal rendering</td><td>10-15 fps</td><td>Actual ratatui draw calls. The sprite’s 60Hz state is sampled at the terminal’s render rate.</td></tr>
+</tbody>
+</table>
+</div>
+<p>The slowness of terminal rendering is deliberate. The sprite moves smoothly internally but the viewer sees it through a slow medium. The gap between internal state and rendered state IS the golem’s embodiment constraint.</p>
+<h3 id="widget-budgets"><a class="header" href="#widget-budgets">Widget budgets</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Widget</th><th>Max instances per screen</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Heartbeat log</td><td>1</td><td>Up to 50 visible lines, each with color lookup by age</td></tr>
+<tr><td>Vitality gauge (thick)</td><td>3</td><td>One per mortality clock</td></tr>
+<tr><td>ProbeGauge (thin)</td><td>8</td><td>Inference screen can stack these</td></tr>
+<tr><td>BrailleSparkline</td><td>4</td><td>80 data points each, braille encoding</td></tr>
+<tr><td>Waveform (half-block)</td><td>4</td><td>PAD channels + phi trace</td></tr>
+<tr><td>Unit array (grid)</td><td>1</td><td>Up to 36 units (6x6 grid)</td></tr>
+<tr><td>Particle system</td><td>1</td><td>Max 64 active particles at any time</td></tr>
+<tr><td>CausalGraph</td><td>1</td><td>Max 24 visible nodes + edges</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="particle-budget"><a class="header" href="#particle-budget">Particle budget</a></h3>
+<p>Maximum 64 active particles across all systems. Dream particles, sprite orbit particles, achievement particles, knowledge stream particles — they share a pool. If birth coalesce needs 40 particles and dream is running 30, dream particles must cull before birth spawns.</p>
+<h3 id="memory-budget-for-atmospheric-state"><a class="header" href="#memory-budget-for-atmospheric-state">Memory budget for atmospheric state</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Structure</th><th>Size</th><th>Lifetime</th></tr>
+</thead>
+<tbody>
+<tr><td>Phosphor map</td><td>~2000 entries max (HashMap&lt;(u16,u16), Instant&gt;)</td><td>Entries auto-expire after 500ms-2s. Lifetime: 500ms for standard text, 2s for bone-colored elements. Proactive sweep every 60 frames.</td></tr>
+<tr><td>Spectral buffer</td><td>~500 cell snapshots</td><td>Session-persistent, capped</td></tr>
+<tr><td>Burn-in map</td><td>~200 entries</td><td>Elements displayed &gt;10 min at same position</td></tr>
+<tr><td>Motion echo ring buffer</td><td>4 entries per moving element, max 8 elements tracked</td><td>Per-frame</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="12-ratatui-ecosystem"><a class="header" href="#12-ratatui-ecosystem">12. Ratatui ecosystem</a></h2>
+<h3 id="why-ratatui"><a class="header" href="#why-ratatui">Why ratatui</a></h3>
+<p>Ratatui is the dominant Rust TUI framework. It gives you a <code>Buffer</code> of <code>Cell</code> structs (character + foreground + background + modifiers) and handles diffing: only changed cells emit ANSI escape codes. This diff-based rendering is what makes atmospheric effects cheap — you write to the full buffer every frame but the terminal only receives the delta.</p>
+<p>The framework does not impose layout opinions. You get a <code>Rect</code> (area) and a <code>Buffer</code> and you write cells. This is what Bardo needs. The atmospheric stack, the phosphor map, the glitch system — all are post-processing passes over the buffer after widgets render.</p>
+<h3 id="core-dependencies"><a class="header" href="#core-dependencies">Core dependencies</a></h3>
+<pre><code class="language-toml">[dependencies]
+ratatui = "0.29"         # TUI framework: widgets, layout, Buffer, Frame
+crossterm = "0.28"       # Terminal backend: events, cursor, colors, truecolor
+tokio = { version = "1", features = ["full"] }  # Async runtime
+tachyonfx = "0.7"        # Shader effects for ratatui: composable post-processing
+interpolation = "0.3"    # Easing functions (ease-in, ease-out, smoothstep)
+rodio = "0.19"           # Audio playback (optional, for ambient sound)
+</code></pre>
+<h3 id="rendering-model"><a class="header" href="#rendering-model">Rendering model</a></h3>
+<p>Every frame:</p>
+<ol>
+<li>Layout calculation (Rect splitting)</li>
+<li>Widget rendering (each widget writes to its allocated Buffer area)</li>
+<li>Post-processing pass 1: scanlines (darken alternating rows)</li>
+<li>Post-processing pass 2: noise floor (scatter dim characters)</li>
+<li>Post-processing pass 3: phosphor persistence (ghost recently-cleared cells)</li>
+<li>Post-processing pass 4: bloom (brighten neighbors of bright cells)</li>
+<li>Post-processing pass 5: spectral traces (surface ghosts in vacant regions)</li>
+<li>Post-processing pass 6: glitch events (corrupt cells if phase triggers)</li>
+<li>Frame diff (ratatui compares current buffer to previous, emits ANSI for changed cells)</li>
+</ol>
+<p>Steps 3-8 are the atmospheric stack. They run after all widget content is in the buffer. Order matters — scanlines go first because noise characters should appear on scanlined rows. Bloom goes after phosphor because bloom should not apply to persistence ghosts.</p>
+<h3 id="easing"><a class="header" href="#easing">Easing</a></h3>
+<ul>
+<li><strong>Default</strong>: ease-in-out-cubic</li>
+<li><strong>Death flash, bloom</strong>: ease-out-expo (fast attack, slow decay)</li>
+<li><strong>Fade-outs</strong>: ease-in-quad</li>
+<li><strong>Panel focus</strong>: ease-out-cubic</li>
+</ul>
+<h3 id="timing-constants"><a class="header" href="#timing-constants">Timing constants</a></h3>
+<pre><code>BREATH_CYCLE:           2000-4000ms   (varies with arousal)
+PHOSPHOR_DECAY:         5000ms        (log line full fade)
+PHOSPHOR_PERSIST:       300-500ms     (afterimage on cell clear)
+PHOSPHOR_BLOOM:         100-200ms     (bright-neighbor bleed)
+PANEL_FOCUS:            300ms         (border color transition)
+DEATH_FLASH:            200ms         (initial bright flash)
+DEATH_FADE:             2000ms        (fade to ghost)
+DEATH_DISAPPEAR:        5000ms        (elements vanishing one by one)
+DREAM_TRANSITION:       3000ms        (palette shift warm -&gt; cool)
+BIRTH_COALESCE:         10000-15000ms (noise -&gt; form)
+TICK_FLASH:             100ms         (momentary brightness on new data)
+SCANLINE_DRIFT:         30000-60000ms (normal) / 10000-15000ms (degraded)
+HORIZONTAL_ROLL:        2000ms        (bottom to top transit, degraded only)
+GLITCH_BAND:            50-150ms      (single glitch event)
+DISSOCIATION_STAGGER:   1 frame       (secondary voice delay)
+THERMAL_NOISE_ACCRUAL:  600000ms      (10 min per 0.1% density increase)
+FRAGMENT_TIMING:        2s fade in, 5-8s hold, 3s fade out
+</code></pre>
+<hr>
+<h2 id="13-prediction-and-evaluation-color-language"><a class="header" href="#13-prediction-and-evaluation-color-language">13. Prediction and evaluation color language</a></h2>
+<p>The Oracle introduces three new color semantics within ROSEDUST constraints. No new hex values – all are mappings of existing tokens.</p>
+<p><strong>Calibration quality dot.</strong> Next to ECE values on the Oracle screen:</p>
+<ul>
+<li><code>●</code> in <code>success</code> (#70887A): ECE &lt; 0.05, well-calibrated</li>
+<li><code>●</code> in <code>warning</code> (#AA8855): ECE 0.05-0.10, acceptable but drifting</li>
+<li><code>●</code> in <code>rose_bright</code> (#CC90A8): ECE &gt; 0.10, miscalibrated</li>
+</ul>
+<p><strong>Residual bias tint.</strong> The residual distribution histogram shifts color temperature:</p>
+<ul>
+<li>Cool-tinted (toward <code>dream</code>): negative bias, consistently underpredicts</li>
+<li>Warm-tinted (toward <code>warning</code>): positive bias, consistently overpredicts</li>
+<li>Neutral (<code>rose</code>): centered near zero</li>
+</ul>
+<p><strong>Creative prediction palette.</strong> Predictions with <code>PredictionSource::Creative</code> (from dreams) render in the dream palette (<code>dream</code>, <code>dream_dim</code>, <code>dream_deep</code>). When a creative prediction is promoted (passes FDR gate with 3 confirmations), it transitions from dream palette to standard rose over 2 seconds.</p>
+<hr>
+<h2 id="14-terminal-existentialism-reference"><a class="header" href="#14-terminal-existentialism-reference">14. Terminal existentialism reference</a></h2>
+<p>The aesthetic draws from Serial Experiments Lain (the Wired as consciousness space, interfaces within interfaces), Evangelion (NERV terminal displays, MAGI consensus, AT Field as cognitive boundary, LCL dissolution), Nier: Automata (UI self-destruction as narrative), Ghost in the Shell (cyberspace dive sequences), Texhnolyze (minimal output as maximal expression), and Disco Elysium (24 skill-voices as competing text streams).</p>
+<p>The design decisions worth repeating: the palette is not Eva orange-green-red but ROSEDUST rose-on-violet through dirty glass. CRT effects are diegetic, not decorative. Bone is scarce on purpose. The atmospheric stack runs backward (layers -2 through 0 are below the void). The 50% empty rule is a rendering constraint, not an aspiration.</p>
+<hr>
+<h2 id="15-demoscene-techniques"><a class="header" href="#15-demoscene-techniques">15. Demoscene techniques</a></h2>
+<p>The demoscene tradition of achieving impossible visual effects in constrained environments maps directly to terminal rendering. Specific techniques adapted for ratatui:</p>
+<p><strong>Plasma substrate.</strong> Four sinusoidal functions combined: <code>value = sin(x/f1 + t) + sin(y/f2 + t*0.8) + sin((x+y)/f3 + t*0.5) + sin(sqrt(x²+y²)/f4 + t*1.5)</code>, mapped to braille density. Incommensurate frequency ratios ensure the pattern never exactly repeats.</p>
+<p><strong>Fire effect.</strong> Cellular automaton: randomize bottom row, propagate upward with divisor slightly above 4. Maps to emotional intensity visualization. Low cooling = sustained intensity; high cooling = brief flashes.</p>
+<p><strong>Tunnel effect.</strong> Pre-computed angle/distance lookup tables, animated by time offset. Depth-based darkening for infinite-depth illusion. Death/transition animation.</p>
+<p><strong>Braille sub-pixel rendering.</strong> 2x4 dot grid per cell (8 sub-pixels), 160x96 effective resolution in an 80x24 terminal. Floyd-Steinberg dithering across cells for smooth gradients.</p>
+<hr>
+<h2 id="16-design-decisions-worth-calling-out"><a class="header" href="#16-design-decisions-worth-calling-out">16. Design decisions worth calling out</a></h2>
+<p><strong>The palette is not Evangelion orange-green-red.</strong> NERV’s color language is institutional — it amplifies tension, not intimacy. Bardo takes Eva’s compositional grammar (data as architecture, hazard stripes, institutional stamps, density gradients) but keeps the ROSEDUST palette throughout. Rose-on-violet-black through dirty glass. That combination does not exist in any other terminal application.</p>
+<p><strong>CRT effects are not retro nostalgia.</strong> The scanlines, phosphor, noise floor, and thermal accrual are not visual style choices. They are the golem’s embodiment. Law 6 says the terminal is the body. When the golem degrades, the CRT degrades. These effects are diegetic, not decorative.</p>
+<p><strong>Bone is scarce on purpose.</strong> In most UI systems, you’d use gold or white for emphasis. Bardo uses bone (<code>#C8B890</code>) and restricts it to one element per screen. The scarcity makes it impossible to ignore. When bone appears, something has become the only thing that matters.</p>
+<p><strong>The atmospheric stack runs backward.</strong> Layers -2 through 0 are below the void. They become visible only when the void thins during degraded states. The substrate bleeds through. This means the healthiest-looking golem has the least visible atmosphere. The display earns its visual complexity through decline.</p>
+<p><strong>The 50% empty rule is not aspirational.</strong> It is a rendering constraint. Screens are designed around negative space. If a screen looks full, it has failed the restraint test. The void is the most expressive element in the entire system — it is where things go when they stop existing.</p>
+<hr>
+<p><em>Nothing on screen is ever at rest.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../prd/18-interfaces/protocol/02-generative-views.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../prd/18-interfaces/rendering/01-demoscene.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../prd/18-interfaces/protocol/02-generative-views.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../prd/18-interfaces/rendering/01-demoscene.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

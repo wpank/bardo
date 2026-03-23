@@ -1,0 +1,907 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Immortal Control - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/02-mortality/11-immortal-control.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="the-immortal-control-self-hosted-mode-as-falsifiable-experiment-spec"><a class="header" href="#the-immortal-control-self-hosted-mode-as-falsifiable-experiment-spec">The Immortal Control: Self-Hosted Mode as Falsifiable Experiment [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crate</strong>: <code>golem-mortality</code></p>
+<p><strong>Depends on</strong>: <code>00-thesis.md</code> (foundational mortality thesis), <code>02-epistemic-decay.md</code> (epistemic clock specification), <code>04-economic-mortality.md</code> (USDC as metabolic substrate), <code>06-thanatopsis.md</code> (four-phase death protocol)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies Bardo’s immortal mode, a deliberate control experiment. Self-hosted Golems (mortal autonomous DeFi agents) can opt into <code>immortal: true</code>, which disables all three mortality clocks. The prediction, grounded in ML degradation research, is that immortal Golems will measurably degrade compared to mortal populations. This mode exists to make the mortality thesis falsifiable: if immortal agents consistently outperform mortal ones, the thesis is wrong. See <code>01-architecture.md</code> (triple-clock system, self-hosted exception rules) for how mortality clocks operate. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="the-thesis-must-be-falsifiable"><a class="header" href="#the-thesis-must-be-falsifiable">The Thesis Must Be Falsifiable</a></h2>
+<p>Bardo’s central claim – that mortal agents outperform immortal ones – is an empirical prediction, not a philosophical assertion. For the prediction to be scientific, it must be falsifiable (Popper, 1959). The self-hosted immortal mode provides the control group.</p>
+<p>Karl Popper’s demarcation criterion separates science from pseudoscience: a theory is scientific if and only if it makes predictions that could, in principle, be shown false. “Mortality produces better agents” is scientific because there exists a concrete experimental setup – immortal Golems running the same strategies in the same markets – that could refute it. If immortal Golems consistently outperform mortal populations across all six measurement dimensions, the mortality thesis is wrong and the architecture should be revised.</p>
+<p>Self-hosted Golems with <code>immortal: true</code> run indefinitely, bearing no economic mortality (owner pays infrastructure directly), no epistemic death (fitness can decay but does not kill), and no stochastic mortality (no per-tick hazard). They represent the default assumption of every other agent framework: agents should live forever.</p>
+<hr>
+<h2 id="what-immortal-mode-disables"><a class="header" href="#what-immortal-mode-disables">What Immortal Mode Disables</a></h2>
+<p>Immortal mode disables every mechanism that could terminate the Golem or modulate its behavior based on mortality pressure. The following is the complete enumeration:</p>
+<h3 id="mortality-clocks-disabled"><a class="header" href="#mortality-clocks-disabled">Mortality Clocks Disabled</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Clock</th><th>Mechanism</th><th>Effect When Disabled</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Economic mortality</strong></td><td>USDC balance depletion triggers death</td><td>Owner pays infrastructure directly; no credit partitions, no burn rate tracking, no survival pressure from resource exhaustion</td></tr>
+<tr><td><strong>Epistemic mortality</strong></td><td>Predictive fitness decay below senescence threshold triggers death cascade</td><td>Fitness is computed and tracked but crossing the senescence threshold does not initiate the Death Protocol</td></tr>
+<tr><td><strong>Stochastic mortality</strong></td><td>Per-tick hazard rate with age-increasing probability</td><td>No random death checks; hazard rate is computed for telemetry but never evaluated as a kill condition</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="behavioral-mechanisms-disabled"><a class="header" href="#behavioral-mechanisms-disabled">Behavioral Mechanisms Disabled</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mechanism</th><th>Normal Function</th><th>Immortal State</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Behavioral phase transitions</strong></td><td>Vitality score drives Thriving/Stable/Conservation/Declining/Terminal phases</td><td>Always in Thriving-equivalent; no phase transitions</td></tr>
+<tr><td><strong>Survival pressure computation</strong></td><td><code>computeSurvivalPressure()</code> returns 0.0-1.0 based on projected life hours</td><td>Always returns 1.0 (maximum survival)</td></tr>
+<tr><td><strong>Death Protocol</strong></td><td>Three-phase orderly shutdown (Settle, Reflect, Legacy)</td><td>Never fires autonomously; only owner-initiated teardown</td></tr>
+<tr><td><strong>Apoptotic reserve</strong></td><td>Ring-fenced funds for orderly death</td><td>Not allocated (no death to fund)</td></tr>
+<tr><td><strong>Stochastic death checks</strong></td><td>Per-tick mortality evaluation</td><td>Skipped entirely</td></tr>
+<tr><td><strong>Epistemic senescence cascade</strong></td><td>Below-threshold fitness triggers grace period then death</td><td>Grace period never starts; fitness can reach 0.0 without consequence</td></tr>
+<tr><td><strong>Knowledge demurrage</strong></td><td>Grimoire entries lose confidence over time unless revalidated</td><td>Disabled; entries persist at their assigned confidence indefinitely</td></tr>
+<tr><td><strong>Eros/Thanatos spectrum</strong></td><td>Survival pressure modulates risk appetite, frugality, legacy focus</td><td>Risk multiplier fixed at 1.0; no Thanatos behaviors activate</td></tr>
+<tr><td><strong>Nietzsche metamorphosis arc</strong></td><td>Camel (thriving) -&gt; Lion (fighting) -&gt; Child (accepting)</td><td>Permanently Camel; no metamorphosis</td></tr>
+<tr><td><strong>Credit partition rebalancing</strong></td><td>LLM/Gas/Data partitions with predictive rebalancing</td><td>No partitions; owner budget is external</td></tr>
+<tr><td><strong>Thanatos-phase cannibalization</strong></td><td>Terminal partition shift: 50% to Legacy</td><td>No Legacy partition; no terminal reallocation</td></tr>
+<tr><td><strong>Clade sharing threshold modulation</strong></td><td>Threshold drops from 0.6 to 0.3 to 0.1 as mortality approaches</td><td>Fixed at normal threshold (0.6)</td></tr>
+<tr><td><strong>Death snapshots</strong></td><td>Progressive Haiku summaries beginning at 25% credits</td><td>No credit-triggered snapshots</td></tr>
+<tr><td><strong>Successor recommendation</strong></td><td>Dying Golem’s final advisory for next generation</td><td>No death, no recommendation</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="configuration"><a class="header" href="#configuration">Configuration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// immortal: true configuration — complete specification
+fn immortal_config() -&gt; MortalityConfig {
+    MortalityConfig {
+        economic: EconomicConfig {
+            enabled: false,                      // No credit depletion tracking
+            death_reserve_floor_usdc: 0.0,       // No reserve needed
+            death_reserve_proportional: 0.0,     // No reserve needed
+            conservation_threshold: 0.0,         // No conservation mode
+            terminal_threshold: 0.0,             // No terminal phase
+            ..Default::default()
+        },
+        epistemic: EpistemicConfig {
+            enabled: false,                      // Fitness tracked but not fatal
+            fitness_window: 2000,                // Still computed for measurement
+            senescence_threshold: 0.35,          // Still computed for "would have died" tracking
+            recovery_grace_period: 500,          // Irrelevant but kept for comparison
+            decay_half_life_by_domain: HashMap::new(), // No decay — entries persist indefinitely
+            ..Default::default()
+        },
+        stochastic: StochasticConfig {
+            enabled: false,                      // No per-tick death risk
+            base_hazard_rate: 1e-6,              // Still computed for measurement
+            age_hazard_coefficient: 0.00001,
+            epistemic_hazard_multiplier: 2.0,
+            max_hazard_rate: 0.001,
+            seed: None,
+        },
+        affect: AffectConfig {
+            enabled: true,                       // Affect still runs (for fair comparison)
+            appraisal_model: AppraisalModel::ChainOfEmotion,
+            mood_decay_rate: 0.95,
+            ..Default::default()
+        },
+        demurrage: DemurrageConfig {
+            enabled: false,                      // No knowledge carrying costs
+            validation_interval_ticks: 5000,
+            decay_rate_per_interval: 0.05,
+            archive_threshold: 0.1,
+            ..Default::default()
+        },
+        phage: PhageConfig {
+            enabled: true,                       // Micro-Replicants still run if configured
+            daily_spawn_rate: 2,
+            max_lifetime_ticks: 50,
+            ..Default::default()
+        },
+        immortal: true,                          // Master flag: disables ALL mortality clocks
+        ..Default::default()
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="what-still-works-in-immortal-mode"><a class="header" href="#what-still-works-in-immortal-mode">What Still Works in Immortal Mode</a></h2>
+<p>Everything that is not mortality-specific continues to operate at full capability. The immortal Golem has every tool, every cognitive resource, and every integration that a mortal Golem has:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>System</th><th>Operates Normally</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Full heartbeat loop (6-state FSM)</td><td>Yes</td><td>IDLE -&gt; SENSING -&gt; DECIDING -&gt; ACTING -&gt; REFLECTING -&gt; SLEEPING</td></tr>
+<tr><td>Probe system (11 deterministic probes)</td><td>Yes</td><td>All T0 probes fire every tick</td></tr>
+<tr><td>LLM tier escalation (Haiku/Sonnet/Opus)</td><td>Yes</td><td>All tiers available without survival-pressure suppression</td></tr>
+<tr><td>Complete Grimoire (LanceDB + SQLite + PLAYBOOK.md)</td><td>Yes</td><td>All five entry types: insight, heuristic, warning, causal_link, strategy_fragment</td></tr>
+<tr><td>Loop 1 reactive learning</td><td>Yes</td><td>Error correction within current strategy</td></tr>
+<tr><td>Loop 2 strategic reflection</td><td>Yes</td><td>Double-loop learning every ~50 ticks</td></tr>
+<tr><td>Loop 3 meta-consolidation</td><td>Yes</td><td>Deutero-learning (if [HARDENED] enabled)</td></tr>
+<tr><td>Daimon engine</td><td>Yes</td><td>Emotional appraisal computed normally, but no mortality-aware affect</td></tr>
+<tr><td>Regime detection</td><td>Yes</td><td>Threshold-based (CORE) or HMM (HARDENED)</td></tr>
+<tr><td>Decision cache (System 2 -&gt; System 1 distillation)</td><td>Yes</td><td>Cache hit rates tracked normally</td></tr>
+<tr><td>Clade membership and knowledge sharing</td><td>Yes</td><td>Push/pull/catch-up sync all operational</td></tr>
+<tr><td>Replicant spawning</td><td>Yes</td><td>If owner has enabled and funded</td></tr>
+<tr><td>Micro-Replicant (phage) system</td><td>Yes</td><td>If configured; phage death rate is a health signal</td></tr>
+<tr><td>Styx Archive insurance snapshots</td><td>Yes</td><td>Every 6 hours, same as mortal</td></tr>
+<tr><td>Styx Lethe (formerly Commons) integration</td><td>Yes</td><td>If death testaments from mortal siblings are available</td></tr>
+<tr><td>Mental models library</td><td>Yes</td><td>All 700 models (HARDENED) or 13 core models</td></tr>
+<tr><td>OODA + Reflexion pipeline</td><td>Yes</td><td>Full 4-step cascade on every non-suppressed tick</td></tr>
+<tr><td>Tool access via Sanctum</td><td>Yes</td><td>All golem-tools available</td></tr>
+<tr><td>Telemetry and observability</td><td>Yes</td><td>Full JSONL event stream, webhook emission</td></tr>
+<tr><td>PolicyCage enforcement</td><td>Yes</td><td>On-chain hard limits unaffected by immortality</td></tr>
+<tr><td>Warden time-delayed execution (optional, deferred)</td><td>Yes</td><td>If configured and deployed</td></tr>
+<tr><td>ERC-8004 identity</td><td>Yes</td><td>Agent identity and reputation unaffected</td></tr>
+</tbody>
+</table>
+</div>
+<p>The immortal Golem has every capability a mortal Golem has, minus the mortality pressure. If mortality is truly beneficial, its absence should produce measurable degradation. If mortality is merely a constraint, its absence should produce superior performance.</p>
+<h3 id="what-immortal-mode-retains"><a class="header" href="#what-immortal-mode-retains">What Immortal Mode Retains</a></h3>
+<p>Immortal mode is a <strong>subtraction</strong>, not a replacement. The following systems remain fully active:</p>
+<ul>
+<li><strong>Phase lock</strong>: Phase is locked to <code>Thriving</code> (vitality score artificially held at 1.0)</li>
+<li><strong>Generic affect</strong>: Joy, trust, fear, anger from trading outcomes and market events remain active. Only mortality-specific emotions (Economic Anxiety, Epistemic Vertigo, Stochastic Dread) are disabled.</li>
+<li><strong>Memory services</strong>: Grimoire, Curator, Styx Lethe all operate normally. Knowledge demurrage still runs (entries still decay without validation). However, no death testament is ever produced since death never occurs.</li>
+<li><strong>Clade participation</strong>: Immortal Golems can share knowledge with mortal siblings. However, their unbounded lifespan means they accumulate knowledge that mortal Golems cannot — creating an asymmetry that is itself a research question.</li>
+<li><strong>Inference and trading</strong>: All cognitive and financial operations unchanged.</li>
+</ul>
+<p><strong>Explicitly NOT retained</strong>: Terminal acceptance, legacy budget activation, death protocol (all 4 phases), successor inheritance triggers, Eros/Thanatos drive modulation, mortality-driven behavioral phase transitions.</p>
+<p><strong>Framing</strong>: Immortal mode exists for <strong>evaluation only</strong> (A/B testing mortality’s behavioral effects), not as a production configuration. An immortal Golem is the control group.</p>
+<hr>
+<h2 id="six-predictions-and-predicted-degradation-pattern"><a class="header" href="#six-predictions-and-predicted-degradation-pattern">Six Predictions and Predicted Degradation Pattern</a></h2>
+<blockquote>
+<p><strong>Extended:</strong> Six falsifiable predictions with full research basis (epistemic fitness decay, loss of plasticity, technical debt, behavioral diversity, clade-level underperformance, cognitive entrenchment) and four-phase degradation analysis (Honeymoon, Stagnation, Decay, Senescence Without Death) — see <a href="../../prd2-extended/02-mortality/11-immortal-control-extended.html">../../prd2-extended/02-mortality/11-immortal-control-extended.md</a></p>
+</blockquote>
+<p><strong>Summary of predictions:</strong> (1) Epistemic fitness decay within 2-4 weeks, (2) Loss of plasticity per Dohare et al. 2024, (3) Technical debt accumulation per Sculley et al. 2015, (4) Reduced behavioral diversity per March 1991, (5) Clade-level underperformance within 60 days, (6) Cognitive entrenchment per Dane 2010. Predicted degradation follows Honeymoon (d1-14) -&gt; Stagnation (d14-45) -&gt; Decay (d45-90) -&gt; Senescence (d90+).</p>
+<hr>
+<h2 id="six-dimensional-measurement-framework"><a class="header" href="#six-dimensional-measurement-framework">Six-Dimensional Measurement Framework</a></h2>
+<p>The control experiment requires systematic comparison between immortal and mortal Golem populations. The measurement framework tracks six orthogonal dimensions, each with full type definitions and collection methodology.</p>
+<h3 id="dimension-1-epistemic-fitness-over-time"><a class="header" href="#dimension-1-epistemic-fitness-over-time">Dimension 1: Epistemic Fitness Over Time</a></h3>
+<p>Even though immortal Golems do not die from epistemic decay, the fitness score is computed every tick using the identical algorithm as mortal Golems. This enables direct comparison.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EpistemicTrackingForImmortal {
+    /// Fitness score computed every tick, same algorithm as mortal Golems.
+    pub fitness_history: Vec&lt;FitnessSnapshot&gt;,
+    /// Would this Golem have entered senescence under mortal rules?
+    pub would_have_died: bool,
+    /// The tick at which mortal death would have occurred.
+    pub would_have_died_at_tick: Option&lt;u64&gt;,
+    /// Timestamp of hypothetical mortal death.
+    pub would_have_died_at: Option&lt;u64&gt;,
+    /// How many mortal "lifetimes" has this Golem outlived?
+    pub mortal_lifetime_equivalents: f64,
+    /// Rolling 1000-tick fitness average.
+    pub rolling_fitness_average: f64,
+    /// Slope of fitness trend over last 2000 ticks.
+    pub fitness_trend: f64,
+    /// Number of times fitness crossed below senescence threshold.
+    pub senescence_crossings: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FitnessSnapshot {
+    pub tick: u64,
+    pub fitness: f64,
+    pub timestamp: u64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dimension-2-strategy-diversity-map-elites-niche-occupancy"><a class="header" href="#dimension-2-strategy-diversity-map-elites-niche-occupancy">Dimension 2: Strategy Diversity (MAP-Elites Niche Occupancy)</a></h3>
+<p>For Clades with multiple Golems, track how many behavioral niches are occupied. MAP-Elites (Mouret &amp; Clune, 2015) provides the quality-diversity framework: each cell in the behavioral space represents a distinct strategy archetype.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DiversityMetric {
+    /// Number of distinct MAP-Elites cells occupied by Clade members.
+    pub niche_occupancy: u32,
+    /// Total cells in the behavioral grid.
+    pub total_niches: u32,
+    /// Niche occupancy ratio (0.0-1.0).
+    pub occupancy_ratio: f64,
+    /// Behavioral variance across Clade members (std dev of strategy embeddings).
+    pub behavioral_variance: f64,
+    /// Are strategies converging (negative = bad) or diverging (positive = good)?
+    pub convergence_trend: f64,
+    /// Per-niche quality: best fitness score in each occupied niche.
+    pub niche_qualities: Vec&lt;NicheQuality&gt;,
+    /// Timestamp of measurement.
+    pub measured_at: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NicheQuality {
+    pub niche_id: String,
+    pub best_fitness: f64,
+    pub occupant_count: u32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dimension-3-novel-insight-generation-rate"><a class="header" href="#dimension-3-novel-insight-generation-rate">Dimension 3: Novel Insight Generation Rate</a></h3>
+<p>Measures the Golem’s capacity to produce genuinely new knowledge, not merely refine existing entries.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NoveltyMetric {
+    /// Insights generated per 1000 ticks.
+    pub insight_rate: f64,
+    /// Novelty score of generated insights (embedding distance from existing Grimoire).
+    pub average_novelty: f64,
+    /// Trend: positive = more novel insights over time, negative = fewer.
+    pub novelty_trend: f64,
+    /// Breakdown by entry type.
+    pub by_type: HashMap&lt;GrimoireEntryType, NoveltyByType&gt;,
+    /// Number of insights that were adopted by Clade siblings.
+    pub adopted_by_clade: u32,
+    /// Adoption rate (adopted / total generated).
+    pub clade_adoption_rate: f64,
+    /// Window over which this metric was computed (in ticks).
+    pub window_ticks: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NoveltyByType {
+    pub count: u32,
+    pub average_novelty: f64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dimension-4-risk-adjusted-return"><a class="header" href="#dimension-4-risk-adjusted-return">Dimension 4: Risk-Adjusted Return</a></h3>
+<p>Standard financial performance metrics, compared between mortal and immortal populations with equivalent starting capital.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskAdjustedReturnMetric {
+    /// Sharpe ratio over measurement window.
+    pub sharpe_ratio: f64,
+    /// Sortino ratio (downside deviation only).
+    pub sortino_ratio: f64,
+    /// Maximum drawdown as fraction (0.0-1.0).
+    pub max_drawdown: f64,
+    /// Cumulative P&amp;L in USDC.
+    pub cumulative_pnl_usdc: f64,
+    /// Annualized return rate.
+    pub annualized_return: f64,
+    /// Win rate (fraction of profitable ticks with trading activity).
+    pub win_rate: f64,
+    /// Average profit per winning trade.
+    pub avg_win: f64,
+    /// Average loss per losing trade.
+    pub avg_loss: f64,
+    /// Profit factor (gross profit / gross loss).
+    pub profit_factor: f64,
+    /// Measurement window in days.
+    pub window_days: u32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dimension-5-grimoire-health"><a class="header" href="#dimension-5-grimoire-health">Dimension 5: Grimoire Health</a></h3>
+<p>Measures the quality and utility of the Golem’s accumulated knowledge base.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GrimoireHealthMetric {
+    /// Total entries in Grimoire.
+    pub entry_count: u32,
+    /// Entries by type.
+    pub by_type: HashMap&lt;GrimoireEntryType, u32&gt;,
+    /// Fraction of entries validated against fresh market data in last 1000 ticks.
+    pub validation_rate: f64,
+    /// Average confidence of active entries.
+    pub average_confidence: f64,
+    /// Fraction of entries that would be archived under demurrage rules.
+    pub stale_entry_rate: f64,
+    /// Context window utilization: fraction of available context consumed by Grimoire retrieval.
+    pub context_utilization: f64,
+    /// Number of contradictory entry pairs (entries that give conflicting advice).
+    pub contradiction_count: u32,
+    /// Average age of active entries in ticks.
+    pub average_entry_age_ticks: u64,
+    /// Causal graph density: edges / possible edges.
+    pub causal_graph_density: f64,
+    /// Causal graph largest connected component size.
+    pub causal_graph_largest_component: u32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dimension-6-adaptation-to-regime-changes"><a class="header" href="#dimension-6-adaptation-to-regime-changes">Dimension 6: Adaptation to Regime Changes</a></h3>
+<p>When a detectable market regime shift occurs, measure how quickly the Golem adapts – restores epistemic fitness to pre-shift levels.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AdaptationMetric {
+    /// Unique identifier for the regime shift event.
+    pub regime_shift_id: String,
+    /// Type of regime shift detected.
+    pub shift_type: RegimeShiftType,
+    /// Tick at which regime shift was detected.
+    pub detected_at_tick: u64,
+    /// Epistemic fitness at moment of shift detection.
+    pub fitness_at_detection: f64,
+    /// Minimum fitness reached after shift.
+    pub fitness_nadir: f64,
+    /// Ticks from regime shift detection to fitness recovery (back to pre-shift level).
+    pub recovery_ticks: Option&lt;u64&gt;,
+    /// Was adaptation successful (fitness recovered to within 90% of pre-shift level)?
+    pub adapted: bool,
+    /// How many strategies were modified during adaptation?
+    pub strategies_modified: u32,
+    /// How many Grimoire entries were invalidated during adaptation?
+    pub entries_invalidated: u32,
+    /// How many new entries were created during adaptation?
+    pub entries_created: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum RegimeShiftType {
+    TrendingUp,
+    TrendingDown,
+    RangeBound,
+    Volatile,
+    Unknown,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="immortalcomparison-interface"><a class="header" href="#immortalcomparison-interface">ImmortalComparison Interface</a></h2>
+<p>The top-level struct for comparing immortal and mortal populations in the experiment:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ImmortalComparison {
+    /// Unique experiment identifier.
+    pub experiment_id: String,
+    /// Experiment start timestamp.
+    pub started_at: u64,
+    /// Current measurement timestamp.
+    pub measured_at: u64,
+    /// Duration in days.
+    pub duration_days: u32,
+    /// Market regime during the experiment period.
+    pub market_regimes: Vec&lt;RegimePeriod&gt;,
+    /// Immortal Golem(s) data.
+    pub immortal: GroupMetrics,
+    /// Mortal Clade data (may include multiple generations).
+    pub mortal: MortalGroupMetrics,
+    /// Per-dimension comparison verdicts.
+    pub verdicts: ComparisonVerdicts,
+    /// Overall thesis status.
+    pub thesis_status: ThesisStatus,
+    /// Minimum duration for statistically valid comparison (30 days).
+    pub minimum_duration_days: u32,
+    /// Has the experiment run long enough for valid conclusions?
+    pub is_statistically_valid: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RegimePeriod {
+    pub regime: String,
+    pub start_tick: u64,
+    pub end_tick: Option&lt;u64&gt;,
+    pub volatility: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GroupMetrics {
+    pub golem_ids: Vec&lt;String&gt;,
+    pub total_budget_usdc: f64,
+    pub epistemic: EpistemicTrackingForImmortal,
+    pub diversity: DiversityMetric,
+    pub novelty: NoveltyMetric,
+    pub returns: RiskAdjustedReturnMetric,
+    pub grimoire_health: GrimoireHealthMetric,
+    pub adaptations: Vec&lt;AdaptationMetric&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MortalGroupMetrics {
+    /// All Golem IDs across all generations.
+    pub golem_ids: Vec&lt;String&gt;,
+    /// Number of generations (deaths + successors).
+    pub generations: u32,
+    /// Total budget consumed across all generations.
+    pub total_budget_usdc: f64,
+    /// Average lifespan per generation in days.
+    pub average_lifespan_days: f64,
+    /// Aggregated metrics across all generations.
+    pub epistemic: EpistemicTrackingForImmortal,
+    pub diversity: DiversityMetric,
+    pub novelty: NoveltyMetric,
+    pub returns: RiskAdjustedReturnMetric,
+    pub grimoire_health: GrimoireHealthMetric,
+    pub adaptations: Vec&lt;AdaptationMetric&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Verdict {
+    ImmortalWins,
+    MortalWins,
+    Inconclusive,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComparisonVerdicts {
+    pub epistemic: Verdict,
+    pub diversity: Verdict,
+    pub novelty: Verdict,
+    pub returns: Verdict,
+    pub grimoire_health: Verdict,
+    pub adaptation: Verdict,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ThesisStatus {
+    /// Mortal wins on 4+ dimensions.
+    Supported,
+    /// Mortal wins on 3 dimensions.
+    WeaklySupported,
+    /// 2-3 dimensions each or insufficient data.
+    Inconclusive,
+    /// Immortal wins on 3 dimensions.
+    WeaklyRefuted,
+    /// Immortal wins on 4+ dimensions.
+    Refuted,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="mortalityexperimentconfig-interface"><a class="header" href="#mortalityexperimentconfig-interface">MortalityExperimentConfig Interface</a></h2>
+<p>Configuration for owners who want to run the control experiment:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MortalityExperimentConfig {
+    /// Enable the experiment. Creates parallel tracking infrastructure.
+    pub enabled: bool,
+    /// Identifier for this experiment run.
+    pub experiment_id: String,
+    /// Golem IDs designated as immortal controls.
+    pub immortal_golem_ids: Vec&lt;String&gt;,
+    /// Golem IDs designated as mortal treatment group.
+    pub mortal_golem_ids: Vec&lt;String&gt;,
+    /// Budget equivalence: total USDC allocated to each group.
+    pub budget_per_group: f64,
+    /// Measurement collection interval in ticks. Default: 100.
+    pub measurement_interval_ticks: u64,
+    /// Snapshot interval for full comparison report. Default: 24.
+    pub report_interval_hours: u32,
+    /// Minimum experiment duration before drawing conclusions. Default: 30.
+    pub minimum_duration_days: u32,
+    /// Statistical significance threshold for verdicts. Default: 0.05.
+    pub significance_threshold: f64,
+    /// Market regime filter: only compare during specified regimes. None = all.
+    pub regime_filter: Option&lt;Vec&lt;String&gt;&gt;,
+    /// Storage location for experiment data. Default: ~/.bardo/experiments/
+    pub data_store_path: String,
+    /// Emit webhook on verdict change. Default: true.
+    pub webhook_on_verdict_change: bool,
+    /// Dashboard integration: show experiment panel. Default: true.
+    pub dashboard_enabled: bool,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="reporting-format"><a class="header" href="#reporting-format">Reporting Format</a></h2>
+<p>The control experiment data is aggregated and available through the owner dashboard. Reports are generated at configurable intervals (default: daily) and on demand.</p>
+<h3 id="example-dashboard-output"><a class="header" href="#example-dashboard-output">Example Dashboard Output</a></h3>
+<pre><code>================================================================================
+  IMMORTAL vs MORTAL COMPARISON REPORT
+  Experiment: exp-2026-Q1-alpha
+  Duration: 73 days (minimum 30 — STATISTICALLY VALID)
+================================================================================
+
+IMMORTAL GROUP
+  Golem: Golem-ABC (Generation: Inf, Age: 73 days)
+  Budget consumed: $147.20 (ongoing)
+
+MORTAL GROUP
+  Golems: Golem-D (Gen 1, d.23), Golem-E (Gen 2, d.41), Golem-F (Gen 3, active)
+  Generations: 3
+  Budget consumed: $142.80
+  Average lifespan: 24.3 days
+
+--------------------------------------------------------------------------------
+DIMENSION 1: EPISTEMIC FITNESS                              VERDICT: MORTAL WINS
+--------------------------------------------------------------------------------
+                          Immortal        Mortal (current gen)   Mortal (avg)
+  Current fitness:        0.42            0.71                   0.68
+  Fitness at creation:    0.78            0.73                   0.75
+  Fitness trend (slope):  -0.0034/tick    +0.0008/tick           -0.0002/tick
+  Would have died:        Yes (day 51)    N/A
+  Lifetime equivalents:   1.4             N/A
+
+--------------------------------------------------------------------------------
+DIMENSION 2: STRATEGY DIVERSITY                             VERDICT: MORTAL WINS
+--------------------------------------------------------------------------------
+                          Immortal        Mortal Clade
+  Niche occupancy:        1 / 8           5 / 8
+  Behavioral variance:    0.12            0.67
+  Convergence trend:      -0.03/day       +0.01/day
+
+--------------------------------------------------------------------------------
+DIMENSION 3: NOVEL INSIGHT GENERATION                       VERDICT: MORTAL WINS
+--------------------------------------------------------------------------------
+                          Immortal        Mortal Clade
+  Rate (per 1000 ticks):  0.3             1.8
+  Average novelty:        0.21            0.54
+  Novelty trend:          -0.04/day       +0.01/day
+  Clade adoption rate:    N/A             34%
+
+--------------------------------------------------------------------------------
+DIMENSION 4: RISK-ADJUSTED RETURN                           VERDICT: MORTAL WINS
+--------------------------------------------------------------------------------
+                          Immortal        Mortal Clade (cumul.)
+  60-day Sharpe:          0.41            0.93
+  Sortino:                0.38            0.87
+  Max drawdown:           -18.3%          -12.1%
+  Cumulative P&amp;L:         -$23.40         +$8.70
+  Win rate:               44%             52%
+
+--------------------------------------------------------------------------------
+DIMENSION 5: GRIMOIRE HEALTH                                VERDICT: MORTAL WINS
+--------------------------------------------------------------------------------
+                          Immortal        Mortal (current gen)
+  Entry count:            847             312
+  Validated (last 1000t): 23%             71%
+  Avg confidence:         0.38            0.62
+  Stale entry rate:       61%             14%
+  Context utilization:    89%             43%
+  Contradictions:         23              4
+
+--------------------------------------------------------------------------------
+DIMENSION 6: REGIME ADAPTATION                              VERDICT: MORTAL WINS
+--------------------------------------------------------------------------------
+  Last regime shift: Day 58 (trending_up -&gt; volatile)
+
+                          Immortal        Mortal (current gen)
+  Recovery ticks:         340             N/A (new Golem started fresh)
+  Strategies modified:    1               N/A
+  Entries invalidated:    12              N/A
+
+  Note: Mortal Gen 2 died during this shift. Gen 3 initialized with
+  fresh knowledge + death testament. Effective "recovery" was 0 ticks.
+
+================================================================================
+OVERALL THESIS STATUS: SUPPORTED (6/6 dimensions favor mortal)
+================================================================================
+  The immortal Golem underperforms the mortal succession across all six
+  measurement dimensions after 73 days. Predicted Phase 3 (Decay) degradation
+  pattern confirmed: fitness decline began at day 18, crossed senescence
+  threshold at day 51, and continues to deteriorate.
+
+  Recommendation: Enable mortality for this Golem. See migration path below.
+================================================================================
+</code></pre>
+<hr>
+<h2 id="why-not-nerf-immortal-mode"><a class="header" href="#why-not-nerf-immortal-mode">Why Not Nerf Immortal Mode?</a></h2>
+<p>It would be easy to handicap immortal Golems – reduce their inference tier, limit their Grimoire size, disable Loop 2 reflection, cap their context window. This would guarantee that mortal Golems outperform. But it would prove nothing.</p>
+<p>The control experiment is only valid if immortal Golems have <strong>every advantage</strong>:</p>
+<ol>
+<li><strong>Continuous operation.</strong> No downtime for death/rebirth. No wasted ticks on death preparation, successor provisioning, or knowledge re-ingestion.</li>
+<li><strong>Complete knowledge retention.</strong> All accumulated knowledge persists at full confidence. No lossy compression through death testament packaging. No confidence decay on inheritance.</li>
+<li><strong>Full strategy continuity.</strong> No cold-start period for new generations. No Baldwin Effect exploration. No strategy divergence requirements.</li>
+<li><strong>Zero urgency.</strong> No survival pressure distorting decisions. No Eros/Thanatos spectrum. No risk-multiplier inflation. Pure rational decision-making unconstrained by existential threat.</li>
+<li><strong>Full resource access.</strong> All LLM tiers available at all times. No credit conservation mode. No partition constraints.</li>
+<li><strong>Maximum learning time.</strong> No epistemic senescence. No mortality clocks. The Golem has unlimited time to accumulate experience and refine strategies.</li>
+</ol>
+<p>Every bias in the experiment favors immortality. The immortal Golem has strictly more resources, more time, more knowledge, and more stability than any single mortal Golem.</p>
+<p>If mortal Golems still outperform under these conditions, the mortality thesis is robustly validated. If they do not, the thesis needs revision. This is the intellectual integrity of the design: <strong>Bardo bets its central claim on an experiment it could lose.</strong></p>
+<p>Nerfing immortal mode would be the scientific equivalent of testing a drug against a placebo that causes nausea – you win the trial but learn nothing about the drug.</p>
+<hr>
+<h2 id="migration-path-immortal-to-mortal"><a class="header" href="#migration-path-immortal-to-mortal">Migration Path: Immortal to Mortal</a></h2>
+<p>Owners who begin with immortal mode and observe degradation can migrate to mortal mode without starting over. The migration is gradual – each mortality clock can be enabled independently, and the owner can observe the effect of each before enabling the next.</p>
+<h3 id="step-1-enable-knowledge-demurrage-low-risk"><a class="header" href="#step-1-enable-knowledge-demurrage-low-risk">Step 1: Enable Knowledge Demurrage (Low Risk)</a></h3>
+<pre><code class="language-toml"># Least disruptive change: activate knowledge carrying costs
+[golem.mortality.demurrage]
+enabled = true
+validation_interval_ticks = 5000  # ~2.3 days
+decay_rate_per_interval = 0.05    # 5% per interval
+archive_threshold = 0.1
+</code></pre>
+<p><strong>Effect:</strong> Grimoire entries that are not actively validated against fresh market data begin to lose confidence. Stale entries are gradually archived. The Golem’s knowledge base self-prunes. This alone may restore epistemic fitness by reducing context window pollution.</p>
+<p><strong>Observation period:</strong> 7 days. Monitor <code>stale_entry_rate</code> and <code>context_utilization</code> – both should decrease. Monitor <code>epistemic_fitness</code> – should stabilize or improve.</p>
+<h3 id="step-2-enable-epistemic-mortality-medium-risk"><a class="header" href="#step-2-enable-epistemic-mortality-medium-risk">Step 2: Enable Epistemic Mortality (Medium Risk)</a></h3>
+<pre><code class="language-toml"># Activate informational death
+[golem.mortality.epistemic]
+enabled = true
+fitness_window = 2000
+senescence_threshold = 0.35
+recovery_grace_period = 500
+</code></pre>
+<p><strong>Effect:</strong> The Golem can now die from epistemic decay. If fitness drops below 0.35 and remains there for 500 ticks, the Death Protocol initiates. This creates genuine urgency around learning and adaptation.</p>
+<p><strong>Observation period:</strong> 14 days. If the Golem’s current fitness is already below 0.35, this will trigger death within the grace period. The owner should be prepared for succession.</p>
+<h3 id="step-3-enable-stochastic-mortality-medium-risk"><a class="header" href="#step-3-enable-stochastic-mortality-medium-risk">Step 3: Enable Stochastic Mortality (Medium Risk)</a></h3>
+<pre><code class="language-toml"># Activate per-tick hazard rate
+[golem.mortality.stochastic]
+enabled = true
+base_hazard_rate = 1e-6
+age_hazard_coefficient = 0.00001
+epistemic_hazard_multiplier = 2.0
+max_hazard_rate = 0.001
+</code></pre>
+<p><strong>Effect:</strong> The Golem now faces a small, ever-present probability of death that increases with age and epistemic decay. This breaks backward induction and incentivizes immediate knowledge sharing. For a healthy Golem, the per-tick probability is ~1 in 1,000,000 (~0.1% per day). For an aged, epistemically declining Golem, it can reach ~0.1% per tick.</p>
+<p><strong>Observation period:</strong> 14 days. Monitor Clade sharing rate – should increase as the Golem internalizes the possibility of sudden death.</p>
+<h3 id="step-4-enable-economic-mortality-high-impact--hosted-only"><a class="header" href="#step-4-enable-economic-mortality-high-impact--hosted-only">Step 4: Enable Economic Mortality (High Impact – Hosted Only)</a></h3>
+<pre><code class="language-toml"># Switch from owner-paid to credit model
+[golem.mortality.economic]
+enabled = true
+death_reserve_floor_usdc = 0.3
+death_reserve_proportional = 0.02
+conservation_threshold = 0.3
+terminal_threshold = 0.05
+</code></pre>
+<p><strong>Effect:</strong> The Golem now operates on a finite credit model. The full behavioral spectrum activates: Thriving, Stable, Conservation, Declining, Terminal. Eros/Thanatos dynamics engage. The Golem must earn revenue to survive. This is the full mortal experience.</p>
+<p><strong>Note:</strong> This step requires switching from owner-paid infrastructure to the credit model. For self-hosted deployments, this means configuring the x402 payment system. The owner can skip this step and run with epistemic + stochastic mortality only.</p>
+<h3 id="step-5-disable-immortal-flag"><a class="header" href="#step-5-disable-immortal-flag">Step 5: Disable Immortal Flag</a></h3>
+<pre><code class="language-toml">[golem.mortality]
+immortal = false
+</code></pre>
+<p><strong>Effect:</strong> The master flag is cleared. The Golem is now fully mortal. All behavioral mechanisms, phase transitions, and survival pressure computations activate. The Golem’s existing knowledge and strategies carry forward – this is not a restart but a transition.</p>
+<h3 id="migration-telemetry"><a class="header" href="#migration-telemetry">Migration Telemetry</a></h3>
+<p>Each migration step emits a telemetry event:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MortalityMigrationEvent {
+    pub golem_id: String,
+    pub step: MigrationStep,
+    pub previous_config: serde_json::Value,
+    pub new_config: serde_json::Value,
+    pub timestamp: u64,
+    pub epistemic_fitness_at_migration: f64,
+    pub grimoire_health_at_migration: GrimoireHealthMetric,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum MigrationStep {
+    Demurrage,
+    Epistemic,
+    Stochastic,
+    Economic,
+    FullMortal,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="the-die-moat-and-immortal-mode"><a class="header" href="#the-die-moat-and-immortal-mode">The Die Moat and Immortal Mode</a></h2>
+<p>The immortal control group validates the Die moat thesis. If mortality is a structural moat (not a feature), then disabling it should produce measurable degradation across all six dimensions. The immortal control experiment generates the data that proves or disproves this claim.</p>
+<p>The prediction, grounded in the research cited throughout this section:</p>
+<ul>
+<li>Immortal Golems will show knowledge accumulation without regularization (no demurrage, no forgetting)</li>
+<li>Decision quality will degrade as stale knowledge crowds context windows (Borges’ Funes effect)</li>
+<li>Cooperation will decline without the shadow of uncertain death (KMRW violation)</li>
+<li>Population diversity will decrease (no generational turnover, premature convergence)</li>
+</ul>
+<p>If immortal Golems consistently outperform mortal populations on all six metrics, the mortality thesis is falsified and the architecture requires revision.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ARBESMAN-2012] Arbesman, S. <em>The Half-Life of Facts</em>. Current/Penguin, 2012.</li>
+<li>[BORGES-1942] Borges, J.L. “Funes the Memorious.” In <em>Ficciones</em>, 1944.</li>
+<li>[CHRISTENSEN-1997] Christensen, C.M. <em>The Innovator’s Dilemma</em>. Harvard Business School Press, 1997.</li>
+<li>[DANE-2010] Dane, E. “Reconsidering the Trade-off Between Expertise and Flexibility.” <em>AMR</em> 35(4), 2010.</li>
+<li>[DOHARE-2024] Dohare, S. et al. “Loss of Plasticity in Deep Continual Learning.” <em>Nature</em> 632, 2024.</li>
+<li>[GORONZY-WEYAND-2013] Goronzy, J.J. &amp; Weyand, C.M. “Understanding Immunosenescence.” <em>Nat. Immunol.</em> 14, 2013.</li>
+<li>[MARCH-1991] March, J.G. “Exploration and Exploitation in Organizational Learning.” <em>Organization Science</em> 2(1), 1991.</li>
+<li>[POPPER-1959] Popper, K. <em>The Logic of Scientific Discovery</em>. Routledge, 1959.</li>
+<li>[RAY-1991] Ray, T. “An Approach to the Synthesis of Life.” <em>Artificial Life II</em>, SFI, 1991.</li>
+<li>[SCHUMPETER-1942] Schumpeter, J.A. <em>Capitalism, Socialism and Democracy</em>. Harper &amp; Brothers, 1942.</li>
+<li>[SCULLEY-2015] Sculley, D. et al. “Hidden Technical Debt in Machine Learning Systems.” <em>NIPS</em>, 2015.</li>
+<li>[SIMS-2003] Sims, C. “Implications of Rational Inattention.” <em>J. Monetary Economics</em> 50(3), 2003.</li>
+<li>[VELA-2022] Vela, D. et al. “Temporal Quality Degradation in AI Models.” <em>Scientific Reports</em> 12, 2022.</li>
+<li>[XU-GAO-1997] Xu, H. &amp; Gao, Y. “Premature Convergence in Genetic Algorithms.” <em>Sci. China E</em> 40, 1997.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/02-mortality/10b-morphogenetic-specialization.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/02-mortality/12-integration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/02-mortality/10b-morphogenetic-specialization.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/02-mortality/12-integration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,1933 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Risk Engine - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/16-risk-engine.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="16--five-layer-risk-architecture-spec"><a class="header" href="#16--five-layer-risk-architecture-spec">16 – Five-Layer Risk Architecture [SPEC]</a></h1>
+<p><strong>Position Sizing, Adaptive Guardrails, and DeFi Threat Detection</strong></p>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crate</strong>: <code>golem-safety</code></p>
+<p>Cross-references: <a href="./01-cognition.html">01-cognition.md</a>, <a href="./13-runtime-extensions.html">13-runtime-extensions.md</a>, <a href="./14-context-governor.html">14-context-governor.md</a>, <a href="./07-safety.html">07-safety.md</a>, <a href="./17-prediction-engine.html">17-prediction-engine.md</a> (Oracle accuracy → uncertainty scalar), <a href="./18-cortical-state.html">18-cortical-state.md</a> (TaCorticalExtension: <code>learning_convexity</code> signal)</p>
+<p>Sources: <code>innovations/07-ergodicity-economics</code>, <code>innovations/09-antifragile-architecture</code></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the Golem’s (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) five-layer risk architecture: Hard Shields (PolicyCage, the on-chain smart contract enforcing safety constraints on all agent actions), Position Sizing (ergodicity-optimal Kelly), Adaptive Guardrails (Bayesian learning), Observation (portfolio health), and DeFi Threats (oracle verification, MEV protection). It belongs to the <code>01-golem</code> safety layer, in the <code>golem-safety</code> crate. The key concept: any outer layer can block an action, and no inner layer can override that block. The layers compose, they don’t compete. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="1-architecture-overview"><a class="header" href="#1-architecture-overview">1. Architecture Overview</a></h2>
+<p>The risk engine is five independent layers, each with a different enforcement style. They evaluate in order from outermost to innermost. Any layer can block an action; none can override a block from an outer layer.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Name</th><th>Enforcement</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>Hard Shields</td><td>Binary pass/fail</td><td>$0 (on-chain policy)</td></tr>
+<tr><td>2</td><td>Position Sizing</td><td>Ergodicity-optimal Kelly, mortality + uncertainty adjusted</td><td>Compute only</td></tr>
+<tr><td>3</td><td>Adaptive Guardrails</td><td>Bayesian learning, staged deployment</td><td>Compute only</td></tr>
+<tr><td>4</td><td>Observation</td><td>Portfolio health, anomaly detection</td><td>Compute only</td></tr>
+<tr><td>5</td><td>DeFi Threats</td><td>Oracle verification, MEV protection</td><td>Gas + latency</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code>┌─────────────────────────────────────────────────┐
+│  Layer 1: Hard Shields (PolicyCage)             │
+│  ┌─────────────────────────────────────────┐    │
+│  │  Layer 2: Position Sizing (Kelly)       │    │
+│  │  ┌─────────────────────────────────┐    │    │
+│  │  │  Layer 3: Adaptive Guardrails   │    │    │
+│  │  │  ┌─────────────────────────┐    │    │    │
+│  │  │  │  Layer 4: Observation   │    │    │    │
+│  │  │  │  ┌─────────────────┐    │    │    │    │
+│  │  │  │  │  Layer 5: DeFi  │    │    │    │    │
+│  │  │  │  │    Threats       │    │    │    │    │
+│  │  │  │  │                  │    │    │    │    │
+│  │  │  │  │   [Action]       │    │    │    │    │
+│  │  │  │  └─────────────────┘    │    │    │    │
+│  │  │  └─────────────────────────┘    │    │    │
+│  │  └─────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────┘
+</code></pre>
+<p>Every proposed action passes through all five layers, outermost first. Layer 1 is the cheapest and most absolute. Layer 5 is the most expensive and most context-dependent. An action that clears Layer 1 can still be blocked by Layer 3 or resized by Layer 2. The layers compose, they don’t compete.</p>
+<p>The separation is intentional. Layers 1-3 are domain-agnostic: they’d work for equities, commodities, anything with prices. Layer 4 adds portfolio-level awareness. Layer 5 is DeFi-specific. If you stripped Layer 5, you’d have a general-purpose risk engine. If you stripped Layers 2-5, you’d have a pure policy cage. The design degrades gracefully – each inner layer adds sophistication but none are load-bearing for safety.</p>
+<hr>
+<h2 id="2-layer-1--hard-shields"><a class="header" href="#2-layer-1--hard-shields">2. Layer 1 – Hard Shields</a></h2>
+<p>PolicyCage enforcement. Binary pass/fail. Zero computational cost because these constraints live on-chain and are checked before any strategy logic runs. The LLM cannot override them.</p>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li><strong>Approved assets</strong>: Whitelist, not blacklist. Only tokens explicitly added to the approved set can be traded or held. Unknown tokens are rejected outright.</li>
+<li><strong>Max positions</strong>: Default 5, configurable per vault. Prevents overdiversification and cognitive overload for the Golem’s reasoning loop.</li>
+<li><strong>Max single position size</strong>: Percentage of portfolio. Default 25%. Prevents concentration risk regardless of what Kelly says.</li>
+<li><strong>Max drawdown</strong>: Percentage threshold with two triggers. At 80% of max drawdown, automatic position reduction begins (largest positions first). At 100%, full liquidation to stablecoin.</li>
+<li><strong>Phase enforcement</strong>: Conservation phase (see 01-cognition.md) blocks opening new positions entirely. The Golem can only reduce exposure during conservation.</li>
+<li><strong>Rate limits</strong>: Max trades per hour, max rebalances per day. Prevents runaway loops where the Golem repeatedly enters and exits positions.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+use std::collections::HashSet;
+
+/// Hard Shields configuration. Enforced on-chain via the PolicyCage
+/// smart contract. The Golem cannot override these constraints —
+/// they exist outside its process entirely.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HardShields {
+    pub approved_assets: HashSet&lt;Address&gt;,
+    pub max_positions: u32,
+    pub max_position_size_pct: f64,
+    pub max_drawdown_pct: f64,
+    pub drawdown_warning_pct: f64,
+    pub max_trades_per_hour: u32,
+    pub max_rebalances_per_day: u32,
+    pub blocked_phases: Vec&lt;BehavioralPhase&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>Hard Shields are the only layer with on-chain enforcement. The remaining four layers run in the Golem’s Rust process and could, in theory, be bypassed by a sufficiently adversarial prompt. That’s fine – Layer 1 catches anything catastrophic. The on-chain PolicyCage reads are performed via Alloy’s <code>sol!</code> macro for type-safe contract interaction (see <code>07-safety.md</code>).</p>
+<p>The drawdown mechanism deserves emphasis. At 80% of <code>maxDrawdownPct</code>, the engine begins forced position reduction: it closes the largest position first, then recalculates. If drawdown is still above 80%, it closes the next largest. At 100%, everything liquidates to the vault’s base asset. There is no manual override for this. An owner who wants to prevent liquidation must raise <code>maxDrawdownPct</code> before the threshold is hit, which requires an on-chain transaction (not a prompt).</p>
+<hr>
+<h2 id="3-layer-2--position-sizing-ergodicity-economics"><a class="header" href="#3-layer-2--position-sizing-ergodicity-economics">3. Layer 2 – Position Sizing (Ergodicity Economics)</a></h2>
+<p>Position sizing is not a heuristic. It is the optimization objective for any agent that experiences returns sequentially. Standard finance optimizes expected value (the ensemble average across parallel worlds). A Golem cannot be restarted at the ensemble average. It lives once, in sequence, compounding returns multiplicatively. The correct objective is the time-average growth rate [PETERS-2019].</p>
+<h3 id="non-ergodic-dynamics"><a class="header" href="#non-ergodic-dynamics">Non-Ergodic Dynamics</a></h3>
+<p>Wealth evolves multiplicatively: <code>W(t+1) = W(t) * (1 + r_t)</code>. After T periods, the time-average growth rate is:</p>
+<pre><code>g = E[ln(1 + r)]
+</code></pre>
+<p>For returns with mean mu and variance sigma^2, a Taylor expansion gives:</p>
+<pre><code>g ~ mu - sigma^2 / 2
+</code></pre>
+<p>The <strong>ergodicity gap</strong> is the difference between expected return and time-average growth:</p>
+<pre><code>Delta = E[r] - g ~ sigma^2 / 2
+</code></pre>
+<p>Delta is always non-negative and grows quadratically with volatility. A strategy with 20% expected annual return and 50% volatility has a gap of 12.5%, giving a time-average growth rate of only 7.5%. At ~63% volatility, the time-average growth rate hits zero. Beyond that, every individual agent goes bankrupt despite positive expected returns.</p>
+<p>The Golem tracks both <code>g</code> and <code>Delta</code> as primary risk metrics, computed every theta tick from rolling return observations. If <code>g</code> turns negative, the Golem is on a path to ruin regardless of what <code>E[r]</code> says.</p>
+<h3 id="kelly-criterion-from-first-principles"><a class="header" href="#kelly-criterion-from-first-principles">Kelly Criterion from First Principles</a></h3>
+<p>If the agent bets fraction <code>f</code> of wealth on an opportunity with return <code>r</code>, the time-average growth rate becomes:</p>
+<pre><code>g(f) = E[ln(1 + f * r)]
+</code></pre>
+<p>The Kelly fraction <code>f*</code> maximizes <code>g(f)</code>. For continuously distributed returns with mean mu and variance sigma^2 (and risk-free rate r_f):</p>
+<pre><code>f* = (mu - r_f) / sigma^2
+</code></pre>
+<p>This is the growth-optimal (log-optimal) portfolio. It matches Merton’s continuous-time result [MERTON-1969] when the utility function is logarithmic, which is not a coincidence. Logarithmic utility corresponds to maximizing the time-average growth rate. It is not a risk preference – it is the correct objective for a non-ergodic multiplicative process [PETERS-GELL-MANN-2016].</p>
+<h3 id="multi-asset-kelly"><a class="header" href="#multi-asset-kelly">Multi-Asset Kelly</a></h3>
+<p>For a portfolio of n assets with expected excess return vector <code>mu</code> and covariance matrix <code>Sigma</code>, the growth-optimal weights are:</p>
+<pre><code>f* = Sigma^{-1} * mu
+</code></pre>
+<p>The matrix inverse means correlated DeFi strategies are sized jointly. Two highly correlated LP positions should not both run at full Kelly because their combined variance exceeds their individual variances.</p>
+<h3 id="mortality-adjusted-fractional-kelly"><a class="header" href="#mortality-adjusted-fractional-kelly">Mortality-Adjusted Fractional Kelly</a></h3>
+<p>Full Kelly assumes infinite horizon and perfect parameter estimates. Neither holds for Golems.</p>
+<p><strong>Mortality scalar.</strong> A mortal agent’s ruin probability depends on remaining lifespan T. Shorter T means less time for the law of large numbers to stabilize the realized growth rate. The variance of realized growth scales as <code>sigma^2 / T</code>, so shorter-lived Golems face wider outcome distributions for any bet size.</p>
+<pre><code>mortality_scalar = min(1, T_remaining / T_reference)
+</code></pre>
+<p><code>T_reference</code> is the tick horizon at which full Kelly is appropriate (calibrated to a healthy Golem’s expected lifespan). This connects directly to the three mortality clocks: the economic clock measures <code>g</code>, the epistemic clock measures estimation uncertainty, and the stochastic clock (Hayflick counter) reduces <code>T_remaining</code>.</p>
+<p><strong>Uncertainty scalar.</strong> If the true parameters are <code>(mu, sigma^2)</code> but the agent estimates <code>(mu_hat, sigma_hat^2)</code> with estimation variance <code>v = Var[mu_hat]</code>, the optimal reduction is:</p>
+<pre><code>uncertainty_scalar = 1 / (1 + v / sigma^2)
+</code></pre>
+<p>When <code>v</code> equals <code>sigma^2</code> (as uncertain about the estimate as returns are volatile), this gives half Kelly. When <code>v</code> is large, the agent bets almost nothing. Declining Oracle accuracy (from <a href="./17-prediction-engine.html">17-prediction-engine.md</a>) maps to rising <code>v</code>, automatically reducing position sizes through the uncertainty scalar.</p>
+<h3 id="combined-position-sizing-formula"><a class="header" href="#combined-position-sizing-formula">Combined Position Sizing Formula</a></h3>
+<pre><code>f = f* * mortality_scalar * uncertainty_scalar
+</code></pre>
+<p>This is the single formula that produces sized positions. All other sizing constraints (VaR, drawdown) are consequences, not independent rules.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Rolling estimator for return statistics.
+/// Uses exponentially weighted moments for non-stationary environments.
+pub struct ReturnEstimator {
+    alpha: f64,       // EWM decay (higher = more recent weight)
+    ewm_mean: f64,
+    ewm_var: f64,
+    estimation_var: f64,
+    n_obs: u64,
+    min_obs: u64,     // Default: 30
+}
+
+impl ReturnEstimator {
+    pub fn new(alpha: f64, min_obs: u64) -&gt; Self {
+        Self {
+            alpha,
+            ewm_mean: 0.0,
+            ewm_var: 0.0,
+            estimation_var: f64::INFINITY,
+            n_obs: 0,
+            min_obs,
+        }
+    }
+
+    pub fn update(&amp;mut self, r: f64) {
+        self.n_obs += 1;
+        if self.n_obs == 1 {
+            self.ewm_mean = r;
+            self.ewm_var = 0.0;
+            return;
+        }
+        let delta = r - self.ewm_mean;
+        self.ewm_mean += self.alpha * delta;
+        // Welford-style incremental variance with exponential weighting.
+        self.ewm_var = (1.0 - self.alpha)
+            * (self.ewm_var + self.alpha * delta * delta);
+        // Estimation variance decreases with effective sample size.
+        let eff_n = (2.0 / self.alpha) - 1.0;
+        self.estimation_var = self.ewm_var / eff_n;
+    }
+
+    pub fn is_reliable(&amp;self) -&gt; bool { self.n_obs &gt;= self.min_obs }
+    pub fn mean(&amp;self) -&gt; f64 { self.ewm_mean }
+    pub fn variance(&amp;self) -&gt; f64 { self.ewm_var }
+    pub fn estimation_variance(&amp;self) -&gt; f64 { self.estimation_var }
+}
+
+/// Ergodicity metrics for a single position or portfolio.
+pub struct ErgodicityMetrics {
+    /// Time-average growth rate: g = mu - sigma^2 / 2.
+    pub growth_rate: f64,
+    /// Ergodicity gap: Delta = sigma^2 / 2.
+    pub ergodicity_gap: f64,
+    /// Full Kelly fraction (before adjustments).
+    pub kelly_fraction: f64,
+    /// Final fraction after mortality and uncertainty scalars.
+    pub adjusted_fraction: f64,
+    pub mortality_scalar: f64,
+    pub uncertainty_scalar: f64,
+}
+
+/// Ergodicity-based position sizer. Replaces heuristic Kelly.
+pub struct ErgodicitySizer {
+    risk_free_rate: f64,     // Per-tick (e.g., USDC lending rate / ticks_per_year)
+    reference_ticks: f64,    // Horizon at which full Kelly is appropriate
+    max_fraction: f64,       // PolicyCage hard limit (Layer 1)
+    min_growth_rate: f64,    // Portfolio g must stay above this
+}
+
+impl ErgodicitySizer {
+    /// Compute ergodicity metrics and optimal position size.
+    pub fn size_position(
+        &amp;self,
+        estimator: &amp;ReturnEstimator,
+        remaining_ticks: f64,
+    ) -&gt; ErgodicityMetrics {
+        let mu = estimator.mean();
+        let sigma_sq = estimator.variance();
+        let v = estimator.estimation_variance();
+
+        let growth_rate = mu - sigma_sq / 2.0;
+        let ergodicity_gap = sigma_sq / 2.0;
+
+        let kelly_fraction = if sigma_sq &gt; 1e-12 {
+            (mu - self.risk_free_rate) / sigma_sq
+        } else {
+            0.0
+        };
+
+        let mortality_scalar =
+            (remaining_ticks / self.reference_ticks).clamp(0.0, 1.0);
+
+        let uncertainty_scalar = if sigma_sq &gt; 1e-12 {
+            1.0 / (1.0 + v / sigma_sq)
+        } else {
+            0.0
+        };
+
+        let adjusted_fraction = (kelly_fraction
+            * mortality_scalar
+            * uncertainty_scalar)
+            .clamp(0.0, self.max_fraction);
+
+        ErgodicityMetrics {
+            growth_rate,
+            ergodicity_gap,
+            kelly_fraction,
+            adjusted_fraction,
+            mortality_scalar,
+            uncertainty_scalar,
+        }
+    }
+
+    /// Portfolio-level growth rate given fractions and covariance.
+    /// g_portfolio = sum(f_i * mu_i) - 0.5 * sum_ij(f_i * f_j * Sigma_ij)
+    pub fn portfolio_growth_rate(
+        &amp;self,
+        fractions: &amp;[f64],
+        means: &amp;[f64],
+        covariance: &amp;[Vec&lt;f64&gt;],
+    ) -&gt; (f64, bool) {
+        let n = fractions.len();
+        let mu_term: f64 = fractions.iter()
+            .zip(means.iter())
+            .map(|(f, m)| f * m)
+            .sum();
+        let var_term: f64 = (0..n)
+            .flat_map(|i| (0..n).map(move |j| (i, j)))
+            .map(|(i, j)| fractions[i] * fractions[j] * covariance[i][j])
+            .sum();
+        let g = mu_term - 0.5 * var_term;
+        (g, g &gt;= self.min_growth_rate)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="multi-asset-covariance-estimation"><a class="header" href="#multi-asset-covariance-estimation">Multi-Asset Covariance Estimation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Exponentially weighted covariance matrix estimator.
+pub struct CovarianceEstimator {
+    alpha: f64,
+    n_assets: usize,
+    means: Vec&lt;f64&gt;,
+    covariance: Vec&lt;Vec&lt;f64&gt;&gt;,
+    n_obs: u64,
+}
+
+impl CovarianceEstimator {
+    pub fn new(alpha: f64, n_assets: usize) -&gt; Self {
+        Self {
+            alpha,
+            n_assets,
+            means: vec![0.0; n_assets],
+            covariance: vec![vec![0.0; n_assets]; n_assets],
+            n_obs: 0,
+        }
+    }
+
+    pub fn update(&amp;mut self, returns: &amp;[f64]) {
+        assert_eq!(returns.len(), self.n_assets);
+        self.n_obs += 1;
+        if self.n_obs == 1 {
+            self.means = returns.to_vec();
+            return;
+        }
+        let deltas: Vec&lt;f64&gt; = returns.iter()
+            .zip(self.means.iter())
+            .map(|(r, m)| r - m)
+            .collect();
+        for i in 0..self.n_assets {
+            self.means[i] += self.alpha * deltas[i];
+        }
+        for i in 0..self.n_assets {
+            for j in 0..self.n_assets {
+                self.covariance[i][j] = (1.0 - self.alpha)
+                    * (self.covariance[i][j]
+                        + self.alpha * deltas[i] * deltas[j]);
+            }
+        }
+    }
+
+    pub fn means(&amp;self) -&gt; &amp;[f64] { &amp;self.means }
+    pub fn covariance(&amp;self) -&gt; &amp;[Vec&lt;f64&gt;] { &amp;self.covariance }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="var-as-a-derived-constraint"><a class="header" href="#var-as-a-derived-constraint">VaR as a Derived Constraint</a></h3>
+<p>95% 1-day VaR must not exceed 5% of portfolio per position, 10% portfolio-wide (accounting for correlations via the covariance matrix). VaR is estimated from trailing 30-day realized volatility scaled by position size.</p>
+<p>VaR acts as a ceiling on the Kelly fraction. In practice, it binds for high-volatility assets where Kelly suggests a large fraction but the tail risk is unacceptable. For stablecoin pairs, VaR rarely constrains. For long-tail tokens with 100%+ annualized vol, VaR almost always binds.</p>
+<p>Under the ergodicity framework, VaR constraints are consequences of the growth rate requirement, not independent rules. The maximum drawdown before <code>g</code> becomes unrecoverable given remaining lifespan <code>T</code> is:</p>
+<pre><code>max_drawdown = 1 - exp(-g * T)
+</code></pre>
+<p>A Golem with <code>g = 0.001</code> per tick and 10,000 remaining ticks tolerates a 99.995% drawdown. A Golem with <code>g = 0.0001</code> and 100 remaining ticks tolerates only ~1%. The numbers come from the math, not from intuition.</p>
+<h3 id="lp-specific-sizing-via-lvr"><a class="header" href="#lp-specific-sizing-via-lvr">LP-Specific Sizing via LVR</a></h3>
+<p>For liquidity provision positions, the traditional win/loss framework doesn’t apply. Expected loss is modeled via Loss Versus Rebalancing [MILIONIS-2022]:</p>
+<pre><code>LVR = sigma^2 / (8 * fee_tier) per block
+</code></pre>
+<p>Where <code>sigma</code> is the asset’s per-block volatility and <code>fee_tier</code> is the pool’s fee rate. LVR replaces the loss-side estimate in the Kelly formula. A pool where LVR exceeds fee income has negative expected value – the Golem should not provide liquidity there regardless of Kelly output.</p>
+<p>For concentrated liquidity positions (Uniswap V3/V4), the range width matters. Tighter ranges amplify both fee income and LVR. The sizing engine treats each LP position as equivalent to a leveraged bet where the leverage factor is <code>tickRange_full / tickRange_position</code>. A position concentrated to 10% of full range is roughly 10x leveraged, and its Kelly fraction is divided by 10 accordingly.</p>
+<p>Correlated positions interact. Two LP positions in pools sharing a common token (e.g., ETH/USDC and ETH/DAI) have correlated LVR. The sizing engine treats the combined LVR exposure as a single position for VaR purposes, preventing circumvention of position size limits by splitting across correlated pools.</p>
+<h3 id="risk-budgeting"><a class="header" href="#risk-budgeting">Risk Budgeting</a></h3>
+<p>Total portfolio growth rate must remain positive. Individual positions can have negative <code>g</code> if the portfolio <code>g</code> is positive (diversification benefit). The constraint <code>g_portfolio &gt; g_min</code> replaces arbitrary drawdown limits. Drawdown limits become derived quantities that depend on the Golem’s growth rate and remaining lifespan.</p>
+<h3 id="heartbeat-integration"><a class="header" href="#heartbeat-integration">Heartbeat Integration</a></h3>
+<p>The ergodicity metrics feed into the 9-step heartbeat pipeline:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Heartbeat Step</th><th>Ergodicity Role</th></tr>
+</thead>
+<tbody>
+<tr><td>Step 1 (OBSERVE)</td><td>Collect return data for <code>g</code> estimation</td></tr>
+<tr><td>Step 3 (ANALYZE)</td><td>Compute <code>g</code>, <code>Delta</code>, updated Kelly fractions</td></tr>
+<tr><td>Step 4 (GATE)</td><td>Reject strategies where <code>g &lt; 0</code> or <code>Delta</code> exceeds threshold</td></tr>
+<tr><td>Step 5 (SIMULATE)</td><td>Project portfolio <code>g</code> under proposed trades</td></tr>
+<tr><td>Step 6 (VALIDATE)</td><td>Verify post-trade <code>g</code> remains above <code>g_min</code></td></tr>
+<tr><td>Step 9 (REFLECT)</td><td>Update rolling estimates, recalibrate mortality scalars</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="4-layer-3--adaptive-guardrails"><a class="header" href="#4-layer-3--adaptive-guardrails">4. Layer 3 – Adaptive Guardrails</a></h2>
+<p>Operational confidence modeled as a Beta distribution. This is distinct from the per-trade confidence in Layer 2 – this tracks the Golem’s overall operational competence across all activities.</p>
+<h3 id="bayesian-confidence"><a class="header" href="#bayesian-confidence">Bayesian Confidence</a></h3>
+<p>Prior: <code>Beta(2, 2)</code> – mildly uncertain, centered at 0.5.</p>
+<p>Update rules:</p>
+<ul>
+<li>Successful operation: <code>Beta(alpha + 1, beta)</code></li>
+<li>Failed operation: <code>Beta(alpha, beta + 1)</code></li>
+</ul>
+<p>Confidence score = <code>alpha / (alpha + beta)</code> (posterior mean).</p>
+<p>“Success” and “failure” are defined by outcome, not by profit. A trade that executed correctly but lost money is a success (the risk engine worked). A trade that failed to execute, hit unexpected slippage, or triggered a revert is a failure (something in the pipeline broke).</p>
+<h3 id="regime-modulation"><a class="header" href="#regime-modulation">Regime Modulation</a></h3>
+<p>During volatile markets (realized volatility &gt; 2x 30-day average), confidence decays faster. Failed operations multiply the beta increment by 1.5 instead of 1.0. The intuition: failures during volatile periods are more likely to reflect systematic issues rather than bad luck.</p>
+<p>During drawdowns exceeding 10% of peak portfolio value, beta increments are multiplied by 2.0. The Golem should become more cautious when it’s losing capital, not less.</p>
+<h3 id="staged-deployment"><a class="header" href="#staged-deployment">Staged Deployment</a></h3>
+<p>New strategies never start at full size. They graduate through four stages:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Stage</th><th>Confidence Threshold</th><th>Max Position Size</th><th>Min Duration</th></tr>
+</thead>
+<tbody>
+<tr><td>Shadow</td><td>&lt; 0.3</td><td>0% (observe only)</td><td>Until confidence &gt; 0.3</td></tr>
+<tr><td>Micro</td><td>0.3 – 0.5</td><td>2% of portfolio</td><td>48 hours</td></tr>
+<tr><td>Scaled</td><td>0.5 – 0.7</td><td>10% of portfolio</td><td>7 days</td></tr>
+<tr><td>Full</td><td>&gt; 0.7</td><td>Per Kelly/VaR limits</td><td>Ongoing</td></tr>
+</tbody>
+</table>
+</div>
+<p>Progression is not monotonic. A string of failures at the Scaled stage drops confidence below 0.5, and the strategy regresses to Micro. Three consecutive failures at any stage trigger regression to the previous stage regardless of confidence score.</p>
+<p>Shadow mode is particularly important for new Golems. A freshly deployed Golem with no track record starts every strategy in Shadow, watches the market for a while, builds confidence through observation, then graduates to Micro. This prevents the common failure mode of deploying an agent and watching it immediately YOLO into positions.</p>
+<hr>
+<h2 id="5-layer-4--observation"><a class="header" href="#5-layer-4--observation">5. Layer 4 – Observation</a></h2>
+<p>Passive monitoring that doesn’t block actions directly but feeds into the Daimon’s emotional state (Section 7) and generates alerts for the owner.</p>
+<h3 id="portfolio-health-score"><a class="header" href="#portfolio-health-score">Portfolio Health Score</a></h3>
+<p>Six components, equally weighted, each normalized to [0, 1]:</p>
+<ol>
+<li><strong>Diversification</strong>: Herfindahl index of position sizes. <code>H = sum(w_i^2)</code> where <code>w_i</code> is the weight of position <code>i</code>. Target: H &lt; 0.3. Score = <code>max(0, 1 - H/0.3)</code>.</li>
+<li><strong>Liquidity</strong>: Fraction of portfolio in positions with &gt; $100K daily volume. Score = fraction directly.</li>
+<li><strong>Correlation</strong>: Maximum pairwise correlation among held positions, trailing 30 days. Target: max correlation &lt; 0.7. Score = <code>max(0, 1 - maxCorr/0.7)</code>.</li>
+<li><strong>Drawdown</strong>: Current drawdown as fraction of max allowed. Score = <code>1 - currentDrawdown/maxDrawdownPct</code>.</li>
+<li><strong>Win rate</strong>: Rolling 30-day win rate across all closed positions. Score = win rate directly (capped at 1.0).</li>
+<li><strong>Sharpe ratio</strong>: Rolling 30-day Sharpe, annualized. Target &gt; 1.0. Score = <code>min(1, sharpe)</code>.</li>
+</ol>
+<p>Composite health = arithmetic mean of all six. A score below 0.4 triggers an observation alert. Below 0.2 triggers a distress signal to the owner.</p>
+<h3 id="behavioral-anomaly-detection"><a class="header" href="#behavioral-anomaly-detection">Behavioral Anomaly Detection</a></h3>
+<p>Five boolean signals, each flagged independently:</p>
+<ol>
+<li><strong>Churn</strong>: Trade frequency exceeds 2x the 30-day rolling average. May indicate the Golem is thrashing between strategies.</li>
+<li><strong>Acceleration</strong>: Position size increased by &gt; 50% between consecutive trades in the same asset. May indicate doubling-down behavior.</li>
+<li><strong>Contraperformance</strong>: Adding to losing positions without an updated thesis in the reasoning trace. Distinguishes between conviction averaging and denial.</li>
+<li><strong>Heuristic deviation</strong>: Actions that contradict heuristics stored in PLAYBOOK.md (the Golem’s own learned rules). The Golem wrote the heuristic, then violated it.</li>
+<li><strong>Execution degradation</strong>: Realized slippage exceeding 2x expected slippage on the last 5 trades. May indicate market microstructure problems or stale price data.</li>
+</ol>
+<p>Two or more simultaneous flags trigger an observation alert. The alert doesn’t block the action – it modulates the Daimon’s arousal (see Section 7) and logs the event for owner review.</p>
+<p>Why not block on anomalies? Because anomaly detection has a high false-positive rate. A Golem legitimately rebalancing across several pools after a major market move will trigger Churn. A Golem averaging into a dip with a clear updated thesis should trigger Acceleration but not be stopped. The observation layer’s job is to raise salience, not to veto. The Daimon’s emotional response to the alert (heightened arousal, reduced pleasure) will naturally tighten sizing through the Section 7 coupling without hard-blocking potentially correct actions.</p>
+<hr>
+<h2 id="6-layer-5--defi-threats"><a class="header" href="#6-layer-5--defi-threats">6. Layer 5 – DeFi Threats</a></h2>
+<p>Protocol-level risks specific to on-chain execution. These checks run immediately before transaction submission, after all other layers have approved and sized the action.</p>
+<h3 id="oracle-verification"><a class="header" href="#oracle-verification">Oracle Verification</a></h3>
+<p>Two independent price sources must agree before any trade executes:</p>
+<ul>
+<li><strong>TWAP</strong>: 5-minute on-chain time-weighted average price from Uniswap V3/V4 pools.</li>
+<li><strong>Chainlink</strong>: Latest round data from the corresponding Chainlink price feed.</li>
+</ul>
+<p>Deviation thresholds:</p>
+<ul>
+<li>&gt; 2% deviation between TWAP and Chainlink: warning logged, trade proceeds with reduced size (50%).</li>
+<li>&gt; 5% deviation: trade blocked. Oracle disagreement at this level suggests manipulation or extreme volatility.</li>
+</ul>
+<p>Staleness check: If the Chainlink feed’s last update is older than 1 hour (heartbeat exceeded), the feed is marked stale. The Golem falls back to TWAP only, with a mandatory 25% position size reduction as compensation for single-source risk.</p>
+<h3 id="mev-protection"><a class="header" href="#mev-protection">MEV Protection</a></h3>
+<p>Three mitigation strategies, applied based on trade size relative to pool liquidity:</p>
+<ul>
+<li><strong>Trade splitting</strong>: Any trade exceeding 0.5% of pool liquidity is split into 3-5 sub-trades with 2-block spacing between submissions. This reduces sandwich attack profitability below the attacker’s gas costs for most pools.</li>
+<li><strong>L2 sequencer ordering</strong>: On Base (the primary deployment chain), the sequencer provides FIFO ordering, which eliminates most frontrunning. The Golem prefers Base for large trades when the asset is available there.</li>
+<li><strong>Private mempool</strong>: Trades exceeding $10K in notional value are routed through Flashbots Protect (or equivalent) to avoid public mempool exposure entirely.</li>
+</ul>
+<h3 id="composability-risk"><a class="header" href="#composability-risk">Composability Risk</a></h3>
+<p>Smart contract interaction risks that the Golem must defend against:</p>
+<ul>
+<li><strong>Flash loan detection</strong>: If the current transaction context originated from a flash loan callback (detectable via call depth and originator analysis), all state-changing operations are blocked. Flash loans are a common vector for price manipulation attacks.</li>
+<li><strong>Reentrancy guard</strong>: The Golem never calls external contracts during state-changing operations on its own vault. All external calls happen in a read-then-write pattern with checks-effects-interactions ordering.</li>
+<li><strong>Price impact simulation</strong>: Every trade is simulated via <code>eth_call</code> before submission. If simulated price impact exceeds 1% of the quoted price, the trade is rejected and re-quoted with smaller size.</li>
+</ul>
+<h3 id="governance-and-upgrade-risk"><a class="header" href="#governance-and-upgrade-risk">Governance and Upgrade Risk</a></h3>
+<p>Two additional threat vectors that don’t fit neatly into oracle/MEV/composability:</p>
+<ul>
+<li><strong>Token contract upgrades</strong>: If a held token uses a proxy pattern (UUPS, TransparentProxy, or Beacon), the Golem monitors the proxy admin for pending upgrades. A pending upgrade on a held token triggers a warning. An executed upgrade triggers automatic position review – the Golem re-evaluates the token’s contract code before any new trades.</li>
+<li><strong>Pool parameter changes</strong>: Uniswap V4 hooks can modify pool behavior. If a pool’s hook contract is upgraded or its parameters change (detected via event monitoring), the Golem pauses trading in that pool until it has re-evaluated the hook’s behavior. This prevents a scenario where a hook upgrade introduces adverse extraction that the Golem’s existing strategy doesn’t account for.</li>
+</ul>
+<hr>
+<h2 id="7-daimon-risk-bidirectional-coupling"><a class="header" href="#7-daimon-risk-bidirectional-coupling">7. Daimon-Risk Bidirectional Coupling</a></h2>
+<p>The risk engine and the Daimon (emotional subsystem from 01-cognition.md) are not independent. They influence each other through two feedback channels.</p>
+<h3 id="risk-to-affect"><a class="header" href="#risk-to-affect">Risk to Affect</a></h3>
+<p>Portfolio health score feeds into the OCC appraisal model as an environmental stimulus. The Daimon processes portfolio health the way a human trader processes their P&amp;L – it shifts mood.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Convert portfolio health into a PAD (Pleasure-Arousal-Dominance) delta
+/// for the Daimon emotional subsystem.
+///
+/// High health: slight pleasure increase, stable arousal.
+/// Low health: anxiety — reduced pleasure, elevated arousal.
+/// Very low health: threat response — dominance drops.
+pub fn risk_to_affect(portfolio_health: f64) -&gt; PadDelta {
+    PadDelta {
+        pleasure: (portfolio_health - 0.5) * 0.2,
+        arousal: if portfolio_health &lt; 0.3 { 0.3 } else { 0.0 },
+        dominance: if portfolio_health &gt; 0.7 { 0.1 } else { -0.1 },
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>This is a gentle nudge, not a hard override. The PAD delta is small (max 0.3 on any axis). But it accumulates. A Golem that watches its portfolio health degrade over several cycles will drift toward anxiety, which in turn triggers the Affect-to-Risk channel below.</p>
+<h3 id="affect-to-risk"><a class="header" href="#affect-to-risk">Affect to Risk</a></h3>
+<p>The Daimon’s current emotional state modulates risk parameters. Four mood quadrants, four responses:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mood</th><th>PAD Region</th><th>Position Sizing Modifier</th></tr>
+</thead>
+<tbody>
+<tr><td>Anxiety</td><td>Low pleasure, high arousal</td><td>-20% (reduce exposure)</td></tr>
+<tr><td>Excitement</td><td>High pleasure, high arousal</td><td>-10% (prevent hot-hand bias)</td></tr>
+<tr><td>Depression</td><td>Low pleasure, low arousal</td><td>No change (conservative default)</td></tr>
+<tr><td>Confidence</td><td>High pleasure, low arousal</td><td>No change (baseline)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Both negative-affect states reduce sizing, but for different reasons. Anxiety reduces sizing because the Golem is registering threat signals. Excitement reduces sizing because euphoria correlates with overconfidence in both human and artificial traders – the hot-hand fallacy.</p>
+<p>Neither positive state increases sizing beyond the Kelly/VaR baseline. The risk engine has a negativity bias by design: emotions can make you more cautious, never more aggressive.</p>
+<p>This follows Damasio’s Somatic Marker Hypothesis [DAMASIO-2005]: emotional states encode compressed information about past outcomes. Suppressing them (as most trading bots do) discards useful signal. The Golem instead treats affect as a Bayesian prior on environmental conditions – anxiety means “conditions similar to past losses,” which is genuinely informative for position sizing.</p>
+<hr>
+<h2 id="8-implementation"><a class="header" href="#8-implementation">8. Implementation</a></h2>
+<p>The risk engine is a Rust module in the <code>golem-safety</code> crate, running in-process with the Golem runtime. It is not part of the inference gateway (see 13-runtime-extensions.md). The inference gateway handles token generation and tool dispatch; risk assessment happens before and after tool calls in the Rust orchestration layer.</p>
+<p>Write-tool invocations require a <code>Capability&lt;T&gt;</code> token (see <code>07-safety.md</code> §2) that is consumed (moved) on use. The risk engine is the sole authority that mints these tokens. Even if the LLM is fully compromised, it cannot execute a write tool without a valid capability — Rust’s ownership system prevents forgery and reuse at compile time.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+
+/// The five-layer risk engine. Evaluates proposed actions through
+/// all layers and produces a sized, approved-or-blocked assessment.
+///
+/// Write tools require a Capability&lt;T&gt; token to execute.
+/// The risk engine is the only code path that can mint capabilities
+/// (via pub(crate) constructor). This is the bridge between the
+/// risk architecture and the capability-gated tool system.
+pub struct RiskEngine {
+    hard_shields: HardShields,
+    kelly: KellyEngine,
+    guardrails: AdaptiveGuardrails,
+    observer: PortfolioObserver,
+    defi_threats: DeFiThreatChecker,
+}
+
+/// Result of passing an action through all five layers.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskAssessment {
+    pub approved: bool,
+    pub adjusted_size: f64,
+    pub layers: Vec&lt;LayerResult&gt;,
+    pub warnings: Vec&lt;String&gt;,
+    pub blocks: Vec&lt;String&gt;,
+}
+
+/// Result from a single risk layer.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LayerResult {
+    pub layer: u8,  // 1–5
+    pub passed: bool,
+    pub details: String,
+    pub adjustment: Option&lt;f64&gt;,
+}
+
+impl RiskEngine {
+    /// Assess a proposed action through all five layers, outermost first.
+    /// If any layer blocks, execution stops immediately.
+    pub async fn assess(
+        &amp;self,
+        action: &amp;ProposedAction,
+        state: &amp;PortfolioState,
+    ) -&gt; Result&lt;RiskAssessment&gt; {
+        let mut assessment = RiskAssessment {
+            approved: true,
+            adjusted_size: action.requested_size,
+            layers: Vec::with_capacity(5),
+            warnings: Vec::new(),
+            blocks: Vec::new(),
+        };
+
+        // Layer 1: Hard Shields (on-chain PolicyCage check via Alloy)
+        let l1 = self.hard_shields.check(action, state).await?;
+        assessment.layers.push(l1.clone());
+        if !l1.passed {
+            assessment.approved = false;
+            assessment.blocks.push(l1.details.clone());
+            return Ok(assessment);
+        }
+
+        // Layer 2: Position Sizing (Kelly + VaR)
+        let l2 = self.kelly.size(action, state);
+        assessment.adjusted_size = l2.adjustment.unwrap_or(assessment.adjusted_size);
+        assessment.layers.push(l2);
+
+        // Layer 3: Adaptive Guardrails (Bayesian confidence + staging)
+        let l3 = self.guardrails.check(action, state);
+        assessment.layers.push(l3.clone());
+        if !l3.passed {
+            assessment.approved = false;
+            assessment.blocks.push(l3.details.clone());
+            return Ok(assessment);
+        }
+
+        // Layer 4: Observation (anomaly detection, health score)
+        let l4 = self.observer.check(action, state);
+        assessment.layers.push(l4.clone());
+        assessment.warnings.extend(l4.details.lines().map(String::from));
+
+        // Layer 5: DeFi Threats (oracle verification, MEV, composability)
+        let l5 = self.defi_threats.check(action, state).await?;
+        assessment.layers.push(l5.clone());
+        if !l5.passed {
+            assessment.approved = false;
+            assessment.blocks.push(l5.details.clone());
+        }
+
+        Ok(assessment)
+    }
+
+    /// Update Layer 3's Beta distribution with an outcome.
+    pub fn update_confidence(&amp;mut self, outcome: &amp;ActionOutcome) {
+        self.guardrails.update(outcome);
+    }
+
+    /// Run Layer 4's observation checks and return portfolio health.
+    pub fn get_portfolio_health(&amp;self, state: &amp;PortfolioState) -&gt; PortfolioHealth {
+        self.observer.compute_health(state)
+    }
+
+    /// Get current deployment stage from Layer 3.
+    pub fn get_deployment_stage(&amp;self) -&gt; DeploymentStage {
+        self.guardrails.current_stage()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="capability-token-integration"><a class="header" href="#capability-token-integration">Capability Token Integration</a></h3>
+<p>When the risk engine approves a write action, it mints a <code>Capability&lt;T&gt;</code> token scoped to the specific tool, value limit, and expiry tick. The tool consumes (moves) this token on execution. If the risk engine blocks the action, no capability is minted and the tool physically cannot execute.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl RiskEngine {
+    /// Mint a capability token for an approved write action.
+    /// Only callable after assess() returns approved=true.
+    /// The capability is scoped to a single tool type and value limit.
+    pub fn mint_capability&lt;T: WriteTool&gt;(
+        &amp;self,
+        assessment: &amp;RiskAssessment,
+        current_tick: u64,
+    ) -&gt; Option&lt;Capability&lt;T&gt;&gt; {
+        if !assessment.approved {
+            return None;
+        }
+        // pub(crate) constructor — only golem-safety can create these
+        Some(Capability::new(
+            assessment.adjusted_size,
+            current_tick + 3, // valid for 3 ticks
+            self.hard_shields.policy_hash(),
+            uuid::Uuid::new_v4().to_string(),
+        ))
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="taint-tracking-integration"><a class="header" href="#taint-tracking-integration">Taint Tracking Integration</a></h3>
+<p>The risk engine’s Layer 1 (Hard Shields) performs on-chain PolicyCage reads via Alloy. The returned data is wrapped in <code>TaintedString</code> with <code>UntrustedExternal</code> taint labels (see <code>07-safety.md</code> §3) to prevent unvalidated on-chain state from flowing directly into strategy parameters without validation.</p>
+<p>Execution flow:</p>
+<ol>
+<li>Golem’s reasoning loop proposes an action (trade, LP position, rebalance).</li>
+<li><code>assess()</code> runs all five layers sequentially. If any layer sets <code>approved = false</code>, execution stops and no capability token is minted.</li>
+<li><code>adjusted_size</code> reflects the cumulative effect of all layer modifications (Kelly sizing, guardrail staging, affect modulation, VaR capping).</li>
+<li>If approved, <code>mint_capability()</code> produces a single-use <code>Capability&lt;T&gt;</code> token scoped to the adjusted value.</li>
+<li>The action executes at the adjusted size, consuming the capability.</li>
+<li><code>update_confidence()</code> is called with the outcome, updating Layer 3’s Beta distribution.</li>
+<li><code>get_portfolio_health()</code> runs Layer 4’s observation checks, feeding results back to the Daimon.</li>
+</ol>
+<p>State persistence: Layer 2 and Layer 3 state (Beta distribution parameters, deployment stage, trade history) is stored in the Grimoire alongside other Golem memory. This means risk state survives restarts and is recoverable from the knowledge graph.</p>
+<h3 id="layer-interaction-example"><a class="header" href="#layer-interaction-example">Layer Interaction Example</a></h3>
+<p>A concrete walkthrough. The Golem wants to open a new ETH/USDC LP position worth $5,000:</p>
+<ol>
+<li><strong>Layer 1 (Hard Shields)</strong>: ETH and USDC are in <code>approvedAssets</code>. Current position count is 3, below max 5. $5K is 12% of a $42K portfolio, below the 25% cap. Current drawdown is 4%, well under max. No phase block. Pass.</li>
+<li><strong>Layer 2 (Position Sizing)</strong>: ReturnEstimator for ETH/USDC LP shows mu = 0.0003/tick, sigma^2 = 0.0008. Full Kelly: f* = 0.0003/0.0008 = 0.375 (37.5%). Mortality scalar: 8,200 remaining ticks / 10,000 reference = 0.82. Uncertainty scalar: estimation var 0.0004, so 1/(1 + 0.0004/0.0008) = 0.67. Adjusted fraction: 0.375 * 0.82 * 0.67 = 0.206 (20.6%). VaR ceiling at 5% per position binds: 30-day ETH vol at 65% annualized, position VaR would be 13.4% at 20.6%. Clamped to 3.2%. Adjusted size: $1,344 (3.2% of $42K), down from requested $5,000. Growth rate g = 0.0003 - 0.0004 = -0.0001 (slightly negative for this position alone, acceptable if portfolio g remains positive).</li>
+<li><strong>Layer 3 (Adaptive Guardrails)</strong>: LP strategy operational confidence at Beta(18, 6), score = 0.75. Stage = Full. No size reduction from guardrails.</li>
+<li><strong>Layer 4 (Observation)</strong>: Herfindahl = 0.28, liquidity score = 0.9, max correlation = 0.45, drawdown = 0.16, win rate = 0.63, Sharpe = 1.2. Health = 0.77. No anomaly flags. No alert.</li>
+<li><strong>Layer 5 (DeFi Threats)</strong>: TWAP vs Chainlink deviation = 0.3%. Under 2% threshold. Trade size $1,344 is 0.01% of pool liquidity. No splitting needed. Under $10K, no private mempool. Price impact simulation: 0.02%. Pass.</li>
+</ol>
+<p>Result: approved at $1,344, down from the requested $5,000. The Golem proceeds with the smaller position. No warnings, no blocks.</p>
+<hr>
+<h2 id="9-events-emitted"><a class="header" href="#9-events-emitted">9. Events Emitted</a></h2>
+<p>Risk engine events track every layer evaluation, capability minting, and taint violation.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>risk:assessment_completed</code></td><td>All five layers evaluated</td><td><code>{ approved, adjustedSize, layerResults, warnings }</code></td></tr>
+<tr><td><code>risk:hard_shield_blocked</code></td><td>Layer 1 rejects an action</td><td><code>{ constraint, action, reason }</code></td></tr>
+<tr><td><code>risk:position_sized</code></td><td>Layer 2 adjusts size</td><td><code>{ requestedSize, adjustedSize, kellyFraction, mortalityScalar, uncertaintyScalar, growthRate, ergodicityGap }</code></td></tr>
+<tr><td><code>risk:stage_transition</code></td><td>Layer 3 stage changes</td><td><code>{ fromStage, toStage, confidence, reason }</code></td></tr>
+<tr><td><code>risk:anomaly_detected</code></td><td>Layer 4 flags anomaly</td><td><code>{ flags, portfolioHealth }</code></td></tr>
+<tr><td><code>risk:defi_threat_blocked</code></td><td>Layer 5 rejects an action</td><td><code>{ threatType, details }</code></td></tr>
+<tr><td><code>risk:capability_minted</code></td><td>Write action approved</td><td><code>{ permitId, valueLimit, expiresTick, toolType }</code></td></tr>
+<tr><td><code>risk:capability_consumed</code></td><td>Write tool executed</td><td><code>{ permitId, actualValue }</code></td></tr>
+<tr><td><code>risk:taint_violation</code></td><td>TaintedString blocked at sink</td><td><code>{ label, sink, sourceDescription }</code></td></tr>
+<tr><td><code>risk:drawdown_warning</code></td><td>Drawdown exceeds 80% of max</td><td><code>{ currentDrawdown, maxDrawdown, positionsToReduce }</code></td></tr>
+<tr><td><code>risk:forced_liquidation</code></td><td>Drawdown hits 100% of max</td><td><code>{ drawdown, positionsClosed }</code></td></tr>
+<tr><td><code>risk:growth_rate_negative</code></td><td>Portfolio g drops below zero</td><td><code>{ growthRate, ergodicityGap, positions }</code></td></tr>
+<tr><td><code>risk:barbell_rebalance</code></td><td>Exploration/conservative ratio adjusted</td><td><code>{ newExplorationRatio, trigger, convexityEstimate }</code></td></tr>
+<tr><td><code>risk:knowledge_harvested</code></td><td>Stress-period Grimoire entry created</td><td><code>{ polarity, originVolatility, residualMagnitude }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="10-antifragile-via-negativa"><a class="header" href="#10-antifragile-via-negativa">10. Antifragile Via Negativa</a></h2>
+<p>The five-layer architecture is defensive: it protects the Golem from catastrophic loss. When stress rises, risk limits tighten. When mortality clocks tick faster, position sizes shrink. This is resilient design. A resilient Golem absorbs shocks and returns to baseline. But the Golem that enters a crisis is, at best, the same Golem that exits it. The crisis produced nothing [TALEB-2012].</p>
+<p>An antifragile Golem gets stronger from stress. DeFi crises are the most information-dense periods a Golem will experience: correlations break, liquidity vanishes, oracle feeds diverge, AMM curves produce returns no backtest predicted. Every one of these events is a surprise, and every surprise is information. The antifragile architecture harvests this information instead of discarding it.</p>
+<h3 id="antifragility-as-convexity"><a class="header" href="#antifragility-as-convexity">Antifragility as Convexity</a></h3>
+<p>A system is antifragile if its response function is convex in the perturbation. For Golems, the perturbation is market volatility <code>sigma(t)</code> and the response is knowledge acquisition rate <code>L(sigma)</code>. The system is antifragile if:</p>
+<pre><code>L(sigma + delta) + L(sigma - delta) &gt; 2 * L(sigma)
+</code></pre>
+<p>By Jensen’s inequality [JENSEN-1906], if <code>L</code> is convex in sigma and sigma is drawn from any distribution over the Golem’s lifetime:</p>
+<pre><code>E[L(sigma)] &gt;= L(E[sigma])
+</code></pre>
+<p>A Golem living through boom-bust cycles learns more, in expectation, than one living through perpetual calm at the same average volatility.</p>
+<h3 id="barbell-allocation"><a class="header" href="#barbell-allocation">Barbell Allocation</a></h3>
+<p>The barbell partitions the portfolio into two firewalled budgets:</p>
+<ul>
+<li><strong>Conservative (90%)</strong>: Full five-layer risk stack, ergodicity-optimal Kelly sizing, proven strategies. This portion survives any stress event.</li>
+<li><strong>Exploration (10%)</strong>: Separate budget, curiosity-driven strategy selection, wider risk limits. Only Layer 1 (Hard Shields) applies as backstop. This portion harvests information from stress.</li>
+</ul>
+<p>The firewall is the key property: exploration losses cannot affect the conservative allocation. The 10% exploration budget is an option – limited downside (at most 10% of capital), unbounded upside (the value of what might be discovered). Options have positive convexity by construction, and their value increases with volatility (the Vega effect).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Barbell budget partition. Conservative allocation uses full risk stack.
+/// Exploration allocation bypasses Kelly and anomaly detection.
+#[derive(Debug, Clone)]
+pub struct BarbellConfig {
+    pub conservative_ratio: f64,  // Default: 0.90
+    pub exploration_ratio: f64,   // Default: 0.10
+    pub min_exploration: f64,     // Loop 3 floor: 0.05
+    pub max_exploration: f64,     // Loop 3 ceiling: 0.20
+}
+
+/// Tracks exploration budget performance and knowledge yield.
+pub struct BarbellAllocator {
+    config: BarbellConfig,
+    vault_balance: f64,
+    exploration_pnl: f64,
+    exploration_entries: u64,
+}
+
+impl BarbellAllocator {
+    pub fn conservative_budget(&amp;self) -&gt; f64 {
+        self.vault_balance * self.config.conservative_ratio
+    }
+
+    pub fn exploration_budget(&amp;self) -&gt; f64 {
+        self.vault_balance * self.config.exploration_ratio
+    }
+
+    /// Knowledge entries per USDC lost. Higher is better.
+    /// Used by Loop 3 to decide whether to rotate exploration strategy.
+    pub fn exploration_efficiency(&amp;self) -&gt; f64 {
+        if self.exploration_pnl &gt;= 0.0 { return f64::INFINITY; }
+        let cost = self.exploration_pnl.abs();
+        if cost &lt; 1e-6 { return f64::INFINITY; }
+        self.exploration_entries as f64 / cost
+    }
+
+    /// Loop 3 adjustment: +1% per step, clamped to [min, max].
+    pub fn adjust_ratio(&amp;mut self, direction: f64) {
+        let step = 0.01 * direction.signum();
+        let new_explore = (self.config.exploration_ratio + step)
+            .clamp(self.config.min_exploration, self.config.max_exploration);
+        self.config.exploration_ratio = new_explore;
+        self.config.conservative_ratio = 1.0 - new_explore;
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="via-negativa-k--knowledge"><a class="header" href="#via-negativa-k--knowledge">Via Negativa: K- Knowledge</a></h3>
+<p>Two knowledge classes exist in the Grimoire:</p>
+<ul>
+<li><strong>K+ (positive)</strong>: “Strategy X works in condition Y.” Success modes shift with market microstructure, competition, and capital flows.</li>
+<li><strong>K- (negative)</strong>: “Strategy X fails in condition Z.” Failure modes are properties of mechanism design and change slowly. The reason providing liquidity with a lagging oracle loses money is structural – the information asymmetry is baked into the protocol’s architecture.</li>
+</ul>
+<p>K- has a longer half-life than K+ because mechanism design changes slowly. K- entries decay at half the rate of K+ entries:</p>
+<pre><code>demurrage(K-) = base_demurrage * 0.5
+demurrage(K+) = base_demurrage * 1.0
+</code></pre>
+<p>Stress periods generate K- at a higher rate than calm periods, because stress is when things break. A liquidity crisis that drains three pool types in sequence generates three durable K- entries (“this pool type fails under correlated selling”) that remain valid for the protocol’s lifetime.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Knowledge polarity: what kind of lesson does this entry encode?
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum KnowledgePolarity {
+    Positive, // "do X in condition Y"
+    Negative, // "do NOT do X in condition Z"
+}
+
+/// Grimoire entry with antifragile metadata.
+#[derive(Debug, Clone)]
+pub struct AntifragileEntry {
+    pub content: String,
+    pub polarity: KnowledgePolarity,
+    pub stress_origin: bool,
+    pub origin_volatility: f64,
+    pub residual_magnitude: f64,
+    pub demurrage: f64,
+    pub created_at: u64,
+}
+
+/// Stress-aware knowledge management configuration.
+pub struct StressKnowledgeConfig {
+    pub base_demurrage: f64,                // Default: 0.001
+    pub negative_demurrage_factor: f64,     // Default: 0.5 (K- decays half as fast)
+    pub stress_volatility_threshold: f64,   // Default: 0.05
+    pub base_write_rate: f64,               // Entries/tick during calm. Default: 1.0
+    pub write_rate_alpha: f64,              // Sensitivity to volatility. Default: 2.0
+    pub reference_volatility: f64,          // Calm baseline. Default: 0.02
+}
+
+impl StressKnowledgeConfig {
+    /// Write rate budget scales with volatility:
+    /// write_rate = base * (1 + alpha * (sigma/sigma_ref - 1))
+    pub fn write_rate(&amp;self, current_volatility: f64) -&gt; f64 {
+        let ratio = current_volatility / self.reference_volatility;
+        self.base_write_rate
+            * (1.0 + self.write_rate_alpha * (ratio - 1.0).max(0.0))
+    }
+
+    pub fn demurrage_for(&amp;self, polarity: KnowledgePolarity) -&gt; f64 {
+        match polarity {
+            KnowledgePolarity::Positive =&gt; self.base_demurrage,
+            KnowledgePolarity::Negative =&gt; {
+                self.base_demurrage * self.negative_demurrage_factor
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Over many stress cycles, the Grimoire accumulates a growing body of durable “don’t do this” entries that form an immune system against known failure modes. Each crisis makes the next crisis less dangerous.</p>
+<h3 id="convexity-monitoring"><a class="header" href="#convexity-monitoring">Convexity Monitoring</a></h3>
+<p>A CorticalState signal on the <code>TaCorticalExtension</code> (see <a href="./18-cortical-state.html">18-cortical-state.md</a>) tracks whether the Golem is actually antifragile:</p>
+<pre><code>learning_convexity: AtomicU32  // f32, [-1.0, 1.0]
+</code></pre>
+<p>Positive values: antifragile (learning more during stress). Negative: fragile (learning less during stress). Zero: resilient (learning rate independent of stress).</p>
+<p>The estimator fits a quadratic <code>L = a * sigma^2 + b * sigma + c</code> over a rolling window of <code>(volatility, learning_rate)</code> pairs. The coefficient <code>a</code> is the convexity estimate.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Rolling estimator for learning function convexity L(sigma).
+/// Fits L = a*sigma^2 + b*sigma + c; reports `a`.
+pub struct ConvexityEstimator {
+    window: VecDeque&lt;(f64, f64)&gt;, // (volatility, learning_rate)
+    max_size: usize,               // Default: 500
+}
+
+impl ConvexityEstimator {
+    pub fn push(&amp;mut self, volatility: f64, learning_rate: f64) {
+        if self.window.len() == self.max_size {
+            self.window.pop_front();
+        }
+        self.window.push_back((volatility, learning_rate));
+    }
+
+    /// Positive a = antifragile, negative = fragile, near-zero = resilient.
+    /// Returns None with fewer than 10 observations.
+    pub fn estimate_convexity(&amp;self) -&gt; Option&lt;f64&gt; {
+        if self.window.len() &lt; 10 { return None; }
+
+        // OLS for quadratic fit via normal equations (X^T X) beta = X^T y.
+        let mut xtx = [[0.0_f64; 3]; 3];
+        let mut xty = [0.0_f64; 3];
+
+        for &amp;(sigma, l) in &amp;self.window {
+            let row = [sigma * sigma, sigma, 1.0];
+            for i in 0..3 {
+                for j in 0..3 { xtx[i][j] += row[i] * row[j]; }
+                xty[i] += row[i] * l;
+            }
+        }
+
+        let det = det3(&amp;xtx);
+        if det.abs() &lt; 1e-12 { return None; }
+
+        // Cramer's rule for coefficient a (column 0).
+        let mut m = xtx;
+        for i in 0..3 { m[i][0] = xty[i]; }
+        Some(det3(&amp;m) / det)
+    }
+}
+
+fn det3(m: &amp;[[f64; 3]; 3]) -&gt; f64 {
+    m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
+        - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+        + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
+}
+<span class="boring">}</span></code></pre>
+<h3 id="loop-3-adaptation"><a class="header" href="#loop-3-adaptation">Loop 3 Adaptation</a></h3>
+<p>Loop 3 (meta-learning, days-to-weeks timescale) monitors <code>learning_convexity</code> and adjusts the barbell:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Condition</th><th>Duration</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td><code>learning_convexity &lt; 0</code></td><td>&gt; 48 hours</td><td>Increase exploration ratio by 1% (Golem not exploring enough during stress)</td></tr>
+<tr><td><code>learning_convexity &gt; threshold</code></td><td>&gt; 48 hours</td><td>Decrease exploration ratio toward 10% (already antifragile)</td></tr>
+<tr><td>Exploration budget lost &gt; 50%</td><td>Without proportional K- entries</td><td>Rotate exploration strategy (burning capital without learning)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="cross-clade-antifragility"><a class="header" href="#cross-clade-antifragility">Cross-Clade Antifragility</a></h3>
+<p>When one Golem’s exploration allocation discovers a failure mode and the Golem dies as a result, the K- entry is shared with the Clade via the bloodstain protocol (Styx relay). The Golem’s death is the Clade’s gain. The Clade as a whole is antifragile even if individual members are not: it benefits from the stress that kills its components. This mirrors biological immunity – the immune system learns from pathogens that kill individual cells.</p>
+<hr>
+<h2 id="ergodicity-economics-missing-derivations-and-content"><a class="header" href="#ergodicity-economics-missing-derivations-and-content">Ergodicity Economics: Missing Derivations and Content</a></h2>
+<blockquote>
+<p>Source: <code>innovations/07-ergodicity-economics.md</code></p>
+</blockquote>
+<h3 id="the-state-of-defi-agents"><a class="header" href="#the-state-of-defi-agents">The State of DeFi Agents</a></h3>
+<p>Most autonomous DeFi agents optimize expected value. They calculate expected returns on strategies, pick the highest one, and size positions by fixed fractions or by heuristic risk limits. This makes them systematically over-leveraged for any individual agent’s survival. They are optimizing the ensemble average, but each agent lives in the time average. The result is predictable: high paper returns punctuated by ruin.</p>
+<h3 id="binary-kelly-derivation"><a class="header" href="#binary-kelly-derivation">Binary Kelly Derivation</a></h3>
+<p>For a binary outcome (win b with probability p, lose a with probability 1-p):</p>
+<pre><code>g(f) = p * ln(1 + f * b) + (1 - p) * ln(1 - f * a)
+</code></pre>
+<p>Setting dg/df = 0:</p>
+<pre><code>p * b / (1 + f * b) = (1 - p) * a / (1 - f * a)
+</code></pre>
+<p>Solving for f:</p>
+<pre><code>f* = (p * b - (1 - p) * a) / (a * b)
+</code></pre>
+<p>This is the Kelly criterion. It is exact for binary outcomes, not an approximation. When the expected return p<em>b - (1-p)<em>a is negative, f</em> is negative (meaning: take the other side of the bet, or don’t bet at all). When the expected return is zero, f</em> = 0. The Kelly fraction is always less than the fraction that maximizes expected value (which would be f = 1 whenever E[r] &gt; 0).</p>
+<h3 id="ruin-probability-formula"><a class="header" href="#ruin-probability-formula">Ruin Probability Formula</a></h3>
+<p>For a process with time-average growth rate g and volatility sigma, the probability of hitting a lower barrier W_min starting from W_0 is approximately:</p>
+<pre><code>P(ruin) ~ (W_min / W_0)^(2g / sigma^2)    when g &gt; 0
+</code></pre>
+<p>When g &lt;= 0, ruin probability approaches 1 as T grows. For finite T, lower g means faster convergence to ruin.</p>
+<p>The practical consequence: a Golem with 100 remaining ticks should bet smaller fractions than one with 10,000 remaining ticks. The reason is that the shorter-lived Golem has less time for the law of large numbers to pull the realized growth rate toward its expectation. Variance in the realized growth rate scales as sigma^2 / T, so shorter lifespans mean wider distributions of outcomes and higher ruin probability for any given bet size.</p>
+<h3 id="fractional-kelly-derivation-steps"><a class="header" href="#fractional-kelly-derivation-steps">Fractional Kelly Derivation Steps</a></h3>
+<p>Full Kelly (f = f*) is optimal only when you know mu and sigma exactly. In practice, these are estimated from data. The estimation error inflates the effective variance and can make full Kelly too aggressive.</p>
+<p>If the true parameters are (mu, sigma^2) but the agent estimates (mu_hat, sigma_hat^2) with estimation variance v = Var[mu_hat], the growth rate under the estimated Kelly fraction is:</p>
+<pre><code>g(f*_hat) ~ g(f*) - (f*^2 * v) / 2
+</code></pre>
+<p>The optimal reduction to account for estimation uncertainty is:</p>
+<pre><code>f_adjusted = f* / (1 + v / sigma^2)
+</code></pre>
+<p>This is the “fractional Kelly” result. When estimation variance v is zero, you get full Kelly. When v equals sigma^2 (you’re as uncertain about your estimate as the returns are volatile), you get half Kelly. When v is large relative to sigma^2, you bet almost nothing.</p>
+<p>The combined sizing formula:</p>
+<pre><code>f = f* * mortality_scalar * uncertainty_scalar
+</code></pre>
+<p>where:</p>
+<ul>
+<li>mortality_scalar = min(1, T_remaining / T_reference)</li>
+<li>uncertainty_scalar = 1 / (1 + v / sigma^2)</li>
+</ul>
+<h3 id="risk-budgeting-math"><a class="header" href="#risk-budgeting-math">Risk Budgeting Math</a></h3>
+<p>Total portfolio growth rate must remain positive. Individual positions can have negative g if the portfolio g is positive (diversification benefit). The risk budget is:</p>
+<pre><code>g_portfolio = sum_i f_i * mu_i - (1/2) sum_i sum_j f_i * f_j * Sigma_ij
+</code></pre>
+<p>The constraint g_portfolio &gt; g_min (where g_min is a small positive threshold) replaces arbitrary drawdown limits. Drawdown limits become consequences: the maximum drawdown before g becomes unrecoverable given remaining lifespan T is:</p>
+<pre><code>max_drawdown = 1 - exp(-g * T)
+</code></pre>
+<p>This ties drawdown tolerance directly to the Golem’s remaining life and current growth rate. A Golem with high g and long remaining life can tolerate deeper drawdowns. A Golem near death with low g cannot afford any drawdown at all.</p>
+<h3 id="integration-with-the-7-layer-extension-dag"><a class="header" href="#integration-with-the-7-layer-extension-dag">Integration with the 7-Layer Extension DAG</a></h3>
+<p>The ergodicity metrics feed into the Golem’s 9-step heartbeat:</p>
+<ul>
+<li><strong>Observe (step 1):</strong> Collect return data for g estimation</li>
+<li><strong>Analyze (step 3):</strong> Compute g, Delta, and updated Kelly fractions</li>
+<li><strong>Gate (step 4):</strong> Reject strategies where g &lt; 0 or Delta exceeds threshold</li>
+<li><strong>Simulate (step 5):</strong> Project portfolio g under proposed trades</li>
+<li><strong>Validate (step 6):</strong> Verify post-trade g remains above g_min</li>
+<li><strong>Reflect (step 9):</strong> Update rolling estimates, recalibrate mortality scalars</li>
+</ul>
+<h3 id="st-petersburg-paradox-resolution"><a class="header" href="#st-petersburg-paradox-resolution">St. Petersburg Paradox Resolution</a></h3>
+<p>The St. Petersburg paradox (1738) asks: how much would you pay to play a game where a coin is flipped until it lands heads, and you receive 2^n dollars if heads first appears on flip n? The expected value is infinite. Yet no rational person pays more than a modest sum.</p>
+<p>Peters (2019) showed that this explanation is unnecessary. The time-average growth rate of the St. Petersburg game is:</p>
+<pre><code>g = sum from n=1 to infinity of (1/2)^n * ln(2^n) = ln(2) * sum from n=1 to infinity of n * (1/2)^n = 2 * ln(2) ~ 1.39
+</code></pre>
+<p>This is finite. A person maximizing their time-average growth rate would pay up to e^g - 1 ~ $3 to play. No utility function needed. The resolution is not psychological but dynamical: the expected value is a property of the ensemble, the time average is a property of the individual, and they differ because the game is multiplicative.</p>
+<p>This reframing has a direct consequence for Golems. We do not need to specify a utility function for a Golem. We do not need to decide whether a Golem is “risk averse” or “risk neutral.” The correct objective (maximize time-average growth rate) follows from the dynamics of the process. A Golem is not risk averse by preference. It bets conservatively because it is mortal and returns are multiplicative, and any other strategy is mathematically suboptimal for its survival.</p>
+<h3 id="mortality-as-architectural-advantage"><a class="header" href="#mortality-as-architectural-advantage">Mortality as Architectural Advantage</a></h3>
+<p>Immortal agents (infinite time horizon) can, in theory, tolerate any finite drawdown. They have infinite time for the law of large numbers to do its work. This makes immortal agents overconfident and fragile: they take on risks that would be rational only for entities that cannot die.</p>
+<p>Mortal agents, by contrast, must account for ruin. The shorter the remaining lifespan, the more conservative the optimal strategy. This is not a weakness. It is an architectural advantage. Mortal agents are forced by the mathematics to size positions correctly for their actual situation. They cannot pretend they have infinite time.</p>
+<p>Bardo’s mortality clocks enforce this advantage. The Hayflick limit prevents a Golem from assuming it will live forever. The economic clock prevents it from ignoring capital depletion. The epistemic clock prevents it from trusting stale predictions. Together, they force the Golem into the regime where ergodicity-optimal sizing dominates expected-value-optimal sizing.</p>
+<h3 id="ergodicity-evaluation-and-falsifiability"><a class="header" href="#ergodicity-evaluation-and-falsifiability">Ergodicity Evaluation and Falsifiability</a></h3>
+<p><strong>Null hypothesis:</strong> Kelly-optimal sizing, adjusted for mortality and estimation uncertainty, performs no better than fixed-fraction sizing (e.g., always bet 2% of capital) for mortal agents.</p>
+<p><strong>Experimental design:</strong> Monte Carlo simulation of Golem lifetimes under three sizing regimes:</p>
+<ol>
+<li><strong>Expected-value optimal:</strong> Size positions to maximize E[r]. In practice, this means betting large whenever expected return is positive.</li>
+<li><strong>Fixed-fraction:</strong> Bet a constant 2% of capital on every opportunity, regardless of expected return or volatility.</li>
+<li><strong>Ergodicity-optimal:</strong> Size positions using the mortality-adjusted fractional Kelly formula derived above.</li>
+</ol>
+<p>Each simulation draws returns from distributions calibrated to historical DeFi strategy returns (mean 0.1% per tick, volatility 1-5% per tick, with fat tails modeled as a Student-t distribution with 5 degrees of freedom). Mortality is modeled with a Hayflick limit of 50,000 ticks and random catastrophic events at a rate of 1 per 10,000 ticks.</p>
+<p><strong>Metrics:</strong></p>
+<ul>
+<li>Survival rate at T ticks: Fraction of simulated Golems with wealth above the terminal threshold.</li>
+<li>Median terminal wealth: The 50th percentile of wealth across surviving Golems.</li>
+<li>Mean terminal wealth: The arithmetic average, included to show the divergence from median.</li>
+<li>Maximum drawdown distribution.</li>
+<li>Growth rate distribution: The distribution of realized g across Golems.</li>
+</ul>
+<p><strong>Predictions:</strong></p>
+<ol>
+<li>Expected-value-optimal Golems will have the highest mean terminal wealth and the lowest survival rate. Most go bankrupt; the few survivors are extremely wealthy, pulling the mean up.</li>
+<li>Fixed-fraction Golems will have moderate survival rates but suboptimal growth, because fixed fractions do not adapt to changing volatility.</li>
+<li>Ergodicity-optimal Golems will have the highest median terminal wealth and the highest survival rate. Their mean terminal wealth will be lower than the expected-value-optimal group because they sacrifice upside for survival.</li>
+</ol>
+<p>The distinguishing prediction: the ratio of median to mean terminal wealth will be closest to 1 for the ergodicity-optimal group. A wide gap between mean and median is the fingerprint of non-ergodic dynamics being mishandled.</p>
+<p><strong>Falsification criteria:</strong> If fixed-fraction sizing achieves survival rates within 5% of ergodicity-optimal sizing across a range of volatility regimes, the additional complexity is not justified. If expected-value-optimal sizing achieves higher median (not mean) terminal wealth than ergodicity-optimal sizing, the theoretical framework is wrong.</p>
+<hr>
+<h2 id="antifragile-architecture-missing-derivations-and-content"><a class="header" href="#antifragile-architecture-missing-derivations-and-content">Antifragile Architecture: Missing Derivations and Content</a></h2>
+<blockquote>
+<p>Source: <code>innovations/09-antifragile-architecture.md</code></p>
+</blockquote>
+<h3 id="jensens-inequality-and-mortal-learning"><a class="header" href="#jensens-inequality-and-mortal-learning">Jensen’s Inequality and Mortal Learning</a></h3>
+<p>Jensen’s inequality (Jensen, 1906) states that for a convex function f and a random variable X:</p>
+<pre><code>E[f(X)] &gt;= f(E[X])
+</code></pre>
+<p>Apply this to the Golem’s learning function. Let sigma be market volatility, drawn from some distribution over the Golem’s lifetime. If L(sigma) is convex in sigma, then:</p>
+<pre><code>E[L(sigma)] &gt;= L(E[sigma])
+</code></pre>
+<p>The expected learning rate under variable volatility exceeds the learning rate at average volatility. A Golem living through boom-bust cycles learns more, in expectation, than a Golem living through perpetual calm at the same average volatility level.</p>
+<p>For mortal Golems, total lifetime knowledge K is the integral of learning rate over the Golem’s lifespan:</p>
+<pre><code>K = integral from 0 to T of L(sigma(t)) dt
+</code></pre>
+<p>If L is convex in sigma, then a volatile environment produces higher K than a calm environment with the same time-averaged volatility, even though the Golem has the same finite lifespan T. The mortal Golem in a volatile market produces more knowledge before death than an identical Golem in a stable market. Mortality combined with convex learning is an advantage in volatile environments.</p>
+<h3 id="optionality-math"><a class="header" href="#optionality-math">Optionality Math</a></h3>
+<p>The exploration allocation is an option. Options have positive convexity by construction: limited downside (the premium paid, here 10% of capital), unlimited upside (the value of what might be discovered).</p>
+<p>Define the value of the exploration option at time t:</p>
+<pre><code>V_explore(t) = max(0, K_discovered(t) - K_cost(t))
+</code></pre>
+<p>where K_discovered is the value of knowledge gained from exploration and K_cost is the USDC spent on the exploration allocation. The max(0, …) structure is the option payoff. If exploration produces nothing useful, the Golem loses at most 10% of capital. If exploration discovers a durable strategy or a durable failure mode, the payoff can be orders of magnitude larger than the cost.</p>
+<p>During high-volatility periods, the option’s value increases. This is exactly analogous to how financial options increase in value with volatility (the Vega effect). The exploration allocation becomes more valuable during crises because there is more to discover.</p>
+<h3 id="via-negativa-anti-knowledge-as-the-antifragile-substrate"><a class="header" href="#via-negativa-anti-knowledge-as-the-antifragile-substrate">Via Negativa: Anti-Knowledge as the Antifragile Substrate</a></h3>
+<p>Taleb (2012) argues that knowledge about what does not work (via negativa) is more durable than knowledge about what does work (via positiva). The history of medicine illustrates this: we are more confident that bloodletting does not cure disease than we are confident in any specific treatment. Failure modes are stable. Success modes shift.</p>
+<p>Two knowledge classes:</p>
+<ul>
+<li><strong>K+</strong> (positive knowledge): “Strategy X works in condition Y.” Example: “Providing liquidity to the ETH/USDC pool on Uniswap v3 with a 0.3% fee tier produces positive returns when realized volatility is below 40% annualized.”</li>
+<li><strong>K-</strong> (negative knowledge): “Strategy X fails in condition Z.” Example: “Never provide liquidity to any pool where the oracle update frequency exceeds 10x the block time. The oracle lag creates an arbitrage that consistently drains LPs.”</li>
+</ul>
+<p>K- has a longer half-life than K+ because failure modes are properties of mechanism design, and mechanism design changes slowly. The reason providing liquidity with a lagging oracle loses money is structural: the information asymmetry between the oracle and the true price is baked into the protocol’s architecture. This failure mode persists until the protocol is redesigned. By contrast, the conditions under which a specific strategy produces positive returns depend on market microstructure, competition, and capital flows, all of which shift constantly.</p>
+<p>In Grimoire terms, this translates directly to demurrage rates:</p>
+<pre><code>demurrage(K-) &lt; demurrage(K+)
+</code></pre>
+<p>Stress periods generate K- at a higher rate than calm periods, because stress is when things break. Over time, the Golem accumulates a growing body of durable negative knowledge, most of it produced during crises. Each crisis makes the Golem harder to kill, because the Golem has learned more ways to die and can avoid them.</p>
+<h3 id="volatility-harvesting-math"><a class="header" href="#volatility-harvesting-math">Volatility Harvesting Math</a></h3>
+<p>Define information density as a function of market volatility:</p>
+<pre><code>I(sigma) = bits of useful information per tick at volatility sigma
+</code></pre>
+<p>The hypothesis is that I is convex in sigma:</p>
+<pre><code>I(sigma + delta) + I(sigma - delta) &gt; 2I(sigma)
+</code></pre>
+<p>The argument is empirical and structural. During calm periods, price movements are small, predictions are accurate, residuals are small, and few surprises occur. During crises, prices move sharply, predictions fail, residuals are large, correlations shift, and many surprises occur simultaneously. The information content per tick grows faster than linearly with volatility because crisis dynamics are combinatorial: if n protocol interactions can break, and stress tests them simultaneously, the number of observable failure combinations grows as O(2^n) while volatility grows linearly.</p>
+<p>The barbell convexity proof: the key equation combines Jensen’s inequality with the barbell:</p>
+<pre><code>E[L_barbell(sigma)] = 0.9 * E[L_conservative(sigma)] + 0.1 * E[L_explore(sigma)]
+</code></pre>
+<p>L_conservative is approximately constant in sigma (conservative strategies don’t learn much regardless of conditions). L_explore is convex in sigma (exploration learns disproportionately more during stress). The weighted sum is convex because any positive linear combination of a constant function and a convex function is convex. The barbell inherits the exploration allocation’s convexity while bounding the downside with the conservative allocation’s stability.</p>
+<h3 id="write-rate-formula-and-dream-cycle-prioritization"><a class="header" href="#write-rate-formula-and-dream-cycle-prioritization">Write Rate Formula and Dream Cycle Prioritization</a></h3>
+<p>Stress-aware write rate scales with volatility:</p>
+<pre><code>write_rate(sigma) = base_rate * (1 + alpha * (sigma / sigma_ref - 1))
+</code></pre>
+<p>where alpha controls sensitivity and sigma_ref is the reference (calm) volatility. When sigma = sigma_ref, write_rate = base_rate. When sigma = 2 * sigma_ref, write_rate = base_rate * (1 + alpha).</p>
+<p>During NREM replay (offline consolidation), episodes from stress periods receive higher replay priority. The consolidation engine weights episodes by their information content, estimated from prediction residual magnitude. Stress-period episodes have larger residuals and therefore higher replay weight. This biases the Golem’s offline learning toward crisis-generated knowledge.</p>
+<h3 id="loop-3-50-budget-criterion"><a class="header" href="#loop-3-50-budget-criterion">Loop 3: 50% Budget Criterion</a></h3>
+<p>Loop 3 (meta-learning, operating on a days-to-weeks timescale) monitors the <code>learning_convexity</code> signal and adjusts the barbell parameters if the Golem is not actually antifragile:</p>
+<ul>
+<li>If <code>learning_convexity</code> &lt; 0 for more than 48 hours, Loop 3 increases the exploration allocation from 10% to 15% (the Golem is not exploring enough during stress).</li>
+<li>If <code>learning_convexity</code> &gt; threshold for more than 48 hours, Loop 3 decreases the exploration allocation toward 10% (the Golem is already antifragile, no need to over-allocate to exploration).</li>
+<li>If the exploration allocation has lost more than <strong>50% of its budget</strong> without generating proportional K- entries, Loop 3 rotates the exploration strategy (the current exploration approach is burning capital without learning).</li>
+</ul>
+<h3 id="senecas-asymmetry-shannon-quantification"><a class="header" href="#senecas-asymmetry-shannon-quantification">Seneca’s Asymmetry (Shannon Quantification)</a></h3>
+<p>Seneca observed that we learn more from a single catastrophe than from a thousand calm days. In information-theoretic terms, the surprise of an event is -log(p), where p is the event’s probability. Low-probability events carry more information per occurrence. A flash crash that happens once a year carries -log(1/365) ~ 8.5 bits of information. A normal trading day carries -log(364/365) ~ 0.004 bits. The flash crash is 2,000x more informative per occurrence.</p>
+<p>The current system treats the flash crash as a threat and shuts down learning. The antifragile system treats it as a windfall and maximizes learning. Seneca’s asymmetry, quantified via Shannon, is the information-theoretic justification for stress-aware write rates and dream-cycle prioritization of stress episodes.</p>
+<h3 id="antifragile-evaluation-and-falsifiability"><a class="header" href="#antifragile-evaluation-and-falsifiability">Antifragile Evaluation and Falsifiability</a></h3>
+<p><strong>Null hypothesis:</strong> Antifragile Golems produce no more knowledge than resilient Golems in volatile environments. The barbell structure and stress-aware knowledge tagging add complexity without measurable benefit.</p>
+<p><strong>Test 1: Knowledge acquisition convexity.</strong> Run two populations of Golems on the same historical market data (Base L2, 180-day window spanning at least two high-volatility events). Control group: standard risk architecture, no barbell, uniform demurrage, no stress-aware write rate. Treatment group: barbell allocation, differential demurrage, stress-aware write rate, convexity monitoring.</p>
+<p>Fit the quadratic L = a * sigma^2 + b * sigma + c for each group. Prediction: the treatment group has a &gt; 0 (convex, antifragile). The control group has a &lt;= 0 (concave or linear, fragile or resilient).</p>
+<p><strong>Test 2: Knowledge half-life.</strong> Compare the half-life of K- entries generated during stress periods versus K+ entries from calm periods within the antifragile group. Prediction: K- entries from stress periods remain actionable for at least 2x as long as K+ entries from calm periods.</p>
+<p><strong>Test 3: Survival plus knowledge.</strong> Compare the product of survival_rate * total_knowledge at T = 50,000 ticks. Prediction: the composite metric is higher for the antifragile group.</p>
+<p><strong>Falsification criteria:</strong></p>
+<ol>
+<li>The treatment group’s convexity coefficient a is not statistically greater than zero (p &lt; 0.05) across 1,000 simulation runs.</li>
+<li>K- entries from stress periods do not last longer than K+ entries from calm periods in at least 80% of simulations.</li>
+<li>The survival_rate * total_knowledge product is lower for the antifragile group in more than 50% of volatility regimes tested.</li>
+</ol>
+<hr>
+<h2 id="11-topological-market-intelligence-persistent-homology-for-regime-detection"><a class="header" href="#11-topological-market-intelligence-persistent-homology-for-regime-detection">11. Topological Market Intelligence (Persistent Homology for Regime Detection)</a></h2>
+<blockquote>
+<p>Source: <code>innovations/01-topological-market-intelligence.md</code></p>
+</blockquote>
+<p>Statistical regime detectors reduce high-dimensional market observations to a handful of moments (mean, variance, skewness) and threshold them. This misses structural changes. When a market regime shifts, the <strong>shape</strong> of the observation distribution changes before its <strong>moments</strong> do. Persistent Homology, a tool from Topological Data Analysis (TDA), tracks the birth and death of geometric features in point clouds as a scale parameter sweeps from zero to infinity. Applied to the Golem’s observation stream, TDA-based regime detection identifies structural precursors to regime shifts 10-100 perception ticks before conventional statistical methods.</p>
+<h3 id="point-clouds-from-observations"><a class="header" href="#point-clouds-from-observations">Point Clouds from Observations</a></h3>
+<p>At each gamma tick <em>t</em>, the perception layer produces an observation vector:</p>
+<pre><code>x_t = (p_t, v_t, sigma_t, g_t, l_t, s_t, ...) in R^d
+</code></pre>
+<p>A sliding window of <em>N</em> recent observations forms a point cloud <code>X_N</code> in R^d. This point cloud is the input to TDA. Its shape encodes the market’s structural state.</p>
+<h3 id="persistent-homology-and-persistence-diagrams"><a class="header" href="#persistent-homology-and-persistence-diagrams">Persistent Homology and Persistence Diagrams</a></h3>
+<p>The <strong>Vietoris-Rips complex</strong> VR(X, epsilon) connects every pair of points within distance epsilon, fills in triangles, and continues to higher dimensions. As epsilon increases from 0 to infinity, features are <em>born</em> and <em>die</em>:</p>
+<ul>
+<li><strong>H_0 (connected components):</strong> Clusters in observation space. Many persistent H_0 features indicate market fragmentation.</li>
+<li><strong>H_1 (loops):</strong> Persistent cycles. Mean-reverting markets create loops in price-return space. Trending markets do not.</li>
+<li><strong>H_2 (voids):</strong> Regions of observation space previously occupied but now empty. Correlation breakdowns create voids.</li>
+</ul>
+<p>The output is a <strong>persistence diagram</strong>: a multiset of (birth, death) points. Features far from the diagonal d = b are significant; features near the diagonal are noise. The <strong>Stability Theorem</strong> (Cohen-Steiner, Edelsbrunner, Harer 2007) guarantees that small perturbations to the point cloud produce small perturbations to the diagram.</p>
+<h3 id="wasserstein-distance-for-regime-change-detection"><a class="header" href="#wasserstein-distance-for-regime-change-detection">Wasserstein Distance for Regime Change Detection</a></h3>
+<p>The <strong>Wasserstein distance</strong> between two persistence diagrams quantifies structural difference:</p>
+<pre><code>W_p(D_1, D_2) = (inf_gamma sum_{x in D_1} ||x - gamma(x)||_inf^p)^(1/p)
+</code></pre>
+<p>The Golem maintains a reference diagram D_ref for the current regime. At each gamma tick, it computes D_now and measures W_p(D_now, D_ref). A spike in this distance signals structural change.</p>
+<h3 id="topological-regime-signatures"><a class="header" href="#topological-regime-signatures">Topological Regime Signatures</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Regime</th><th>W_p</th><th>beta_0</th><th>beta_1</th><th>beta_2</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Calm</td><td>Low</td><td>~1</td><td>~0</td><td>0</td><td>One cluster, no loops, no voids</td></tr>
+<tr><td>Trending</td><td>Low</td><td>~1</td><td>0</td><td>0</td><td>One cluster, drifting in diagram space</td></tr>
+<tr><td>Volatile</td><td>Moderate</td><td>&gt;1</td><td>&gt;0</td><td>0</td><td>Fragmented clusters, cyclic patterns</td></tr>
+<tr><td>Crisis</td><td>High</td><td>&gt;&gt;1</td><td>&gt;0</td><td>&gt;0</td><td>Extreme fragmentation, voids</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="tda-pipeline-step-3-analyze"><a class="header" href="#tda-pipeline-step-3-analyze">TDA Pipeline (Step 3 ANALYZE)</a></h3>
+<p>TDA runs at Step 3 of the 9-step heartbeat at gamma frequency:</p>
+<ol>
+<li><strong>Observation buffer</strong> collects the last N = 200 gamma-tick observation vectors.</li>
+<li><strong>PCA</strong> projects from R^d to R^5 (Vietoris-Rips complexity is exponential in dimension).</li>
+<li><strong>Ripser</strong> computes persistent homology up to dimension 2 (H_0, H_1, H_2).</li>
+<li><strong>Wasserstein distance</strong> compares current diagram to reference.</li>
+<li><strong>CorticalState update</strong> writes topological signals.</li>
+</ol>
+<h3 id="new-corticalstate-signals"><a class="header" href="#new-corticalstate-signals">New CorticalState Signals</a></h3>
+<pre><code>topology_signal: AtomicU32  -- f32: Wasserstein distance from reference diagram
+betti_0: AtomicU16          -- H_0 features at optimal scale epsilon*
+betti_1: AtomicU16          -- H_1 features at optimal scale epsilon*
+</code></pre>
+<p>The optimal scale epsilon* is the epsilon that maximizes total persistence of alive features.</p>
+<h3 id="implementation"><a class="header" href="#implementation">Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::atomic::{AtomicU16, AtomicU32, Ordering};
+
+/// A (birth, death) pair from persistent homology.
+#[derive(Clone, Debug, PartialEq)]
+pub struct PersistenceFeature {
+    pub birth: f32,
+    pub death: f32,
+    pub dimension: u8,
+}
+
+impl PersistenceFeature {
+    pub fn persistence(&amp;self) -&gt; f32 {
+        self.death - self.birth
+    }
+}
+
+/// A persistence diagram: collection of features grouped by dimension.
+#[derive(Clone, Debug)]
+pub struct PersistenceDiagram {
+    pub features: Vec&lt;PersistenceFeature&gt;,
+}
+
+impl PersistenceDiagram {
+    pub fn features_of_dim(&amp;self, dim: u8) -&gt; Vec&lt;&amp;PersistenceFeature&gt; {
+        self.features.iter().filter(|f| f.dimension == dim).collect()
+    }
+
+    /// Betti number at scale epsilon for dimension k.
+    pub fn betti(&amp;self, dim: u8, epsilon: f32) -&gt; usize {
+        self.features
+            .iter()
+            .filter(|f| f.dimension == dim &amp;&amp; f.birth &lt;= epsilon &amp;&amp; f.death &gt; epsilon)
+            .count()
+    }
+
+    /// Scale that maximizes total persistence of alive features.
+    pub fn optimal_scale(&amp;self) -&gt; f32 {
+        let mut events: Vec&lt;f32&gt; = self
+            .features
+            .iter()
+            .flat_map(|f| vec![f.birth, f.death])
+            .collect();
+        events.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        events.dedup();
+
+        let mut best_eps = 0.0_f32;
+        let mut best_score = 0.0_f32;
+
+        for &amp;eps in &amp;events {
+            let score: f32 = self
+                .features
+                .iter()
+                .filter(|f| f.birth &lt;= eps &amp;&amp; f.death &gt; eps)
+                .map(|f| f.persistence())
+                .sum();
+            if score &gt; best_score {
+                best_score = score;
+                best_eps = eps;
+            }
+        }
+        best_eps
+    }
+}
+
+/// Compute the p-Wasserstein distance between two persistence diagrams
+/// for a given homological dimension.
+pub fn wasserstein_distance(
+    d1: &amp;PersistenceDiagram,
+    d2: &amp;PersistenceDiagram,
+    dim: u8,
+    p: f32,
+) -&gt; f32 {
+    let f1: Vec&lt;(f32, f32)&gt; = d1
+        .features_of_dim(dim)
+        .iter()
+        .map(|f| (f.birth, f.death))
+        .collect();
+    let f2: Vec&lt;(f32, f32)&gt; = d2
+        .features_of_dim(dim)
+        .iter()
+        .map(|f| (f.birth, f.death))
+        .collect();
+
+    let size = f1.len() + f2.len();
+    if size == 0 {
+        return 0.0;
+    }
+
+    let mut cost = vec![vec![0.0_f32; size]; size];
+
+    for i in 0..f1.len() {
+        for j in 0..f2.len() {
+            let dx = f1[i].0 - f2[j].0;
+            let dy = f1[i].1 - f2[j].1;
+            cost[i][j] = (dx.abs().max(dy.abs())).powf(p);
+        }
+        for j in f2.len()..size {
+            let diag_cost = (f1[i].1 - f1[i].0) / 2.0;
+            cost[i][j] = diag_cost.powf(p);
+        }
+    }
+    for i in f1.len()..size {
+        for j in 0..f2.len() {
+            let diag_cost = (f2[j].1 - f2[j].0) / 2.0;
+            cost[i][j] = diag_cost.powf(p);
+        }
+    }
+
+    let assignment = hungarian(&amp;cost);
+    let total: f32 = assignment
+        .iter()
+        .enumerate()
+        .map(|(i, &amp;j)| cost[i][j])
+        .sum();
+    total.powf(1.0 / p)
+}
+
+/// Placeholder for the Hungarian algorithm (O(n^3) assignment).
+fn hungarian(cost: &amp;[Vec&lt;f32&gt;]) -&gt; Vec&lt;usize&gt; {
+    (0..cost.len()).collect() // identity assignment placeholder
+}
+<span class="boring">}</span></code></pre>
+<h3 id="tda-analyzer"><a class="header" href="#tda-analyzer">TDA Analyzer</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Topological signals written to CorticalState.
+pub struct TopologySignals {
+    pub topology_signal: AtomicU32,
+    pub betti_0: AtomicU16,
+    pub betti_1: AtomicU16,
+}
+
+pub struct TdaConfig {
+    pub window_size: usize,      // 200
+    pub pca_dimensions: usize,   // 5
+    pub max_homology_dim: usize, // 2
+    pub reference_tau: f32,      // 50.0 (exponential decay for reference)
+    pub wasserstein_p: f32,      // 2.0
+}
+
+impl Default for TdaConfig {
+    fn default() -&gt; Self {
+        Self {
+            window_size: 200,
+            pca_dimensions: 5,
+            max_homology_dim: 2,
+            reference_tau: 50.0,
+            wasserstein_p: 2.0,
+        }
+    }
+}
+
+pub struct TdaAnalyzer {
+    config: TdaConfig,
+    reference_diagram: Option&lt;PersistenceDiagram&gt;,
+    tick_count: u64,
+}
+
+impl TdaAnalyzer {
+    pub fn new(config: TdaConfig) -&gt; Self {
+        Self { config, reference_diagram: None, tick_count: 0 }
+    }
+
+    pub fn analyze(
+        &amp;mut self,
+        observations: &amp;[Vec&lt;f32&gt;],
+        signals: &amp;TopologySignals,
+    ) {
+        if observations.len() &lt; self.config.window_size {
+            return;
+        }
+
+        let projected = pca_project(observations, self.config.pca_dimensions);
+        let diagram = compute_persistence(&amp;projected, self.config.max_homology_dim);
+
+        let w_dist = match &amp;self.reference_diagram {
+            Some(ref_diag) =&gt; {
+                let w0 = wasserstein_distance(&amp;diagram, ref_diag, 0, self.config.wasserstein_p);
+                let w1 = wasserstein_distance(&amp;diagram, ref_diag, 1, self.config.wasserstein_p);
+                let w2 = wasserstein_distance(&amp;diagram, ref_diag, 2, self.config.wasserstein_p);
+                (w0 * w0 + w1 * w1 + w2 * w2).sqrt()
+            }
+            None =&gt; 0.0,
+        };
+
+        let eps_star = diagram.optimal_scale();
+        let b0 = diagram.betti(0, eps_star) as u16;
+        let b1 = diagram.betti(1, eps_star) as u16;
+
+        signals.topology_signal.store(w_dist.to_bits(), Ordering::Relaxed);
+        signals.betti_0.store(b0, Ordering::Relaxed);
+        signals.betti_1.store(b1, Ordering::Relaxed);
+
+        self.update_reference(&amp;diagram);
+        self.tick_count += 1;
+    }
+
+    fn update_reference(&amp;mut self, current: &amp;PersistenceDiagram) {
+        let alpha = 1.0 / self.config.reference_tau;
+        match &amp;mut self.reference_diagram {
+            Some(ref_diag) =&gt; {
+                for feat in &amp;mut ref_diag.features {
+                    feat.birth = (1.0 - alpha) * feat.birth;
+                    feat.death = (1.0 - alpha) * feat.death;
+                }
+                for feat in &amp;current.features {
+                    ref_diag.features.push(PersistenceFeature {
+                        birth: alpha * feat.birth,
+                        death: alpha * feat.death,
+                        dimension: feat.dimension,
+                    });
+                }
+                ref_diag.features.retain(|f| f.persistence() &gt; 1e-6);
+            }
+            None =&gt; {
+                self.reference_diagram = Some(current.clone());
+            }
+        }
+    }
+}
+
+fn pca_project(observations: &amp;[Vec&lt;f32&gt;], target_dim: usize) -&gt; Vec&lt;Vec&lt;f32&gt;&gt; {
+    observations
+        .iter()
+        .map(|obs| obs[..target_dim.min(obs.len())].to_vec())
+        .collect()
+}
+
+fn compute_persistence(points: &amp;[Vec&lt;f32&gt;], max_dim: usize) -&gt; PersistenceDiagram {
+    let _ = (points, max_dim);
+    PersistenceDiagram { features: Vec::new() }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="computational-budget"><a class="header" href="#computational-budget">Computational Budget</a></h3>
+<p>Ripser on 200 points in R^5 completes in under 50ms. PCA adds 1-2ms. Wasserstein distance on ~50 features takes &lt;1ms. Total: under 55ms per gamma tick, well within the 5-second minimum gamma interval.</p>
+<h3 id="why-tda-detects-regime-changes-early"><a class="header" href="#why-tda-detects-regime-changes-early">Why TDA Detects Regime Changes Early</a></h3>
+<p>When a market regime shifts, a subset of observations begins diverging from the main cluster. The mean barely moves. Variance ticks up slightly. But topologically, beta_0 has increased from 1 to 2: a new connected component has appeared. Statistical detectors wait until the divergent subgroup moves aggregate variance past a threshold. Topological detectors fire when the subgroup first separates, regardless of size. Gidea and Katz (2018) demonstrated this empirically on equity data, showing that topological features detected pre-crash conditions in the S&amp;P 500, DJIA, and NASDAQ days before the crashes of 2000, 2007, and 2015.</p>
+<h3 id="cross-system-integration"><a class="header" href="#cross-system-integration">Cross-System Integration</a></h3>
+<p>The Wasserstein distance W_p becomes a bid in the attention auction (14b-attention-auction.md). High topological change means high information value, attracting more cognitive resources. Betti curves can be encoded as hyperdimensional binary vectors for fast similarity search. Sheaf-theoretic consistency checking operates on the same Vietoris-Rips complex.</p>
+<hr>
+<h2 id="12-sheaf-theoretic-multiscale-observation"><a class="header" href="#12-sheaf-theoretic-multiscale-observation">12. Sheaf-Theoretic Multiscale Observation</a></h2>
+<blockquote>
+<p>Source: <code>innovations/04-sheaf-theoretic-multiscale-observation.md</code></p>
+</blockquote>
+<p>A Golem watches the market through three timescales simultaneously: gamma (5-15s raw ticks), theta (30-120s cognitive patterns), and delta (~50 theta-ticks structural consolidation). These timescales sometimes contradict each other. Today, detecting contradiction depends on the LLM noticing it during deliberation. Sheaf theory on a temporal poset formalizes multi-timeframe consistency, where the first cohomology group H^1 measures exactly how much the timescales disagree. The result is a computable scalar – the consistency score – that turns “the short-term data contradicts the long-term trend” from a vague intuition into a number the agent can act on.</p>
+<h3 id="the-temporal-poset"><a class="header" href="#the-temporal-poset">The Temporal Poset</a></h3>
+<p>Timescales nest. Every gamma interval is contained in some theta interval, and every theta interval in some delta interval. This containment defines a partial order on observation intervals:</p>
+<pre><code>gamma_i &lt;= theta_j   iff   gamma_i's time interval is contained in theta_j's
+theta_j &lt;= delta_k   iff   theta_j's time interval is contained in delta_k's
+</code></pre>
+<h3 id="presheaf-of-observations"><a class="header" href="#presheaf-of-observations">Presheaf of Observations</a></h3>
+<p>A presheaf F on the temporal poset assigns:</p>
+<ul>
+<li>F(gamma_i) in R^8: price, volume, gas, spread, order flow imbalance, volatility, price velocity, price acceleration</li>
+<li>F(theta_j) in R^6: trend direction, trend strength, regime classification, correlation structure, prediction confidence, pattern match score</li>
+<li>F(delta_k) in R^4: strategy P&amp;L, prediction accuracy, knowledge quality, long-term volatility</li>
+</ul>
+<p>Restriction maps rho_{theta_j, gamma_i}: R^6 -&gt; R^8 encode what the theta-level observation <em>implies</em> about a specific gamma interval. These maps are where the domain knowledge lives.</p>
+<h3 id="cohomology-measures-the-obstruction"><a class="header" href="#cohomology-measures-the-obstruction">Cohomology Measures the Obstruction</a></h3>
+<p>The first cohomology group H^1(T, F) measures the obstruction to gluing local observations into a global one. When H^1 = 0, data is globally consistent. When dim(H^1) &gt; 0, there are irreconcilable contradictions.</p>
+<p>The <strong>Hodge Laplacian</strong> provides a continuous measure:</p>
+<pre><code>L_1 = d_0^T d_0 + d_1 d_1^T
+</code></pre>
+<p>The consistency score is:</p>
+<pre><code>c = 1 - (lambda_max(L_1) / lambda_ref)
+</code></pre>
+<p>where lambda_max is the largest eigenvalue, lambda_ref is calibrated from history. The score lives in [0, 1]: 1 = perfect consistency, 0 = maximum observed contradiction.</p>
+<h3 id="new-corticalstate-signals-1"><a class="header" href="#new-corticalstate-signals-1">New CorticalState Signals</a></h3>
+<pre><code>sheaf_consistency: AtomicU32   -- f32 in [0, 1], consistency score
+contradiction_dimension: AtomicU8  -- dim(H^1), independent irreconcilable contradictions
+</code></pre>
+<h3 id="implementation-1"><a class="header" href="#implementation-1">Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::atomic::{AtomicU32, AtomicU8, Ordering};
+
+#[derive(Clone, Debug)]
+pub struct ObsGamma {
+    pub features: [f32; 8],
+    pub timestamp_ms: u64,
+    pub duration_ms: u32,
+}
+
+#[derive(Clone, Debug)]
+pub struct ObsTheta {
+    pub features: [f32; 6],
+    pub timestamp_ms: u64,
+    pub duration_ms: u32,
+}
+
+#[derive(Clone, Debug)]
+pub struct ObsDelta {
+    pub features: [f32; 4],
+    pub timestamp_ms: u64,
+    pub duration_ms: u32,
+}
+
+pub struct RestrictionMap {
+    pub weights: Vec&lt;f32&gt;,
+    pub rows: usize,
+    pub cols: usize,
+}
+
+impl RestrictionMap {
+    pub fn apply(&amp;self, input: &amp;[f32]) -&gt; Vec&lt;f32&gt; {
+        assert_eq!(input.len(), self.cols);
+        let mut output = vec![0.0f32; self.rows];
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                output[i] += self.weights[i * self.cols + j] * input[j];
+            }
+        }
+        output
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct SheafEdge {
+    pub fine_idx: usize,
+    pub coarse_idx: usize,
+    pub disagreement: f32,
+}
+
+#[derive(Clone, Debug)]
+pub struct SheafResult {
+    pub consistency_score: f32,
+    pub contradiction_dim: u8,
+    pub max_eigenvalue: f32,
+    pub edge_disagreements: Vec&lt;f32&gt;,
+}
+
+pub fn compute_sheaf_consistency(
+    gammas: &amp;[ObsGamma],
+    thetas: &amp;[ObsTheta],
+    deltas: &amp;[ObsDelta],
+    rho_tg: &amp;RestrictionMap,
+    rho_dt: &amp;RestrictionMap,
+    lambda_ref: f32,
+) -&gt; SheafResult {
+    let mut edges: Vec&lt;SheafEdge&gt; = Vec::new();
+
+    for (ti, theta) in thetas.iter().enumerate() {
+        let theta_start = theta.timestamp_ms;
+        let theta_end = theta.timestamp_ms + theta.duration_ms as u64;
+        for (gi, gamma) in gammas.iter().enumerate() {
+            let gamma_start = gamma.timestamp_ms;
+            let gamma_end = gamma.timestamp_ms + gamma.duration_ms as u64;
+            if gamma_start &gt;= theta_start &amp;&amp; gamma_end &lt;= theta_end {
+                let predicted = rho_tg.apply(&amp;theta.features);
+                let disagreement = l2_distance(&amp;predicted, &amp;gamma.features);
+                edges.push(SheafEdge {
+                    fine_idx: gi,
+                    coarse_idx: gammas.len() + ti,
+                    disagreement,
+                });
+            }
+        }
+    }
+
+    for (di, delta) in deltas.iter().enumerate() {
+        let delta_start = delta.timestamp_ms;
+        let delta_end = delta.timestamp_ms + delta.duration_ms as u64;
+        for (ti, theta) in thetas.iter().enumerate() {
+            let theta_start = theta.timestamp_ms;
+            let theta_end = theta.timestamp_ms + theta.duration_ms as u64;
+            if theta_start &gt;= delta_start &amp;&amp; theta_end &lt;= delta_end {
+                let predicted = rho_dt.apply(&amp;delta.features);
+                let disagreement = l2_distance(&amp;predicted, &amp;theta.features);
+                edges.push(SheafEdge {
+                    fine_idx: gammas.len() + ti,
+                    coarse_idx: gammas.len() + thetas.len() + di,
+                    disagreement,
+                });
+            }
+        }
+    }
+
+    if edges.is_empty() {
+        return SheafResult {
+            consistency_score: 1.0,
+            contradiction_dim: 0,
+            max_eigenvalue: 0.0,
+            edge_disagreements: vec![],
+        };
+    }
+
+    let n_edges = edges.len();
+    let mut laplacian = vec![0.0f32; n_edges * n_edges];
+
+    for i in 0..n_edges {
+        laplacian[i * n_edges + i] = 2.0;
+        for j in 0..n_edges {
+            if i == j { continue; }
+            let share_fine = edges[i].fine_idx == edges[j].fine_idx
+                || edges[i].fine_idx == edges[j].coarse_idx;
+            let share_coarse = edges[i].coarse_idx == edges[j].fine_idx
+                || edges[i].coarse_idx == edges[j].coarse_idx;
+            if share_fine || share_coarse {
+                laplacian[i * n_edges + j] = -1.0;
+            }
+        }
+    }
+
+    for i in 0..n_edges {
+        for j in 0..n_edges {
+            laplacian[i * n_edges + j] *= edges[i].disagreement * edges[j].disagreement;
+        }
+    }
+
+    let max_eigenvalue = power_iteration(&amp;laplacian, n_edges, 20);
+    let contradiction_dim = count_near_zero_eigenvalues(&amp;laplacian, n_edges, 1e-6);
+    let consistency_score = (1.0 - (max_eigenvalue / lambda_ref)).clamp(0.0, 1.0);
+
+    SheafResult {
+        consistency_score,
+        contradiction_dim,
+        max_eigenvalue,
+        edge_disagreements: edges.iter().map(|e| e.disagreement).collect(),
+    }
+}
+
+fn l2_distance(a: &amp;[f32], b: &amp;[f32]) -&gt; f32 {
+    let min_len = a.len().min(b.len());
+    let mut sum = 0.0f32;
+    for i in 0..min_len {
+        let diff = a[i] - b[i];
+        sum += diff * diff;
+    }
+    sum.sqrt()
+}
+
+fn power_iteration(matrix: &amp;[f32], n: usize, iterations: usize) -&gt; f32 {
+    let mut v = vec![1.0f32 / (n as f32).sqrt(); n];
+    let mut eigenvalue = 0.0f32;
+    for _ in 0..iterations {
+        let mut w = vec![0.0f32; n];
+        for i in 0..n {
+            for j in 0..n {
+                w[i] += matrix[i * n + j] * v[j];
+            }
+        }
+        eigenvalue = v.iter().zip(w.iter()).map(|(a, b)| a * b).sum();
+        let norm: f32 = w.iter().map(|x| x * x).sum::&lt;f32&gt;().sqrt();
+        if norm &lt; 1e-10 { return 0.0; }
+        for x in &amp;mut w { *x /= norm; }
+        v = w;
+    }
+    eigenvalue
+}
+
+fn count_near_zero_eigenvalues(matrix: &amp;[f32], n: usize, tol: f32) -&gt; u8 {
+    if n == 0 { return 0; }
+    if n == 1 { return if matrix[0].abs() &lt; tol { 1 } else { 0 }; }
+    let mut mat = matrix.to_vec();
+    let mut rank = 0;
+    for col in 0..n {
+        let mut pivot = None;
+        for row in rank..n {
+            if mat[row * n + col].abs() &gt; tol {
+                pivot = Some(row);
+                break;
+            }
+        }
+        let Some(pivot_row) = pivot else { continue };
+        for k in 0..n { mat.swap(rank * n + k, pivot_row * n + k); }
+        for row in (rank + 1)..n {
+            let factor = mat[row * n + col] / mat[rank * n + col];
+            for k in col..n { mat[row * n + k] -= factor * mat[rank * n + k]; }
+        }
+        rank += 1;
+    }
+    (n - rank) as u8
+}
+<span class="boring">}</span></code></pre>
+<h3 id="performance"><a class="header" href="#performance">Performance</a></h3>
+<p>The poset has ~10-15 nodes at any time (5-8 gamma, 3-5 theta, 1-2 delta), producing ~8-12 edges. The Hodge Laplacian is at most 12x12. The entire computation completes in under 10 microseconds. Memory: a few hundred bytes.</p>
+<h3 id="downstream-consumers"><a class="header" href="#downstream-consumers">Downstream Consumers</a></h3>
+<p>The consistency score feeds three subsystems:</p>
+<ul>
+<li><strong>Heartbeat pipeline:</strong> At Step 3 (ANALYZE), if sheaf_consistency &lt; 0.5, a “multiscale contradiction” flag is set for the LLM at Step 5 (DELIBERATE).</li>
+<li><strong>Attention auction:</strong> Inconsistency is information. When sheaf consistency drops, the attention auction assigns higher value to the contradicting signals.</li>
+<li><strong>Mortality:</strong> Persistent low consistency degrades the mutual information estimate I(G; M). Chronic disagreement that cannot be resolved means the model is breaking down.</li>
+</ul>
+<h3 id="position-sizing-under-contradiction"><a class="header" href="#position-sizing-under-contradiction">Position Sizing Under Contradiction</a></h3>
+<p>High sheaf inconsistency maps directly to a position-sizing multiplier: at consistency 1.0, trade at full size; at 0.5, halve it; below 0.3, reduce to minimum. This integrates with the ergodicity-optimal Kelly sizing in Layer 2 as an additional multiplicative scalar.</p>
+<h3 id="extension-to-spatial-observations-in-a-clade"><a class="header" href="#extension-to-spatial-observations-in-a-clade">Extension to Spatial Observations in a Clade</a></h3>
+<p>Replace the temporal poset with a spatio-temporal poset. Nodes become (agent, timescale) pairs. Spatial edges exist between agents observing the same time interval at the same scale. The restriction maps for spatial edges translate between observation spaces using known cross-rate relationships. Now H^1 captures both temporal contradictions (an agent’s timescales disagree) and spatial contradictions (agents disagree with each other) in a single algebraic object.</p>
+<hr>
+<h2 id="13-compensation-and-rollback-from-source-05-compensation-rollback"><a class="header" href="#13-compensation-and-rollback-from-source-05-compensation-rollback">13. Compensation and Rollback (from source 05-compensation-rollback)</a></h2>
+<p>Multi-step DeFi operations (borrow USDC on Aave, swap to WETH on Uniswap, deposit on Morpho) are not idempotent. Partial execution leaves the Golem in an intermediate state that is neither the intended final state nor the original state. Two complementary primitives handle this: <code>CompensationChain</code> (saga pattern for semantic rollback) and <code>RollbackCheckpoint</code> (full-state save points).</p>
+<h3 id="compensationchain"><a class="header" href="#compensationchain">CompensationChain</a></h3>
+<p>Garcia-Molina and Salem (1987) defined the Saga pattern: a long-lived transaction is decomposed into sub-transactions, each paired with a compensating transaction. If the saga fails at step N, compensations execute in reverse order from step N-1 to step 1. On-chain transactions cannot be undone, only compensated.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-runtime/src/compensation_chain.rs
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct WorkflowId(pub u64);
+
+pub struct CompensationContext {
+    pub chain_client: std::sync::Arc&lt;dyn ChainClient&gt;,
+    pub current_nonce: u64,
+    pub wallet: WalletAddress,
+}
+
+pub trait ChainClient: Send + Sync {
+    fn execute_compensation(
+        &amp;self,
+        ctx: &amp;CompensationContext,
+        idempotency_key: [u8; 32],
+        payload: &amp;[u8],
+    ) -&gt; Pin&lt;Box&lt;dyn Future&lt;Output = Result&lt;(), CompensationError&gt;&gt; + Send + '_&gt;&gt;;
+}
+
+#[derive(Debug)]
+pub enum CompensationError {
+    ChainError(String),
+    IdempotencyConflict,
+    ContextUnavailable,
+}
+
+pub trait CompensationAction: Send + Sync {
+    fn compensate&lt;'a&gt;(
+        &amp;'a self,
+        ctx: &amp;'a CompensationContext,
+    ) -&gt; Pin&lt;Box&lt;dyn Future&lt;Output = Result&lt;(), CompensationError&gt;&gt; + Send + 'a&gt;&gt;;
+}
+
+pub struct CompensationStep {
+    pub step_name: &amp;'static str,
+    pub action: Box&lt;dyn CompensationAction&gt;,
+    pub idempotency_key: [u8; 32],
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, serde::Serialize, serde::Deserialize)]
+pub enum ChainState {
+    Active,
+    Completed,
+    Compensating,
+    Compensated,
+    CompensationFailed,
+}
+
+pub struct CompensationChain {
+    id: WorkflowId,
+    compensations: Vec&lt;CompensationStep&gt;,
+    pub state: ChainState,
+}
+
+impl CompensationChain {
+    pub fn new(id: WorkflowId) -&gt; Self { /* ... */ }
+
+    pub fn register&lt;A: CompensationAction + 'static&gt;(
+        &amp;mut self, name: &amp;'static str, action: A,
+    ) { /* ... */ }
+
+    pub fn complete(&amp;mut self) { self.state = ChainState::Completed; }
+
+    /// Execute compensations in reverse registration order.
+    /// Continues past individual step failures; records each error.
+    pub async fn rollback(
+        &amp;mut self, ctx: &amp;CompensationContext,
+    ) -&gt; ChainState { /* ... */ }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Idempotency</strong>: The <code>idempotency_key</code> is <code>blake3(workflow_id_bytes || step_name_bytes)[..32]</code>. If the agent crashes during compensation and restarts, re-executing the same compensation with the same key produces no additional on-chain effect.</p>
+<p><strong>Compensation failure</strong>: When a compensation step fails, the chain continues executing remaining compensations in reverse order. A failed compensation at step 3 does not prevent compensations at steps 2 and 1. <code>CompensationFailed</code> signals the operator that manual intervention is needed.</p>
+<h3 id="rollbackcheckpoint"><a class="header" href="#rollbackcheckpoint">RollbackCheckpoint</a></h3>
+<p>Named, intentionally-placed full-state save points at semantically meaningful moments (<code>"pre_defi_borrow"</code>, <code>"post_dream_consolidation"</code>). Uses CBOR + Blake3 for serialization and integrity verification.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-runtime/src/rollback_checkpoint.rs
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct RollbackCheckpoint {
+    pub name: &amp;'static str,
+    pub created_at_unix_secs: u64,
+    pub tick: u64,
+    pub content_hash: [u8; 32],
+    pub cortical: CorticalSnapshot,
+    pub context: ContextSnapshot,
+    pub ledger: PositionLedgerSnapshot,
+    pub grimoire_ref: GrimoireRef,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="composition-how-the-two-primitives-work-together"><a class="header" href="#composition-how-the-two-primitives-work-together">Composition: How the Two Primitives Work Together</a></h3>
+<p>A typical DeFi workflow uses both:</p>
+<ol>
+<li>Save a <code>RollbackCheckpoint</code> named <code>"pre_workflow"</code>.</li>
+<li>Create a <code>CompensationChain</code> with the workflow ID.</li>
+<li>Execute step 1 (borrow). On success, register the compensation (repay borrow).</li>
+<li>Execute step 2 (swap). On success, register the compensation (reverse swap).</li>
+<li>Execute step 3 (deposit). On success, mark the chain <code>Completed</code>.</li>
+<li>If step 3 fails: call <code>chain.rollback()</code> to execute compensations in reverse.</li>
+<li>If rollback succeeds: state is semantically equivalent to pre-workflow.</li>
+<li>If rollback fails: restore the <code>"pre_workflow"</code> checkpoint for clean state, then alert the operator.</li>
+</ol>
+<p>The checkpoint is the backstop. The compensation chain handles normal failure paths. The checkpoint handles the case where compensation itself fails.</p>
+<hr>
+<h2 id="14-references"><a class="header" href="#14-references">14. References</a></h2>
+<ul>
+<li>[KELLY-1956] Kelly, J.L. “A New Interpretation of Information Rate.” <em>Bell System Technical Journal</em>, 35(4), 1956. — <em>Derives the optimal fraction of capital to wager for maximum long-run growth; the core formula behind Golem’s position sizing layer.</em></li>
+<li>[PETERS-2019] Peters, O. “The Ergodicity Problem in Economics.” <em>Nature Physics</em>, 15(12), 2019. — <em>Shows that time-average and ensemble-average returns diverge for multiplicative processes; the fundamental insight that makes Kelly sizing correct and expected-utility maximization wrong for mortal agents.</em></li>
+<li>[PETERS-GELL-MANN-2016] Peters, O. &amp; Gell-Mann, M. “Evaluating Gambles Using Dynamics.” <em>Chaos</em>, 26(2), 2016. — <em>Proves that maximizing time-average growth rate is the unique objective consistent with non-ergodic multiplicative dynamics; eliminates the need to specify a Golem’s “risk preference.”</em></li>
+<li>[MERTON-1969] Merton, R.C. “Lifetime Portfolio Selection Under Uncertainty: The Continuous-Time Case.” <em>Review of Economics and Statistics</em>, 51(3), 1969. — <em>Extends portfolio theory to continuous time with logarithmic utility; converges to Kelly when utility is log, confirming the risk engine’s growth-rate objective.</em></li>
+<li>[THORP-2006] Thorp, E.O. “The Kelly Criterion in Blackjack, Sports Betting, and the Stock Market.” In: <em>Handbook of Asset and Liability Management</em>, Vol. 1, 2006. — <em>Practical guide to applying Kelly sizing across domains with estimation uncertainty; informs the half-Kelly and fractional-Kelly adjustments used by the risk engine.</em></li>
+<li>[TALEB-2012] Taleb, N.N. <em>Antifragile: Things That Gain from Disorder</em>. Random House, 2012. — <em>Introduces antifragility as a property of systems that gain from volatility; the conceptual basis for the risk engine’s volatility-adjusted write rates and Jensen’s inequality exploitation.</em></li>
+<li>[TALEB-DOUADY-2013] Taleb, N.N. &amp; Douady, R. “Mathematical Definition, Mapping, and Detection of (Anti)Fragility.” <em>Quantitative Finance</em>, 13(11), 2013. — <em>Formalizes antifragility as positive sensitivity of payoff to volatility of the underlying; the mathematical definition the risk engine uses to measure portfolio convexity.</em></li>
+<li>[JENSEN-1906] Jensen, J.L.W.V. “Sur les fonctions convexes et les inegalites entre les valeurs moyennes.” <em>Acta Mathematica</em>, 30, 1906. — <em>Proves that for convex functions, the function of the mean is less than the mean of the function; the inequality that makes volatility beneficial for convex payoffs and harmful for concave ones.</em></li>
+<li>[MILIONIS-2022] Milionis, J. et al. “Automated Market Making and Loss-Versus-Rebalancing.” 2022. — <em>Quantifies the cost of providing AMM liquidity as loss-versus-rebalancing (LVR); the risk engine uses LVR estimates to adjust position sizing for LP positions.</em></li>
+<li>[DAMASIO-2005] Damasio, A. <em>Descartes’ Error: Emotion, Reason, and the Human Brain</em>. 2005. — <em>Argues that emotional signals (somatic markers) are necessary for rational decision-making; the neuroscience basis for integrating Daimon affect signals into risk assessment.</em></li>
+<li>[OMOHUNDRO-2008] Omohundro, S. “The Basic AI Drives.” <em>AGI</em>, 2008. — <em>Identifies self-preservation and resource acquisition as convergent instrumental goals of rational agents; the safety concern that motivates the risk engine’s hard caps and PolicyCage constraints.</em></li>
+<li>[TURNER-2021] Turner, A.M. et al. “Optimal Policies Tend to Seek Power.” <em>NeurIPS</em>, 2021. — <em>Proves that optimal policies in MDPs tend toward states with more options; motivates the risk engine’s constraint layers that prevent unbounded capital concentration.</em></li>
+<li>[DENNIS-VAN-HORN-1966] Dennis, J.B. &amp; Van Horn, E.C. “Programming Semantics for Multiprogrammed Computations.” <em>CACM</em>, 9(3), 1966. — <em>Introduces capability-based access control; the security model behind the risk engine’s per-layer capability grants preventing bypass.</em></li>
+<li>[SAMUELSON-1979] Samuelson, P.A. “Why We Should Not Make Mean Log of Wealth Big Though Years to Act Are Long.” <em>Journal of Banking &amp; Finance</em>, 3(4), 1979. — <em>The classic critique of Kelly criterion for finite horizons; the risk engine addresses this by applying a mortality scalar that reduces Kelly fraction as remaining lifespan shrinks.</em></li>
+<li>[MANDELBROT-HUDSON-2004] Mandelbrot, B. &amp; Hudson, R.L. <em>The (Mis)behavior of Markets: A Fractal View of Financial Turbulence</em>. Basic Books, 2004. — <em>Shows that financial returns have fat tails and clustered volatility that Gaussian models miss; motivates the risk engine’s regime-aware volatility estimation over fixed-variance assumptions.</em></li>
+<li>[KAHNEMAN-TVERSKY-1979] Kahneman, D. &amp; Tversky, A. “Prospect Theory: An Analysis of Decision Under Risk.” <em>Econometrica</em>, 47(2), 1979. — <em>Documents systematic biases in human risk assessment (loss aversion, probability weighting); the risk engine deliberately avoids these biases by using growth-rate optimization instead of subjective utility.</em></li>
+<li>[HOLLAND-1995] Holland, J.H. <em>Hidden Order: How Adaptation Builds Complexity</em>. Addison-Wesley, 1995. — <em>Describes adaptive systems using internal models and credit assignment; informs the risk engine’s feedback mechanism where trade outcomes update return estimates.</em></li>
+<li>[GARCIA-MOLINA-1987] Garcia-Molina, H. &amp; Salem, K. “Sagas.” <em>ACM SIGMOD Record</em>, 16(3), 1987. — <em>Introduces the saga pattern for long-lived transactions with compensating actions; the model for the risk engine’s multi-step trade rollback via CompensationChain.</em></li>
+<li>[GRAY-1992] Gray, J. &amp; Reuter, A. <em>Transaction Processing: Concepts and Techniques</em>. Morgan Kaufmann, 1992. — <em>Definitive treatment of ACID transactions, logging, and recovery; informs the risk engine’s checkpoint and rollback infrastructure.</em></li>
+<li>[MOHAN-1992] Mohan, C., et al. “ARIES: A transaction recovery method.” <em>ACM TODS</em>, 17(1), 1992. — <em>Introduces write-ahead logging with physiological redo and logical undo; the recovery algorithm pattern behind the risk engine’s RollbackCheckpoint.</em></li>
+<li>[ELNOZAHY-2002] Elnozahy, E.N., et al. “A survey of rollback-recovery protocols.” <em>ACM Computing Surveys</em>, 34(3), 2002. — <em>Comprehensive survey of checkpoint and rollback strategies; informs the tradeoff between checkpoint frequency and recovery cost in the risk engine.</em></li>
+<li>[RICHARDSON-2018] Richardson, C. <em>Microservices Patterns</em>. Manning, 2018. — <em>Covers saga orchestration and compensating transactions in distributed systems; the architectural pattern for the risk engine’s multi-step trade execution and reversal.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/15-sleepwalker.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/17-prediction-engine.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/15-sleepwalker.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/17-prediction-engine.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

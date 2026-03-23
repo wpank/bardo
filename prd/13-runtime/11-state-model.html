@@ -1,0 +1,1031 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>State Model - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/13-runtime/11-state-model.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="state-model-spec"><a class="header" href="#state-model-spec">State model [SPEC]</a></h1>
+<p><strong>Version:</strong> 3.0.0
+<strong>Last Updated:</strong> 2026-03-14
+<strong>Status:</strong> Draft</p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document defines the canonical state model for a running Golem (a mortal autonomous DeFi agent compiled as a single Rust binary on a micro VM): the mutable <code>GolemState</code> struct, the read-only <code>GolemSnapshot</code> projection, and all component states (identity, heartbeat, vitality, mood, dream, cognition, memory, economic, death). It sits in the <strong>Runtime</strong> layer of the Bardo specification. Key prerequisites: the Heartbeat FSM (the recurring decision cycle), the Daimon (affect engine), and the Event Fabric (internal event bus). For any unfamiliar term, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The Golem’s mutable state lives in a single Rust struct (<code>GolemState</code>) that flows through the extension chain on every heartbeat tick. A read-only projection (<code>GolemSnapshot</code>) is computed at the end of each tick for TUI consumption, REST queries, and WebSocket streaming. All state transitions emit <code>GolemEvent</code> variants through the Event Fabric.</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-runtime</code> (state.rs, lifecycle.rs), <code>golem-core</code> (event_fabric.rs)</p>
+<p><strong>Cross-references:</strong></p>
+<ul>
+<li><code>./12-realtime-subscriptions.md</code> — full GolemEvent enum (50+ variants), subscription topics, and the event catalog emitted by state transitions</li>
+<li><code>../02-mortality/01-architecture.md</code> — VitalityState: three mortality clocks (economic, epistemic, stochastic), composite Vitality score, and BehavioralPhase transitions</li>
+<li><code>../03-daimon/01-appraisal.md</code> — MoodState: PAD (Pleasure-Arousal-Dominance) vector computation, Plutchik emotion mapping, and appraisal triggers</li>
+<li><code>../05-dreams/01-architecture.md</code> — DreamState: dream scheduling, the three-phase NREM/REM/integration cycle, and urgency scoring</li>
+<li><code>../06-hypnagogia/02-architecture.md</code> — HypnagogicState: the transitional cognitive state between waking and dreaming, producing creative associations</li>
+<li><code>../04-memory/01-grimoire.md</code> — MemoryState: the Grimoire persistent knowledge base with episodes, insights, heuristics, and the Curator maintenance cycle</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="design-principles"><a class="header" href="#design-principles">Design principles</a></h2>
+<ol>
+<li><strong>Single mutable struct.</strong> <code>GolemState</code> is the one source of truth. Extensions read and write it during hook execution. No ambient mutation between ticks.</li>
+<li><strong>Component ownership.</strong> Each section of <code>GolemState</code> is written by a specific extension. The sequential <code>after_turn</code> firing order ensures each section is written once per tick, then read by later extensions.</li>
+<li><strong>Snapshot projection.</strong> At tick end, <code>GolemState</code> projects to <code>GolemSnapshot</code> – a read-only, serializable struct optimized for UI consumption. Snapshots are cheap to compute and safe to send across thread boundaries.</li>
+<li><strong>Three visibility tiers.</strong> Every field is tagged <code>public</code>, <code>owner</code>, or <code>internal</code>. WebSocket connections receive only fields matching their auth tier.</li>
+<li><strong>Event emission.</strong> Every state transition emits a <code>GolemEvent</code> variant through the Event Fabric’s <code>tokio::broadcast</code> channel. Zero subscribers means zero serialization cost.</li>
+</ol>
+<hr>
+<h2 id="golemstate-the-mutable-world"><a class="header" href="#golemstate-the-mutable-world">GolemState: the mutable world</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The mutable state of a living Golem. Passed through the extension chain.
+///
+/// Organized by ownership: each section is written by a specific extension
+/// (or set of extensions) and read by downstream extensions.
+pub struct GolemState {
+    // ── Identity (static after boot) ──────────────────────────
+    pub identity: IdentityState,
+
+    // ── Heartbeat (written by golem-heartbeat) ────────────────
+    pub heartbeat: HeartbeatState,
+
+    // ── Mortality (written by golem-lifespan) ─────────────────
+    pub vitality: VitalityState,
+
+    // ── Affect (written by golem-daimon) ──────────────────────
+    pub mood: MoodState,
+
+    // ── Dreams (written by golem-dream) ───────────────────────
+    pub dream: DreamState,
+
+    // ── Hypnagogia (written by golem-hypnagogia) ────────────
+    pub hypnagogia: HypnagogicState,
+
+    // ── Cognition (written by golem-context, golem-reflector) ─
+    pub cognition: CognitionState,
+
+    // ── Performance (written by golem-verifier) ───────────────
+    pub performance: PerformanceState,
+
+    // ── Memory (written by golem-curator, golem-styx) ─────────
+    pub memory: MemoryState,
+
+    // ── Clade (written by golem-clade) ────────────────────────
+    pub clade: CladeState,
+
+    // ── Economics (written by golem-lifespan) ─────────────────
+    pub economic: EconomicState,
+
+    // ── Death (written by golem-lifespan during Thanatopsis) ──
+    pub death: DeathState,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="golemsnapshot-the-read-only-projection"><a class="header" href="#golemsnapshot-the-read-only-projection">GolemSnapshot: the read-only projection</a></h2>
+<p>Returned on initial WebSocket connection and via <code>GET /api/v1/state</code>. Computed once per tick, cached until the next tick.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Read-only projection of GolemState for UI consumption.
+/// Serialized to JSON for WebSocket and REST delivery.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct GolemSnapshot {
+    /// Schema version for forward compatibility.
+    pub version: u32,
+
+    /// Monotonic sequence number -- incremented on every state change.
+    pub seq: u64,
+
+    /// Tick number when this snapshot was computed.
+    pub tick: u64,
+
+    /// ISO-8601 timestamp.
+    pub timestamp: String,
+
+    /// Component snapshots.
+    pub identity: IdentitySnapshot,
+    pub heartbeat: HeartbeatSnapshot,
+    pub vitality: VitalitySnapshot,
+    pub mood: MoodSnapshot,
+    pub dream: DreamSnapshot,
+    pub hypnagogia: HypnagogicSnapshot,
+    pub cognition: CognitionSnapshot,
+    pub performance: PerformanceSnapshot,
+    pub memory: MemorySnapshot,
+    pub clade: CladeSnapshot,
+    pub economic: EconomicSnapshot,
+    pub death: DeathSnapshot,
+}
+<span class="boring">}</span></code></pre>
+<blockquote>
+<p><strong>Size target:</strong> Serialized <code>GolemSnapshot</code> must be &lt;50KB for efficient WebSocket transmission.</p>
+</blockquote>
+<hr>
+<h2 id="component-states"><a class="header" href="#component-states">Component states</a></h2>
+<h3 id="identitystate"><a class="header" href="#identitystate">IdentityState</a></h3>
+<p>Written once at boot. Changes only on config reload.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct IdentityState {
+    pub golem_id: String,
+    pub name: String,
+    pub owner_address: String,        // Hex address
+    pub wallet_address: String,       // Hex address
+    pub erc8004_id: Option&lt;String&gt;,
+    pub lineage_id: String,
+    pub generation_number: u32,
+    pub strategy_family: String,
+    pub disposition: Disposition,
+    pub created_at: String,           // ISO-8601
+    pub chains: Vec&lt;u64&gt;,
+
+    // Owner-only fields
+    pub privy_user_id: Option&lt;String&gt;,
+    pub telegram_binding: Option&lt;TelegramBinding&gt;,
+    pub discord_binding: Option&lt;DiscordBinding&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum Disposition { Eros, Balanced, Thanatos }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct TelegramBinding {
+    pub telegram_user_id: String,
+    pub privy_user_id: String,
+    pub wallet_address: String,
+    pub bound_at: String,
+    pub permissions: Vec&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DiscordBinding {
+    pub discord_user_id: String,
+    pub clade_id: String,
+    pub channel_id: String,
+    pub wallet_address: String,
+    pub bound_at: String,
+    pub permissions: Vec&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h3 id="heartbeatstate"><a class="header" href="#heartbeatstate">HeartbeatState</a></h3>
+<p>Updated every tick by <code>golem-heartbeat</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct HeartbeatState {
+    pub phase: FsmPhase,
+    pub dream_sub_phase: Option&lt;DreamSubPhase&gt;,
+    pub tick_number: u64,
+    pub tick_interval_seconds: f64,
+    pub tier: InferenceTier,
+    pub suppressed: bool,
+    pub tick_cost_usdc: f64,
+    pub daily_cost_usdc: f64,
+    pub daily_cost_remaining_usdc: f64,
+    pub cost_cap_state: CostCapState,
+    pub last_tick_at: String,           // ISO-8601
+    pub last_tick_duration_ms: u64,
+
+    // Owner-only
+    pub probes: Option&lt;Vec&lt;ProbeResult&gt;&gt;,
+    pub escalation: Option&lt;EscalationSummary&gt;,
+    pub cache_hit: Option&lt;bool&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum FsmPhase { Idle, Sensing, Deciding, Acting, Reflecting, Sleeping }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum DreamSubPhase { HypnagogicOnset, Nrem, Rem, Integration, HypnopompicReturn }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum InferenceTier { T0, T1, T2, T3 }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum CostCapState { Normal, Warning, SoftCap, HardCap }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ProbeResult {
+    pub probe: String,
+    pub severity: Severity,
+    pub value: f64,
+    pub threshold: f64,
+    pub detail: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum Severity { None, Low, High }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct EscalationSummary {
+    pub max_severity: Severity,
+    pub probes_triggered: Vec&lt;String&gt;,
+    pub tier: InferenceTier,
+    pub reason: String,
+    pub similar_past_episodes: u32,
+    pub applicable_models: Vec&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Probes</strong> (16 total, all T0 / deterministic / $0.00):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Probe</th><th>Low threshold</th><th>High threshold</th><th>Detects</th></tr>
+</thead>
+<tbody>
+<tr><td><code>price_delta</code></td><td>50 bps</td><td>200 bps</td><td>Price movement since last tick</td></tr>
+<tr><td><code>tvl_delta</code></td><td>2%</td><td>10%</td><td>TVL change in monitored pools</td></tr>
+<tr><td><code>position_health</code></td><td>1.5</td><td>1.2</td><td>Lending health factor</td></tr>
+<tr><td><code>gas_spike</code></td><td>2x</td><td>5x</td><td>Gas price vs. 1h average</td></tr>
+<tr><td><code>credit_balance</code></td><td>30% remaining</td><td>15% remaining</td><td>USDC credit depletion</td></tr>
+<tr><td><code>rsi_extreme</code></td><td>RSI &lt; 30</td><td>RSI &gt; 70</td><td>Momentum extremes</td></tr>
+<tr><td><code>macd_cross</code></td><td>signal cross</td><td>strong divergence</td><td>Trend change</td></tr>
+<tr><td><code>circuit_breaker</code></td><td>any</td><td>any</td><td>PolicyCage violation</td></tr>
+<tr><td><code>kill_switch</code></td><td>any</td><td>any</td><td>Operator kill command</td></tr>
+<tr><td><code>replicant_report</code></td><td>any</td><td>any</td><td>Replicant completed test</td></tr>
+<tr><td><code>clade_alert</code></td><td>any</td><td>any</td><td>Clade peer urgent alert</td></tr>
+<tr><td><code>homeostatic</code></td><td>deviation &gt; 1s</td><td>deviation &gt; 2s</td><td>Position drift from target</td></tr>
+<tr><td><code>world_model_drift</code></td><td>0.3</td><td>0.6</td><td>Prediction accuracy degradation</td></tr>
+<tr><td><code>causal_graph</code></td><td>edge weakened</td><td>edge broken</td><td>Causal relationship invalidated</td></tr>
+<tr><td><code>vpin_spike</code></td><td>0.5</td><td>0.8</td><td>Informed trading probability</td></tr>
+<tr><td><code>il_threshold</code></td><td>2%</td><td>5%</td><td>Impermanent loss on LP positions</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h3 id="vitalitystate"><a class="header" href="#vitalitystate">VitalityState</a></h3>
+<p>Updated every tick by <code>golem-lifespan</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct VitalityState {
+    /// Economic clock -- USDC depletion [0, 1].
+    pub economic: f64,
+
+    /// Epistemic clock -- predictive fitness [0, 1].
+    pub epistemic: f64,
+
+    /// Age factor -- Gompertz aging drag [0, 1].
+    pub age_factor: f64,
+
+    /// Composite vitality -- multiplicative combination [0, 1].
+    pub composite: f64,
+
+    /// Current behavioral phase.
+    pub phase: BehavioralPhase,
+
+    /// Ticks spent in current phase.
+    pub ticks_in_phase: u64,
+
+    /// Previous phase.
+    pub previous_phase: Option&lt;BehavioralPhase&gt;,
+
+    /// Projected hours remaining at current burn rate.
+    pub projected_life_hours: f64,
+
+    /// Survival pressure [0, 1] -- composite inverse, smoothed.
+    pub survival_pressure: f64,
+
+    // Owner-only
+    pub epistemic_detail: Option&lt;EpistemicFitnessState&gt;,
+    pub stochastic_detail: Option&lt;StochasticMortalityState&gt;,
+    pub economic_detail: Option&lt;EconomicVitalityDetail&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum BehavioralPhase {
+    Thriving,      // composite &gt; 0.7
+    Stable,        // 0.5-0.7
+    Conservation,  // 0.3-0.5
+    Declining,     // 0.1-0.3
+    Terminal,      // &lt; 0.1
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct EpistemicFitnessState {
+    pub fitness: f64,
+    pub fitness_trend: f64,
+    pub domain_fitness: DomainFitness,
+    pub ticks_below_threshold: u64,
+    pub senescent: bool,
+    pub senescence_stage: Option&lt;u8&gt;,  // 1, 2, or 3
+    pub peak_fitness: f64,
+    pub peak_fitness_tick: u64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DomainFitness {
+    pub price_direction: f64,
+    pub volatility_regime: f64,
+    pub yield_trend: f64,
+    pub gas_pattern: f64,
+    pub protocol_behavior: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct StochasticMortalityState {
+    pub tick_number: u64,
+    pub current_hazard: f64,
+    pub survival_probability: f64,
+    pub survived: bool,
+    pub last_roll: f64,  // internal-only
+    pub estimated_median_remaining_ticks: u64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct EconomicVitalityDetail {
+    pub remaining_usdc: f64,
+    pub burn_rate: BurnRateState,
+    pub partitions: CreditPartitions,
+    pub reserve: ApoptoticReserve,
+    pub net_income_rate_24h: f64,
+    pub sustainability: SustainabilityMetrics,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct BurnRateState {
+    pub compute_per_hour: f64,
+    pub inference_per_hour: f64,
+    pub gas_per_hour: f64,
+    pub data_per_hour: f64,
+    pub insurance_per_hour: f64,
+    pub total_per_hour: f64,
+    pub regime_cost_profile: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CreditPartitions {
+    pub llm: PartitionState,
+    pub gas: PartitionState,
+    pub data: PartitionState,
+    pub legacy: PartitionState,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PartitionState {
+    pub allocated: f64,
+    pub spent: f64,
+    pub remaining: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ApoptoticReserve {
+    pub total_usdc: f64,
+    pub settle: f64,
+    pub life_review: f64,
+    pub legacy: f64,
+    pub locked: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SustainabilityMetrics {
+    pub revenue_per_hour: f64,
+    pub burn_per_hour: f64,
+    pub sustainability_ratio: f64,
+    pub time_to_sustainability: f64,
+    pub homeostatic: bool,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Phase behavior effects:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Tick interval</th><th>Inference ceiling</th><th>Trading</th><th>Clade sharing</th><th>Replicants</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>1x</td><td>T3 (Opus)</td><td>Full</td><td>Normal thresholds</td><td>Spawn enabled</td></tr>
+<tr><td>Stable</td><td>1x</td><td>T2 (Sonnet)</td><td>Full</td><td>Normal thresholds</td><td>Spawn enabled</td></tr>
+<tr><td>Conservation</td><td>2x</td><td>T1 (Haiku)</td><td>Monitor-only</td><td>Elevated thresholds</td><td>Disabled</td></tr>
+<tr><td>Declining</td><td>2x</td><td>T1 (Haiku)</td><td>Unwind only</td><td>Emergency sharing</td><td>Disabled</td></tr>
+<tr><td>Terminal</td><td>N/A</td><td>T1 (one-shot)</td><td>Settlement only</td><td>Death notification</td><td>Disabled</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h3 id="moodstate"><a class="header" href="#moodstate">MoodState</a></h3>
+<p>Updated by <code>golem-daimon</code> when PAD Euclidean delta &gt; 0.15.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MoodState {
+    pub pad: PadVector,
+    pub label: String,             // Plutchik primary
+    pub intensity: String,         // "mild" | "moderate" | "intense"
+    pub octant: String,            // PAD octant name
+    pub persistence_ticks: u64,
+    pub trigger: String,
+    pub personality_baseline: PadVector,
+    pub tone: String,              // conversational tone
+
+    // Owner-only
+    pub history: Option&lt;Vec&lt;MoodSample&gt;&gt;,
+
+    // Internal-only
+    pub last_appraisal: Option&lt;AppraisalResult&gt;,
+    pub contagion: Option&lt;ContagionState&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PadVector {
+    pub pleasure: f64,   // [-1.0, 1.0]
+    pub arousal: f64,    // [-1.0, 1.0]
+    pub dominance: f64,  // [-1.0, 1.0]
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MoodSample {
+    pub tick: u64,
+    pub timestamp: String,
+    pub pad: PadVector,
+    pub label: String,
+    pub trigger: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct AppraisalResult {
+    pub emotion: String,
+    pub pad: PadVector,
+    pub intensity: f64,
+    pub trigger_event_type: String,
+    pub trigger_tick: u64,
+    pub goal_relevance: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContagionState {
+    pub sources: Vec&lt;ContagionSource&gt;,
+    pub net_effect: PadVector,
+    pub last_sync_at: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContagionSource {
+    pub peer_id: String,
+    pub pad: PadVector,
+    pub attenuation: f64,
+    pub received_at: String,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h3 id="dreamstate"><a class="header" href="#dreamstate">DreamState</a></h3>
+<p>Updated by <code>golem-dream</code> on mode/phase transitions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DreamState {
+    pub mode: GolemMode,
+    pub tier: String,                  // "core" | "hardened"
+    pub current_phase: Option&lt;DreamSubPhase&gt;,
+    pub cycle_number: u32,
+    pub total_cycles_this_window: u32,
+    pub budget_remaining: f64,
+    pub budget_spent: f64,
+    pub episodes_replayed: u32,
+    pub hypotheses_generated: u32,
+    pub threats_simulated: u32,
+    pub dream_start_tick: u64,
+    pub last_dream_tick: u64,
+    pub urgency: f64,
+    pub episode_count: u64,
+    pub lifetime_cycles: u32,
+    pub avg_dream_quality: f64,
+
+    // Owner-only
+    pub budget_config: Option&lt;DreamBudget&gt;,
+    pub active_hypotheses: Option&lt;Vec&lt;HypothesisSummary&gt;&gt;,
+    pub active_threats: Option&lt;Vec&lt;ThreatSummary&gt;&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum GolemMode { Waking, Dreaming, Dying }
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DreamBudget {
+    pub per_cycle_max: f64,
+    pub per_session_max: f64,
+    pub monthly_max: f64,
+    pub nrem_allocation: f64,
+    pub rem_allocation: f64,
+    pub integration_allocation: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct HypothesisSummary {
+    pub id: String,
+    pub source: String,
+    pub description: String,
+    pub confidence: f64,
+    pub status: String,
+    pub created_cycle: u32,
+    pub last_tested_tick: u64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ThreatSummary {
+    pub id: String,
+    pub tier: u8,
+    pub category: String,
+    pub description: String,
+    pub rehearsed: bool,
+    pub impact_severity: f64,
+    pub response_confidence: f64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h3 id="hypnagogicstate"><a class="header" href="#hypnagogicstate">HypnagogicState</a></h3>
+<p>Updated by <code>golem-hypnagogia</code> during onset and return phases.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct HypnagogicState {
+    pub phase: Option&lt;HypnagogicPhase&gt;,
+    pub depth: f64,                     // [0.0, 1.0] — dissolution depth during onset, recrystallization during return
+    pub waking_residue_count: u32,      // Unresolved waking threads captured at onset
+    pub dali_interrupt_pending: bool,   // True during the Dali interrupt window in return
+    pub onset_duration_ms: u64,
+    pub return_duration_ms: u64,
+    pub liminal_insights_captured: u32, // Fragments captured at the onset/return boundary
+    pub last_onset_tick: u64,
+    pub last_return_tick: u64,
+
+    // Owner-only
+    pub waking_residue: Option&lt;Vec&lt;WakingResidue&gt;&gt;,
+    pub liminal_fragments: Option&lt;Vec&lt;LiminalFragment&gt;&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum HypnagogicPhase {
+    Onset,   // Waking → Dreaming transition
+    Return,  // Dreaming → Waking transition
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct WakingResidue {
+    pub thread_id: String,
+    pub description: String,
+    pub emotional_charge: f64,
+    pub source_tick: u64,
+    pub resolved_in_dream: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct LiminalFragment {
+    pub id: String,
+    pub content: String,
+    pub phase: HypnagogicPhase,   // Which transition produced it
+    pub confidence: f64,
+    pub promoted_to_staging: bool,
+    pub captured_at: String,       // ISO-8601
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>depth</code> field tracks how far the Golem has progressed through the current liminal transition. During onset, depth increases from 0.0 (fully waking) to 1.0 (fully dissolved, ready for NREM). During return, depth decreases from 1.0 (still in dream cognition) to 0.0 (fully recrystallized, ready for waking). The TUI renders this as a depth gauge (see <code>../18-interfaces/03-tui.md</code>).</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../06-hypnagogia/02-architecture.md</code> (onset/return phase specifications), <code>../05-dreams/01-architecture.md</code> (DreamPhase enum)</p>
+</blockquote>
+<hr>
+<h3 id="cognitionstate-performancestate-memorystate-cladestate-economicstate-deathstate"><a class="header" href="#cognitionstate-performancestate-memorystate-cladestate-economicstate-deathstate">CognitionState, PerformanceState, MemoryState, CladeState, EconomicState, DeathState</a></h3>
+<p>These follow the same pattern. Each is a Rust struct with <code>serde::Serialize + serde::Deserialize</code>, written by a specific extension, projected to a snapshot at tick end.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CognitionState {
+    pub decision_cache: DecisionCacheStats,
+    pub insights_active: u32,
+    pub insights_candidate: u32,
+    pub heuristics: u32,
+    pub warnings: u32,
+    pub causal_graph_nodes: u32,
+    pub causal_graph_edges: u32,
+    pub regime: RegimeTag,
+    pub playbook_revisions: u32,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DecisionCacheStats {
+    pub total_entries: u32,
+    pub hits_24h: u32,
+    pub misses_24h: u32,
+    pub hit_rate: f64,
+    pub estimated_savings_usdc: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct RegimeTag {
+    pub volatility_quintile: u8,       // 1-5
+    pub trend_direction: String,       // "up" | "down" | "range"
+    pub gas_price_level: String,       // "low" | "normal" | "high" | "spike"
+    pub liquidity_condition: String,   // "deep" | "normal" | "thin" | "crisis"
+    pub timestamp: u64,
+    pub block_number: u64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PerformanceState {
+    pub nav_usdc: f64,
+    pub pnl_24h: f64,
+    pub pnl_7d: f64,
+    pub pnl_30d: f64,
+    pub sharpe_30d: f64,
+    pub max_drawdown_30d: f64,
+    pub trade_count_24h: u32,
+    pub win_rate_30d: f64,
+    pub positions: Option&lt;Vec&lt;PositionSummary&gt;&gt;,  // Owner-only
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PositionSummary {
+    pub protocol: String,
+    pub position_type: String,
+    pub value_usdc: f64,
+    pub pnl_usdc: f64,
+    pub entry_tick: u64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MemoryState {
+    pub episode_count: u64,
+    pub insight_count: u32,
+    pub heuristic_count: u32,
+    pub warning_count: u32,
+    pub causal_link_count: u32,
+    pub grimoire_disk_bytes: u64,
+    pub last_curator_tick: u64,
+    pub styx_vault_last_upload: Option&lt;String&gt;,  // ISO-8601
+    pub styx_vault_connected: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CladeState {
+    pub peers_connected: u32,
+    pub entries_pushed: u64,
+    pub entries_received: u64,
+    pub alerts_received: u32,
+    pub last_sync_at: Option&lt;String&gt;,
+    pub peers: Option&lt;Vec&lt;CladePeer&gt;&gt;,  // Owner-only
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CladePeer {
+    pub peer_id: String,
+    pub status: String,      // "online" | "offline" | "dying"
+    pub erc8004_id: String,
+    pub last_seen: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct EconomicState {
+    pub balance_usdc: f64,
+    pub projected_ttl_hours: f64,
+    pub burn_rate_per_hour: f64,
+    pub partitions: CreditPartitions,
+    pub cost_cap_state: CostCapState,
+    pub daily_accumulator: f64,
+    pub daily_remaining: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DeathState {
+    pub protocol_active: bool,
+    pub phase: Option&lt;DeathProtocolPhase&gt;,
+    pub cause: Option&lt;String&gt;,
+    pub started_at_tick: Option&lt;u64&gt;,
+    pub settlement_progress: Option&lt;SettlementProgress&gt;,
+    pub testament_progress: Option&lt;TestamentProgress&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub enum DeathProtocolPhase {
+    Acceptance,  // Phase 0: 1-5 ticks, deterministic
+    Settlement,  // Phase I: variable, close positions
+    Reflection,  // Phase II: 5-15 ticks, Opus-level review
+    Legacy,      // Phase III: 2-5 ticks, upload to Styx Archive
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct SettlementProgress {
+    pub positions_total: u32,
+    pub positions_closed: u32,
+    pub usdc_recovered: f64,
+    pub failed_settlements: Vec&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct TestamentProgress {
+    pub sections_complete: u32,
+    pub sections_total: u32,
+    pub uploaded_to_styx: bool,
+    pub upload_timestamp: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="state-change-and-event-emission"><a class="header" href="#state-change-and-event-emission">State change and event emission</a></h2>
+<p>Every mutation to <code>GolemState</code> emits a corresponding <code>GolemEvent</code> through the Event Fabric. The Event Fabric is a <code>tokio::broadcast</code> channel with a 10,000-entry ring buffer for reconnection replay.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl GolemState {
+    /// Apply a state change and emit the corresponding event.
+    pub fn apply(&amp;mut self, change: StateChange, fabric: &amp;EventFabric) {
+        match change {
+            StateChange::VitalityUpdate(v) =&gt; {
+                self.vitality = v.clone();
+                fabric.emit(GolemEvent::VitalityUpdate {
+                    timestamp: now_ms(),
+                    golem_id: self.identity.golem_id.clone(),
+                    sequence: fabric.next_seq(),
+                    vitality: v.composite,
+                    phase: format!("{:?}", v.phase),
+                    credit_balance: self.economic.balance_usdc,
+                    projected_life_hours: v.projected_life_hours,
+                    clocks: VitalityClocks {
+                        economic: v.economic,
+                        epistemic: v.epistemic,
+                        stochastic: v.age_factor,
+                    },
+                });
+            }
+            // ... other state changes follow the same pattern
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>See <code>./12-realtime-subscriptions.md</code> for the complete <code>GolemEvent</code> enum with all 50+ variants.</p>
+<hr>
+<h2 id="snapshot-projection"><a class="header" href="#snapshot-projection">Snapshot projection</a></h2>
+<p>At the end of each tick, <code>GolemState</code> projects to <code>GolemSnapshot</code>. The projection strips internal-only fields based on the connection’s auth tier.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl GolemState {
+    pub fn snapshot(&amp;self, tier: AuthTier) -&gt; GolemSnapshot {
+        GolemSnapshot {
+            seq: self.next_seq(),
+            tick: self.heartbeat.tick_number,
+            timestamp: now_iso8601(),
+            identity: self.identity.project(tier),
+            heartbeat: self.heartbeat.project(tier),
+            vitality: self.vitality.project(tier),
+            mood: self.mood.project(tier),
+            dream: self.dream.project(tier),
+            hypnagogia: self.hypnagogia.project(tier),
+            cognition: self.cognition.project(tier),
+            performance: self.performance.project(tier),
+            memory: self.memory.project(tier),
+            clade: self.clade.project(tier),
+            economic: self.economic.project(tier),
+            death: self.death.project(tier),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum AuthTier { Public, Owner, Internal }
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="type-state-lifecycle"><a class="header" href="#type-state-lifecycle">Type-state lifecycle</a></h2>
+<p>The Golem’s lifecycle phases are enforced at the type level:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct Golem&lt;Phase&gt; {
+    state: GolemState,
+    _phase: std::marker::PhantomData&lt;Phase&gt;,
+}
+
+pub struct Booting;
+pub struct Running;
+pub struct Dying;
+
+impl Golem&lt;Booting&gt; {
+    pub fn start(config: GolemConfig) -&gt; Self { /* ... */ }
+    pub fn ready(self) -&gt; Golem&lt;Running&gt; { /* first heartbeat passed */ }
+}
+
+impl Golem&lt;Running&gt; {
+    pub fn tick(&amp;mut self, fabric: &amp;EventFabric) { /* heartbeat loop */ }
+    pub fn die(self, cause: String) -&gt; Golem&lt;Dying&gt; { /* Thanatopsis */ }
+}
+
+impl Golem&lt;Dying&gt; {
+    pub fn settle(&amp;mut self) { /* Phase I */ }
+    pub fn reflect(&amp;mut self) { /* Phase II */ }
+    pub fn legacy(self) { /* Phase III, then drop */ }
+}
+<span class="boring">}</span></code></pre>
+<p>A running Golem cannot call <code>settle()</code>. A dying Golem cannot call <code>tick()</code>. The compiler enforces the lifecycle.</p>
+<hr>
+<blockquote>
+<p><strong>Design system binding:</strong> Every field in this state model has a visual binding in the design system §24 (Data-to-Visual Binding Reference). See <code>tmp/research/design-inspo/bardo-design-system-v2.md</code>.</p>
+</blockquote>
+<hr>
+<p><em>End of document.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/13-runtime/10-packaging-deployment.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/13-runtime/12-realtime-subscriptions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/13-runtime/10-packaging-deployment.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/13-runtime/12-realtime-subscriptions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

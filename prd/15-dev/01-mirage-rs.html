@@ -1,0 +1,953 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Mirage RS - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/15-dev/01-mirage-rs.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="mirage-rs--in-process-evm-fork-with-live-state-tracking"><a class="header" href="#mirage-rs--in-process-evm-fork-with-live-state-tracking">mirage-rs – In-Process EVM Fork with Live State Tracking</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-18
+<strong>Crate:</strong> <code>mirage-rs/</code></p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the core architecture of mirage-rs, the in-process EVM fork that replaces Anvil for DeFi development (section 15). The central concept is HybridDB, a three-tier database (DirtyStore for local mutations, ReadCache for hot reads, upstream RPC at <code>latest</code>) that lets a Golem’s (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) local transactions coexist with live mainnet state. The document also covers automatic dirty tracking, Copy-on-Write state layers for cheap branching, and Block-STM parallel execution for historical replay. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="concept"><a class="header" href="#concept">Concept</a></h2>
+<p>The standard approach to local EVM development is Anvil: fork mainnet at block N, get a frozen snapshot, run your transactions against it. This works for unit tests. It fails for anything that cares about what happens <em>after</em> your transaction.</p>
+<p>If you add liquidity to a Uniswap V3 pool and want to know whether you’re in range an hour later, Anvil can’t tell you. The pool’s price doesn’t move because no one else is trading. If you deploy a vault and want to see how its NAV tracks as the underlying assets fluctuate, Anvil gives you silence.</p>
+<p>mirage-rs solves this by running a local revm instance that tracks live mainnet state and replays only the transactions that matter. Your local state diverges from mainnet at the point of your first local transaction, but mainnet data keeps flowing in. The result is a parallel universe: your positions exist in a market that keeps moving.</p>
+<h3 id="v1-to-v2-the-inversion"><a class="header" href="#v1-to-v2-the-inversion">v1 to v2: The Inversion</a></h3>
+<p>v1 replayed every mainnet block through a local revm instance. That meant ~150 transactions per block, every 12 seconds, racing against block production. The cost was enormous: block skipping, stale state for contracts that fell behind, oracle rot, and a permanent race against the chain head.</p>
+<p>v2 inverts the model around three ideas:</p>
+<p><strong>Lazy-latest reads.</strong> Every storage slot the golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) hasn’t modified reads directly from mainnet at <code>latest</code>. Oracle prices, lending rates, token supplies – all live, zero local compute.</p>
+<p><strong>Automatic dirty tracking.</strong> When a golem transacts locally, revm’s state diff classifies each touched contract as either a “protocol” (complex state, the golem’s position lives here) or a “token” (balance transfer, slot-level override only). Protocols enter a watch list. Tokens get their specific slots overridden and nothing more.</p>
+<p><strong>Targeted replay.</strong> Only mainnet transactions touching watched protocol contracts get replayed locally. For a typical portfolio of 3-10 DeFi positions, this means ~5-15 transactions per block instead of ~150. Keeping up with the chain head becomes trivial.</p>
+<p>The golem transacts normally; mirage figures out what to watch. LP fees accrue from real swaps, Aave positions respond to real liquidations, and Chainlink oracles stay current without any simulation.</p>
+<hr>
+<h2 id="architecture-diagram"><a class="header" href="#architecture-diagram">Architecture Diagram</a></h2>
+<pre><code>+------------------------------------------------------------------+
+|                          mirage-rs v2                             |
+|                                                                  |
+|  +------------------------------------------------------------+ |
+|  |                     JSON-RPC Server                         | |
+|  |  eth_*, mirage_*, evm_*, hardhat_*, anvil_* handlers        | |
+|  +---------------+--------------------------+-----------------+ |
+|                  |                          |                    |
+|           write path                  read path                  |
+|                  |                          |                    |
+|  +---------------v--------------------------v-----------------+ |
+|  |                     EvmExecutor                             | |
+|  |   call() / transact() against HybridDB                     | |
+|  +---------------+--------------------------+-----------------+ |
+|                  |                          |                    |
+|  +---------------v--------------+ +---------v-----------------+ |
+|  |       DirtyStore             | |      ReadThrough          | |
+|  |  +------------------------+  | |  +---------------------+  | |
+|  |  | watched_contracts      |  | |  | BytecodeCache (LRU) |  | |
+|  |  | (protocol state)       |  | |  | keyed by code_hash  |  | |
+|  |  +------------------------+  | |  +---------------------+  | |
+|  |  | dirty_slots            |  | |  | ReadCache (LRU+TTL) |  | |
+|  |  | (token balances)       |  | |  | (hot read path)     |  | |
+|  |  +------------------------+  | |  +---------------------+  | |
+|  |  | CoW state layers       |  | |  | Upstream RPC        |  | |
+|  |  | (scenario branching)   |  | |  | (fetch at "latest") |  | |
+|  |  +------------------------+  | |  +---------------------+  | |
+|  +------------------------------+ +---------------------------+ |
+|                                                                  |
+|  +------------------------------------------------------------+ |
+|  |                  TargetedFollower                            | |
+|  |  Subscribe to new blocks via WebSocket                      | |
+|  |  Scan each block for txs touching watched contracts         | |
+|  |  Replay matched txs through EvmExecutor                     | |
+|  |  Update DirtyStore + extend watch list via contagion        | |
+|  +------------------------------------------------------------+ |
+|                                                                  |
+|  +------------------------------------------------------------+ |
+|  |              SpeculativeExecutor (enhancement)              | |
+|  |  Subscribe to pending txs from mempool                      | |
+|  |  Pre-execute against CoW fork of current state              | |
+|  |  Cache results keyed by (tx_hash, base_state_block)         | |
+|  |  Invalidate on state overlap with new blocks                | |
+|  +------------------------------------------------------------+ |
++------------------------------------------------------------------+
+</code></pre>
+<hr>
+<h2 id="hybriddb"><a class="header" href="#hybriddb">HybridDB</a></h2>
+<p>The central database replaces v1’s <code>CacheDB&lt;RemoteDB&gt;</code> with a three-tier read priority: DirtyStore, then ReadCache, then upstream RPC at <code>latest</code>. All local mutations write to DirtyStore. All clean reads flow through the cache with TTL-based expiry.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy_primitives::{Address, B256, U256};
+use revm::primitives::{AccountInfo, Bytecode};
+use revm::database::Database;
+use parking_lot::RwLock;
+use std::collections::HashMap;
+use std::sync::Arc;
+use std::time::{Duration, Instant};
+
+/// The main database backing all EVM execution in mirage-rs v2.
+///
+/// Read priority: DirtyStore -&gt; ReadCache -&gt; Upstream RPC (at "latest")
+/// Write destination: DirtyStore (all local mutations land here)
+pub struct HybridDB {
+    /// All locally-modified state. Never evicted except by evm_revert.
+    dirty: DirtyStore,
+
+    /// LRU cache for upstream reads. Entries expire after cache_ttl.
+    read_cache: ReadCache,
+
+    /// LRU cache for compiled bytecode, keyed by code hash.
+    /// Bytecode is immutable post-deployment -- this cache never invalidates.
+    bytecode_cache: BytecodeCache,
+
+    /// Upstream RPC client for fetching live mainnet state.
+    upstream: UpstreamRpc,
+
+    /// When set, all upstream reads within a single EVM execution
+    /// use this block number instead of "latest". Ensures consistency
+    /// within a transaction/call. Set before execution, cleared after.
+    pinned_block: Option&lt;u64&gt;,
+
+    /// Cache TTL. Default: 12 seconds (one Ethereum L1 block).
+    cache_ttl: Duration,
+
+    /// Chain ID for EVM configuration.
+    chain_id: u64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="database-trait-implementation"><a class="header" href="#database-trait-implementation">Database Trait Implementation</a></h3>
+<p>HybridDB implements revm’s <code>Database</code> trait, the four-method interface revm calls for all state access during EVM execution: <code>basic()</code>, <code>code_by_hash()</code>, <code>storage()</code>, and <code>block_hash()</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Database for HybridDB {
+    type Error = MirageError;
+
+    fn basic(&amp;mut self, address: Address) -&gt; Result&lt;Option&lt;AccountInfo&gt;, Self::Error&gt; {
+        // 1. Check dirty store for overridden fields
+        if let Some(dirty) = self.dirty.accounts.get(&amp;address) {
+            let needs_upstream = dirty.balance.is_none()
+                || dirty.nonce.is_none()
+                || dirty.code.is_none();
+
+            let base = if needs_upstream {
+                self.fetch_account_info(address)?.unwrap_or_default()
+            } else {
+                AccountInfo::default()
+            };
+
+            return Ok(Some(AccountInfo {
+                balance: dirty.balance.unwrap_or(base.balance),
+                nonce: dirty.nonce.unwrap_or(base.nonce),
+                code_hash: dirty.code_hash.unwrap_or(base.code_hash),
+                code: dirty.code.clone().or(base.code),
+            }));
+        }
+
+        // 2. Check read cache
+        if let Some(info) = self.read_cache.get_account(&amp;address) {
+            return Ok(Some(info.clone()));
+        }
+
+        // 3. Fetch from upstream at pinned block or latest
+        let info = self.fetch_account_info(address)?;
+        if let Some(ref info) = info {
+            let block = self.resolve_block();
+            self.read_cache.insert_account(address, info.clone(), block);
+        }
+        Ok(info)
+    }
+
+    fn code_by_hash(&amp;mut self, code_hash: B256) -&gt; Result&lt;Bytecode, Self::Error&gt; {
+        // Check bytecode cache first (immutable, never invalidates)
+        if let Some(bytecode) = self.bytecode_cache.get(&amp;code_hash) {
+            return Ok(bytecode.clone());
+        }
+
+        // Check dirty store (locally injected code)
+        for dirty in self.dirty.accounts.values() {
+            if dirty.code_hash == Some(code_hash) {
+                if let Some(ref code) = dirty.code {
+                    self.bytecode_cache.insert(code_hash, code.clone());
+                    return Ok(code.clone());
+                }
+            }
+        }
+
+        // Fetch from upstream and cache permanently
+        let bytecode = self.upstream.get_code_by_hash(
+            code_hash, self.resolve_block()
+        )?;
+        self.bytecode_cache.insert(code_hash, bytecode.clone());
+        Ok(bytecode)
+    }
+
+    fn storage(&amp;mut self, address: Address, index: U256) -&gt; Result&lt;U256, Self::Error&gt; {
+        // 1. Check dirty store for this slot
+        if let Some(dirty) = self.dirty.accounts.get(&amp;address) {
+            if let Some(value) = dirty.storage.get(&amp;index) {
+                return Ok(*value);
+            }
+        }
+
+        // 2. Check read cache
+        if let Some(value) = self.read_cache.get_storage(&amp;address, &amp;index) {
+            return Ok(value);
+        }
+
+        // 3. Fetch from upstream
+        let block = self.resolve_block();
+        let value = self.upstream.get_storage_at(address, index, block)?;
+        self.read_cache.insert_storage(address, index, value, block);
+        Ok(value)
+    }
+
+    fn block_hash(&amp;mut self, number: u64) -&gt; Result&lt;B256, Self::Error&gt; {
+        if let Some(hash) = self.read_cache.block_hashes.get(&amp;number) {
+            return Ok(*hash);
+        }
+        let hash = self.upstream.get_block_hash(number)?;
+        self.read_cache.block_hashes.put(number, hash);
+        Ok(hash)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>resolve_block()</code> method returns <code>BlockTag::Number(from_block)</code> in historical mode (where all reads pin to the fork block) and <code>BlockTag::Latest</code> in live mode. This single branch is the mechanism that makes historical replay work correctly – no upstream read ever sees state newer than the fork point.</p>
+<hr>
+<h2 id="dirtystore"><a class="header" href="#dirtystore">DirtyStore</a></h2>
+<p>The DirtyStore holds all locally-modified state and the watch list. It is the successor to v1’s <code>UserOverlay</code>, promoted from an optional add-on to the primary write layer.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DirtyStore {
+    /// Per-account dirty state. Keyed by contract/EOA address.
+    accounts: HashMap&lt;Address, DirtyAccount&gt;,
+
+    /// Contracts whose mainnet activity should be replayed locally.
+    /// Built automatically from transaction state diffs.
+    watch_list: HashMap&lt;Address, WatchEntry&gt;,
+
+    /// Contracts explicitly excluded from the watch list.
+    /// Prevents auto-classification from re-adding them.
+    unwatch_list: HashSet&lt;Address&gt;,
+
+    /// Running counter of total dirty slots, for status reporting
+    /// and memory pressure monitoring.
+    total_dirty_slots: u64,
+
+    /// Snapshot storage for evm_snapshot / evm_revert.
+    snapshots: HashMap&lt;u64, Box&lt;DirtyStoreSnapshot&gt;&gt;,
+    next_snapshot_id: u64,
+}
+
+pub struct DirtyAccount {
+    /// Overridden account fields. Some = locally modified, None = read-through.
+    balance: Option&lt;U256&gt;,
+    nonce: Option&lt;u64&gt;,
+    code: Option&lt;Bytecode&gt;,
+    code_hash: Option&lt;B256&gt;,
+
+    /// Per-slot storage overrides. Only these slots are detached from mainnet.
+    /// All other slots read through to upstream at latest.
+    storage: HashMap&lt;U256, U256&gt;,
+}
+
+pub struct WatchEntry {
+    source: WatchSource,
+    added_at_block: u64,
+    initial_slot_count: usize,
+    replay_count: u64,
+}
+
+pub enum WatchSource {
+    /// Local transaction wrote 3+ slots to this contract.
+    AutoClassified,
+    /// A replayed transaction for a watched contract triggered writes
+    /// to this contract (recursive contagion).
+    Contagion { parent: Address },
+    /// Added explicitly via mirage_watchContract.
+    Manual,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="state-diff-classification"><a class="header" href="#state-diff-classification">State Diff Classification</a></h2>
+<p>When a local transaction executes, revm produces a state diff: every account and storage slot that was read or written. The <code>DiffClassifier</code> examines this diff to decide what enters the watch list.</p>
+<p>The classification rule is simple. A contract with 3 or more storage slots written by a single transaction is a protocol (complex state, the golem’s position lives here). A contract with 1-2 slots written is a token (balance transfer, slot-level override only). The threshold is configurable but the default of 3 works because ERC-20 transfers write at most 2 slots (sender balance + recipient balance), while protocol interactions (LP deposit, borrow, stake) write 3 or more (position state, global accumulators, tick bitmaps, etc.).</p>
+<p>A secondary heuristic handles edge cases: if all written slots are high-entropy keccak outputs (typical of mapping entries) with no low-numbered slots (0-20, typical of contract-level state variables), the contract is likely a token even at 3+ writes. Rebasing tokens like stETH that update totalSupply, rebase index, and user balance in one transfer trigger this path.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ClassificationConfig {
+    /// Minimum slots written to classify as protocol. Default: 3.
+    pub protocol_slot_threshold: usize,
+    /// Check for ERC-20 storage patterns as a secondary signal.
+    pub check_token_interface: bool,
+    /// Maximum watched contracts. Safety valve.
+    pub max_watched_contracts: usize,
+    /// Enable recursive contagion (watched contracts that interact
+    /// with new contracts add those to the watch list).
+    pub enable_contagion: bool,
+    /// Maximum contagion depth. Default: 2.
+    pub max_contagion_depth: usize,
+}
+
+pub enum Classification {
+    Protocol,  // Add to watch list, replay mainnet txs
+    SlotOnly,  // Override specific slots, no replay
+    ReadOnly,  // No storage written, no action
+}
+<span class="boring">}</span></code></pre>
+<h3 id="recursive-contagion"><a class="header" href="#recursive-contagion">Recursive Contagion</a></h3>
+<p>When TargetedFollower replays a mainnet transaction that touches a watched contract, the replay itself may write to new contracts. If those new contracts exceed the slot threshold, they are added to the watch list with <code>WatchSource::Contagion { parent }</code>. This captures the composability chain: a golem deposits into a Yearn vault, which calls Aave, which reads from Chainlink. The vault enters the watch list from the golem’s transaction; Aave enters via contagion from the vault’s replayed interactions.</p>
+<p>Contagion depth is capped at <code>max_contagion_depth</code> (default: 2) to prevent the watch list from spiraling through the entire DeFi dependency graph.</p>
+<hr>
+<h2 id="bytecode-cache"><a class="header" href="#bytecode-cache">Bytecode Cache</a></h2>
+<p>Contract bytecode is immutable after deployment. Every <code>eth_getCode</code> call downloads bytes that never change, yet v1 re-fetched them on every fork. The bytecode cache eliminates this overhead entirely.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use lru::LruCache;
+
+/// LRU cache for compiled revm bytecode, keyed by code hash.
+/// Entries never expire -- bytecode is immutable post-deployment.
+/// Shared across all forks via Arc.
+pub struct BytecodeCache {
+    cache: LruCache&lt;B256, Bytecode&gt;,
+}
+
+impl BytecodeCache {
+    pub fn new(capacity: usize) -&gt; Self {
+        Self {
+            cache: LruCache::new(
+                std::num::NonZeroUsize::new(capacity).unwrap()
+            ),
+        }
+    }
+
+    pub fn get(&amp;mut self, code_hash: &amp;B256) -&gt; Option&lt;&amp;Bytecode&gt; {
+        self.cache.get(code_hash)
+    }
+
+    pub fn insert(&amp;mut self, code_hash: B256, bytecode: Bytecode) {
+        self.cache.put(code_hash, bytecode);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>For a golem watching ~100 protocols with ~500 unique contracts, the bytecode cache eliminates ~500 RPC calls on the first fork and all calls on subsequent forks. The cache is shared across all mirage instances via <code>Arc</code>, so scenario runner child processes and Sanctum F6 forks benefit from the same warmed bytecode. The Foundry team’s <code>foundry-fork-db</code> uses the same pattern (Urbanek, 2024).</p>
+<hr>
+<h2 id="copy-on-write-state-layers"><a class="header" href="#copy-on-write-state-layers">Copy-on-Write State Layers</a></h2>
+<p>v1’s snapshot/revert mechanism clones the entire DirtyStore on each snapshot. For a baseline of ~50,000 dirty slots, that is ~3.2 MB per snapshot. With 8 parallel scenarios, baseline memory consumption reaches ~25 MB just for state copies.</p>
+<p>CoW state layers eliminate this cost. A CoW overlay shares its parent state via <code>Arc</code> and stores only the slots that the current branch has modified. Reading checks the overlay first, then falls through to the shared parent. Writing goes to the overlay only.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::Arc;
+
+/// Copy-on-Write state overlay.
+/// The baseline is shared (Arc, zero-copy for all scenarios).
+/// Each branch stores only its own mutations.
+pub struct CowState {
+    /// Shared immutable baseline.
+    baseline: Arc&lt;HashMap&lt;(Address, U256), U256&gt;&gt;,
+    /// Per-branch dirty overlay (only modified slots).
+    overlay: HashMap&lt;(Address, U256), U256&gt;,
+}
+
+impl CowState {
+    /// Create a new branch from a shared baseline.
+    pub fn branch(baseline: &amp;Arc&lt;HashMap&lt;(Address, U256), U256&gt;&gt;) -&gt; Self {
+        Self {
+            baseline: Arc::clone(baseline),
+            overlay: HashMap::new(),
+        }
+    }
+
+    pub fn read(&amp;self, addr: Address, slot: U256) -&gt; Option&lt;U256&gt; {
+        self.overlay.get(&amp;(addr, slot))
+            .or_else(|| self.baseline.get(&amp;(addr, slot)))
+            .copied()
+    }
+
+    pub fn write(&amp;mut self, addr: Address, slot: U256, value: U256) {
+        self.overlay.insert((addr, slot), value);
+    }
+
+    /// Number of slots modified in this branch.
+    pub fn overlay_size(&amp;self) -&gt; usize {
+        self.overlay.len()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>For a scenario that modifies ~200 storage slots against a 50,000-slot baseline, memory drops from 3.2 MB per branch to ~12.8 KB. At 8 parallel scenarios: 25 MB becomes 100 KB. This matters for the Sanctum F6 fork workflow, where branching should be instant – create an empty overlay, not clone the entire state.</p>
+<hr>
+<h2 id="evm-executor"><a class="header" href="#evm-executor">EVM Executor</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EvmExecutor;
+
+impl EvmExecutor {
+    // Read-only: pins block, does not mutate state
+    pub fn call(state: &amp;ForkState, from, to, data, value, gas_limit)
+        -&gt; Result&lt;ExecutionResult&gt;;
+
+    // Write: mutates state, triggers DiffClassifier
+    pub fn transact(state: &amp;mut ForkState, from, to, data, value, gas_limit, gas_price)
+        -&gt; Result&lt;ExecutionResult&gt;;
+
+    // Detached: execute against a borrowed DB, return the modified DB
+    pub fn transact_detached(db: ForkDB, tx: TxEnv, block_env, chain_id)
+        -&gt; (Result&lt;ExecutionResult&gt;, ForkDB);
+}
+<span class="boring">}</span></code></pre>
+<p>Configuration: Cancun spec (EIP-1153 transient storage, required for V4 PoolManager), nonce/balance checks disabled by default (allows unsigned local transactions), no base fee enforcement by default.</p>
+<h3 id="transaction-execution-state-commit"><a class="header" href="#transaction-execution-state-commit">Transaction Execution (State Commit)</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn transact_env(state: &amp;mut ForkState, tx: TxEnv, block_env: Option&lt;BlockEnv&gt;)
+    -&gt; Result&lt;ExecutionResult&gt;
+{
+    let block = block_env.unwrap_or_else(|| state.current_block_env());
+    let cfg = Self::cfg_env(state.chain_id());
+
+    // Swap DB out so Context can take ownership
+    let placeholder = ForkDB::new(state.db().db.clone());
+    let db = std::mem::replace(state.db_mut(), placeholder);
+
+    let mut evm = Context::mainnet()
+        .with_db(db)
+        .with_block(block)
+        .with_cfg(cfg)
+        .build_mainnet();
+
+    let result = evm.transact_commit(tx)?;
+
+    // Put the DB back
+    *state.db_mut() = evm.ctx.journaled_state.database;
+    Ok(ExecutionResult::from_revm(result))
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>std::mem::replace</code> dance is necessary because revm’s <code>Context</code> takes ownership of the database. After execution, the modified database is extracted from the context and placed back into ForkState.</p>
+<h3 id="local-transaction-pipeline"><a class="header" href="#local-transaction-pipeline">Local Transaction Pipeline</a></h3>
+<p>When a golem sends a transaction via <code>eth_sendTransaction</code>, the full flow is:</p>
+<ol>
+<li><strong>Execute</strong> the transaction through revm against HybridDB.</li>
+<li><strong>Classify</strong> the resulting state diff (protocol vs. token vs. read-only).</li>
+<li><strong>Apply</strong> account info changes and storage overrides to DirtyStore.</li>
+<li><strong>Update</strong> the watch list with newly classified protocol contracts.</li>
+<li><strong>Generate</strong> a transaction hash, store the receipt, and advance the local block counter.</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub async fn handle_local_transaction(
+    state: &amp;Arc&lt;RwLock&lt;MirageState&gt;&gt;,
+    tx: TransactionRequest,
+) -&gt; Result&lt;B256&gt; {
+    let mut state = state.write();
+
+    let (result, diff) = EvmExecutor::transact(
+        &amp;mut state.db,
+        tx.from,
+        tx.to,
+        tx.data.unwrap_or_default(),
+        tx.value.unwrap_or_default(),
+        tx.gas_limit.unwrap_or(30_000_000),
+    )?;
+
+    let classification = state.classifier.classify(
+        &amp;diff, &amp;state.db.dirty, state.block_number,
+    );
+
+    for (address, account_diff) in &amp;diff.accounts {
+        state.db.dirty.apply_account_changes(*address, account_diff);
+    }
+    state.db.dirty.apply_classification(classification);
+
+    let tx_hash = generate_tx_hash(&amp;tx, state.block_number, state.tx_index);
+    state.store_receipt(tx_hash, &amp;result);
+    state.advance_block();
+
+    Ok(tx_hash)
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="speculative-pre-execution"><a class="header" href="#speculative-pre-execution">Speculative Pre-Execution</a></h2>
+<p>The golem can subscribe to pending mempool transactions and pre-execute them against a CoW fork of the current state before the next block confirms. This turns mirage from a reactive tool (simulate after the fact) into a predictive one (simulate before the block lands).</p>
+<p>The design follows the pattern used in MEV extraction (Flashbots’ <code>eth_callBundle</code>) but applied to the golem’s own position awareness:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct SpeculativeExecutor {
+    /// Cache of speculative results.
+    /// Key: (pending_tx_hash, base_state_block_number)
+    /// Value: execution result + state diff
+    cache: HashMap&lt;(B256, u64), SpeculativeResult&gt;,
+}
+
+pub struct SpeculativeResult {
+    result: ExecutionResult,
+    state_diff: StateDiff,
+    /// Slots that were read during execution. Used for invalidation:
+    /// if any new block transaction writes to an overlapping slot,
+    /// this cached result is stale.
+    read_set: HashSet&lt;(Address, U256)&gt;,
+    computed_at: Instant,
+}
+<span class="boring">}</span></code></pre>
+<p>Cache invalidation fires when:</p>
+<ol>
+<li>The transaction is included on-chain (the speculation is resolved).</li>
+<li>Any transaction in a new block modifies state that the cached simulation read (SLOAD/SSTORE overlap via state diffs).</li>
+<li>The block number or timestamp deviate from the values assumed during speculation.</li>
+</ol>
+<p>Pre-execution uses a CoW overlay against the current state, so the memory cost is minimal – ~12 KB per pending transaction. The compute cost is a single revm <code>transact()</code> call, typically under 1ms for cached state.</p>
+<hr>
+<h2 id="block-stm-parallel-execution"><a class="header" href="#block-stm-parallel-execution">Block-STM Parallel Execution</a></h2>
+<p>For historical replay, mirage must re-execute entire blocks when tracked addresses have active transactions. Block-STM (Gelashvili et al., 2023) enables parallel transaction execution within a single block:</p>
+<ol>
+<li>Execute all transactions in the block optimistically in parallel.</li>
+<li>Track per-slot version numbers to detect read-write conflicts.</li>
+<li>Re-execute conflicting transactions sequentially.</li>
+<li>On typical DeFi blocks, the conflict rate is &lt;5% (Saraph &amp; Herlihy, 2019), so effective parallelism is high.</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Per-slot version tracking for Block-STM conflict detection.
+pub struct MultiVersionStore {
+    /// For each (address, slot), track the latest version written
+    /// and by which transaction index.
+    versions: DashMap&lt;(Address, U256), Vec&lt;VersionEntry&gt;&gt;,
+}
+
+pub struct VersionEntry {
+    tx_index: usize,
+    value: U256,
+    /// Incarnation number -- incremented on re-execution after conflict.
+    incarnation: u32,
+}
+
+impl MultiVersionStore {
+    /// Read a slot value as seen by transaction at tx_index.
+    /// Returns the latest version written by a transaction with index &lt; tx_index.
+    pub fn read(&amp;self, addr: Address, slot: U256, tx_index: usize) -&gt; ReadResult {
+        match self.versions.get(&amp;(addr, slot)) {
+            Some(entries) =&gt; {
+                let prior = entries.iter()
+                    .filter(|e| e.tx_index &lt; tx_index)
+                    .max_by_key(|e| e.tx_index);
+                match prior {
+                    Some(entry) =&gt; ReadResult::Found(entry.value, entry.tx_index),
+                    None =&gt; ReadResult::NotFound,
+                }
+            }
+            None =&gt; ReadResult::NotFound,
+        }
+    }
+
+    /// Record a write from a specific transaction.
+    pub fn write(
+        &amp;self,
+        addr: Address,
+        slot: U256,
+        tx_index: usize,
+        incarnation: u32,
+        value: U256,
+    ) {
+        self.versions.entry((addr, slot))
+            .or_default()
+            .push(VersionEntry { tx_index, value, incarnation });
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Block-STM is most valuable for historical replay in <code>--replay-mode replay</code>, where full blocks of 150+ transactions must be re-executed. In live mode, TargetedFollower only replays 5-15 transactions per block – too few to benefit from parallelism.</p>
+<hr>
+<h2 id="snapshot-and-revert"><a class="header" href="#snapshot-and-revert">Snapshot and Revert</a></h2>
+<p>Snapshots capture the DirtyStore. The ReadCache is not snapshotted – it is a performance cache, and staleness is handled by TTL expiry. With CoW state layers, snapshots become cheap: the snapshot records the current overlay as a frozen baseline, and new mutations write to a fresh overlay.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DirtyStoreSnapshot {
+    accounts: HashMap&lt;Address, DirtyAccount&gt;,
+    watch_list: HashMap&lt;Address, WatchEntry&gt;,
+    unwatch_list: HashSet&lt;Address&gt;,
+    total_dirty_slots: u64,
+    block_number: u64,
+    tx_index: u64,
+}
+
+impl DirtyStore {
+    pub fn snapshot(&amp;mut self, block_number: u64, tx_index: u64) -&gt; u64 {
+        let id = self.next_snapshot_id;
+        self.next_snapshot_id += 1;
+        self.snapshots.insert(id, Box::new(DirtyStoreSnapshot {
+            accounts: self.accounts.clone(),
+            watch_list: self.watch_list.clone(),
+            unwatch_list: self.unwatch_list.clone(),
+            total_dirty_slots: self.total_dirty_slots,
+            block_number,
+            tx_index,
+        }));
+        id
+    }
+
+    pub fn revert(&amp;mut self, id: u64) -&gt; Result&lt;(u64, u64)&gt; {
+        let snapshot = self.snapshots.remove(&amp;id)
+            .ok_or_else(|| MirageError::SnapshotNotFound(id))?;
+
+        self.accounts = snapshot.accounts;
+        self.watch_list = snapshot.watch_list;
+        self.unwatch_list = snapshot.unwatch_list;
+        self.total_dirty_slots = snapshot.total_dirty_slots;
+
+        // Remove snapshots taken after this one
+        let later: Vec&lt;u64&gt; = self.snapshots.keys()
+            .filter(|&amp;&amp;k| k &gt; id).copied().collect();
+        for k in later { self.snapshots.remove(&amp;k); }
+
+        Ok((snapshot.block_number, snapshot.tx_index))
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Snapshots are consumed on revert – calling <code>evm_revert</code> with the same ID twice fails. To use a snapshot multiple times (branching), take a new snapshot after each revert.</p>
+<hr>
+<h2 id="library-mode"><a class="header" href="#library-mode">Library Mode</a></h2>
+<p>mirage ships as both a standalone binary (the primary deployment for golem sidecars) and an optional Rust crate for embedding directly into a host process.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct Mirage {
+    state: Arc&lt;RwLock&lt;MirageState&gt;&gt;,
+    follower: Option&lt;TargetedFollower&gt;,
+}
+
+impl Mirage {
+    pub async fn new(config: MirageConfig) -&gt; Result&lt;Self&gt;;
+    pub async fn call(&amp;self, req: CallRequest) -&gt; Result&lt;ExecutionResult&gt;;
+    pub async fn send_transaction(&amp;self, tx: TransactionRequest) -&gt; Result&lt;TxReceipt&gt;;
+    pub fn snapshot(&amp;self) -&gt; u64;
+    pub fn revert(&amp;self, snapshot_id: u64) -&gt; Result&lt;()&gt;;
+    pub fn watch_contract(&amp;self, address: Address) -&gt; Result&lt;()&gt;;
+    pub fn resource_usage(&amp;self) -&gt; ResourceUsage;
+    pub async fn get_position(&amp;self, addrs: &amp;[Address]) -&gt; Result&lt;PositionSnapshot&gt;;
+    pub fn event_stream(&amp;self) -&gt; impl Stream&lt;Item = LocalEvent&gt;;
+}
+<span class="boring">}</span></code></pre>
+<p>The embedded API calls directly into the same state machine that backs the JSON-RPC server. No serialization overhead, no process spawn latency. Feature flags control what ships:</p>
+<pre><code class="language-toml">[features]
+default = ["binary"]
+binary  = ["tokio/full", "dep:axum", "dep:tower"]  # JSON-RPC server
+library = []                                         # API-only, no server
+sim-gas = []                                         # Optional gas price simulator
+</code></pre>
+<hr>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct MirageConfig {
+    pub chain_id: u64,
+    pub fork_block: Option&lt;u64&gt;,         // None = latest (live mode)
+    pub rpc_url: String,                 // Upstream provider
+    pub port: u16,                       // Local JSON-RPC port (default: 8545)
+    pub host: String,                    // Bind address (default: 127.0.0.1)
+    pub follow: bool,                    // Enable TargetedFollower
+    pub max_watched_contracts: usize,    // Watch list cap (default: 64)
+    pub cache_ttl_secs: u64,             // ReadCache TTL (default: 12)
+    pub cache_capacity: usize,           // ReadCache entries (default: 10_000)
+    pub max_memory_bytes: u64,           // Memory cap (default: 512 MB)
+    pub sim_gas: bool,                   // Enable gas price simulator
+    pub profile: Profile,               // micro, standard, or power
+    pub watchdog_timeout_secs: u64,      // Watchdog timer (default: 30)
+    pub strict_nonce: bool,              // Enforce sequential nonces
+    pub strict_balance: bool,            // Enforce sufficient balance
+    pub verify_signatures: bool,         // Verify ECDSA signatures
+    pub hardfork: Hardfork,              // EVM hardfork (default: Cancun)
+    // Historical mode
+    pub mode: Mode,                      // Live or Historical
+    pub from_block: Option&lt;u64&gt;,         // Historical: pin reads here
+    pub to_block: Option&lt;u64&gt;,           // Historical: replay up to here
+    pub replay_mode: ReplayMode,         // replay, stateDiff, or hybrid
+    pub checkpoint_every: Option&lt;u64&gt;,   // Checkpoint interval
+    pub output_dir: Option&lt;PathBuf&gt;,     // PnL + events output
+}
+
+pub enum Mode { Live, Historical }
+pub enum ReplayMode { Replay, StateDiff, Hybrid }
+pub enum Profile { Micro, Standard, Power }
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="performance-expectations"><a class="header" href="#performance-expectations">Performance Expectations</a></h2>
+<p><strong>Startup.</strong> Instant. Connect to upstream, start JSON-RPC server. No state to load, no blocks to catch up on.</p>
+<p><strong>Steady state (no positions).</strong> Zero overhead. TargetedFollower subscribes to blocks but finds no matches.</p>
+<p><strong>Steady state (3-5 DeFi positions).</strong> Watch list: 5-15 contracts. Per block: scan ~150 tx targets against the watch list (HashSet lookup, ~1us each), replay 0-5 matched txs. Block processing time: &lt;100ms typical.</p>
+<p><strong>Read path.</strong> Hot reads (cached): &lt;1us. Warm reads (cache expired): 20-100ms. Cold reads (first access): 50-200ms.</p>
+<hr>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Crate</th><th>Version</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>revm</td><td>v36</td><td>EVM execution engine</td></tr>
+<tr><td>revm-database</td><td>v12</td><td>CacheDB, DatabaseRef trait</td></tr>
+<tr><td>alloy</td><td>v1.7</td><td>Ethereum types, RPC providers (HTTP + WS)</td></tr>
+<tr><td>jsonrpsee</td><td>v0.26</td><td>JSON-RPC server framework</td></tr>
+<tr><td>tokio</td><td>latest</td><td>Async runtime (full feature set)</td></tr>
+<tr><td>clap</td><td>v4.5</td><td>CLI parsing with derive macros</td></tr>
+<tr><td>tracing</td><td>v0.1</td><td>Structured logging</td></tr>
+<tr><td>tracing-subscriber</td><td>v0.3</td><td>Log formatting (plain + JSON)</td></tr>
+<tr><td>parking_lot</td><td>v0.12</td><td>Fast RwLock for shared ForkState</td></tr>
+<tr><td>reqwest</td><td>v0.12</td><td>HTTP client for upstream RPC proxy</td></tr>
+<tr><td>tower-http</td><td>v0.6</td><td>CORS middleware</td></tr>
+<tr><td>serde / serde_json</td><td>latest</td><td>Serialization</td></tr>
+<tr><td>futures</td><td>v0.3</td><td>Async streams for WS subscription</td></tr>
+<tr><td>lru</td><td>v0.12</td><td>LRU cache for ReadCache and BytecodeCache</td></tr>
+<tr><td>dashmap</td><td>v6</td><td>Concurrent map for Block-STM MultiVersionStore</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="edge-cases"><a class="header" href="#edge-cases">Edge Cases</a></h2>
+<p><strong>Composability depth.</strong> A Yearn vault calls Aave which calls Chainlink which calls… Contagion caps at <code>max_contagion_depth</code> (default: 2), preventing the watch list from spiraling through every contract on Ethereum.</p>
+<p><strong>Watch list saturation.</strong> When the watch list hits <code>max_watched_contracts</code> (default: 64), new contracts fall back to slot-only classification. The lazy-latest base layer still provides correct reads – the golem just doesn’t get causal replay for those contracts.</p>
+<p><strong>Mainnet transaction reverts.</strong> When a mainnet swap replays against modified pool state, it may revert because the golem’s liquidity changed the price past the swap’s slippage tolerance. This is correct behavior. The follower logs it and moves on.</p>
+<p><strong>Proxy contracts.</strong> Storage writes from delegatecall land at the proxy’s address, not the implementation. The slot count heuristic works correctly because it counts slots at the address where storage was actually modified.</p>
+<p><strong>Reorg handling.</strong> If the upstream chain reorgs, TargetedFollower may have replayed transactions from the old block. The impact is usually negligible for 1-block reorgs. The read cache TTL ensures stale upstream data expires within one block interval.</p>
+<hr>
+<h2 id="v1-compatibility"><a class="header" href="#v1-compatibility">v1 Compatibility</a></h2>
+<p>The v1 API surface (<code>CacheDB&lt;RemoteDB&gt;</code>, <code>ForkState</code>, full block replay) is replaced by v2. The key structural differences:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>v1</th><th>v2</th></tr>
+</thead>
+<tbody>
+<tr><td>State model</td><td><code>CacheDB&lt;RemoteDB&gt;</code> two-layer</td><td>HybridDB three-tier (DirtyStore + ReadCache + upstream)</td></tr>
+<tr><td>Read source</td><td>Fork block (pinned at fork time)</td><td><code>latest</code> (live reads, lazy)</td></tr>
+<tr><td>Block replay</td><td>Every transaction in every block</td><td>Only txs touching watched contracts</td></tr>
+<tr><td>Watch list</td><td>Manual filter by address/selector</td><td>Automatic via DiffClassifier</td></tr>
+<tr><td>Branching</td><td>Full clone on snapshot</td><td>CoW overlays (~12.8 KB per branch)</td></tr>
+<tr><td>Prefetching</td><td>Trace-based bulk insert</td><td>Not needed (lazy-latest eliminates cold reads during sync)</td></tr>
+<tr><td>Divergence detection</td><td>Compare local vs mainnet receipts</td><td>Narrowed to watched contracts only</td></tr>
+<tr><td>Memory overhead</td><td>Unbounded (all state cached)</td><td>Capped by profile (256 MB to 2 GB)</td></tr>
+</tbody>
+</table>
+</div>
+<p>v1’s full block replay is preserved in v2 as the <code>--replay-mode replay</code> option for historical mode. Live mode uses targeted replay exclusively.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li>RPC method reference: <a href="./01b-mirage-rpc.html">01b-mirage-rpc.md</a> – Full JSON-RPC method catalog: eth_<em>, mirage_</em>, evm_*, hardhat/anvil compatibility methods, scenario runner API, error codes</li>
+<li>Scenario runner, historical mode, targeted follower: <a href="./01c-mirage-scenarios.html">01c-mirage-scenarios.md</a> – Classification rules, targeted follower pipeline, historical replay modes (replay/stateDiff/hybrid), scenario runner with CoW branching, Latin Hypercube parameter sweeps</li>
+<li>Bardo TUI integration, golem workflows: <a href="./01d-mirage-integration.html">01d-mirage-integration.md</a> – F6 fork workflow, Fork Inspector overlay, golem sidecar lifecycle (spawn/warm/simulate/teardown), CorticalState pressure gating, resource profiles</li>
+<li>Transaction compatibility: <a href="./01e-mirage-tx-compatibility.html">01e-mirage-tx-compatibility.md</a> – Transaction formats (EIP-2718 types 0-3), signature verification (ECDSA/EIP-1271/EIP-712), gas edge cases, nonce semantics, state injection pitfalls, DeFi-specific concerns (Chainlink staleness, TWAP drift, Permit2)</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Gelashvili, R. et al. (2023). “Block-STM: Scaling Blockchain Execution by Turning Ordering Curse to a Performance Blessing.” arXiv (Aptos Labs). – <em>Introduces optimistic parallel transaction execution with per-slot version tracking and conflict-driven re-execution; the algorithm behind mirage-rs’s parallel historical replay.</em></li>
+<li>Saraph, V. &amp; Herlihy, M. (2019). “An Empirical Study of Speculative Concurrency in Ethereum Smart Contracts.” arXiv:1901.01376. – <em>Measures read-write conflict rates across real Ethereum blocks, finding &lt;5% conflict on typical DeFi blocks; justifies the high effective parallelism of Block-STM in mirage-rs.</em></li>
+<li>Urbanek, P. (2024). “How to Simulate MEV Arbitrage with REVM, Anvil and Alloy.” Blog post. – <em>Describes the bytecode cache pattern used by Foundry’s fork-db, which mirage-rs adopts for its immutable bytecode cache keyed by code hash.</em></li>
+<li>Yang, T. et al. (2021). “Forerunner: Constraint-based Speculative Transaction Execution for Ethereum.” SOSP 2021. – <em>Proposes constraint-based speculation for transaction pre-execution; informs mirage-rs’s SpeculativeExecutor design for mempool pre-execution against CoW state forks.</em></li>
+<li>Reddio team (2025). “Boosting Blockchain Throughput: Parallel EVM Execution with Asynchronous Storage.” arXiv:2503.04595. – <em>Demonstrates async storage I/O during parallel EVM execution; relevant to mirage-rs’s async upstream RPC fetches during Block-STM replay.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/15-dev/00-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/15-dev/01b-mirage-rpc.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/15-dev/00-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/15-dev/01b-mirage-rpc.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

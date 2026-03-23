@@ -1,0 +1,698 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Teardown - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/12-teardown.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="teardown-destruction-and-cleanup-spec"><a class="header" href="#teardown-destruction-and-cleanup-spec">Teardown: Destruction and Cleanup [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><em>“Every ending is a choice about what to preserve.”</em></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the 8-step teardown pipeline – the reverse of provisioning – that cleans up a Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) when it dies or is destroyed. It covers position settlement in dependency order, wallet sweeping, Grimoire (the agent’s persistent knowledge base) export to Styx (global knowledge relay and persistence layer at wss://styx.bardo.run), identity deregistration, VM destruction, and the irreversibility invariant. It belongs to the <code>01-golem</code> lifecycle layer. The key concept: once teardown begins, it cannot be stopped – a partially-torn-down Golem is more dangerous than a fully-torn-down one. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="the-teardown-pipeline"><a class="header" href="#the-teardown-pipeline">The Teardown Pipeline</a></h2>
+<p>The teardown pipeline is the reverse of provisioning. Eight steps, executed sequentially as a Rust type-state machine. Each step is individually retryable and transitions to the next state. Once teardown begins, it cannot be stopped – this is a safety invariant. A partially-torn-down Golem in an inconsistent state is more dangerous than a fully-torn-down one, because it may hold positions it can no longer manage or keys it can no longer rotate.</p>
+<p>The pipeline is identical whether initiated by the owner or triggered by credit exhaustion. The differences are in the trigger, confirmation flow, and surrounding protocol (see S5).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+
+// Teardown step marker types (zero-sized)
+pub struct TeardownStop;
+pub struct TeardownSettle;
+pub struct TeardownSweep;
+pub struct TeardownExport;
+pub struct TeardownPush;
+pub struct TeardownDeregister;
+pub struct TeardownDestroyVm;
+pub struct TeardownEmitDeath;
+pub struct TeardownComplete;
+
+pub struct TeardownPipeline&lt;S&gt; {
+    pub golem_id: String,
+    pub death_cause: DeathCause,
+    pub results: TeardownResults,
+    _step: PhantomData&lt;S&gt;,
+}
+
+impl TeardownPipeline&lt;TeardownStop&gt; {
+    /// Begin teardown. Consumes a running Golem, stops the heartbeat.
+    pub async fn begin(golem: Golem&lt;Terminal&gt;) -&gt; Result&lt;TeardownPipeline&lt;TeardownSettle&gt;&gt; {
+        // Stop heartbeat, cancel pending ops, wait for current tick (max 30s)
+        // ...
+        Ok(TeardownPipeline {
+            golem_id: golem.state.id.clone(),
+            death_cause: golem.state.death_cause(),
+            results: TeardownResults::default(),
+            _step: PhantomData,
+        })
+    }
+}
+
+// Each step: consume self, execute, produce next state.
+// Invalid step sequences are compile errors.
+<span class="boring">}</span></code></pre>
+<pre><code>Step 1: Stop Heartbeat
+  Stop heartbeat scheduler, cancel pending ops, wait for current tick (max 30s)
+     |
+Step 2: Settle Positions
+  Close LPs, cancel orders, withdraw lending, exit vaults, convert to USDC
+     |
+Step 3: Sweep Wallets
+  Transfer all token balances to designated beneficiary (Owner's wallet)
+     |
+Step 4: Export Grimoire
+  Snapshot knowledge base, push to Styx Archive layer
+     |
+Step 5: Push Clade
+  Upload novelty-prioritized insights to Clade via Styx WebSocket relay
+     |
+Step 6: Deregister Identity
+  Mark ERC-8004 entry as inactive (does NOT burn the token)
+     |
+Step 7: Destroy VM
+  Revoke session key, zero key material, destroy Fly.io VM
+     |
+Step 8: Emit Death Event
+  Store tombstone record, emit webhook, telemetry
+</code></pre>
+<hr>
+<h2 id="s1--stop-heartbeat-step-1"><a class="header" href="#s1--stop-heartbeat-step-1">S1 – Stop Heartbeat (Step 1)</a></h2>
+<p>The first step ensures no new operations can begin while teardown proceeds.</p>
+<ol>
+<li>Set Golem status to <code>tearing_down</code></li>
+<li>Stop the heartbeat scheduler – no new ticks will fire</li>
+<li>Cancel all pending scheduled operations (DCA executions, rebalance checks, Warden announcements if Warden is deployed)</li>
+<li>Wait for the current tick to complete (maximum 30 seconds)</li>
+<li>If the current tick does not complete within 30 seconds, force-terminate it</li>
+</ol>
+<p>This step is idempotent. Calling it on an already-paused Golem is a no-op.</p>
+<hr>
+<h2 id="s2--settle-positions-step-2"><a class="header" href="#s2--settle-positions-step-2">S2 – Settle Positions (Step 2)</a></h2>
+<p>Position settlement closes all open DeFi positions and converts proceeds to USDC (or the position’s base token if no USDC route exists). Settlement is best-effort – positions that cannot be automatically closed are flagged for manual intervention.</p>
+<p>In Delegation custody mode, all settlement transactions execute from the owner’s Smart Account (where funds always were). The session key signs UserOperations bounded by the delegation’s caveat enforcers. Settlement may be simpler: the owner retains full control and can handle deferred positions directly from MetaMask.</p>
+<h3 id="21-topological-dependency-order"><a class="header" href="#21-topological-dependency-order">2.1 Topological Dependency Order</a></h3>
+<p>Positions are closed in dependency order. Borrow positions must be repaid before the collateral backing them can be withdrawn. The settlement planner builds a dependency graph from position types and resolves it topologically.</p>
+<p>Within each dependency tier, positions are settled in order of decreasing value to prioritize recovering the most capital first (in case gas runs out mid-settlement).</p>
+<p><strong>Settlement order:</strong></p>
+<ol>
+<li>Cancel all pending Warden announcements if deployed (free, just marks as cancelled)</li>
+<li>Cancel all pending limit orders and scheduled trades</li>
+<li>Repay borrow positions (Morpho, Aave, Compound) – must happen before collateral withdrawal</li>
+<li>Withdraw from lending supply positions and freed collateral</li>
+<li>Exit vault positions (ERC-4626 <code>withdraw()</code>)</li>
+<li>Close LP positions (Uniswap V3 <code>decreaseLiquidity</code> + <code>collect</code>, V4 equivalent)</li>
+<li>Swap non-USDC tokens to USDC via best available route</li>
+<li>Revoke session key (Delegation: delegation hash disabled; Embedded: P-256 signer deregistered)</li>
+<li>Emit <code>golem.funds_settled</code> webhook</li>
+</ol>
+<h3 id="22-borrow-position-resolution"><a class="header" href="#22-borrow-position-resolution">2.2 Borrow Position Resolution</a></h3>
+<ol>
+<li><strong>Build the dependency graph</strong>: For each lending protocol, map which supply positions serve as collateral for which borrow positions</li>
+<li><strong>Repay borrows first</strong>: Use existing token balances to repay outstanding borrows. If the Golem holds sufficient tokens of the borrowed asset, repay directly. If not, swap other held tokens to the borrowed asset first</li>
+<li><strong>Withdraw collateral after repayment</strong>: Once the borrow is fully repaid (or reduced below the liquidation threshold), the collateral supply position is freed and can be withdrawn</li>
+<li><strong>Flash loan fallback</strong>: If the Golem lacks sufficient liquid assets to repay a borrow directly, and the borrow is small enough, use a flash loan to atomically repay the borrow and withdraw collateral in a single transaction</li>
+<li><strong>Flag if unresolvable</strong>: If none of the above strategies can settle the borrow (e.g., total assets are insufficient to cover the debt), flag the position as <code>requires_manual_close: true</code> with a clear explanation</li>
+</ol>
+<h3 id="23-unsettleable-positions"><a class="header" href="#23-unsettleable-positions">2.3 Unsettleable Positions</a></h3>
+<p>Some positions cannot be auto-closed:</p>
+<ul>
+<li>Borrow positions where total assets are insufficient to cover the outstanding debt</li>
+<li>Locked positions with time-based vesting (Pendle PT before maturity)</li>
+<li>Positions in paused or exploited protocols (no contract interaction possible)</li>
+</ul>
+<p>These are flagged with <code>requires_manual_close: true</code> and described in the teardown plan warnings. The teardown pipeline continues regardless – unsettleable positions do not block subsequent steps.</p>
+<p>In Delegation mode, unsettleable positions remain in the owner’s Smart Account – the owner handles them directly. In Embedded mode, they remain in the Privy wallet for manual sweep.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SettlementResult {
+    pub position: PositionSummary,
+    pub settled: bool,
+    pub tx_hash: Option&lt;[u8; 32]&gt;,
+    pub tokens_received: Vec&lt;TokenBalance&gt;,
+    pub error: Option&lt;String&gt;,
+    pub requires_manual_close: bool,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s3--sweep-wallets-step-3"><a class="header" href="#s3--sweep-wallets-step-3">S3 – Sweep Wallets (Step 3)</a></h2>
+<p>After settlement, behavior depends on custody mode:</p>
+<p><strong>Delegation mode:</strong> No sweep needed. Funds were never transferred to the Golem – they remain in the owner’s Smart Account. The session key is simply revoked (delegation hash disabled on-chain). This is the cleanest death: no sweep, no stuck funds, no gas estimation errors during teardown.</p>
+<p><strong>Embedded mode:</strong> All remaining token balances are transferred to the designated beneficiary – the owner’s Main Wallet.</p>
+<h3 id="31-sweep-order-embedded-mode"><a class="header" href="#31-sweep-order-embedded-mode">3.1 Sweep Order (Embedded Mode)</a></h3>
+<p>Tokens are swept in order of decreasing USD value. The highest-value tokens move first, ensuring maximum capital recovery if the sweep is interrupted.</p>
+<h3 id="32-dust-threshold"><a class="header" href="#32-dust-threshold">3.2 Dust Threshold</a></h3>
+<p>A token is classified as dust if its estimated USD value is less than 2x the gas cost to transfer it. On Base (sub-$0.01 gas), this threshold is very low (~$0.02), so most tokens get swept. Dust tokens are reported in the teardown summary but not transferred.</p>
+<h3 id="33-manual-sweep-fallback-embedded-mode"><a class="header" href="#33-manual-sweep-fallback-embedded-mode">3.3 Manual Sweep Fallback (Embedded Mode)</a></h3>
+<p>If the session signer is unavailable (already revoked or VM crashed), the owner can sweep funds via the app dashboard. The dashboard uses the owner’s Main Wallet signature to authorize a direct sweep through the Privy admin API, bypassing the session signer entirely. This ensures funds are always recoverable even if the Golem’s compute environment is gone.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SweepResult {
+    pub swept: Vec&lt;SweptToken&gt;,
+    pub dust: Vec&lt;TokenBalance&gt;,
+    pub failed: Vec&lt;FailedSweep&gt;,
+    pub total_swept_usd: f64,
+    pub total_dust_usd: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SweptToken {
+    pub token: TokenBalance,
+    pub tx_hash: [u8; 32],
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FailedSweep {
+    pub token: TokenBalance,
+    pub error: String,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s4--export-grimoire-step-4"><a class="header" href="#s4--export-grimoire-step-4">S4 – Export Grimoire (Step 4)</a></h2>
+<p>The Golem’s knowledge base is packaged and persisted to the Styx Archive layer. For owner-initiated teardown, this step is optional (owner checkbox). For credit exhaustion death, it always executes.</p>
+<h3 id="41-archive-format"><a class="header" href="#41-archive-format">4.1 Archive Format</a></h3>
+<p>The Grimoire archive is serialized with bincode for compact binary encoding and pushed to the Styx Archive layer via the persistent WebSocket connection:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>File</th><th>Contents</th><th>Typical Size</th></tr>
+</thead>
+<tbody>
+<tr><td><code>insights.bin</code></td><td>All 5 GrimoireEntry types with confidence scores and metadata</td><td>50–500 KB</td></tr>
+<tr><td><code>episodes.bin</code></td><td>Most recent 1000 episodes</td><td>1–5 MB</td></tr>
+<tr><td><code>strategy.md</code></td><td>Final compiled STRATEGY.md</td><td>5–50 KB</td></tr>
+<tr><td><code>playbook.md</code></td><td>Machine-evolved heuristics (PLAYBOOK.md)</td><td>10–100 KB</td></tr>
+<tr><td><code>performance.bin</code></td><td>Trade log, daily P&amp;L, Sharpe ratio, drawdown events</td><td>100 KB–2 MB</td></tr>
+<tr><td><code>metadata.toml</code></td><td>Creation manifest, runtime config, lifespan stats, credit breakdown</td><td>10–50 KB</td></tr>
+</tbody>
+</table>
+</div>
+<p>Target: under 10 MB for a typical Golem with 30 days of operation.</p>
+<h3 id="42-import-rules"><a class="header" href="#42-import-rules">4.2 Import Rules</a></h3>
+<p>Exported archives can be imported into a new Golem to bootstrap its knowledge. All imported data goes through a quarantine-then-validate pipeline – nothing is trusted blindly:</p>
+<ul>
+<li>All imported insights start as <code>candidate</code> status regardless of original confidence</li>
+<li>Imported insights must shadow-execute locally before promotion to <code>active</code></li>
+<li>Strategy and playbook are loaded as reference documents, not automatically applied</li>
+<li>Episodes are added to episodic memory but do not influence decisions until the Curator validates</li>
+</ul>
+<h3 id="43-memory-zeroization"><a class="header" href="#43-memory-zeroization">4.3 Memory Zeroization</a></h3>
+<p>After the Grimoire export completes, all sensitive knowledge material in process memory is zeroized. The <code>zeroize</code> crate handles this via the <code>Zeroizing&lt;T&gt;</code> wrapper – secrets are overwritten when dropped. This ensures no residual knowledge persists in VM memory after teardown.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use zeroize::Zeroizing;
+
+/// Sensitive knowledge material that must be zeroized after export.
+pub struct SensitiveKnowledge {
+    pub session_key: Zeroizing&lt;Vec&lt;u8&gt;&gt;,
+    pub grimoire_encryption_key: Zeroizing&lt;Vec&lt;u8&gt;&gt;,
+    pub owner_pii_fragments: Zeroizing&lt;Vec&lt;u8&gt;&gt;,
+}
+// When SensitiveKnowledge is dropped, all fields are overwritten with zeros.
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s5--push-clade-step-5"><a class="header" href="#s5--push-clade-step-5">S5 – Push Clade (Step 5)</a></h2>
+<p>Before the infrastructure is torn down, the Golem disseminates its knowledge to the Clade via the Styx WebSocket relay. This step ensures the Clade’s collective intelligence is updated with the dying Golem’s final contributions.</p>
+<h3 id="51-knowledge-dissemination-protocol"><a class="header" href="#51-knowledge-dissemination-protocol">5.1 Knowledge Dissemination Protocol</a></h3>
+<ol>
+<li><strong>Extract final insights</strong> via ExpeL (distill operational experience into reusable heuristics)</li>
+<li><strong>Run verbal reflection</strong> (if Opus inference budget remains) – the unfiltered death reflection</li>
+<li><strong>Push novelty-prioritized insights</strong> to Styx for relay to all connected siblings with the same <code>user_id</code></li>
+<li><strong>Notify sibling Golems</strong> via <code>CladeDeltaImmediate</code> message (death bloodstain bundle)</li>
+<li><strong>Deposit bloodstains</strong> to the Pheromone Field (threat and wisdom pheromones from death warnings)</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Push death knowledge to the Clade via Styx relay.
+pub async fn push_death_knowledge(
+    styx_conn: &amp;mut StyxConnection,
+    grimoire: &amp;Grimoire,
+    death_testament: &amp;DeathTestament,
+) -&gt; Result&lt;CladeDeathPushResult&gt; {
+    // Extract clade-eligible entries
+    let final_entries = grimoire.get_entries_with_propagation(
+        PropagationPolicy::Clade,
+    )?;
+
+    // Build bloodstain bundle
+    let bloodstain = Bloodstain {
+        source_golem_id: grimoire.golem_id().clone(),
+        generation: grimoire.generation(),
+        death_cause: death_testament.cause.clone(),
+        warnings: death_testament.warnings.clone(),
+        causal_edges: grimoire.top_causal_edges(50),
+        somatic_landscape_fragment: grimoire.landscape_fragment(),
+        timestamp: std::time::SystemTime::now(),
+        signature: vec![], // EIP-712 signed
+    };
+
+    // Push as immediate (bypasses batch cycle)
+    styx_conn.send(StyxMessage::CladeDeltaImmediate {
+        entries: vec![
+            SyncEntry::Bloodstain(bloodstain),
+        ],
+    }).await?;
+
+    // Push remaining insights as batch
+    styx_conn.send(StyxMessage::CladeDeltaBatch {
+        entries: final_entries.iter().map(SyncEntry::from).collect(),
+        version_vector: grimoire.version_vector(),
+        bloom_filter: None,
+    }).await?;
+
+    Ok(CladeDeathPushResult {
+        entries_pushed: final_entries.len() as u32,
+        bloodstain_deposited: true,
+    })
+}
+<span class="boring">}</span></code></pre>
+<h3 id="52-clade-grimoire-persistence"><a class="header" href="#52-clade-grimoire-persistence">5.2 Clade Grimoire Persistence</a></h3>
+<p>When an individual Golem is destroyed, its contributions to the Clade persist in two ways: (1) siblings that received the entries via Styx relay retain them in their local Grimoires, and (2) the Styx Archive layer stores the death bundle for 90 days for offline siblings to retrieve on reconnection. Destroying one Golem does not remove its insights from the Clade – other siblings retain access to those insights. The knowledge survives the knower.</p>
+<hr>
+<h2 id="s6--deregister-identity-step-6"><a class="header" href="#s6--deregister-identity-step-6">S6 – Deregister Identity (Step 6)</a></h2>
+<p>The Golem’s ERC-8004 identity entry is marked as inactive. The token is NOT burned – just its status changes. This preserves the historical record (other agents can still see that this identity existed and what it accomplished) while preventing future interactions with a dead agent.</p>
+<hr>
+<h2 id="s7--destroy-vm-step-7"><a class="header" href="#s7--destroy-vm-step-7">S7 – Destroy VM (Step 7)</a></h2>
+<p>This step handles all compute and cryptographic cleanup:</p>
+<ol>
+<li><strong>Revoke session key</strong>: Delegation mode – disable delegation hash on-chain (one tx). Embedded mode – deregister P-256 key from Privy.</li>
+<li><strong>Delete signing policy</strong> – no further transactions can be authorized</li>
+<li><strong>Zero key material from VM memory</strong> – the <code>zeroize</code> crate overwrites <code>Zeroizing&lt;T&gt;</code> wrappers on drop</li>
+<li><strong>Destroy Fly.io VM</strong> (hosted) or stop local process (self-hosted)</li>
+<li><strong>Delete associated volumes and snapshots</strong> – no persistent storage remains</li>
+</ol>
+<hr>
+<h2 id="s8--emit-death-event-step-8"><a class="header" href="#s8--emit-death-event-step-8">S8 – Emit Death Event (Step 8)</a></h2>
+<p>The final step creates the permanent record:</p>
+<ol>
+<li><strong>Store tombstone record</strong> – permanent record in the owner’s account (never deleted)</li>
+<li><strong>Emit webhook</strong> – <code>golem.destroyed</code> for owner-initiated, <code>golem.dead</code> for credit exhaustion</li>
+<li><strong>Fire telemetry event</strong> – <code>golem_destroyed</code> or <code>golem_dead</code></li>
+</ol>
+<h3 id="81-tombstone-schema"><a class="header" href="#81-tombstone-schema">8.1 Tombstone Schema</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GolemTombstone {
+    pub golem_id: String,
+    pub golem_name: String,
+    pub wallet_address: Address,
+    pub network: String,
+    pub chain_id: u64,
+    pub custody_mode: String,
+    pub death_cause: DeathCause,
+    pub lifetime_stats: LifetimeStats,
+    pub grimoire_archive_url: Option&lt;String&gt;, // Expires after 90 days
+    pub has_dust_tokens: bool,
+    pub created_at: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum DeathCause {
+    /// USDC balance hit apoptotic reserve.
+    CreditExhaustion,
+    /// Maximum generation count reached.
+    HayflickLimit,
+    /// Underlying model deprecated/unavailable.
+    ModelStaleness,
+    /// Owner-initiated termination.
+    OwnerKill,
+    /// Extended inactivity beyond threshold.
+    IdleTimeout,
+    /// Policy breach triggered forced shutdown.
+    SafetyViolation,
+    /// Owner-initiated destroy (legacy).
+    UserDestroyed,
+    /// Migration to new deployment (legacy).
+    Migration,
+    /// Unrecoverable system failure (legacy).
+    SystemError,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LifetimeStats {
+    pub created_at: u64,
+    pub destroyed_at: u64,
+    pub uptime_hours: f64,
+    pub total_funded: f64,
+    pub total_earned: f64,
+    pub total_spent: f64,
+    pub net_pnl: f64,
+    pub trades_executed: u32,
+    pub insights_generated: u32,
+    pub replicants_spawned: u32,
+    pub grimoire_entry_count: u32,
+}
+<span class="boring">}</span></code></pre>
+<p>Tombstones enable: reviewing past Golem performance, understanding why Golems failed, tracking total historical activity. They are never deleted.</p>
+<hr>
+<h2 id="s9--irreversibility-invariant"><a class="header" href="#s9--irreversibility-invariant">S9 – Irreversibility Invariant</a></h2>
+<p>Once teardown starts, it cannot be stopped. This is a deliberate safety invariant, not a limitation.</p>
+<p>A partially-torn-down Golem is a liability:</p>
+<ul>
+<li><strong>Positions without management</strong>: If teardown stops after settling some positions but not others, the remaining positions have no active manager. They cannot be rebalanced, hedged, or emergency-exited.</li>
+<li><strong>Keys without oversight</strong>: If teardown stops after exporting the Grimoire but before revoking the session key, the signing keys remain live with no process monitoring them.</li>
+<li><strong>Identity without backing</strong>: If teardown stops after sweeping funds but before deregistering identity, the ERC-8004 entry points to an agent that cannot fulfill obligations.</li>
+</ul>
+<p>The type-state machine enforces this structurally: each step consumes the previous state and produces the next. There is no method to “go back” – the consumed state is moved and cannot be re-used. The pipeline either completes fully or leaves the Golem in its pre-teardown state (if step 1 fails, nothing has changed). Individual steps are retryable – if step 3 (sweep) fails due to a gas spike, it can be retried without re-executing steps 1 and 2. But the pipeline as a whole does not support rollback past step 1.</p>
+<p>The owner’s only decision point is before teardown begins: the teardown plan review and type-to-confirm dialog (see S10). After confirmation, the pipeline runs to completion.</p>
+<hr>
+<h2 id="s10--teardown-plan-review"><a class="header" href="#s10--teardown-plan-review">S10 – Teardown Plan Review</a></h2>
+<p>Before anything executes, the system generates a teardown plan that the owner reviews. Nothing runs until explicit confirmation.</p>
+<p>The plan includes:</p>
+<ul>
+<li>All positions to close (type, protocol, value, auto-closeability)</li>
+<li>All tokens to sweep (balance, USD value, dust classification) – Embedded mode only</li>
+<li>Pending operations to cancel</li>
+<li>Estimated gas cost for settlement</li>
+<li>Grimoire export option (entry count, episode count)</li>
+<li>Lifetime statistics (uptime, P&amp;L, trades executed)</li>
+<li>Warnings (illiquid positions, borrow positions requiring repayment, locked vesting)</li>
+<li>Custody-specific notes (Delegation: “funds remain in your wallet”; Embedded: “funds will be swept to your Main Wallet”)</li>
+</ul>
+<h3 id="101-type-to-confirm"><a class="header" href="#101-type-to-confirm">10.1 Type-to-Confirm</a></h3>
+<p>Destruction uses GitHub-style type-to-confirm. The owner must type the Golem’s name to enable the “Destroy Golem” button. This prevents accidental destruction and forces the owner to consciously acknowledge which agent they are terminating.</p>
+<hr>
+<h2 id="s11--graceful-shutdown-sequence"><a class="header" href="#s11--graceful-shutdown-sequence">S11 – Graceful Shutdown Sequence</a></h2>
+<p>The VM has a 30-second budget for in-process cleanup. This is the 10-phase protocol from <code>01b-runtime-infrastructure.md</code>:</p>
+<pre><code>Phase  1 (1s):  Stop accepting new work
+Phase  2 (2s):  Cancel in-flight tool calls
+Phase  3 (3s):  Flush Grimoire to persistent storage (SQLite WAL sync + LanceDB flush)
+Phase  4 (10s): Settlement triage (build BardoManifest)
+Phase  5 (8s):  Execute critical settlements (blockchain txs)
+Phase  6 (2s):  Write BardoManifest for deferred positions
+Phase  7 (1s):  Flush and seal the audit chain (final Merkle hash)
+Phase  8 (2s):  Sync Grimoire to Styx (best-effort)
+Phase  9 (0s):  Zero secrets (automatic via Zeroizing&lt;T&gt; Drop)
+Phase 10 (0s):  Exit
+
+On control plane (after VM drain, no time pressure):
+  11. Sweep wallet (Embedded mode only): query balance, transfer
+  12. Record sweep in machine_events
+  13. Update DB: status='destroyed'
+</code></pre>
+<p>The wallet sweep (Embedded mode) runs on the control plane, not the VM. The control plane has no time pressure – it can retry failed sweeps and wait for RPC confirmation. This frees ~15s from the VM’s shutdown budget for Grimoire operations.</p>
+<p>In Delegation mode, steps 11-13 simplify: no sweep needed (funds are in the owner’s wallet), just delegation expiry and status update.</p>
+<hr>
+<h2 id="s12--dream-engine-shutdown"><a class="header" href="#s12--dream-engine-shutdown">S12 – Dream Engine Shutdown</a></h2>
+<p>During teardown, the dream engine either completes the current cycle (if one is in progress) or aborts with a partial journal. A dream cycle in the Consolidate or Validate phase is allowed to finish – aborting mid-consolidation could leave the Grimoire in an inconsistent state. A cycle still in Replay is aborted, and the partial <code>DreamJournal</code> is flushed as-is.</p>
+<p>Partial dream journals are still pushed to the Styx Archive layer. Incomplete is better than lost. The <code>DreamConsolidator</code> staging buffer is flushed: staged revisions that have been validated are applied to the Grimoire before export; revisions still pending validation are discarded with <code>status: "abandoned_at_death"</code> logged in the journal.</p>
+<hr>
+<h2 id="s13--final-styx-archive-backup"><a class="header" href="#s13--final-styx-archive-backup">S13 – Final Styx Archive Backup</a></h2>
+<p>The final Styx Archive backup is the authoritative terminal state, pushed to Styx as the last act before the VM is destroyed. It includes:</p>
+<ul>
+<li><strong>grimoire_bundle</strong> – The fully updated Grimoire with any last-moment dream consolidations applied</li>
+<li><strong>death_testament</strong> – The completed death reflection, including <code>EmotionalDeathTestament</code> and verbal narrative</li>
+<li><strong>dream_journal</strong> – The finalized <code>DreamJournal</code>, including partial entries from an interrupted cycle</li>
+<li><strong>insurance_snapshot</strong> – A last <code>InsuranceSnapshot</code> timestamped at teardown initiation</li>
+</ul>
+<p>This backup is what the successor’s Styx Archive restoration step (see <code>07-provisioning.md</code> S2.5) decrypts and loads. If the Golem dies necrotically (hard crash, no graceful shutdown), the most recent periodic Styx Archive backup is used instead.</p>
+<hr>
+<h2 id="s14--automated-death-teardown"><a class="header" href="#s14--automated-death-teardown">S14 – Automated Death Teardown</a></h2>
+<p>When a Golem dies from credit exhaustion (not owner-initiated), the teardown pipeline triggers automatically. The same 8-step pipeline runs, with these differences:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>Owner-Initiated Destroy</th><th>Credit Exhaustion Death</th></tr>
+</thead>
+<tbody>
+<tr><td>Trigger</td><td>Owner clicks “Destroy”</td><td>Credits reach 5% threshold</td></tr>
+<tr><td>Confirmation</td><td>Type-to-confirm</td><td>Automatic (no owner action required)</td></tr>
+<tr><td>Death preparation</td><td>Skipped</td><td>Full protocol (knowledge extraction, verbal reflection)</td></tr>
+<tr><td>Grimoire export</td><td>Optional (owner checkbox)</td><td>Always exported</td></tr>
+<tr><td>Fund settlement</td><td>Standard settlement</td><td>Uses ring-fenced death reserve for gas</td></tr>
+<tr><td>Webhook</td><td><code>golem.destroyed</code></td><td><code>golem.dead</code> (different event)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The death reserve is a small USDC ring-fence ($0.30 base + per-position sweep gas) set aside at creation time. It ensures the Golem can always afford to close positions and sweep funds (Embedded mode) even when its operating balance hits zero. In Delegation mode, the death reserve covers only gas for settlement transactions.</p>
+<hr>
+<h2 id="s15--pause-vs-destroy"><a class="header" href="#s15--pause-vs-destroy">S15 – Pause vs Destroy</a></h2>
+<p>A running Golem can be stopped two ways. The choice determines whether it can come back.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Action</th><th>Effect</th><th>Reversible</th><th>Funds</th><th>Compute</th><th>Knowledge</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Pause</strong></td><td>Stops heartbeat, cancels pending ops, preserves state</td><td>Yes (resume anytime)</td><td>Stay as-is</td><td>VM suspended</td><td>Grimoire intact on disk</td></tr>
+<tr><td><strong>Destroy</strong></td><td>Full teardown pipeline, all resources cleaned up</td><td>No</td><td>Settled/returned</td><td>VM destroyed</td><td>Exported to Styx Archive, then deleted</td></tr>
+</tbody>
+</table>
+</div>
+<p>Pausing is always safe and instantly reversible. Destroying is permanent and requires explicit confirmation.</p>
+<p>Paused Golems in hosted mode still consume Bardo Compute credits – the VM is allocated, just idle. If credits drop to 5%, the automated death teardown begins.</p>
+<blockquote>
+<p>Credit conservation (30%) is a behavioral mode within the Running state, not a Paused transition. See <a href="../02-mortality/01-architecture.html">02-mortality/01-architecture.md</a> for behavioral phase details.</p>
+</blockquote>
+<hr>
+<h2 id="s16--death-settlement-by-custody-mode"><a class="header" href="#s16--death-settlement-by-custody-mode">S16 – Death Settlement by Custody Mode</a></h2>
+<p>How a Golem’s financial state resolves at death depends on the custody mode.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>Delegation</th><th>Embedded (Privy)</th></tr>
+</thead>
+<tbody>
+<tr><td>Funds at death</td><td>Owner’s wallet (always were)</td><td>Privy server wallet</td></tr>
+<tr><td>Sweep required</td><td>No</td><td>Yes</td></tr>
+<tr><td>Stuck fund risk</td><td>None</td><td>Yes (if sweep fails)</td></tr>
+<tr><td>Owner action needed</td><td>None (delegation expires)</td><td>Must claim deferred positions</td></tr>
+<tr><td>Session key cleanup</td><td>Delegation hash disabled on-chain</td><td>P-256 key deregistered from Privy</td></tr>
+<tr><td>Deferred positions</td><td>Owner handles from MetaMask directly</td><td>Recorded in BardoManifest for manual handling</td></tr>
+</tbody>
+</table>
+</div>
+<p>Delegation is strictly superior for death settlement. The “no sweep” death eliminates stuck funds, failed sweeps, gas estimation errors during teardown, and the race condition between death and sweep confirmation.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[DENNIS-VAN-HORN-1966] Dennis, J.B. &amp; Van Horn, E.C. (1966). “Programming Semantics for Multiprogrammed Computations.” <em>Communications of the ACM</em>, 9(3). — <em>Foundational work on capability-based security; informs the type-state pipeline design where each step consumes the previous state.</em></li>
+<li>ERC-4626: <code>withdraw()</code> and <code>redeem()</code> for vault position exits during settlement. — <em>The standard vault interface used for closing ERC-4626 positions in the settlement step.</em></li>
+<li>Uniswap V3: <code>decreaseLiquidity()</code> + <code>collect()</code> for LP position closure. — <em>The protocol calls used to close concentrated liquidity positions during teardown settlement.</em></li>
+<li>MetaMask Delegation Framework: https://github.com/MetaMask/delegation-framework — <em>Enables delegation revocation during teardown: disabling the delegation hash on-chain in a single transaction.</em></li>
+<li><code>zeroize</code> crate: https://crates.io/crates/zeroize — <em>Rust library for automatic secret wiping on drop; ensures no key material persists in VM memory after teardown.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/11-lifecycle.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/13-runtime-extensions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/11-lifecycle.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/13-runtime-extensions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

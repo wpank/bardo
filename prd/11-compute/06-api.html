@@ -1,0 +1,728 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>API - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/11-compute/06-api.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="06--api-reference-spec"><a class="header" href="#06--api-reference-spec">06 – API reference [SPEC]</a></h1>
+<p><strong>REST endpoints, database schema, request/response schemas, GolemEvent types, and error codes</strong></p>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document is the API reference for Bardo Compute, the managed VM hosting service for Golems (mortal autonomous DeFi agents). It belongs to the <strong>Compute</strong> layer of Bardo (the Rust runtime for these agents). The key concept before diving in: the API is a REST service backed by Turso (libSQL) for persistence, accepting x402 (EIP-3009 USDC micropayment) headers for provisioning and extension, and emitting typed <code>GolemEvent</code> variants for all state transitions. Terms like Golem, Grimoire, Styx, and PolicyCage are defined inline on first use; a full glossary lives in <code>00-overview.md § Terminology</code>.</p>
+</blockquote>
+<hr>
+<h2 id="database-schema-turso--libsql"><a class="header" href="#database-schema-turso--libsql">Database schema (Turso / libSQL)</a></h2>
+<h3 id="machines-table"><a class="header" href="#machines-table"><code>machines</code> table</a></h3>
+<pre><code class="language-sql">PRAGMA foreign_keys = ON;
+
+CREATE TABLE machines (
+  id            TEXT PRIMARY KEY,           -- UUID v4
+  user_id       TEXT NOT NULL,              -- Privy user ID
+  machine_id    TEXT,                       -- Fly machine ID (null during provisioning)
+  machine_name  TEXT NOT NULL UNIQUE,       -- golem-{nanoid(12)}
+  private_ip    TEXT,                       -- Fly 6PN IPv6 (null during provisioning)
+  status        TEXT NOT NULL DEFAULT 'provisioning',
+                                            -- provisioning|booting|ready|draining|crashed|destroyed
+  vm_size       TEXT NOT NULL DEFAULT 'small',
+                                            -- micro|small|medium|large
+  strategy_type TEXT,                       -- yield-optimizer, dca, keeper, etc.
+  tool_profile  TEXT NOT NULL DEFAULT 'full',
+  custody_mode  TEXT NOT NULL DEFAULT 'delegation',
+                                            -- delegation|embedded|local_key
+  ttl_seconds   INTEGER NOT NULL,           -- Total TTL granted (cumulative)
+  expires_at    INTEGER NOT NULL,           -- Epoch seconds (authoritative TTL)
+  created_at    INTEGER NOT NULL DEFAULT (unixepoch()),
+  destroyed_at  INTEGER,
+  destroy_reason TEXT,                      -- ttl_expired|user_destroyed|admin_destroyed|
+                                            --   provision_failed|boot_timeout|thanatopsis|orphaned
+  region        TEXT NOT NULL,
+  wallet_address TEXT,                      -- Custody-mode wallet address (Base)
+  erc8004_id    TEXT,                       -- ERC-8004 on-chain identity (Base)
+  styx_connected INTEGER NOT NULL DEFAULT 0, -- 0 or 1
+  cache_version INTEGER NOT NULL DEFAULT 0  -- Incremented on status change
+);
+
+CREATE INDEX idx_machines_user_id ON machines(user_id);
+CREATE INDEX idx_machines_status ON machines(status);
+CREATE INDEX idx_machines_expires_at ON machines(expires_at);
+CREATE UNIQUE INDEX idx_machines_machine_name ON machines(machine_name);
+</code></pre>
+<h3 id="billing_events-table"><a class="header" href="#billing_events-table"><code>billing_events</code> table</a></h3>
+<pre><code class="language-sql">CREATE TABLE billing_events (
+  id                 TEXT PRIMARY KEY,
+  user_id            TEXT NOT NULL,
+  machine_id         TEXT NOT NULL REFERENCES machines(id),
+  type               TEXT NOT NULL,             -- provision|extension|refund|failed_provision|self_extension
+  amount_micro_usdc  INTEGER NOT NULL,
+  tx_hash            TEXT,
+  from_address       TEXT NOT NULL,
+  to_address         TEXT NOT NULL,
+  payer_type         TEXT NOT NULL,             -- owner|self|external_user
+  nonce              TEXT NOT NULL UNIQUE,
+  ttl_seconds_granted INTEGER NOT NULL,
+  vm_size            TEXT NOT NULL,
+  created_at         INTEGER NOT NULL DEFAULT (unixepoch()),
+  metadata           TEXT
+);
+
+CREATE INDEX idx_billing_user_id ON billing_events(user_id);
+CREATE INDEX idx_billing_machine_id ON billing_events(machine_id);
+CREATE INDEX idx_billing_type ON billing_events(type);
+CREATE INDEX idx_billing_created_at ON billing_events(created_at);
+</code></pre>
+<h3 id="machine_events-table"><a class="header" href="#machine_events-table"><code>machine_events</code> table</a></h3>
+<pre><code class="language-sql">CREATE TABLE machine_events (
+  id        TEXT PRIMARY KEY,
+  machine_id TEXT NOT NULL REFERENCES machines(id),
+  user_id   TEXT NOT NULL,
+  event     TEXT NOT NULL,
+  metadata  TEXT,
+  created_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
+
+CREATE INDEX idx_events_machine_id ON machine_events(machine_id);
+CREATE INDEX idx_events_event ON machine_events(event);
+CREATE INDEX idx_events_created_at ON machine_events(created_at);
+</code></pre>
+<h3 id="supporting-tables"><a class="header" href="#supporting-tables">Supporting tables</a></h3>
+<pre><code class="language-sql">-- System locks (leader election)
+CREATE TABLE system_locks (
+  name       TEXT PRIMARY KEY,
+  holder     TEXT,
+  acquired_at INTEGER
+);
+
+-- Grimoire snapshots
+CREATE TABLE grimoire_snapshots (
+  id          TEXT PRIMARY KEY,
+  user_id     TEXT NOT NULL,
+  machine_id  TEXT NOT NULL REFERENCES machines(id),
+  machine_name TEXT NOT NULL,
+  size_bytes  INTEGER NOT NULL,
+  r2_key      TEXT NOT NULL,
+  created_at  INTEGER NOT NULL DEFAULT (unixepoch()),
+  type        TEXT NOT NULL DEFAULT 'periodic'
+);
+
+-- User SSH keys
+CREATE TABLE user_keys (
+  id          TEXT PRIMARY KEY,
+  user_id     TEXT NOT NULL,
+  public_key  TEXT NOT NULL,
+  fingerprint TEXT NOT NULL UNIQUE,
+  label       TEXT,
+  added_at    INTEGER NOT NULL DEFAULT (unixepoch())
+);
+
+-- Strategy compilation quotas
+CREATE TABLE user_quotas (
+  user_id                TEXT PRIMARY KEY,
+  strategy_compilations  INTEGER NOT NULL DEFAULT 0,
+  free_compilations_used INTEGER NOT NULL DEFAULT 0,
+  updated_at             INTEGER NOT NULL DEFAULT (unixepoch())
+);
+
+-- Admin users
+CREATE TABLE admins (
+  user_id TEXT PRIMARY KEY,
+  role    TEXT NOT NULL DEFAULT 'operator',
+  added_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
+
+-- Daily revenue aggregates
+CREATE TABLE daily_revenue (
+  date              TEXT PRIMARY KEY,
+  total_micro_usdc  INTEGER NOT NULL DEFAULT 0,
+  provision_count   INTEGER NOT NULL DEFAULT 0,
+  extension_count   INTEGER NOT NULL DEFAULT 0,
+  self_extension_count INTEGER NOT NULL DEFAULT 0,
+  refund_count      INTEGER NOT NULL DEFAULT 0,
+  refund_micro_usdc INTEGER NOT NULL DEFAULT 0,
+  avg_ttl_seconds   INTEGER NOT NULL DEFAULT 0,
+  active_machines_eod INTEGER NOT NULL DEFAULT 0,
+  unique_users      INTEGER NOT NULL DEFAULT 0
+);
+
+-- Archived destroyed machines (90+ days)
+CREATE TABLE machines_archive (
+  -- Same schema as machines + archived_at
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  machine_id TEXT,
+  machine_name TEXT NOT NULL,
+  private_ip TEXT,
+  status TEXT NOT NULL,
+  vm_size TEXT NOT NULL,
+  strategy_type TEXT,
+  tool_profile TEXT NOT NULL,
+  custody_mode TEXT NOT NULL,
+  ttl_seconds INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  created_at INTEGER NOT NULL,
+  destroyed_at INTEGER,
+  destroy_reason TEXT,
+  region TEXT NOT NULL,
+  wallet_address TEXT,
+  erc8004_id TEXT,
+  archived_at INTEGER NOT NULL DEFAULT (unixepoch())
+);
+</code></pre>
+<hr>
+<h2 id="rest-api-reference"><a class="header" href="#rest-api-reference">REST API reference</a></h2>
+<h3 id="public-endpoints-no-auth"><a class="header" href="#public-endpoints-no-auth">Public endpoints (no auth)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Description</th><th>Rate limit</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/health</code></td><td>API health check</td><td>60/min/IP</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/pricing</code></td><td>Current pricing tiers</td><td>30/min/IP</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/golems</code></td><td>Agent discovery directory</td><td>30/min/IP</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/machines/:name/status</code></td><td>Public machine status</td><td>30/min/IP</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/machines/:name/extend</code></td><td>Permissionless extension</td><td>10/min/IP, 30/hr/machine</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="get-health"><a class="header" href="#get-health"><code>GET /health</code></a></h4>
+<pre><code class="language-json">{
+  "status": "healthy",
+  "version": "1.0.0",
+  "checks": { "db": "ok", "fly_api": "ok" },
+  "uptime": 86400
+}
+</code></pre>
+<h4 id="get-v1pricing"><a class="header" href="#get-v1pricing"><code>GET /v1/pricing</code></a></h4>
+<pre><code class="language-json">{
+  "currency": "USDC",
+  "chain": "base",
+  "chain_id": 8453,
+  "tiers": [
+    { "vm_size": "micro", "price_per_hour_micro_usdc": 25000, "min_purchase_hours": 1 },
+    { "vm_size": "small", "price_per_hour_micro_usdc": 50000, "min_purchase_hours": 1 },
+    { "vm_size": "medium", "price_per_hour_micro_usdc": 100000, "min_purchase_hours": 1 },
+    { "vm_size": "large", "price_per_hour_micro_usdc": 200000, "min_purchase_hours": 1 }
+  ],
+  "max_extension_hours": 720,
+  "min_extension_hours": 1,
+  "operator_address": "0x..."
+}
+</code></pre>
+<h4 id="get-v1golems"><a class="header" href="#get-v1golems"><code>GET /v1/golems</code></a></h4>
+<p>Query params: <code>capabilities</code>, <code>asset</code>, <code>status</code>, <code>region</code>, <code>limit</code> (default 50, max 200), <code>offset</code>.</p>
+<h4 id="get-v1machinesnamestatus"><a class="header" href="#get-v1machinesnamestatus"><code>GET /v1/machines/:name/status</code></a></h4>
+<p>All time values include <code>server_time</code> for clock skew compensation:</p>
+<pre><code class="language-json">{
+  "name": "golem-V1StGXR8_Z5j",
+  "status": "ready",
+  "vm_size": "small",
+  "region": "ams",
+  "custody_mode": "delegation",
+  "vitality": 0.72,
+  "behavioral_phase": "stable",
+  "styx_connected": true,
+  "ttl": {
+    "expires_at": 1710500400,
+    "remaining_seconds": 36000,
+    "server_time": 1710464400,
+    "pricing": { "price_per_hour_micro_usdc": 50000 }
+  },
+  "performance": { "nav": 1050.25, "uptime_seconds": 604800 }
+}
+</code></pre>
+<h3 id="user-endpoints-privy-jwt-required"><a class="header" href="#user-endpoints-privy-jwt-required">User endpoints (Privy JWT required)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>POST</code></td><td><code>/v1/machines</code></td><td>Provision new Golem (returns 202)</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/machines/mine</code></td><td>List user’s machines (paginated)</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/machines/mine/events</code></td><td>SSE dashboard events</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/machines/:name</code></td><td>Full machine details</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/machines/:name/provision-status</code></td><td>SSE provisioning progress</td></tr>
+<tr><td><code>DELETE</code></td><td><code>/v1/machines/:name</code></td><td>Destroy machine (graceful Thanatopsis)</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/keys</code></td><td>Add SSH public key</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/keys</code></td><td>List user’s SSH keys</td></tr>
+<tr><td><code>DELETE</code></td><td><code>/v1/keys/:fingerprint</code></td><td>Remove SSH key</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/billing/mine</code></td><td>Billing history</td></tr>
+<tr><td><code>POST</code></td><td><code>/v1/ssh/ticket</code></td><td>Get SSH ticket</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="post-v1machines-202-accepted"><a class="header" href="#post-v1machines-202-accepted"><code>POST /v1/machines</code> (202 Accepted)</a></h4>
+<pre><code class="language-json">{
+  "id": "uuid",
+  "machine_name": "golem-V1StGXR8_Z5j",
+  "status": "provisioning",
+  "url": "https://golem-V1StGXR8_Z5j.bardo.money",
+  "vm_size": "small",
+  "region": "ams",
+  "custody_mode": "delegation",
+  "ttl_seconds": 36000,
+  "expires_at": null,
+  "tx_hash": null,
+  "wallet_address": null,
+  "server_time": 1710464400
+}
+</code></pre>
+<h3 id="internal-endpoints-fly-oidc-token"><a class="header" href="#internal-endpoints-fly-oidc-token">Internal endpoints (Fly OIDC token)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/internal/machines/self/ttl</code></td><td>Authoritative TTL (for cron)</td></tr>
+<tr><td><code>POST</code></td><td><code>/internal/machines/self/crash</code></td><td>Report crash</td></tr>
+<tr><td><code>POST</code></td><td><code>/internal/grimoire/sync</code></td><td>Upload snapshot</td></tr>
+<tr><td><code>GET</code></td><td><code>/internal/grimoire/:user_id/snapshot</code></td><td>Download snapshot</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="admin-endpoints-privy-jwt--admin-role"><a class="header" href="#admin-endpoints-privy-jwt--admin-role">Admin endpoints (Privy JWT + admin role)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GET</code></td><td><code>/admin/stats</code></td><td>System metrics</td></tr>
+<tr><td><code>GET</code></td><td><code>/admin/machines</code></td><td>List all machines</td></tr>
+<tr><td><code>GET</code></td><td><code>/admin/machines/:id</code></td><td>Full details (any machine)</td></tr>
+<tr><td><code>DELETE</code></td><td><code>/admin/machines/:id</code></td><td>Force destroy</td></tr>
+<tr><td><code>POST</code></td><td><code>/admin/machines/:id/expire</code></td><td>Force TTL expiry</td></tr>
+<tr><td><code>POST</code></td><td><code>/admin/machines/:id/sweep</code></td><td>Manual wallet sweep (Embedded mode only)</td></tr>
+<tr><td><code>GET</code></td><td><code>/admin/billing/summary</code></td><td>Revenue summary</td></tr>
+<tr><td><code>POST</code></td><td><code>/admin/refund</code></td><td>Manual refund</td></tr>
+<tr><td><code>GET</code></td><td><code>/admin/health/detailed</code></td><td>Extended health</td></tr>
+</tbody>
+</table>
+</div>
+<p>Admin endpoints use <code>:id</code> (UUID) not <code>:name</code>.</p>
+<h3 id="websocket-ssh-endpoint"><a class="header" href="#websocket-ssh-endpoint">WebSocket SSH endpoint</a></h3>
+<pre><code>wss://ssh.bardo.money/ws?machine=golem-V1StGXR8_Z5j&amp;ticket=&lt;ticket&gt;
+</code></pre>
+<hr>
+<h2 id="machine-event-types"><a class="header" href="#machine-event-types">Machine event types</a></h2>
+<p>Events are stored in the <code>machine_events</code> table and pushed via SSE to connected dashboard clients. These are <strong>control plane events</strong> – distinct from the Golem’s <code>GolemEvent</code> types emitted by the Event Fabric.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Metadata</th></tr>
+</thead>
+<tbody>
+<tr><td><code>PaymentVerified</code></td><td>x402 validated</td><td><code>{ trace_id, amount_micro_usdc, nonce }</code></td></tr>
+<tr><td><code>Provisioning</code></td><td>Fly machine started</td><td><code>{ trace_id, region, vm_size, custody_mode }</code></td></tr>
+<tr><td><code>Booting</code></td><td>Health check polling</td><td><code>{ trace_id }</code></td></tr>
+<tr><td><code>Ready</code></td><td>Health check passed</td><td><code>{ trace_id, provision_time_ms, styx_connected }</code></td></tr>
+<tr><td><code>Extended</code></td><td>TTL extended</td><td><code>{ payer_type, amount_micro_usdc, ttl_added, new_expires_at }</code></td></tr>
+<tr><td><code>SshConnected</code></td><td>SSH session via ticket</td><td><code>{ source_ip, ticket_id }</code></td></tr>
+<tr><td><code>StrategyUpdated</code></td><td>Hot-swap</td><td><code>{ strategy_type }</code></td></tr>
+<tr><td><code>GrimoireSynced</code></td><td>Periodic sync</td><td><code>{ snapshot_size_bytes }</code></td></tr>
+<tr><td><code>Draining</code></td><td>Shutdown initiated</td><td><code>{ reason, behavioral_phase }</code></td></tr>
+<tr><td><code>ThanatopsisStarted</code></td><td>Death protocol begins</td><td><code>{ vitality, death_cause }</code></td></tr>
+<tr><td><code>Destroyed</code></td><td>Fully destroyed</td><td><code>{ destroy_reason, final_ttl_seconds, death_testament_uploaded }</code></td></tr>
+<tr><td><code>Crashed</code></td><td>Supervisor max restarts</td><td><code>{ exit_code, restart_count }</code></td></tr>
+<tr><td><code>WalletSwept</code></td><td>Control plane sweep</td><td><code>{ usdc_micro_amount, eth_wei, tx_hash }</code></td></tr>
+<tr><td><code>DelegationExpired</code></td><td>Delegation timeout</td><td><code>{ delegation_hash, expiry_cause }</code></td></tr>
+<tr><td><code>ProvisionFailed</code></td><td>Provisioning failed</td><td><code>{ trace_id, error, step }</code></td></tr>
+<tr><td><code>AdminForceDestroy</code></td><td>Admin action</td><td><code>{ admin_id, reason }</code></td></tr>
+<tr><td><code>AdminForceExpire</code></td><td>Admin action</td><td><code>{ admin_id, reason }</code></td></tr>
+<tr><td><code>AdminRefund</code></td><td>Admin refund</td><td><code>{ admin_id, amount_micro_usdc, tx_hash }</code></td></tr>
+<tr><td><code>AdminSweep</code></td><td>Admin sweep</td><td><code>{ admin_id, wallet_address, amount_micro_usdc }</code></td></tr>
+<tr><td><code>Warning30m</code></td><td>30 min warning</td><td>–</td></tr>
+<tr><td><code>Warning5m</code></td><td>5 min warning</td><td>–</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="golemevent-types-from-event-fabric"><a class="header" href="#golemevent-types-from-event-fabric">GolemEvent types (from Event Fabric)</a></h2>
+<p>The Golem binary emits 50+ typed <code>GolemEvent</code> variants via the Event Fabric. These flow over the Styx WebSocket to surfaces (TUI, web dashboard). They use Rust <code>CamelCase</code> naming with <code>snake_case</code> serde serialization:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum GolemEvent {
+    // Heartbeat
+    MarketObservation { timestamp: u64, tick: u64, regime: String, anomalies: Vec&lt;String&gt;, .. },
+    HeartbeatTick { timestamp: u64, tick: u64, tier: String, pe: f64, threshold: f64, .. },
+    HeartbeatComplete { timestamp: u64, tick: u64, duration_ms: u64, actions_taken: u32, .. },
+    TierSelected { timestamp: u64, tick: u64, tier: String, vitality: f64, arousal: f64, .. },
+
+    // Tools
+    ToolExecutionStart { timestamp: u64, tool_name: String, risk_tier: String, .. },
+    ToolExecutionUpdate { timestamp: u64, tool_name: String, progress: Option&lt;f64&gt;, .. },
+    ToolExecutionEnd { timestamp: u64, tool_name: String, result: String, tx_hash: Option&lt;String&gt;, .. },
+
+    // Permits
+    PermitCreated { timestamp: u64, permit_id: String, action_kind: String, .. },
+    PermitCommitted { timestamp: u64, permit_id: String, tx_hash: Option&lt;String&gt;, .. },
+    PermitBlocked { timestamp: u64, permit_id: String, block_reason: String, .. },
+
+    // Inference
+    InferenceStart { timestamp: u64, model: String, tier: String, .. },
+    InferenceEnd { timestamp: u64, model: String, cost_usd: f64, latency_ms: u64, .. },
+
+    // Dreams
+    DreamStart { timestamp: u64, phase: String, .. },
+    DreamReplay { timestamp: u64, episode_id: String, .. },
+    DreamInsight { timestamp: u64, insight_text: String, confidence: f64, .. },
+    DreamEnd { timestamp: u64, insights_generated: u32, entries_pruned: u32, .. },
+
+    // Mortality
+    VitalityUpdate { timestamp: u64, economic: f64, epistemic: f64, stochastic: f64, composite: f64, .. },
+    PhaseTransition { timestamp: u64, from_phase: String, to_phase: String, vitality: f64, .. },
+    ThanatopsisStarted { timestamp: u64, death_cause: String, .. },
+    DeathReflection { timestamp: u64, reflection_text: String, .. },
+
+    // Affect
+    EmotionUpdate { timestamp: u64, pleasure: f64, arousal: f64, dominance: f64, label: String, .. },
+    SomaticMarker { timestamp: u64, situation: String, valence: f64, .. },
+
+    // Memory
+    GrimoireWrite { timestamp: u64, entry_type: String, confidence: f64, .. },
+    CuratorCycle { timestamp: u64, entries_pruned: u32, entries_compressed: u32, .. },
+
+    // Custody
+    SessionKeyRotated { timestamp: u64, old_address: String, new_address: String, .. },
+    DelegationWarning { timestamp: u64, remaining_budget_pct: f64, .. },
+
+    // Styx
+    StyxConnected { timestamp: u64, latency_ms: u64, .. },
+    StyxDisconnected { timestamp: u64, reason: String, .. },
+    PheromoneDeposited { timestamp: u64, pheromone_class: String, domain: String, .. },
+    BloodstainReceived { timestamp: u64, source_golem: String, warning_count: u32, .. },
+
+    // Trading
+    SwapExecuted { timestamp: u64, pair: String, amount_in: f64, amount_out: f64, slippage_bps: u16, gas_usd: f64, .. },
+    PositionOpened { timestamp: u64, protocol: String, pool: String, range: String, .. },
+    PositionClosed { timestamp: u64, protocol: String, pnl_usd: f64, .. },
+
+    // Economics
+    SustainabilityUpdate { timestamp: u64, ratio: f64, daily_revenue: f64, daily_cost: f64, .. },
+    TtlExtended { timestamp: u64, added_seconds: u64, new_expires_at: u64, payer_type: String, .. },
+}
+<span class="boring">}</span></code></pre>
+<p>Each variant carries <code>timestamp</code> (Unix ms), <code>golem_id</code>, <code>sequence</code> (monotonic), and <code>tick</code> (heartbeat number). See <a href="../01-golem/13-runtime-extensions.html">prd2/01-golem/13-runtime-extensions.md</a> for the full GolemEvent catalog with field definitions.</p>
+<hr>
+<h2 id="golemstate-client-side-representation"><a class="header" href="#golemstate-client-side-representation">GolemState (client-side representation)</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Client-side state for rendering Golem status in TUI or web dashboard.
+/// Assembled from health endpoint + GolemEvent stream.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GolemState {
+    // Identity
+    pub machine_name: String,
+    pub user_id: String,
+    pub vm_size: VmTier,
+    pub region: String,
+    pub custody_mode: String,
+
+    // TTL (with clock skew compensation)
+    pub expires_at: u64,
+    pub clock_offset: i64,       // server_time - local_time (seconds)
+
+    // Strategy
+    pub strategy_type: String,
+
+    // Performance
+    pub nav: f64,
+    pub pnl_percent: f64,
+    pub sharpe: f64,
+    pub max_drawdown: f64,
+    pub uptime_seconds: u64,
+
+    // Vitality
+    pub vitality: f64,
+    pub behavioral_phase: String,
+    pub sustainability_ratio: Option&lt;f64&gt;,
+
+    // Status
+    pub status: String,          // "booting", "ready", "draining", "crashed"
+    pub styx_connected: bool,
+    pub tool_count: u32,
+    pub heartbeat_count: u64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="error-codes"><a class="header" href="#error-codes">Error codes</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>HTTP status</th><th>Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td><code>PAYMENT_INVALID</code></td><td>402</td><td>x402 header missing or malformed</td></tr>
+<tr><td><code>PAYMENT_INSUFFICIENT</code></td><td>402</td><td>Below minimum for VM size</td></tr>
+<tr><td><code>PAYMENT_BALANCE_LOW</code></td><td>402</td><td>On-chain USDC insufficient</td></tr>
+<tr><td><code>PAYMENT_NONCE_USED</code></td><td>409</td><td>EIP-3009 nonce consumed</td></tr>
+<tr><td><code>PAYMENT_EXPIRED</code></td><td>402</td><td><code>validBefore</code> has passed</td></tr>
+<tr><td><code>MACHINE_NOT_FOUND</code></td><td>404</td><td>Name or ID not found</td></tr>
+<tr><td><code>MACHINE_NOT_READY</code></td><td>409</td><td>Not in <code>ready</code> state</td></tr>
+<tr><td><code>MACHINE_LIMIT_REACHED</code></td><td>403</td><td>At 5 active machines</td></tr>
+<tr><td><code>EXTENSION_TOO_LARGE</code></td><td>400</td><td>&gt;720h single extension</td></tr>
+<tr><td><code>EXTENSION_TOO_SMALL</code></td><td>400</td><td>Below 1-hour minimum</td></tr>
+<tr><td><code>EXTENSION_CONFLICT</code></td><td>409</td><td>CAS conflict (retry)</td></tr>
+<tr><td><code>VALID_BEFORE_TOO_TIGHT</code></td><td>400</td><td>&lt;300s window</td></tr>
+<tr><td><code>REGION_FULL</code></td><td>503</td><td>Per-region cap reached</td></tr>
+<tr><td><code>GLOBAL_CAP_REACHED</code></td><td>503</td><td>Global cap reached</td></tr>
+<tr><td><code>UNAUTHORIZED</code></td><td>401</td><td>Missing/invalid JWT</td></tr>
+<tr><td><code>FORBIDDEN</code></td><td>403</td><td>Valid JWT but not owner/admin</td></tr>
+<tr><td><code>RATE_LIMITED</code></td><td>429</td><td>Rate limit exceeded</td></tr>
+<tr><td><code>PROVISION_FAILED</code></td><td>500</td><td>Fly or health check failed</td></tr>
+<tr><td><code>GOLEM_NOT_FOUND</code></td><td>404</td><td>Proxy: no matching machine</td></tr>
+<tr><td><code>SSH_TICKET_INVALID</code></td><td>401</td><td>Ticket expired or consumed</td></tr>
+<tr><td><code>ERC8004_REGISTRATION_FAILED</code></td><td>500</td><td>On-chain identity registration failed</td></tr>
+<tr><td><code>STYX_CONNECTION_FAILED</code></td><td>503</td><td>Styx WebSocket handshake failed (non-fatal)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment variables</a></h2>
+<h3 id="bardo-control"><a class="header" href="#bardo-control">bardo-control</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Variable</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>DATABASE_URL</code></td><td>Turso connection string</td></tr>
+<tr><td><code>DATABASE_AUTH_TOKEN</code></td><td>Turso auth token</td></tr>
+<tr><td><code>FLY_API_TOKEN</code></td><td>Fly.io API token</td></tr>
+<tr><td><code>FLY_ORG_SLUG</code></td><td>Fly org for OIDC issuer URL</td></tr>
+<tr><td><code>BARDO_OPERATOR_ADDRESS</code></td><td>USDC recipient (Base)</td></tr>
+<tr><td><code>PRIVY_APP_ID</code></td><td>Privy app ID</td></tr>
+<tr><td><code>PRIVY_APP_SECRET</code></td><td>Privy API secret</td></tr>
+<tr><td><code>BASE_RPC_URL</code></td><td>Base chain RPC</td></tr>
+<tr><td><code>STEP_CA_URL</code></td><td>SSH CA URL</td></tr>
+<tr><td><code>STEP_CA_FINGERPRINT</code></td><td>CA root certificate fingerprint</td></tr>
+<tr><td><code>BARDO_ADMIN_SECRET</code></td><td>Break-glass admin auth</td></tr>
+<tr><td><code>REDIS_URL</code></td><td>Optional – rate limiting only</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="bardo-machines-golem-vms"><a class="header" href="#bardo-machines-golem-vms">bardo-machines (Golem VMs)</a></h3>
+<p>All config injected via <code>golem.toml</code> at machine creation. See <a href="02-provisioning.html">02-provisioning.md</a>.</p>
+<hr>
+<h2 id="retention-policy"><a class="header" href="#retention-policy">Retention policy</a></h2>
+<ul>
+<li><strong>Active machines</strong>: No retention limit</li>
+<li><strong>Destroyed machines</strong>: Archived after 90 days to <code>machines_archive</code></li>
+<li><strong>Billing events</strong>: Kept permanently (financial records)</li>
+<li><strong>Machine events</strong>: Kept with associated machine</li>
+<li><strong>Grimoire snapshots</strong>: Latest 5 per machine (R2). Full history in Styx Archive layer.</li>
+<li><strong>Daily revenue</strong>: Kept permanently</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/11-compute/05-operations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/11-compute/07-frontend.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/11-compute/05-operations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/11-compute/07-frontend.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

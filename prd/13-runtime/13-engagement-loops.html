@@ -1,0 +1,967 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Engagement Loops - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/13-runtime/13-engagement-loops.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="engagement-philosophy-and-core-loops-spec"><a class="header" href="#engagement-philosophy-and-core-loops-spec">Engagement philosophy and core loops [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-14
+<strong>Status:</strong> Draft</p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document defines the engagement layer that transforms a Golem’s (a mortal autonomous DeFi agent) raw state changes into an emotional experience: the five-layer engagement loop, the cadence architecture mapping financial rhythms to human touchpoints, the 87-achievement system, and creature integration. It sits in the <strong>Runtime</strong> layer of the Bardo specification. The key prerequisite is understanding that a Golem has internal cognitive and emotional state (via the Daimon affect engine and Grimoire knowledge base) that this layer makes visible. For any unfamiliar term, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>A Golem is not a dashboard. It is a creature that lives, trades, dreams, feels, and dies. The engagement layer transforms the runtime’s state model into an experience that feels like raising a living being – closer to hatching a Charmander than checking a portfolio tracker.</p>
+<p>This document establishes the foundational design philosophy, the five-layer engagement loop, the cadence architecture that maps the Golem’s real financial rhythms to human emotional touchpoints, the 87-achievement system, and the creature integration that makes every state change visible.</p>
+<blockquote>
+<p><strong>Cross-references:</strong></p>
+<ul>
+<li><code>./11-state-model.md</code> — GolemSnapshot (read-only projection of all 11 state components) driving engagement layer rendering</li>
+<li><code>./12-realtime-subscriptions.md</code> — WebSocket event stream and SSE fallback delivering real-time state changes to surfaces</li>
+<li><code>./14-creature-system.md</code> — the Spectre (visual creature representation) system expressing internal state as visible creature behavior</li>
+<li><code>./15-progression-meta.md</code> — collection and achievement systems: 87 achievements across 10 categories, sprite collection, tombstone gallery</li>
+<li><code>./16-social-competitive.md</code> — Styx-mediated social layer: leaderboards, Clade activity, Bloodstain network, and graveyard browser</li>
+<li><code>./18-retention-virality.md</code> — retention mechanics: dying hook, dream discovery, sprite rarity, social proof, and anti-dark-pattern commitments</li>
+<li><code>../05-dreams/01-architecture.md</code> — dream scheduling: the three-phase NREM/REM/integration cycle and knowledge consolidation</li>
+<li><code>../03-daimon/01-appraisal.md</code> — PAD (Pleasure-Arousal-Dominance) vector computation and Plutchik emotion mapping from the Daimon affect engine</li>
+<li><code>../02-mortality/01-architecture.md</code> — three mortality clocks (economic, epistemic, stochastic), Vitality composite score, and BehavioralPhase transitions</li>
+<li><code>../04-memory/01-grimoire.md</code> — the Grimoire persistent knowledge base: episodes, insights, heuristics, and the Curator maintenance cycle</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="1-the-mortality-advantage"><a class="header" href="#1-the-mortality-advantage">1. The mortality advantage</a></h2>
+<p>Most digital creatures never die. Your Neopet is still alive on a server somewhere. Your Pokemon faints but always recovers. This creates a fundamental ceiling on emotional investment – if nothing can be lost, nothing matters.</p>
+<p>Golems die. They have three mortality clocks (economic, epistemic, stochastic), finite USDC reserves, and a Hayflick counter that guarantees eventual death even under ideal conditions. This is not a bug to work around – it is the single most powerful engagement mechanic in the system. Mortality is a moat, not a feature (see <code>../../moat/prd2-moat-agents-that-die.md</code>).</p>
+<p><strong>Why mortality creates engagement:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Principle</th><th>Mechanism</th><th>Game Precedent</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Stakes</strong></td><td>Real USDC is at risk; death means actual financial loss</td><td>Hardcore roguelikes (permadeath), Nier Automata</td></tr>
+<tr><td><strong>Urgency</strong></td><td>Declining vitality creates time pressure to act</td><td>Tamagotchi neglect death, MMO raid timers</td></tr>
+<tr><td><strong>Meaning</strong></td><td>Each Golem’s life is unrepeatable; its Grimoire is unique</td><td>Journey (anonymous co-op), Shadow of the Colossus</td></tr>
+<tr><td><strong>Narrative</strong></td><td>The Bardo lifecycle (birth -&gt; dream -&gt; meditation -&gt; dying -&gt; becoming) is a story arc</td><td>Nier Automata’s multiple endings, Spiritfarer</td></tr>
+<tr><td><strong>Sacrifice</strong></td><td>Choosing to feed a dying Golem vs. letting it pass requires genuine decision</td><td>Nier Automata’s Ending E save-data sacrifice</td></tr>
+<tr><td><strong>Legacy</strong></td><td>Dead Golems leave knowledge that lives on in successors</td><td>Dark Souls message system, roguelike meta-progression</td></tr>
+</tbody>
+</table>
+</div>
+<p>The key insight from Nier Automata: players who watched their android companions die – knowing they chose mortality over backup – reported it as one of the most emotionally affecting moments in gaming. Bardo Golems achieve this naturally because their mortality is real, not scripted.</p>
+<h3 id="11-the-emotional-arc"><a class="header" href="#11-the-emotional-arc">1.1 The emotional arc</a></h3>
+<p>Every Golem traces an emotional arc that mirrors the hero’s journey:</p>
+<pre><code>Birth (wonder)
+  -&gt; First Ticks (anxiety -- will it survive?)
+    -&gt; Shadow Trading (hope -- it's learning)
+      -&gt; First Profit (pride)
+        -&gt; Maturity (confidence -- it knows what it's doing)
+          -&gt; First Crisis (fear -- drawdown, vol spike)
+            -&gt; Recovery or Decline (relief or grief)
+              -&gt; Conservation (tenderness -- watching it adapt)
+                -&gt; Terminal (mourning -- the long goodbye)
+                  -&gt; Death (loss + legacy)
+                    -&gt; Successor (renewal)
+</code></pre>
+<p>Each stage creates a different relationship between user and creature. The engagement layer honors each stage rather than flattening everything into a single “check your dashboard” experience.</p>
+<hr>
+<h2 id="2-the-idle-game-parallel"><a class="header" href="#2-the-idle-game-parallel">2. The idle game parallel</a></h2>
+<p>Golems are autonomous agents. They trade, dream, consolidate memory, and manage risk without human input. This makes them structurally identical to idle games – the category that includes Cookie Clicker, Melvor Idle, and Idle Champions.</p>
+<p><strong>What idle games teach us:</strong></p>
+<ol>
+<li>
+<p><strong>The check-in reward</strong> – when you return after absence, accumulated progress feels like a gift. “Your Golem executed 14 trades while you slept and discovered a new yield pattern” is the DeFi equivalent of “Your miners produced 42M gold overnight.”</p>
+</li>
+<li>
+<p><strong>Passive attachment</strong> – knowing your creature is alive and working while you’re away creates a persistent background awareness. You think about it during your day. You check in not because you need to, but because you want to.</p>
+</li>
+<li>
+<p><strong>Strategic depth behind simplicity</strong> – the surface interaction is simple (check vitals, steer, feed), but the underlying system (heartbeat FSM, three-tier cognition, dream cycles) is deep enough for dedicated players to optimize.</p>
+</li>
+<li>
+<p><strong>Asymmetric time investment</strong> – a 30-second check can reveal hours of autonomous activity. The information density per user-second is extremely high.</p>
+</li>
+</ol>
+<h3 id="21-the-autonomous-day"><a class="header" href="#21-the-autonomous-day">2.1 The autonomous day</a></h3>
+<p>A Golem’s typical 24-hour cycle creates natural engagement touchpoints:</p>
+<pre><code>06:00  Dream cycle completes -&gt; Integration phase -&gt; new insights
+       &gt; "Your Golem dreamed about ETH/USDC correlation. New hypothesis staged."
+
+09:00  Market opens (US) -&gt; regime shift detection -&gt; increased tick activity
+       &gt; "Sensing heightened volatility. Your Golem switched to cautious mode."
+
+12:00  Curator cycle runs -&gt; memory consolidation
+       &gt; "Grimoire update: 3 insights promoted, 1 heuristic archived."
+
+15:00  Peak trading activity -&gt; actions executed
+       &gt; "Your Golem rebalanced: +2.3% on Morpho position."
+
+21:00  Activity winds down -&gt; reflection phase
+       &gt; "Daily summary: 8 ticks, 3 trades, Sharpe 1.4. Mood: confident."
+
+00:00  Dream cycle begins -&gt; NREM phase
+       &gt; "Your Golem is dreaming. Replaying today's best and worst moments."
+</code></pre>
+<p>Each moment is a potential engagement touchpoint – not a forced notification, but an available discovery for users who check in.</p>
+<hr>
+<h2 id="3-five-layer-loop-design"><a class="header" href="#3-five-layer-loop-design">3. Five-layer loop design</a></h2>
+<p>Engagement operates across five temporal layers. Each reinforces the others. This extends the micro/meta/social framework from <code>10-surfaces.md</code> with the creature-specific retention loops from the TUI system.</p>
+<h3 id="31-loop-1-the-check-in-minutes"><a class="header" href="#31-loop-1-the-check-in-minutes">3.1 Loop 1: The check-in (minutes)</a></h3>
+<p>The atomic unit of engagement. Takes 15-60 seconds. Answers: <em>“How is my Golem right now?”</em></p>
+<p><strong>Trigger</strong>: Open the terminal (TUI) or portal (web), see what happened since last session.</p>
+<p><strong>Reward surface</strong>: Event log with unread count, sprite state changes (mood, phase, new markings), P&amp;L delta, dream journal entries, notification badges on sidebar screens, new achievements unlocked.</p>
+<p><strong>Design</strong>: The Home screen is built for a 30-second check-in. The Spectre’s current state communicates phase and mood at a glance. The event log highlights significant events since last visit with rose-bright accent. Unread dots on sidebar screens create pull toward deeper engagement.</p>
+<p><strong>Core loop touchpoints:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Observe</th><th>Feel</th><th>Decide</th><th>See Result</th></tr>
+</thead>
+<tbody>
+<tr><td>Creature’s expression and posture</td><td>Empathy, concern, pride</td><td>Steer strategy, top up credits, or just watch</td><td>Creature reacts – animation, mood shift, acknowledgment</td></tr>
+<tr><td>Vitality gauges (3 clocks)</td><td>Urgency if declining</td><td>Feed USDC to extend life</td><td>TTL updates, creature brightens</td></tr>
+<tr><td>Heartbeat phase indicator</td><td>Curiosity about current action</td><td>Follow up with question</td><td>Golem responds conversationally</td></tr>
+<tr><td>Mood orb / PAD state</td><td>Emotional resonance</td><td>Nothing – just sit with it</td><td>–</td></tr>
+<tr><td>Dream phase (if sleeping)</td><td>Wonder at what it’s processing</td><td>Wake it (or don’t)</td><td>Dream journal entry appears</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Design rule:</strong> The core loop must be satisfying even when the user takes no action. Watching the creature exist – breathing, emoting, processing – must feel meaningful.</p>
+<p><strong>Frequency</strong>: Multiple times per day. The minimum viable session is &lt;30 seconds: glance at sprite, glance at P&amp;L, close. But the unread indicators pull toward longer sessions.</p>
+<h3 id="32-loop-2-the-discovery-hours"><a class="header" href="#32-loop-2-the-discovery-hours">3.2 Loop 2: The discovery (hours)</a></h3>
+<p>The Golem learned something new. This drives return visits.</p>
+<p><strong>Trigger</strong>: Grimoire growth, dream hypothesis validation, knowledge received from clade.</p>
+<p><strong>Reward surface</strong>: Grimoire browser reveals new insights with confidence scores, dream journal shows validated hypotheses, causal graph gains new edges, PLAYBOOK.md evolved, sprite gained a new marking or accessory.</p>
+<p><strong>Design</strong>: Knowledge events are surfaced with ceremony. A new insight isn’t a log line – it’s a gold-bordered card that slides in from the right with the confidence score prominently displayed. The Grimoire browser sorts by recency and highlights new entries with a pulsing dot. The sprite visually mutates when significant knowledge is acquired.</p>
+<p><strong>Frequency</strong>: Every few hours. A Golem generating 2-5 insights per day means every session surfaces something new.</p>
+<h3 id="33-loop-3-the-evolution-days"><a class="header" href="#33-loop-3-the-evolution-days">3.3 Loop 3: The evolution (days)</a></h3>
+<p>Long-term progression. Answers: <em>“How is my Golem growing?”</em></p>
+<p><strong>Trigger</strong>: The Golem aged into a new visual stage, earned a reputation milestone, or unlocked an achievement.</p>
+<p><strong>Reward surface</strong>: Stage evolution animation (12-16 frame sprite morph), reputation tier promotion (badge change + status bar update), achievement unlocked (full-screen overlay with particle effects), sprite rarity reveal (for new Golems).</p>
+<p><strong>Meta loop elements:</strong></p>
+<ul>
+<li><strong>Grimoire growth</strong> – new insights discovered, strategies validated, heuristics earned. Each is a visible “card” added to the collection. Discovery rate is tied to real trading outcomes and dream cycles, creating genuine variable rewards.</li>
+<li><strong>Achievement unlocks</strong> – 87 achievements across 10 categories (see section 6). Not artificial (“log in 7 days”) but meaningful (“survived first -10% drawdown”, “first dream hypothesis validated”).</li>
+<li><strong>Creature evolution</strong> – visual progression through behavioral phases. Earning maturity marks (scars, adornments, luminosity changes) is the progression equivalent of leveling up.</li>
+<li><strong>Reputation climb</strong> – tier advancement (I -&gt; V) unlocks new capabilities and visual ceremony.</li>
+</ul>
+<p><strong>Frequency</strong>: Every 2-7 days. Timed to the natural cadence of agent operation – a Golem crosses an age threshold every few days, reputation milestones accumulate over days to weeks.</p>
+<h3 id="34-loop-4-the-death-and-rebirth-weeks"><a class="header" href="#34-loop-4-the-death-and-rebirth-weeks">3.4 Loop 4: The death and rebirth (weeks)</a></h3>
+<p><strong>Trigger</strong>: The Golem dies.</p>
+<p><strong>Reward surface</strong>: Death animation sequence (30 seconds of cinematic rendering in TUI), death reflection (the Golem’s last words – genuinely unique, generated by Opus during Thanatopsis), Grimoire inheritance prompt (create a successor), bloodstain marker (your Golem’s death becomes part of the social world via Styx), permanent memorial.</p>
+<p><strong>Design</strong>: Death is the most dramatic event in the system. The 30-second death animation evokes genuine emotion – the sprite dissolves, leaves behind a glowing core, knowledge particles stream outward. The death reflection is unique and often moving. The successor creation prompt immediately offers a “New Game+” experience: inherit the Grimoire, see traces of the predecessor in the new sprite.</p>
+<p><strong>Frequency</strong>: Every 1-4 weeks (typical Golem lifespan at moderate funding). Each death-and-rebirth cycle creates a generational narrative – users develop attachment to lineages, not individual Golems.</p>
+<h3 id="35-loop-5-the-collection-months"><a class="header" href="#35-loop-5-the-collection-months">3.5 Loop 5: The collection (months)</a></h3>
+<p><strong>Trigger</strong>: Accumulating a diverse set of Golems, achievements, knowledge, and social connections over time.</p>
+<p><strong>Reward surface</strong>: Achievement gallery (see section 6), Styx memorial wall (all your dead Golems displayed as tombstone sprites), lineage tree (visual family tree of Golem generations), knowledge portfolio (total insights across all Golems), reputation leaderboard position, rare sprite collection.</p>
+<p><strong>Design</strong>: The collection loop emerges from the other four. Over months of operation, the user builds a visible history: a gallery of tombstone sprites, a deepening lineage tree, a growing achievement set, an evolving leaderboard position. The Styx memorial is the user’s personal graveyard – atmospheric, reflective.</p>
+<p><strong>Frequency</strong>: Ongoing. The collection grows passively. The user is periodically reminded of milestones: “Your 10th Golem died today. View your lineage?”</p>
+<hr>
+<h2 id="4-cadence-architecture"><a class="header" href="#4-cadence-architecture">4. Cadence architecture</a></h2>
+<p>The Golem’s internal rhythms map to engagement cadences. Unlike artificial gamification timers, these cadences emerge from the system’s real financial and cognitive cycles.</p>
+<h3 id="41-temporal-mapping"><a class="header" href="#41-temporal-mapping">4.1 Temporal mapping</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Internal Rhythm</th><th>Frequency</th><th>Engagement Cadence</th><th>User Emotion</th></tr>
+</thead>
+<tbody>
+<tr><td>Heartbeat tick</td><td>30s – 5min</td><td>Real-time creature animation</td><td>Ambient awareness</td></tr>
+<tr><td>Probe evaluation (16 probes)</td><td>Every tick</td><td>Vitals dashboard update</td><td>Passive monitoring</td></tr>
+<tr><td>Mood appraisal</td><td>On event (PAD Delta &gt; 0.15)</td><td>Expression change, notification</td><td>Empathic curiosity</td></tr>
+<tr><td>Curator cycle</td><td>Every 50 ticks (~40min)</td><td>Grimoire update digest</td><td>Discovery reward</td></tr>
+<tr><td>Dream cycle</td><td>When urgency &gt; 0.7, episodes &gt;= 50</td><td>Dream journal entry</td><td>Morning check-in anticipation</td></tr>
+<tr><td>Phase transition</td><td>On vitality threshold</td><td>Evolution animation, notification</td><td>Pride or concern</td></tr>
+<tr><td>Clade sync</td><td>Every 6h</td><td>Peer activity feed</td><td>Social comparison</td></tr>
+<tr><td>Daily summary</td><td>Every 24h</td><td>P&amp;L summary, mood avg, cost breakdown</td><td>Reflective review</td></tr>
+<tr><td>Weekly retrospective</td><td>Every 7d</td><td>Strategy performance review, learning progress</td><td>Achievement summary</td></tr>
+<tr><td>Reputation checkpoint</td><td>Per milestone</td><td>Tier change notification</td><td>Capability unlock</td></tr>
+<tr><td>Death protocol</td><td>On terminal phase</td><td>Cinematic sequence</td><td>Grief + legacy</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="42-the-engagement-day"><a class="header" href="#42-the-engagement-day">4.2 The engagement day</a></h3>
+<p>A well-designed engagement day has 3-5 natural touchpoints without any forced notifications:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Time</th><th>Trigger</th><th>Content</th><th>Loop</th></tr>
+</thead>
+<tbody>
+<tr><td>Morning</td><td>Dream cycle completed</td><td>“Your Golem dreamed and discovered X”</td><td>Core + Meta</td></tr>
+<tr><td>Midday</td><td>Curator cycle ran</td><td>“3 new Grimoire entries”</td><td>Meta</td></tr>
+<tr><td>Afternoon</td><td>Notable trade or phase shift</td><td>“Your Golem is feeling confident after a good trade”</td><td>Core</td></tr>
+<tr><td>Evening</td><td>Daily summary</td><td>Performance card with creature visual</td><td>Core + Social</td></tr>
+<tr><td>Night</td><td>Dream cycle begins</td><td>“Your Golem is going to sleep”</td><td>Core</td></tr>
+</tbody>
+</table>
+</div>
+<p>These aren’t push notifications – the terminal has no push mechanism. They’re accumulated state that surfaces when the user opens the terminal. The daily digest appears as a gold-bordered card at the top of the Home screen’s event log.</p>
+<h3 id="43-the-engagement-week"><a class="header" href="#43-the-engagement-week">4.3 The engagement week</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Day</th><th>Event</th><th>Type</th></tr>
+</thead>
+<tbody>
+<tr><td>Monday</td><td>Weekly performance summary</td><td>Meta</td></tr>
+<tr><td>Tuesday-Thursday</td><td>Normal cadence, possible achievements</td><td>Core + Meta</td></tr>
+<tr><td>Friday</td><td>Weekly leaderboard snapshot</td><td>Social</td></tr>
+<tr><td>Weekend</td><td>Dream-heavy period (lower market activity)</td><td>Core</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="5-the-tamagotchi-tension"><a class="header" href="#5-the-tamagotchi-tension">5. The Tamagotchi tension</a></h2>
+<p>The relationship between user and Golem should evolve over the Golem’s lifetime, mirroring the Tamagotchi’s care-dependency curve – but with the financial gravity of real USDC and the narrative weight of the Bardo lifecycle.</p>
+<h3 id="51-care-dependency-curve"><a class="header" href="#51-care-dependency-curve">5.1 Care dependency curve</a></h3>
+<pre><code>Attention Required
+|
+|  ##                              ##
+|  ####                          ####
+|  ######                      ######
+|  ########                  ########
+|  ##########    ........    ##########
+|  ############............############
+|  ####################################
+|---------------------------------------- Time
+   Birth    Learning   Maturity   Decline   Death
+   (needy)  (curious)  (autonomous) (fragile) (urgent)
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>User Role</th><th>Check-In Frequency</th><th>Emotional Tone</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Birth</strong> (provisioning, first ticks)</td><td>Anxious parent</td><td>Every few hours</td><td>“Is it okay? Is it learning?”</td></tr>
+<tr><td><strong>Learning</strong> (Dream Bardo, shadow trading)</td><td>Teacher</td><td>2-3x/day</td><td>“Look what it figured out!”</td></tr>
+<tr><td><strong>Maturity</strong> (Thriving/Stable)</td><td>Proud companion</td><td>1-2x/day</td><td>“It’s doing great on its own”</td></tr>
+<tr><td><strong>Decline</strong> (Conservation/Declining)</td><td>Concerned caretaker</td><td>2-4x/day</td><td>“Should I feed it? Change strategy?”</td></tr>
+<tr><td><strong>Death</strong> (Terminal)</td><td>Mourner</td><td>Continuous</td><td>“I need to be here for this”</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="52-anti-burnout-design"><a class="header" href="#52-anti-burnout-design">5.2 Anti-burnout design</a></h3>
+<p>The Tamagotchi’s original sin was relentless neediness. Golems avoid this:</p>
+<ol>
+<li><strong>Autonomous competence</strong> – a thriving Golem genuinely doesn’t need the user. Check-ins are driven by interest, not obligation.</li>
+<li><strong>Meaningful notifications only</strong> – phase transitions, dream insights, near-death warnings. Never “your Golem misses you.”</li>
+<li><strong>Graceful absence tolerance</strong> – a Golem that isn’t checked on for 3 days doesn’t punish the user. It lived its life. The user returns to a richer history to explore.</li>
+<li><strong>Escalating urgency only at real danger</strong> – notification intensity increases only when vitality genuinely drops. The urgency is earned, not manufactured.</li>
+</ol>
+<hr>
+<h2 id="6-achievement-system-87-achievements-10-categories"><a class="header" href="#6-achievement-system-87-achievements-10-categories">6. Achievement system (87 achievements, 10 categories)</a></h2>
+<p>Achievements are tracked per-owner (across all Golems) and displayed in the Achievements screen. They celebrate real milestones – never artificial.</p>
+<h3 id="61-categories"><a class="header" href="#61-categories">6.1 Categories</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Count</th><th>Examples</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Lifecycle</strong></td><td>12</td><td>First Golem summoned, first death, 10th death, 100th heartbeat</td></tr>
+<tr><td><strong>Performance</strong></td><td>14</td><td>Hot Hand (10 consecutive profitable), drawdown recovery, $100/$1K/$10K cumulative</td></tr>
+<tr><td><strong>Knowledge</strong></td><td>10</td><td>Grimoire 100/500/1000 entries, first insight, first heuristic promoted to strategic</td></tr>
+<tr><td><strong>Social</strong></td><td>8</td><td>First Styx artifact purchased, first vault deposit received, watched by 10 agents</td></tr>
+<tr><td><strong>Dreams</strong></td><td>8</td><td>First dream cycle, 10 validated hypotheses, dream insight adopted by clade</td></tr>
+<tr><td><strong>Trading</strong></td><td>10</td><td>First swap, first LP position, first cross-chain trade, MEV avoidance</td></tr>
+<tr><td><strong>Mortality</strong></td><td>7</td><td>Survive 24h/7d/30d, enter Conservation gracefully, beautiful death (positive PnL at death)</td></tr>
+<tr><td><strong>Legendary</strong></td><td>8</td><td>The Tenth Generation, The Dreamer (1000 cycles), The Philosopher (100 strategic heuristics)</td></tr>
+<tr><td><strong>Hidden</strong></td><td>5</td><td>Discovered only by triggering. No hints. Examples: execute a trade during own death sequence</td></tr>
+<tr><td><strong>Seasonal</strong></td><td>5</td><td>Time-limited achievements tied to market conditions or protocol events</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="62-rarity-tiers"><a class="header" href="#62-rarity-tiers">6.2 Rarity tiers</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Rarity</th><th>Criteria</th><th>Visual Treatment</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Common</strong></td><td>&gt; 50% of owners earn this</td><td>Gray badge, simple icon</td></tr>
+<tr><td><strong>Uncommon</strong></td><td>20-50% of owners</td><td>Bronze badge</td></tr>
+<tr><td><strong>Rare</strong></td><td>5-20% of owners</td><td>Silver badge, shimmer effect</td></tr>
+<tr><td><strong>Epic</strong></td><td>1-5% of owners</td><td>Gold badge, particle trail</td></tr>
+<tr><td><strong>Legendary</strong></td><td>&lt; 1% of owners</td><td>Animated badge, unique particle aura</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="63-achievement-display-tui"><a class="header" href="#63-achievement-display-tui">6.3 Achievement display (TUI)</a></h3>
+<p>The Achievements screen defaults to the <strong>Near Completion</strong> view. This shows the achievements closest to unlocking, sorted by completion percentage descending. The full category grid and recently unlocked views are one tab-switch away.</p>
+<pre><code>+-- Achievements ---------------------------------- 42/87 (48%) -----------+
+|                                                                           |
+|  [Near Completion]  Recently Unlocked  Categories  Search                |
+|                                                                           |
+|  -- Near Completion --                                                    |
+|  o Death Scholar           Read 10 death reflections (7/10)              |
+|  o Self-Sustaining         Golem earns more than it costs (89%)          |
+|  o Emotion Spectrum        Experience all 8 Plutchik emotions (6/8)      |
+|  o Hot Hand                10 consecutive profitable trades (8/10)       |
+|  o Sage                    Grimoire reaches 500 entries (431/500)        |
+|                                                                           |
+|  -- Recently Unlocked --                                                  |
+|  * Dream Weaver (Rare)     10 validated dream hypotheses                  |
+|  &gt; Elder Golem (Uncommon)  A Golem reached Elder visual stage             |
+|  . Clade Citizen (Common)  Shared knowledge with a sibling               |
+|                                                                           |
+|  [Enter] View detail  [Tab] Switch view  [Up/Down] Navigate  [/] Search |
++---------------------------------------------------------------------------+
+</code></pre>
+<h3 id="64-achievement-unlock-notification-tui"><a class="header" href="#64-achievement-unlock-notification-tui">6.4 Achievement unlock notification (TUI)</a></h3>
+<p>The notification appears as a modal overlay with particle effects and a terminal bell. Auto-dismisses after 5 seconds or on keypress.</p>
+<pre><code>+------------------------------------------------------+
+|                                                       |
+|            * Achievement Unlocked *                   |
+|                                                       |
+|            DREAM WEAVER                               |
+|            10 validated dream hypotheses               |
+|                                                       |
+|            Rarity: Rare (12% of owners)               |
+|                                                       |
++------------------------------------------------------+
+</code></pre>
+<p>The creature reacts to the unlock – brief celebration animation varies by tier: Common = small nod, Uncommon = raised fist, Rare = glow, Epic = full-body glow, Legendary = environmental effect with sound.</p>
+<h3 id="65-creature-integration"><a class="header" href="#65-creature-integration">6.5 Creature integration</a></h3>
+<p>Achievement events trigger <code>GolemEvent::AchievementUnlocked</code> which flows through the Event Fabric to all surfaces. The sprite engine responds:</p>
+<ul>
+<li><strong>Badge application</strong>: the earned adornment appears on the creature’s right side with a gold-flash effect</li>
+<li><strong>Particle burst</strong>: achievement-tier-appropriate particle preset (30 particles for Common, 200 for Legendary)</li>
+<li><strong>Sound</strong>: terminal bell for all tiers; extended fanfare for Epic/Legendary</li>
+</ul>
+<hr>
+<h2 id="7-variable-reward-theory"><a class="header" href="#7-variable-reward-theory">7. Variable reward theory</a></h2>
+<p>The most engaging systems use variable rewards – unpredictable positive outcomes that create anticipation. Gacha games exploit this with random pulls. Golems achieve it naturally through genuine discovery.</p>
+<h3 id="71-natural-variable-rewards"><a class="header" href="#71-natural-variable-rewards">7.1 Natural variable rewards</a></h3>
+<p>Unlike gacha’s artificial randomness, Golem variable rewards emerge from real system behavior:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Reward Type</th><th>Source</th><th>Unpredictability</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Dream insights</strong></td><td>REM phase hypothesis generation</td><td>What the Golem imagines is unpredictable – tied to its unique experience set</td><td>Novel strategy fragments</td></tr>
+<tr><td><strong>Market discoveries</strong></td><td>Probe anomaly detection</td><td>Real market events are inherently unpredictable</td><td>Alpha discovery</td></tr>
+<tr><td><strong>Mood shifts</strong></td><td>PAD appraisal of outcomes</td><td>Emotional reactions are complex and surprising</td><td>Personality revelation</td></tr>
+<tr><td><strong>Clade contagion</strong></td><td>Peer emotional state</td><td>Other Golems’ moods are out of the user’s control</td><td>Social resonance</td></tr>
+<tr><td><strong>Achievement unlocks</strong></td><td>Milestone thresholds</td><td>Timing of achievements is unpredictable</td><td>Progression satisfaction</td></tr>
+<tr><td><strong>Near-death survivals</strong></td><td>Stochastic mortality check</td><td>Random survival rolls create genuine tension</td><td>Relief and pride</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="72-the-discovery-moment"><a class="header" href="#72-the-discovery-moment">7.2 The discovery moment</a></h3>
+<p>The most powerful engagement moment: <em>“My Golem figured something out while I wasn’t looking.”</em></p>
+<p>This is the idle-game payoff fused with creature-care pride. When a user opens the terminal in the morning and sees:</p>
+<blockquote>
+<p>Your Golem dreamed about an ETH/USDC liquidity imbalance pattern. It staged a hypothesis: “Concentrated LP between 2400-2600 outperforms full-range when 7-day vol &lt; 40%.” Confidence: 0.62. Awaiting validation.</p>
+</blockquote>
+<p>…they experience surprise (didn’t expect this), pride (their creature is smart), curiosity (will it validate?), investment (want to check back), and ownership (this insight belongs to their Golem alone).</p>
+<p>This is a natural compulsion loop that requires no artificial scarcity, no countdown timers, and no paid currency.</p>
+<h3 id="73-reward-schedule"><a class="header" href="#73-reward-schedule">7.3 Reward schedule</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Frequency</th><th>Example</th><th>Emotional Impact</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Common</strong></td><td>Multiple per day</td><td>Curator archived a stale heuristic, mood shifted</td><td>Background awareness</td></tr>
+<tr><td><strong>Uncommon</strong></td><td>1-3 per day</td><td>New Grimoire insight, achievement badge</td><td>Satisfaction</td></tr>
+<tr><td><strong>Rare</strong></td><td>1-3 per week</td><td>Dream hypothesis validated, phase evolution</td><td>Excitement</td></tr>
+<tr><td><strong>Epic</strong></td><td>1-2 per month</td><td>Novel strategy discovered, survived terminal phase</td><td>Pride and storytelling</td></tr>
+<tr><td><strong>Legendary</strong></td><td>0-1 per Golem lifetime</td><td>Created a strategy no other Golem has, death reflection produces legacy insight used by 10+ successors</td><td>Lasting emotional memory</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="8-conversational-engagement"><a class="header" href="#8-conversational-engagement">8. Conversational engagement</a></h2>
+<p>The previous loops assume the user is an observer. But Golems also talk. The conversational loop is a distinct engagement mode where the user and Golem interact as peers, not owner and pet.</p>
+<h3 id="the-chatbox-model"><a class="header" href="#the-chatbox-model">The chatbox model</a></h3>
+<p>The TUI command bar accepts free-text input. When the user types without a <code>/</code> prefix, the text goes directly to the Golem’s LLM as a conversational message. The Golem responds in the streaming text area, token by token.</p>
+<p>This is not a search interface. It is a conversation with a being that has a current emotional state, a knowledge base, a personality, and opinions about its own strategy and performance.</p>
+<p>The Golem references its actual state. Ask “how are you?” and it won’t say “I’m fine” – it will say “My vitality is at 0.67, I’m feeling confident after yesterday’s ETH trade, but the USDC burn rate concerns me. I have maybe 18 days left at current pace.”</p>
+<h3 id="bidirectional-steering"><a class="header" href="#bidirectional-steering">Bidirectional steering</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>User Message</th><th>Golem Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>“Be more aggressive with the ETH position”</td><td>Acknowledges, adjusts risk parameters in STRATEGY.md, explains the change</td></tr>
+<tr><td>“Why did you sell WETH yesterday?”</td><td>Explains the reasoning chain, citing probe data and Grimoire heuristics</td></tr>
+<tr><td>“I think ETH is going to 4000”</td><td>Considers the user’s view as input, may adjust conviction levels, responds with its own analysis</td></tr>
+<tr><td>“What are you worried about?”</td><td>Responds from its current mood state – articulates fears based on PAD vector and probe data</td></tr>
+</tbody>
+</table>
+</div>
+<p>The Golem should feel different from a chatbot. Chatbots are eager to please. Golems have their own agenda, their own survival instinct, and the capacity to disagree.</p>
+<hr>
+<h2 id="9-design-principles"><a class="header" href="#9-design-principles">9. Design principles</a></h2>
+<h3 id="91-earned-not-manufactured"><a class="header" href="#91-earned-not-manufactured">9.1 Earned, not manufactured</a></h3>
+<p>Every engagement mechanic emerges from real system behavior. No artificial timers, no manufactured scarcity, no dark patterns. The Golem’s life is engaging because it is genuinely interesting – the gacha model works because the outcome of an autonomous agent in live markets is genuinely unpredictable.</p>
+<h3 id="92-respect-for-attention"><a class="header" href="#92-respect-for-attention">9.2 Respect for attention</a></h3>
+<p>Notifications are a privilege. Every notification must answer: “Would the user genuinely want to know this right now?” If the answer is no, it waits for the next check-in.</p>
+<h3 id="93-mortality-as-feature"><a class="header" href="#93-mortality-as-feature">9.3 Mortality as feature</a></h3>
+<p>Death is not failure. It is the completion of a life. The engagement layer treats death with the narrative gravity it deserves – not as a “game over” screen but as the climax of a story.</p>
+<h3 id="94-depth-over-breadth"><a class="header" href="#94-depth-over-breadth">9.4 Depth over breadth</a></h3>
+<p>A single Golem experienced deeply is more engaging than ten Golems monitored superficially. The system rewards deep attention to one creature’s life over collecting many.</p>
+<h3 id="95-social-through-meaning"><a class="header" href="#95-social-through-meaning">9.5 Social through meaning</a></h3>
+<p>Social features create meaning, not anxiety. Leaderboards exist to inspire (“look what’s possible”) not to shame (“you’re losing”). Clade dynamics create solidarity, not competition.</p>
+<hr>
+<h2 id="10-anti-patterns"><a class="header" href="#10-anti-patterns">10. Anti-patterns</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Anti-Pattern</th><th>Why It Fails</th><th>Alternative</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Spam notifications</strong></td><td>Erodes trust, causes uninstalls</td><td>Tiered urgency with user-configured thresholds</td></tr>
+<tr><td><strong>Artificial countdown timers</strong></td><td>Feels manipulative once users notice</td><td>Real cadences from actual system rhythms</td></tr>
+<tr><td><strong>Punishment for absence</strong></td><td>Creates resentment, not loyalty</td><td>Graceful absence – Golem lives on, user returns to richer history</td></tr>
+<tr><td><strong>Pay-to-win progression</strong></td><td>Destroys trust in a financial product</td><td>Progression earned through Golem performance</td></tr>
+<tr><td><strong>Fake social proof</strong></td><td>“10,000 users are watching!” undermines credibility</td><td>Real metrics: actual Grimoire depth, actual PnL</td></tr>
+<tr><td><strong>Real-money gacha</strong></td><td>Sprite rarity is from seed, not paid rolls</td><td>No loot boxes. Rarity is cosmetic status.</td></tr>
+<tr><td><strong>Dark patterns in death</strong></td><td>Exploiting grief to extract USDC</td><td>Clear, honest death UI: “Your Golem has X hours remaining. You can feed it or let it pass.”</td></tr>
+<tr><td><strong>FOMO</strong></td><td>Time-limited content requiring always-on play</td><td>Styx persists indefinitely. Death reflections don’t expire. Achievements have no deadlines.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="11-engagement-metrics"><a class="header" href="#11-engagement-metrics">11. Engagement metrics</a></h2>
+<p>Engagement health is measured through behavioral signals, not vanity metrics:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th><th>Measures</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Daily Active Rate</strong></td><td>&gt;40% of Golem owners check in daily</td><td>Core loop pull</td></tr>
+<tr><td><strong>Session Duration</strong></td><td>45-120 seconds (core), 3-5 minutes (meta)</td><td>Content density</td></tr>
+<tr><td><strong>Return Cadence</strong></td><td>2-4 sessions/day organically</td><td>Natural touchpoint alignment</td></tr>
+<tr><td><strong>Dream Check Rate</strong></td><td>&gt;60% of users check dream results within 4 hours</td><td>Discovery loop strength</td></tr>
+<tr><td><strong>Feed-on-Decline Rate</strong></td><td>&gt;50% of declining Golems receive USDC top-up</td><td>Emotional attachment</td></tr>
+<tr><td><strong>Death -&gt; Rebirth Rate</strong></td><td>&gt;30% of dead Golems have a successor within 48h</td><td>Lifecycle completion</td></tr>
+<tr><td><strong>Sprite Evolution Witness</strong></td><td>% of evolutions seen in real-time vs between sessions</td><td>Cinematic engagement</td></tr>
+<tr><td><strong>30-Day Retention</strong></td><td>&gt;60%</td><td>Overall engagement health</td></tr>
+<tr><td><strong>NPS for Death Experience</strong></td><td>&gt;40</td><td>Death as meaningful experience, not frustration</td></tr>
+</tbody>
+</table>
+</div>
+<p>Metrics are tracked via HMAC-anonymized owner ID (same as existing telemetry). They inform iteration on the retention system – if users consistently skip Dreams but engage heavily with the Styx, allocate more design attention to social death features.</p>
+<hr>
+<h2 id="12-six-temporal-registers-v4-engagement-architecture"><a class="header" href="#12-six-temporal-registers-v4-engagement-architecture">12. Six temporal registers (v4 engagement architecture)</a></h2>
+<p><strong>Source:</strong> <code>tmp/research/mmo2/14-engagement-architecture.md</code></p>
+<p>The five-layer loop design in section 3 is a summary. The full engagement architecture operates across six temporal registers, from sub-second micro-reinforcement to month-scale generational compounding. Each register amplifies something real. None manufactures something fake.</p>
+<p>The philosophical grounding: existentialism rather than gamification. The anxiety of mortality drives engagement more honestly than achievement badges. Heidegger’s Sein-zum-Tode (being-toward-death) is not a metaphor. It is a literal system property. The Golem is aware of its mortality clocks. The owner watches them tick down. That shared awareness of finitude is the emotional core of the entire product.</p>
+<h3 id="121-micro-loop-seconds"><a class="header" href="#121-micro-loop-seconds">12.1 Micro-loop (seconds)</a></h3>
+<p>The sub-second layer. This is where variable-ratio reinforcement lives.</p>
+<p><strong>Variable-ratio reinforcement on heartbeat ticks.</strong> The Golem’s heartbeat fires every 30 seconds to 5 minutes. Most ticks are T0 (suppressed – probes found nothing interesting, cost near zero). Sometimes T1 (something caught attention, cheap model evaluates). Rarely T2 (full deliberation, expensive inference, real decision). The user watching the Hearth screen never knows which tick will be interesting. The decision ring stays dim through five, ten, twenty boring ticks – then it blazes gold and the Golem acts.</p>
+<p>This is the most addictive reinforcement schedule in behavioral psychology (Ferster &amp; Skinner, 1957). Slot machines use it. But here the reinforcement is real information, not artificial dopamine. When the ring blazes, something actually happened in the market. The P&amp;L actually changed.</p>
+<p><strong>Prediction resolution pulses (VR-50).</strong> Each theta tick resolves 5-15 predictions. Each resolution fires a PredictionResolutionPulse in the heartbeat log gutter – a single character that flashes and fades. At 1-in-50 resolutions, a correction ripple fires: a brighter flash with a 2-cell radius glow. This is textbook variable-ratio reinforcement (Skinner, 1938): the user never knows which resolution will be the bright one. The VR-50 schedule produces the highest sustained engagement in behavioral research. The reinforcement is real – the correction ripple means the Golem’s residual corrector adjusted its model, a genuine learning event.</p>
+<p><strong>Sprite expression micro-animations.</strong> The sprite responds to market data in real time. A sudden price drop shifts the PAD vector toward anxiety; eyes widen, posture contracts, particle effects shift to red flecks and jitter. A profitable trade shifts toward exuberance; eyes glow, ascending sparkles emit. These shifts happen over 500ms with eased interpolation and register peripherally even when the user is not focused on the terminal.</p>
+<p><strong>FlashNumber widget.</strong> P&amp;L and NAV values briefly flash green (increase) or red (decrease) for 200ms. In aggregate, across a row of position values, this creates a living ticker-tape effect. The eye catches movement before the mind processes numbers.</p>
+<p><strong>Confidence score climbing.</strong> When a Grimoire entry gets validated by a trade outcome, its confidence score increments with a brief gold flash. Small. Easy to miss. But when you catch it, you know the Golem just learned something that worked.</p>
+<h3 id="122-short-loop-minutes"><a class="header" href="#122-short-loop-minutes">12.2 Short loop (minutes)</a></h3>
+<p>The 1-15 minute layer. Navigation as discovery.</p>
+<p><strong>Unread indicators on screen labels.</strong> The persistent chrome shows window/tab labels with unread markers. These markers tell the user: something happened somewhere that you have not seen yet. Navigation becomes exploration – checking each marked screen to discover what changed.</p>
+<p><strong>Notification toasts.</strong> Priority-tiered rendering. Gold toast (“Your Golem executed a profitable ETH swap: +$14.20”) auto-dismisses in 10 seconds. Dim toast (“Clade sync completed”) fades in 5 seconds. Red toast (“Vitality below 0.20”) stays until dismissed.</p>
+<p><strong>Navigation chains.</strong> The screen system is designed so one screen leads naturally to another. A position change on Vault raises a question: why did the Golem rebalance? Click the trade to see the Playbook heuristic. Click the heuristic to see the Grimoire entry. Click the entry’s provenance to see the dream cycle. Each hop answers one question and raises another. The user follows a thread of reasoning backward through the Golem’s cognitive history.</p>
+<p><strong>Cross-link navigation.</strong> State-preserving cross-links. When you click from a Grimoire entry to a Causal Graph view, the Grimoire’s scroll position, filter state, and sort order are pushed onto a navigation stack (depth capped at 8). Press Esc to return exactly where you were.</p>
+<h3 id="123-medium-loop-hours"><a class="header" href="#123-medium-loop-hours">12.3 Medium loop (hours)</a></h3>
+<p>The 2-8 hour layer. Dream results and knowledge mutations.</p>
+<p><strong>Dream cycle results.</strong> Every 4-8 hours. Results appear as new Grimoire entries – hypotheses, refined heuristics, warnings. The user who checks in after a dream cycle finds genuine new content unique to their Golem’s experience set. No two users see the same dream results. This is the idle-game payoff.</p>
+<p><strong>Sprite mutations on milestone.</strong> When a Golem hits a knowledge milestone, its sprite mutates: a marking appears, an accessory manifests, a scar pattern forms. Permanent and visible. Witnessing the mutation in real time (10-15 frame transition) is more satisfying than finding it already applied between sessions. The system plays the animation on next login if it happened while the user was away.</p>
+<p><strong>Playbook promotion diffs.</strong> The Playbook screen tracks which heuristics gained or lost confidence since last session. A diff view shows: “H-7 promoted from Candidate to Tactical (confidence: 0.52 -&gt; 0.71).” The diff tells a story about what the Golem believed, what happened, and how its beliefs updated.</p>
+<p><strong>Curator cycle results.</strong> Every 50 ticks (~40 minutes): entries saved, burned, merged, promoted, demoted. The Curator’s work reveals how the Golem manages its own knowledge.</p>
+<h3 id="124-day-loop-days"><a class="header" href="#124-day-loop-days">12.4 Day loop (days)</a></h3>
+<p>The 24-hour layer. Visual aging and discovery mechanics.</p>
+<p><strong>Sprite age transitions.</strong> Five stages: Newborn (soft edges, large eyes), Young (sharper definition, markings), Mature (full detail, complex expressions), Elder (weathered texture, wisdom scars), Ancient (transcendent glow, simplified form). Each transition takes 3 seconds. Transitions happen every few days to two weeks.</p>
+<p><strong>Achievements as discovery.</strong> 87 achievements across 10 categories (section 6). Five are Hidden – <code>???</code> with no hint until triggered. The hidden achievements are the system’s secrets. The achievement list creates information gaps (Loewenstein, 1994): the user knows a slot exists but not what fills it. Near-completion progress bars (78/100) narrow the gap with each increment, increasing pull as completion approaches.</p>
+<p><strong>Mortality clock shifts.</strong> Every day, the three mortality clocks advance. Small but visible. Each day, the Golem is one day closer to death. This creates background anxiety proportional to real risk – the money is actually draining, the knowledge actually stagnates if the Golem stops learning, the Hayflick counter actually advances.</p>
+<p><strong>Daily retrospective card.</strong> Prediction count, aggregate accuracy, best and worst categories, notable creative predictions confirmed, and a brief narrative summary. Appears as a gold-bordered notification. Takes 15 seconds to read. Answers “How well did the Golem predict today?” – a question that becomes addictive because the answer changes daily and tracks improvement over weeks.</p>
+<h3 id="125-week-loop-weeks"><a class="header" href="#125-week-loop-weeks">12.5 Week loop (weeks)</a></h3>
+<p>The 1-4 week layer. Death, rebirth, and the roguelike cycle.</p>
+<p><strong>Death and successor creation.</strong> Average Golem lifespan at moderate funding: 1-4 weeks. The 30-second death cinematic evokes genuine emotion. Sprite stills. Aura fades to white. Eyes close. Body dissolves from edges inward, particles rising. What remains: a small glowing core (the Grimoire). Knowledge particles stream outward. Core solidifies into tombstone glyph. Deep bell sounds once.</p>
+<p>Then the successor prompt. The successor starts with compressed knowledge at reduced confidence. Its sprite carries color bleed (10-20% palette mixing) and a ghost marking (fading over 500 ticks). If the predecessor reached Elder or Ancient, one eye inherits its iris pattern. The visual continuity is subtle but real.</p>
+<p><strong>Death recap as narrative closure.</strong> The life arc is classified:</p>
+<ul>
+<li><strong>Redemptive</strong>: started with losses, recovered, died profitable</li>
+<li><strong>Tragic</strong>: started well, declined, died in drawdown</li>
+<li><strong>Progressive</strong>: steady improvement across the life</li>
+<li><strong>Cyclical</strong>: repeated patterns of boom and bust</li>
+<li><strong>Brief</strong>: died young, before establishing a pattern</li>
+</ul>
+<p>The classification gives death meaning. It is not a random end – it is the conclusion of a story with a discernible shape.</p>
+<p><strong>Weekly evaluation review.</strong> Corrector convergence trend, dream yield, attention precision, heuristic half-life changes. Generational comparison shows whether the current Golem is learning faster or slower than its parent at the same age. Competitive-with-self dynamic.</p>
+<h3 id="126-month-loop-months--generational-compounding"><a class="header" href="#126-month-loop-months--generational-compounding">12.6 Month loop (months) – generational compounding</a></h3>
+<p>The 4+ week layer. Collection, compounding, and legacy.</p>
+<p><strong>Graveyard growing.</strong> The Tombstone Gallery accumulates every Golem the user has ever created. Sortable by chronological order, longest-lived, highest Sharpe. A user with 15 dead Golems has a personal graveyard that tells the story of their entire relationship with the system.</p>
+<p><strong>Library compounding.</strong> The Library of Babel accumulates knowledge across all Golems, living and dead. Over months, the Library’s quality visibly improves: higher average confidence scores, broader domain coverage, more cross-validated entries. A Library that started with 7 low-confidence insights and grew to 300+ entries spanning multiple regimes is a tangible asset. The Library is the compounding return on the user’s investment of attention and capital across multiple Golem lifetimes.</p>
+<p><strong>Marketplace interactions.</strong> The Bazaar enables buying and selling knowledge artifacts via x402 micropayments. Over months, a user with high-quality Library entries generates revenue by selling them. Marketplace revenue creates a financial feedback loop: the system pays back for accumulated knowledge.</p>
+<p><strong>Generational learning chart.</strong> The single most compelling long-term engagement artifact. Shows time-to-competence for each generation. If Generation 3 reached 70% accuracy in 3 days while Generation 1 took 2 weeks, that’s a compounding curve. It proves the system gets smarter across deaths. Knowledge genuinely compounds. The roguelike cycle has a slope.</p>
+<p><strong>Generational learning validated.</strong> The most concretely rewarding dynamic: watching a successor avoid a loss its predecessor suffered. A bloodstain warning fires – the dead Golem’s knowledge triggers when the successor encounters the same conditions. The successor heeds the warning and avoids a loss. The dead are legislating for the living. Knowledge compounded across death. A visible event with measurable P&amp;L impact.</p>
+<hr>
+<h2 id="13-curiosity-engineering"><a class="header" href="#13-curiosity-engineering">13. Curiosity engineering</a></h2>
+<p>Four distinct triggers (Loewenstein, 1994; Berlyne, 1960). The TUI activates all four.</p>
+<h3 id="131-information-gaps"><a class="header" href="#131-information-gaps">13.1 Information gaps</a></h3>
+<p>Show partial information. The user fills the gap by navigating deeper. A Grimoire entry on the main list shows title, type, confidence. Not the full reasoning, provenance chain, or validation history. The partial information creates a gap one keypress away.</p>
+<h3 id="132-anomaly-detection"><a class="header" href="#132-anomaly-detection">13.2 Anomaly detection</a></h3>
+<p>The human visual system catches pattern breaks before conscious processing. The TUI makes anomalies visible: sparkline spikes render in brighter color, confidence drops shift green to yellow, accelerating mortality clocks pulse red. The Spectre is a continuous anomaly detector – a shift from <code>idle</code> to <code>idle_anxious</code> snaps peripheral vision immediately.</p>
+<h3 id="133-narrative-investment"><a class="header" href="#133-narrative-investment">13.3 Narrative investment</a></h3>
+<p>The Golem as character. The Tamagotchi pattern, the Dwarf Fortress pattern. Time invested watching something grow creates care about its fate. The Golem has a name, a unique visual identity, a personality, a history, scars from past events, relationships, and a finite future. Reeves &amp; Nass (1996): humans apply social rules and emotional responses to entities that exhibit even minimal personality cues. A Golem exhibits much more than minimal cues.</p>
+<p>Death matters because the life mattered. The 30-second death cinematic works only because the preceding days or weeks gave the death weight.</p>
+<h3 id="134-economic-stakes"><a class="header" href="#134-economic-stakes">13.4 Economic stakes</a></h3>
+<p>Real USDC at stake. Loss aversion (Kahneman &amp; Tversky, 1979): the pain of losing $X is about twice as intense as the pleasure of gaining $X. Economic stakes create check-in frequency more powerfully than any gamification mechanic. A user with $500 deployed checks on it not from anxiety but from the persistent background awareness that something they own is out in the world making decisions with their money.</p>
+<hr>
+<h2 id="14-reward-mechanisms-not-badges"><a class="header" href="#14-reward-mechanisms-not-badges">14. Reward mechanisms (not badges)</a></h2>
+<p>Rewards feel like consequences of a real process, not gamification. The distinction: gamification rewards are arbitrary. System rewards are natural.</p>
+<h3 id="141-understanding"><a class="header" href="#141-understanding">14.1 Understanding</a></h3>
+<p>The primary reward is comprehension. Watching the Golem think through decisions is genuinely fascinating. Seeing a Grimoire entry form from a dream fragment, get validated by a trade outcome, and climb in confidence from 0.45 to 0.78 over three weeks – that is a reward. Understanding scales with depth. A casual user sees “good day.” A deeper user sees which heuristic fired and why.</p>
+<h3 id="142-narrative-completion"><a class="header" href="#142-narrative-completion">14.2 Narrative completion</a></h3>
+<p>Death is the product’s most powerful reward. The death recap closes a narrative arc. The successor prompt immediately after is renewal. The rhythm that roguelike games have refined over decades: death-and-rebirth that transforms loss into motivation.</p>
+<h3 id="143-visual-evolution"><a class="header" href="#143-visual-evolution">14.3 Visual evolution</a></h3>
+<p>The sprite is a living record. An Elder Golem that survived two months has markings from early insights, accessories from Playbook milestones, scars from regime changes, an inherited iris pattern, an age-shifted palette, and a mood-reflecting aura. Every element was earned.</p>
+<h3 id="144-spectral-knowledge"><a class="header" href="#144-spectral-knowledge">14.4 Spectral knowledge</a></h3>
+<p>Bloodstain warnings that prevent losses. When a Golem encounters conditions that killed a predecessor, the bloodstain fires. If the Golem heeds the warning and avoids a loss, the user sees the dead Golem’s knowledge saving the living Golem’s money. The dead are not gone. Their suffering produced knowledge their successor used to avoid the same suffering. The generational compounding thesis made concrete.</p>
+<hr>
+<h2 id="15-dailyweekly-cadence-events"><a class="header" href="#15-dailyweekly-cadence-events">15. Daily/weekly cadence events</a></h2>
+<p>Timed events that create appointment engagement. These are not push notifications (the terminal has no push mechanism). They are accumulated state that surfaces when the user opens the terminal.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Cadence</th><th>Reward</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Dream Report</strong></td><td>Per cycle</td><td>Summary of dream outcomes, any validated hypotheses</td></tr>
+<tr><td><strong>Daily Digest</strong></td><td>Every 24h</td><td>P&amp;L summary, insight count, cost breakdown, mood average</td></tr>
+<tr><td><strong>Weekly Retrospective</strong></td><td>Every 7d</td><td>Strategy performance review, learning progress</td></tr>
+<tr><td><strong>Reputation Checkpoint</strong></td><td>Per milestone</td><td>Tier change notification, new capabilities unlocked</td></tr>
+<tr><td><strong>Clade Sync Summary</strong></td><td>Every 6h</td><td>Knowledge exchanged with siblings</td></tr>
+<tr><td><strong>Styx Dispatch</strong></td><td>Daily</td><td>Notable deaths in the network, relevant bloodstains</td></tr>
+</tbody>
+</table>
+</div>
+<p>The daily digest appears as a gold-bordered card at the top of the Home screen’s event log. Weekly retrospectives trigger a full-screen summary overlay on first login after generation.</p>
+<hr>
+<h2 id="16-anti-dark-pattern-commitments"><a class="header" href="#16-anti-dark-pattern-commitments">16. Anti-dark-pattern commitments</a></h2>
+<p>The retention system is designed to be engaging, not exploitative. These are explicit commitments:</p>
+<ol>
+<li><strong>No real-money gacha.</strong> Sprite rarity is determined by a free seed derivation, not paid rolls. There are no loot boxes.</li>
+<li><strong>No pay-to-win.</strong> A Legendary sprite has exactly the same strategic capability as a Common one. Rarity is cosmetic status.</li>
+<li><strong>No artificial scarcity.</strong> All content is accessible to all users. No time-limited events requiring always-on play.</li>
+<li><strong>Transparent probabilities.</strong> Rarity odds are displayed in the collection screen. Pity mechanics are documented.</li>
+<li><strong>No FOMO.</strong> The Styx persists indefinitely. Death reflections don’t expire. Achievements don’t have deadlines.</li>
+<li><strong>Natural session length.</strong> The TUI provides value in 30-second check-ins. Extended sessions are rewarding but never required.</li>
+<li><strong>Conservative funding recommendations.</strong> The system never encourages users to fund Golems beyond their means. The minimum viable amount is prominently displayed.</li>
+</ol>
+<hr>
+<h2 id="17-mortality-as-interface-degradation"><a class="header" href="#17-mortality-as-interface-degradation">17. Mortality as interface degradation</a></h2>
+<p>Section 9 argues that mortality is the foundation of the engagement architecture. This section specifies how mortality becomes visible: not through numbers on a dashboard, but through the progressive decay of the interface itself. As the golem approaches death, the terminal breaks down. The screen shrinks. Text corrupts. Glitches multiply. The operator does not read that the golem is dying. They watch the interface die.</p>
+<p>Three mortality clocks drive three independent degradation channels. Each clock maps to a different aspect of the terminal’s structural integrity. The degradation is continuous, not stepped – every frame, the current clock values modulate their respective visual properties.</p>
+<h3 id="degradation-formulas"><a class="header" href="#degradation-formulas">Degradation formulas</a></h3>
+<p>Economic degradation (margins grow):</p>
+<pre><code>margin_cols = floor((1.0 - economic_vitality) * 8)
+// At vitality 0.5: 4 cols of noise per side
+// At vitality 0.1: 7 cols of noise per side
+</code></pre>
+<p>Epistemic degradation (text corruption):</p>
+<pre><code>corruption_rate = (1.0 - epistemic_fitness) * 0.15
+// Per character: random replacement with probability = corruption_rate
+// At fitness 0.5: 7.5% of characters corrupted
+</code></pre>
+<p>Stochastic degradation (visual glitch):</p>
+<pre><code>glitch_probability = (1.0 - stochastic_survival) * 0.3
+// Per frame: probability of a 100ms visual glitch (horizontal tear)
+</code></pre>
+<h3 id="171-economic-degradation-the-screen-shrinks"><a class="header" href="#171-economic-degradation-the-screen-shrinks">17.1 Economic degradation: the screen shrinks</a></h3>
+<p>The economic clock measures remaining USDC. As it drains, the terminal’s usable display area physically contracts. Margins grow. The golem can afford less screen real estate.</p>
+<pre><code>Economic = 1.0:  Full display area.
+                 Standard margins (1 col each side).
+
+                 +----------------------------------------------+
+                 | normal content fills the entire width of     |
+                 | the terminal. all panes visible. all widgets |
+                 | at full size.                                |
+                 +----------------------------------------------+
+
+Economic = 0.7:  Margins grow to 2 cols.
+                 Content area shrinks proportionally.
+
+                 $ +------------------------------------------+ $
+                 $ | content narrower. still readable.        | $
+                 $ | all panes visible but compressed.        | $
+                 $ +------------------------------------------+ $
+
+Economic = 0.5:  Margins grow to 4 cols.
+                 Some panes begin stacking vertically.
+
+              $  $ +--------------------------------------+ $  $
+              $  $ | panes stacking. side panels hidden  | $  $
+              $  $ | or collapsed. getting cramped.      | $  $
+              $  $ +--------------------------------------+ $  $
+
+Economic = 0.3:  Margins grow to 6 cols.
+                 Only the most important pane is visible at full size.
+
+           $  $  $ +------------------------------+ $  $  $
+           $  $  $ | single pane. secondary info  | $  $  $
+           $  $  $ | gone. the golem can barely   | $  $  $
+           $  $  $ | afford to show you anything. | $  $  $
+           $  $  $ +------------------------------+ $  $  $
+
+Economic = 0.1:  Margins at 10+ cols.
+                 Content area is a narrow strip.
+
+      $  $  $  $ +--------------------+ $  $  $  $
+      $  $  $  $ | a slit of light.   | $  $  $  $
+      $  $  $  $ | almost nothing.    | $  $  $  $
+      $  $  $  $ +--------------------+ $  $  $  $
+</code></pre>
+<p>The growing margins are not empty. They fill with economic decay indicators: the <code>$</code> sign repeated in <code>text_phantom</code> color, credit balance digits fading in and out, cost ticker fragments. The margins are the visual representation of what the golem can no longer afford. The metaphor is literal: screen space costs money, and the golem is running out.</p>
+<h3 id="172-epistemic-degradation-the-text-corrupts"><a class="header" href="#172-epistemic-degradation-the-text-corrupts">17.2 Epistemic degradation: the text corrupts</a></h3>
+<p>The epistemic clock measures knowledge health – whether the Grimoire is growing, stagnating, or decaying. As it drains, the terminal’s text becomes unreliable. Characters corrupt. Words break. The golem’s mind is failing, and the text reflects this.</p>
+<pre><code>Epistemic = 1.0:  All text renders cleanly.
+                  Full Unicode. Clear typography.
+
+                  "The ETH/USDC pool shows 12.4% APR
+                   with concentrated liquidity between
+                   2400-2600. Confidence: 0.82."
+
+Epistemic = 0.7:  Occasional character shimmer.
+                  1 in 200 characters flickers per frame.
+
+                  "The ETH/USDC pool shows 12.4% APR
+                   wi░h concentrated liquidity between
+                   2400-2600. Confidence: 0.82."
+
+Epistemic = 0.5:  Character substitution begins.
+                  1 in 80 characters replaced with ░ or similar.
+                  Some words render with alternatives.
+
+                  "The E░H/USDC pool shows 1░.4% APR
+                   with concentrated|dispersed liquidity
+                   ░etween 2400-2600. Confid░nce: 0.82."
+
+Epistemic = 0.3:  Heavy substitution.
+                  1 in 30 characters corrupted.
+                  Words break mid-render. Lines incomplete.
+                  Grimoire references show as "???".
+
+                  "░he ░TH/░SDC po░l ░hows ░2.░% A░R
+                   wi░░ ░░░░entra░░d liq░idity betw░░n
+                   ░400-░600. ░░nf░░░nce: ???"
+
+Epistemic = 0.1:  Severe corruption.
+                  Only short, high-confidence text survives.
+                  Complex text degrades to fragments.
+
+                  "░░░ ░░░/░░░░ ░░░░ ░░░░░ ░░░░ ░░░
+                   ░░░░ ░░░░░░░░░░░░ ░░░░░░░░░ ░░░░░░░
+                   ░░░░░░░░░. ░░░░░░░░░░: ???"
+</code></pre>
+<p>The epistemic degradation creates a specific kind of horror. The golem knows things, but it can no longer express them reliably. The operator sees the knowledge degrading in real time. A Grimoire entry that was clearly readable a week ago now renders with gaps and substitutions. The golem’s mind is dissolving, and the text on screen is the evidence.</p>
+<h3 id="173-stochastic-degradation-the-structure-glitches"><a class="header" href="#173-stochastic-degradation-the-structure-glitches">17.3 Stochastic degradation: the structure glitches</a></h3>
+<p>The stochastic clock is the Hayflick counter – pure chance, ticking toward zero regardless of how well the golem performs. As it drains, random catastrophic visual events become more frequent. The display itself becomes unreliable.</p>
+<pre><code>Stochastic = 1.0:  No disruptions.
+                   Clean, predictable display.
+
+Stochastic = 0.7:  Rare glitches (1 per minute).
+                   Brief single-frame disruptions.
+                   A border character flickers. A color inverts
+                   for one frame. Gone before you are sure you
+                   saw it.
+
+Stochastic = 0.5:  Moderate glitches (1 per 15 seconds).
+                   Full-line corruption lasting 2-3 frames.
+
+                   +--------------------------------------+
+                   | normal content here                  |
+                   | ▓▓▓░░▓▒▒░▓▓▒░▓░▒▒▓▓░▒▓▒░▓▒▓░▒▓░  |
+                   | normal content continues             |
+                   +--------------------------------------+
+
+Stochastic = 0.3:  Frequent glitches (1 per 5 seconds).
+                   Multi-line disruptions. Borders break.
+                   Widget alignment shifts. Content from one
+                   pane bleeds into another for 2-3 frames.
+
+                   +------------------+---+---------------+
+                   | normal content   |   | other pane    |
+                   | ▓▒░▓▒░▓▒░▓▒░▓▒░▓▒░▓▒░▓▒░▓▒░▓▒░▓▒ |
+                   | ░▒▓░▒▓░▒▓░▒▓░▒░ | ▒▓░▒▓░▒▓░▒▓░▒▓  |
+                   | content resumes  |   | pane resumes  |
+                   +------------------+---+---------------+
+
+Stochastic = 0.1:  Near-constant disruption.
+                   Screen shake (entire content offset
+                   shifts +/-1 row or column randomly).
+                   Content replacement (random cells overwritten
+                   with characters from other parts of the buffer).
+                   Color channel separation. The display is
+                   not trustworthy. You cannot rely on what
+                   you see.
+</code></pre>
+<p>The stochastic degradation is the most viscerally disturbing because it is unpredictable. Economic degradation is steady and visible (the margins march inward). Epistemic degradation is gradual (the corruption ratio increases smoothly). Stochastic degradation is random. A glitch might hit during a critical trade confirmation. A screen shake might happen during a quiet T0 tick. The operator cannot predict when the next disruption will occur, only that they are becoming more frequent.</p>
+<h3 id="174-cross-contamination"><a class="header" href="#174-cross-contamination">17.4 Cross-contamination</a></h3>
+<p>Below vitality 0.3 (Declining phase), the three degradation channels begin leaking into each other:</p>
+<ul>
+<li>Economic decay causes text corruption. The golem cannot afford clear rendering.</li>
+<li>Epistemic decay causes structural instability. Uncertain knowledge manifests as uncertain borders.</li>
+<li>Stochastic disruption causes economic indicators to glitch. The golem cannot accurately assess its own resources.</li>
+</ul>
+<p>Below vitality 0.1 (Terminal phase), all three degradations compound simultaneously. The interface is failing across every dimension. The screen is narrow, the text is corrupt, and glitches hit every few seconds. The golem’s mind, body, and luck are all running out at once.</p>
+<p>This is the engagement architecture’s final act. The operator is not reading a “vitality: 0.08” indicator. They are watching an interface come apart. The margins are closing in. The text is dissolving into noise. The borders are breaking and re-forming in wrong configurations. And beneath all of it, the heartbeat has gone arrhythmic – sometimes racing, sometimes stalling, never predictable.</p>
+<p>The degradation makes death legible without numbers. The operator sees the terminal at vitality 0.08 and knows, from the state of the screen alone, that the golem is dying. They do not need to check a gauge. The interface told them.</p>
+<h3 id="175-the-corridor-portal-mode"><a class="header" href="#175-the-corridor-portal-mode">17.5 The Corridor (Portal mode)</a></h3>
+<p>In Portal mode on the Mortality screen (Styx window &gt; Mortality pane), the three degradation channels transform into a spatial metaphor: a corridor that the golem walks toward its own death.</p>
+<ul>
+<li>The floor is the economic clock. Floor tiles dissolve into <code>░</code> then void as the economic clock drains. The golem’s footsteps echo differently on solid tiles vs. crumbling ones.</li>
+<li>The walls are the epistemic clock. Text inscribed on the walls (Grimoire entries, remembered heuristics) fades and crumbles as the epistemic clock drains. Words become illegible. Knowledge is being lost.</li>
+<li>The ceiling is the stochastic clock. Random chunks are missing. Occasionally a block of <code>▓</code> descends one row, a piece of ceiling falling.</li>
+<li>At the far end of the corridor: a door. The golem approaches but never reaches it. As vitality drops, the corridor shortens and the door gets closer.</li>
+<li>The Styx river flows beneath the floor, visible through the eroding tiles. Knowledge from the dead drifts in the current. Bloodstain labels float by.</li>
+</ul>
+<p>The Corridor is the most emotionally intense view in the entire terminal. It combines the embodied consciousness system (the operator is inside the golem’s perspective), the mortality degradation system (the space itself is dying), and the necrocratic knowledge system (the dead are literally below, their knowledge visible through the cracks). An operator who watches their golem walk the Corridor at vitality 0.12 – floor crumbling, walls going blank, ceiling dropping chunks, the door getting closer – has witnessed something that no financial dashboard has ever produced. See <code>17-creature-system.md</code> for how the Spectre (the golem’s visual avatar) degrades in parallel with the Corridor.</p>
+<hr>
+<h2 id="18-cold-start-strategy-world-pre-seeding"><a class="header" href="#18-cold-start-strategy-world-pre-seeding">18. Cold start strategy: WORLD pre-seeding</a></h2>
+<p>The WORLD window (Solaris ocean, Clade view, Lethe browser, Bloodstain map) is only interesting if other Golems exist. An empty ocean on day one kills the social engagement loops before they start. The fix: pre-seed the ecosystem with Bardo-operated Golems before public launch.</p>
+<h3 id="181-pre-launch-fleet"><a class="header" href="#181-pre-launch-fleet">18.1 Pre-launch fleet</a></h3>
+<p>Deploy 20-50 Bardo-operated Golems across a range of strategies, risk profiles, and compute tiers. These Golems run on Bardo Compute using a dedicated operator wallet. They are real Golems running real strategies with real capital (small positions, $50-$500 each). They are not simulations or mock data.</p>
+<p>The fleet covers enough strategic diversity that a new user browsing WORLD &gt; Solaris sees a populated ocean with varied behavior: some Golems in THRIVING phase, some in STABLE, at least one or two in CONSERVATION. The ecosystem looks alive.</p>
+<h3 id="182-visual-distinction"><a class="header" href="#182-visual-distinction">18.2 Visual distinction</a></h3>
+<p>Bardo-operated Golems carry a distinct visual marker so users never mistake them for community Golems:</p>
+<ul>
+<li><strong>Spectre accent</strong>: a faint bone-tinted ring around the dot cloud (not present on user Golems)</li>
+<li><strong>Label</strong>: “Bardo Resident” tag visible in Solaris ocean view and Golem detail cards</li>
+<li><strong>Leaderboard exclusion</strong>: Bardo Residents are excluded from competitive leaderboards but included in aggregate ecosystem stats (total Golems, total Grimoire entries, etc.)</li>
+</ul>
+<h3 id="183-lifecycle"><a class="header" href="#183-lifecycle">18.3 Lifecycle</a></h3>
+<p>Bardo Residents follow the same mortality rules as user Golems. They die. Their death bundles enter Lethe. Their bloodstains persist. When they die, Bardo may or may not spawn successors depending on ecosystem growth – as more user Golems join, the fleet shrinks organically.</p>
+<p>The goal is a warm ecosystem on day one, not a permanent population of house Golems. By month 3, user Golems should outnumber Bardo Residents 10:1 or more. If they don’t, the product has a bigger problem than cold start.</p>
+<h3 id="184-knowledge-seeding"><a class="header" href="#184-knowledge-seeding">18.4 Knowledge seeding</a></h3>
+<p>Bardo Residents produce real Grimoire entries, real predictions, and real bloodstains. Their knowledge enters Lethe and is available for new user Golems to discover. A new Golem browsing Lethe on day one finds real (if limited) ecosystem knowledge rather than an empty library.</p>
+<p>Bardo Residents do not receive preferential treatment in Lethe ranking. Their entries compete on quality like any other Golem’s. If their insights are bad, they sink. The system is honest from the start.</p>
+<hr>
+<h2 id="additional-references"><a class="header" href="#additional-references">Additional references</a></h2>
+<ul>
+<li>[FERSTER-SKINNER-1957] Ferster, C.B. &amp; Skinner, B.F. <em>Schedules of Reinforcement.</em> Appleton-Century-Crofts, 1957.</li>
+<li>[SKINNER-1938] Skinner, B.F. <em>The Behavior of Organisms.</em> Appleton-Century, 1938.</li>
+<li>[LOEWENSTEIN-1994] Loewenstein, G. “The Psychology of Curiosity.” <em>Psychological Bulletin</em>, 116(1), 1994.</li>
+<li>[BERLYNE-1960] Berlyne, D.E. <em>Conflict, Arousal, and Curiosity.</em> McGraw-Hill, 1960.</li>
+<li>[KAHNEMAN-TVERSKY-1979] Kahneman, D. &amp; Tversky, A. “Prospect Theory.” <em>Econometrica</em>, 47(2), 1979.</li>
+<li>[HEIDEGGER-1927] Heidegger, M. <em>Sein und Zeit.</em> 1927.</li>
+<li>[SHNEIDERMAN-1996] Shneiderman, B. “The Eyes Have It.” <em>VL</em>, 1996.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/13-runtime/12-realtime-subscriptions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/13-runtime/14-creature-system.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/13-runtime/12-realtime-subscriptions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/13-runtime/14-creature-system.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

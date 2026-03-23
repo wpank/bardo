@@ -1,0 +1,1418 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Runtime Extensions A - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/13a-runtime-extensions.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="runtime-extensions--part-a-spec"><a class="header" href="#runtime-extensions--part-a-spec">Runtime Extensions – Part A [SPEC]</a></h1>
+<p><strong>Extension Architecture, Registry, GolemState, Interventions, Session Tree, Tool Authorization, Model Routing, Adaptive Clock</strong></p>
+<blockquote>
+<p><strong>Version</strong>: 3.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crates</strong>: <code>golem-core</code> (cortical_state.rs, event_fabric.rs, arena.rs, taint.rs), <code>golem-runtime</code> (extension.rs, registry.rs, dispatch.rs, state.rs, lifecycle.rs, shutdown.rs)</p>
+<p><strong>Prerequisites</strong>: Read <code>00-architecture.md</code> for the glossary, thesis, and system overview.</p>
+<p>Sources: <code>03-agent-runtime/00-runtime-primitives</code>, <code>03-agent-runtime/06-event-wakeup</code>, <code>03-agent-runtime/08-metrics-tracing</code></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is Part A of the runtime extensions specification. It covers the native Rust extension architecture that forms the skeleton of the Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) runtime: the Extension trait (20 lifecycle hooks), the 28 concrete extensions organized into 7 dependency layers, the ExtensionRegistry, GolemState, Interventions, the Session Tree (conversation as a Merkle hash-chained tree), Tool Authorization (three-tier capability tokens), Model Routing (T0/T1/T2 cognitive tiers), and the Adaptive Clock (gamma/theta/delta oscillators). Part B is in <code>13b-runtime-extensions.md</code> (type-state machine, event fabric, CorticalState, arena allocator, shutdown). See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="what-this-document-covers"><a class="header" href="#what-this-document-covers">What This Document Covers</a></h2>
+<p>Every subsystem in the Golem runtime – heartbeat, memory, affect, dreams, risk, mortality, coordination, inference – is implemented as a native Rust <strong>extension</strong>: a struct that hooks into the Golem’s lifecycle at defined points. There is no plugin system, no scripting sandbox, no foreign function interface. Extensions are compiled into the binary and dispatched through a trait-object registry.</p>
+<p>This document specifies:</p>
+<ol>
+<li>Why a native Rust extension architecture (not a plugin/Pi runtime)</li>
+<li>The <code>Extension</code> trait and its 20 lifecycle hooks</li>
+<li>The 28 concrete extensions organized into 7 dependency layers</li>
+<li>The <code>ExtensionRegistry</code> that validates and dispatches them</li>
+<li><code>GolemState</code> – the mutable struct flowing through the extension chain</li>
+<li>Type-state lifecycle enforcement via phantom types</li>
+<li>The Event Fabric (<code>tokio::broadcast</code> ring buffer)</li>
+<li>The CorticalState (lock-free atomics for real-time perception reads)</li>
+<li>The arena allocator (<code>bumpalo</code> per-tick allocation)</li>
+<li>The 10-phase graceful shutdown protocol</li>
+<li>The main binary and startup sequence</li>
+</ol>
+<hr>
+<h2 id="1-why-native-rust-extensions"><a class="header" href="#1-why-native-rust-extensions">1. Why Native Rust Extensions</a></h2>
+<p>The Golem runtime inherits its extension model from <a href="https://github.com/Dicklesworthstone/pi_agent_rust">pi_agent_rust</a>, itself a Rust port of the Pi Agent framework. Pi’s core insight was correct: an agent runtime should define WHEN things happen (lifecycle hooks) but not WHAT happens (extension implementations). What changes is the implementation substrate.</p>
+<p>Pi ran extensions in a QuickJS sandbox – JavaScript executing inside a JavaScript runtime, with serialization boundaries at every hook invocation. The Golem runtime runs extensions as native Rust structs implementing a trait. The <code>Extension</code> trait replaces the plugin boundary entirely. The compiler enforces what a sandbox can only check at runtime:</p>
+<ul>
+<li>
+<p><strong>Composition over inheritance.</strong> Each subsystem implements only the hooks it needs. The heartbeat extension overrides <code>on_after_turn</code>; the safety extension overrides <code>on_tool_call</code>. Neither knows or cares about the other’s implementation. This is Rust’s trait system doing what it does best – defining shared behavior contracts without coupling implementations.</p>
+</li>
+<li>
+<p><strong>Zero-cost dispatch.</strong> When the registry fires <code>on_after_turn</code> across 9 extensions in sequence, each call is a vtable lookup on a <code>dyn Extension</code> trait object. No serialization, no sandbox boundary crossing, no GC pause between extensions. The data flows through <code>&amp;mut GolemState</code> directly.</p>
+</li>
+<li>
+<p><strong>Compile-time safety.</strong> The type-state lifecycle machine (Section 6) makes invalid state transitions impossible to write. A <code>Golem&lt;Dead&gt;</code> has no <code>tick()</code> method. A <code>Golem&lt;Provisioning&gt;</code> has no <code>steer()</code> method. These are not runtime checks – they are compilation failures. Pi enforced these with runtime guards (<code>if phase === "dead" return</code>); Rust enforces them with the type system.</p>
+</li>
+<li>
+<p><strong>Ordered data flow.</strong> Extensions fire in a defined sequence within each hook. The Daimon reads the heartbeat’s probe results. The memory extension reads the Daimon’s appraisal. The dream scheduler reads both. This is a carefully designed data dependency chain, and it works because <code>&amp;mut GolemState</code> guarantees single-writer semantics – no data races, no stale reads, no locks.</p>
+</li>
+<li>
+<p><strong>Testability.</strong> Each extension can be tested in isolation with a mock <code>GolemState</code>. The full system can be tested by registering a subset of extensions. No sandbox setup, no IPC mocking.</p>
+</li>
+</ul>
+<p>The model is analogous to middleware in web frameworks (Express, Axum), but richer: middleware chains are linear, while the extension system supports a DAG of dependencies across multiple hook types.</p>
+<hr>
+<h2 id="2-the-extension-trait-20-lifecycle-hooks"><a class="header" href="#2-the-extension-trait-20-lifecycle-hooks">2. The Extension Trait: 20 Lifecycle Hooks</a></h2>
+<p>Every extension implements the <code>Extension</code> trait. All 20 hooks have default no-op implementations, so extensions only override the hooks they use. The hooks are grouped into six categories that correspond to the phases of a cognitive cycle.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use async_trait::async_trait;
+use anyhow::Result;
+
+/// The Extension trait defines 20 lifecycle hooks.
+///
+/// Each hook fires at a specific point in the Golem's cognitive cycle.
+/// Extensions implement only the hooks they need -- all others default to no-ops.
+///
+/// Extensions are registered with:
+/// - A unique name (e.g., "heartbeat", "daimon")
+/// - A layer number (0-7) that determines dependency ordering
+/// - An optional list of dependencies (extensions that must fire before this one)
+///
+/// The extension system is adapted from Pi Agent's hook architecture for
+/// Rust's ownership model. The key difference: Pi extensions ran in a
+/// QuickJS sandbox (JavaScript); Golem extensions run as native Rust with
+/// zero overhead.
+#[async_trait]
+pub trait Extension: Send + Sync + 'static {
+    /// Unique identifier for this extension (e.g., "heartbeat", "daimon").
+    /// Used for dependency resolution and debugging.
+    fn name(&amp;self) -&gt; &amp;str;
+
+    /// Layer in the dependency graph (0 = foundation, 7 = recovery).
+    /// Extensions in higher layers may depend on extensions in lower layers,
+    /// but never the reverse. This ensures the dependency graph is acyclic.
+    fn layer(&amp;self) -&gt; u8;
+
+    /// Names of extensions that must fire before this one in shared hooks.
+    /// Dependencies must be in the same or lower layer.
+    fn depends_on(&amp;self) -&gt; &amp;[&amp;str] { &amp;[] }
+<span class="boring">}</span></code></pre>
+<h3 id="category-1-session-lifecycle-hook-1"><a class="header" href="#category-1-session-lifecycle-hook-1">Category 1: Session Lifecycle (hook 1)</a></h3>
+<p>These hooks fire when the Golem’s overall session begins, resumes, or undergoes structural changes.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    /// SESSION LIFECYCLE
+    ///
+    /// Fires on session-level events:
+    /// - `SessionReason::Start`: Golem just booted. Extensions initialize.
+    /// - `SessionReason::Resume`: Golem resuming from a checkpoint.
+    /// - `SessionReason::BeforeCompact`: Context compaction about to occur
+    ///   (conversation sidecar only).
+    /// - `SessionReason::BeforeBranch`: Conversation branch about to be created.
+    ///
+    /// Used by: grimoire (initialize storage), heartbeat (load FSM state),
+    ///          audit (open chain).
+    async fn on_session(
+        &amp;self,
+        _reason: SessionReason,
+        _ctx: &amp;mut SessionCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+<span class="boring">}</span></code></pre>
+<h3 id="category-2-input-processing-hook-2"><a class="header" href="#category-2-input-processing-hook-2">Category 2: Input Processing (hook 2)</a></h3>
+<p>When input arrives from any source – user message, owner steer, system event – this hook can transform, route, or suppress it.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    /// INPUT PROCESSING
+    ///
+    /// Fires when external input arrives. The extension can:
+    /// - `InputAction::Pass`: Let the input through unchanged.
+    /// - `InputAction::Transform(new_msg)`: Modify the input.
+    /// - `InputAction::Suppress`: Block the input entirely.
+    ///
+    /// Used by: input-router (classify as steer/followUp/message and route
+    ///          accordingly).
+    async fn on_input(
+        &amp;self,
+        _msg: &amp;mut InputMessage,
+        _ctx: &amp;InputCtx,
+    ) -&gt; Result&lt;InputAction&gt; {
+        Ok(InputAction::Pass)
+    }
+<span class="boring">}</span></code></pre>
+<h3 id="category-3-agent-lifecycle-hooks-3-4"><a class="header" href="#category-3-agent-lifecycle-hooks-3-4">Category 3: Agent Lifecycle (hooks 3-4)</a></h3>
+<p>These hooks bracket the LLM invocation. “Agent” here means the LLM reasoning session, not the Golem itself.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    /// AGENT LIFECYCLE -- BEFORE START
+    ///
+    /// Fires before the LLM begins processing. This is where context assembly
+    /// happens: the context extension builds the Cognitive Workspace, the compiler
+    /// extension injects STRATEGY.md, the playbook extension injects PLAYBOOK.md.
+    ///
+    /// Used by: context (assemble Cognitive Workspace), compiler (parse STRATEGY.md),
+    ///          tools (register available tools for this tier), model-router (select
+    ///          model), safety (enforce phase restrictions), x402-payment (prepare
+    ///          micropayment).
+    async fn on_before_agent_start(
+        &amp;self,
+        _ctx: &amp;mut AgentStartCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// AGENT LIFECYCLE -- AFTER START
+    ///
+    /// Fires after the agent is initialized but before it generates its first
+    /// response. Used for logging and metrics.
+    async fn on_agent_start(&amp;self, _ctx: &amp;AgentStartCtx) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+<span class="boring">}</span></code></pre>
+<h3 id="category-4-turn-lifecycle-hooks-5-11"><a class="header" href="#category-4-turn-lifecycle-hooks-5-11">Category 4: Turn Lifecycle (hooks 5-11)</a></h3>
+<p>A “turn” is one LLM request-response cycle. Within a single tick, there may be zero turns (T0: no LLM call), one turn (T1: analyze), or multiple turns (T2: deliberate, then tool calls, then continuation).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    /// TURN START -- before the LLM generates a response.
+    async fn on_turn_start(&amp;self, _ctx: &amp;TurnStartCtx) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// CONTEXT ASSEMBLY -- modify the messages array before sending to the LLM.
+    /// This is where the turn-context extension injects phase-appropriate context
+    /// subsets (progressive disclosure per the Context Governor's policy).
+    async fn on_context(
+        &amp;self,
+        _messages: &amp;mut Vec&lt;AgentMessage&gt;,
+        _ctx: &amp;ContextCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// BEFORE PROVIDER REQUEST -- last chance to modify the LLM request.
+    /// The model-router sets the model; x402-payment attaches the micropayment;
+    /// the safety extension checks for tainted data entering the context.
+    async fn on_before_provider_request(
+        &amp;self,
+        _ctx: &amp;mut ProviderReqCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// TOOL CALL -- the LLM has proposed a tool call.
+    ///
+    /// This is the safety checkpoint. Extensions can:
+    /// - `ToolAction::Allow`: Let the call proceed.
+    /// - `ToolAction::Block(reason)`: Reject the call. The LLM receives the
+    ///   rejection.
+    /// - `ToolAction::Modify(new_call)`: Alter the call (e.g., reduce amount).
+    ///
+    /// Firing order: safety -&gt; permits -&gt; risk -&gt; result-filter.
+    /// Each layer can block. The most restrictive wins.
+    ///
+    /// Used by: safety (PolicyCage check), permits (ActionPermit lifecycle),
+    ///          risk (five-layer risk assessment), loop-guard (repetition
+    ///          detection).
+    async fn on_tool_call(
+        &amp;self,
+        _call: &amp;ToolCall,
+        _ctx: &amp;mut ToolCallCtx,
+    ) -&gt; Result&lt;ToolAction&gt; {
+        Ok(ToolAction::Allow)
+    }
+
+    /// TOOL EXECUTION lifecycle -- three hooks for progress tracking.
+    /// Multi-step tools (e.g., LP rebalance: simulate -&gt; build calldata -&gt;
+    /// broadcast -&gt; confirm) emit progress events at each step.
+    async fn on_tool_execution_start(
+        &amp;self,
+        _ctx: &amp;ToolExecCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    async fn on_tool_execution_update(
+        &amp;self,
+        _ctx: &amp;ToolExecCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    async fn on_tool_execution_end(
+        &amp;self,
+        _ctx: &amp;ToolExecCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// TOOL RESULT -- the tool has returned a result.
+    /// Extensions can transform or redact the result before the LLM sees it.
+    ///
+    /// Used by: result-filter (redact sensitive data, compress verbose output,
+    ///          capture ground truth for OutcomeVerification).
+    async fn on_tool_result(
+        &amp;self,
+        _result: &amp;mut ToolResult,
+        _ctx: &amp;ToolResultCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+<span class="boring">}</span></code></pre>
+<h3 id="category-5-post-turn-learning-hooks-12-14"><a class="header" href="#category-5-post-turn-learning-hooks-12-14">Category 5: Post-Turn Learning (hooks 12-14)</a></h3>
+<p>After the LLM has responded and any tool calls have completed, these hooks handle learning, bookkeeping, and state evolution. The <code>on_after_turn</code> hook is the critical path – it’s where the nine subsystems fire in sequence.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    /// TURN END -- the LLM has produced a response for this turn.
+    async fn on_turn_end(&amp;self, _ctx: &amp;TurnEndCtx) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// AGENT END -- the LLM session is closing.
+    async fn on_agent_end(&amp;self, _ctx: &amp;AgentEndCtx) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// AFTER TURN -- the post-processing hook.
+    ///
+    /// This is where the nine core subsystems fire in a strict sequence,
+    /// each reading what the previous wrote to GolemState:
+    ///
+    ///   heartbeat -&gt; lifespan -&gt; daimon -&gt; memory -&gt; risk -&gt;
+    ///   dream -&gt; cybernetics -&gt; clade -&gt; telemetry
+    ///
+    /// The ordering is intentional and non-negotiable:
+    /// 1. Heartbeat evaluates probes and writes observation/regime data.
+    /// 2. Lifespan ticks mortality clocks, using heartbeat's cost data.
+    /// 3. Daimon runs emotional appraisal, using heartbeat's observation
+    ///    and lifespan's mortality state.
+    /// 4. Memory writes episodes to Grimoire, using Daimon's emotional tags.
+    /// 5. Risk assesses current position danger, using all of the above.
+    /// 6. Dream checks if dreaming is warranted, using emotional load
+    ///    and novelty metrics from all prior extensions.
+    /// 7. Cybernetics self-tunes the Context Governor, correlating outcomes
+    ///    with the context entries that produced them.
+    /// 8. Clade syncs with siblings and reads the Pheromone Field.
+    /// 9. Telemetry emits final metrics and cost tracking.
+    ///
+    /// Each extension in this chain receives a mutable reference to
+    /// GolemState. It reads fields set by earlier extensions and writes
+    /// fields that later extensions will read. This is a pipeline,
+    /// not parallel execution.
+    async fn on_after_turn(
+        &amp;self,
+        _ctx: &amp;mut AfterTurnCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+<span class="boring">}</span></code></pre>
+<h3 id="category-6-system-hooks-hooks-15-20"><a class="header" href="#category-6-system-hooks-hooks-15-20">Category 6: System Hooks (hooks 15-20)</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    /// SYSTEM PROMPT -- modify the system prompt before the LLM sees it.
+    /// The playbook extension injects PLAYBOOK.md + survival state here.
+    async fn on_system_prompt(
+        &amp;self,
+        _prompt: &amp;mut String,
+        _ctx: &amp;PromptCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// STEER -- a mid-execution interrupt has arrived.
+    /// Steers are high-priority interventions that can preempt the current tick.
+    /// The semantics: "change what the Golem is doing RIGHT NOW."
+    async fn on_steer(
+        &amp;self,
+        _msg: &amp;SteerMessage,
+        _ctx: &amp;mut SteerCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// SEND MESSAGE -- an outbound message is being sent to a surface.
+    /// The intervention extension intercepts this to log owner communications.
+    async fn on_send_message(
+        &amp;self,
+        _msg: &amp;OutboundMessage,
+        _ctx: &amp;MsgCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// DEBUG -- debug information requested (e.g., owner asks "what are you
+    /// thinking?").
+    async fn on_debug(&amp;self, _ctx: &amp;DebugCtx) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// ERROR -- an error occurred somewhere in the pipeline.
+    /// Extensions can log, alert, or attempt recovery.
+    async fn on_error(
+        &amp;self,
+        _err: &amp;GolemError,
+        _ctx: &amp;ErrorCtx,
+    ) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+
+    /// END -- the Golem is shutting down (graceful or forced).
+    /// Extensions flush state, sync to Styx, and release resources.
+    async fn on_end(&amp;self, _ctx: &amp;EndCtx) -&gt; Result&lt;()&gt; {
+        Ok(())
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="3-the-28-extensions"><a class="header" href="#3-the-28-extensions">3. The 28 Extensions</a></h2>
+<p>Each extension is a Rust struct implementing the <code>Extension</code> trait. They are organized into seven dependency layers, from foundation (layer 0) through recovery (layer 7).</p>
+<h3 id="layer-0--foundation-6-extensions"><a class="header" href="#layer-0--foundation-6-extensions">Layer 0 – Foundation (6 extensions)</a></h3>
+<p>These have no dependencies. They provide the infrastructure that everything else builds on.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><code>provider-adapter</code></td><td><code>before_agent_start</code></td><td>Routes LLM calls through the inference provider abstraction. Extracted from pi_agent_rust, supports 90+ providers. Handles auth, streaming, error recovery, and failover.</td></tr>
+<tr><td>2</td><td><code>telemetry</code></td><td><code>after_turn</code>, <code>tool_call</code></td><td>Emits OpenTelemetry spans and Prometheus metrics. Tracks per-tick cost (inference + gas), latency percentiles, tool call success rates, and cognitive tier distribution.</td></tr>
+<tr><td>3</td><td><code>audit</code></td><td><code>tool_call</code>, <code>after_turn</code>, <code>session(before_compact)</code></td><td>Writes every action to the Merkle hash-chain audit trail. Each entry contains a SHA-256 hash of the previous entry, creating a tamper-evident forensic log. Supports periodic on-chain anchoring.</td></tr>
+<tr><td>4</td><td><code>grimoire</code></td><td><code>session(start)</code>, <code>before_agent_start</code></td><td>Initializes the Grimoire (LanceDB + SQLite + PLAYBOOK.md). On session start, opens or creates the storage files. On before_agent_start, preloads the embedding model and decision cache.</td></tr>
+<tr><td>5</td><td><code>tools</code></td><td><code>before_agent_start</code></td><td>Loads DeFi tools from the configured profile (active: ~423 tools, observatory: ~72 read-only tools, conservative: limited writes). Registers tools with the tool registry and sets up the TypeScript sidecar connection if needed.</td></tr>
+<tr><td>6</td><td><code>heartbeat</code></td><td><code>session(start)</code>, <code>after_turn</code></td><td>The autonomous decision cycle engine. On session start, initializes the heartbeat FSM. On after_turn, runs the 9-step pipeline (observe, retrieve, analyze, gate, simulate, validate, execute, verify, reflect). See <code>02a-heartbeat-pipeline.md</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-1--input-1-extension"><a class="header" href="#layer-1--input-1-extension">Layer 1 – Input (1 extension)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>7</td><td><code>input-router</code></td><td><code>input</code></td><td>Classifies incoming messages as user messages, owner steers, followUps, or system events. Routes steers to the interrupt handler; queues followUps for the next decision window. Depends on heartbeat for FSM state.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-2--state-4-extensions"><a class="header" href="#layer-2--state-4-extensions">Layer 2 – State (4 extensions)</a></h3>
+<p>These manage the Golem’s core state: knowledge, affect, mortality.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>8</td><td><code>context</code></td><td><code>before_agent_start</code></td><td>The Context Governor. Assembles the Cognitive Workspace from structured categories (invariants, strategy, retrieved knowledge, observations, affect) with learned token allocations. Implements Baddeley’s working memory model [BADDELEY-2000].</td></tr>
+<tr><td>9</td><td><code>daimon</code></td><td><code>after_turn</code></td><td>The affect engine. Runs OCC/Scherer appraisal on the current observation, computes PAD vector and Plutchik label, checks somatic markers, queries the Somatic Landscape, and writes the result to the CorticalState for zero-latency reads by other fibers.</td></tr>
+<tr><td>10</td><td><code>memory</code></td><td><code>after_turn</code></td><td>Episode writer and Curator. Writes the current tick’s observation/action/outcome as an episodic entry in LanceDB. Runs the Curator cycle every 50 ticks (validate, prune, compress, cross-reference). Enforces the Admission Gate quality threshold.</td></tr>
+<tr><td>11</td><td><code>lifespan</code></td><td><code>after_turn</code>, <code>on_end</code></td><td>Ticks the three mortality clocks (economic, epistemic, stochastic). Computes VitalityState and BehavioralPhase. Triggers phase transitions. On death, initiates the Thanatopsis protocol.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-3--safety-8-extensions"><a class="header" href="#layer-3--safety-8-extensions">Layer 3 – Safety (8 extensions)</a></h3>
+<p>The safety layer intercepts tool calls, validates constraints, and manages risk.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>12</td><td><code>safety</code></td><td><code>tool_call</code>, <code>before_agent_start</code></td><td>PolicyCage enforcement. Reads on-chain constraints (approved assets, max positions, max drawdown) via Alloy and blocks any tool call that would violate them. Also enforces behavioral phase restrictions (e.g., Conservation phase blocks new position entry). Performs taint checking on data entering LLM context.</td></tr>
+<tr><td>13</td><td><code>permits</code></td><td><code>tool_call</code></td><td>ActionPermit lifecycle. Write tools require a permit (created -&gt; committed -&gt; expired/cancelled/blocked). The permit records the capability token hash, value limit, and PolicyCage constraint snapshot for audit.</td></tr>
+<tr><td>14</td><td><code>risk</code></td><td><code>tool_call</code>, <code>after_turn</code></td><td>Five-layer risk assessment: Layer 1 (Hard Shields / PolicyCage), Layer 2 (Kelly Sizing – optimal position sizing under uncertainty), Layer 3 (Adaptive Guardrails – learned from the Golem’s own outcomes), Layer 4 (Observation – monitor for emerging threats), Layer 5 (DeFi-specific threats – MEV, oracle manipulation, flash loan attacks).</td></tr>
+<tr><td>15</td><td><code>result-filter</code></td><td><code>tool_result</code></td><td>Redacts sensitive data from tool results before the LLM sees them (e.g., wallet addresses, internal metrics). Compresses verbose output to fit context budgets. Captures ground truth (actual transaction outcomes) for the OutcomeVerification system.</td></tr>
+<tr><td>16</td><td><code>coordination</code></td><td><code>tool_call</code></td><td>Handles cross-agent tool calls using ERC-8001/8033/8183 typed interfaces. These are on-chain coordination primitives – Golems don’t chat, they interact through typed transactions.</td></tr>
+<tr><td>17</td><td><code>compiler</code></td><td><code>before_agent_start</code></td><td>Parses STRATEGY.md into typed <code>StrategyParams</code>. The owner writes STRATEGY.md in natural language or structured markdown; the compiler extracts risk bounds, target protocols, and trigger conditions into the format the heartbeat pipeline consumes.</td></tr>
+<tr><td>18</td><td><code>model-router</code></td><td><code>before_agent_start</code></td><td>Three-tier model routing. Based on the cognitive tier from the gating step: T0 -&gt; no model (skip), T1 -&gt; Haiku-class (<del>$0.001/call), T2 -&gt; Opus-class (</del>$0.10/call). Implements FrugalGPT’s adaptive routing principle [CHEN-2023].</td></tr>
+<tr><td>19</td><td><code>x402-payment</code></td><td><code>before_provider_request</code></td><td>Attaches x402 micropayment authorization to each LLM request. Signs a USDC <code>transferWithAuthorization</code> via Alloy. The Golem’s wallet IS its API key – no separate billing accounts.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-4--cognition-4-extensions"><a class="header" href="#layer-4--cognition-4-extensions">Layer 4 – Cognition (4 extensions)</a></h3>
+<p>Higher-order cognitive processes that depend on the state and safety layers.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>20</td><td><code>turn-context</code></td><td><code>context</code></td><td>Injects turn-phase-aware context subsets. Progressive disclosure: the LLM doesn’t see everything at once. During observation, it sees market data. During deliberation, it sees the full Cognitive Workspace. Based on the Context Governor’s learned policy [BADDELEY-2000].</td></tr>
+<tr><td>21</td><td><code>dream</code></td><td><code>after_turn</code></td><td>The DreamScheduler decides whether to enter a dream cycle (based on time since last dream, emotional load, and novelty). If dreaming, transitions the Golem to the Dreaming state and runs the three-phase cycle: NREM replay, REM imagination, Consolidation. Also manages background micro-consolidation.</td></tr>
+<tr><td>22</td><td><code>cybernetics</code></td><td><code>after_turn</code></td><td>Three self-tuning loops that adapt the Context Governor over time. Loop 1 (per-tick): correlate which context entries appeared in the workspace with outcome quality. Loop 2 (per-Curator cycle): adjust token allocations across categories. Loop 3 (per-regime change): partially reset correlations and re-adapt.</td></tr>
+<tr><td>23</td><td><code>clade</code></td><td><code>after_turn</code></td><td>Peer-to-peer Grimoire synchronization within the owner’s clade. Exports entries with <code>propagation &gt;= Clade</code>, transmits to siblings, receives their exports, and ingests through the four-stage pipeline (quarantine, consensus, sandbox, adopt). Also gossips Bloom Oracle filters and reads the Pheromone Field.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-5--ux-2-extensions"><a class="header" href="#layer-5--ux-2-extensions">Layer 5 – UX (2 extensions)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>24</td><td><code>ui-bridge</code></td><td><code>agent_start</code>, <code>agent_end</code>, <code>turn_start</code>, <code>turn_end</code>, <code>tool_execution_*</code></td><td>Translates hook firings into Event Fabric events. This is the bridge between the internal pipeline and external surfaces. Every GolemEvent type (50+ across 16 subsystems) originates from this extension mapping an internal state transition to a typed event payload.</td></tr>
+<tr><td>25</td><td><code>observability</code></td><td><code>debug</code>, <code>error</code></td><td>Structured logging with DeFi-contextual fields (tick, regime, phase, tool, cost). Error capture with context. Prometheus metric updates for operational dashboards.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-6--intervention-2-extensions"><a class="header" href="#layer-6--intervention-2-extensions">Layer 6 – Intervention (2 extensions)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>26</td><td><code>playbook</code></td><td><code>system_prompt</code></td><td>Injects PLAYBOOK.md and survival state (mortality phase, vitality, active warnings) into the LLM’s system prompt. The LLM reads PLAYBOOK heuristics as reasoning scaffolding.</td></tr>
+<tr><td>27</td><td><code>intervention</code></td><td><code>send_message</code>, <code>steer</code></td><td>Manages the owner steer/followUp lifecycle. Steers preempt the current tick. FollowUps are queued for the appropriate decision window (NextDecide, NextReflect, NextCurator, NextDream). Self-steers from the risk daemon enter through this same pathway.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="layer-7--recovery-1-extension"><a class="header" href="#layer-7--recovery-1-extension">Layer 7 – Recovery (1 extension)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Name</th><th>Hooks Used</th><th>What It Does</th></tr>
+</thead>
+<tbody>
+<tr><td>28</td><td><code>compaction</code></td><td><code>session(before_compact)</code>, <code>session(before_branch)</code></td><td>DeFi-aware compaction for the conversation sidecar. Preserves critical invariants during compaction: PolicyCage constraint hash, current position state, behavioral phase, active warnings, somatic state. Only relevant when the user is chatting with the Golem – the heartbeat path uses the Cognitive Workspace instead of compaction.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="hook-coverage-matrix"><a class="header" href="#hook-coverage-matrix">Hook Coverage Matrix</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Hook</th><th>Extensions (firing order)</th></tr>
+</thead>
+<tbody>
+<tr><td><code>session(start)</code></td><td><code>grimoire</code> -&gt; <code>heartbeat</code></td></tr>
+<tr><td><code>input</code></td><td><code>input-router</code></td></tr>
+<tr><td><code>before_agent_start</code></td><td><code>tools</code> -&gt; <code>context</code> -&gt; <code>compiler</code> -&gt; <code>model-router</code> -&gt; <code>safety</code></td></tr>
+<tr><td><code>agent_start</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>turn_start</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>context</code></td><td><code>turn-context</code></td></tr>
+<tr><td><code>before_provider_request</code></td><td><code>x402-payment</code></td></tr>
+<tr><td><code>tool_call</code></td><td><code>telemetry</code> -&gt; <code>safety</code> -&gt; <code>risk</code> -&gt; <code>permits</code> -&gt; <code>coordination</code></td></tr>
+<tr><td><code>tool_execution_start</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>tool_execution_update</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>tool_execution_end</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>tool_result</code></td><td><code>result-filter</code></td></tr>
+<tr><td><code>turn_end</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>agent_end</code></td><td><code>ui-bridge</code></td></tr>
+<tr><td><code>after_turn</code></td><td><code>heartbeat</code> -&gt; <code>lifespan</code> -&gt; <code>daimon</code> -&gt; <code>memory</code> -&gt; <code>risk</code> -&gt; <code>dream</code> -&gt; <code>cybernetics</code> -&gt; <code>clade</code> -&gt; <code>telemetry</code></td></tr>
+<tr><td><code>session(before_compact)</code></td><td><code>compaction</code> -&gt; <code>audit</code></td></tr>
+<tr><td><code>session(before_branch)</code></td><td><code>compaction</code></td></tr>
+<tr><td><code>system_prompt</code></td><td><code>playbook</code></td></tr>
+<tr><td><code>send_message</code></td><td><code>intervention</code></td></tr>
+<tr><td><code>steer</code></td><td><code>intervention</code></td></tr>
+<tr><td><code>debug</code></td><td><code>observability</code></td></tr>
+<tr><td><code>error</code></td><td><code>observability</code></td></tr>
+<tr><td><code>on_end</code></td><td><code>lifespan</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Coverage: 20/20 hooks occupied with meaningful behavior. All 28 extensions wired.</strong></p>
+<hr>
+<h2 id="4-the-7-layer-dependency-graph"><a class="header" href="#4-the-7-layer-dependency-graph">4. The 7-Layer Dependency Graph</a></h2>
+<p>The dependency graph ensures extensions fire in a consistent order that respects data dependencies. An extension in layer N may depend on extensions in layers 0 through N, but never on a higher layer. The arrows show “depends on” relationships.</p>
+<pre><code>Layer 0 -- Foundation (no dependencies):
+    provider-adapter, telemetry, audit, grimoire, tools, heartbeat
+
+Layer 1 -- Input:
+    input-router         &lt;- heartbeat
+
+Layer 2 -- State:
+    context              &lt;- grimoire
+    daimon               &lt;- grimoire
+    memory               &lt;- grimoire
+    lifespan             &lt;- heartbeat
+
+Layer 3 -- Safety:
+    safety               &lt;- tools
+    permits              &lt;- safety
+    risk                 &lt;- safety + grimoire
+    result-filter        &lt;- safety
+    coordination         &lt;- tools
+    compiler             &lt;- tools
+    model-router         &lt;- provider-adapter
+    x402-payment         &lt;- provider-adapter
+
+Layer 4 -- Cognition:
+    turn-context         &lt;- context
+    dream                &lt;- grimoire + daimon
+    cybernetics          &lt;- context + grimoire
+    clade                &lt;- grimoire + coordination
+
+Layer 5 -- UX:
+    ui-bridge            &lt;- telemetry
+    observability        &lt;- telemetry
+
+Layer 6 -- Intervention:
+    playbook             &lt;- grimoire
+    intervention         &lt;- heartbeat
+
+Layer 7 -- Recovery:
+    compaction           &lt;- context
+</code></pre>
+<h3 id="why-sequential-not-parallel"><a class="header" href="#why-sequential-not-parallel">Why Sequential, Not Parallel</a></h3>
+<p>The <code>after_turn</code> hook chain fires extensions <strong>sequentially</strong>, not in parallel. This is intentional. Each extension reads what the previous one wrote to GolemState:</p>
+<ol>
+<li><strong>Heartbeat</strong> writes <code>observation</code>, <code>regime</code>, <code>probe_results</code>, <code>prediction_error</code>, <code>cognitive_tier</code></li>
+<li><strong>Lifespan</strong> reads heartbeat’s cost data, writes <code>vitality</code>, <code>phase</code>, <code>credit_remaining</code></li>
+<li><strong>Daimon</strong> reads observation + vitality, writes <code>current_pad</code>, <code>primary_emotion</code>, <code>somatic_markers_fired</code></li>
+<li><strong>Memory</strong> reads observation + PAD (for emotional tagging), writes <code>episodes_written</code>, <code>grimoire_mutations</code></li>
+<li><strong>Risk</strong> reads all of the above, writes <code>risk_assessment</code>, <code>active_warnings</code></li>
+<li><strong>Dream</strong> reads emotional load + novelty + risk, writes <code>dream_state</code></li>
+<li><strong>Cybernetics</strong> reads outcome + context entries, writes <code>context_policy_revision</code></li>
+<li><strong>Clade</strong> reads all local state, syncs with peers, writes <code>clade_sync_status</code>, <code>pheromone_readings</code></li>
+<li><strong>Telemetry</strong> reads everything, emits final metrics</li>
+</ol>
+<p>Parallelizing this would require each extension to work with stale data – the Daimon would appraise an observation without knowing the current mortality phase, and the dream scheduler would not know the latest emotional state. The sequential pipeline ensures every extension has the freshest possible data. Rust’s <code>&amp;mut GolemState</code> borrow makes this data flow explicit at the type level.</p>
+<hr>
+<h2 id="5-the-extension-registry"><a class="header" href="#5-the-extension-registry">5. The Extension Registry</a></h2>
+<p>The registry accepts extensions, validates that the dependency graph is acyclic, and pre-computes firing orders per hook.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::Arc;
+use std::collections::HashMap;
+
+/// The extension registry. Validates dependencies and computes firing orders.
+///
+/// Usage:
+/// 1. Create a new registry: `let mut registry = ExtensionRegistry::new();`
+/// 2. Register all extensions: `registry.register(Arc::new(HeartbeatExt::new(...)));`
+/// 3. Build (validates + computes orders): `registry.build();`
+/// 4. Fire hooks: `registry.fire_after_turn(&amp;mut ctx).await?;`
+pub struct ExtensionRegistry {
+    /// All registered extensions, sorted by layer after build().
+    extensions: Vec&lt;Arc&lt;dyn Extension&gt;&gt;,
+
+    /// Pre-computed firing orders per hook type.
+    /// Each entry is a Vec of indices into `extensions`.
+    /// Avoids re-computing topological sort on every hook invocation.
+    firing_orders: HashMap&lt;HookId, Vec&lt;usize&gt;&gt;,
+}
+
+/// Identifies which hook to fire. Used as the key for pre-computed orders.
+#[derive(Hash, Eq, PartialEq, Clone, Debug)]
+pub enum HookId {
+    Session,
+    Input,
+    BeforeAgentStart,
+    AgentStart,
+    TurnStart,
+    Context,
+    BeforeProviderRequest,
+    ToolCall,
+    ToolExecutionStart,
+    ToolExecutionUpdate,
+    ToolExecutionEnd,
+    ToolResult,
+    TurnEnd,
+    AgentEnd,
+    AfterTurn,
+    SystemPrompt,
+    Steer,
+    SendMessage,
+    Debug,
+    Error,
+    End,
+}
+
+impl ExtensionRegistry {
+    pub fn new() -&gt; Self {
+        Self {
+            extensions: Vec::new(),
+            firing_orders: HashMap::new(),
+        }
+    }
+
+    /// Register an extension. Order of registration doesn't matter --
+    /// the registry sorts by layer during build().
+    pub fn register(&amp;mut self, ext: Arc&lt;dyn Extension&gt;) {
+        self.extensions.push(ext);
+    }
+
+    /// Validate the dependency graph and compute firing orders.
+    ///
+    /// This method:
+    /// 1. Sorts all extensions by layer (0 first, 7 last).
+    /// 2. Validates that every declared dependency exists and is in an
+    ///    equal or lower layer.
+    /// 3. Pre-computes the topological firing order for each hook type.
+    ///
+    /// Panics if the dependency graph contains cycles or missing dependencies.
+    /// This is a startup-time check -- it fails fast rather than at runtime.
+    pub fn build(&amp;mut self) {
+        // Sort by layer
+        self.extensions.sort_by_key(|e| e.layer());
+
+        // Validate dependencies
+        let names: Vec&lt;&amp;str&gt; = self.extensions.iter().map(|e| e.name()).collect();
+        for ext in &amp;self.extensions {
+            for dep in ext.depends_on() {
+                // Dependency must exist
+                let dep_idx = names.iter().position(|n| n == dep)
+                    .unwrap_or_else(|| panic!(
+                        "Extension '{}' depends on '{}' which is not registered. \
+                         Registered extensions: {:?}",
+                        ext.name(), dep, names
+                    ));
+                // Dependency must be in same or lower layer
+                let dep_layer = self.extensions[dep_idx].layer();
+                assert!(
+                    dep_layer &lt;= ext.layer(),
+                    "Extension '{}' (layer {}) depends on '{}' (layer {}). \
+                     Dependencies must be in an equal or lower layer.",
+                    ext.name(), ext.layer(), dep, dep_layer
+                );
+            }
+        }
+
+        // Pre-compute after_turn firing order
+        // This is the canonical order: heartbeat -&gt; lifespan -&gt; daimon -&gt;
+        // memory -&gt; risk -&gt; dream -&gt; cybernetics -&gt; clade -&gt; telemetry
+        self.firing_orders.insert(
+            HookId::AfterTurn,
+            self.compute_topological_order(HookId::AfterTurn),
+        );
+
+        // Pre-compute all other hook orders
+        for hook_id in [
+            HookId::Session, HookId::Input, HookId::BeforeAgentStart,
+            HookId::ToolCall, HookId::ToolResult, HookId::SystemPrompt,
+            HookId::Steer, HookId::End,
+        ] {
+            self.firing_orders.insert(
+                hook_id.clone(),
+                self.compute_topological_order(hook_id),
+            );
+        }
+    }
+
+    /// Fire the after_turn hook across all extensions that implement it.
+    /// Extensions fire in the pre-computed topological order.
+    pub async fn fire_after_turn(&amp;self, ctx: &amp;mut AfterTurnCtx) -&gt; Result&lt;()&gt; {
+        let order = self.firing_orders.get(&amp;HookId::AfterTurn)
+            .expect("Registry not built -- call build() before firing hooks");
+        for &amp;idx in order {
+            self.extensions[idx].on_after_turn(ctx).await?;
+        }
+        Ok(())
+    }
+
+    /// Fire the tool_call hook. Returns the most restrictive action
+    /// (any Block beats all Allows).
+    pub async fn fire_tool_call(
+        &amp;self,
+        call: &amp;ToolCall,
+        ctx: &amp;mut ToolCallCtx,
+    ) -&gt; Result&lt;ToolAction&gt; {
+        let order = self.firing_orders.get(&amp;HookId::ToolCall)
+            .expect("Registry not built");
+        let mut result = ToolAction::Allow;
+        for &amp;idx in order {
+            let action = self.extensions[idx].on_tool_call(call, ctx).await?;
+            match action {
+                ToolAction::Block(_) =&gt; return Ok(action), // Immediate block
+                ToolAction::Modify(_) =&gt; result = action,  // Modification overrides allow
+                ToolAction::Allow =&gt; {}                     // No change
+            }
+        }
+        Ok(result)
+    }
+
+    /// Compute topological order for a given hook, respecting layer ordering
+    /// and declared dependencies.
+    fn compute_topological_order(&amp;self, _hook_id: HookId) -&gt; Vec&lt;usize&gt; {
+        // Layer ordering is sufficient because all dependencies flow from
+        // higher to lower layers. Within a layer, registration order
+        // (which the build() sort makes deterministic) applies.
+        //
+        // A full Kahn's algorithm implementation would be needed if
+        // intra-layer dependencies were complex, but the current
+        // 28-extension graph doesn't require it.
+        (0..self.extensions.len()).collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="6-golemstate-the-mutable-world"><a class="header" href="#6-golemstate-the-mutable-world">6. GolemState: The Mutable World</a></h2>
+<p>GolemState is the single mutable struct that extensions read and write during hook execution. It represents everything the Golem currently “knows” about itself and its environment.</p>
+<p>The struct is organized by ownership: each section is written by a specific extension (or set of extensions) and read by downstream extensions. This ownership pattern is what makes the sequential <code>after_turn</code> firing order correct – each section is written once per tick, then read by later extensions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The mutable state of a living Golem. Passed through the extension chain.
+///
+/// Organization: each section has a primary writer (the extension that sets it)
+/// and multiple readers (downstream extensions that consume it).
+///
+/// This struct is NOT thread-safe on its own -- it is passed as `&amp;mut` through
+/// the sequential hook chain. The CorticalState and EventFabric (wrapped in Arc)
+/// provide thread-safe cross-fiber access for the specific data that needs it.
+pub struct GolemState {
+    // ===================================================================
+    // IDENTITY (set once at provisioning, read-only thereafter)
+    // ===================================================================
+    /// Unique identifier for this Golem (derived from on-chain ERC-8004
+    /// registration).
+    pub id: GolemId,
+    /// Configuration loaded from golem.toml + STRATEGY.md.
+    pub config: GolemConfig,
+    /// The Golem's generation number (0 = first-gen, N = Nth successor).
+    pub generation: u32,
+
+    // ===================================================================
+    // HEARTBEAT STATE
+    // Writer: heartbeat extension (after_turn)
+    // Readers: lifespan, daimon, memory, risk, dream, cybernetics, clade
+    // ===================================================================
+    /// Current tick number (monotonically increasing, starts at 0).
+    pub current_tick: u64,
+    /// The latest market observation (prices, positions, gas, anomalies).
+    /// None before the first tick completes.
+    pub observation: Option&lt;Observation&gt;,
+    /// Results from market probes (price deviation, liquidity change, etc.).
+    pub probe_results: Vec&lt;ProbeResult&gt;,
+    /// Current market regime (trending_up, trending_down, volatile,
+    /// range_bound, unknown). Detected from probe results using regime
+    /// classification.
+    pub regime: MarketRegime,
+    /// How surprising was this tick's observation vs. the Golem's
+    /// expectations? Range [0.0, 1.0]. Compared against the adaptive
+    /// threshold to determine cognitive tier (T0/T1/T2).
+    pub prediction_error: f64,
+    /// Which cognitive tier was selected for this tick.
+    /// T0 = suppress (no LLM, $0.00), T1 = analyze (cheap LLM),
+    /// T2 = deliberate (full LLM).
+    pub cognitive_tier: CognitiveTier,
+
+    // ===================================================================
+    // MORTALITY STATE
+    // Writer: lifespan extension (after_turn)
+    // Readers: daimon, dreams, context, gating
+    // ===================================================================
+    /// Three-component mortality state. Any component reaching zero kills
+    /// the Golem. Multiplicative composition:
+    /// vitality_composite = economic * epistemic * stochastic.
+    pub vitality: VitalityState,
+    /// Current behavioral phase derived from vitality composite.
+    /// Thriving (&gt;0.7) -&gt; Stable (0.5-0.7) -&gt; Conservation (0.3-0.5) -&gt;
+    /// Declining (0.1-0.3) -&gt; Terminal (&lt;0.1).
+    pub phase: BehavioralPhase,
+    /// Remaining credit balance in USDC. When this reaches zero, economic
+    /// death.
+    pub credit_remaining: f64,
+    /// Estimated ticks until death at current burn rate.
+    pub estimated_ttl_ticks: u64,
+
+    // ===================================================================
+    // AFFECT STATE
+    // Writer: daimon extension (after_turn)
+    // Readers: memory (emotional tags), dreams (emotional load),
+    //          context (mood-congruent retrieval), gating (arousal)
+    // ===================================================================
+    /// Current Pleasure-Arousal-Dominance vector. Updated by the Daimon
+    /// after appraisal. Also written to the CorticalState for zero-latency
+    /// reads by background fibers.
+    pub current_pad: PADVector,
+    /// Discrete emotion label derived from PAD octant.
+    pub primary_emotion: PlutchikLabel,
+    /// Somatic markers that fired this tick (situation -&gt; emotional residue
+    /// of past outcomes).
+    pub somatic_markers_fired: Vec&lt;SomaticMarkerSummary&gt;,
+
+    // ===================================================================
+    // MEMORY STATE
+    // Writer: memory extension (after_turn)
+    // Readers: dreams (episodes for replay), cybernetics (learning rate)
+    // ===================================================================
+    /// Episodes written to the Grimoire during this tick.
+    pub episodes_written_this_tick: Vec&lt;EpisodeId&gt;,
+    /// All Grimoire mutations this tick (inserts, updates, promotions,
+    /// deletions).
+    pub grimoire_mutations: Vec&lt;GrimoireMutation&gt;,
+    /// Admission Gate statistics (accepted/rejected and why).
+    pub admission_gate_stats: AdmissionGateStats,
+
+    // ===================================================================
+    // RISK STATE
+    // Writer: risk extension (tool_call, after_turn)
+    // Readers: dreams (risk signals), clade (warnings shared)
+    // ===================================================================
+    /// Result of the five-layer risk assessment for this tick.
+    pub risk_assessment: Option&lt;RiskAssessment&gt;,
+    /// Currently active warnings (risk signals that haven't been resolved).
+    pub active_warnings: Vec&lt;Warning&gt;,
+
+    // ===================================================================
+    // DREAM STATE
+    // Writer: dream extension (after_turn)
+    // Readers: cybernetics (dream insights feed self-tuning)
+    // ===================================================================
+    /// Current dream state (Idle, Scheduled, InProgress, Completed).
+    pub dream_state: DreamState,
+    /// Result of the most recent dream cycle (if any).
+    pub last_dream_result: Option&lt;DreamCycleResult&gt;,
+
+    // ===================================================================
+    // CYBERNETICS STATE
+    // Writer: cybernetics extension (after_turn)
+    // ===================================================================
+    /// Current revision of the Context Governor's learned policy.
+    pub context_policy_revision: u32,
+    /// What the cybernetics extension adjusted this tick.
+    pub self_tune_adjustments: Vec&lt;PolicyAdjustment&gt;,
+
+    // ===================================================================
+    // COORDINATION STATE
+    // Writer: clade extension (after_turn)
+    // ===================================================================
+    /// Result of the latest clade sync (entries sent/received).
+    pub clade_sync_status: CladeSyncStatus,
+    /// Current Pheromone Field readings (threats, opportunities, wisdom).
+    pub pheromone_readings: PheromoneReadings,
+
+    // ===================================================================
+    // POSITION STATE (managed by tool results and chain reads)
+    // ===================================================================
+    /// Snapshots of all current DeFi positions (LP ranges, lending
+    /// positions, vault deposits).
+    pub positions: Vec&lt;PositionSnapshot&gt;,
+    /// Total portfolio value in USD.
+    pub portfolio_value: f64,
+
+    // ===================================================================
+    // INTERVENTION STATE (managed by intervention extension)
+    // ===================================================================
+    /// Active steers -- high-priority interrupts that preempt the current
+    /// tick.
+    pub active_steers: Vec&lt;Intervention&gt;,
+    /// Pending followUps -- queued for the next appropriate decision
+    /// window.
+    pub pending_followups: Vec&lt;Intervention&gt;,
+
+    // ===================================================================
+    // SHARED INFRASTRUCTURE (Arc-wrapped for cross-fiber access)
+    // ===================================================================
+    /// Lock-free atomic perception surface. See Section 8.
+    pub cortical_state: Arc&lt;CorticalState&gt;,
+    /// Broadcast event bus. See Section 7.
+    pub event_fabric: Arc&lt;EventFabric&gt;,
+    /// The Golem's knowledge base (LanceDB + SQLite + filesystem).
+    pub grimoire: Arc&lt;Grimoire&gt;,
+    /// Merkle hash-chain audit trail.
+    pub audit: Arc&lt;AuditChain&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="intervention-primitives-from-source-00-runtime-primitives"><a class="header" href="#intervention-primitives-from-source-00-runtime-primitives">Intervention Primitives (from source 00-runtime-primitives)</a></h3>
+<p>The intervention system uses typed <code>InterventionKind</code> variants and delivery windows targeting specific cognitive phases. Steers are preemptive (interrupt current execution). FollowUps are non-preemptive (delivered when idle). Internal systems (risk daemon, mortality engine) use the same pathway via <code>SelfSteer</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-surfaces/src/intervention.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum InterventionKind {
+    /// Preempt current execution.
+    Steer { cancel_in_flight: bool },
+    /// Queue for a specific decision window.
+    FollowUp { window: DeliveryWindow },
+    /// System-generated: from internal daemons (risk, mortality).
+    SelfSteer { source: SelfSteerSource },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum DeliveryWindow {
+    NextDecide,
+    NextReflect,
+    NextCurator,
+    NextDream,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum SelfSteerSource {
+    RiskDaemon,
+    MortalityEngine,
+    PoliceCage,
+    AttentionForager,
+}
+
+pub struct Intervention {
+    pub id: InterventionId,
+    pub kind: InterventionKind,
+    pub message: String,
+    pub priority: u8,
+    pub sender: InterventionSender,
+    pub created_at: u64,
+    pub deadline: Option&lt;u64&gt;,
+}
+
+pub struct InterventionQueue {
+    high_priority: VecDeque&lt;Intervention&gt;,
+    low_priority: BTreeMap&lt;DeliveryWindow, VecDeque&lt;Intervention&gt;&gt;,
+}
+
+impl InterventionQueue {
+    pub fn push_steer(
+        &amp;mut self, msg: String, cancel_in_flight: bool, priority: u8,
+    ) -&gt; InterventionId { /* ... */ }
+
+    pub fn push_follow_up(
+        &amp;mut self, msg: String, window: DeliveryWindow,
+    ) -&gt; InterventionId { /* ... */ }
+
+    pub fn drain_steers(&amp;mut self) -&gt; Vec&lt;Intervention&gt; { /* ... */ }
+
+    pub fn drain_for_window(
+        &amp;mut self, window: DeliveryWindow,
+    ) -&gt; Vec&lt;Intervention&gt; { /* ... */ }
+}
+<span class="boring">}</span></code></pre>
+<p>Every intervention becomes a Grimoire episode so the agent learns from its response pattern.</p>
+<h3 id="session-tree-from-source-00-runtime-primitives"><a class="header" href="#session-tree-from-source-00-runtime-primitives">Session Tree (from source 00-runtime-primitives)</a></h3>
+<p>Conversation history is modeled as a tree, not a linear list. The trunk is the main conversation. At any point you can branch, creating an alternative path from any earlier node. Branches are typed with explicit semantics.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-inference/src/session.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum BranchKind {
+    /// What-if analysis from a historical checkpoint.
+    Sim { hypothesis: String },
+    /// Preview owner intervention before applying it.
+    PreSteer { pending_steer: String },
+    /// Creative exploration during sleep cycles.
+    Dream { seed: DreamSeed },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ConversationNode {
+    pub id: NodeId,
+    pub parent_id: Option&lt;NodeId&gt;,
+    pub kind: NodeKind,
+    pub messages: Vec&lt;AgentMessage&gt;,
+    /// SHA-256 of parent hash + this node's content.
+    pub content_hash: [u8; 32],
+    pub created_at: u64,
+    pub label: Option&lt;String&gt;,
+    pub metadata: ConversationMetadata,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ConversationMetadata {
+    pub model: String,
+    pub cost_usd: f64,
+    pub token_count: u32,
+    pub golem_id: u64,
+    pub checkpoint_id: Option&lt;String&gt;,
+}
+
+pub struct ConversationTree {
+    nodes: HashMap&lt;NodeId, ConversationNode&gt;,
+    current_head: NodeId,
+    root: NodeId,
+}
+
+impl ConversationTree {
+    pub fn new(root_messages: Vec&lt;AgentMessage&gt;) -&gt; Self { /* ... */ }
+    pub fn navigate(&amp;mut self, target: NodeId) -&gt; Result&lt;Vec&lt;NodeId&gt;&gt; { /* ... */ }
+    pub fn branch(
+        &amp;self, from: NodeId, kind: BranchKind,
+    ) -&gt; ConversationBranch { /* ... */ }
+    pub fn current_path(&amp;self) -&gt; Vec&lt;&amp;ConversationNode&gt; { /* ... */ }
+    pub fn find_by_hash(
+        &amp;self, hash: [u8; 32],
+    ) -&gt; Option&lt;&amp;ConversationNode&gt; { /* ... */ }
+    pub fn verify_integrity(&amp;self) -&gt; bool { /* ... */ }
+}
+<span class="boring">}</span></code></pre>
+<p>The Merkle hash chain makes post-hoc history editing detectable. In a DeFi context, an agent that made a bad trade has an incentive (if compromised) to edit history. The chain prevents that silently.</p>
+<p>Branches are typed, single-level only (no branch-of-branch), and cost-attributed. <code>BranchSession</code> wraps a ConversationTree with cost tracking and a commit/abort protocol:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct BranchSession {
+    pub id: SessionId,
+    pub parent_id: SessionId,
+    pub root_node: NodeId,
+    pub kind: BranchKind,
+    pub tree: ConversationTree,
+    pub cost_usd: f64,
+    pub max_cost_usd: f64,
+    pub pending_predictions: Vec&lt;SimulationPrediction&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>ChronoNav</strong> provides time-travel navigation, explicit about direction (forward vs. backward), with structured summaries and audit-chain recording:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ChronoNavRequest {
+    pub target: NodeId,
+    pub direction: NavDirection,
+    pub summary_policy: SummaryPolicy,
+    pub instruction_update: Option&lt;InstructionUpdate&gt;,
+}
+
+#[derive(Debug, Clone)]
+pub enum SummaryPolicy {
+    None,
+    Structural,
+    Narrative { max_tokens: u32 },
+    Custom(String),
+}
+<span class="boring">}</span></code></pre>
+<h3 id="three-tier-tool-authorization-from-source-00-runtime-primitives"><a class="header" href="#three-tier-tool-authorization-from-source-00-runtime-primitives">Three-Tier Tool Authorization (from source 00-runtime-primitives)</a></h3>
+<p>Tools are organized into three trust tiers enforced by the type system. <code>Capability&lt;T&gt;</code> tokens are created only by the safety extension, consumed by move semantics, and cannot be forged or reused. The <code>PhantomData&lt;fn(T) -&gt; T&gt;</code> (invariant over T) prevents using a <code>Capability&lt;SwapTool&gt;</code> where a <code>Capability&lt;WithdrawTool&gt;</code> is expected.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-tools/src/lib.rs
+
+/// Unforgeable, single-use capability token.
+/// No Default, no Clone, no Copy.
+pub struct Capability&lt;T&gt; {
+    pub value_limit: f64,
+    pub expires_at: u64,
+    pub policy_hash: [u8; 32],
+    pub permit_id: String,
+    _marker: PhantomData&lt;fn(T) -&gt; T&gt;,
+}
+
+// Tier 1: read tools -- no capability needed
+#[async_trait]
+pub trait ReadTool: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn schema(&amp;self) -&gt; serde_json::Value;
+    async fn execute_read(
+        &amp;self, params: serde_json::Value, ctx: &amp;ToolContext,
+    ) -&gt; Result&lt;ToolResult&gt;;
+}
+
+// Tier 2: write tools -- capability consumed on use
+#[async_trait]
+pub trait WriteTool: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn schema(&amp;self) -&gt; serde_json::Value;
+    async fn execute_write(
+        &amp;self,
+        params: serde_json::Value,
+        ctx: &amp;ToolContext,
+        capability: Capability&lt;Self&gt;,
+    ) -&gt; Result&lt;ToolResult&gt;
+    where Self: Sized;
+}
+
+// Tier 3: privileged tools -- capability + owner approval
+#[async_trait]
+pub trait PrivilegedTool: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn schema(&amp;self) -&gt; serde_json::Value;
+    async fn execute_privileged(
+        &amp;self,
+        params: serde_json::Value,
+        ctx: &amp;ToolContext,
+        capability: Capability&lt;Self&gt;,
+        owner_approval: OwnerApproval,
+    ) -&gt; Result&lt;ToolResult&gt;
+    where Self: Sized;
+}
+<span class="boring">}</span></code></pre>
+<p>Move semantics make “impossible” mean “won’t compile.” Code that would call a write tool without a capability token does not compile.</p>
+<blockquote>
+<p><strong>Note</strong>: Section 11 (above) shows the simplified Capability pattern used in the registry. This three-tier model from the source is the full design with value limits, policy hashes, and tier-specific trait bounds.</p>
+</blockquote>
+<h3 id="model-routing-from-source-00-runtime-primitives"><a class="header" href="#model-routing-from-source-00-runtime-primitives">Model Routing (from source 00-runtime-primitives)</a></h3>
+<p>The <code>ProviderRouter</code> implements a full routing layer with three cognitive tiers, cost tracking, budget enforcement, and fallback chains.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-inference/src/provider_router.rs
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CognitiveTier {
+    /// No LLM. Pure Rust. ~80% of ticks. $0.
+    T0,
+    /// Haiku-class. Analysis. ~18% of ticks. ~$0.001/call.
+    T1,
+    /// Opus-class. Deliberation. ~2% of ticks. ~$0.03-$0.10/call.
+    T2,
+}
+
+pub struct ProviderRouter {
+    tier_configs: HashMap&lt;CognitiveTier, TierConfig&gt;,
+    providers: HashMap&lt;String, Box&lt;dyn LlmProvider&gt;&gt;,
+    daily_spend: HashMap&lt;CognitiveTier, AtomicF64&gt;,
+    daily_budget: f64,
+    auth: Arc&lt;AuthStorage&gt;,
+}
+
+impl ProviderRouter {
+    pub async fn complete(
+        &amp;self,
+        tier: CognitiveTier,
+        messages: Vec&lt;AgentMessage&gt;,
+        tools: &amp;[ToolDef],
+    ) -&gt; Result&lt;ProviderResponse&gt; { /* ... */ }
+
+    pub fn budget_ok(&amp;self, tier: CognitiveTier) -&gt; bool { /* ... */ }
+}
+<span class="boring">}</span></code></pre>
+<p>Model selection is not a user-facing API. It is the model-router extension’s job, driven by the prediction-error gate result for each tick.</p>
+<h3 id="adaptive-clock-from-source-00-runtime-primitives"><a class="header" href="#adaptive-clock-from-source-00-runtime-primitives">Adaptive Clock (from source 00-runtime-primitives)</a></h3>
+<p>Three concurrent temporal scales, modeled after neural oscillatory hierarchies:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-runtime/src/adaptive_clock.rs
+
+pub struct AdaptiveClock {
+    gamma: ClockOscillator,   // 5-15s: perception
+    theta: ClockOscillator,   // 30-120s: cognition
+    delta: DeltaCounter,      // ~50 theta-ticks: consolidation
+    cost_tracker: DailyCostTracker,
+    config: ClockConfig,
+}
+
+pub struct ClockOscillator {
+    min_interval: Duration,
+    max_interval: Duration,
+    current_interval: Duration,
+}
+
+impl ClockOscillator {
+    pub fn accelerate(&amp;mut self) {
+        self.current_interval = (self.current_interval / 2).max(self.min_interval);
+    }
+    pub fn decelerate(&amp;mut self) {
+        self.current_interval = (self.current_interval * 2).min(self.max_interval);
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum TickKind { Gamma, Theta, Delta }
+<span class="boring">}</span></code></pre>
+<p>Gamma handles perception (resolve predictions, update CorticalState). Theta handles cognition (full predict-appraise-gate-retrieve-deliberate-act-reflect pipeline). Delta handles consolidation (Curator cycle, memory maintenance, dream scheduling). The clock throttles all rates when approaching the daily budget ceiling.</p>
+<h3 id="context-management-compaction-preservation-from-source-00-runtime-primitives"><a class="header" href="#context-management-compaction-preservation-from-source-00-runtime-primitives">Context Management: Compaction Preservation (from source 00-runtime-primitives)</a></h3>
+<p>When context compaction applies (to the conversation sidecar), it preserves structured data:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-context/src/compaction.rs
+
+pub struct CompactionPreserve {
+    pub policy_cage_hash: [u8; 32],
+    pub positions: Vec&lt;PositionSummary&gt;,
+    pub behavioral_phase: BehavioralPhase,
+    pub playbook_heuristics: Vec&lt;PlaybookEntry&gt;,
+    pub active_warnings: Vec&lt;RiskWarning&gt;,
+}
+
+pub struct CompactionResult {
+    pub structured: CompactionPreserve,
+    pub narrative: String,
+    pub tokens_before: u32,
+    pub tokens_after: u32,
+    pub compression_ratio: f32,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<p><em>Continued in <a href="./13b-runtime-extensions.html">13b-runtime-extensions.md</a>: Type-State Machine, Event Fabric, CorticalState, Arena, Shutdown, Main Binary (Sections 7-15).</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/13-runtime-extensions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/13b-runtime-extensions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/13-runtime-extensions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/13b-runtime-extensions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

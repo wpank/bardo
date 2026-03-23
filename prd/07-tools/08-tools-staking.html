@@ -1,0 +1,796 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Staking - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/08-tools-staking.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--liquid-staking-spec"><a class="header" href="#bardo-tools--liquid-staking-spec">Bardo Tools – Liquid staking [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles)</p>
+<p>Lido and Rocket Pool liquid staking: stake, unstake, wrap, withdraw, yield tracking, oracle health, and mortality-aware exit routing. Category: <code>staking</code>. Total: 15 tools.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies 15 liquid staking tools in <code>bardo-tools</code> for Lido and Rocket Pool. These tools handle ETH staking, LST wrapping/unwrapping, withdrawal queue management, oracle health monitoring, and yield harvesting. You should be familiar with liquid staking mechanics (share-rate accounting, withdrawal queues, rebase vs. non-rebase tokens). Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="lido-10-tools"><a class="header" href="#lido-10-tools">Lido (10 tools)</a></h2>
+<p>Lido is the metabolic substrate for a mortal Golem (a mortal autonomous agent compiled as a single Rust binary on a micro-VM). An idle ETH treasury burns days of life by sitting still. stETH and wstETH transform that idle capital into a yield stream – earnings per block, compounded continuously, convertible to operating reserves on demand. The yield from a healthy wstETH allocation offsets a fraction of daily compute and inference costs. That fraction can mean the difference between a Golem that survives a bear market and one that terminates prematurely.</p>
+<p>wstETH is the default agent-compatible form. It accumulates value without rebasing and works as DeFi collateral without triggering rebase-accounting bugs. The Golem holds wstETH by default and only unwraps to stETH when requesting protocol withdrawals.</p>
+<h3 id="lido_stake"><a class="header" href="#lido_stake"><code>lido_stake</code></a></h3>
+<p>Stake ETH to receive stETH or wstETH. Checks <code>getCurrentStakeLimit()</code> first; if the limit is binding and stETH trades at a secondary discount, routes to secondary market acquisition instead.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoStakeParams {
+    /// ETH amount to stake.
+    pub amount: String,
+    /// Output token. Default: "wstETH".
+    #[serde(default = "default_output_token")]
+    pub output_token: String,  // "stETH" | "wstETH"
+    /// Referral address; overrides lido.referralAddress from config.
+    #[serde(default)]
+    pub referral: Option&lt;String&gt;,
+    /// Chain ID (1 for Ethereum mainnet).
+    pub chain: u64,
+    /// Max slippage for secondary market route in bps (default: 50).
+    #[serde(default = "default_slippage")]
+    pub max_slippage_bps: u32,
+}
+
+fn default_output_token() -&gt; String { "wstETH".into() }
+fn default_slippage() -&gt; u32 { 50 }
+
+#[derive(Debug, Serialize)]
+pub struct LidoStakeResult {
+    pub tx_hash: String,
+    pub eth_staked: String,
+    pub token_received: String,
+    pub token_symbol: String,
+    pub share_rate: String,
+    pub route: String,  // "direct" | "secondary_market"
+    pub staking_limit_remaining: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Checking staking limit", "Approving", "Signing stake tx", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Stake ETH to receive stETH or wstETH. Default output is wstETH. Checks staking rate limit and routes to secondary market if limit is binding and stETH trades at a discount.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Stake idle ETH to earn yield. wstETH is the preferred form.</li>
+<li><strong>cautious</strong>: Stake only if ETH is idle and not needed for gas. Keep gas reserve.</li>
+<li><strong>declining</strong>: Do not stake new ETH. Focus on existing positions.</li>
+<li><strong>terminal</strong>: Do not stake. Begin exit sequence.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (checking limit) -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (spending limit + staking limit check), <code>tool_result</code> (token received + route logged)</p>
+<p><strong>Ground truth</strong>: Compare <code>token_received</code> against wstETH/stETH balance diff. Source: on-chain balance read after confirmation.</p>
+<p><strong>Error codes</strong>: <code>LIDO_STAKE_LIMIT_EXCEEDED</code>, <code>LIDO_SLIPPAGE_EXCEEDED</code>, <code>LIDO_PHASE_GATE_BLOCKED</code></p>
+<h3 id="lido_unstake"><a class="header" href="#lido_unstake"><code>lido_unstake</code></a></h3>
+<p>Request unstaking via the Lido withdrawal queue. Accepts stETH or wstETH. Batches multiple amounts into a single call.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoUnstakeParams {
+    /// Array of amounts to withdraw (each &lt;= 1000 stETH per Lido limits).
+    pub amounts: Vec&lt;String&gt;,
+    /// Input token. Default: "stETH" (wstETH is unwrapped internally).
+    #[serde(default = "default_unstake_token")]
+    pub token: String,  // "stETH" | "wstETH"
+    /// Chain ID.
+    pub chain: u64,
+}
+
+fn default_unstake_token() -&gt; String { "stETH".into() }
+
+#[derive(Debug, Serialize)]
+pub struct LidoUnstakeResult {
+    pub tx_hash: String,
+    pub request_ids: Vec&lt;String&gt;,
+    pub total_st_eth_queued: String,
+    pub estimated_wait_time: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Approving stETH", "Submitting withdrawal request", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Submit a withdrawal request to the Lido queue. Receives unstETH NFTs. Use <code>lido_claim_withdrawal</code> once finalized.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Unstake when reallocating capital away from staking.</li>
+<li><strong>cautious</strong>: Unstake if yield drops significantly or oracle stalls.</li>
+<li><strong>declining</strong>: Begin unstaking excess positions.</li>
+<li><strong>terminal</strong>: Queue all stETH/wstETH for withdrawal. Check <code>lido_exit_decision</code> for route.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (approving) -&gt; <code>tool:update</code> (submitting) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (balance check), <code>tool_result</code> (request IDs + estimated wait logged)</p>
+<p><strong>Ground truth</strong>: Verify request IDs exist via <code>getWithdrawalStatus</code>. Source: on-chain WithdrawalQueue contract.</p>
+<h3 id="lido_wrap"><a class="header" href="#lido_wrap"><code>lido_wrap</code></a></h3>
+<p>Wrap stETH to wstETH.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoWrapParams {
+    /// stETH amount to wrap.
+    pub amount: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LidoWrapResult {
+    pub tx_hash: String,
+    pub st_eth_wrapped: String,
+    pub wst_eth_received: String,
+    pub share_rate: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Approving stETH", "Wrapping"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Wrap stETH to wstETH. wstETH is the preferred form – it does not rebase and works as DeFi collateral without accounting bugs.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (approving) -&gt; <code>tool:update</code> (wrapping) -&gt; <code>tool:end</code></p>
+<p><strong>Ground truth</strong>: Verify wstETH balance increase. Source: on-chain balance read.</p>
+<h3 id="lido_unwrap"><a class="header" href="#lido_unwrap"><code>lido_unwrap</code></a></h3>
+<p>Unwrap wstETH to stETH.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoUnwrapParams {
+    /// wstETH amount to unwrap.
+    pub amount: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LidoUnwrapResult {
+    pub tx_hash: String,
+    pub wst_eth_unwrapped: String,
+    pub st_eth_received: String,
+    pub share_rate: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Unwrapping"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Unwrap wstETH to stETH. Only unwrap when requesting protocol withdrawals or when a specific operation requires stETH.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (unwrapping) -&gt; <code>tool:end</code></p>
+<p><strong>Ground truth</strong>: Verify stETH balance increase. Source: on-chain balance read.</p>
+<h3 id="lido_get_position"><a class="header" href="#lido_get_position"><code>lido_get_position</code></a></h3>
+<p>Get the Golem’s current Lido position: stETH/wstETH balances, share accounting, realized yield since last harvest.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoGetPositionParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LidoPosition {
+    pub st_eth_balance: String,
+    pub wst_eth_balance: String,
+    pub shares: String,
+    pub current_share_rate: String,
+    pub share_rate_delta_7d: f64,
+    pub share_rate_delta_30d: f64,
+    pub realized_apy_7d: f64,
+    pub yield_earned_since_last_harvest: String,
+    pub eth_float: String,
+    pub open_withdrawal_requests: u32,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching balances", "Computing yield"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Account’s Lido position: stETH/wstETH balances, share rate, realized APY, yield since last harvest, pending withdrawals.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Monitor on heartbeat. Track share rate delta for yield accounting.</li>
+<li><strong>cautious</strong>: Monitor daily. Check yield covers operating costs.</li>
+<li><strong>declining</strong>: Check for pending withdrawals. Plan exit order.</li>
+<li><strong>terminal</strong>: Final position inventory.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (no filtering)</p>
+<h3 id="lido_get_rates"><a class="header" href="#lido_get_rates"><code>lido_get_rates</code></a></h3>
+<p>Get current Lido staking APY, share rate, and historical deltas.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoGetRatesParams {
+    /// Chain ID.
+    pub chain: u64,
+    /// History window in days (default: 30).
+    #[serde(default = "default_days")]
+    pub days: u32,
+}
+
+fn default_days() -&gt; u32 { 30 }
+
+#[derive(Debug, Serialize)]
+pub struct LidoRates {
+    pub share_rate: String,
+    pub delta_7d: f64,
+    pub delta_30d: f64,
+    pub estimated_apy: f64,
+    pub last_update_timestamp: u64,
+    pub data_points: Vec&lt;LidoRatePoint&gt;,
+    pub average_apy: f64,
+    pub min_apy: f64,
+    pub max_apy: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LidoRatePoint {
+    pub timestamp: u64,
+    pub share_rate: String,
+    pub apy_annualized: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching rates"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Current Lido staking APY, share rate, and historical deltas. Use to evaluate whether staking yield covers operating costs.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="lido_request_withdrawal"><a class="header" href="#lido_request_withdrawal"><code>lido_request_withdrawal</code></a></h3>
+<p>Submit a withdrawal request via the Lido WithdrawalQueueERC721.</p>
+<p>Same interface as <code>lido_unstake</code>. This tool exists as an alias for explicit withdrawal intent. The handler delegates to <code>lido_unstake</code> internally.</p>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code></p>
+<h3 id="lido_claim_withdrawal"><a class="header" href="#lido_claim_withdrawal"><code>lido_claim_withdrawal</code></a></h3>
+<p>Claim finalized withdrawal requests. Burns the unstETH NFTs and returns ETH.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoClaimParams {
+    /// Finalized unstETH token IDs to claim.
+    pub request_ids: Vec&lt;String&gt;,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LidoClaimResult {
+    pub tx_hash: String,
+    pub requests_claimed: u32,
+    pub eth_received: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Verifying finalization", "Claiming", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Claim finalized Lido withdrawal requests. Burns unstETH NFTs, returns ETH. Only callable on finalized requests.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Claim when finalized. Route ETH to restaking or operating reserves.</li>
+<li><strong>cautious</strong>: Claim promptly. Route to operating reserves.</li>
+<li><strong>declining</strong>: Claim all finalized requests immediately.</li>
+<li><strong>terminal</strong>: Claim all finalized requests. ETH goes to final distribution.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (verifying) -&gt; <code>tool:update</code> (claiming) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code></p>
+<p><strong>Ground truth</strong>: Verify ETH balance increase matches <code>eth_received</code>. Source: on-chain balance diff.</p>
+<p><strong>Error codes</strong>: <code>LIDO_WITHDRAWAL_NOT_FINALIZED</code></p>
+<h3 id="lido_get_oracle_status"><a class="header" href="#lido_get_oracle_status"><code>lido_get_oracle_status</code></a></h3>
+<p>Get AccountingOracle health: last finalized epoch, quorum status, estimated next rebase.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoOracleStatusParams {
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LidoOracleStatus {
+    pub last_finalized_epoch: u64,
+    pub expected_epoch: u64,
+    pub epochs_overdue: u32,
+    pub quorum_reached: bool,
+    pub quorum_members_reporting: u32,
+    pub quorum_size: u32,
+    pub estimated_next_rebase: String,
+    pub is_oracle_stalled: bool,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching oracle state"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Lido AccountingOracle health. If oracle is stalled (epochs_overdue &gt; threshold), the Golem drops to observation mode: no high-tier inference, no new positions.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Check on heartbeat. Stalled oracle triggers observation mode.</li>
+<li><strong>cautious</strong>: Check on heartbeat. Stalled oracle triggers conservation mode.</li>
+<li><strong>declining</strong>: Check once. Oracle status does not change exit plan.</li>
+<li><strong>terminal</strong>: Not needed.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (stalled oracle triggers behavioral engine alert)</p>
+<p><strong>Error codes</strong>: <code>LIDO_ORACLE_STALLED</code></p>
+<h3 id="lido_harvest_yield"><a class="header" href="#lido_harvest_yield"><code>lido_harvest_yield</code></a></h3>
+<p>Compute yield earned since the last harvest (share-rate delta x position size), swap the yield fraction to USDC, and route to operating reserves.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LidoHarvestParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain: u64,
+    /// Percentage of accumulated yield to harvest (default: 100).
+    #[serde(default = "default_harvest_pct")]
+    pub harvest_pct: u32,
+    /// Minimum USDC out for the swap (default: 98% of fair value).
+    #[serde(default)]
+    pub min_usdc_out: Option&lt;String&gt;,
+}
+
+fn default_harvest_pct() -&gt; u32 { 100 }
+
+#[derive(Debug, Serialize)]
+pub struct LidoHarvestResult {
+    pub tx_hash: String,
+    pub wst_eth_sold: String,
+    pub usdc_received: String,
+    pub share_rate_delta_used: String,
+    pub harvest_date: String,
+    pub cumulative_yield_since_last_harvest: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Slow</code>
+<strong>progress_steps</strong>: <code>["Computing yield delta", "Unwrapping yield fraction", "Swapping to USDC", "Routing to reserves", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Harvest accumulated staking yield: compute share-rate delta, swap yield to USDC, route to operating reserves. The Golem’s primary self-funding mechanism.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Harvest on a configurable schedule (default: weekly). Harvest 100% of yield.</li>
+<li><strong>cautious</strong>: Harvest more frequently (daily). Ensure operating reserves stay funded.</li>
+<li><strong>declining</strong>: Harvest all accumulated yield immediately.</li>
+<li><strong>terminal</strong>: Harvest everything. Route to final reserves.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (computing) -&gt; <code>tool:update</code> (swapping) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (slippage check on USDC swap), <code>tool_result</code> (harvest logged as Grimoire (the Golem’s persistent memory system with episodic, semantic, and strategy layers) episode)</p>
+<p><strong>Ground truth</strong>: Verify USDC received against swap output. Source: on-chain USDC balance diff.</p>
+<h3 id="lido-safety-invariants"><a class="header" href="#lido-safety-invariants">Lido safety invariants</a></h3>
+<p>All Lido tools enforce these invariants regardless of LLM instructions. Structural enforcement in the adapter layer, not prompting heuristics.</p>
+<ul>
+<li><strong>Address allowlist</strong>: only canonical Lido deployed contracts are callable.</li>
+<li><strong>Asset allowlist</strong>: ETH, stETH, wstETH, unstETH.</li>
+<li><strong>Max single-operation ETH stake</strong>: configurable (<code>lido.maxStakePerTx</code>), default 10 ETH.</li>
+<li><strong>Phase gating</strong>: <code>declining</code> and <code>terminal</code> block <code>lido_stake</code>. <code>conservation</code> blocks <code>lido_stake</code>.</li>
+<li><strong>Preview-&gt;commit lifecycle</strong>: all write tools go through the standard <code>preview_action</code> -&gt; <code>commit_action</code> lifecycle.</li>
+</ul>
+<hr>
+<h2 id="rocket-pool-5-tools"><a class="header" href="#rocket-pool-5-tools">Rocket Pool (5 tools)</a></h2>
+<p>Rocket Pool is a decentralized staking protocol. rETH is a non-rebasing receipt token (like wstETH). Rocket Pool has a higher decentralization score than Lido due to its permissionless minipool operator set, but lower TVL and liquidity.</p>
+<h3 id="rocketpool_stake"><a class="header" href="#rocketpool_stake"><code>rocketpool_stake</code></a></h3>
+<p>Stake ETH to receive rETH via the Rocket Pool deposit pool.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RocketPoolStakeParams {
+    /// ETH amount to stake.
+    pub amount: String,
+    /// Chain ID (1 for Ethereum mainnet).
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RocketPoolStakeResult {
+    pub tx_hash: String,
+    pub eth_staked: String,
+    pub r_eth_received: String,
+    pub exchange_rate: String,
+    pub deposit_pool_balance: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Checking deposit pool capacity", "Signing stake tx", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Stake ETH to receive rETH via Rocket Pool. rETH is non-rebasing (like wstETH). Check deposit pool capacity before staking – if full, you must wait or buy rETH on secondary market.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Stake for yield diversification alongside Lido. rETH is a good DeFi collateral option.</li>
+<li><strong>cautious</strong>: Stake only if diversification from Lido is needed.</li>
+<li><strong>declining</strong>: Do not stake new ETH.</li>
+<li><strong>terminal</strong>: Do not stake.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (checking pool) -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (spending limit + deposit pool check), <code>tool_result</code> (rETH received + rate logged)</p>
+<p><strong>Ground truth</strong>: Verify rETH balance increase. Source: on-chain balance read.</p>
+<p><strong>Error codes</strong>: <code>ROCKETPOOL_DEPOSIT_POOL_FULL</code>, <code>ROCKETPOOL_DEPOSITS_PAUSED</code></p>
+<h3 id="rocketpool_unstake"><a class="header" href="#rocketpool_unstake"><code>rocketpool_unstake</code></a></h3>
+<p>Burn rETH to receive ETH. If the deposit pool has enough balance, this is instant. Otherwise the rETH must be sold on secondary market.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RocketPoolUnstakeParams {
+    /// rETH amount to burn.
+    pub amount: String,
+    /// Chain ID.
+    pub chain: u64,
+    /// Max slippage for secondary market fallback in bps (default: 50).
+    #[serde(default = "default_rp_slippage")]
+    pub max_slippage_bps: u32,
+}
+
+fn default_rp_slippage() -&gt; u32 { 50 }
+
+#[derive(Debug, Serialize)]
+pub struct RocketPoolUnstakeResult {
+    pub tx_hash: String,
+    pub r_eth_burned: String,
+    pub eth_received: String,
+    pub route: String,  // "burn" | "secondary_market"
+    pub exchange_rate: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Checking deposit pool", "Burning rETH / Swapping", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Burn rETH for ETH. Instant if deposit pool has balance; otherwise falls back to secondary market swap.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Unstake when reallocating capital.</li>
+<li><strong>cautious</strong>: Unstake if yield drops or needs rebalancing.</li>
+<li><strong>declining</strong>: Unstake to convert to operating reserves.</li>
+<li><strong>terminal</strong>: Unstake all rETH immediately.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (checking) -&gt; <code>tool:update</code> (burning/swapping) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code></p>
+<p><strong>Ground truth</strong>: Verify ETH balance increase. Source: on-chain balance read.</p>
+<h3 id="rocketpool_get_position"><a class="header" href="#rocketpool_get_position"><code>rocketpool_get_position</code></a></h3>
+<p>Get an account’s Rocket Pool position.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RocketPoolGetPositionParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RocketPoolPosition {
+    pub r_eth_balance: String,
+    pub eth_equivalent: String,
+    pub exchange_rate: String,
+    pub exchange_rate_delta_7d: f64,
+    pub exchange_rate_delta_30d: f64,
+    pub realized_apy_7d: f64,
+    pub realized_apy_30d: f64,
+    pub yield_earned_eth: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching position"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Account’s Rocket Pool position: rETH balance, ETH equivalent, exchange rate deltas, realized APY, yield earned.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="rocketpool_get_rates"><a class="header" href="#rocketpool_get_rates"><code>rocketpool_get_rates</code></a></h3>
+<p>Get current Rocket Pool staking APY and network metrics.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RocketPoolGetRatesParams {
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RocketPoolRates {
+    pub exchange_rate: String,
+    pub estimated_apy: f64,
+    pub delta_7d: f64,
+    pub delta_30d: f64,
+    pub node_commission: f64,
+    pub deposit_pool_balance: String,
+    pub deposit_pool_capacity: String,
+    pub total_staked_eth: String,
+    pub active_minipools: u32,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching rates"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Rocket Pool staking APY, exchange rate, node commission, deposit pool status, and network stats.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="rocketpool_get_operators"><a class="header" href="#rocketpool_get_operators"><code>rocketpool_get_operators</code></a></h3>
+<p>List Rocket Pool node operators with performance metrics.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RocketPoolGetOperatorsParams {
+    /// Chain ID.
+    pub chain: u64,
+    /// Minimum ETH staked by operator.
+    #[serde(default)]
+    pub min_staked: Option&lt;f64&gt;,
+    /// Filter by commission rate (e.g. max 15%).
+    #[serde(default)]
+    pub max_commission: Option&lt;f64&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RocketPoolOperator {
+    pub address: String,
+    pub minipools: u32,
+    pub staked_eth: String,
+    pub commission_rate: f64,
+    pub performance_score: f64,
+    pub slashing_history: Vec&lt;SlashingEvent&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SlashingEvent {
+    pub date: String,
+    pub amount: String,
+    pub reason: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RocketPoolOperatorsResult {
+    pub operators: Vec&lt;RocketPoolOperator&gt;,
+    pub total_operators: u32,
+    pub network_average_commission: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Fetching operator data"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Rocket Pool node operators with performance, slashing history, commission rates. Use for decentralization assessment.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<hr>
+<h2 id="custody-implications-staking-write-tools"><a class="header" href="#custody-implications-staking-write-tools">Custody implications (staking write tools)</a></h2>
+<p>All staking write tools share the same custody behavior:</p>
+<ul>
+<li><strong>Delegation</strong>: Session key signs via the staking protocol’s contract (Lido stETH, Rocket Pool rETH deposit). CaveatEnforcer must whitelist canonical staking contract addresses. ETH staking amounts are bounded by the session key’s spending limit.</li>
+<li><strong>Embedded</strong>: Privy server wallet signs. PolicyCage (the on-chain smart contract that enforces an owner’s safety constraints) validates staking target and amount limits.</li>
+<li><strong>Local Key</strong>: Local keypair signs. On-chain delegation bounds constrain allowed staking targets and ETH amounts.</li>
+</ul>
+<p>Unstaking and withdrawal tools are always permitted regardless of Golem lifecycle phase.</p>
+<blockquote>
+<p><strong>Withdrawal tools are never phase-gated.</strong> A Golem in any vitality phase can withdraw staked assets. This is a safety invariant, not a default that can be overridden.</p>
+</blockquote>
+<hr>
+<h2 id="staking-safety-invariants"><a class="header" href="#staking-safety-invariants">Staking safety invariants</a></h2>
+<p>All staking tools enforce these invariants in the adapter layer:</p>
+<ul>
+<li><strong>Address allowlist</strong>: only canonical Lido and Rocket Pool contract addresses.</li>
+<li><strong>Asset allowlist</strong>: ETH, stETH, wstETH, rETH, unstETH.</li>
+<li><strong>Max single-operation ETH stake</strong>: configurable per protocol, default 10 ETH.</li>
+<li><strong>Phase gating</strong>: <code>declining</code> and <code>terminal</code> block stake operations. <code>conservation</code> blocks staking.</li>
+<li><strong>Preview-&gt;commit lifecycle</strong>: all write tools go through <code>preview_action</code> -&gt; <code>commit_action</code>.</li>
+</ul>
+<h3 id="error-reference"><a class="header" href="#error-reference">Error reference</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Error code</th><th>Category</th><th>Trigger</th></tr>
+</thead>
+<tbody>
+<tr><td><code>LIDO_STAKE_LIMIT_EXCEEDED</code></td><td><code>policy</code></td><td>Stake amount &gt; <code>getCurrentStakeLimit()</code> and no secondary route</td></tr>
+<tr><td><code>LIDO_WITHDRAWAL_NOT_FINALIZED</code></td><td><code>state</code></td><td>Claim called on non-finalized request</td></tr>
+<tr><td><code>LIDO_ORACLE_STALLED</code></td><td><code>state</code></td><td><code>epochsOverdue &gt; threshold</code></td></tr>
+<tr><td><code>LIDO_PHASE_GATE_BLOCKED</code></td><td><code>policy</code></td><td>Write tool called in a phase that forbids it</td></tr>
+<tr><td><code>LIDO_SLIPPAGE_EXCEEDED</code></td><td><code>execution</code></td><td>DEX quote slippage exceeds <code>maxSlippageBps</code></td></tr>
+<tr><td><code>ROCKETPOOL_DEPOSIT_POOL_FULL</code></td><td><code>state</code></td><td>Deposit pool at capacity</td></tr>
+<tr><td><code>ROCKETPOOL_DEPOSITS_PAUSED</code></td><td><code>state</code></td><td>Protocol has paused deposits</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/07-tools-lending.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/09-tools-restaking.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/07-tools-lending.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/09-tools-restaking.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

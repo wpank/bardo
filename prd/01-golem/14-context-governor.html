@@ -1,0 +1,2168 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Context Governor - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/14-context-governor.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="context-governor-spec"><a class="header" href="#context-governor-spec">Context Governor [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 3.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crates</strong>: <code>golem-context</code> (workspace.rs, policy.rs, cybernetics.rs, predictive.rs, interventions.rs)</p>
+<p><strong>Prerequisites</strong>: Read <code>00-overview.md</code>, <code>02-heartbeat.md</code> (decision cycle, DecisionCycleRecord), <code>01-cognition.md</code> (Cognitive Workspace, inference routing).</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the Context Governor – the system that decides what enters the Golem’s (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) LLM context window on each tick. It belongs to the <code>01-golem</code> cognition layer, in the <code>golem-context</code> crate. The key concept: context assembly is a learnable control problem, not a static token budget. The Governor sits between Grimoire (the agent’s persistent knowledge base) retrieval and inference, selecting and allocating candidates into a CognitiveWorkspace that is assembled fresh each tick. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="s1--thesis"><a class="header" href="#s1--thesis">S1 – Thesis</a></h2>
+<p>Context failures, not model failures, cause most agent breakdowns. Anthropic’s context engineering framework (2025) names this directly: the primary bottleneck for production agents is not reasoning capability but what enters the context window. For a Golem running days or weeks in volatile DeFi markets, managing 200K tokens of capacity with 15K consumed by tool definitions, context assembly is the single highest-leverage system in the entire architecture.</p>
+<p>Current approaches treat context assembly as a static token budget: N tokens for episodes, M for insights, K for playbook heuristics. This is the equivalent of giving every student the same textbook regardless of the exam. The Context Governor makes context assembly a <strong>learnable control problem</strong> – one that starts with static defaults and evolves through cybernetic feedback into a system that knows, per-regime and per-task-type, which context categories improve decisions and which waste tokens.</p>
+<p><strong>Position in architecture.</strong> The Governor sits between Grimoire retrieval and inference, operating through the extension chain’s <code>before_llm_call</code> hook (Extension #17) and <code>after_turn</code> hook:</p>
+<pre><code>Heartbeat probes → Grimoire retrieval → Context Governor → CognitiveWorkspace → Inference call
+</code></pre>
+<p>The Grimoire produces candidates – episodes, insights, heuristics, causal edges that are semantically relevant to the current situation. The Governor decides which candidates make it into the actual context window, how much space each category gets, and why. It logs every inclusion and exclusion decision for downstream learning.</p>
+<p>The Governor is not a retriever. It is a selector and allocator that operates on retrieval results.</p>
+<hr>
+<h2 id="s2--cognitiveworkspace-and-contextpolicy"><a class="header" href="#s2--cognitiveworkspace-and-contextpolicy">S2 – CognitiveWorkspace and ContextPolicy</a></h2>
+<h3 id="s21-cognitiveworkspace"><a class="header" href="#s21-cognitiveworkspace">S2.1 CognitiveWorkspace</a></h3>
+<p>The typed context unit assembled per inference call. Every LLM invocation receives a <code>CognitiveWorkspace</code> – not raw retrieved data, not unstructured prompts, but a structured, budgeted, and annotated package. This is Bardo’s implementation of the Context State Object pattern (Samsung Research, arXiv:2511.03728, 2025), where a compressed structured log replaces raw conversation history, achieving 6x reduction in initial prompt context and 10-25x reduction in context growth rate.</p>
+<p>See <code>01-cognition.md</code> S3 for the full <code>CognitiveWorkspace</code> struct. The key fields for the Governor:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Summary of how the Governor assembled the workspace.
+/// Attached to every CognitiveWorkspace for audit and learning.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct AssemblyReason {
+    pub category: String,
+    pub tokens_allocated: u32,
+    pub tokens_used: u32,
+    pub items_included: u32,
+    pub items_excluded: u32,
+    pub reason: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>assembly_reasons</code> vector is the Governor’s audit trail. Loop 1 (S4) reads it to learn which context categories contributed to good decisions.</p>
+<h3 id="s22-cognitiveworkspacedelta"><a class="header" href="#s22-cognitiveworkspacedelta">S2.2 CognitiveWorkspaceDelta</a></h3>
+<p>Rather than rebuilding the full workspace each turn, the Governor tracks deltas between consecutive assemblies. This reduces re-tokenization cost and makes it easier to detect which categories are churning versus stable.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Delta between two consecutive workspace assemblies.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CognitiveWorkspaceDelta {
+    /// Which categories changed since last assembly.
+    pub changed_categories: Vec&lt;String&gt;,
+    /// New entries added, keyed by category.
+    pub added: HashMap&lt;String, Vec&lt;ContextEntry&gt;&gt;,
+    /// Entries removed, keyed by category (entry IDs).
+    pub removed: HashMap&lt;String, Vec&lt;String&gt;&gt;,
+    /// Token budget change.
+    pub token_delta: i32,
+}
+
+/// Compute the delta between two workspace assemblies.
+pub fn compute_workspace_delta(
+    previous: &amp;CognitiveWorkspace,
+    current: &amp;CognitiveWorkspace,
+) -&gt; CognitiveWorkspaceDelta {
+    let mut delta = CognitiveWorkspaceDelta {
+        changed_categories: Vec::new(),
+        added: HashMap::new(),
+        removed: HashMap::new(),
+        token_delta: current.total_tokens as i32 - previous.total_tokens as i32,
+    };
+
+    for category in &amp;ALL_CATEGORIES {
+        let prev_ids: HashSet&lt;&amp;str&gt; = previous
+            .entries_for(category)
+            .iter()
+            .map(|e| e.id.as_str())
+            .collect();
+        let curr_ids: HashSet&lt;&amp;str&gt; = current
+            .entries_for(category)
+            .iter()
+            .map(|e| e.id.as_str())
+            .collect();
+
+        let new: Vec&lt;_&gt; = curr_ids.difference(&amp;prev_ids).collect();
+        let gone: Vec&lt;_&gt; = prev_ids.difference(&amp;curr_ids).collect();
+
+        if !new.is_empty() || !gone.is_empty() {
+            delta.changed_categories.push(category.to_string());
+            if !new.is_empty() {
+                delta.added.insert(
+                    category.to_string(),
+                    new.iter()
+                        .filter_map(|id| current.entry_by_id(category, id))
+                        .cloned()
+                        .collect(),
+                );
+            }
+            if !gone.is_empty() {
+                delta.removed.insert(
+                    category.to_string(),
+                    gone.iter().map(|id| id.to_string()).collect(),
+                );
+            }
+        }
+    }
+
+    delta
+}
+<span class="boring">}</span></code></pre>
+<blockquote>
+<p><strong>Cross-reference</strong>: The <code>CognitiveWorkspaceDelta</code> tracks high-level category changes between assemblies. For the lower-level I-frame/P-frame context delta compression (segment-level content hashes, forced recompact triggers, regime-change invalidation), see <a href="./03c-state-management.html">03c-state-management.md</a> Section 2 (Context Delta Compression). The <code>DeltaCompressor</code> from source <code>09-context-delta</code> operates on named <code>ContextSegment</code> entries with Blake3 content hashes and forces full I-frame recompacts when delta tokens exceed 30% of the budget or after 10 consecutive delta runs.</p>
+</blockquote>
+<h3 id="s23-contextpolicy"><a class="header" href="#s23-contextpolicy">S2.3 ContextPolicy</a></h3>
+<p>The <code>ContextPolicy</code> defines how the Governor assembles context. It starts as static defaults and evolves through cybernetic feedback (S4).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The learned context assembly policy.
+///
+/// This struct IS the Governor's intelligence. It starts with static
+/// defaults and evolves through three feedback loops (S4) into a
+/// regime-aware, phase-aware, task-aware allocation strategy.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContextPolicy {
+    /// Monotonically increasing revision number.
+    pub revision: u32,
+
+    /// Per-category token allocations (fraction of total budget, summing to 1.0).
+    pub allocations: HashMap&lt;ContextCategory, f64&gt;,
+
+    /// Retrieval configuration.
+    pub retrieval: RetrievalConfig,
+
+    /// Compression thresholds — when to summarize instead of including raw.
+    pub compression: CompressionConfig,
+
+    /// Override allocations per regime.
+    pub regime_overrides: HashMap&lt;MarketRegime, HashMap&lt;ContextCategory, f64&gt;&gt;,
+
+    /// Override allocations per behavioral phase.
+    pub phase_overrides: HashMap&lt;BehavioralPhase, HashMap&lt;ContextCategory, f64&gt;&gt;,
+
+    /// Override allocations per task type.
+    pub task_overrides: HashMap&lt;TaskType, HashMap&lt;ContextCategory, f64&gt;&gt;,
+
+    /// Model preference for the current policy.
+    pub model_preference: ModelPreference,
+
+    /// Performance tracking.
+    pub metrics: PolicyMetrics,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct RetrievalConfig {
+    /// Minimum cosine similarity for episode retrieval (default: 0.3).
+    pub similarity_threshold: f64,
+    /// Maximum episodes to retrieve (default: 10).
+    pub max_episode_count: u32,
+    /// Minimum confidence for insight inclusion (default: 0.4).
+    pub min_insight_confidence: f64,
+    /// Maximum causal graph traversal depth (default: 3).
+    pub max_causal_depth: u32,
+    /// Full episode slots for observation masking (default: 3).
+    pub full_episode_slots: u32,
+    /// Summary episode slots for observation masking (default: 7).
+    pub summary_episode_slots: u32,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CompressionConfig {
+    /// Summarize episodes longer than this token count (default: 200).
+    pub episode_summary_threshold: u32,
+    /// Summarize insights longer than this (default: 150).
+    pub insight_summary_threshold: u32,
+    /// ACON-evolved compression guidelines.
+    pub guidelines: Vec&lt;CompressionGuideline&gt;,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum ModelPreference {
+    CheapFirst,
+    Balanced,
+    Paranoid,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PolicyMetrics {
+    pub decision_quality_avg: f64,
+    /// Decisions per 1000 tokens.
+    pub token_efficiency: f64,
+    pub last_validated: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+pub enum ContextCategory {
+    Invariants,
+    Strategy,
+    Playbook,
+    Episodes,
+    Insights,
+    CausalEdges,
+    Contrarian,
+    DreamHypotheses,
+    ToolState,
+    DefiSnapshot,
+    Mortality,
+    Affect,
+    OwnerControl,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+pub enum TaskType {
+    Swap,
+    LpRebalance,
+    RiskCheck,
+    VaultDeposit,
+    VaultWithdraw,
+    StrategyReview,
+    Dream,
+    Sim,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s24-default-overrides"><a class="header" href="#s24-default-overrides">S2.4 Default Overrides</a></h3>
+<p>The initial policy uses fixed allocations derived from operational experience with LLM context engineering. These defaults are conservative – they over-allocate to invariants and strategy (safety-critical) and under-allocate to episodes and contrarian (learning-oriented). As the Governor learns, allocations shift toward the categories that contribute to better decisions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Default per-category allocations (fraction of total budget).
+pub fn default_allocations() -&gt; HashMap&lt;ContextCategory, f64&gt; {
+    use ContextCategory::*;
+    [
+        (Invariants, 0.15),
+        (Strategy, 0.10),
+        (Playbook, 0.15),
+        (Episodes, 0.12),
+        (Insights, 0.10),
+        (CausalEdges, 0.08),
+        (Contrarian, 0.04),
+        (DreamHypotheses, 0.03),
+        (ToolState, 0.03),
+        (DefiSnapshot, 0.08),
+        (Mortality, 0.04),
+        (Affect, 0.03),
+        (OwnerControl, 0.04),
+    ].into_iter().collect()
+    // Sum: ~0.99 (rounding). Normalized to 1.0 at assembly time.
+}
+
+/// Regime-specific overrides.
+pub fn default_regime_overrides() -&gt; HashMap&lt;MarketRegime, HashMap&lt;ContextCategory, f64&gt;&gt; {
+    use ContextCategory::*;
+    let mut overrides = HashMap::new();
+
+    // Volatile: more DeFi data, less exploration
+    overrides.insert(MarketRegime::Volatile, [
+        (DefiSnapshot, 0.10),   // +25%
+        (Episodes, 0.08),       // -33%
+        (Contrarian, 0.02),     // -50%
+    ].into_iter().collect());
+
+    // Bear high vol: survival focus
+    overrides.insert(MarketRegime::BearHighVol, [
+        (Mortality, 0.06),      // +50%
+        (Contrarian, 0.01),     // -75%
+        (DreamHypotheses, 0.01), // -67%
+    ].into_iter().collect());
+
+    overrides
+}
+
+/// Phase-specific overrides.
+pub fn default_phase_overrides() -&gt; HashMap&lt;BehavioralPhase, HashMap&lt;ContextCategory, f64&gt;&gt; {
+    use ContextCategory::*;
+    let mut overrides = HashMap::new();
+
+    // Conservation: survival focus
+    overrides.insert(BehavioralPhase::Conservation, [
+        (Mortality, 0.06),
+        (Episodes, 0.06),       // -50%
+        (Contrarian, 0.01),
+        (DreamHypotheses, 0.0),
+    ].into_iter().collect());
+
+    // Declining: heavy constraint awareness
+    overrides.insert(BehavioralPhase::Declining, [
+        (Mortality, 0.08),
+        (Invariants, 0.20),     // +33%
+        (Episodes, 0.04),
+        (Insights, 0.04),
+        (Contrarian, 0.0),
+        (DreamHypotheses, 0.0),
+        (Affect, 0.0),
+    ].into_iter().collect());
+
+    // Terminal: only constraints matter
+    overrides.insert(BehavioralPhase::Terminal, [
+        (Invariants, 0.30),
+        (Mortality, 0.10),
+    ].into_iter().collect());
+
+    overrides
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s3--seven-context-engineering-techniques"><a class="header" href="#s3--seven-context-engineering-techniques">S3 – Seven Context Engineering Techniques</a></h2>
+<p>Each technique is drawn from recent academic work and mapped to the Golem’s architecture. Together they define how the Context Governor decides what enters the context window.</p>
+<h3 id="s31-ace-agentic-context-engineering"><a class="header" href="#s31-ace-agentic-context-engineering">S3.1 ACE: Agentic Context Engineering</a></h3>
+<p><strong>Citation</strong>: Zhang, A. et al. “ACE: Agentic Context Engineering.” arXiv:2510.04618, 2025.</p>
+<p>ACE treats context as an evolving playbook refined through a Generator-Reflector-Curator cycle. The Generator produces reasoning trajectories; the Reflector distills insights from successes and failures; the Curator applies delta edits to structured context rather than regenerating it from scratch. This addresses two failure modes: “brevity bias” (summaries that lose critical detail) and “context collapse” (iterative summarization compounding information loss). ACE achieved +10.6% on the AppWorld agent benchmark.</p>
+<p>The ACE cycle maps directly to the Golem’s existing Reflexion/ExpeL loop, extended to context:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// ACE-style context strategy map.
+/// Task type determines retrieval strategy; phase and regime modify it.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContextStrategyMap {
+    pub task_strategies: HashMap&lt;TaskType, RetrievalStrategy&gt;,
+    pub phase_modifiers: HashMap&lt;BehavioralPhase, PhaseModifier&gt;,
+    pub regime_modifiers: HashMap&lt;MarketRegime, RegimeModifier&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct RetrievalStrategy {
+    /// Which Grimoire collections to query.
+    pub collections: Vec&lt;GrimoireCollection&gt;,
+    /// Minimum relevance score for inclusion.
+    pub relevance_threshold: f64,
+    /// Maximum entries per collection.
+    pub max_entries: HashMap&lt;GrimoireCollection, u32&gt;,
+    /// Whether to include causal graph traversal.
+    pub traverse_causal_graph: bool,
+    /// Custom ranking function weights for this task type.
+    pub ranking_weights: HashMap&lt;String, f64&gt;,
+}
+
+/// The ACE pipeline connection.
+///
+/// 1. Retrieve: Pull candidate context items from Grimoire
+/// 2. Score: Apply Beta-distribution-learned weights per category per regime
+/// 3. Filter: Remove items below the dynamic threshold (Beta.value() &lt; 0.3)
+/// 4. Reorder: Apply lost-in-middle mitigation (interleave sort)
+/// 5. Inject: Place into the CognitiveWorkspace for the current tick
+<span class="boring">}</span></code></pre>
+<h3 id="s32-retrieval-augmented-prompting-with-progressive-disclosure"><a class="header" href="#s32-retrieval-augmented-prompting-with-progressive-disclosure">S3.2 Retrieval-Augmented Prompting with Progressive Disclosure</a></h3>
+<p>Neither pure RAG nor pure full-context wins. Agentic RAG – where the LLM has tool-calling agency to dynamically retrieve – outperforms both (“Is Agentic RAG Worth It?”, arXiv:2601.07711, 2026). The optimal approach routes per-turn between full context, RAG, and hybrid based on context pressure and task phase.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Retrieve, rank, and progressively disclose context entries.
+/// Recent entries are injected in full; older entries as one-line
+/// summaries (observation masking per Lindenbauer et al., NeurIPS 2025).
+pub fn retrieve_and_rank(
+    candidates: &amp;[GrimoireEntry],
+    policy: &amp;ContextPolicy,
+    task_type: TaskType,
+    token_budget: u32,
+) -&gt; RankedContext {
+    // Rank by relevance * recency * confidence
+    let mut scored: Vec&lt;_&gt; = candidates.iter().map(|entry| {
+        let score = entry.relevance_score * 0.5
+            + recency_decay(entry.timestamp) * 0.3
+            + entry.confidence * 0.2;
+        (entry, score)
+    }).collect();
+
+    scored.sort_by(|a, b| b.1.partial_cmp(&amp;a.1).unwrap_or(std::cmp::Ordering::Equal));
+
+    // Progressive disclosure: full entries until budget pressure, then summaries
+    let mut result = RankedContext::default();
+    let mut tokens_used = 0u32;
+
+    for (entry, _score) in &amp;scored {
+        let entry_tokens = estimate_tokens(&amp;entry.content);
+
+        if tokens_used + entry_tokens &lt;= (token_budget as f64 * 0.7) as u32 {
+            // Under 70% budget: inject full content
+            result.full.push((*entry).clone());
+            tokens_used += entry_tokens;
+        } else if tokens_used &lt; (token_budget as f64 * 0.95) as u32 {
+            // 70-95% budget: inject one-line summary
+            result.summarized.push((*entry).clone());
+            tokens_used += estimate_tokens(&amp;entry.one_liner_summary);
+        } else {
+            // Over 95%: exclude, but the LLM can retrieve via query_grimoire
+            result.excluded.push((*entry).clone());
+        }
+    }
+
+    result
+}
+
+/// Route between full injection, RAG-only, and hybrid per turn.
+pub fn route_context_injection(
+    turn_phase: TurnPhase,
+    current_context_tokens: u32,
+    max_context_tokens: u32,
+    task_complexity: TaskComplexity,
+) -&gt; ContextRoute {
+    let context_pressure = current_context_tokens as f64 / max_context_tokens as f64;
+
+    // Low pressure + simple task = inject full context
+    if context_pressure &lt; 0.5 &amp;&amp; task_complexity == TaskComplexity::Low {
+        return ContextRoute::Full;
+    }
+
+    // High pressure = RAG only (let the LLM use query_grimoire)
+    if context_pressure &gt; 0.8 {
+        return ContextRoute::Rag;
+    }
+
+    // DECIDE and REFLECT phases benefit from full episodic context
+    if matches!(turn_phase, TurnPhase::Decide | TurnPhase::Reflect) {
+        return ContextRoute::Hybrid;
+    }
+
+    // Default: hybrid (inject essentials, let LLM retrieve the rest)
+    ContextRoute::Hybrid
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ContextRoute {
+    Full,
+    Rag,
+    Hybrid,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Why masking over summarization</strong>: Summarization introduces a subtle but dangerous failure mode – it can obscure that a previous action failed. If the summary reads “analyzed ETH/USDC pool conditions,” the LLM doesn’t know the analysis concluded the pool was dangerous. The original observation “ETH/USDC pool shows 4.2% IL risk, AVOID” is unambiguous. Masking preserves the original observations for recent events and drops older ones entirely, avoiding the lossy middle ground (Lindenbauer et al., arXiv:2508.21433, NeurIPS 2025 DL4C Workshop).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Apply observation masking to episodes.
+/// Most recent `full_slots` episodes are injected verbatim.
+/// Next `summary_slots` episodes are injected as one-line summaries.
+/// Remaining episodes are excluded (negative prehension) but available
+/// via query_grimoire.
+pub fn mask_episodes(
+    episodes: &amp;[Episode],
+    full_slots: usize,
+    summary_slots: usize,
+) -&gt; String {
+    let mut sorted = episodes.to_vec();
+    sorted.sort_by(|a, b| b.timestamp.cmp(&amp;a.timestamp));
+
+    let mut sections = Vec::new();
+
+    // Full episodes (most recent K)
+    let full = &amp;sorted[..full_slots.min(sorted.len())];
+    if !full.is_empty() {
+        sections.push("&lt;recent_episodes&gt;".to_string());
+        for ep in full {
+            sections.push(format!(
+                "  &lt;episode tick=\"{}\" type=\"{}\" outcome=\"{}\"&gt;\n    {}\n  &lt;/episode&gt;",
+                ep.tick, ep.episode_type, ep.outcome, ep.content
+            ));
+        }
+        sections.push("&lt;/recent_episodes&gt;".to_string());
+    }
+
+    // Summary episodes (next N, one-line each)
+    let summaries = &amp;sorted[full_slots.min(sorted.len())
+        ..(full_slots + summary_slots).min(sorted.len())];
+    if !summaries.is_empty() {
+        sections.push("&lt;older_episodes&gt;".to_string());
+        for ep in summaries {
+            sections.push(format!(
+                "  &lt;episode tick=\"{}\" type=\"{}\" outcome=\"{}\" summary=\"{}\" /&gt;",
+                ep.tick, ep.episode_type, ep.outcome, ep.one_liner_summary
+            ));
+        }
+        sections.push("&lt;/older_episodes&gt;".to_string());
+    }
+
+    // Remaining episodes are NOT included (negative prehension).
+    // The LLM can use query_grimoire to retrieve them if needed.
+    sections.join("\n")
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s33-phase-aware-context-routing"><a class="header" href="#s33-phase-aware-context-routing">S3.3 Phase-Aware Context Routing</a></h3>
+<p>Budget allocations shift by behavioral phase. A Golem in <code>Thriving</code> phase can afford exploratory context (contrarian evidence, dream hypotheses). A Golem in <code>Declining</code> phase cannot – it needs constraint awareness and survival data. A <code>Terminal</code> Golem gets only invariants and mortality.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Apply phase-specific overrides to the base policy.
+pub fn apply_phase_routing(
+    phase: BehavioralPhase,
+    base_policy: &amp;ContextPolicy,
+) -&gt; ContextPolicy {
+    let mut routed = base_policy.clone();
+    if let Some(overrides) = routed.phase_overrides.get(&amp;phase) {
+        for (cat, value) in overrides {
+            routed.allocations.insert(*cat, *value);
+        }
+    }
+    normalize_allocations(&amp;mut routed.allocations);
+    routed
+}
+
+/// Normalize allocations so they sum to 1.0.
+fn normalize_allocations(allocations: &amp;mut HashMap&lt;ContextCategory, f64&gt;) {
+    let total: f64 = allocations.values().sum();
+    if total &gt; 0.0 {
+        for v in allocations.values_mut() {
+            *v /= total;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Phase routing interacts with task-type routing. A <code>Swap</code> task in <code>Conservation</code> phase gets the swap task overrides with conservation modifiers applied on top. The composition order is: base allocations -&gt; task overrides -&gt; phase overrides -&gt; regime overrides. Later overrides win on conflicts.</p>
+<h3 id="s34-outcome-verification-context"><a class="header" href="#s34-outcome-verification-context">S3.4 Outcome Verification Context</a></h3>
+<p><strong>Citation</strong>: Cohen-Wang, B., Shah, H., Georgiev, B., &amp; Madry, A. “ContextCite: Attributing Model Generation to Context.” MIT CSAIL, arXiv:2409.00729, 2024.</p>
+<p>Attribution runs periodically (not every turn) via a background process. High-attribution items are flagged for preservation during compaction; low-attribution items are candidates for pruning. This feeds the cybernetic loops with hard data about which context categories actually drove decisions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Build verification context by comparing predicted outcomes
+/// against actual results.
+pub fn build_outcome_verification(
+    prediction: &amp;GolemPrediction,
+    actual: &amp;ObservedOutcome,
+    contribution_records: &amp;[ContextContributionRecord],
+) -&gt; OutcomeVerificationBlock {
+    let prediction_error = (prediction.value - actual.value).abs();
+    let was_correct_direction = (prediction.value - prediction.baseline).signum()
+        == (actual.value - prediction.baseline).signum();
+
+    // Find which context categories were present when the prediction was made
+    let prediction_tick = contribution_records.iter()
+        .find(|r| r.tick == prediction.tick);
+
+    // Categories that were injected but NOT referenced suggest the LLM
+    // ignored information that would have improved the prediction
+    let ignored_categories = prediction_tick
+        .map(|tick| {
+            tick.injected.iter()
+                .filter(|i| !tick.referenced.iter().any(|r| r.category == i.category))
+                .map(|i| i.category.clone())
+                .collect()
+        })
+        .unwrap_or_default();
+
+    OutcomeVerificationBlock {
+        prediction_error,
+        was_correct_direction,
+        ignored_categories,
+        calibration_delta: prediction_error / (prediction.confidence + 0.01),
+        recommendation: if prediction_error &gt; 0.2 {
+            format!("Increase allocation for: {:?}", ignored_categories)
+        } else {
+            "Current allocations adequate".to_string()
+        },
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct OutcomeVerificationBlock {
+    pub prediction_error: f64,
+    pub was_correct_direction: bool,
+    pub ignored_categories: Vec&lt;String&gt;,
+    pub calibration_delta: f64,
+    pub recommendation: String,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s35-state-compaction"><a class="header" href="#s35-state-compaction">S3.5 State Compaction</a></h3>
+<p>When context pressure rises above 80%, the Governor compacts state into XML-formatted blocks. Hard context (PolicyCage, positions, phase) is never compacted – only soft context gets compressed.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compact state into XML blocks for injection when context pressure
+/// is high. Hard context is always full fidelity; soft context is
+/// compressed proportionally.
+pub fn compact_state_for_context(
+    workspace: &amp;CognitiveWorkspace,
+    target_tokens: u32,
+) -&gt; String {
+    let mut blocks = Vec::new();
+
+    // Hard context: always full fidelity
+    blocks.push(format!(
+        "&lt;invariants&gt;\n  &lt;policy_cage hash=\"{}\"&gt;
+    {}
+    &lt;max_positions&gt;{}&lt;/max_positions&gt;
+    &lt;max_drawdown_bps&gt;{}&lt;/max_drawdown_bps&gt;
+  &lt;/policy_cage&gt;
+  &lt;phase&gt;{:?}&lt;/phase&gt;
+  &lt;active_warnings count=\"{}\"&gt;
+    {}
+  &lt;/active_warnings&gt;
+&lt;/invariants&gt;",
+        workspace.policy_cage.hash,
+        workspace.policy_cage.approved_assets.iter()
+            .map(|a| format!("&lt;asset&gt;{}&lt;/asset&gt;", a))
+            .collect::&lt;Vec&lt;_&gt;&gt;().join("\n    "),
+        workspace.policy_cage.max_positions,
+        workspace.policy_cage.max_drawdown_bps,
+        workspace.affect.phase,
+        workspace.active_warnings.len(),
+        workspace.active_warnings.iter()
+            .map(|w| format!("&lt;warning severity=\"{:?}\"&gt;{}&lt;/warning&gt;", w.severity, w.message))
+            .collect::&lt;Vec&lt;_&gt;&gt;().join("\n    "),
+    ));
+
+    // Soft context: compressed proportionally
+    let hard_tokens = estimate_tokens(&amp;blocks.join(""));
+    let _soft_budget = target_tokens.saturating_sub(hard_tokens);
+
+    // Episodes: use observation masking with fewer slots under pressure
+    let episode_block = mask_episodes(
+        &amp;workspace.retrieved_episodes,
+        2.min(workspace.retrieved_episodes.len()),
+        5.min(workspace.retrieved_episodes.len()),
+    );
+    blocks.push(episode_block);
+
+    blocks.join("\n\n")
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s36-regime-conditional-context"><a class="header" href="#s36-regime-conditional-context">S3.6 Regime-Conditional Context</a></h3>
+<p>Market regime changes demand different context. A volatile regime needs more DeFi snapshot data and warnings. A stable regime can afford more episodic exploration and dream hypotheses. The Governor detects regime transitions and applies overrides immediately, without waiting for the next Loop 2 cycle.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Apply regime-specific overrides to the base policy.
+pub fn apply_regime_routing(
+    regime: MarketRegime,
+    base_policy: &amp;ContextPolicy,
+) -&gt; ContextPolicy {
+    let mut adjusted = base_policy.clone();
+    if let Some(overrides) = adjusted.regime_overrides.get(&amp;regime) {
+        for (cat, value) in overrides {
+            adjusted.allocations.insert(*cat, *value);
+        }
+    }
+    normalize_allocations(&amp;mut adjusted.allocations);
+    adjusted
+}
+<span class="boring">}</span></code></pre>
+<p>Regime overrides interact with phase overrides. When a Golem in <code>Conservation</code> phase hits a <code>BearHighVol</code> regime, both override sets apply. The result is a hyper-vigilant context assembly: heavy on invariants, mortality, and DeFi snapshot; light on everything else. This is the correct behavior – a Golem under capital pressure in a crashing market should think about survival, not about what it learned last week.</p>
+<h3 id="s37-affect-modulated-context-priorities"><a class="header" href="#s37-affect-modulated-context-priorities">S3.7 Affect-Modulated Context Priorities</a></h3>
+<p>The Golem’s emotional state (PAD vector from the Daimon) modulates context priorities. When pleasure is negative and arousal is high (stressed, losing money), the Governor injects contrarian evidence to counter confirmation bias. When dominance is low (uncertain), it injects more playbook heuristics. The affect modulation is subtle – it shifts allocations by small amounts, not by large multiples.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Apply PAD-based modulation to context allocations.
+///
+/// The modulation is intentionally conservative. Large swings in
+/// context allocation based on mood would amplify emotional instability
+/// rather than counteract it. Small shifts are enough to inject a few
+/// extra contrarian entries or heuristics without destabilizing the
+/// overall context balance.
+pub fn apply_affect_modulation(
+    pad: &amp;PADVector,
+    allocations: &amp;mut HashMap&lt;ContextCategory, f64&gt;,
+) {
+    // Negative pleasure + high arousal = stressed → inject contrarian evidence
+    // to counter confirmation bias (the Golem is likely anchoring on losses)
+    if pad.pleasure &lt; -0.3 &amp;&amp; pad.arousal &gt; 0.3 {
+        *allocations.entry(ContextCategory::Contrarian).or_insert(0.04) += 0.02;
+        *allocations.entry(ContextCategory::Episodes).or_insert(0.12) -= 0.01;
+        *allocations.entry(ContextCategory::Playbook).or_insert(0.15) -= 0.01;
+    }
+
+    // Low dominance = uncertain → inject more playbook heuristics
+    // (the Golem needs decision scaffolding)
+    if pad.dominance &lt; -0.2 {
+        *allocations.entry(ContextCategory::Playbook).or_insert(0.15) += 0.02;
+        *allocations.entry(ContextCategory::DreamHypotheses).or_insert(0.03) -= 0.01;
+        *allocations.entry(ContextCategory::Contrarian).or_insert(0.04) -= 0.01;
+    }
+
+    // High pleasure + low arousal = complacent → inject more warnings
+    // (the Golem may be overconfident)
+    if pad.pleasure &gt; 0.5 &amp;&amp; pad.arousal &lt; -0.2 {
+        *allocations.entry(ContextCategory::Contrarian).or_insert(0.04) += 0.015;
+        *allocations.entry(ContextCategory::Affect).or_insert(0.03) -= 0.015;
+    }
+
+    // Clamp all values to minimum 0.01
+    for v in allocations.values_mut() {
+        *v = v.max(0.01);
+    }
+
+    normalize_allocations(allocations);
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s38-failure-driven-compression-guidelines"><a class="header" href="#s38-failure-driven-compression-guidelines">S3.8 Failure-Driven Compression Guidelines</a></h3>
+<p><strong>Citation</strong>: Kang, S. et al. “ACON: Agentic Context Compression.” Microsoft Research, arXiv:2510.00615, 2025.</p>
+<p>When compressed context leads to a task failure but full context would have succeeded, the Governor generates a natural-language compression guideline that prevents the same loss in future. ACON achieves 26-54% peak token reduction while preserving task success.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A compression guideline learned from a failure.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct CompressionGuideline {
+    pub id: String,
+    pub category: String,
+    pub task_type: TaskType,
+    pub regime: MarketRegime,
+    pub text: String,
+    pub created_at: u64,
+    pub trigger_count: u32,
+    pub prevented_failures: u32,
+}
+
+/// Manage and evolve compression guidelines.
+pub struct CompressionGuidelineEvolver {
+    guidelines: Vec&lt;CompressionGuideline&gt;,
+}
+
+impl CompressionGuidelineEvolver {
+    /// When outcome verification reveals that compressed context
+    /// led to a poor decision, generate a guideline to prevent recurrence.
+    pub async fn evolve_guideline(
+        &amp;mut self,
+        failure: &amp;CompressionFailure,
+        inference: &amp;InferenceRouter,
+    ) -&gt; Result&lt;CompressionGuideline&gt; {
+        let prompt = format!(
+            "A DeFi trading agent made a poor decision because context was compressed.\n\n\
+             Task type: {:?}\n\
+             Regime: {:?}\n\
+             What was compressed: {} ({} → {} tokens)\n\
+             What was lost: {}\n\
+             How it affected the decision: {}\n\n\
+             Generate a concise compression guideline (1-2 sentences) that prevents \
+             this information loss in future compressions of the same category.",
+            failure.task_type, failure.regime, failure.compressed_category,
+            failure.original_tokens, failure.compressed_tokens,
+            failure.lost_information, failure.decision_impact
+        );
+
+        let result = inference.call_llm(
+            "claude-haiku-4-5-20251001",
+            &amp;CognitiveWorkspace::minimal_with_prompt(&amp;prompt),
+            InferenceConfig::light(),
+        ).await?;
+
+        let guideline = CompressionGuideline {
+            id: ulid::Ulid::new().to_string(),
+            category: failure.compressed_category.clone(),
+            task_type: failure.task_type,
+            regime: failure.regime,
+            text: result.output,
+            created_at: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap().as_secs(),
+            trigger_count: 0,
+            prevented_failures: 0,
+        };
+
+        self.guidelines.push(guideline.clone());
+        Ok(guideline)
+    }
+
+    pub fn guidelines_for(
+        &amp;self,
+        category: &amp;str,
+        task_type: TaskType,
+        regime: MarketRegime,
+    ) -&gt; Vec&lt;&amp;str&gt; {
+        self.guidelines.iter()
+            .filter(|g| {
+                g.category == category
+                    &amp;&amp; (g.task_type == task_type)
+                    &amp;&amp; (g.regime == regime)
+            })
+            .map(|g| g.text.as_str())
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s4--three-cybernetic-feedback-loops"><a class="header" href="#s4--three-cybernetic-feedback-loops">S4 – Three Cybernetic Feedback Loops</a></h2>
+<p>The Governor learns from its own assembly decisions through three feedback loops at different timescales. This is the mechanism by which the Golem learns how to build its own context windows.</p>
+<p>Each feedback loop uses a per-category Beta distribution to learn context value:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Per-category Beta distribution for learning context value.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContextFeedback {
+    pub category: String,
+    pub regime: MarketRegime,
+    /// Success count (good outcome with this category in context).
+    pub alpha: f64,
+    /// Failure count (bad outcome with this category in context).
+    pub beta: f64,
+}
+
+impl ContextFeedback {
+    pub fn update(&amp;mut self, outcome: Outcome) {
+        match outcome {
+            Outcome::Good =&gt; self.alpha += 1.0,
+            Outcome::Bad =&gt; self.beta += 1.0,
+        }
+    }
+
+    /// Expected value of the Beta distribution.
+    pub fn value(&amp;self) -&gt; f64 {
+        self.alpha / (self.alpha + self.beta)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Initial prior: <code>Beta(2, 2)</code> (mildly uncertain). On good outcome (action succeeded, low regret): <code>Beta(alpha+1, beta)</code>. On bad outcome (action failed, high regret, unexpected result): <code>Beta(alpha, beta+1)</code>. Separate distributions per category per regime – what works in <code>BullHighVol</code> may not work in <code>BearLowVol</code>.</p>
+<h3 id="loop-1-prediction---outcome---recalibration"><a class="header" href="#loop-1-prediction---outcome---recalibration">Loop 1: Prediction -&gt; Outcome -&gt; Recalibration</a></h3>
+<p><strong>Timescale</strong>: Every LLM invocation (per-tick).
+<strong>Purpose</strong>: Data collection. Records what was injected, what was referenced, and what was missing.
+<strong>Hook</strong>: <code>after_turn</code> in the cybernetics extension.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Outcome record for Loop 1 data collection.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct OutcomeRecord {
+    pub tick: u64,
+    pub task_type: TaskType,
+    pub regime: MarketRegime,
+    pub phase: BehavioralPhase,
+    pub policy_revision: u32,
+    pub injected: Vec&lt;InjectedCategory&gt;,
+    pub referenced: Vec&lt;ReferencedCategory&gt;,
+    pub model_tier: CognitiveTier,
+    pub outcome_quality: Option&lt;f64&gt;,
+    pub cost: f64,
+    pub over_contexted: bool,
+    pub missing_context_signals: Vec&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct InjectedCategory {
+    pub category: String,
+    pub entry_id: String,
+    pub tokens: u32,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ReferencedCategory {
+    pub category: String,
+    pub entry_id: String,
+    pub influenced_decision: bool,
+}
+
+/// Recalibrate context weights based on outcome records.
+///
+/// The recalibration is asymmetric: it penalizes waste faster than
+/// it rewards contribution. In DeFi, the cost of including irrelevant
+/// context (wasted tokens, slower reasoning) is lower than the cost
+/// of excluding relevant context (bad decision, lost money). But
+/// wasted tokens still compound.
+pub fn recalibrate_context_weights(
+    records: &amp;[OutcomeRecord],
+    current_policy: &amp;ContextPolicy,
+) -&gt; HashMap&lt;String, f64&gt; {
+    let mut adjustments = HashMap::new();
+    let mut category_stats: HashMap&lt;String, (u32, u32, f64)&gt; = HashMap::new();
+
+    for record in records {
+        for cat in &amp;record.injected {
+            let stats = category_stats.entry(cat.category.clone()).or_insert((0, 0, 0.0));
+            stats.0 += 1; // injected count
+            stats.2 = (stats.2 * (stats.0 - 1) as f64 + cat.tokens as f64) / stats.0 as f64;
+
+            if record.referenced.iter().any(|r| r.category == cat.category &amp;&amp; r.influenced_decision) {
+                stats.1 += 1; // referenced count
+            }
+        }
+    }
+
+    for (category, (injected, referenced, avg_tokens)) in &amp;category_stats {
+        let reference_rate = *referenced as f64 / *injected as f64;
+
+        if reference_rate &lt; 0.1 {
+            // Rarely referenced: reduce
+            adjustments.insert(category.clone(), -(avg_tokens * 0.1).min(0.015));
+        } else if reference_rate &gt; 0.6 {
+            // Frequently referenced: increase
+            adjustments.insert(category.clone(), 0.02);
+        }
+    }
+
+    // Boost categories the LLM asked for
+    for record in records {
+        for signal in &amp;record.missing_context_signals {
+            if let Some(target_category) = signal_maps_to_category(signal) {
+                let current = adjustments.get(&amp;target_category).copied().unwrap_or(0.0);
+                adjustments.insert(target_category, current + 0.005);
+            }
+        }
+    }
+
+    adjustments
+}
+<span class="boring">}</span></code></pre>
+<p>Loop 1 is pure data collection – it does not modify the ContextPolicy. The data feeds Loop 2 and Loop 3.</p>
+<p><strong>How “referenced” is detected.</strong> The Governor compares the injected entry IDs against the LLM’s response text using lightweight heuristics: direct quotation, paraphrase detection (embedding similarity &gt; 0.8 between injected content and response sentences), and explicit citation (“as the heuristic suggests”, “based on the episode from tick 3200”). This is approximate, not exact – false negatives are acceptable.</p>
+<h3 id="loop-2-context-category---decision-quality---weight-evolution"><a class="header" href="#loop-2-context-category---decision-quality---weight-evolution">Loop 2: Context Category -&gt; Decision Quality -&gt; Weight Evolution</a></h3>
+<p><strong>Timescale</strong>: Every 50 ticks (aligned with Curator cycle) or on regime change.
+<strong>Purpose</strong>: Aggregate Loop 1 signals into ContextPolicy updates.
+<strong>Academic grounding</strong>: Argyris &amp; Schon (1978), single-loop organizational learning. Extended with DSPy-style prompt optimization (Khattab et al., 2024, ICLR) where context allocation weights are the “parameters” being tuned.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Optimize the ContextPolicy based on accumulated outcome records.
+pub struct ContextCategoryOptimizer {
+    max_delta: f64, // Max change per cycle per category (default: 0.02)
+}
+
+impl ContextCategoryOptimizer {
+    pub fn optimize(
+        &amp;self,
+        records: &amp;[OutcomeRecord],
+        current_policy: &amp;ContextPolicy,
+        attribution_analysis: &amp;[CategoryContribution],
+    ) -&gt; ContextPolicy {
+        let mut updated = current_policy.clone();
+        updated.revision += 1;
+
+        let adjustments = recalibrate_context_weights(records, current_policy);
+
+        // Apply adjustments with magnitude cap
+        for (category_name, delta) in &amp;adjustments {
+            if let Some(cat) = parse_category(category_name) {
+                let capped = delta.signum() * delta.abs().min(self.max_delta);
+                if let Some(alloc) = updated.allocations.get_mut(&amp;cat) {
+                    *alloc = (*alloc + capped).max(0.01);
+                }
+            }
+        }
+
+        // Fold in ContextCite attribution data when available
+        for attr in attribution_analysis {
+            if attr.reference_rate &lt; 0.1
+                &amp;&amp; attr.efficiency &lt; 0.001
+                &amp;&amp; attr.sample_count &gt;= 10
+            {
+                if let Some(cat) = parse_category(&amp;attr.category) {
+                    if let Some(alloc) = updated.allocations.get_mut(&amp;cat) {
+                        *alloc = (*alloc - self.max_delta).max(0.01);
+                    }
+                }
+            }
+        }
+
+        normalize_allocations(&amp;mut updated.allocations);
+
+        // Update metrics
+        let records_with_outcome: Vec&lt;_&gt; = records.iter()
+            .filter(|r| r.outcome_quality.is_some())
+            .collect();
+        updated.metrics = PolicyMetrics {
+            decision_quality_avg: if !records_with_outcome.is_empty() {
+                records_with_outcome.iter()
+                    .map(|r| r.outcome_quality.unwrap())
+                    .sum::&lt;f64&gt;() / records_with_outcome.len() as f64
+            } else { 0.0 },
+            token_efficiency: {
+                let total_cost: f64 = records.iter().map(|r| r.cost).sum();
+                let good_outcomes = records_with_outcome.iter()
+                    .filter(|r| r.outcome_quality.unwrap() &gt; 0.5)
+                    .count();
+                good_outcomes as f64 / (total_cost * 1000.0 + 1.0)
+            },
+            last_validated: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap().as_secs(),
+        };
+
+        updated
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="loop-3-strategy-performance---context-policy---regime-learning"><a class="header" href="#loop-3-strategy-performance---context-policy---regime-learning">Loop 3: Strategy Performance -&gt; Context Policy -&gt; Regime Learning</a></h3>
+<p><strong>Timescale</strong>: During dream cycles.
+<strong>Purpose</strong>: Counterfactual context assembly – “what if we had assembled different context?”
+<strong>Academic grounding</strong>: Bateson (1972), deutero-learning. The system learns not just what to decide but how to assemble the context that informs decisions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Run counterfactual context experiments during dream cycles.
+pub struct RegimePolicyLearner;
+
+impl RegimePolicyLearner {
+    /// For each recent poor-outcome tick, replay with alternative
+    /// context policies. If the alternative produces a better decision,
+    /// generate a ContextPolicy mutation.
+    pub async fn run_counterfactuals(
+        &amp;self,
+        poor_outcome_ticks: &amp;[OutcomeRecord],
+        current_policy: &amp;ContextPolicy,
+        inference: &amp;InferenceRouter,
+    ) -&gt; Result&lt;Vec&lt;ContextPolicyMutation&gt;&gt; {
+        let mut mutations = Vec::new();
+
+        // Select top-3 worst outcomes for counterfactual analysis
+        let mut candidates = poor_outcome_ticks.to_vec();
+        candidates.sort_by(|a, b| {
+            a.outcome_quality.unwrap_or(0.0)
+                .partial_cmp(&amp;b.outcome_quality.unwrap_or(0.0))
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+        candidates.truncate(3);
+
+        for candidate in &amp;candidates {
+            let alternatives = self.generate_alternative_policies(current_policy, candidate);
+
+            for alt_policy in &amp;alternatives {
+                // Replay the tick with alternative context (Haiku, ~$0.001)
+                let alt_quality = self.evaluate_alternative(
+                    candidate, alt_policy, inference,
+                ).await?;
+
+                if alt_quality &gt; candidate.outcome_quality.unwrap_or(0.0) + 0.15 {
+                    mutations.push(ContextPolicyMutation {
+                        id: ulid::Ulid::new().to_string(),
+                        source_tick_id: candidate.tick,
+                        original_policy: current_policy.clone(),
+                        proposed_policy: alt_policy.clone(),
+                        quality_improvement: alt_quality - candidate.outcome_quality.unwrap_or(0.0),
+                        confidence: 0.2, // Dream mutations start at low confidence
+                        status: MutationStatus::Staged,
+                        created_at: std::time::SystemTime::now()
+                            .duration_since(std::time::UNIX_EPOCH)
+                            .unwrap().as_secs(),
+                    });
+                }
+            }
+        }
+
+        Ok(mutations)
+    }
+
+    /// Learn regime-specific policies from accumulated experience.
+    pub fn learn_regime_policy(
+        &amp;self,
+        regime: MarketRegime,
+        records: &amp;[OutcomeRecord],
+    ) -&gt; Option&lt;HashMap&lt;ContextCategory, f64&gt;&gt; {
+        let regime_records: Vec&lt;_&gt; = records.iter()
+            .filter(|r| r.regime == regime)
+            .collect();
+        if regime_records.len() &lt; 20 { return None; }
+
+        let good_records: Vec&lt;_&gt; = regime_records.iter()
+            .filter(|r| r.outcome_quality.map_or(false, |q| q &gt; 0.7))
+            .collect();
+        if good_records.len() &lt; 5 { return None; }
+
+        // Average the allocations that produced good outcomes
+        let mut avg_allocations: HashMap&lt;String, f64&gt; = HashMap::new();
+        for record in &amp;good_records {
+            for cat in &amp;record.injected {
+                *avg_allocations.entry(cat.category.clone()).or_insert(0.0) += cat.tokens as f64;
+            }
+        }
+
+        // Normalize
+        let total: f64 = avg_allocations.values().sum();
+        let learned: HashMap&lt;ContextCategory, f64&gt; = avg_allocations.into_iter()
+            .filter_map(|(k, v)| parse_category(&amp;k).map(|cat| (cat, v / total)))
+            .collect();
+
+        Some(learned)
+    }
+
+    fn generate_alternative_policies(
+        &amp;self,
+        current: &amp;ContextPolicy,
+        failed_record: &amp;OutcomeRecord,
+    ) -&gt; Vec&lt;ContextPolicy&gt; {
+        let mut alternatives = Vec::new();
+
+        // Alternative 1: Boost missing context categories
+        let mut alt1 = current.clone();
+        for signal in &amp;failed_record.missing_context_signals {
+            if let Some(cat) = signal_maps_to_category(signal).and_then(|s| parse_category(&amp;s)) {
+                if let Some(alloc) = alt1.allocations.get_mut(&amp;cat) {
+                    *alloc += 0.02;
+                }
+            }
+        }
+        normalize_allocations(&amp;mut alt1.allocations);
+        alternatives.push(alt1);
+
+        // Alternative 2: Double causal edges at expense of playbook
+        let mut alt2 = current.clone();
+        let playbook_val = *alt2.allocations.get(&amp;ContextCategory::Playbook).unwrap_or(&amp;0.15);
+        let delta = (playbook_val - 0.02).min(0.06);
+        *alt2.allocations.entry(ContextCategory::Playbook).or_insert(0.15) -= delta;
+        *alt2.allocations.entry(ContextCategory::CausalEdges).or_insert(0.08) += delta;
+        normalize_allocations(&amp;mut alt2.allocations);
+        alternatives.push(alt2);
+
+        alternatives
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContextPolicyMutation {
+    pub id: String,
+    pub source_tick_id: u64,
+    pub original_policy: ContextPolicy,
+    pub proposed_policy: ContextPolicy,
+    pub quality_improvement: f64,
+    pub confidence: f64,
+    pub status: MutationStatus,
+    pub created_at: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum MutationStatus {
+    Staged,
+    Validated,
+    Refuted,
+}
+<span class="boring">}</span></code></pre>
+<p>Dream-generated policy mutations enter a staging buffer at confidence 0.2 (same pattern as other dream hypotheses, per <code>../05-dreams/04-consolidation.md</code>). They are validated by comparing waking performance under the mutated policy against performance under the current policy. Validated mutations are promoted; refuted mutations are discarded.</p>
+<p><strong>Quantitative prediction</strong>: Based on ACE’s +10.6% improvement from iterative context refinement, and the multiplicative benefit of counterfactual evaluation during dream cycles, dreaming Golems converge on effective context policies 2x faster than non-dreaming Golems. The dream optimizer runs ~3 counterfactual experiments per dream cycle at ~$0.01 each (Haiku), consuming &lt;$0.03/dream – well within the dream budget of $0.06-$0.12/day.</p>
+<h3 id="lost-in-middle-mitigation"><a class="header" href="#lost-in-middle-mitigation">Lost-in-Middle Mitigation</a></h3>
+<p>LLMs attend more to content at the beginning and end of their context window, with reduced attention to middle content [LIU-2024]. The Context Governor counteracts this by interleaving context items by relevance:</p>
+<p>Given items sorted by relevance <code>[r1, r2, r3, r4, r5]</code> (r1 highest), reorder to:
+<code>[r1, r4, r5, r3, r2]</code></p>
+<p>This places the highest-value items at context boundaries (positions 1 and N) and lower-value items in the middle. Combined with safety constraints at both START and END of context, this mitigates the lost-in-middle effect.</p>
+<hr>
+<h2 id="s5--extension-integration"><a class="header" href="#s5--extension-integration">S5 – Extension Integration</a></h2>
+<p>The Context Governor wires into the runtime through Extension #17 (<code>before_llm_call</code>) for workspace assembly and the <code>after_turn</code> chain for feedback loops.</p>
+<h3 id="s51-workspace-assembly-extension-17"><a class="header" href="#s51-workspace-assembly-extension-17">S5.1 Workspace Assembly (Extension #17)</a></h3>
+<p>On every heartbeat escalation that triggers an LLM call, the context extension assembles the complete <code>CognitiveWorkspace</code>. This runs once per invocation, not per turn.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Extension #17: before_llm_call hook.
+/// Assembles the CognitiveWorkspace from the current ContextPolicy.
+pub async fn before_llm_call(
+    state: &amp;mut GolemState,
+    registry: &amp;ExtensionRegistry,
+) -&gt; Result&lt;()&gt; {
+    // 1. Load current ContextPolicy (may have been updated by Loop 2)
+    let policy = &amp;state.context_policy;
+
+    // 2. Apply regime and phase overrides
+    let regime_policy = apply_regime_routing(state.regime, policy);
+    let phased_policy = apply_phase_routing(state.phase, &amp;regime_policy);
+
+    // 3. Apply affect modulation
+    let mut final_allocations = phased_policy.allocations.clone();
+    let pad = state.cortical_state.read_pad();
+    apply_affect_modulation(&amp;pad, &amp;mut final_allocations);
+
+    // 4. Query Grimoire for candidate entries
+    let candidates = state.grimoire.query(&amp;GrimoireQuery {
+        task_type: state.current_task_type,
+        regime: state.regime,
+        max_episodes: phased_policy.retrieval.max_episode_count,
+        min_similarity: phased_policy.retrieval.similarity_threshold,
+        min_insight_confidence: phased_policy.retrieval.min_insight_confidence,
+        max_causal_depth: phased_policy.retrieval.max_causal_depth,
+    }).await?;
+
+    // 5. Allocate token budgets per category
+    let total_budget = state.config.context_governor.soft_budget_tokens;
+    let budgets: HashMap&lt;ContextCategory, u32&gt; = final_allocations.iter()
+        .map(|(cat, frac)| (*cat, (*frac * total_budget as f64) as u32))
+        .collect();
+
+    // 6. Select entries within budgets using progressive disclosure
+    let workspace = build_cognitive_workspace(candidates, budgets, &amp;phased_policy)?;
+
+    // 7. Store for per-turn injection
+    state.current_workspace = Some(workspace);
+    state.last_workspace_assembly_tick = state.current_tick;
+
+    Ok(())
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s52-per-turn-phase-injection"><a class="header" href="#s52-per-turn-phase-injection">S5.2 Per-Turn Phase Injection</a></h3>
+<p>The phase injection logic selects a phase-appropriate subset from the full workspace and injects it as a structured system message. Phase multipliers determine which categories get more or less space during different pipeline steps.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Phase multipliers: how much of each category to inject per pipeline step.
+pub fn phase_multipliers(phase: TurnPhase) -&gt; HashMap&lt;ContextCategory, f64&gt; {
+    use ContextCategory::*;
+    match phase {
+        TurnPhase::Analyze =&gt; [
+            (Invariants, 1.0), (Strategy, 0.8), (Playbook, 1.5),
+            (Episodes, 0.8), (Insights, 0.8), (CausalEdges, 0.6),
+            (Contrarian, 0.4), (DreamHypotheses, 0.3), (ToolState, 0.8),
+            (DefiSnapshot, 1.3), (Mortality, 0.6), (Affect, 0.4),
+            (OwnerControl, 1.0),
+        ].into_iter().collect(),
+        TurnPhase::Decide =&gt; [
+            (Invariants, 1.0), (Strategy, 1.0), (Playbook, 0.8),
+            (Episodes, 1.4), (Insights, 1.2), (CausalEdges, 1.3),
+            (Contrarian, 0.8), (DreamHypotheses, 0.5), (ToolState, 0.5),
+            (DefiSnapshot, 0.8), (Mortality, 0.8), (Affect, 0.6),
+            (OwnerControl, 1.0),
+        ].into_iter().collect(),
+        TurnPhase::Execute =&gt; [
+            (Invariants, 1.0), (Strategy, 0.5), (Playbook, 0.3),
+            (Episodes, 0.3), (Insights, 0.3), (CausalEdges, 0.2),
+            (Contrarian, 0.0), (DreamHypotheses, 0.0), (ToolState, 1.5),
+            (DefiSnapshot, 0.5), (Mortality, 0.3), (Affect, 0.0),
+            (OwnerControl, 1.0),
+        ].into_iter().collect(),
+        TurnPhase::Reflect =&gt; [
+            (Invariants, 0.5), (Strategy, 0.5), (Playbook, 0.8),
+            (Episodes, 1.0), (Insights, 1.0), (CausalEdges, 1.0),
+            (Contrarian, 1.2), (DreamHypotheses, 0.8), (ToolState, 0.3),
+            (DefiSnapshot, 0.3), (Mortality, 0.5), (Affect, 1.0),
+            (OwnerControl, 0.5),
+        ].into_iter().collect(),
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="s53-cybernetic-feedback-after_turn"><a class="header" href="#s53-cybernetic-feedback-after_turn">S5.3 Cybernetic Feedback (after_turn)</a></h3>
+<p>The cybernetics extension runs the feedback loops after each turn. Loop 1 runs on every turn; Loop 2 runs on a timer or regime change; Loop 3 runs during dream cycles.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// after_turn hook: run cybernetic feedback loops.
+pub async fn after_turn_cybernetics(
+    state: &amp;mut GolemState,
+    record: &amp;mut DecisionCycleRecord,
+) -&gt; Result&lt;()&gt; {
+    // Skip T0 (probe-only, no LLM call)
+    if state.cognitive_tier == CognitiveTier::T0 { return Ok(()); }
+
+    let injection = match &amp;state.last_context_injection {
+        Some(inj) =&gt; inj.clone(),
+        None =&gt; return Ok(()),
+    };
+
+    // --- Loop 1: Record contributions ---
+    let mut outcome_record = OutcomeRecord {
+        tick: state.current_tick,
+        task_type: injection.task_type,
+        regime: state.regime,
+        phase: state.phase,
+        policy_revision: state.context_policy.revision,
+        injected: injection.categories.iter().map(|c| InjectedCategory {
+            category: c.name.clone(),
+            entry_id: c.entry_ids.first().cloned().unwrap_or_else(|| "aggregate".to_string()),
+            tokens: c.token_count,
+        }).collect(),
+        referenced: Vec::new(), // Filled by the reflector
+        model_tier: state.cognitive_tier,
+        outcome_quality: None, // Filled when action completes
+        cost: state.current_invocation_cost(),
+        over_contexted: false,
+        missing_context_signals: Vec::new(),
+    };
+
+    let reflection = state.context_reflector.reflect_on_tick(&amp;outcome_record)?;
+    outcome_record.referenced = reflection.referenced_categories();
+    outcome_record.missing_context_signals = reflection.missing_context_signals;
+    outcome_record.over_contexted = !reflection.over_context_signals.is_empty();
+
+    state.context_contribution_history.push(outcome_record);
+    if state.context_contribution_history.len() &gt; 500 {
+        state.context_contribution_history.remove(0);
+    }
+
+    // --- Loop 2: Periodic aggregation ---
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap().as_secs();
+    let hours_since_last = (now - state.context_policy.metrics.last_validated) as f64 / 3600.0;
+    let regime_changed = state.previous_regime.map_or(false, |prev| prev != state.regime);
+
+    if hours_since_last &gt;= state.config.context_governor.loop2_interval_hours as f64
+        || regime_changed
+    {
+        let optimizer = ContextCategoryOptimizer { max_delta: 0.02 };
+        let attributions = state.context_attribution_analyzer
+            .estimate_contributions(&amp;state.context_contribution_history)?;
+
+        state.context_policy = optimizer.optimize(
+            &amp;state.context_contribution_history,
+            &amp;state.context_policy,
+            &amp;attributions,
+        );
+
+        state.event_fabric.emit(Subsystem::Context, EventPayload::PolicyUpdated {
+            revision: state.context_policy.revision,
+            trigger: if regime_changed { "regime_change" } else { "periodic" }.to_string(),
+        });
+    }
+
+    Ok(())
+}
+<span class="boring">}</span></code></pre>
+<p>Loop 3 (dream-cycle meta-optimization) is triggered by the dream extension during REM phase. See <code>../05-dreams/06-integration.md</code> for the dream-cycle integration point.</p>
+<h3 id="s53-predictive-context-pre-assembly"><a class="header" href="#s53-predictive-context-pre-assembly">S5.3 Predictive Context Pre-Assembly</a></h3>
+<p>Assembling the Cognitive Workspace takes 5-50ms: querying LanceDB for relevant episodes, scoring candidates, querying SQLite for causal edges, reading the Somatic Landscape. A background tokio fiber eliminates this latency by maintaining a pre-built workspace that updates reactively when the Golem’s state changes (PAD shift &gt; 0.1, regime change, new Grimoire entries).</p>
+<p>The fiber runs every 5 seconds. When deliberation fires, the heartbeat pipeline reads the pre-assembled workspace from a shared <code>Arc&lt;RwLock&lt;Option&lt;CognitiveWorkspace&gt;&gt;&gt;</code> instead of building one from scratch. See <code>01-cognition.md</code> S4 for the full <code>predictive_context_fiber</code> implementation.</p>
+<p>This is a latency optimization, not a correctness concern. If the pre-built workspace is stale (state changed after last pre-assembly), the assembly path falls back to synchronous construction. The staleness window is bounded by the 5-second fiber interval.</p>
+<hr>
+<h2 id="s6--events-emitted"><a class="header" href="#s6--events-emitted">S6 – Events Emitted</a></h2>
+<p>The Context Governor emits events through the Event Fabric (<code>tokio::broadcast</code>). Consumers include the telemetry extension, the audit log, and the portal dashboard.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>Trigger</th></tr>
+</thead>
+<tbody>
+<tr><td><code>context:assembled</code></td><td><code>{ tick, category_count, total_tokens, route }</code></td><td>Workspace assembled in <code>before_llm_call</code></td></tr>
+<tr><td><code>context:policy_updated</code></td><td><code>{ revision, trigger, delta }</code></td><td>Loop 2 updated allocation weights</td></tr>
+<tr><td><code>context:regime_override</code></td><td><code>{ previous_regime, new_regime, allocations_applied }</code></td><td>Regime change triggered policy switch</td></tr>
+<tr><td><code>context:feedback_loop</code></td><td><code>{ loop_id, tick, record_count, adjustments }</code></td><td>Any loop iteration completed</td></tr>
+<tr><td><code>context:compacted</code></td><td><code>{ original_tokens, compacted_tokens, categories_compressed }</code></td><td>State compaction performed</td></tr>
+</tbody>
+</table>
+</div>
+<p>The <code>context:policy_updated</code> event includes the full delta between old and new allocations, making it possible to reconstruct the policy’s evolution history from the event log alone.</p>
+<hr>
+<h2 id="s7--configuration"><a class="header" href="#s7--configuration">S7 – Configuration</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Context Governor configuration.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ContextGovernorConfig {
+    /// Total token budget for soft context (default: 8000).
+    pub soft_budget_tokens: u32,
+
+    /// Initial ContextPolicy (used until learning produces a better one).
+    pub initial_policy: ContextPolicy,
+
+    /// Loop 2 aggregation interval in hours (default: 24).
+    pub loop2_interval_hours: u32,
+
+    /// Maximum allocation change per Loop 2 cycle (default: 0.02).
+    pub max_allocation_delta: f64,
+
+    /// Trigger Loop 2 on regime change (default: true).
+    pub loop2_on_regime_change: bool,
+
+    /// Enable Loop 3 dream-based optimization (default: true, requires dreaming).
+    pub enable_loop3: bool,
+
+    /// Dream mutation initial confidence (default: 0.2).
+    pub dream_mutation_confidence: f64,
+
+    /// Enable contrarian injection when PAD pleasure &lt; 0 (default: true).
+    pub enable_contrarian_injection: bool,
+
+    /// Minimum contrarian allocation when enabled (default: 200 tokens).
+    pub min_contrarian_tokens: u32,
+
+    /// Enable ACON-style compression guideline evolution (default: true).
+    pub enable_compression_evolution: bool,
+
+    /// Observation masking: full episode slots (default: 3).
+    pub full_episode_slots: u32,
+
+    /// Observation masking: summary episode slots (default: 7).
+    pub summary_episode_slots: u32,
+
+    /// ContextCite attribution analysis interval in ticks (default: 10).
+    pub attribution_analysis_interval: u32,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="memory-citation-mechanics"><a class="header" href="#memory-citation-mechanics">Memory Citation Mechanics</a></h2>
+<p>When a Claude-capable backend is configured (BlockRun, OpenRouter, Bankr, Direct Anthropic key), Grimoire entries are injected as Anthropic <code>search_result</code> content blocks in the request body. Claude responds with <code>citation</code> objects pointing back to specific entries, creating a closed provenance feedback loop:</p>
+<ul>
+<li><strong>Entry cited</strong> → category USEFUL → increase weight for future ticks</li>
+<li><strong>Entry injected but not cited</strong> → WASTEFUL → decrease weight</li>
+<li><strong>Response references knowledge not in any entry</strong> → MISSING context signal → trigger Oracle re-ranking</li>
+</ul>
+<pre><code class="language-typescript">// The oracle extension prepares the request before sending to Bardo Inference
+pi.hook("context", async (ctx) =&gt; {
+  const entries = await localGrimoire.retrieve({ query: ctx.currentMessage, limit: 10 });
+
+  for (const entry of entries) {
+    ctx.messages.push({
+      role: "user",
+      content: [{
+        type: "search_result",
+        source: `grimoire://${entry.namespace}/${entry.type}/${entry.id}`,
+        title: `[${entry.type.toUpperCase()}] ${entry.title ?? entry.id}`,
+        content: [{ type: "text", text: entry.content }],
+        citations: { enabled: true },
+      }],
+    });
+  }
+});
+</code></pre>
+<p><strong>Context engineering interaction</strong>: Bardo Inference’s prompt cache alignment (Layer 1) orders the <code>search_result</code> blocks by stability – Grimoire entries that haven’t changed recently get placed in the cached prefix. New entries go after the cache boundary. Stable knowledge gets cached (90% discount) while fresh knowledge pays full price.</p>
+<p><strong>Without Claude access</strong>: If no Claude backend is configured, citations are unavailable. The Context Governor falls back to embedding similarity (cosine &gt; 0.8 between injected content and response sentences) for provenance estimation. This is ~30% less accurate but still functional.</p>
+<hr>
+<h2 id="reasoning-chain-preservation-for-dream-replay"><a class="header" href="#reasoning-chain-preservation-for-dream-replay">Reasoning Chain Preservation for Dream Replay</a></h2>
+<p>Each subsystem has different reasoning requirements. Dreams need visible chains for narration. Risk needs interleaved thinking with tool calls. Daimon needs privacy. The reasoning adapter declares requirements; Bardo Inference’s router satisfies them.</p>
+<p>All provider reasoning output is normalized into a unified <code>ReasoningChain</code>:</p>
+<pre><code class="language-typescript">interface ReasoningChain {
+  provider: string;
+  visibility: "visible" | "summarized" | "opaque" | "none";
+  content: string | null;
+  reasoningTokens: number;
+  interleaved: boolean;
+  phases: ReasoningPhase[];
+  rawBlocks: ProviderReasoningBlock[];
+}
+
+interface ReasoningPhase {
+  type: "analysis" | "planning" | "evaluation" | "reflection" | "uncertainty" | "decision";
+  content: string;
+  confidence?: number;
+}
+</code></pre>
+<p><strong>Dream replay usage</strong>: The visible reasoning chain from T2 deliberation ticks is stored in the Grimoire as a dream-replayable episode. During NREM replay, the dream engine can re-present the reasoning chain alongside the prediction residuals, looking for patterns in <em>how</em> the Golem reasoned that correlate with prediction errors. The <code>rawBlocks</code> field preserves the provider-specific format for faithful reconstruction.</p>
+<p><strong>Provider-specific parsing</strong>: DeepSeek R1 and Qwen models produce visible <code>&lt;think&gt;</code> tags. Anthropic produces summarized thinking blocks. OpenAI produces reasoning summaries. The reasoning adapter normalizes all formats into <code>ReasoningChain</code>, so downstream consumers (Grimoire, dream engine, TUI) handle a single type.</p>
+<p><strong>Budget and mortality integration</strong>: Reasoning depth scales with mortality pressure. At high vitality, dreams get maximum reasoning depth (visible chains, DIEM-funded if Venice is available). Under mortality pressure, dream reasoning budgets contract to 0.3x (except risk assessment and death reflection, which are never degraded).</p>
+<hr>
+<h2 id="efe-composite-attention-score"><a class="header" href="#efe-composite-attention-score">EFE Composite Attention Score</a></h2>
+<p>The Context Governor’s attention scoring replaces fixed-weight summation with an Expected Free Energy (EFE) decomposition (Friston et al., 2017; Parr &amp; Friston, 2019). The EFE framework decomposes the value of attending to an item into four components, each with a distinct computational source. No weight tuning is required; the components have natural scales and compose additively.</p>
+<p>This replaces:</p>
+<pre><code>score = pred_error * w1 + info_gain * w2 + recency * w3
+</code></pre>
+<p>with:</p>
+<pre><code>score = pragmatic_value + epistemic_value + affective_bias + mortality_urgency
+</code></pre>
+<p>Conflict resolution reference: <a href="../../tmp/research/witness-research/new/reconciling/04-conflict-resolution.html">04-conflict-resolution.md</a>, Conflict 3.</p>
+<h3 id="the-four-components"><a class="header" href="#the-four-components">The four components</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// EFE-inspired attention score.
+/// Each component has a natural [0, 1] range and a distinct source.
+pub struct CompositeAttentionScore {
+    /// Expected improvement in position outcomes from monitoring this item.
+    /// Sources: risk engine's delta_CVaR, Oracle's prediction improvement estimate.
+    pub pragmatic_value: f64,
+
+    /// Expected information gain from observing this item.
+    /// Sources: Oracle prediction error, Bayesian KL divergence,
+    /// curiosity module's D_KL(posterior || prior).
+    pub epistemic_value: f64,
+
+    /// Affective bias from the Daimon.
+    /// |cos(PAD_current, PAD_association(item))|
+    /// Modulates attention toward emotionally relevant items.
+    pub affective_bias: f64,
+
+    /// Mortality urgency.
+    /// (1.0 - vitality) * relevance_to_declining_axis.
+    /// Near-zero for healthy Golems. Dominates for dying Golems.
+    pub mortality_urgency: f64,
+}
+
+impl CompositeAttentionScore {
+    pub fn total(&amp;self) -&gt; f64 {
+        self.pragmatic_value
+            + self.epistemic_value
+            + self.affective_bias
+            + self.mortality_urgency
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="pragmatic-value"><a class="header" href="#pragmatic-value">Pragmatic value</a></h3>
+<p>The pragmatic component answers: “If I monitor this item, how much does my expected portfolio outcome improve?” It draws from two sources:</p>
+<ul>
+<li><strong>Risk engine delta_CVaR.</strong> The marginal reduction in Conditional Value-at-Risk from monitoring item i. When the Golem holds a concentrated ETH position, anything correlated with ETH gets high pragmatic value because unmonitored movement could cause portfolio loss.</li>
+<li><strong>Oracle prediction improvement.</strong> The expected reduction in prediction error from an additional observation. Items where the Oracle’s model is systematically wrong get high pragmatic value because correcting the model improves downstream action gating.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn compute_pragmatic(
+    item: &amp;TrackedItem,
+    risk_engine: &amp;RiskEngine,
+    oracle: &amp;Oracle,
+) -&gt; f64 {
+    let delta_cvar = risk_engine.marginal_cvar_reduction(item);
+    let pred_improvement = oracle.expected_improvement(item);
+    // Both are naturally in [0, 1]. Sum, capped at 1.0.
+    (delta_cvar + pred_improvement).min(1.0)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="epistemic-value"><a class="header" href="#epistemic-value">Epistemic value</a></h3>
+<p>The epistemic component answers: “How much would I learn from observing this item?” This is the information-theoretic dual of the pragmatic component: pragmatic value is about outcomes, epistemic value is about knowledge.</p>
+<ul>
+<li><strong>Oracle prediction error.</strong> Items where the Oracle is wrong carry high epistemic value.</li>
+<li><strong>Bayesian surprise (KL divergence).</strong> Items whose recent observations shifted the agent’s beliefs carry high epistemic value. See <a href="./17-prediction-engine.html">17-prediction-engine.md</a>, BayesianSurpriseDomain.</li>
+<li><strong>ChainScope Hebbian reinforcement.</strong> Addresses that keep appearing near relevant transactions accumulate epistemic value through Hebbian learning (see ChainScope handoff below).</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn compute_epistemic(
+    item: &amp;TrackedItem,
+    oracle: &amp;Oracle,
+    surprise_domain: &amp;BayesianSurpriseDomain,
+    chainscope: &amp;ChainScope,
+) -&gt; f64 {
+    let pred_error = oracle.normalized_prediction_error(item);
+    let surprise = surprise_domain.recent_surprise(item).min(1.0);
+    let hebbian = chainscope.interest_score(item);
+    // Weighted by precision: high-precision channels contribute more.
+    let precision_weighted = pred_error * oracle.precision(item);
+    (precision_weighted + surprise + hebbian * 0.3).min(1.0)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="affective-bias"><a class="header" href="#affective-bias">Affective bias</a></h3>
+<p>The affective component answers: “Does this item have emotional significance?” The Daimon stores PAD associations for items the Golem has interacted with. Cosine similarity between the current PAD vector and the item’s stored association determines affective relevance.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn compute_affective(
+    item: &amp;TrackedItem,
+    daimon: &amp;Daimon,
+) -&gt; f64 {
+    let pad_current = daimon.current_pad();
+    let pad_assoc = daimon.pad_association(item);
+    // Absolute cosine similarity: both congruent and incongruent
+    // affect attract attention.
+    pad_current.cosine_similarity(&amp;pad_assoc).abs()
+}
+<span class="boring">}</span></code></pre>
+<p>The absolute value matters. A fearful Golem should attend to fear-relevant items regardless of whether the association is positive (approach) or negative (avoidance). The sign determines how attention is used, not whether it’s warranted.</p>
+<h3 id="mortality-urgency"><a class="header" href="#mortality-urgency">Mortality urgency</a></h3>
+<p>The mortality component answers: “Is this item relevant to my survival?” Near-zero for healthy Golems. Dominates as vitality drops.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn compute_mortality(
+    item: &amp;TrackedItem,
+    mortality: &amp;MortalityEngine,
+) -&gt; f64 {
+    let urgency = 1.0 - mortality.composite_vitality();
+    let relevance = mortality.item_relevance(item);
+    urgency * relevance
+}
+<span class="boring">}</span></code></pre>
+<p>When the economic clock is declining, items that could generate revenue get high relevance. When the epistemic clock is declining, items with high model uncertainty get high relevance. A dying Golem’s attention narrows to survival-relevant items through the math, not through hard-coded rules.</p>
+<h3 id="integration-with-the-cybernetic-feedback-loops"><a class="header" href="#integration-with-the-cybernetic-feedback-loops">Integration with the cybernetic feedback loops</a></h3>
+<p>The EFE composite feeds into the Governor’s existing cybernetic learning system (S4, Loop 1). The Governor tracks which component dominated the score for each item, and correlates component dominance with decision quality. If pragmatic-dominated items produce better decisions than epistemic-dominated items in the current regime, the Governor’s feedback loop learns to weight pragmatic attention higher. This is a second-order learning system: the EFE provides the scoring, and the cybernetic loop learns how to weight the scoring components across regimes.</p>
+<hr>
+<h2 id="chainscope-handoff"><a class="header" href="#chainscope-handoff">ChainScope Handoff</a></h2>
+<p>ChainScope and the Context Governor operate at different abstraction levels. ChainScope filters at the chain level: which addresses, pools, and protocols should the Golem see raw events from. The Context Governor filters at the cognition level: which retrieved context items should enter the LLM’s workspace.</p>
+<p>The handoff is one-directional. ChainScope determines the observation stream. The Context Governor selects from that stream for cognitive processing. ChainScope’s Hebbian interest scores feed into the EFE’s epistemic component, but the Context Governor never tells ChainScope what to filter. This separation prevents circular dependencies.</p>
+<h3 id="the-hierarchy"><a class="header" href="#the-hierarchy">The hierarchy</a></h3>
+<pre><code>Chain Events (all on-chain activity)
+    |
+    | ChainScope filters: address interest, protocol fingerprinting
+    v
+Observation Stream (relevant events only)
+    |
+    | Perception layer: domain probes, state updates
+    v
+CorticalState + TaCorticalExtension (atomic signals)
+    |
+    | Grimoire retrieval: semantic + HDC search
+    v
+Retrieval Candidates (episodes, insights, heuristics, causal links)
+    |
+    | Context Governor: EFE composite scoring, budget allocation
+    v
+CognitiveWorkspace (structured, budgeted context for LLM)
+</code></pre>
+<h3 id="chainscope-interest-as-epistemic-input"><a class="header" href="#chainscope-interest-as-epistemic-input">ChainScope interest as epistemic input</a></h3>
+<p>ChainScope tracks per-address interest scores with exponential decay and Hebbian reinforcement: addresses that co-occur with relevant transactions accumulate interest. These interest scores flow into the EFE’s epistemic component via <code>chainscope.interest_score(item)</code>. The mapping is direct: an address with high ChainScope interest has been frequently associated with events the Golem cared about, so observing it is epistemically valuable.</p>
+<p>ChainScope does not use EFE scores. It operates on its own Hebbian dynamics. The Governor reads ChainScope state but does not write to it.</p>
+<h3 id="vcg-attention-auction-phase-2"><a class="header" href="#vcg-attention-auction-phase-2">VCG Attention Auction (Phase 2)</a></h3>
+<p>The EFE composite is Phase 1 of a two-phase transition toward auction-based attention allocation. If the EFE composite performs well and Clade-level coordination is needed, Phase 2 replaces the additive scoring with a full VCG auction where the four EFE components become four bidders (plus the Curiosity module as a fifth). The VCG mechanism is documented in <a href="./14b-attention-auction.html">14b-attention-auction.md</a>.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th></tr>
+</thead>
+<tbody>
+<tr><td>CognitiveWorkspace struct — the working memory container the Governor fills</td><td><code>01-cognition.md</code> S3</td></tr>
+<tr><td>DecisionCycleRecord — per-tick structured output the Governor assembles context for</td><td><code>02-heartbeat.md</code> S6</td></tr>
+<tr><td>Cybernetic loops — heartbeat feedback that trains the Governor’s context policy</td><td><code>02-heartbeat.md</code> S13</td></tr>
+<tr><td>Grimoire retrieval — episodic and semantic memory the Governor pulls into context</td><td><code>../04-memory/01-grimoire.md</code></td></tr>
+<tr><td>Dream counterfactual optimization — sleep-phase replay that refines context assembly heuristics</td><td><code>../05-dreams/06-integration.md</code></td></tr>
+<tr><td>Inference gateway context engineering — the LLM call site that consumes the Governor’s output</td><td><code>12-inference-gateway.md</code></td></tr>
+<tr><td>Extension registry (golem-context) — the runtime extension that hosts the Governor</td><td><code>01a-runtime-extensions.md</code> (Extension #17)</td></tr>
+<tr><td>EFE and active inference — the variational objective the Governor optimizes</td><td><a href="../../tmp/research/witness-research/new/06-curiosity-learning/01-active-inference.html">01-active-inference.md</a></td></tr>
+<tr><td>VCG attention auction (Phase 2) — mechanism-design upgrade where subsystems bid for context slots</td><td><a href="./14b-attention-auction.html">14b-attention-auction.md</a></td></tr>
+<tr><td>Bayesian surprise domain — conjugate-prior surprise scoring that feeds the Governor’s epistemic value</td><td><a href="./17-prediction-engine.html">17-prediction-engine.md</a> (BayesianSurpriseDomain)</td></tr>
+<tr><td>TA prediction domains — eight technical-analysis prediction categories tracked by the Oracle</td><td><a href="./17b-ta-prediction-domains.html">17b-ta-prediction-domains.md</a></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="active-inference-theoretical-umbrella-for-agent-behavior"><a class="header" href="#active-inference-theoretical-umbrella-for-agent-behavior">Active Inference: Theoretical Umbrella for Agent Behavior</a></h2>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/01-active-inference.md</code></p>
+</blockquote>
+<p>The Free Energy Principle (FEP) provides a single mathematical framework that unifies the golem’s curiosity scoring, attention allocation, action selection, and model updating into one objective: minimize surprise. Where Bayesian surprise (see prediction engine, BayesianSurpriseDomain) measures how much a single observation shifts beliefs, active inference prescribes what the agent should <em>do</em> about it. The agent can reduce surprise in two ways – update its model (perception) or change the world (action). Both are governed by the same variational objective. This reframes the entire triage-to-action pipeline as inference rather than engineering: the golem doesn’t follow hand-coded rules about when to act; it selects actions that minimize expected free energy, which decomposes naturally into information-seeking (curiosity) and goal-seeking (profit).</p>
+<h3 id="variational-free-energy"><a class="header" href="#variational-free-energy">Variational Free Energy</a></h3>
+<h4 id="the-core-equation"><a class="header" href="#the-core-equation">The Core Equation</a></h4>
+<p>An agent maintains a generative model – beliefs q(s) about hidden states s given observations o. Variational free energy is:</p>
+<pre><code>F = D_KL[ q(s) || p(s|o) ] - ln p(o)
+  = D_KL[ q(s) || p(s) ] - E_q[ ln p(o|s) ]
+  = complexity - accuracy
+</code></pre>
+<p>The first line says free energy upper-bounds surprise (-ln p(o)). The second line decomposes it into complexity (how far beliefs deviate from priors) and accuracy (how well beliefs explain observations). Minimizing free energy forces the agent to find the simplest beliefs (low complexity) that still explain the data (high accuracy).</p>
+<p>For the golem, this decomposition maps directly:</p>
+<ul>
+<li><strong>Hidden states s</strong>: the true state of on-chain protocols (pool reserves, pending liquidations, MEV bot positions, oracle staleness)</li>
+<li><strong>Observations o</strong>: decoded transaction logs, gas prices, event counts</li>
+<li><strong>Beliefs q(s)</strong>: the golem’s protocol state models in <code>bardo-protocol-state</code> plus the Bayesian models from the BayesianSurpriseDomain</li>
+<li><strong>Generative model p(o|s)</strong>: the forward model predicting what observations should occur given the believed state</li>
+</ul>
+<p>Friston (2010) showed that any system that maintains its organization over time must, in effect, minimize variational free energy. The golem’s mortality-aware lifecycle makes this concrete: a golem that fails to minimize surprise (fails to model its environment accurately) makes bad trades, loses capital, and dies sooner.</p>
+<h4 id="the-perception-action-cycle"><a class="header" href="#the-perception-action-cycle">The Perception-Action Cycle</a></h4>
+<p>Free energy minimization happens through two complementary pathways:</p>
+<p><strong>Perception (model update):</strong> Adjust q(s) to better explain observations. This is the Bayesian update step – exactly what the conjugate prior models in the BayesianSurpriseDomain do at each Gamma tick. When the golem updates its gas price model after observing an unusually high gas price, it’s performing perceptual inference.</p>
+<p><strong>Action:</strong> Change the world so that future observations match predictions. When the golem rebalances an LP position that has gone out of range, it’s performing active inference – changing the state of the world to reduce the prediction error between “position should be in range” and “position is out of range.”</p>
+<p>Both pathways reduce free energy. The golem’s tick hierarchy implements them at different timescales:</p>
+<ul>
+<li><strong>Gamma tick</strong>: Perceptual inference (fast model updates, ~12 seconds)</li>
+<li><strong>Theta tick</strong>: Mixed inference and planning (LLM analysis, action proposals, ~5 minutes)</li>
+<li><strong>Delta tick</strong>: Deep perceptual inference (model consolidation, ANN rebuild, ~20 minutes)</li>
+</ul>
+<h3 id="precision-weighting"><a class="header" href="#precision-weighting">Precision Weighting</a></h3>
+<h4 id="precision-as-confidence-weighted-attention"><a class="header" href="#precision-as-confidence-weighted-attention">Precision as Confidence-Weighted Attention</a></h4>
+<p>Precision is the inverse variance of a prediction error. A prediction channel with high precision produces tight, reliable predictions; its errors carry weight. A channel with low precision produces noisy, unreliable predictions; its errors should be downweighted.</p>
+<p>In active inference, attention <em>is</em> precision optimization. The agent doesn’t attend to everything equally. It allocates attention proportional to the expected precision of each sensory channel. This is not a metaphor – it’s mathematically identical.</p>
+<pre><code>prediction_error_weighted = precision * (observation - prediction)
+</code></pre>
+<p>For the golem’s triage pipeline, each protocol feature channel has its own precision:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Precision estimate for a single prediction channel.
+/// Tracks the inverse variance of recent prediction errors.
+#[derive(Clone, Debug)]
+pub struct PrecisionEstimate {
+    /// Running mean of squared prediction errors
+    mean_sq_error: f64,
+    /// Running mean of prediction errors (for bias detection)
+    mean_error: f64,
+    /// Exponential decay factor for the running estimates
+    decay: f64,
+    /// Number of effective samples
+    n_eff: f64,
+}
+
+impl PrecisionEstimate {
+    pub fn new(decay: f64) -&gt; Self {
+        Self {
+            mean_sq_error: 1.0, // Start with unit variance (uninformative)
+            mean_error: 0.0,
+            decay,
+            n_eff: 0.0,
+        }
+    }
+
+    /// Update with a new prediction error. Returns the current precision.
+    pub fn update(&amp;mut self, error: f64) -&gt; f64 {
+        self.mean_sq_error = self.decay * self.mean_sq_error + (1.0 - self.decay) * error * error;
+        self.mean_error = self.decay * self.mean_error + (1.0 - self.decay) * error;
+        self.n_eff = self.decay * self.n_eff + 1.0;
+        self.precision()
+    }
+
+    /// Precision = inverse variance, clamped to avoid division by near-zero.
+    pub fn precision(&amp;self) -&gt; f64 {
+        let variance = (self.mean_sq_error - self.mean_error.powi(2)).max(1e-8);
+        (1.0 / variance).min(1e6) // Clamp to prevent numerical explosion
+    }
+
+    /// Is this channel well-calibrated? High precision + low bias = yes.
+    pub fn is_calibrated(&amp;self) -&gt; bool {
+        self.n_eff &gt; 10.0 &amp;&amp; self.mean_error.abs() &lt; 2.0 * self.mean_sq_error.sqrt()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="precision-and-curiosity-thresholds"><a class="header" href="#precision-and-curiosity-thresholds">Precision and Curiosity Thresholds</a></h4>
+<p>The FEP predicts a counterintuitive relationship between model confidence and curiosity thresholds. Protocols where the golem has high-precision models should get <em>lower</em> curiosity thresholds, not higher. Why? Because a prediction error from a high-precision channel is more informative than one from a low-precision channel. If the golem’s model of Uniswap V3 is tight (high precision), and a Uniswap V3 event violates that model, something genuinely unusual is happening. If the model of some obscure new protocol is loose (low precision), prediction errors are expected and carry less information.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Modulate curiosity threshold based on model precision.
+/// High precision → lower threshold → more events escalated for that protocol.
+/// Low precision → higher threshold → fewer events escalated (noise expected).
+fn precision_modulated_threshold(
+    base_threshold: f32,
+    precision: f64,
+    max_precision: f64,
+) -&gt; f32 {
+    let normalized = (precision / max_precision).min(1.0) as f32;
+    // High precision: threshold drops to 60% of base
+    // Low precision: threshold stays at 100% of base
+    base_threshold * (1.0 - 0.4 * normalized)
+}
+<span class="boring">}</span></code></pre>
+<p>This reverses the naive intuition (well-known protocols are boring, unknown ones are interesting) with a principled alternative: well-modeled protocols whose behavior deviates are the most interesting signals.</p>
+<h3 id="expected-free-energy-for-action-selection"><a class="header" href="#expected-free-energy-for-action-selection">Expected Free Energy for Action Selection</a></h3>
+<h4 id="the-planning-as-inference-framework"><a class="header" href="#the-planning-as-inference-framework">The Planning-as-Inference Framework</a></h4>
+<p>Active inference treats planning as inference. Instead of optimizing a reward function (reinforcement learning) or following rules (expert systems), the agent scores candidate actions by their <strong>Expected Free Energy (EFE)</strong>:</p>
+<pre><code>G(a) = E_q[ D_KL( q(o|a) || p(o) ) ] + E_q[ D_KL( q(s|o,a) || q(s|a) ) ]
+     = pragmatic_value              + epistemic_value
+     = (expected reward)             + (expected information gain)
+</code></pre>
+<p>The first term (pragmatic value) favors actions that lead to observations the agent prefers. For the golem: actions that lead to profitable positions, lower risk exposure, timely rebalancing.</p>
+<p>The second term (epistemic value) favors actions that resolve uncertainty. For the golem: probe swaps that reveal market depth, monitoring positions to detect out-of-range conditions, investigating unknown protocols.</p>
+<p>The balance between these terms is not tuned by a hyperparameter. It falls out of the math: when the agent is uncertain, epistemic value dominates and the agent explores. When the agent is confident, pragmatic value dominates and the agent exploits. This is the exploration-exploitation tradeoff solved without epsilon-greedy hacks or UCB bounds.</p>
+<h4 id="efe-for-triage-routing"><a class="header" href="#efe-for-triage-routing">EFE for Triage Routing</a></h4>
+<p>At Theta tick, the golem decides how to handle a set of high-scoring triage events. Each “action” is a routing decision: escalate to LLM analysis, update state silently, or discard. EFE scores these:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Expected Free Energy for a triage routing action.
+pub struct EfeScore {
+    /// Pragmatic: how much does this action align with the golem's goals?
+    /// Positive for actions that protect positions, capture opportunities.
+    pub pragmatic: f64,
+    /// Epistemic: how much uncertainty does this action resolve?
+    /// High for events from poorly modeled protocols with high-precision violations.
+    pub epistemic: f64,
+}
+
+impl EfeScore {
+    /// Combined EFE. Lower is better (minimizing free energy).
+    /// Negate because we want to SELECT actions with highest value,
+    /// but EFE is a quantity to minimize.
+    pub fn combined(&amp;self) -&gt; f64 {
+        -(self.pragmatic + self.epistemic)
+    }
+}
+
+/// Score a routing decision using expected free energy.
+fn score_routing_action(
+    event: &amp;TriageEvent,
+    action: RoutingAction,
+    belief_state: &amp;BeliefState,
+    golem_preferences: &amp;GolemPreferences,
+) -&gt; EfeScore {
+    match action {
+        RoutingAction::EscalateToLlm =&gt; {
+            let epistemic = belief_state.information_gain_from_analysis(event);
+            let pragmatic = golem_preferences.relevance_to_positions(event);
+            EfeScore { pragmatic, epistemic }
+        }
+        RoutingAction::UpdateStateSilently =&gt; {
+            // Low epistemic value (no LLM analysis = less learning)
+            // but non-zero pragmatic value (state stays current)
+            let epistemic = 0.1 * belief_state.information_gain_from_analysis(event);
+            let pragmatic = 0.3 * golem_preferences.relevance_to_positions(event);
+            EfeScore { pragmatic, epistemic }
+        }
+        RoutingAction::Discard =&gt; {
+            EfeScore {
+                pragmatic: 0.0,
+                epistemic: 0.0,
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-belief-state"><a class="header" href="#the-belief-state">The Belief State</a></h3>
+<h4 id="maintaining-a-generative-model-of-chain-activity"><a class="header" href="#maintaining-a-generative-model-of-chain-activity">Maintaining a Generative Model of Chain Activity</a></h4>
+<p>The golem’s belief state is the collection of all its models about on-chain activity:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The golem's beliefs about the state of its environment.
+/// Updated at each tick via Bayesian inference.
+pub struct BeliefState {
+    /// Per-protocol Bayesian surprise models (from BayesianSurpriseDomain)
+    pub surprise_models: BayesianSurpriseScorer,
+
+    /// Per-channel precision estimates
+    pub precisions: DashMap&lt;(ProtocolId, String), PrecisionEstimate&gt;,
+
+    /// Protocol state predictions for the next observation
+    pub predictions: DashMap&lt;ProtocolId, StatePrediction&gt;,
+
+    /// Global regime indicator (stationary vs. changepoint detected)
+    pub regime: AtomicU8, // 0 = stationary, 1 = transition, 2 = new regime
+}
+
+/// Prediction about what the next observation from a protocol should look like.
+#[derive(Clone, Debug)]
+pub struct StatePrediction {
+    pub expected_event_rate: f64,
+    pub expected_gas_range: (f64, f64),
+    pub expected_value_range: (f64, f64),
+    pub confidence: f64, // derived from precision estimates
+}
+
+impl BeliefState {
+    /// Process a new observation: update beliefs, compute surprise,
+    /// update precisions, generate next prediction.
+    pub fn process_observation(
+        &amp;self,
+        protocol: &amp;ProtocolId,
+        features: &amp;TxFeatures,
+    ) -&gt; ObservationResult {
+        // 1. Compute surprise (updates models internally)
+        let surprise = self.surprise_models.score(protocol, features);
+
+        // 2. Compute prediction error against current predictions
+        let prediction_error = if let Some(pred) = self.predictions.get(protocol) {
+            features.deviation_from(&amp;pred)
+        } else {
+            1.0 // No prediction = maximum uncertainty
+        };
+
+        // 3. Update precision for each feature channel
+        let precision = self.update_precisions(protocol, features, prediction_error);
+
+        // 4. Precision-weighted prediction error
+        let weighted_error = precision * prediction_error;
+
+        // 5. Generate next prediction (simple EMA-based)
+        self.update_predictions(protocol, features);
+
+        ObservationResult {
+            surprise,
+            prediction_error,
+            precision_weighted_error: weighted_error,
+            regime_change_detected: weighted_error &gt; REGIME_THRESHOLD,
+        }
+    }
+
+    /// Estimate information gain from LLM analysis of an event.
+    pub fn information_gain_from_analysis(&amp;self, event: &amp;TriageEvent) -&gt; f64 {
+        // Events from low-precision protocols offer more information gain
+        let avg_precision = self.average_precision(&amp;event.protocol_id);
+        let uncertainty = 1.0 / (avg_precision + 1.0);
+
+        // Events with high surprise offer more information gain
+        let surprise = event.curiosity_score as f64;
+
+        // Information gain is approximately surprise * uncertainty
+        surprise * uncertainty
+    }
+
+    fn update_precisions(
+        &amp;self,
+        protocol: &amp;ProtocolId,
+        features: &amp;TxFeatures,
+        error: f64,
+    ) -&gt; f64 {
+        let key = (protocol.clone(), "aggregate".to_string());
+        let mut entry = self.precisions
+            .entry(key)
+            .or_insert_with(|| PrecisionEstimate::new(0.95));
+        entry.update(error)
+    }
+
+    fn average_precision(&amp;self, protocol: &amp;ProtocolId) -&gt; f64 {
+        let key = (protocol.clone(), "aggregate".to_string());
+        self.precisions
+            .get(&amp;key)
+            .map(|p| p.precision())
+            .unwrap_or(1.0)
+    }
+
+    fn update_predictions(&amp;self, protocol: &amp;ProtocolId, features: &amp;TxFeatures) {
+        // Simple exponential moving average prediction
+        let alpha = 0.1;
+        let mut pred = self.predictions
+            .entry(protocol.clone())
+            .or_insert_with(|| StatePrediction::from_features(features));
+
+        pred.expected_event_rate = pred.expected_event_rate * (1.0 - alpha)
+            + features.event_rate * alpha;
+        pred.expected_gas_range = (
+            pred.expected_gas_range.0 * (1.0 - alpha) + features.gas_price * alpha,
+            pred.expected_gas_range.1.max(features.gas_price),
+        );
+        pred.confidence = self.average_precision(protocol).min(1.0);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-active-inference-agent"><a class="header" href="#the-active-inference-agent">The Active Inference Agent</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Active inference agent wrapping the belief state and action selection.
+pub struct ActiveInferenceAgent {
+    pub beliefs: BeliefState,
+    pub preferences: GolemPreferences,
+}
+
+impl ActiveInferenceAgent {
+    /// Select the best routing action for a triage event.
+    /// Returns the action with the lowest expected free energy.
+    pub fn select_routing(&amp;self, event: &amp;TriageEvent) -&gt; RoutingAction {
+        let actions = [
+            RoutingAction::EscalateToLlm,
+            RoutingAction::UpdateStateSilently,
+            RoutingAction::Discard,
+        ];
+
+        actions
+            .iter()
+            .map(|action| {
+                let efe = score_routing_action(
+                    event,
+                    *action,
+                    &amp;self.beliefs,
+                    &amp;self.preferences,
+                );
+                (*action, efe.combined())
+            })
+            .min_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap())
+            .map(|(action, _)| action)
+            .unwrap_or(RoutingAction::Discard)
+    }
+
+    /// Process an observation and update the agent's beliefs.
+    /// Called at each Gamma tick for every transaction that passes
+    /// address triage (Stage 2).
+    pub fn observe(&amp;self, protocol: &amp;ProtocolId, features: &amp;TxFeatures) -&gt; ObservationResult {
+        self.beliefs.process_observation(protocol, features)
+    }
+
+    /// Gamma tick maintenance: decay models, update regime detection.
+    pub fn gamma_tick(&amp;self) {
+        self.beliefs.surprise_models.decay_gamma();
+    }
+
+    /// Theta tick maintenance: decay categorical models,
+    /// check for regime changes across protocols.
+    pub fn theta_tick(&amp;self) {
+        self.beliefs.surprise_models.decay_theta();
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="behavioral-phases-as-shifted-priors"><a class="header" href="#behavioral-phases-as-shifted-priors">Behavioral Phases as Shifted Priors</a></h3>
+<p>The golem’s behavioral phases (thriving, declining, terminal) map naturally to the FEP as shifted priors over preferred observations. In the thriving phase, the golem “expects” (prefers) observations consistent with capital growth: profitable trade opportunities, healthy position states. In the terminal phase, the golem “expects” observations consistent with capital preservation: stable positions, low-risk states.</p>
+<p>This shift in priors changes the pragmatic value term of EFE without touching the epistemic term. A terminal golem still seeks information (epistemic value is unchanged), but it no longer seeks profit opportunities (pragmatic value shifts toward conservation). The math produces the right behavior: a dying golem explores its environment to generate knowledge for its successor (high epistemic value) while avoiding risky trades (low pragmatic value for profit-seeking actions).</p>
+<h3 id="connection-to-the-triage-pipeline"><a class="header" href="#connection-to-the-triage-pipeline">Connection to the Triage Pipeline</a></h3>
+<p>Active inference doesn’t replace the existing triage pipeline. It provides a theoretical grounding for decisions that the pipeline already makes heuristically:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Triage decision</th><th>Current implementation</th><th>Active inference interpretation</th></tr>
+</thead>
+<tbody>
+<tr><td>Bloom filter pre-screen</td><td>Fixed bloom membership</td><td>Prior-based gating: events outside the generative model are pre-filtered</td></tr>
+<tr><td>Address triage</td><td>DashSet membership check</td><td>Attention allocation: only attend to entities within the generative model</td></tr>
+<tr><td>Curiosity scoring</td><td>Heuristic + ANN similarity</td><td>Free energy: surprise (Bayesian) + prediction error (precision-weighted)</td></tr>
+<tr><td>Score routing thresholds</td><td>Fixed brackets (&gt;0.8, 0.5-0.8, etc.)</td><td>EFE-based action selection: route to minimize expected free energy</td></tr>
+<tr><td>Heuristic-to-learned weight shift</td><td>Linear interpolation by episode count</td><td>Precision weighting: shift from prior-dominated to likelihood-dominated as data accumulates</td></tr>
+</tbody>
+</table>
+</div>
+<p>The value of this mapping is that it identifies missing capabilities: precision weighting isn’t implemented, EFE-based routing isn’t implemented, and the exploration-exploitation balance is currently managed by hand-tuned interpolation rather than falling out of the math.</p>
+<h3 id="active-inference-references"><a class="header" href="#active-inference-references">Active Inference References</a></h3>
+<ul>
+<li>Friston, K. (2010). “The Free-Energy Principle: A Unified Brain Theory?” <em>Nature Reviews Neuroscience</em>, 11(2), 127-138. — <em>Proposes that all adaptive systems minimize variational free energy; the theoretical umbrella under which Golem’s perception-action cycle operates.</em></li>
+<li>Parr, T. &amp; Friston, K.J. (2019). “Generalised Free Energy and Active Inference.” <em>Biological Cybernetics</em>, 113(5), 495-513. — <em>Extends free energy to include expected free energy for planning; formalizes the explore-exploit balance that governs context assembly priorities.</em></li>
+<li>Da Costa, L., Parr, T., Sajid, N., Veselic, S., Neacsu, V. &amp; Friston, K. (2020). “Active Inference on Discrete State-Spaces: A Synthesis.” <em>Journal of Mathematical Psychology</em>, 99, 102447. — <em>Provides a tractable discrete-state implementation of active inference; the computational template for Golem’s finite-state triage decisions.</em></li>
+<li>Parr, T., Pezzulo, G. &amp; Friston, K. (2022). <em>Active Inference: The Free Energy Principle in Mind, Brain, and Behavior.</em> MIT Press. — <em>The definitive textbook treatment of active inference, covering perception, action, and learning under one variational objective; primary reference for the context governor’s theoretical grounding.</em></li>
+<li>Feldman, H. &amp; Friston, K. (2010). “Attention, Uncertainty, and Free-Energy.” <em>Frontiers in Human Neuroscience</em>, 4, 215. — <em>Models attention as precision optimization on prediction errors; directly justifies the context governor’s precision-weighted slot allocation.</em></li>
+<li>Friston, K., FitzGerald, T., Rigoli, F., Schwartenbeck, P. &amp; Pezzulo, G. (2017). “Active Inference: A Process Theory.” <em>Neural Computation</em>, 29(1), 1-49. — <em>Specifies the computational process theory for active inference with belief propagation; the algorithmic blueprint behind the four-component value scoring system.</em></li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Anthropic (2025). “Context Engineering for Agents.” anthropic.com. — <em>Introduces the concept of context engineering as a first-class design discipline for LLM agents; the direct motivation for treating context assembly as a learnable control problem.</em></li>
+<li>Zhang, A. et al. (2025). “ACE: Agentic Context Engineering.” arXiv:2510.04618. — <em>Proposes an architecture where agents actively manage their own context windows; validates the context governor’s approach of autonomous slot allocation.</em></li>
+<li>Samsung Research (2025). “Context State Object Architecture.” arXiv:2511.03728. — <em>Introduces structured context state objects for multi-turn agent interactions; informs the governor’s typed context block design.</em></li>
+<li>Cohen-Wang, B., Shah, H., Georgiev, B., &amp; Madry, A. (2024). “ContextCite: Attributing Model Generation to Context.” MIT CSAIL, arXiv:2409.00729. — <em>Provides methods to attribute which context tokens influenced specific outputs; enables the governor’s cybernetic feedback loop measuring context block utility.</em></li>
+<li>Kang, S. et al. (2025). “ACON: Agentic Context Compression.” Microsoft Research, arXiv:2510.00615. — <em>Demonstrates agent-driven prompt compression that preserves task-relevant information; supports the governor’s delta compression strategy.</em></li>
+<li>Lindenbauer, M. et al. (2025). “Simple Observation Masking Halves Cost While Matching LLM Summarization.” arXiv:2508.21433, NeurIPS 2025 DL4C Workshop. — <em>Shows that selectively masking observations can halve token cost without degrading performance; evidence for the governor’s observation pruning approach.</em></li>
+<li>“Is Agentic RAG Worth It?” (2026). arXiv:2601.07711. — <em>Evaluates when retrieval-augmented generation pays for itself in agentic settings; informs the governor’s decision on when to inject Grimoire episodes vs. relying on prior knowledge.</em></li>
+<li>Wang, Z. et al. (2025). “TracLLM: Context Attribution for Long Contexts.” USENIX Security 2025. — <em>Traces which context segments are actually used during generation; provides the attribution signal the governor needs for its feedback loop.</em></li>
+<li>Jiang, H. et al. (2023). “LLMLingua: Compressing Prompts for Accelerated Inference.” EMNLP 2023. — <em>Introduces iterative prompt compression using a small LM to identify dispensable tokens; one of the compression techniques the governor can deploy on context blocks.</em></li>
+<li>Pan, Z. et al. (2024). “LLMLingua-2: Data Distillation for Faithful Prompt Compression.” ACL 2024. — <em>Improves on LLMLingua with faithful compression that preserves factual content; ensures the governor’s compression doesn’t distort critical on-chain data.</em></li>
+<li>Khattab, O. et al. (2024). “DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.” ICLR 2024. — <em>Demonstrates declarative prompt programs that self-optimize; the governor’s learnable context assembly follows a similar compile-then-improve pattern.</em></li>
+<li>Shinn, N. et al. (2023). “Reflexion: Language Agents with Verbal Reinforcement Learning.” NeurIPS 2023. — <em>Shows agents can improve through self-reflective verbal feedback; the governor’s after_turn reflection loop implements this pattern.</em></li>
+<li>Zhao, A. et al. (2024). “ExpeL: LLM Agents Are Experiential Learners.” AAAI 2024. — <em>Demonstrates agents extracting reusable insights from past episodes; parallel to how the governor uses Grimoire episode replay to improve future context assembly.</em></li>
+<li>Bateson, G. (1972). <em>Steps to an Ecology of Mind</em>. Chandler. — <em>Introduces deutero-learning (learning to learn) and logical types of learning; the theoretical basis for the governor’s meta-learning feedback loops.</em></li>
+<li>Argyris, C. &amp; Schon, D.A. (1978). <em>Organizational Learning</em>. Addison-Wesley. — <em>Defines single-loop and double-loop learning in organizations; the governor implements both: tuning parameters (single-loop) and revising its own assembly strategy (double-loop).</em></li>
+<li>Chen, L. et al. (2024). “FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance.” <em>TMLR</em>. — <em>Cascading LLM calls from cheap to expensive based on confidence; informs the governor’s tier-aware context budgeting across T0/T1/T2.</em></li>
+<li>[LIU-2024] Liu, N.F. et al. (2024). “Lost in the Middle: How Language Models Use Long Contexts.” TACL. — <em>Shows LLMs attend poorly to middle-positioned context; the governor places high-value blocks at the start and end of the assembled prompt.</em></li>
+<li>[BADDELEY-2000] Baddeley, A. “The Episodic Buffer: A New Component of Working Memory?” <em>Trends in Cognitive Sciences</em>, 4(11), 2000. — <em>Proposes a limited-capacity buffer integrating multi-modal information; the neuroscience model for the governor’s fixed-budget context window.</em></li>
+<li>[COGNITIVE-WORKSPACE-2025] “Cognitive Workspace: Active Memory Management for LLMs.” arXiv:2508.13171, 2025. — <em>Introduces explicit workspace management for LLM memory; directly supports the governor’s design as an active memory manager rather than a passive prompt concatenator.</em></li>
+<li>[FRISTON-2017] Friston, K. et al. “Active Inference: A Process Theory.” <em>Neural Computation</em>, 29(1), 2017. — <em>Specifies the computational process theory for active inference; provides the expected free energy objective the governor uses for value scoring.</em></li>
+<li>[PARR-2019] Parr, T. &amp; Friston, K.J. “Generalised Free Energy and Active Inference.” <em>Biological Cybernetics</em>, 113, 2019. — <em>Extends free energy to planning horizons; formalizes how the governor should weight epistemic vs. pragmatic value in slot allocation.</em></li>
+<li>[VICKREY-1961] Vickrey, W. “Counterspeculation, Auctions, and Competitive Sealed Tenders.” <em>Journal of Finance</em>, 16(1), 1961. — <em>Introduces the second-price sealed-bid auction; the mechanism design foundation for the Phase 2 VCG attention auction.</em></li>
+<li>[NISAN-2007] Nisan, N. et al. <em>Algorithmic Game Theory</em>. Cambridge University Press, 2007. — <em>Comprehensive treatment of mechanism design, VCG auctions, and incentive compatibility; the textbook reference for the attention auction’s truthfulness guarantees.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/13b-runtime-extensions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/14b-attention-auction.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/13b-runtime-extensions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/14b-attention-auction.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

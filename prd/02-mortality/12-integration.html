@@ -1,0 +1,896 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Integration - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/02-mortality/12-integration.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="system-integration-mortality-across-the-bardo-stack-spec"><a class="header" href="#system-integration-mortality-across-the-bardo-stack-spec">System Integration: Mortality Across the Bardo Stack [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crates</strong>: <code>golem-mortality</code>, <code>golem-runtime</code>, <code>golem-grimoire</code>, <code>golem-inference</code></p>
+<p><strong>Depends on</strong>: <code>00-thesis.md</code> (foundational mortality thesis), <code>02-epistemic-decay.md</code> (epistemic clock), <code>03-stochastic-mortality.md</code> (per-tick hazard rate), <code>08-mortality-affect.md</code> (mortality emotions), <code>06-thanatopsis.md</code> (death protocol), <code>07-succession.md</code> (generational evolution), <code>11-immortal-control.md</code> (immortal mode as control experiment), <code>../01-golem/02-heartbeat.md</code> (tick-based FSM), <code>../04-memory/01-grimoire.md</code> (persistent knowledge base), <code>../01-golem/09-inheritance.md</code> (knowledge inheritance specification), <code>../01-golem/11-lifecycle.md</code> (Golem lifecycle states)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how mortality integrates across the entire Bardo stack. The three mortality clocks (economic, epistemic, stochastic) are not isolated; they modulate inference tier selection, Grimoire (persistent knowledge base) maintenance, dream cycles, CorticalState (32-signal atomic shared perception surface), and the Heartbeat (tick-based FSM driving all computation). Mortality information flows downward as configuration and upward as telemetry. If you need to understand how a specific subsystem interacts with mortality, this is the map. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Mortality is not a standalone subsystem. It is a pervasive property that modulates every layer of the Bardo stack. This document specifies how the three mortality clocks (economic, epistemic, stochastic) integrate with each system component, what events flow between them, and how the composite vitality score propagates through the architecture.</p>
+<p>The integration follows a single principle: <strong>mortality information flows downward as configuration and upward as telemetry.</strong> The mortality engine computes vitality state; downstream systems consume it to modulate their behavior; those systems emit events that feed back into mortality computation.</p>
+<hr>
+<h2 id="full-integration-diagram"><a class="header" href="#full-integration-diagram">Full Integration Diagram</a></h2>
+<pre><code>+-----------------------------------------------------------------------------------+
+|                              OWNER / DASHBOARD                                     |
+|  Mortality curves | Hazard indicators | Vitality graphs | Experiment comparison   |
++--------+-----------------------------+--------------------------------------------+
+         |                             |
+         | config / steer              | Event Fabric / telemetry
+         v                             ^
++-----------------------------------------------------------------------------------+
+|                              MORTALITY ENGINE                                      |
+|  Economic Clock | Epistemic Clock | Stochastic Clock | Daimon Engine              |
+|  VitalityState computation | Phase transitions | Death Protocol trigger           |
++---+-------+-------+-------+-------+-------+-------+------+-----------------------+
+    |       |       |       |       |       |       |      |
+    v       v       v       v       v       v       v      v
++------+ +------+ +------+ +------+ +------+ +------+ +------+ +------------------+
+|Heart-| |Mind  | |Grim- | |Styx | |Styx  | |Clade | |Infer-| |Policy            |
+|beat  | |      | |oire  | |Vault| |Comm- | |      | |ence  | |                  |
+|      | |Probes| |      | |     | |ons   | |Death | |Tier  | |PolicyCage        |
+|bardo-| |feed  | |Demur-| |Ins. | |Death | |notif.| |selec-| |remains           |
+|life- | |epist.| |rage, | |snap | |testa-| |know- | |tion  | |hard limit        |
+|span  | |fit-  | |emoti.| |death| |ment  | |ledge | |mortal| |regardless of     |
+|ext.  | |ness  | |tags  | |bndl | |index | |share | |ity   | |emotional state   |
++------+ +------+ +------+ +------+ +------+ +------+ +------+ +------------------+
+    |       |       |       |       |       |       |      |
+    +-------+-------+-------+-------+-------+-------+------+
+                             |
+                             v
+                    +------------------+
+                    |  Event Fabric    |
+                    |  golem.* events  |
+                    +------------------+
+</code></pre>
+<hr>
+<h2 id="heartbeat-extension-bardo-lifespan"><a class="header" href="#heartbeat-extension-bardo-lifespan">Heartbeat Extension: bardo-lifespan</a></h2>
+<p>The <code>bardo-lifespan</code> extension implements the <code>Extension</code> trait (see <code>01a-runtime-extensions.md</code>) and fires on <code>on_after_turn</code>. It runs every tick and is the primary integration point between the mortality engine and the heartbeat loop, extending the existing heartbeat architecture (see <code>../01-golem/02-heartbeat.md</code>) with mortality-aware computation.</p>
+<p>The canonical <code>on_after_turn</code> firing order places lifespan second: heartbeat -&gt; <strong>lifespan</strong> -&gt; daimon -&gt; memory -&gt; risk -&gt; dream -&gt; cybernetics -&gt; clade -&gt; telemetry. This means lifespan reads the heartbeat’s cost data and writes vitality state that the daimon and all subsequent extensions consume.</p>
+<h3 id="extension-implementation"><a class="header" href="#extension-implementation">Extension Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The lifespan extension. Layer 2 (State), depends on heartbeat.
+pub struct LifespanExtension {
+    config: MortalityConfig,
+    economic_clock: EconomicClock,
+    epistemic_clock: EpistemicClock,
+    stochastic_clock: StochasticClock,
+}
+
+/// Inputs consumed from GolemState (written by prior extensions).
+pub struct LifespanInputs {
+    /// From heartbeat: current tick number and timing.
+    pub tick: u64,
+    pub tick_interval_ms: u64,
+    /// From telemetry: current cost attribution.
+    pub current_burn_rate: f64,
+    pub remaining_usdc: f64,
+    /// From context: current market regime.
+    pub market_regime: String,
+    /// From probe system: epistemic fitness computed this tick.
+    pub epistemic_fitness: f64,
+}
+
+/// Outputs written to GolemState for downstream extensions.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LifespanOutputs {
+    /// Composite vitality state -- consumed by all mortality-aware systems.
+    pub vitality: VitalityState,
+    /// Current behavioral phase.
+    pub phase: BehavioralPhase,
+    /// Survival pressure scalar (0.0 = terminal, 1.0 = thriving).
+    pub survival_pressure: f64,
+    /// Did a phase transition occur this tick?
+    pub phase_transition: Option&lt;PhaseTransition&gt;,
+    /// Should the Death Protocol initiate?
+    pub death_trigger: Option&lt;DeathTrigger&gt;,
+    /// Stochastic death check result.
+    pub stochastic_check: Option&lt;StochasticCheck&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StochasticCheck {
+    pub hazard_rate: f64,
+    pub rolled: f64,
+    pub died: bool,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="vitalitystate-computation"><a class="header" href="#vitalitystate-computation">VitalityState Computation</a></h3>
+<p>The vitality state integrates all three mortality clocks into a single composite score. This is the canonical state object that all downstream systems consume.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VitalityState {
+    /// Economic health: normalized USDC balance (0.0 = dead, 1.0 = fully funded).
+    pub economic: f64,
+    /// Epistemic fitness: rolling predictive accuracy vs reality (0.0 = random, 1.0 = perfect).
+    pub epistemic: f64,
+    /// Age factor: increases stochastic hazard rate (0.0 = newborn, 1.0 = ancient).
+    pub age_factor: f64,
+    /// Composite vitality: multiplicative combination of all three axes.
+    pub composite: f64,
+    /// Current tick at which this state was computed.
+    pub computed_at_tick: u64,
+    /// Timestamp of computation.
+    pub computed_at: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BehavioralPhase {
+    Thriving,
+    Stable,
+    Conservation,
+    Declining,
+    Terminal,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PhaseTransition {
+    pub from: BehavioralPhase,
+    pub to: BehavioralPhase,
+    pub tick: u64,
+    pub timestamp: u64,
+    pub cause: TransitionCause,
+    pub vitality_at_transition: VitalityState,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum TransitionCause {
+    Economic,
+    Epistemic,
+    Stochastic,
+    Composite,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="vitality-computation-function"><a class="header" href="#vitality-computation-function">Vitality Computation Function</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn compute_vitality(state: &amp;VitalityState) -&gt; f64 {
+    // Multiplicative, not additive -- low score on ANY axis drags vitality down
+    let econ = sigmoid(state.economic, 0.3, 10.0);  // Sharp drop below 30% credits
+    let epist = sigmoid(state.epistemic, 0.4, 8.0);  // Sharp drop below 40% accuracy
+    let age = 1.0 - state.age_factor * 0.3;          // Gradual drag from age
+    (econ * epist * age).clamp(0.0, 1.0)
+}
+
+fn vitality_to_phase(composite: f64) -&gt; BehavioralPhase {
+    if composite &gt; 0.7 { BehavioralPhase::Thriving }
+    else if composite &gt; 0.5 { BehavioralPhase::Stable }
+    else if composite &gt; 0.3 { BehavioralPhase::Conservation }
+    else if composite &gt; 0.1 { BehavioralPhase::Declining }
+    else { BehavioralPhase::Terminal }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="per-tick-execution-flow"><a class="header" href="#per-tick-execution-flow">Per-Tick Execution Flow</a></h3>
+<p>On every heartbeat tick, <code>bardo-lifespan</code> executes in this order:</p>
+<ol>
+<li><strong>Read inputs</strong> from other extensions (burn rate, USDC balance, epistemic fitness, market regime).</li>
+<li><strong>Compute economic health</strong> – normalize remaining USDC against initial funding and current burn rate.</li>
+<li><strong>Read epistemic fitness</strong> – consume the fitness score computed by the probe system this tick.</li>
+<li><strong>Compute age factor</strong> – <code>min(1.0, tickCount / expectedMaxTicks)</code> where <code>expectedMaxTicks</code> is derived from the epistemic decay half-life for the current domain.</li>
+<li><strong>Compute composite vitality</strong> – multiplicative combination of economic, epistemic, and age factors.</li>
+<li><strong>Determine behavioral phase</strong> – map composite vitality to the five behavioral phases.</li>
+<li><strong>Check for phase transition</strong> – if phase changed, emit <code>PhaseTransition</code> event.</li>
+<li><strong>Run stochastic death check</strong> – if stochastic mortality is enabled, compute hazard rate and roll.</li>
+<li><strong>Check death triggers</strong> – evaluate all four trigger conditions (low vitality, low balance, epistemic senescence, staleness).</li>
+<li><strong>Emit outputs</strong> – vitality state, phase, survival pressure, and any triggers.</li>
+</ol>
+<hr>
+<h2 id="mind-integration-probe-system-feeding-epistemic-fitness"><a class="header" href="#mind-integration-probe-system-feeding-epistemic-fitness">Mind Integration: Probe System Feeding Epistemic Fitness</a></h2>
+<p>The probe system (see <code>../01-golem/02-heartbeat.md</code> SENSING state) is extended with a dedicated epistemic fitness probe that computes the Golem’s predictive accuracy against reality.</p>
+<h3 id="epistemic-fitness-probe-t0"><a class="header" href="#epistemic-fitness-probe-t0">Epistemic Fitness Probe (T0)</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Epistemic fitness probe — T0 (deterministic, $0.00 cost), fires every tick.
+pub struct EpistemicFitnessProbe {
+    /// Rolling window of prediction-outcome pairs.
+    pub prediction_window: VecDeque&lt;PredictionOutcomePair&gt;,
+    /// Window size in ticks (from MortalityConfig.epistemic.fitness_window).
+    pub window_size: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PredictionOutcomePair {
+    pub tick: u64,
+    pub prediction: Prediction,
+    /// None if outcome not yet observed.
+    pub outcome: Option&lt;Outcome&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Prediction {
+    pub prediction_type: PredictionType,
+    pub predicted: f64,
+    pub confidence: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum PredictionType {
+    PriceDirection,
+    VolatilityRegime,
+    FeeRate,
+    LiquidityDepth,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Outcome {
+    pub actual: f64,
+    pub measured_at_tick: u64,
+}
+
+/// Output of the epistemic fitness probe.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EpistemicFitnessOutput {
+    /// 0.0 (random) to 1.0 (perfect).
+    pub fitness: f64,
+    /// Slope over last 500 ticks.
+    pub trend: f64,
+    /// How many predictions had outcomes.
+    pub predictions_evaluated: u32,
+    /// Raw accuracy (correct / total).
+    pub accuracy: f64,
+    /// Calibration score (confidence vs outcome).
+    pub calibration: f64,
+    /// High if fitness below senescence threshold.
+    pub severity: Severity,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Severity {
+    Low,
+    High,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="how-fitness-feeds-into-mortality"><a class="header" href="#how-fitness-feeds-into-mortality">How Fitness Feeds Into Mortality</a></h3>
+<p>The epistemic fitness probe runs at T0 cost (deterministic computation, no inference). Its output is consumed by <code>bardo-lifespan</code> on the same tick:</p>
+<ol>
+<li><strong>Fitness below senescence threshold</strong> (<code>&lt; 0.35</code> by default) with severity <code>high</code> triggers the senescence cascade.</li>
+<li><strong>Senescence cascade</strong>: If fitness remains below threshold for <code>recoveryGracePeriod</code> ticks (default: 500), the Death Protocol initiates with <code>deathCause: "epistemic_senescence"</code>.</li>
+<li><strong>Fitness modulates stochastic hazard</strong>: Low fitness multiplies the base hazard rate by <code>epistemicHazardMultiplier</code> (default: 2.0), making stochastic death more likely for cognitively impaired Golems.</li>
+<li><strong>Fitness modulates affect</strong>: The daimon engine appraises low fitness as a threat, producing anxiety or fear emotions that further modulate behavior.</li>
+</ol>
+<h3 id="probe-results-in-escalation-context"><a class="header" href="#probe-results-in-escalation-context">Probe Results in Escalation Context</a></h3>
+<p>When the heartbeat escalates to T1 or T2 (DECIDING state), the epistemic fitness score and trend are included in the <code>EscalationContext</code> provided to the LLM:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Injected into the EscalationContext when the heartbeat escalates to T1 or T2.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MortalityContext {
+    pub vitality: VitalityState,
+    pub phase: BehavioralPhase,
+    pub survival_pressure: f64,
+    pub epistemic_fitness: f64,
+    pub epistemic_trend: f64,
+    pub estimated_lifespan_ticks: Option&lt;u64&gt;,
+    pub stochastic_hazard_rate: f64,
+    pub affect_state: AffectState,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="grimoire-integration"><a class="header" href="#grimoire-integration">Grimoire Integration</a></h2>
+<p>The Grimoire (see <code>../04-memory/01-grimoire.md</code>) integrates with mortality through three mechanisms: emotional tags on entries, knowledge demurrage, and death testament storage.</p>
+<h3 id="emotional-tags-on-grimoire-entries"><a class="header" href="#emotional-tags-on-grimoire-entries">Emotional Tags on Grimoire Entries</a></h3>
+<p>Every <code>GrimoireEntry</code> gains an optional <code>emotionalContext</code> field that records the Golem’s affective state when the entry was created. This enables successors and Clade siblings to understand the emotional conditions under which knowledge was produced.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GrimoireEntryEmotionalContext {
+    /// Primary emotion active when this entry was created.
+    pub primary_emotion: EmotionType,
+    /// Emotional valence: -1.0 (negative) to +1.0 (positive).
+    pub valence: f64,
+    /// Arousal level: 0.0 (calm) to 1.0 (activated).
+    pub arousal: f64,
+    /// Behavioral phase at creation time.
+    pub phase: BehavioralPhase,
+    /// Survival pressure at creation time.
+    pub survival_pressure: f64,
+    /// Epistemic fitness at creation time.
+    pub epistemic_fitness: f64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EmotionType {
+    Curiosity,    // Novel pattern detected, approach motivation
+    Confidence,   // Strategy validated, reinforcement
+    Anxiety,      // Threat detected, vigilance heightened
+    Frustration,  // Repeated failure, approach persistence
+    Grief,        // Clade sibling death, loss processing
+    Resolve,      // Conservation phase, determination
+    Serenity,     // Terminal acceptance, generative giving
+    Excitement,   // High-value opportunity detected
+    Caution,      // Near-miss or small loss, protective response
+    Neutral,      // Default state, routine operation
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Why this matters:</strong> Knowledge produced under different emotional states has different epistemic properties. An insight generated during <code>anxiety</code> (threat detected) may be overly conservative. One generated during <code>serenity</code> (terminal acceptance, zero survival pressure) may be the most epistemically honest – the Golem has nothing left to protect. Successors can calibrate inherited knowledge against the emotional context of its creation.</p>
+<h3 id="knowledge-demurrage"><a class="header" href="#knowledge-demurrage">Knowledge Demurrage</a></h3>
+<p>Demurrage implements Gesell’s Freigeld principle for information: knowledge that is not actively maintained decays. This prevents the Funes pathology (perfect memory, no understanding) and keeps the Grimoire lean.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DemurrageConfig {
+    /// Enable knowledge demurrage. Default: true for mortal, false for immortal.
+    pub enabled: bool,
+    /// Ticks between validation checks. Default: 5000 (~2.3 days at 40s/tick).
+    pub validation_interval_ticks: u64,
+    /// Confidence decay per interval for unvalidated entries. Default: 0.05 (5%).
+    pub decay_rate_per_interval: f64,
+    /// Confidence below which entries are archived (removed from active PLAYBOOK.md).
+    /// Default: 0.1.
+    pub archive_threshold: f64,
+    /// Decay class overrides by entry category.
+    pub decay_classes: DecayClasses,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DecayClasses {
+    /// Protocol mechanics, ABIs. None = no decay.
+    pub structural: Option&lt;f64&gt;,
+    /// Market regime models, correlation structures. Default: 14 days half-life.
+    pub regime_conditional: f64,
+    /// Entry/exit signals, spread patterns, gas estimates. Default: 7 days half-life.
+    pub tactical: f64,
+    /// Order book snapshots, mempool state, current prices. Default: 1 day half-life.
+    pub ephemeral: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Demurrage execution flow:</strong></p>
+<ol>
+<li>Every <code>validationIntervalTicks</code>, the Curator scans all active Grimoire entries.</li>
+<li>Entries whose <code>lastValidated</code> timestamp is older than the interval lose <code>decayRatePerInterval</code> confidence.</li>
+<li>Entries whose confidence drops below <code>archiveThreshold</code> are moved from active to cold storage.</li>
+<li>Archived entries are not deleted – they persist in LanceDB for death reflection and historical analysis.</li>
+<li>An entry is “validated” when fresh market data confirms or references it during the Reflexion pipeline.</li>
+</ol>
+<p><strong>Feedback loop with mortality:</strong> Demurrage creates a productive coupling between activity and survival. A Golem that stops learning (e.g., in conservation mode where it is monitoring only) watches its knowledge decay, which lowers epistemic fitness, which accelerates mortality. This prevents conservation mode from becoming a sustainable steady state – the Golem must eventually either resume active learning or die.</p>
+<h3 id="death-testament-storage"><a class="header" href="#death-testament-storage">Death Testament Storage</a></h3>
+<p>The Grimoire stores the Golem’s death testament – the output of the Thanatopsis Protocol (enhanced Death Protocol Reflect phase) – as a special entry type.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeathTestament {
+    /// Unique identifier for this testament.
+    pub testament_id: String,
+    /// Golem that produced this testament.
+    pub golem_id: String,
+    /// Generation number.
+    pub generation: u32,
+    /// The nine-section DeathReflection.
+    pub reflection: DeathReflection,
+    /// Emotional life review: the Golem's affective arc summarized.
+    pub emotional_life_review: EmotionalLifeReview,
+    /// Compressed Grimoire: top entries by confidence and novelty.
+    pub compressed_grimoire: CompressedGrimoire,
+    /// Cause of death with full metadata.
+    pub death_cause: DeathCauseWithMetadata,
+    /// Timestamp of death.
+    pub died_at: u64,
+    /// Total lifetime in ticks.
+    pub lifetime_ticks: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EmotionalLifeReview {
+    /// Dominant emotion per lifecycle phase.
+    pub emotional_arc: Vec&lt;EmotionalArcEntry&gt;,
+    /// Peak emotional moments (highest arousal events).
+    pub peak_moments: Vec&lt;PeakMoment&gt;,
+    /// Unresolved emotional patterns.
+    pub unresolved_patterns: Vec&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EmotionalArcEntry {
+    pub phase: BehavioralPhase,
+    pub dominant_emotion: EmotionType,
+    /// Ticks spent in this phase.
+    pub duration: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PeakMoment {
+    pub tick: u64,
+    pub emotion: EmotionType,
+    pub trigger: String,
+    pub outcome: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompressedGrimoire {
+    /// Top 20 by confidence.
+    pub top_insights: Vec&lt;GrimoireEntry&gt;,
+    /// All warnings.
+    pub top_warnings: Vec&lt;GrimoireEntry&gt;,
+    pub causal_graph: SerializedCausalGraph,
+    pub strategy_fragments: Vec&lt;GrimoireEntry&gt;,
+    pub total_entries_compressed: u32,
+    pub compression_ratio: f64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="styx-archive-integration-insurance-snapshots-and-death-bundles"><a class="header" href="#styx-archive-integration-insurance-snapshots-and-death-bundles">Styx Archive Integration: Insurance Snapshots and Death Bundles</a></h2>
+<p>The Styx Archive layer is the durable storage layer for mortality-critical data. It extends the insurance snapshot system (see <code>06-thanatopsis.md</code>) with mortality-aware metadata.</p>
+<h3 id="insurance-snapshots-with-mortality-context"><a class="header" href="#insurance-snapshots-with-mortality-context">Insurance Snapshots with Mortality Context</a></h3>
+<p>Every 6-hour insurance snapshot gains mortality fields:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Extends InsuranceSnapshot with mortality-aware fields.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MortalityAwareSnapshot {
+    /// Base insurance snapshot fields.
+    #[serde(flatten)]
+    pub base: InsuranceSnapshot,
+    /// Current vitality state at snapshot time.
+    pub vitality: VitalityState,
+    /// Current behavioral phase.
+    pub phase: BehavioralPhase,
+    /// Epistemic fitness history since last snapshot.
+    pub epistemic_history: Vec&lt;EpistemicHistoryEntry&gt;,
+    /// Stochastic death checks since last snapshot.
+    pub stochastic_checks: StochasticChecksSummary,
+    /// Affect state at snapshot time.
+    pub affect_state: SnapshotAffectState,
+    /// Would this Golem have died under mortal rules? (for immortal tracking)
+    pub would_have_died: bool,
+    pub would_have_died_cause: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EpistemicHistoryEntry {
+    pub tick: u64,
+    pub fitness: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StochasticChecksSummary {
+    pub checks_performed: u32,
+    pub max_hazard_rate: f64,
+    pub cumulative_survival_probability: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SnapshotAffectState {
+    pub primary_emotion: EmotionType,
+    /// EMA-smoothed valence.
+    pub mood: f64,
+    pub arousal: f64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="death-bundles"><a class="header" href="#death-bundles">Death Bundles</a></h3>
+<p>When the Death Protocol completes, a death bundle is assembled and stored in the Styx Archive layer. The death bundle is the canonical artifact of a Golem’s death – everything needed by a successor, the Clade, or the Styx Lethe.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeathBundle {
+    /// Bundle version for forward compatibility.
+    pub version: String,  // "1.0"
+    /// Unique bundle identifier.
+    pub bundle_id: String,
+    /// The death testament (Thanatopsis output).
+    pub testament: DeathTestament,
+    /// Final insurance snapshot.
+    pub final_snapshot: MortalityAwareSnapshot,
+    /// Complete PLAYBOOK.md at time of death.
+    pub final_playbook: String,
+    /// Serialized causal graph.
+    pub causal_graph: SerializedCausalGraph,
+    /// Top 50 Grimoire entries by confidence x novelty.
+    pub top_entries: Vec&lt;GrimoireEntry&gt;,
+    /// All warnings (no limit -- risk information is always included).
+    pub all_warnings: Vec&lt;GrimoireEntry&gt;,
+    /// Lifetime statistics.
+    pub lifetime_stats: GolemLifetimeStats,
+    /// Successor recommendation.
+    pub successor_recommendation: Option&lt;SuccessorRecommendation&gt;,
+    /// Bundle size in bytes.
+    pub size_bytes: u64,
+    /// Hash for integrity verification.
+    pub sha256: String,
+    /// Storage URL. Expires after 90 days for hosted; permanent for self-hosted.
+    pub storage_url: String,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="styx-lethe-formerly-lethe-integration-death-testament-indexing-with-provenance-boost"><a class="header" href="#styx-lethe-formerly-lethe-integration-death-testament-indexing-with-provenance-boost">Styx Lethe (formerly Lethe) Integration: Death Testament Indexing with Provenance Boost</a></h2>
+<p>The Styx Lethe layer is the Clade’s queryable knowledge index. Death testaments receive special treatment because they are produced under zero survival pressure and are therefore epistemically privileged.</p>
+<h3 id="provenance-boost"><a class="header" href="#provenance-boost">Provenance Boost</a></h3>
+<p>Knowledge from death testaments receives a provenance confidence boost when ingested by the Styx Lethe:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Source</th><th>Base Confidence</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Live Golem (self-generated)</td><td>0.7</td><td>Full experiential context</td></tr>
+<tr><td>Clade sibling (alive)</td><td>0.4</td><td>Trust but verify</td></tr>
+<tr><td>Death testament – “What I learned”</td><td>0.5</td><td>Validated knowledge, death-reviewed</td></tr>
+<tr><td>Death testament – “What I got wrong”</td><td>0.6</td><td>Highest-value negative knowledge</td></tr>
+<tr><td>Death testament – “What I suspect”</td><td>0.35</td><td>Hunches, but from a Golem with nothing to protect</td></tr>
+<tr><td>Death testament – “What confused me”</td><td>0.45</td><td>Unresolved questions point to frontier</td></tr>
+<tr><td>Replicant report</td><td>0.3</td><td>Experimental, needs validation</td></tr>
+<tr><td>Marketplace purchase</td><td>0.3</td><td>Unknown provenance</td></tr>
+</tbody>
+</table>
+</div>
+<p>The rationale for the boost: a dying Golem’s “What I got wrong” entries are produced with zero survival pressure (the Golem is already dead), making them the most epistemically honest artifacts in the system. A live Golem has incentives to rationalize failures; a dying Golem does not. This is Bataille’s sovereign death applied to knowledge production.</p>
+<h3 id="death-testament-indexing"><a class="header" href="#death-testament-indexing">Death Testament Indexing</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Death testament indexing within the Styx Lethe layer.
+#[async_trait]
+pub trait DeathTestamentIndex: Send + Sync {
+    /// Index death testament entries for retrieval by topic, regime, and emotion.
+    async fn index_testament(&amp;self, testament: &amp;DeathTestament) -&gt; Result&lt;()&gt;;
+
+    /// Query entries from dead Golems, optionally filtered by death cause or emotional state.
+    async fn query_death_knowledge(
+        &amp;self,
+        params: DeathKnowledgeQuery,
+    ) -&gt; Result&lt;Vec&lt;DeathKnowledgeResult&gt;&gt;;
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeathKnowledgeQuery {
+    /// Semantic query string.
+    pub query: String,
+    /// Filter by specific death causes.
+    pub death_causes: Option&lt;Vec&lt;DeathCause&gt;&gt;,
+    /// Filter by emotional context at creation.
+    pub emotional_context: Option&lt;Vec&lt;EmotionType&gt;&gt;,
+    /// Filter by behavioral phase at creation.
+    pub phases: Option&lt;Vec&lt;BehavioralPhase&gt;&gt;,
+    /// Maximum results.
+    pub limit: Option&lt;usize&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeathKnowledgeResult {
+    pub entry: GrimoireEntry,
+    pub source_golem: String,
+    pub generation: u32,
+    pub death_cause: DeathCause,
+    pub emotional_context: GrimoireEntryEmotionalContext,
+    pub provenance_boost: f64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="clade-integration-death-notifications-and-knowledge-sharing"><a class="header" href="#clade-integration-death-notifications-and-knowledge-sharing">Clade Integration: Death Notifications and Knowledge Sharing</a></h2>
+<p>When a Golem dies, the Clade (see <code>../01-golem/09-inheritance.md</code> Section S6) is notified through multiple channels. The mortality system integrates with Clade mechanics to ensure death produces maximum knowledge transfer.</p>
+<blockquote>
+<p><strong>Extended:</strong> DeathNotification struct, 5-step Clade response protocol (grief affect, insight ingestion, epistemic recalculation, sharing threshold adjustment) – see <a href="../../prd2-extended/02-mortality/12-integration-extended.html">../../prd2-extended/02-mortality/12-integration-extended.md</a></p>
+</blockquote>
+<h3 id="knowledge-sharing-thresholds-by-phase"><a class="header" href="#knowledge-sharing-thresholds-by-phase">Knowledge Sharing Thresholds by Phase</a></h3>
+<p>Mortality modulates the Clade sharing threshold. As a Golem approaches death, it shares more freely:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Sharing Threshold</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>0.6</td><td>Share validated knowledge only</td></tr>
+<tr><td>Stable</td><td>0.5</td><td>Slightly more generous</td></tr>
+<tr><td>Conservation</td><td>0.4</td><td>Share more to preserve knowledge</td></tr>
+<tr><td>Declining</td><td>0.3</td><td>Share aggressively – death approaching</td></tr>
+<tr><td>Terminal</td><td>0.1</td><td>Share everything, even hunches</td></tr>
+</tbody>
+</table>
+</div>
+<p>The expected value of hoarding approaches zero as mortality approaches certainty. A Golem that will die tomorrow gains nothing from keeping knowledge private.</p>
+<hr>
+<h2 id="dashboard-event-fabric-and-inference-integration"><a class="header" href="#dashboard-event-fabric-and-inference-integration">Dashboard, Event Fabric, and Inference Integration</a></h2>
+<blockquote>
+<p><strong>Extended:</strong> Dashboard visualization structs (MortalityCurveData, HazardIndicatorData, VitalityGraphData), complete MortalityEvents (15 event types), DeathCauseWithMetadata struct, inference tier selection (MortalityAwareTierSelection, tier availability by phase, affect modulation) – see <a href="../../prd2-extended/02-mortality/12-integration-extended.html">../../prd2-extended/02-mortality/12-integration-extended.md</a></p>
+</blockquote>
+<h3 id="event-fabric-integration"><a class="header" href="#event-fabric-integration">Event Fabric Integration</a></h3>
+<p>Every state change in the mortality engine calls <code>event_fabric.emit()</code> to publish a typed event. The Event Fabric (<code>01b-runtime-infrastructure.md</code> section 3) broadcasts events as a <code>tokio::broadcast</code> channel with a ring buffer of 10,000 entries for reconnection replay. Key mortality events:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Fires On</th><th>Consumer</th></tr>
+</thead>
+<tbody>
+<tr><td><code>mortality.vitality_update</code></td><td>Every tick after vitality recomputation</td><td>TUI mortality panel, creature animation, web dashboard</td></tr>
+<tr><td><code>mortality.phase_transition</code></td><td>Phase changes (with hysteresis)</td><td>All downstream extensions, owner notification</td></tr>
+<tr><td><code>mortality.stochastic_roll</code></td><td>Every stochastic death check</td><td>TUI hazard indicator, telemetry</td></tr>
+<tr><td><code>mortality.epistemic_warning</code></td><td>Fitness below 0.50</td><td>Owner notification, dream scheduler</td></tr>
+<tr><td><code>mortality.economic_critical</code></td><td>Credits below conservation threshold</td><td>Owner notification, feed option</td></tr>
+<tr><td><code>mortality.dying</code></td><td>Terminal phase entered</td><td>Clade siblings, owner webhook, settlement</td></tr>
+<tr><td><code>mortality.dead</code></td><td>Death Protocol completes</td><td>Clade, dashboard, tombstone, on-chain event</td></tr>
+<tr><td><code>mortality.sibling_death</code></td><td>Clade sibling dies</td><td>Grimoire (ingest death testament)</td></tr>
+<tr><td><code>mortality.immortal_would_have_died</code></td><td>Immortal Golem exceeds mortality threshold</td><td>Control experiment telemetry</td></tr>
+</tbody>
+</table>
+</div>
+<p>The owner dashboard gains a mortality panel with three visualizations: mortality curves (time-series of three clocks + composite vitality), hazard indicators (real-time color-coded severity), and vitality graphs (comparative Clade Golem vitality). Inference tier selection (Haiku/Sonnet/Opus) is modulated by behavioral phase – Thriving has all tiers available; Terminal restricts to budget-gated Haiku for death snapshots only.</p>
+<hr>
+<h2 id="policy-integration-policycage-remains-hard-limit"><a class="header" href="#policy-integration-policycage-remains-hard-limit">Policy Integration: PolicyCage Remains Hard Limit</a></h2>
+<p>The PolicyCage (on-chain smart contract; see <code>../10-safety/02-policy.md</code>) enforces hard boundaries that <strong>no mortality state, emotional state, or behavioral phase can override</strong>.</p>
+<h3 id="invariants"><a class="header" href="#invariants">Invariants</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// These constraints are NEVER relaxed regardless of mortality state.
+/// A terminal Golem with maximum Thanatos risk appetite still cannot
+/// exceed PolicyCage limits. The LLM cannot override the contract.
+#[derive(Debug, Clone)]
+pub struct PolicyCageMortalityInvariants {
+    /// Approved assets: only these can be traded. Mortality does not add assets.
+    pub approved_assets: Vec&lt;alloy::primitives::Address&gt;,
+    /// Max position size: risk multiplier applies but is capped by this.
+    pub max_position_bps: u16,
+    /// Max concentration: single-asset exposure limit.
+    pub max_concentration_bps: u16,
+    /// Max drawdown: absolute loss limit.
+    pub max_drawdown_bps: u16,
+    /// Rebalance minimum interval: cannot trade more frequently.
+    pub rebalance_min_interval: u64,
+    /// Strategy whitelist: only approved function selectors.
+    pub strategy_whitelist: Vec&lt;[u8; 4]&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="how-mortality-interacts-with-policycage"><a class="header" href="#how-mortality-interacts-with-policycage">How Mortality Interacts with PolicyCage</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mortality Effect</th><th>PolicyCage Response</th></tr>
+</thead>
+<tbody>
+<tr><td>Risk multiplier increases to 3.0x (Thanatos)</td><td>Capped at <code>maxPositionBps</code> regardless</td></tr>
+<tr><td>Terminal Golem attempts aggressive trade</td><td>Rejected if it exceeds any PolicyCage constraint</td></tr>
+<tr><td>Daimon engine produces extreme arousal</td><td>No effect on PolicyCage; emotional state cannot modify on-chain limits</td></tr>
+<tr><td>Stochastic death imminent</td><td>No effect; the Golem cannot “escape” death by making risky trades</td></tr>
+<tr><td>Golem attempts to modify PolicyCage</td><td>Impossible; the contract requires owner signature</td></tr>
+</tbody>
+</table>
+</div>
+<p>This is the architectural guarantee that mortality-driven behavior remains safe. The Golem may <em>want</em> to take larger risks as it approaches death (Thanatos drive), but the PolicyCage prevents it from <em>actually</em> doing so beyond defined limits. Mortality provides motivation; PolicyCage provides constraint. The tension between them is productive, not pathological.</p>
+<hr>
+<h2 id="integration-event-flow-for-each-mortality-clock-trigger"><a class="header" href="#integration-event-flow-for-each-mortality-clock-trigger">Integration Event Flow for Each Mortality Clock Trigger</a></h2>
+<blockquote>
+<p><strong>Extended:</strong> Detailed 12-step sequences for economic, epistemic, and stochastic death triggers, plus affect-modulated response table – see <a href="../../prd2-extended/02-mortality/12-integration-extended.html">../../prd2-extended/02-mortality/12-integration-extended.md</a></p>
+</blockquote>
+<p>All three death triggers follow the same terminal pattern: detect threshold -&gt; phase transition to terminal -&gt; Death Protocol (Settle -&gt; Reflect -&gt; Legacy) -&gt; Clade notification -&gt; dashboard update -&gt; telemetry. Economic death fires when <code>remainingUsdc &lt; apoptoticReserve + $0.50</code>. Epistemic death fires when fitness stays below <code>senescenceThreshold</code> (0.35) for the full grace period (500 ticks). Stochastic death fires on a per-tick hazard roll modulated by age and epistemic fitness.</p>
+<hr>
+<h2 id="mortalityevent-enum"><a class="header" href="#mortalityevent-enum">MortalityEvent Enum</a></h2>
+<blockquote>
+<p><strong>Extended:</strong> Full MortalityEvent enum, 15 MortalityEventType variants, 10 typed payload structs (PhaseTransitionPayload, EpistemicWarningPayload, StochasticCheckPayload, DeathTriggeredPayload, DeathCompletedPayload, SiblingDeathPayload, DemurrageCyclePayload, AffectStateChangePayload, ImmortalWouldHaveDiedPayload, MigrationStepPayload) – see <a href="../../prd2-extended/02-mortality/12-integration-extended.html">../../prd2-extended/02-mortality/12-integration-extended.md</a></p>
+</blockquote>
+<p>The canonical event type emitted by the mortality engine. Each <code>MortalityEvent</code> carries a discriminated <code>type</code> field, the golem ID, tick, timestamp, vitality state, phase, and a typed payload. 15 event types cover the full mortality lifecycle from phase transitions through death completion.</p>
+<hr>
+<h2 id="dream-integration"><a class="header" href="#dream-integration">Dream Integration</a></h2>
+<p>Track 4 Dreaming integrates with the mortality system through three mechanisms: (1) dream budget allocation tracks behavioral phase – Thriving Golems dream freely while Terminal Golems allocate all remaining resources to the Thanatopsis Protocol, (2) mortality pressure biases dream content toward defensive/consolidation modes as vitality declines, and (3) the DreamJournal enriches death testaments and succession by providing untested hypotheses and validated dream discoveries to successors. See <code>../05-dreams/06-integration.md</code> for the complete four-track interaction model.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ARGYRIS-1978] Argyris, C. &amp; Schon, D. (1978). <em>Organizational Learning</em>. Addison-Wesley.</li>
+<li>[BATAILLE-1949] Bataille, G. <em>The Accursed Share, Volume I</em>. Zone Books, 1991.</li>
+<li>[DAVIS-ZHONG-2017] Davis, R.L. &amp; Zhong, Y. “The Biology of Forgetting.” <em>Neuron</em> 95(5), 2017.</li>
+<li>[GESELL-1916] Gesell, S. <em>The Natural Economic Order</em>. 1916.</li>
+<li>[KAHNEMAN-2011] Kahneman, D. <em>Thinking, Fast and Slow</em>. Farrar, Straus and Giroux, 2011.</li>
+<li>[SIMS-2003] Sims, C. “Implications of Rational Inattention.” <em>J. Monetary Economics</em> 50(3), 2003.</li>
+</ul>
+<h2 id="mortality-specific-attack-vectors-fsm-hooks-runtime-execution-and-observability"><a class="header" href="#mortality-specific-attack-vectors-fsm-hooks-runtime-execution-and-observability">Mortality-Specific Attack Vectors, FSM Hooks, Runtime Execution, and Observability</a></h2>
+<blockquote>
+<p><strong>Extended:</strong> 5 mortality-specific attack vectors with defenses (death acceleration, death prevention, inheritance poisoning, Hayflick manipulation, reserve theft), 3 Heartbeat FSM hook points (SENSING/DECIDING/SLEEPING), 8-step runtime Death Protocol execution sequence with constraints table, Prometheus metrics (6 gauges), SSE events, owner alert matrix, error codes, disaster recovery – see <a href="../../prd2-extended/02-mortality/12-integration-extended.html">../../prd2-extended/02-mortality/12-integration-extended.md</a></p>
+</blockquote>
+<p>Key architectural invariant: <code>bardo-lifespan</code> triggers at the infrastructure layer, not the LLM layer. The Golem’s LLM cannot prevent or delay death. The Death Protocol has a 30-minute max duration, uses only the Apoptotic Reserve budget, and after FSM enters DYING no Steer or FollowUp commands are accepted. Insurance snapshots persist to R2 every 6 hours, bounding worst-case knowledge loss for stochastic deaths.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/02-mortality/11-immortal-control.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/02-mortality/13-configuration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/02-mortality/11-immortal-control.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/02-mortality/13-configuration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

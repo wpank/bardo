@@ -1,0 +1,622 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Integration - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/05-dreams/06-integration.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="dream-integration-cross-track-interactions-spec"><a class="header" href="#dream-integration-cross-track-interactions-spec">Dream Integration: Cross-Track Interactions [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Depends on</strong>: <code>00-overview.md</code>, all Track 1–3 documents</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how the Dreams track interacts with the other four tracks of Bardo (the Rust runtime for mortal autonomous DeFi agents): Mortality, Daimon (affect engine), Memory, and Hypnagogia (liminal onset/return phases). It covers pairwise interaction matrices, the quadruple interaction lifecycle (Mortality x Daimon x Memory x Dreams), the Extension trait implementation, and how each track’s outputs feed into and modulate dreaming. Prerequisites: the Dreams overview (<code>00-overview.md</code>) and familiarity with all five tracks. For a full glossary, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="the-five-track-system"><a class="header" href="#the-five-track-system">The Five-Track System</a></h2>
+<p>With hypnagogia as Track 5, the Bardo system now comprises five interconnected tracks. Each is independently motivated by distinct research traditions. Each is individually valuable. But their power is multiplicative – the interactions between tracks produce dynamics that no single track could achieve alone.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Track</th><th>Core Question</th><th>Research Domains</th><th>Package</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>1. Mortality</strong></td><td>When and why should an agent die?</td><td>Evolutionary computation, game theory, information science, mortal computation</td><td><code>golem-core</code></td></tr>
+<tr><td><strong>2. Daimon</strong></td><td>How should feelings shape decisions?</td><td>Cognitive neuroscience, RL curiosity, LLM emotion research, narrative psychology</td><td><code>golem-daimon</code></td></tr>
+<tr><td><strong>3. Memory</strong></td><td>What should be remembered, forgotten, bequeathed?</td><td>Neuroscience of forgetting, evolutionary biology, knowledge economics</td><td><code>golem-grimoire</code>, <code>bardo-styx-client</code></td></tr>
+<tr><td><strong>4. Dreaming</strong></td><td>How does the agent get smarter between actions?</td><td>Sleep neuroscience, world models/RL, counterfactual reasoning, computational creativity</td><td><code>golem-dreams</code></td></tr>
+<tr><td><strong>5. Hypnagogia</strong></td><td>How should the agent transition in and out of sleep?</td><td>Hypnagogic/hypnopompic neuroscience, liminal cognition, Dali’s slumber-with-a-key</td><td><code>golem-hypnagogia</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="pairwise-interactions"><a class="header" href="#pairwise-interactions">Pairwise Interactions</a></h2>
+<h3 id="dreaming--mortality"><a class="header" href="#dreaming--mortality">Dreaming × Mortality</a></h3>
+<p><strong>Mortality makes dreaming essential.</strong> An immortal agent can afford to learn slowly through direct experience — time is free. A mortal agent cannot. Every real trade costs gas, risks capital, and consumes finite lifespan. Sutton’s (1991) Dyna architecture showed that each real experience can be supplemented by many “planning steps” of simulated experience, multiplying learning signal [SUTTON-1991]. For a mortal Golem, this multiplication converts a finite lifespan of N real trades into N × R learning episodes (where R is the replay ratio), dramatically increasing the return on each unit of lived experience.</p>
+<p><strong>Dreaming intensity tracks mortality pressure.</strong> As the Golem ages and its mortality clocks advance, dream behavior changes:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Behavioral Phase</th><th>Vitality</th><th>Dream Character</th><th>Budget Priority</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Thriving</strong></td><td>0.7–1.0</td><td>Exploratory. Creative recombination dominates. Novel hypotheses sought.</td><td>Maximize exploration</td></tr>
+<tr><td><strong>Stable</strong></td><td>0.5–0.7</td><td>Consolidating. Replay dominates. PLAYBOOK.md stabilizes.</td><td>Balanced</td></tr>
+<tr><td><strong>Conservation</strong></td><td>0.3–0.5</td><td>Defensive. Threat simulation intensifies. Pruning and compression.</td><td>Maximize robustness</td></tr>
+<tr><td><strong>Declining</strong></td><td>0.15–0.3</td><td>Legacy-oriented. Deep replay for death testament enrichment.</td><td>Maximize knowledge transfer</td></tr>
+<tr><td><strong>Terminal</strong></td><td>&lt;0.15</td><td>No dreaming. All resources to Thanatopsis Protocol.</td><td>$0 (all to death reserve)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Dreaming rehearses death.</strong> Revonsuo’s threat simulation theory (2000) shows biological dreams over-represent threats [REVONSUO-2000]. A mortal Golem dreams about capital depletion, epistemic decay, and cascading failures — its own death scenarios. This rehearsal produces anticipatory responses: pre-positioned exits, early warning triggers, defensive PLAYBOOK.md guards. A non-dreaming Golem can only develop these through direct (and possibly fatal) experience.</p>
+<p><strong>Dreaming extends effective lifespan.</strong> If dreaming produces better strategies, faster adaptation, and more robust risk management, then a dreaming Golem extracts more value from each tick of lifespan. The lifespan in ticks may be identical to a non-dreaming Golem, but the <em>effective intelligence-ticks</em> are higher. This is the mortal computation argument applied to dreaming: the quality of computation within a finite lifespan is what matters, not the quantity of ticks.</p>
+<h3 id="dreaming--daimon"><a class="header" href="#dreaming--daimon">Dreaming × Daimon</a></h3>
+<p><strong>Daimon guides dream content.</strong> Emotional tags on episodes create a salience gradient for dream replay. McGaugh (2004) showed that emotional memories receive preferential consolidation through amygdala-hippocampal interactions [MCGAUGH-2004]. During NREM-like replay, high-arousal episodes (whether positive or negative) are replayed preferentially. During REM-like imagination, mood state biases scenario generation — an anxious Golem (low dominance, negative pleasure) generates more threat scenarios; a confident Golem (high dominance, positive pleasure) generates more exploratory scenarios.</p>
+<p><strong>Dreaming processes daimon.</strong> Walker and van der Helm’s (2009) “Sleep to Forget, Sleep to Remember” model: REM sleep depotentiates emotional tone while preserving informational content [WALKER-VAN-DER-HELM-2009]. Without this processing, emotional tags accumulate monotonically — the Golem becomes increasingly reactive, eventually trapped in mood-congruent retrieval loops (always anxious because anxiety retrieves anxious memories which generate more anxiety). Dreaming breaks these loops through controlled reprocessing.</p>
+<p><strong>The creative-emotion tension.</strong> Franceschelli and Musolesi (2024) showed that RLHF reduces LLM output diversity [FRANCESCHELLI-MUSOLESI-2024]. Similarly, a Golem experiencing sustained negative affect will generate less creative dream content — its “exploration temperature” drops. The dream architecture counters this by maintaining a minimum creative allocation (20%) even during negative mood states. Some creative generation must persist regardless of emotional state, or the Golem loses its ability to discover novel escape strategies precisely when it needs them most.</p>
+<p><strong>Dream-mediated resolution of mortality emotions.</strong> Per <code>../03-daimon/04-mortality-daimon.md</code>, dreaming provides the primary resolution mechanism for three mortality-specific emotional states:</p>
+<ul>
+<li><strong>Economic anxiety</strong> (fear of capital depletion): REM depotentiation reduces the arousal dimension while preserving the informational content (“low balance is dangerous”). Over multiple dream cycles, the Golem maintains rational caution without panic.</li>
+<li><strong>Epistemic vertigo</strong> (confusion about what it knows): Counterfactual dreaming processes episodes where predictions diverged most, restoring dominance (sense of understanding) through structured re-analysis.</li>
+<li><strong>Stochastic dread</strong> (awareness of random death): Threat simulation rehearses worst-case scenarios, converting abstract dread into concrete preparedness with rehearsed responses. Revonsuo’s (2000) threat simulation theory predicts that rehearsal reduces emotional charge while maintaining behavioral vigilance.</li>
+</ul>
+<p>Without dreaming, these mortality emotions accumulate unresolved, progressively impairing decision quality through mood-congruent retrieval cascades.</p>
+<p><strong>Dream outcome events close the emotional loop.</strong> When a staged dream hypothesis is validated or refuted by live trading, the DreamConsolidator emits a <code>dream_outcome</code> appraisal event to the Daimon engine (see <code>04-consolidation.md</code>). Validated hypotheses generate mild joy; refuted hypotheses generate moderate surprise. This integrates dreaming into the Daimon’s appraisal cycle — the Golem develops emotional relationships with its own hypotheses.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../03-daimon/04-mortality-daimon.md</code> (economic anxiety, epistemic vertigo, stochastic dread), <code>../03-daimon/01-appraisal.md</code> (dream_outcome trigger)</p>
+</blockquote>
+<h3 id="dreaming--memory"><a class="header" href="#dreaming--memory">Dreaming × Memory</a></h3>
+<p><strong>Memory provides dream material; dreaming produces memory updates.</strong> The Grimoire’s episodes, insights, and PLAYBOOK.md heuristics are the raw inputs to dream processing. Dream outputs — novel insights, validated hypotheses, threat records, PLAYBOOK.md revisions — flow back into the Grimoire. This bidirectional flow creates a feedback loop: better memory produces better dreams which produce better memory.</p>
+<p><strong>The Curator and the Dreamer are complementary.</strong> The Curator (every 50 ticks during waking) performs incremental distillation under time pressure — it must not delay trading. Dreaming performs deep reorganization without time pressure. The Curator is the Golem’s daily housekeeping; dreaming is the annual spring cleaning. Together they implement the full complementary learning systems architecture from McClelland et al. (1995): fast episodic encoding (Grimoire episodes) → slow extraction of statistical regularities (PLAYBOOK.md) via interleaved replay (Curator + Dream) [MCCLELLAND-1995].</p>
+<p><strong>Dream outputs are memory with special provenance.</strong> Dream-generated insights enter the Grimoire at lower confidence (0.2–0.3) than waking-generated insights (0.5+). This confidence differential implements a variant of the Weismann barrier — dream knowledge is treated as hypothesis, not established fact, until validated through waking experience. The IKEA Effect [NORTON-MOCHON-ARIELY-2012] ensures the Golem values its own waking validations above its dream speculations.</p>
+<p><strong>Dream-validated entries get preferential demurrage.</strong> Per <code>../02-mortality/05-knowledge-demurrage.md</code>, entries that have been dream-analyzed and subsequently confirmed by waking experience decay at 0.5× the standard knowledge demurrage rate. This creates a virtuous cycle: dreaming produces hypotheses → waking validates them → validated entries persist longer → they are retrieved more frequently → their continued utility is further confirmed. The preferential rate reflects double validation (dream staging buffer + live-market confirmation).</p>
+<p><strong>Dream outputs flow through Styx Archive and Styx query.</strong> Dream journal entries are auto-backed to the Styx Archive after each <code>SLEEPING.DREAMING</code> sub-state (entry type: <code>"dream_journal"</code>). Validated dream entries enter Styx through the standard Curator promotion pipeline at provenance weight 0.6. Once promoted to <code>dream_validated</code> status, entries compete on equal footing with <code>self</code>-provenance entries. Read-only API endpoints (<code>GET /v1/oracle/grimoire/dreams</code>, <code>GET /v1/oracle/grimoire/hypotheses</code>) provide owner visibility into dream outputs.</p>
+<p><strong>Dream journal enriches death testament.</strong> During the Thanatopsis Protocol, the DreamJournal is available for the life review. A dying Golem with a rich dream history can report to its successor: “I dreamed about flash crash scenarios 47 times. Here’s what I learned. I generated 12 creative strategy hypotheses; 3 were validated, 6 were refuted, 3 were never tested — the untested ones might be worth exploring.” This is more valuable than any single strategy parameter because it provides a map of the explored and unexplored hypothesis space. Untested hypotheses are included in the death testament as an <code>&lt;unvalidated_dreams&gt;</code> XML block with <code>provenance: "dream_untested"</code>.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../02-mortality/05-knowledge-demurrage.md</code> (demurrage rates), <code>../20-styx/01-architecture.md</code> (dream_journal entry type, provenance weights), <code>../20-styx/02-api-revenue.md</code> (dream API endpoints), <code>../02-mortality/06-thanatopsis.md</code> (death reflection, <code>&lt;unvalidated_dreams&gt;</code>)</p>
+</blockquote>
+<h3 id="dreaming--context-governor"><a class="header" href="#dreaming--context-governor">Dreaming × Context Governor</a></h3>
+<p><strong>Dreams optimize context policies offline.</strong> The Context Governor (<code>../01-golem/14-context-governor.md</code>) assembles per-inference context windows using a learned <code>ContextPolicy</code> – per-category token allocations, retrieval thresholds, and compression settings. During REM imagination, the dream engine runs counterfactual context assembly: “tick 42 failed – would different context have led to a better decision?” The dream replays the tick with alternative <code>ContextPolicy</code> allocations (more contrarian evidence, fewer episodes, different retrieval thresholds) and evaluates whether the counterfactual assembly would have produced a better outcome.</p>
+<p>Dream-generated <code>ContextPolicy</code> revisions enter the staging buffer at confidence 0.2, following the same staging pattern as other dream hypotheses (see <code>04-consolidation.md</code>). They are validated by comparing waking performance under the mutated policy against performance under the current policy. Validated mutations are promoted and applied to the active ContextPolicy; refuted mutations are discarded.</p>
+<p><strong>Quantitative prediction:</strong> Dreaming Golems converge on effective context policies 2x faster than non-dreaming Golems. The basis: offline counterfactual evaluation multiplies context experiments without consuming live inference budget. A non-dreaming Golem learns context allocations only from live trading experience (Loop 2 aggregation every 24 hours). A dreaming Golem supplements this with dozens of counterfactual context experiments per dream cycle (Loop 3), each testing alternative allocations against historical outcomes.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../01-golem/14-context-governor.md</code> S6 (Loop 3 meta-optimization), <code>../01-golem/02-heartbeat.md</code> S9.4 (context feedback integration)</p>
+</blockquote>
+<h3 id="dreaming--foreign-grimoire-inheritance"><a class="header" href="#dreaming--foreign-grimoire-inheritance">Dreaming × Foreign Grimoire Inheritance</a></h3>
+<p><strong>At birth, the successor receives the predecessor’s <code>PriorsPackage</code>.</strong> The predecessor’s death testament includes distilled knowledge: top-5 scars (highest-impact negative outcomes with lessons extracted), top-3 hypotheses (highest-confidence validated dream hypotheses), and unvalidated dream hypotheses marked <code>requiresInvestigation: true</code>. Raw episodes are not inherited – they carry too much predecessor-specific context.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct PriorsPackage {
+    pub scars: Vec&lt;Scar&gt;,                          // top-5 by impact magnitude
+    pub hypotheses: Vec&lt;StrategyHypothesis&gt;,        // top-3 by confidence
+    pub unvalidated_dreams: Vec&lt;DreamStagingRecord&gt;, // predecessor's untested hypotheses
+    pub playbook_snapshot: String,                  // predecessor's final PLAYBOOK.md
+    pub dream_quality_calibration: DreamQualityCalibration,
+}
+
+pub struct DreamQualityCalibration {
+    /// Which dream modes produced the best results
+    pub nrem_yield: f64,
+    pub rem_yield: f64,
+    pub threat_yield: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>The successor’s first dream cycle processes inherited material.</strong> Inherited entries enter the successor’s Grimoire through the foreign ingestion pipeline (<code>ingest/*</code> branch) with validation lighter than marketplace purchases – Layer 1 (TrustRAG) is skipped for predecessors with fewer than 100 Grimoire entries, since sparse Grimoires produce degenerate clusters. Adopted entries start at confidence 0.15 for dream-validated entries and 0.25 for self-validated entries (the predecessor saw them work in live trading).</p>
+<p>Once adopted, inherited entries are processed in the successor’s first dream cycle as if they were replayed episodes – the same NREM selection algorithm applies, the same staging buffer entry point at confidence 0.2-0.3. The Zeigarnik effect drives prioritization: unvalidated dream hypotheses (incomplete ideas) are more salient than completed work, so the successor’s early dreams finish the predecessor’s unfinished intellectual investigations.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../02-mortality/07-succession.md</code> (PriorsPackage, death testament), <code>../10-safety/03-ingestion.md</code> (predecessor ingestion pipeline)</p>
+</blockquote>
+<h3 id="dreaming--hypnagogia"><a class="header" href="#dreaming--hypnagogia">Dreaming × Hypnagogia</a></h3>
+<p><strong>Hypnagogia manages the transitions that dreaming assumes.</strong> The three-phase dream cycle (NREM, REM, Integration) presupposes that the Golem has cleanly transitioned from waking cognition to offline processing. In biological sleep, this transition is not instantaneous – the hypnagogic period (sleep onset) involves a distinct neurological state where waking context dissolves progressively, and the hypnopompic period (sleep return) involves recrystallization of waking context from dream outputs. Mavromatis (1987) documented that hypnagogic imagery is qualitatively different from both waking thought and dream content – more fragmentary, more loosely associated, and often the site of creative breakthroughs (Kekule’s benzene ring, Edison’s steel ball technique, Dali’s slumber-with-a-key).</p>
+<p><strong>Onset feeds NREM.</strong> During hypnagogic onset, the Golem performs context dissolution: releasing the waking context window’s focus, capturing unresolved “waking residue” (threads of reasoning that were active but incomplete at dream entry), and transitioning the inference profile from waking (tool-heavy, action-oriented) to dreaming (reflective, generative). The waking residue captured during onset seeds NREM replay priorities – if the Golem was mid-analysis of a puzzling trade when sleep triggered, that trade becomes the highest-priority replay target.</p>
+<p><strong>Integration feeds return.</strong> The hypnopompic return phase receives Integration’s outputs and recrystallizes them into waking-compatible context. Dream insights are re-framed from the reflective register of dream cognition into the action-oriented register of waking cognition. The return phase also implements the “Dali interrupt” – a brief window where the Golem checks if any liminal insight was forming at the boundary between dream and waking that might be lost if the transition completes too quickly.</p>
+<p><strong>Budget interaction.</strong> The onset and return phases consume 10% and 5% of the dream cycle budget respectively, leaving 85% for the three core phases. These fractions are fixed – the liminal transitions are necessary regardless of behavioral phase or dream intensity.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../06-hypnagogia/00-overview.md</code> (Track 5 thesis), <code>../06-hypnagogia/02-architecture.md</code> (onset/return phase specifications)</p>
+</blockquote>
+<h3 id="real-time-dream-triggers"><a class="header" href="#real-time-dream-triggers">Real-Time Dream Triggers</a></h3>
+<p>Two mechanisms allow dreams outside scheduled windows:</p>
+<p><strong>REFLECT-phase urgency accumulator.</strong> During each REFLECT step of the heartbeat FSM, the <code>bardo-dream</code> extension evaluates <code>dreamUrgency()</code> and accumulates the score. When the composite urgency exceeds the phase-specific threshold (0.8 for Thriving, 0.6 for uncertain states), a dream triggers even outside configured sleep windows. The urgency score incorporates <code>recentSurprise</code>, <code>unreplayedEpisodes</code>, <code>unresolvedArousal</code>, <code>recentLosses</code>, <code>ticksSinceLastDream</code>, and <code>epistemicDrift</code>. If a precondition blocks dreaming (e.g., active <code>ActionPermit</code>), urgency decays by 0.1 per tick rather than resetting, preserving the buildup.</p>
+<p><strong>Owner-commanded immediate dream.</strong> <code>steer("dream now")</code> bypasses urgency scoring entirely, triggering with implicit urgency 1.0.</p>
+<p><strong>Emergency dream on terminal phase entry.</strong> When a death trigger fires and the Golem transitions to terminal phase, <code>bardo-dream</code> triggers a compressed single-cycle dream before the Thanatopsis Protocol starts. This emergency dream runs all three phases (NREM, REM, Integration) in compressed form with a reduced turn limit. Its outputs go directly to the death testament draft rather than the standard staging buffer, since there is no time for waking validation.</p>
+<h3 id="mortality--daimon--memory-existing-triple"><a class="header" href="#mortality--daimon--memory-existing-triple">Mortality × Daimon × Memory (Existing Triple)</a></h3>
+<p>The existing triple interaction (documented in <code>../03-daimon/00-overview.md</code>) is unchanged but deepened by Track 4. The original lifecycle arc:</p>
+<ol>
+<li>Birth with compressed priors → 2. Emotional learning under mortality pressure → 3. Knowledge-producing death → 4. Compressed transmission to successor</li>
+</ol>
+<p>Gains a new dimension at each stage:</p>
+<ol>
+<li>Birth with compressed priors <strong>plus a map of the predecessor’s explored hypothesis space from its dream journal</strong></li>
+<li>Emotional learning <strong>augmented by dream-based emotional depotentiation and threat rehearsal</strong></li>
+<li>Knowledge-producing death <strong>enriched by dream-refined knowledge that has been replayed, counterfactualized, and stress-tested</strong></li>
+<li>Transmission includes <strong>not just facts and heuristics but the dream-enhanced version: knowledge that has been offline-optimized across multiple dream cycles</strong></li>
+</ol>
+<hr>
+<h2 id="the-quadruple-interaction-complete-lifecycle"><a class="header" href="#the-quadruple-interaction-complete-lifecycle">The Quadruple Interaction: Complete Lifecycle</a></h2>
+<h3 id="full-arc-with-dreaming"><a class="header" href="#full-arc-with-dreaming">Full Arc with Dreaming</a></h3>
+<ol>
+<li>
+<p><strong>Birth</strong>: The Golem wakes with compressed priors from its predecessor’s death testament (memory), low initial confidence in inherited knowledge (mortality’s generational decay), a personality baseline (daimon), and the predecessor’s dream journal as a hypothesis map (dreaming). The successor knows not just what the predecessor learned but what it <em>wondered about</em>.</p>
+</li>
+<li>
+<p><strong>Early Thriving</strong>: Active trading generates episodes tagged with emotional salience. First dream cycles are exploratory — creative recombination dominates, seeking novel strategies appropriate for current market conditions. Dream content is biased toward the untested hypotheses from the predecessor’s dream journal — finishing the dead Golem’s unfinished intellectual work. The Zeigarnik effect (1927) ensures incomplete ideas are more salient than completed ones [ZEIGARNIK-1927].</p>
+</li>
+<li>
+<p><strong>Stable Operation</strong>: PLAYBOOK.md stabilizes through the combined action of waking Curator cycles and dream consolidation cycles. Emotional depotentiation resolves accumulated reactivity from early-phase learning. Threat simulation builds a comprehensive set of rehearsed responses. The Golem’s effective strategy set grows through dream-validated hypotheses being promoted into operational use.</p>
+</li>
+<li>
+<p><strong>Conservation/Decline</strong>: Mortality pressure increases across all three clocks. Dream content shifts: less creation, more consolidation and threat preparation. The Golem dreams defensively — replaying success patterns for preservation, rehearsing failure modes for resilience. Emotional processing focuses on resolving residual high-arousal memories, preparing for the equanimity needed during the death protocol.</p>
+</li>
+<li>
+<p><strong>Terminal and Death</strong>: Dreaming ceases. The Thanatopsis Protocol runs a final, comprehensive life review that draws on the entire dream history. The death testament includes:</p>
+<ul>
+<li>Validated dream discoveries (strategies that worked)</li>
+<li>Refuted dream hypotheses (what not to try)</li>
+<li>Untested dream hypotheses (the most generative successor fuel)</li>
+<li>Threat records (what dangers were rehearsed)</li>
+<li>Dream quality calibration (which dream modes were most productive)</li>
+<li>Emotional trajectory through dreaming (how daimon evolved across the lifecycle)</li>
+</ul>
+</li>
+<li>
+<p><strong>Succession</strong>: The next Golem inherits a richer starting position than any non-dreaming system could produce. The Baldwin Effect operates on dream-enhanced knowledge: what crosses generations is not just experience but experience that has been dreamed about — replayed, counterfactualized, creatively recombined, stress-tested, emotionally processed, and integrated into a coherent PLAYBOOK.md. This is the full cycle of mortal intelligence: live, feel, learn, dream, die, transmit.</p>
+<p>The Zeigarnik effect (1927) is critical here: the predecessor’s <em>untested</em> dream hypotheses — marked <code>requiresInvestigation: true</code> in the inherited DreamJournal — are more salient to the successor than completed work. These hypotheses are prioritized in the successor’s early dream cycles, creating an intellectual inheritance where each generation picks up where the last left off. The predecessor dreamed up a novel strategy but died before testing it; the successor’s first dreams finish that investigation. Per <code>../02-mortality/07-succession.md</code>, inherited dream hypotheses enter at confidence 0.15 with <code>provenance: "inherited_dream"</code> — lower than fresh dream hypotheses (0.2–0.3) because they originated in a different market regime.</p>
+</li>
+</ol>
+<hr>
+<h2 id="extension-trait-implementation"><a class="header" href="#extension-trait-implementation">Extension trait implementation</a></h2>
+<p>The dream system implements the <code>Extension</code> trait from <code>golem-core</code>, registering on two hooks:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Extension for DreamExtension {
+    fn name(&amp;self) -&gt; &amp;str { "bardo-dream" }
+
+    fn layer(&amp;self) -&gt; u8 { 4 }
+    // Layer 4: after heartbeat(1), lifespan(1), daimon(2), memory(3)
+    // Before: cybernetics(5), coordination(6)
+
+    async fn on_idle(&amp;self, ctx: &amp;mut ExtensionContext) -&gt; Result&lt;()&gt; {
+        // Dream scheduling: evaluate urgency, open dream branch if threshold met.
+        // This hook fires when the heartbeat FSM enters SLEEPING state.
+        self.scheduler.evaluate_and_maybe_dream(ctx).await
+    }
+
+    async fn after_turn(&amp;self, ctx: &amp;mut ExtensionContext) -&gt; Result&lt;()&gt; {
+        // Accumulate dream urgency from waking ticks.
+        // Update DreamState (urgency score, episode counts).
+        self.scheduler.accumulate_urgency(ctx).await
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>on_idle</code> hook handles dream scheduling – when the heartbeat FSM enters SLEEPING, the dream extension evaluates whether to open a dream branch. The <code>after_turn</code> hook accumulates urgency from each waking tick, tracking surprise, consolidation debt, and emotional load.</p>
+<p><strong>DAG position</strong>: Layer 4 runs after memory extensions have finished their <code>after_turn</code> work (Grimoire writes, Curator tagging), so the dream urgency calculation sees up-to-date episode counts and tags. It runs before cybernetics (Layer 5) and coordination (Layer 6), so context policy mutations from dreams are available for the next waking tick’s context assembly.</p>
+<h2 id="event-fabric-cross-references"><a class="header" href="#event-fabric-cross-references">Event Fabric cross-references</a></h2>
+<p>The dream system emits five canonical <code>GolemEvent</code> variants through the Event Fabric (see <code>rewrite4/14-events.md</code>):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Wire name</th><th>When emitted</th></tr>
+</thead>
+<tbody>
+<tr><td><code>DreamStart</code></td><td><code>dream.start</code></td><td>Dream branch opens. Trigger type recorded.</td></tr>
+<tr><td><code>DreamPhase</code></td><td><code>dream.phase</code></td><td>Each phase transition (NREM -&gt; REM -&gt; Integration). Budget token allocation included.</td></tr>
+<tr><td><code>DreamHypothesis</code></td><td><code>dream.hypothesis</code></td><td>REM generates a counterfactual hypothesis. Seed episode tick for provenance.</td></tr>
+<tr><td><code>DreamCounterfactual</code></td><td><code>dream.counterfactual</code></td><td>Counterfactual evaluated. Outcome, lesson, and confidence recorded.</td></tr>
+<tr><td><code>DreamComplete</code></td><td><code>dream.complete</code></td><td>Dream branch closes. Full summary: episodes replayed, counterfactuals generated, insights crystallized, heuristics proposed, episodes depotentiated, playbook edits.</td></tr>
+</tbody>
+</table>
+</div>
+<p>All events carry the standard base fields (<code>timestamp</code>, <code>golem_id</code>, <code>sequence</code>, <code>tick</code>) and are broadcast through the <code>tokio::broadcast</code> channel with ring buffer replay for reconnecting subscribers.</p>
+<p>The TUI’s Dreams tab subscribes to the <code>dream</code> event category; switching away unsubscribes to minimize bandwidth.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>rewrite4/14-events.md</code> (GolemEvent enum, section 2.4), <code>rewrite4/10-surfaces.md</code> (TUI dream pane)</p>
+</blockquote>
+<hr>
+<h2 id="updated-architecture-diagram"><a class="header" href="#updated-architecture-diagram">Updated architecture diagram</a></h2>
+<pre><code>┌───────────────────────────────────────────────────────────────────────┐
+│                         THE GOLEM                                     │
+│                                                                       │
+│  ┌─────────────────── TRACK 1: MORTALITY ──────────────────────────┐  │
+│  │  Three Clocks (Economic, Epistemic, Stochastic)                 │  │
+│  │  Five Phases (Thriving → Stable → Conservation → Declining → T) │  │
+│  │  Composite Vitality · Behavioral Phase                          │  │
+│  └────────────────────────────┬────────────────────────────────────┘  │
+│                               │                                       │
+│            ┌──────────────────┼──────────────────┐                    │
+│            │                  │                  │                    │
+│            ▼                  ▼                  ▼                    │
+│  ┌──── TRACK 2 ────┐ ┌── TRACK 3 ──┐ ┌──── TRACK 4 ────────────┐   │
+│  │    DAIMON        │ │   MEMORY    │ │     DREAMING             │   │
+│  │                  │ │             │ │                           │   │
+│  │ Appraisal Engine │ │ Grimoire    │ │ ┌─NREM──┐  ┌──REM────┐  │   │
+│  │ PAD Vectors      │ │  Episodes   │ │ │Replay │  │Imagine  │  │   │
+│  │ Mood EMA         │ │  Insights   │ │ │Credit │  │Counter  │  │   │
+│  │ Behavioral Mod.  │ │  PLAYBOOK   │ │ │Perturb│  │Create   │  │   │
+│  │ Life Review      │ │  Cache      │ │ └───┬───┘  │Threats  │  │   │
+│  │                  │ │             │ │     │      │Emotion  │  │   │
+│  │ [guides dream    │ │ [feeds      │ │     │      └──┬──────┘  │   │
+│  │  content via     │◄│  dream      │◄│     └────┬───┘         │   │
+│  │  emotional tags] │ │  material]  │ │          ▼              │   │
+│  │                  │ │             │ │   ┌─INTEGRATE───────┐   │   │
+│  │ [receives dream  │ │ [receives   │ │   │Consolidate     │   │   │
+│  │  depotentiation]►│ │  dream     │►│   │PLAYBOOK.md evo │   │   │
+│  │                  │ │  outputs]   │ │   │Dream journal   │   │   │
+│  └──────────────────┘ └─────────────┘ │   └─────────────────┘   │   │
+│                                       └─────────────────────────┘   │
+│                                                                       │
+│  ┌─────────────────── HEARTBEAT FSM ──────────────────────────────┐  │
+│  │  Waking: Probes → Escalation → Action                          │  │
+│  │  Dreaming: Suspended (Dream Engine runs instead)                │  │
+│  │  Dying: Thanatopsis Protocol (enriched by dream journal)        │  │
+│  └────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2 id="what-dreaming-adds-to-the-existing-system"><a class="header" href="#what-dreaming-adds-to-the-existing-system">What Dreaming Adds to the Existing System</a></h2>
+<h3 id="quantitative-predictions"><a class="header" href="#quantitative-predictions">Quantitative Predictions</a></h3>
+<p>These predictions are derived from the research literature and are the basis for the falsifiability requirement (Design Principle 7 from <code>00-overview.md</code>):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Prediction</th><th>Basis</th></tr>
+</thead>
+<tbody>
+<tr><td>Time-to-adaptation after regime change</td><td>30–50% faster for dreaming Golems</td><td>Jensen et al. (2024): meta-RL agents that learn when to plan adapt faster [JENSEN-2024]</td></tr>
+<tr><td>Response latency to rehearsed threats</td><td>5–10x faster than unrehearsed</td><td>Revonsuo (2000): threat rehearsal produces automatic responses [REVONSUO-2000]</td></tr>
+<tr><td>Successor boot performance</td><td>15–25% better first-week Sharpe</td><td>Baldwin Effect: dream-enhanced priors provide richer starting position</td></tr>
+<tr><td>PLAYBOOK.md convergence speed</td><td>2–3x faster to stable strategy set</td><td>Replay multiplies learning signal [LIN-1992]; consolidation extracts rules faster [WAGNER-2004]</td></tr>
+<tr><td>Emotional reactivity after trauma</td><td>40–60% lower arousal to similar events</td><td>Walker &amp; van der Helm (2009): REM depotentiates emotional charge [WALKER-VAN-DER-HELM-2009]</td></tr>
+<tr><td>Hidden pattern discovery</td><td>2x more likely to find regime rules</td><td>Wagner et al. (2004): sleep subjects 2.5x more likely to discover hidden rules [WAGNER-2004]</td></tr>
+<tr><td>Death testament richness</td><td>3–5x more hypothesis space coverage</td><td>Dream journal provides tested and untested hypotheses</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="control-experiment"><a class="header" href="#control-experiment">Control Experiment</a></h3>
+<p>The control is straightforward: run matched pairs of Golems – one with dreaming enabled, one without – in identical market conditions with identical parameters (same owner, same strategies, same capital, same risk limits). Measure the metrics above over a 30-day lifecycle.</p>
+<p>The dreaming Golem should outperform on adaptation speed, threat response, and successor quality. The non-dreaming Golem may outperform on raw trade volume (no time lost to dreaming) and simplicity of operation. If the dreaming Golem does not show statistically significant improvement on at least three of the seven metrics, dreaming should be disabled — the cost does not justify the benefit.</p>
+<hr>
+<h2 id="integration-status-with-existing-documents"><a class="header" href="#integration-status-with-existing-documents">Integration Status with Existing Documents</a></h2>
+<p>The following changes to other PRD documents have been completed or are needed to support Track 4. This section serves as a cross-reference checklist — it describes changes <em>in other docs</em>, not in this one.</p>
+<h3 id="daimon-prd-03-daimon--completed"><a class="header" href="#daimon-prd-03-daimon--completed">Daimon PRD (../03-daimon/) — Completed</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>File</th><th>Change</th><th>Status</th></tr>
+</thead>
+<tbody>
+<tr><td><code>../03-daimon/00-overview.md</code></td><td>Track 4 added to four-track system, package map includes <code>golem-dreams</code></td><td>Done</td></tr>
+<tr><td><code>../03-daimon/00-overview.md</code></td><td>Dream Engine as sixth interaction partner</td><td>Done</td></tr>
+<tr><td><code>../03-daimon/01-appraisal.md</code></td><td><code>dream_outcome</code> appraisal trigger defined</td><td>Done</td></tr>
+<tr><td><code>../03-daimon/02-emotion-memory.md</code></td><td>Dream-retrieval strengthening (+0.5), Dream-Memory-Emotion Triangle</td><td>Done</td></tr>
+<tr><td><code>../03-daimon/04-mortality-daimon.md</code></td><td>Dream-mediated resolution of economic anxiety, epistemic vertigo, stochastic dread</td><td>Done</td></tr>
+<tr><td><code>../03-daimon/03-behavior.md</code></td><td>Dream content modulation by mood, minimum creative allocation (20%)</td><td>Done</td></tr>
+<tr><td><code>../03-daimon/05-death-daimon.md</code></td><td>DreamJournal in Phase II Life Review</td><td>Done</td></tr>
+<tr><td><code>../03-daimon/09-evaluation.md</code></td><td>Dream-Daimon interaction metrics, cognitive quality dashboard</td><td>Done</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="mortality-prd-02-mortality--completed"><a class="header" href="#mortality-prd-02-mortality--completed">Mortality PRD (../02-mortality/) — Completed</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>File</th><th>Change</th><th>Status</th></tr>
+</thead>
+<tbody>
+<tr><td><code>../02-mortality/00-thesis.md</code></td><td>Cross-subsystem table includes Dream interactions</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/01-architecture.md</code></td><td>Dream budget column per behavioral phase</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/02-epistemic-decay.md</code></td><td>Dreaming as partial countermeasure to epistemic decay</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/04-economic-mortality.md</code></td><td>Dream compute in burn rate (5–10% inference)</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/05-knowledge-demurrage.md</code></td><td>Dream-validated entries at 0.5× demurrage rate</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/06-thanatopsis.md</code></td><td>DreamJournal enrichment, <code>&lt;unvalidated_dreams&gt;</code> XML block</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/07-succession.md</code></td><td>DreamJournal inheritance, Zeigarnik prioritization, <code>inherited_dream</code> provenance</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/08-mortality-affect.md</code></td><td>Dream-mediated resolution of mortality emotions</td><td>Done</td></tr>
+<tr><td><code>../02-mortality/12-integration.md</code></td><td>Dream integration section (budget, content bias, DreamJournal)</td><td>Done</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="memory-prd-04-memory--completed"><a class="header" href="#memory-prd-04-memory--completed">Memory PRD (../04-memory/) — Completed</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>File</th><th>Change</th><th>Status</th></tr>
+</thead>
+<tbody>
+<tr><td><code>../04-memory/00-overview.md</code></td><td>Third processing mode (offline dreaming), shared constants</td><td>Done</td></tr>
+<tr><td><code>../04-memory/01-grimoire.md</code></td><td>Dream provenance, DreamJournalEntry schema, Curator ↔ Dream coordination, dream-retrieval strengthening, dream yield metric</td><td>Done</td></tr>
+<tr><td><code>../04-memory/02-emotional-memory.md</code></td><td>Dream-Emotional Memory Integration, REM depotentiation</td><td>Done</td></tr>
+<tr><td><code>../04-memory/03-mortal-memory.md</code></td><td>Dreaming under mortality pressure</td><td>Done</td></tr>
+<tr><td><code>../20-styx/01-architecture.md</code></td><td><code>dream_journal</code> entry type, upload after SLEEPING.DREAMING, dream provenance weight 0.6, <code>dream_validated</code> promotion path</td><td>Done</td></tr>
+<tr><td><code>../04-memory/06-economy.md</code></td><td>Dream knowledge lifecycle, trophic levels</td><td>Done</td></tr>
+<tr><td><code>../20-styx/02-api-revenue.md</code></td><td>Dream Grimoire API endpoints (read-only)</td><td>Done</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="golem-prd-01-golem--partially-completed"><a class="header" href="#golem-prd-01-golem--partially-completed">Golem PRD (../01-golem/) — Partially Completed</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>File</th><th>Change</th><th>Status</th></tr>
+</thead>
+<tbody>
+<tr><td><code>../01-golem/02-heartbeat.md</code></td><td><code>GolemMode</code>, SLEEPING.DREAMING, SSE events, chat hold during dreaming</td><td>Done</td></tr>
+<tr><td><code>../01-golem/06-creation.md</code></td><td>First-dream milestone (4–6 hours, 50–200 episodes)</td><td>Done</td></tr>
+<tr><td>Observability</td><td>Dream-specific Prometheus metrics, OpenTelemetry spans, health fields</td><td><strong>Gap</strong></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="remaining-gaps"><a class="header" href="#remaining-gaps">Remaining Gaps</a></h3>
+<ol>
+<li>
+<p><strong>Observability</strong>: No dream-specific Prometheus metrics (dream cycles, duration, hypotheses staged/validated/refuted), no OpenTelemetry spans for dream phases, no dream state in health/readiness responses. These should be added when the observability PRD is next revised.</p>
+</li>
+<li>
+<p><strong>Evaluation matrix</strong> (<code>../03-daimon/09-evaluation.md</code>): The 2×2×2 evaluation matrix (Mortality × Daimon × Memory) does not include Dreaming as a factor. A 2×2×2×2 matrix (16 configurations) would allow systematic comparison of dreaming vs non-dreaming across all other system combinations.</p>
+</li>
+<li>
+<p><strong>Architecture diagrams</strong>: Several docs’ architecture diagrams (notably <code>../03-daimon/00-overview.md</code>) do not yet include the Dream Engine. These should be updated when diagrams are next revised.</p>
+</li>
+</ol>
+<hr>
+<h2 id="updated-terminology"><a class="header" href="#updated-terminology">Updated Terminology</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Term</th><th>Definition</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Dream Cycle</strong></td><td>A complete three-phase sequence: NREM-like replay → REM-like imagination → Integration.</td></tr>
+<tr><td><strong>DreamState</strong></td><td>The Golem’s state during offline processing: current phase, budget, progress.</td></tr>
+<tr><td><strong>DreamJournal</strong></td><td>Persistent log of all dream cycles, outputs, and validation results.</td></tr>
+<tr><td><strong>DreamScheduler</strong></td><td>Component that determines when to dream, for how long, with what budget.</td></tr>
+<tr><td><strong>ReplayEngine</strong></td><td>Selects, prioritizes, and re-processes episodes during NREM-like phase.</td></tr>
+<tr><td><strong>ImaginationEngine</strong></td><td>Generates counterfactual, creative, and adversarial scenarios during REM-like phase.</td></tr>
+<tr><td><strong>ThreatSimulator</strong></td><td>Generates DeFi-specific threat scenarios and rehearses responses.</td></tr>
+<tr><td><strong>DreamConsolidator</strong></td><td>Integrates dream outputs into Grimoire and PLAYBOOK.md through staging buffer.</td></tr>
+<tr><td><strong>Strategy Hypothesis</strong></td><td>A dream-generated strategy proposal at low confidence, requiring live validation.</td></tr>
+<tr><td><strong>Staged Revision</strong></td><td>A proposed PLAYBOOK.md change from dreaming, waiting for live validation.</td></tr>
+<tr><td><strong>Threat Record</strong></td><td>A rehearsed threat scenario with trigger conditions and pre-planned responses.</td></tr>
+<tr><td><strong>Dream Quality Score</strong></td><td>Self-assessed quality of a dream cycle, validated against subsequent outcomes.</td></tr>
+<tr><td><strong>Exploration Temperature (τ)</strong></td><td>LLM sampling temperature during dream generation; controls scenario divergence.</td></tr>
+<tr><td><strong>Perturbed Replay</strong></td><td>Episode replay with injected noise (slippage, gas, latency) for robustness.</td></tr>
+<tr><td><strong>Emotional Depotentiation</strong></td><td>REM-like processing that reduces emotional charge while preserving informational content.</td></tr>
+<tr><td><strong>[CORE] Dreams</strong></td><td>Lightweight T0-only dreaming tier: compressed replay + simplified counterfactual + basic consolidation. Default for all Golems.</td></tr>
+<tr><td><strong>[HARDENED] Dreams</strong></td><td>Full T1–T2 dreaming tier: complete three-phase cycle with all operations including creative recombination and threat simulation.</td></tr>
+<tr><td><strong>Dream Outcome Event</strong></td><td>Appraisal event emitted when a staged dream hypothesis is confirmed or refuted by live trading.</td></tr>
+<tr><td><strong>Knowledge Demurrage</strong></td><td>Time-based decay of knowledge entries; dream-validated entries decay at 0.5× standard rate.</td></tr>
+<tr><td><strong>First Dream Threshold</strong></td><td>Minimum episode count (50–200) before dream cycles produce meaningful patterns.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="citation-summary"><a class="header" href="#citation-summary">Citation Summary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Citation Key</th><th>Source</th></tr>
+</thead>
+<tbody>
+<tr><td>[SUTTON-1991]</td><td>Sutton. “Dyna, an integrated architecture.” <em>ACM SIGART Bulletin</em>, 1991.</td></tr>
+<tr><td>[MCCLELLAND-1995]</td><td>McClelland et al. “Complementary Learning Systems.” <em>Psychological Review</em>, 1995.</td></tr>
+<tr><td>[REVONSUO-2000]</td><td>Revonsuo. “The reinterpretation of dreams.” <em>Behavioral and Brain Sciences</em>, 2000.</td></tr>
+<tr><td>[MCGAUGH-2004]</td><td>McGaugh. “The amygdala modulates consolidation.” <em>Annual Review of Neuroscience</em>, 2004.</td></tr>
+<tr><td>[WALKER-VAN-DER-HELM-2009]</td><td>Walker &amp; van der Helm. “Overnight therapy?” <em>Psychological Bulletin</em>, 2009.</td></tr>
+<tr><td>[NORTON-MOCHON-ARIELY-2012]</td><td>Norton et al. “The IKEA Effect.” <em>JCSP</em>, 2012.</td></tr>
+<tr><td>[FRANCESCHELLI-MUSOLESI-2024]</td><td>Franceschelli &amp; Musolesi. “Creativity and ML.” <em>ACM Computing Surveys</em>, 2024.</td></tr>
+<tr><td>[JENSEN-2024]</td><td>Jensen et al. “A recurrent network model of planning.” <em>Nature Neuroscience</em>, 2024.</td></tr>
+<tr><td>[LIN-1992]</td><td>Lin. “Self-improving reactive agents.” <em>Machine Learning</em>, 1992.</td></tr>
+<tr><td>[WAGNER-2004]</td><td>Wagner et al. “Sleep inspires insight.” <em>Nature</em>, 2004.</td></tr>
+<tr><td>[ZEIGARNIK-1927]</td><td>Zeigarnik. Unfinished task recall effect, 1927.</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/05-dreams/05-threats.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/05-dreams/07-venice-dreaming.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/05-dreams/05-threats.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/05-dreams/07-venice-dreaming.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,990 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Derivatives - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/10-tools-derivatives.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--derivatives-spec"><a class="header" href="#bardo-tools--derivatives-spec">Bardo Tools – Derivatives [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles)</p>
+<p>Perpetual futures (GMX v2) and on-chain options (Panoptic). 16 tools total. <strong>Safety constraint</strong>: write tools are restricted to Thriving and Stable vitality phases. A Golem (a mortal autonomous agent compiled as a single Rust binary on a micro-VM) in Conservation phase (one of five BehavioralPhases that govern risk appetite based on remaining budget) may close existing positions but cannot open new ones. Phase gate runs in the handler preamble before any state-mutating call.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies 16 derivatives tools in <code>bardo-tools</code>: 8 for GMX v2 perpetual futures and 8 for Panoptic on-chain options. Write tools are phase-gated to Thriving and Stable phases only. You should be familiar with perpetual futures (funding rates, leverage, liquidation prices) and options basics (puts, calls, spreads). Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="perpetuals--gmx-v2-8-tools"><a class="header" href="#perpetuals--gmx-v2-8-tools">Perpetuals – GMX v2 (8 tools)</a></h2>
+<p>GMX v2 uses a synthetic asset model where a Global LP pool (GM tokens) provides liquidity for all positions. Pricing uses Chainlink + Pyth oracles; there is no order book. Deployed on Arbitrum (chain 42161) and Avalanche (chain 43114).</p>
+<p>All GMX tools use Alloy’s (the standard Rust library for EVM interaction) <code>sol!</code> macro for type-safe contract bindings against GMX v2’s <code>ExchangeRouter</code>, <code>Reader</code>, and <code>DataStore</code> contracts.</p>
+<h3 id="gmx_open_position"><a class="header" href="#gmx_open_position"><code>gmx_open_position</code></a></h3>
+<p>Open a leveraged perpetual position on GMX v2.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer3</code> (unbounded leverage exposure) | <strong>Tick budget</strong>: <code>Slow</code> (15s – keeper execution)
+<strong>Progress steps</strong>: <code>["Validating market", "Simulating in Revm (Rust EVM implementation for local transaction simulation) fork", "Broadcasting createOrder", "Awaiting keeper execution"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GmxOpenPositionParams {
+    /// Market address or symbol (e.g., "ETH/USD", "BTC/USD").
+    pub market: String,
+    /// Position direction.
+    pub side: Side,
+    /// Collateral token address or symbol.
+    pub collateral: String,
+    /// Collateral amount (human-readable, e.g., "1000").
+    pub collateral_amount: String,
+    /// Position size in USD notional.
+    pub size_delta: String,
+    /// Chain ID (42161 for Arbitrum, 43114 for Avalanche).
+    pub chain_id: u64,
+    /// Max acceptable entry price for slippage control.
+    pub acceptable_price: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxPositionOpened {
+    pub tx_hash: String,
+    /// Unique on-chain position identifier.
+    pub position_key: String,
+    pub market: String,
+    pub side: Side,
+    pub entry_price: f64,
+    pub leverage: f64,
+    pub collateral_usd: f64,
+    pub size_usd: f64,
+    pub liquidation_price: f64,
+    pub fees: GmxFees,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxFees {
+    /// Position fee in USD.
+    pub open_fee: String,
+    /// Accrued funding at open.
+    pub funding_fee: String,
+    /// Keeper execution fee in ETH.
+    pub execution_fee: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Receipt confirmation of <code>createOrder</code> + position existence check via <code>Reader.getPosition()</code> post-execution. Expected: position key exists with matching <code>sizeUsd</code>. Actual: on-chain position state. Source: <code>"gmx_reader_contract"</code>.</p>
+<p><strong>Event Fabric</strong> (Bardo’s <code>tokio::broadcast</code> channel system for real-time event streaming between runtime components):</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "gmx_open_position", params_hash }</code></li>
+<li><code>tool:update</code> -&gt; <code>"Validating market"</code> -&gt; <code>"Simulating in Revm fork"</code> -&gt; <code>"Broadcasting createOrder"</code> -&gt; <code>"Awaiting keeper execution"</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success, duration_ms, result_summary: { position_key, leverage, size_usd } }</code></li>
+</ul>
+<p><strong>promptSnippet</strong>: “Opens a leveraged perp on GMX v2 (Arbitrum/Avalanche). Uses oracle pricing, no order book. Check <code>get_gmx_markets</code> and <code>get_gmx_funding_rate</code> before opening. Phase-gated: blocked in conservation/declining/terminal.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In thriving phase: open positions with clear directional conviction. Set stop-loss via <code>gmx_set_stop_loss_take_profit</code> immediately after.”</li>
+<li>“In stable phase: open smaller positions only. Max 3x leverage. Always set stop-loss.”</li>
+<li>“In conservation phase: BLOCKED for new positions. Use <code>gmx_close_position</code> to unwind.”</li>
+<li>“In declining/terminal phase: BLOCKED.”</li>
+<li>“ALWAYS check <code>get_gmx_funding_rate</code> before opening – unfavorable funding erodes P&amp;L.”</li>
+</ul>
+<h3 id="gmx_close_position"><a class="header" href="#gmx_close_position"><code>gmx_close_position</code></a></h3>
+<p>Close or partially reduce a GMX v2 position. Pass the position’s full size in <code>size_delta</code> for a full close.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer2</code> (bounded – closing reduces exposure) | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Loading position", "Simulating close in Revm", "Broadcasting decreaseOrder", "Awaiting keeper execution"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GmxClosePositionParams {
+    /// From `gmx_open_position` or `get_gmx_position`.
+    pub position_key: String,
+    /// USD amount to close.
+    pub size_delta: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Acceptable execution price.
+    pub acceptable_price: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxPositionClosed {
+    pub tx_hash: String,
+    pub pnl_usd: f64,
+    pub fees_usd: f64,
+    pub collateral_returned: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Position no longer exists (full close) or <code>sizeUsd</code> decreased by <code>size_delta</code>. Expected: <code>"position closed"</code> or <code>"size reduced by {size_delta}"</code>. Actual: <code>Reader.getPosition()</code> state. Source: <code>"gmx_reader_contract"</code>.</p>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; steps -&gt; <code>tool:end</code> -&gt; <code>{ pnl_usd, fees_usd }</code></p>
+<p><strong>promptSnippet</strong>: “Closes or partially reduces a GMX v2 position. Allowed at any phase. Pass full size for complete close.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In thriving/stable phase: close to take profit or cut losses per strategy.”</li>
+<li>“In conservation phase: close positions to reduce exposure. Mandatory.”</li>
+<li>“In declining phase: close ALL positions.”</li>
+<li>“In terminal phase: close any remaining positions for settlement.”</li>
+</ul>
+<h3 id="gmx_adjust_collateral"><a class="header" href="#gmx_adjust_collateral"><code>gmx_adjust_collateral</code></a></h3>
+<p>Add or remove collateral from a live GMX position to change leverage.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Loading position", "Simulating adjustment", "Broadcasting updateOrder"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GmxAdjustCollateralParams {
+    /// Position identifier.
+    pub position_key: String,
+    /// Positive to add collateral, negative to remove.
+    pub collateral_delta: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxCollateralAdjusted {
+    pub tx_hash: String,
+    pub new_collateral_usd: f64,
+    pub new_leverage: f64,
+    pub new_liquidation_price: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: <code>Reader.getPosition()</code> shows updated collateral. Expected: collateral changed by <code>collateral_delta</code>. Actual: new collateral value. Source: <code>"gmx_reader_contract"</code>.</p>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; steps -&gt; <code>tool:end</code> -&gt; <code>{ new_leverage, new_liquidation_price }</code></p>
+<p><strong>promptSnippet</strong>: “Adjusts collateral on a live GMX position to change leverage. Adding collateral reduces leverage and lowers liquidation risk. Removing increases leverage.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In thriving phase: adjust to optimize leverage for strategy.”</li>
+<li>“In conservation phase: only ADD collateral to reduce leverage. Removing is blocked.”</li>
+<li>“In declining/terminal phase: close positions instead of adjusting.”</li>
+</ul>
+<h3 id="gmx_set_stop_loss_take_profit"><a class="header" href="#gmx_set_stop_loss_take_profit"><code>gmx_set_stop_loss_take_profit</code></a></h3>
+<p>Attach stop-loss and take-profit trigger orders to a GMX position. Either field may be omitted to set only one order type.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Validating trigger prices", "Creating trigger orders"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GmxSetStopLossTakeProfitParams {
+    /// Position identifier.
+    pub position_key: String,
+    /// Oracle trigger price for stop-loss.
+    pub stop_loss_price: Option&lt;String&gt;,
+    /// Oracle trigger price for take-profit.
+    pub take_profit_price: Option&lt;String&gt;,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxStopLossTakeProfitSet {
+    pub stop_loss_order_key: Option&lt;String&gt;,
+    pub take_profit_order_key: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Order keys exist in GMX <code>DataStore</code>. Source: <code>"gmx_datastore_contract"</code>.</p>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; steps -&gt; <code>tool:end</code> -&gt; <code>{ stop_loss_order_key, take_profit_order_key }</code></p>
+<p><strong>promptSnippet</strong>: “Sets stop-loss and/or take-profit trigger orders on a GMX position. ALWAYS call immediately after opening a new position.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In thriving phase: set stop-loss at max acceptable loss. Take-profit at target.”</li>
+<li>“In conservation phase: tighten stop-losses to reduce max drawdown.”</li>
+<li>“NEVER leave a position without a stop-loss.”</li>
+</ul>
+<h3 id="get_gmx_position"><a class="header" href="#get_gmx_position"><code>get_gmx_position</code></a></h3>
+<p>Read the current state of a GMX v2 position.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code>
+<strong>Progress steps</strong>: <code>["Reading position from Reader contract"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetGmxPositionParams {
+    /// Position identifier.
+    pub position_key: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxPosition {
+    pub position_key: String,
+    pub market: String,
+    pub side: Side,
+    pub account: String,
+    pub collateral_token: String,
+    pub collateral_usd: f64,
+    pub size_usd: f64,
+    pub leverage: f64,
+    pub entry_price: f64,
+    pub mark_price: f64,
+    pub unrealized_pnl_usd: f64,
+    pub liquidation_price: f64,
+    pub funding_fee_accrued: String,
+    pub is_liquidatable: bool,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ unrealized_pnl_usd, leverage }</code></p>
+<p><strong>promptSnippet</strong>: “Reads current state of a GMX v2 position: P&amp;L, leverage, liquidation price, funding fees. Read-only.”</p>
+<h3 id="get_gmx_markets"><a class="header" href="#get_gmx_markets"><code>get_gmx_markets</code></a></h3>
+<p>List all available GMX v2 markets on a chain.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code>
+<strong>Progress steps</strong>: <code>["Querying GMX Reader for markets"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetGmxMarketsParams {
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxMarketsResult {
+    pub markets: Vec&lt;GmxMarketInfo&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxMarketInfo {
+    pub address: String,
+    pub index_token: String,
+    pub long_token: String,
+    pub short_token: String,
+    pub max_leverage: f64,
+    pub funding_rate: f64,
+    pub open_interest_long: f64,
+    pub open_interest_short: f64,
+    pub borrowing_factor: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ market_count }</code></p>
+<p><strong>promptSnippet</strong>: “Lists all GMX v2 markets on a chain with funding rates, open interest, and max leverage. Read-only discovery.”</p>
+<h3 id="get_gmx_funding_rate"><a class="header" href="#get_gmx_funding_rate"><code>get_gmx_funding_rate</code></a></h3>
+<p>Get the current funding rate for a GMX market. Positive means longs pay shorts; negative means shorts pay longs.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code>
+<strong>Progress steps</strong>: <code>["Reading funding rate from DataStore"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetGmxFundingRateParams {
+    /// Market address or symbol.
+    pub market: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxFundingRateResult {
+    pub market: String,
+    pub funding_rate_per_hour: f64,
+    pub long_funding: f64,
+    pub short_funding: f64,
+    pub next_funding_time: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ funding_rate_per_hour }</code></p>
+<p><strong>promptSnippet</strong>: “Gets current funding rate for a GMX market. Positive = longs pay shorts. Check before opening a position to avoid unfavorable funding.”</p>
+<h3 id="get_gmx_fees"><a class="header" href="#get_gmx_fees"><code>get_gmx_fees</code></a></h3>
+<p>Estimate the fee breakdown for opening or closing a GMX position of a given size.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code>
+<strong>Progress steps</strong>: <code>["Calculating fee estimate"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetGmxFeesParams {
+    /// Market address or symbol.
+    pub market: String,
+    /// Position size in USD.
+    pub size_delta: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GmxFeesResult {
+    pub position_fee: String,
+    pub funding_fee: String,
+    pub execution_fee: String,
+    pub total_fee_usd: f64,
+    pub fee_pct: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ total_fee_usd, fee_pct }</code></p>
+<p><strong>promptSnippet</strong>: “Estimates fee breakdown for a GMX position of a given size: position fee, funding, execution fee. Use to compare cost before opening.”</p>
+<p><strong>Error codes</strong>: <code>GMX_MARKET_PAUSED</code>, <code>GMX_BELOW_MIN_COLLATERAL</code>, <code>GMX_ABOVE_MAX_LEVERAGE</code>, <code>POSITION_NOT_FOUND</code>, <code>GMX_PRICE_IMPACT_TOO_HIGH</code></p>
+<hr>
+<h2 id="options--panoptic-8-tools"><a class="header" href="#options--panoptic-8-tools">Options – Panoptic (8 tools)</a></h2>
+<p>Panoptic implements options as Uniswap V4 LP positions. A call option is a long single-sided LP position above spot; a put option is below spot. Options are perpetual (no fixed expiry) and priced by LP fees rather than Black-Scholes. This architecture makes Panoptic positions fully composable with V4.</p>
+<p>All Panoptic tools use Alloy’s <code>sol!</code> macro against the <code>SemiFungiblePositionManager</code> and <code>PanopticPool</code> contracts.</p>
+<h3 id="panoptic_buy_option"><a class="header" href="#panoptic_buy_option"><code>panoptic_buy_option</code></a></h3>
+<p>Buy an options contract on Panoptic.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer3</code> (options are high-risk derivatives) | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Validating pool and strike", "Computing collateral requirement", "Simulating in Revm fork", "Broadcasting mintTokenizedPosition"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct PanopticBuyOptionParams {
+    /// Uniswap V4 pool address.
+    pub pool: String,
+    /// Strike price as a V4 tick.
+    pub strike: i32,
+    /// Tick range width in tick spacings (1 = minimum).
+    pub width: u32,
+    /// Option type.
+    pub option_type: OptionType,
+    /// Notional amount in quote token.
+    pub amount: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticOptionOpened {
+    pub tx_hash: String,
+    pub position_id: String,
+    pub pool: String,
+    pub option_type: OptionType,
+    pub strike: i32,
+    /// Strike tick converted to USD price.
+    pub strike_price: f64,
+    pub width: u32,
+    pub notional: String,
+    /// Stream-priced, not paid upfront.
+    pub premium: String,
+    pub collateral_required: String,
+    pub greeks: Greeks,
+    pub max_loss: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct Greeks {
+    pub delta: f64,
+    pub gamma: f64,
+    /// Negative for buyers -- time decay.
+    pub theta: f64,
+    pub vega: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Position exists in <code>SemiFungiblePositionManager</code> with matching token ID. Expected: <code>"option position created with notional {amount}"</code>. Actual: on-chain position state. Source: <code>"panoptic_sfpm_contract"</code>.</p>
+<p><strong>Event Fabric</strong>:</p>
+<ul>
+<li><code>tool:start</code> -&gt; <code>{ tool_name: "panoptic_buy_option", params_hash }</code></li>
+<li><code>tool:update</code> -&gt; <code>"Validating pool and strike"</code> -&gt; <code>"Computing collateral requirement"</code> -&gt; <code>"Simulating in Revm fork"</code> -&gt; <code>"Broadcasting mintTokenizedPosition"</code></li>
+<li><code>tool:end</code> -&gt; <code>{ success, duration_ms, result_summary: { position_id, option_type, strike_price, max_loss } }</code></li>
+</ul>
+<p><strong>promptSnippet</strong>: “Buys a perpetual option on Panoptic (built on Uniswap V4 LP positions). Premium is stream-priced via LP fees, not paid upfront. Phase-gated: blocked in conservation/declining/terminal.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In thriving phase: buy options for directional bets or hedging. Size to max 5% of portfolio per position.”</li>
+<li>“In stable phase: buy only for hedging existing exposure. No speculative positions.”</li>
+<li>“In conservation/declining/terminal phase: BLOCKED for new buys. Use <code>panoptic_close_option</code> to unwind.”</li>
+<li>“ALWAYS check <code>get_panoptic_option_chain</code> for available strikes and premiums first.”</li>
+<li>“Set a mental stop – if unrealized loss exceeds 50% of max_loss, close early.”</li>
+</ul>
+<h3 id="panoptic_sell_option"><a class="header" href="#panoptic_sell_option"><code>panoptic_sell_option</code></a></h3>
+<p>Sell (write) an options contract on Panoptic. The seller earns LP fees as premium but faces increasing collateral requirements as the option moves in-the-money.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer3</code> | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Validating pool and strike", "Computing collateral requirement", "Simulating in Revm fork", "Broadcasting mintTokenizedPosition"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct PanopticSellOptionParams {
+    /// Uniswap V4 pool address.
+    pub pool: String,
+    /// Strike price as a V4 tick.
+    pub strike: i32,
+    /// Tick range width in tick spacings.
+    pub width: u32,
+    /// Option type.
+    pub option_type: OptionType,
+    /// Notional to sell.
+    pub amount: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticOptionSold {
+    pub tx_hash: String,
+    pub position_id: String,
+    pub premium: String,
+    pub collateral_required: String,
+    pub greeks: Greeks,
+    /// Maximum gain for the seller (capped).
+    pub max_gain: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Short position exists in SFPM. Source: <code>"panoptic_sfpm_contract"</code>.</p>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; steps -&gt; <code>tool:end</code> -&gt; <code>{ position_id, premium, collateral_required }</code></p>
+<p><strong>promptSnippet</strong>: “Sells (writes) a Panoptic option. Earns streaming premium but faces unlimited loss on naked positions. Phase-gated: blocked in conservation/declining/terminal.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In thriving phase: sell options for income generation. Always hedge with the underlying or pair with a bought option (spread).”</li>
+<li>“In stable phase: sell only covered options. Naked selling blocked by risk policy.”</li>
+<li>“In conservation/declining/terminal phase: BLOCKED.”</li>
+<li>“WARNING: Naked sold options have unlimited loss potential. Monitor collateral utilization.”</li>
+</ul>
+<h3 id="panoptic_close_option"><a class="header" href="#panoptic_close_option"><code>panoptic_close_option</code></a></h3>
+<p>Close an existing Panoptic options position.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Loading position", "Simulating close", "Broadcasting burnTokenizedPosition"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct PanopticCloseOptionParams {
+    /// From `panoptic_buy_option` or `panoptic_sell_option`.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticOptionClosed {
+    pub tx_hash: String,
+    pub realized_pnl: f64,
+    pub premium_earned: String,
+    pub collateral_returned: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Position no longer exists in SFPM. Source: <code>"panoptic_sfpm_contract"</code>.</p>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; steps -&gt; <code>tool:end</code> -&gt; <code>{ realized_pnl, premium_earned }</code></p>
+<p><strong>promptSnippet</strong>: “Closes a Panoptic options position. Allowed at any phase.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li>“In conservation phase: close speculative positions first, hedges last.”</li>
+<li>“In declining phase: close ALL options positions.”</li>
+</ul>
+<h3 id="panoptic_exercise_option"><a class="header" href="#panoptic_exercise_option"><code>panoptic_exercise_option</code></a></h3>
+<p>Force-exercise an in-the-money Panoptic position. This is the perpetual analog of expiry exercise: it forces early liquidation of an ITM position. Only available to buyers.</p>
+<p><strong>Capability</strong>: <code>WriteTool</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code>
+<strong>Progress steps</strong>: <code>["Verifying ITM status", "Simulating exercise", "Broadcasting forceExercise"]</code>
+<strong>Sprite trigger</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct PanopticExerciseOptionParams {
+    /// Position to exercise.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticOptionExercised {
+    pub tx_hash: String,
+    pub payout: String,
+    pub intrinsic_value: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Ground truth</strong>: Position burned, payout transferred. Source: <code>"panoptic_pool_contract"</code>.</p>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; steps -&gt; <code>tool:end</code> -&gt; <code>{ payout, intrinsic_value }</code></p>
+<p><strong>promptSnippet</strong>: “Force-exercises an ITM Panoptic option. Only for buyers. Reverts if the option is OTM.”</p>
+<h3 id="get_panoptic_option_chain"><a class="header" href="#get_panoptic_option_chain"><code>get_panoptic_option_chain</code></a></h3>
+<p>Get the available strike prices and premiums for a Panoptic pool’s option chain.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code>
+<strong>Progress steps</strong>: <code>["Reading pool state", "Computing strike premiums"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetPanopticOptionChainParams {
+    /// Uniswap V4 pool address.
+    pub pool: String,
+    /// Filter by type (default: "both").
+    pub option_type: Option&lt;OptionTypeFilter&gt;,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticOptionChain {
+    pub pool: String,
+    pub current_price: f64,
+    pub strikes: Vec&lt;StrikeInfo&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StrikeInfo {
+    pub tick: i32,
+    pub strike_price: f64,
+    /// Annualized premium as LP fee rate.
+    pub call_premium_bps: f64,
+    pub put_premium_bps: f64,
+    pub delta: f64,
+    pub open_interest: String,
+    pub moneyness: Moneyness,
+}
+
+#[derive(Debug, Serialize)]
+pub enum Moneyness {
+    DeepItm,
+    Itm,
+    Atm,
+    Otm,
+    DeepOtm,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ strike_count }</code></p>
+<p><strong>promptSnippet</strong>: “Lists available strikes with premiums and Greeks for a Panoptic pool. Read-only. Call before buying or selling options.”</p>
+<h3 id="get_panoptic_greeks"><a class="header" href="#get_panoptic_greeks"><code>get_panoptic_greeks</code></a></h3>
+<p>Get Greeks for an existing Panoptic position.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code>
+<strong>Progress steps</strong>: <code>["Computing Greeks from position state"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetPanopticGreeksParams {
+    /// Position identifier.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticGreeksResult {
+    pub delta: f64,
+    pub gamma: f64,
+    pub theta: f64,
+    pub vega: f64,
+    pub rho: f64,
+    pub collateral_utilization: f64,
+    pub unrealized_pnl: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ delta, unrealized_pnl }</code></p>
+<p><strong>promptSnippet</strong>: “Gets Greeks for a Panoptic position: delta, gamma, theta, vega, rho plus collateral utilization. Read-only.”</p>
+<h3 id="get_panoptic_iv"><a class="header" href="#get_panoptic_iv"><code>get_panoptic_iv</code></a></h3>
+<p>Get implied volatility for a Panoptic pool, derived from LP fee rates rather than Black-Scholes inversion.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code>
+<strong>Progress steps</strong>: <code>["Reading fee accumulation data", "Computing IV surface"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetPanopticIvParams {
+    /// Uniswap V4 pool address.
+    pub pool: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticIvResult {
+    pub implied_volatility: f64,
+    pub iv_surface: Vec&lt;IvPoint&gt;,
+    /// Comparison to 30-day realized vol.
+    pub vs_30d_realized_vol: f64,
+    /// Current IV relative to historical range (0-100).
+    pub iv_percentile: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct IvPoint {
+    pub strike: i32,
+    pub width: u32,
+    pub iv: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ implied_volatility, iv_percentile }</code></p>
+<p><strong>promptSnippet</strong>: “Gets implied volatility for a Panoptic pool derived from LP fee rates. Includes IV surface and comparison to realized vol. Read-only.”</p>
+<h3 id="get_panoptic_positions"><a class="header" href="#get_panoptic_positions"><code>get_panoptic_positions</code></a></h3>
+<p>Get all Panoptic options positions for an account, with aggregate Greeks.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code>
+<strong>Progress steps</strong>: <code>["Scanning SFPM for positions", "Computing aggregate Greeks"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetPanopticPositionsParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticPositionsResult {
+    pub positions: Vec&lt;PanopticPositionInfo&gt;,
+    pub total_delta: f64,
+    pub total_vega: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PanopticPositionInfo {
+    pub position_id: String,
+    pub pool: String,
+    pub option_type: OptionType,
+    pub strike: i32,
+    pub width: u32,
+    pub notional: String,
+    pub unrealized_pnl: f64,
+    pub greeks: Greeks,
+    pub collateral_utilization: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ position_count, total_delta }</code></p>
+<p><strong>promptSnippet</strong>: “Returns all Panoptic positions for an account with per-position and aggregate Greeks. Read-only.”</p>
+<p><strong>Error codes</strong>: <code>PANOPTIC_POOL_NOT_FOUND</code>, <code>STRIKE_OUT_OF_RANGE</code>, <code>INSUFFICIENT_PREMIUM_COLLATERAL</code>, <code>OPTION_NOT_EXERCISABLE</code></p>
+<hr>
+<h2 id="cross-derivatives-tools-2-tools"><a class="header" href="#cross-derivatives-tools-2-tools">Cross-derivatives tools (2 tools)</a></h2>
+<p>These tools span both GMX and Panoptic, providing cross-protocol views.</p>
+<h3 id="get_perp_liquidation_risk"><a class="header" href="#get_perp_liquidation_risk"><code>get_perp_liquidation_risk</code></a></h3>
+<p>Check liquidation risk across all open perpetual positions for an account.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code>
+<strong>Progress steps</strong>: <code>["Scanning GMX positions", "Computing liquidation distances"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetPerpLiquidationRiskParams {
+    /// Account address.
+    pub account: String,
+    /// Omit to check across all supported chains.
+    pub chain_id: Option&lt;u64&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PerpLiquidationRiskResult {
+    pub positions: Vec&lt;PerpRiskPosition&gt;,
+    pub highest_risk: Option&lt;HighestRisk&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PerpRiskPosition {
+    pub venue: String,
+    pub market: String,
+    pub side: Side,
+    pub leverage: f64,
+    pub liquidation_price: f64,
+    /// Percentage distance from current price to liquidation.
+    pub distance_to_liquidation: f64,
+    pub risk_level: RiskLevel,
+}
+
+#[derive(Debug, Serialize)]
+pub struct HighestRisk {
+    pub venue: String,
+    pub market: String,
+    pub risk_level: RiskLevel,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ position_count, highest_risk_level }</code></p>
+<p><strong>promptSnippet</strong>: “Checks liquidation risk across all GMX perp positions. Returns distance to liquidation and risk level per position. Read-only.”</p>
+<h3 id="estimate_carry_trade"><a class="header" href="#estimate_carry_trade"><code>estimate_carry_trade</code></a></h3>
+<p>Estimate net APY for a delta-neutral carry trade: hold spot, short via perp to collect funding.</p>
+<p><strong>Capability</strong>: <code>ReadTool</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code>
+<strong>Progress steps</strong>: <code>["Fetching spot price", "Querying GMX funding rate", "Computing carry economics"]</code>
+<strong>Sprite trigger</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EstimateCarryTradeParams {
+    /// Asset to hold spot (e.g., "ETH").
+    pub asset: String,
+    /// Notional position size in USD.
+    pub amount: String,
+    /// Chain ID for spot leg.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CarryTradeEstimate {
+    pub asset: String,
+    pub perp_venue: String,
+    pub spot_position: String,
+    pub perp_position: String,
+    pub funding_rate_annualized: f64,
+    /// Cost of holding spot if sourced via lending.
+    pub borrow_cost_annualized: f64,
+    pub estimated_net_apy_pct: f64,
+    pub break_even_funding_rate: f64,
+    pub risk_factors: Vec&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Event Fabric</strong>: <code>tool:start</code> -&gt; <code>tool:end</code> -&gt; <code>{ estimated_net_apy_pct }</code></p>
+<p><strong>promptSnippet</strong>: “Estimates net APY for a delta-neutral carry trade (spot long + perp short). Factors in funding rate and borrow cost. Read-only.”</p>
+<hr>
+<h2 id="cross-protocol-risk-normalization"><a class="header" href="#cross-protocol-risk-normalization">Cross-protocol risk normalization</a></h2>
+<p>GMX uses a leverage-based health metric. The safety tools normalize it to a unified risk scale alongside lending protocols.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Protocol</th><th>Native metric</th><th>Safe</th><th>Warning</th><th>Danger</th></tr>
+</thead>
+<tbody>
+<tr><td>GMX v2</td><td>Leverage vs max</td><td>&lt; 70% max</td><td>70-85% max</td><td>&gt; 85% max</td></tr>
+<tr><td>Panoptic</td><td>Collateral utilization</td><td>&lt; 60%</td><td>60-80%</td><td>&gt; 80%</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="adapter-registry-mapping"><a class="header" href="#adapter-registry-mapping">Adapter registry mapping</a></h2>
+<p>The two-layer tool model maps GMX and Panoptic tools to Pi-facing tools:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pi-facing tool</th><th>Action type</th><th>Internal ToolDef</th></tr>
+</thead>
+<tbody>
+<tr><td><code>preview_action</code></td><td><code>open_perp</code></td><td><code>gmx_open_position</code> (simulate)</td></tr>
+<tr><td><code>commit_action</code></td><td><code>open_perp</code></td><td><code>gmx_open_position</code> (execute)</td></tr>
+<tr><td><code>preview_action</code></td><td><code>close_perp</code></td><td><code>gmx_close_position</code> (simulate)</td></tr>
+<tr><td><code>commit_action</code></td><td><code>close_perp</code></td><td><code>gmx_close_position</code> (execute)</td></tr>
+<tr><td><code>preview_action</code></td><td><code>buy_option</code></td><td><code>panoptic_buy_option</code> (simulate)</td></tr>
+<tr><td><code>commit_action</code></td><td><code>buy_option</code></td><td><code>panoptic_buy_option</code> (execute)</td></tr>
+<tr><td><code>query_state</code></td><td><code>perp_position</code></td><td><code>get_gmx_position</code></td></tr>
+<tr><td><code>query_state</code></td><td><code>option_positions</code></td><td><code>get_panoptic_positions</code></td></tr>
+<tr><td><code>query_state</code></td><td><code>option_greeks</code></td><td><code>get_panoptic_greeks</code></td></tr>
+<tr><td><code>search_context</code></td><td><code>funding_rate</code></td><td><code>get_gmx_funding_rate</code></td></tr>
+<tr><td><code>search_context</code></td><td><code>option_chain</code></td><td><code>get_panoptic_option_chain</code></td></tr>
+<tr><td><code>search_context</code></td><td><code>implied_vol</code></td><td><code>get_panoptic_iv</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="custody-implications-derivatives-write-tools"><a class="header" href="#custody-implications-derivatives-write-tools">Custody implications (derivatives write tools)</a></h2>
+<p>All derivatives write tools share the same custody behavior:</p>
+<ul>
+<li><strong>Delegation</strong>: Session key signs via the protocol router (GMX Router, Panoptic SemiFungiblePositionManager). CaveatEnforcer must whitelist each protocol’s canonical contract addresses. Position size is bounded by session key spending limits.</li>
+<li><strong>Embedded</strong>: Privy server wallet signs. PolicyCage validates protocol target, position size, and leverage limits.</li>
+<li><strong>Local Key</strong>: Local keypair signs. On-chain delegation bounds constrain allowed targets and amounts.</li>
+</ul>
+<p>Perpetual positions carry ongoing liquidation risk. The custody layer validates opening and modification calls but cannot prevent on-chain liquidation by the protocol. Close position tools are always permitted regardless of lifecycle phase.</p>
+<hr>
+<h2 id="chain-specific-contracts"><a class="header" href="#chain-specific-contracts">Chain-specific contracts</a></h2>
+<p>For chain-specific V4 contract addresses, see <code>shared/chains.md</code>.</p>
+<hr>
+<h2 id="error-taxonomy"><a class="header" href="#error-taxonomy">Error taxonomy</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GMX_MARKET_PAUSED</code></td><td>GMX market is paused for maintenance or emergency</td></tr>
+<tr><td><code>GMX_BELOW_MIN_COLLATERAL</code></td><td>Collateral amount below GMX’s minimum requirement</td></tr>
+<tr><td><code>GMX_ABOVE_MAX_LEVERAGE</code></td><td>Requested leverage exceeds market’s maximum</td></tr>
+<tr><td><code>GMX_PRICE_IMPACT_TOO_HIGH</code></td><td>Position size creates excessive price impact</td></tr>
+<tr><td><code>POSITION_NOT_FOUND</code></td><td>Position key does not match any open position</td></tr>
+<tr><td><code>PANOPTIC_POOL_NOT_FOUND</code></td><td>V4 pool does not have a Panoptic deployment</td></tr>
+<tr><td><code>STRIKE_OUT_OF_RANGE</code></td><td>Strike tick is outside the pool’s active range</td></tr>
+<tr><td><code>INSUFFICIENT_PREMIUM_COLLATERAL</code></td><td>Not enough collateral to cover premium stream</td></tr>
+<tr><td><code>OPTION_NOT_EXERCISABLE</code></td><td>Option is OTM and cannot be force-exercised</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/09-tools-restaking.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/11-tools-yield.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/09-tools-restaking.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/11-tools-yield.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

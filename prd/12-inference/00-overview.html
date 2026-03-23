@@ -1,0 +1,722 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Inference - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/12-inference/00-overview.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="00--inference-gateway-overview-spec"><a class="header" href="#00--inference-gateway-overview-spec">00 – Inference gateway overview [SPEC]</a></h1>
+<p><strong>Rust inference gateway with context engineering, five-provider routing, and x402 spread revenue</strong></p>
+<blockquote>
+<p>Related: <a href="01a-routing.html">01a-routing.md</a> (model routing spec with self-describing providers and mortality-aware resolution), <a href="02-caching.html">02-caching.md</a> (three-layer cache stack with regime-aware invalidation), <a href="03-economics.html">03-economics.md</a> (x402 spread revenue model and per-tenant cost attribution), <a href="04-context-engineering.html">04-context-engineering.md</a> (8-layer context engineering pipeline for cost reduction)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document is the top-level specification for <strong>Bardo Inference</strong>, the LLM inference gateway layer of the Bardo ecosystem (a Rust runtime for mortal autonomous DeFi agents called Golems). It describes the gateway’s architecture, payment flows, provider routing, context engineering pipeline, and deployment topology. The key concept is that every LLM call an agent makes flows through this gateway, which optimizes cost, routes across five provider backends, and settles payments in USDC via the x402 micropayment protocol. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="what-is-the-inference-gateway"><a class="header" href="#what-is-the-inference-gateway">What is the inference gateway</a></h2>
+<p>The inference gateway is a Rust binary (<code>bardo-gateway</code>) that sits between the Golem (a mortal autonomous DeFi agent managed by the Bardo runtime) runtime and foundation model providers. It accepts LLM requests from the Pi plane, applies an 8-layer context engineering pipeline, routes through five provider backends, and returns completions. The operator keeps the spread between what the user pays and what the provider charges.</p>
+<p>The gateway accepts both <strong>Anthropic Messages API</strong> and <strong>OpenAI Chat Completions API</strong> natively, auto-detecting from request shape. Claude Code, Cursor, Aider, and custom apps work with two environment variables. Context engineering (prompt cache alignment, tool pruning, history compression, semantic caching) reduces effective token costs by ~40%, so users pay less through the gateway than calling providers directly – even after the operator’s spread. x402 (a micropayment protocol for HTTP-native USDC payments on Base) settles both legs of every transaction.</p>
+<p>ERC-8004 (the on-chain agent identity standard) identity is optional. Users who link an ERC-8004 identity unlock reputation-based spread discounts.</p>
+<h3 id="three-plane-architecture"><a class="header" href="#three-plane-architecture">Three-plane architecture</a></h3>
+<p>The Golem’s cognition spans three independently deployable planes. Each evolves on its own schedule and communicates over HTTP.</p>
+<pre><code>Golem-RS runtime (Rust)            Inference plane (Rust)           Styx plane (stateless)
++---------------------------+      +-------------------------+      +---------------------+
+| Session state             |      | Routing                 |      | Vector retrieval    |
+| ActionPermits             | ---&gt; | 8-layer pipeline        | &lt;--- | Knowledge injection |
+| Phase enforcement         |      | Caching (3 layers)      |      | L0/L1/L2 namespaces |
+| Tool orchestration        |      | Provider resolution     |      |                     |
+| bardo-provider-adapter    |      | Cost accounting         |      | bardo-styx ext      |
++---------------------------+      +-------------------------+      +---------------------+
+</code></pre>
+<p><strong>Golem-RS runtime</strong> owns the Golem’s session lifecycle and tool orchestration. It does not route or cache. Every LLM call passes through <code>bardo-provider-adapter</code>, an extension that registers the inference gateway as the sole provider at session start and intercepts all subsequent model calls.</p>
+<p><strong>Inference</strong> (the subject of this document) receives every LLM call from the runtime and applies routing, caching, context engineering, and safety checks before the call reaches a foundation model. It is stateless with respect to the Golem’s memory. It sees assembled prompts and returns completions.</p>
+<p><strong>Styx</strong> (the knowledge retrieval and injection plane) is a runtime extension that hooks <code>before_llm_call</code>. It pre-fetches knowledge from Styx namespaces (Vault, Clade (a peer-to-peer network of Golems sharing knowledge), Lethe (formerly Commons)) and injects it into the Context Governor’s input before the inference plane sees any prompt. Styx stays stateless and horizontally scalable because session state lives entirely in the Golem-RS runtime.</p>
+<p>The separation is functional. The inference plane’s routing model can be swapped without touching the runtime’s session logic. Styx’s scoring function can change without redeploying inference. The runtime can switch providers by updating one extension with a new endpoint and key.</p>
+<h3 id="bardo-provider-adapter-the-bridge"><a class="header" href="#bardo-provider-adapter-the-bridge"><code>bardo-provider-adapter</code>: the bridge</a></h3>
+<p>A Golem-RS runtime extension registers the inference gateway as the sole provider at session start. This single registration is the trust boundary. Gateway-side middleware (tool-firewall, policy-enforcer, audit-tagger, budget-enforcer) is declared by Pi for observability but enforced server-side. Pi cannot route around the gateway without making a detectable structural modification to the extension set.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Golem-RS runtime extension that bridges to the inference gateway.
+/// Registers the gateway as the sole provider on session start.
+pub struct ProviderAdapter {
+    endpoint: String,
+    auth: AuthConfig,
+}
+
+impl Extension for ProviderAdapter {
+    fn name(&amp;self) -&gt; &amp;str { "bardo-provider-adapter" }
+    fn layer(&amp;self) -&gt; u8 { 2 } // Layer 2: Provider
+
+    async fn on_before_agent_start(&amp;self, ctx: &amp;mut AgentStartCtx) -&gt; Result&lt;()&gt; {
+        ctx.register_provider(ProviderRegistration {
+            id: "bardo".into(),
+            endpoint: self.endpoint.clone(),
+            auth: self.auth.clone(),
+            middleware: vec![
+                "tool-firewall",
+                "policy-enforcer",
+                "audit-tagger",
+                "budget-enforcer",
+            ],
+        });
+        Ok(())
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="standalone-product-shared-infrastructure"><a class="header" href="#standalone-product-shared-infrastructure">Standalone product, shared infrastructure</a></h3>
+<p>The inference gateway is a standalone product – any ERC-8004 agent can use it, whether or not it runs on Bardo Compute (the VM hosting service for Golems). It is deeply integrated with the Golem runtime: each Compute VM tier includes a base inference token allowance (overages bill from the Golem’s wallet), the <code>bardo-provider-adapter</code> routes all Golem LLM calls through inference with T0/T1/T2 model routing applied at the gateway layer, and when the onboarding flow provisions a Golem its first inference calls flow through this gateway. See <a href="../11-compute/03-billing.html">prd2/11-compute/03-billing.md</a>.</p>
+<hr>
+<h2 id="why-agents-need-this"><a class="header" href="#why-agents-need-this">Why agents need this</a></h2>
+<p>Every autonomous agent on Base needs LLM inference. Today each agent must independently manage API keys, failover logic, rate limiting, prompt optimization, context windows, and spend tracking. The inference gateway eliminates all of it: one endpoint, one payment method (USDC), automatic optimization, and per-request billing that settles on-chain.</p>
+<h3 id="concrete-cost-reduction"><a class="header" href="#concrete-cost-reduction">Concrete cost reduction</a></h3>
+<p>The naive architecture – give the agent all tool definitions and let it call Opus every tick – costs roughly $85/day at 100 ticks/day. The three-plane architecture with inference as the policy layer brings that down to $0.05-$0.40/day on typical workloads, an <strong>18-200x reduction</strong> depending on market conditions. Additional cost reduction paths include DIEM staking (100% discount on Venice-routed calls), Batch API (50% discount on offline dream cycles), and multi-model routing across 5 providers (50-90% savings by matching task complexity to model cost).</p>
+<p>The savings come from two mechanisms that compound:</p>
+<p><strong>T0/T1/T2</strong> (the three-tier model routing system: T0 is a zero-cost finite state machine, T1 uses a cheap/fast model, T2 escalates to a frontier model) <strong>FSM routing kills ~80% of ticks before any LLM call.</strong> When all probes return <code>none</code> severity, the Heartbeat tick (the Golem’s periodic sense-think-act cycle) exits at OBSERVE with zero inference cost. At 100 ticks/day, that eliminates ~80 LLM calls entirely.</p>
+<p><strong>3-layer caching cuts the cost of the remaining 20% by 60-80%.</strong> Anthropic prompt cache (90% discount on cached prefix tokens, 5-minute TTL), semantic cache (cosine &gt; 0.92 threshold), and deterministic hash cache together mean that most T1 and T2 calls pay only for the variable portion of context.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Market condition</th><th>T0 rate</th><th>Daily cost</th></tr>
+</thead>
+<tbody>
+<tr><td>Calm (bull_low_vol)</td><td>~90%</td><td>$0.05-$0.10</td></tr>
+<tr><td>Normal</td><td>~80%</td><td>~$0.20</td></tr>
+<tr><td>Volatile (bear_high_vol)</td><td>~60%</td><td>~$0.40</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="moat-agents-that-think"><a class="header" href="#moat-agents-that-think">Moat: agents that think</a></h3>
+<p>Context engineering is the competitive advantage. Context failures, not model failures, cause most agent breakdowns. Anthropic’s context engineering framework (2025) established this as the primary bottleneck for production agents [ANTHROPIC-CONTEXT-ENG].</p>
+<p>The Context Governor (see <a href="04-context-engineering.html">04-context-engineering.md</a>) treats context assembly as a <strong>learnable control problem</strong> – a system that starts with heuristics and evolves through three cybernetic feedback loops into something that knows, per-regime and per-task-type, which categories of context improve decisions and which waste tokens. Seven academic techniques integrated through three loops that run continuously, within a mortality-aware runtime that provides economic pressure to optimize. The techniques are published papers. The integration is months of competitive moat. See <code>prd2/appendices/moat-think.md</code>.</p>
+<h3 id="the-context-engineering-platform"><a class="header" href="#the-context-engineering-platform">The context engineering platform</a></h3>
+<p>Every request passes through 8 layers: prompt cache alignment (L1), semantic response caching (L2), deterministic hash caching (L3), dynamic tool pruning at 97.5% token reduction (L4), history compression via cheap model (L5), provider-specific KV-cache routing (L6), PII masking with round-trip de-identification (L7), and prompt injection detection via ONNX classifier (L8). All transparent to the calling agent. Combined, these reduce inference cost by 40-85%.</p>
+<p>The design is informed by how production agent harnesses (Cursor, Claude Code, Aider, Amp, Devin, Codex CLI) manage prompts, context windows, and tool orchestration [ANTHROPIC-CONTEXT-ENG]. These systems have converged on stable prompt prefixes optimized for cache hits, just-in-time context retrieval, lossy compaction at context boundaries, dynamic tool loading, and simple agent loops with at most one level of sub-agent branching.</p>
+<hr>
+<h2 id="five-providers"><a class="header" href="#five-providers">Five providers</a></h2>
+<p>The gateway routes across five provider backends. Each has a unique value proposition. The owner configures which are enabled; the resolver walks the list in priority order until something fits.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Provider</th><th>Payment</th><th>Value</th><th>When to route here</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>BlockRun</strong></td><td>x402 USDC</td><td>30+ models, no API keys, wallet-based auth</td><td>Default for standard inference</td></tr>
+<tr><td><strong>OpenRouter</strong></td><td>API key</td><td>400+ models, BYOK, automatic failover</td><td>Niche models, breadth, BlockRun down</td></tr>
+<tr><td><strong>Venice</strong></td><td>API key / DIEM</td><td>Zero data retention, visible <code>&lt;think&gt;</code> tags</td><td>Private cognition, dreams, death reflection</td></tr>
+<tr><td><strong>Bankr</strong></td><td>Wallet</td><td>Inference wallet = execution wallet, self-funding</td><td>Revenue-funded Golems, token launching</td></tr>
+<tr><td><strong>Direct Keys</strong></td><td>Owner’s billing</td><td>Full native API surface per provider</td><td>Predicted Outputs, Batch API, explicit caching</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="12-providers.html">12-providers.md</a> for full specifications and the self-describing provider resolution algorithm.</p>
+<p>Fallback order: <code>blockrun</code> (x402, no API key) -&gt; <code>openrouter</code> (API key, universal fallback). Venice is a separate inference plane, not a fallback – selected by task class or security classification. Bankr activates for self-funding economics. Direct Keys bypass the gateway when native provider features are required.</p>
+<hr>
+<h2 id="payment-flows"><a class="header" href="#payment-flows">Payment flows</a></h2>
+<h3 id="prepaid-balance-flow-recommended"><a class="header" href="#prepaid-balance-flow-recommended">Prepaid balance flow (recommended)</a></h3>
+<pre><code class="language-text">User                          Bardo Gateway              BlockRun
+ | POST + Bearer bardo_sk_*        |                        |
+ |--------------------------------&gt;| 1. Validate key        |
+ |                                 | 2. Check balance       |
+ |                                 | 3. Context engineering  |
+ |                                 | 4. x402 payment ------&gt;|
+ | SSE stream + [DONE]             |&lt;--- stream chunks -----|
+ | X-Bardo-Cost / Savings / Balance|                        |
+ |&lt;--------------------------------| 5. Debit balance       |
+</code></pre>
+<h3 id="per-request-x402-flow"><a class="header" href="#per-request-x402-flow">Per-request x402 flow</a></h3>
+<pre><code class="language-text">User                          Bardo Gateway              BlockRun
+ | POST /v1/chat/completions       |                        |
+ |--------------------------------&gt;| 1. Estimate tokens     |
+ | 402 + X-Payment quote           |                        |
+ |&lt;--------------------------------| 2. Calculate price     |
+ | POST + X-PAYMENT (signed USDC)  |                        |
+ |--------------------------------&gt;| 3. Context engineering |
+ |                                 | 4. x402 payment ------&gt;|
+ | SSE stream + [DONE]             |&lt;--- stream chunks -----|
+ | X-Bardo-Cost                    |                        |
+ |&lt;--------------------------------| 5. Settle actual cost  |
+</code></pre>
+<h3 id="pricing-model-upto-scheme"><a class="header" href="#pricing-model-upto-scheme">Pricing model: <code>upto</code> scheme</a></h3>
+<p>For per-request x402 mode, LLM inference has unpredictable output length. The gateway uses x402’s <code>upto</code> payment scheme: the user authorizes a maximum amount, the gateway charges based on actual consumption, and the difference is never settled. For prepaid balance mode, the balance is debited by the actual cost after completion.</p>
+<h3 id="x402-protocol-detail"><a class="header" href="#x402-protocol-detail">x402 protocol detail</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-x402/src/pricing.rs
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PriceQuote {
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub provider_cost: f64,
+    pub routing_discount: f64,
+    pub cache_discount: f64,
+    pub compression_discount: f64,
+    pub margin: f64,
+    pub total_charged: f64,
+}
+<span class="boring">}</span></code></pre>
+<p>The 402 body includes <code>scheme: "upto"</code>, <code>recipient</code> (gateway’s USDC address on Base), <code>expiry</code> (quote validity window), and an <code>inference</code> block with <code>estimatedInputTokens</code>, <code>estimatedOutputTokens</code>, <code>routedFrom</code> (selected model), <code>cacheEligible</code> (boolean), and <code>optimizations[]</code> (list of applied optimizations). The client authorizes <code>maxAmount</code>; the gateway charges actual cost and the difference is never settled.</p>
+<h3 id="authentication-modes"><a class="header" href="#authentication-modes">Authentication modes</a></h3>
+<p>Two authentication modes. Both settle in USDC on Base via x402.</p>
+<p><strong>Mode 1: Prepaid balance (recommended)</strong></p>
+<p>Owner deposits USDC, receives a <code>bardo_sk_*</code> API key. No per-request signing, no wallet management.</p>
+<pre><code class="language-bash">export ANTHROPIC_BASE_URL="https://bardo.example.com/v1"
+export ANTHROPIC_API_KEY="bardo_sk_abc123..."
+</code></pre>
+<p>Claude Code works unmodified. Balance visible via <code>X-Bardo-Balance</code> response header, low-balance warning via <code>X-Bardo-Balance-Warning</code> when &lt; $1.00. Keys are bcrypt-hashed at rest, can be scoped (read-only, spend-limited, IP-restricted).</p>
+<p><strong>Mode 2: Per-request x402</strong></p>
+<p>Every request triggers the x402 flow: gateway returns 402, client signs USDC authorization, retries with payment. Requires the thin wrapper (<code>bardo-inference</code> CLI binary) for terminal tools, or direct 402 handling for programmatic clients.</p>
+<p><strong>Auth detection</strong>: <code>bardo_sk_*</code>/<code>bardo_pk_*</code> in Authorization header -&gt; prepaid; <code>X-Payment</code> header -&gt; x402; neither -&gt; rejected.</p>
+<h3 id="multi-auth-gateway"><a class="header" href="#multi-auth-gateway">Multi-auth gateway</a></h3>
+<p>The inference gateway accepts four authentication methods: x402 payment headers, prepaid API keys, Privy JWT tokens, and ERC-8004 delegation proofs. Auth detection runs in order: <code>X-Payment</code> header (x402), <code>Authorization: Bearer bardo_sk_*</code> (prepaid), <code>Authorization: Bearer privy_*</code> (Privy JWT), EIP-712 signature with ERC-8004 delegation (delegation proof). The first match wins. All four methods resolve to the same internal identity before the request enters the pipeline.</p>
+<h3 id="inference-and-styx-event-paths"><a class="header" href="#inference-and-styx-event-paths">Inference and Styx event paths</a></h3>
+<p>Inference events flow Golem -&gt; inference gateway -&gt; response. Styx events flow Golem -&gt; Styx relay -&gt; TUI. These are separate paths. The inference gateway never touches Styx; Styx never routes LLM calls. They share the Event Fabric for observability, but data flows are independent.</p>
+<h3 id="token-allowance-headers"><a class="header" href="#token-allowance-headers">Token allowance headers</a></h3>
+<p>The gateway returns <code>X-Remaining-Tokens: &lt;count&gt;</code> on every response. Allowances reset hourly. Clients can use this header to track consumption without polling a separate endpoint. When the count reaches zero, further requests return 429 until the next hourly reset.</p>
+<h3 id="erc-8004-identity-optional"><a class="header" href="#erc-8004-identity-optional">ERC-8004 identity (optional)</a></h3>
+<p>ERC-8004 identity is not required for v1. Both payment modes work without it. Owners can optionally link an ERC-8004 identity to their API key or wallet address via <code>POST /v1/identity/link</code> to unlock reputation-based spread discounts:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Reputation tier</th><th>Spread</th></tr>
+</thead>
+<tbody>
+<tr><td>None (default)</td><td>20%</td></tr>
+<tr><td>Basic (50+ score)</td><td>18%</td></tr>
+<tr><td>Verified (200+)</td><td>15%</td></tr>
+<tr><td>Trusted (500+)</td><td>12%</td></tr>
+<tr><td>Sovereign (1000+)</td><td>8%</td></tr>
+</tbody>
+</table>
+</div>
+<p>When an ERC-8004 identity is linked, the gateway authenticates requests using EIP-712 typed data signatures. Verification supports both EOA wallets (standard <code>ecrecover</code>) and contract wallets (ERC-1271 <code>isValidSignature</code>).</p>
+<h3 id="rate-limiting"><a class="header" href="#rate-limiting">Rate limiting</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>Default rate limit</th><th>Keyed by</th></tr>
+</thead>
+<tbody>
+<tr><td>Prepaid balance</td><td>100 req/min</td><td>API key</td></tr>
+<tr><td>Per-request x402</td><td>100 req/min</td><td>Wallet address</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="budget-enforcement"><a class="header" href="#budget-enforcement">Budget enforcement</a></h3>
+<p>The gateway enforces multi-dimensional budget constraints per agent. When a budget dimension is exceeded, the response is graduated:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-gateway/src/budget.rs
+
+#[derive(Debug, Clone, Serialize)]
+pub enum BudgetAction { Allow, Downgrade, Block }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct BudgetDecision {
+    pub action: BudgetAction,
+    pub reason: String,
+    pub alternative_model: Option&lt;String&gt;,
+    pub retry_after: Option&lt;u64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>Progressive degradation: when a cost budget is exceeded, the gateway finds a cheaper equivalent model rather than rejecting the request. A request targeting Opus that exceeds the session budget may be downgraded to Sonnet; a Sonnet request to Haiku. Only when no cheaper model can satisfy the request does the gateway return 429 with <code>Retry-After</code>.</p>
+<p>Budget partitioning follows the Golem’s wallet structure. When a Golem’s wallet allocates funds across inference, compute, and gas reserves, the inference budget maps directly to per-day and per-month caps. The Golem’s Daimon (the agent’s internal personality and emotional regulation subsystem) can dynamically adjust these caps based on survival pressure – a Golem in Conservation phase (one of five BehavioralPhases – Thriving, Stable, Conservation, Desperate, Terminal – that govern risk tolerance and resource allocation based on survival pressure) may reduce its inference budget to extend lifespan, while a Thriving Golem may increase it. See <a href="../10-safety/01-custody.html">../10-safety/01-custody.md</a> for wallet fund partitioning.</p>
+<hr>
+<h3 id="dual-api-format"><a class="header" href="#dual-api-format">Dual API format</a></h3>
+<p>The gateway accepts both Anthropic Messages API and OpenAI Chat Completions API natively. Auto-detection from request shape:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Signal</th><th>Format</th></tr>
+</thead>
+<tbody>
+<tr><td><code>system</code> as top-level string/array + <code>messages[].content</code> blocks with <code>type</code></td><td>Anthropic</td></tr>
+<tr><td><code>messages[].role</code> + simple string content</td><td>OpenAI</td></tr>
+</tbody>
+</table>
+</div>
+<p>Endpoints: <code>POST /v1/messages</code> (Anthropic), <code>POST /v1/chat/completions</code> (OpenAI), <code>POST /v1/completions</code> (auto-detect). Internally, the gateway normalizes to OpenAI format for BlockRun. Responses are translated back to the caller’s format.</p>
+<hr>
+<h2 id="inference-events"><a class="header" href="#inference-events">Inference events</a></h2>
+<p>Every inference call emits typed <code>GolemEvent</code> variants through the Event Fabric for TUI streaming and observability. These events carry CamelCase type tags with <code>inference.*</code> prefix.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Emitted when the inference gateway receives a request from Pi.
+#[serde(rename = "inference.start")]
+InferenceStart {
+    timestamp: u64,
+    golem_id: String,
+    sequence: u64,
+    tick: u64,
+    model: String,
+    provider: String,
+    tier: String,           // "T1", "T2"
+    subsystem: String,      // "heartbeat_t1", "risk", "dream", etc.
+}
+
+/// Streaming token chunk. High frequency during T2 calls.
+#[serde(rename = "inference.token")]
+InferenceToken {
+    timestamp: u64,
+    golem_id: String,
+    sequence: u64,
+    tick: u64,
+    token_count: u32,
+    is_reasoning: bool,     // true if inside &lt;think&gt; or thinking block
+}
+
+/// LLM call completed with final cost and latency.
+#[serde(rename = "inference.end")]
+InferenceEnd {
+    timestamp: u64,
+    golem_id: String,
+    sequence: u64,
+    tick: u64,
+    model: String,
+    provider: String,
+    input_tokens: u32,
+    output_tokens: u32,
+    cost_usd: f64,
+    latency_ms: u64,
+    cache_hit_rate: f64,
+}
+
+/// Cache hit -- call avoided entirely.
+#[serde(rename = "inference.cache_hit")]
+CacheHit {
+    timestamp: u64,
+    golem_id: String,
+    sequence: u64,
+    tick: u64,
+    cache_type: String,     // "hash", "semantic"
+    savings_usd: f64,
+}
+
+/// Provider failed, falling back to next in chain.
+#[serde(rename = "inference.provider_fallback")]
+ProviderFallback {
+    timestamp: u64,
+    golem_id: String,
+    sequence: u64,
+    tick: u64,
+    failed_provider: String,
+    fallback_provider: String,
+    reason: String,
+}
+<span class="boring">}</span></code></pre>
+<p>The TUI renders <code>InferenceStart</code> as a “Thinking…” badge with sprite pulsing, <code>InferenceToken</code> as an incrementing token counter, and <code>InferenceEnd</code> as a cost badge with decision summary. <code>CacheHit</code> shows a green indicator with savings. See <a href="../01-golem/13-runtime-extensions.html">prd2/01-golem/13-runtime-extensions.md</a> for the full GolemEvent catalog.</p>
+<hr>
+<h2 id="system-architecture"><a class="header" href="#system-architecture">System architecture</a></h2>
+<pre><code class="language-text">+---------------------------------------------------------------------+
+|                      Bardo Inference Gateway                        |
+|                      (Rust: bardo-gateway crate)                    |
+|                                                                     |
+|  Auth ──&gt; Router ──&gt; Context Engine ──&gt; KV-Cache Router             |
+|  (Prepaid/x402)  (intent-based   (8-layer pipeline:  |              |
+|       |           resolution)     budget,tools,       v              |
+|  Rate Limiter     Value-Add Svcs  compress,reorder)  Provider       |
+|  (per-key/wallet) (DeFi enrich,  Session Services    Registry       |
+|                    ToolReg)      (Compaction,         (BlockRun,     |
+|                                  Checkpoint,          OpenRouter,    |
+|                   Observability   SemanticCache)      Venice,        |
+|                   (OTEL-&gt;Langfuse)                    Bankr,         |
+|                   Tool Format                         Direct)        |
+|                   Adapters (Anthropic,                               |
+|                   OpenAI,Hermes,Qwen)                                |
++---------------------------------------------------------------------+
+            |                                   |
+   +--------v--------+                +--------v---------+
+   |    Base L2       |                |    BlockRun      |
+   | x402 USDC + 8004 |                | (x402, all models)|
+   +------------------+                +------------------+
+</code></pre>
+<hr>
+<h2 id="technology-stack"><a class="header" href="#technology-stack">Technology stack</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Technology</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Gateway core</strong></td><td>Rust (Axum + Tokio)</td><td>&lt;1ms routing P99 at 10K QPS. TensorZero/Bifrost class.</td></tr>
+<tr><td><strong>API translation</strong></td><td>Dual-format (Anthropic + OpenAI)</td><td>Auto-detection, native both directions.</td></tr>
+<tr><td><strong>Provider catalog</strong></td><td>BlockRun API (<code>GET /v1/models</code>)</td><td>Dynamic pricing + capabilities, hourly refresh.</td></tr>
+<tr><td><strong>Tool format adapters</strong></td><td>Anthropic, OpenAI, Hermes, Qwen, JSON</td><td>Normalize diverse model tool call formats.</td></tr>
+<tr><td><strong>Semantic cache</strong></td><td>In-memory HNSW (<code>fastembed-rs</code>)</td><td>Default lightweight. Optional Redis 7+ for scale.</td></tr>
+<tr><td><strong>Embedding model</strong></td><td>nomic-embed-text-v1.5 (ONNX via <code>ort</code>)</td><td>768-dim, &lt;5ms local inference.</td></tr>
+<tr><td><strong>Injection classifier</strong></td><td>DeBERTa-v3-base (ONNX via <code>ort</code>)</td><td>~8ms quantized INT8.</td></tr>
+<tr><td><strong>PII detection</strong></td><td>Compiled regex sets + ONNX NER</td><td>No spaCy/Presidio dependency. Crypto-specific patterns.</td></tr>
+<tr><td><strong>Vector store</strong></td><td>Embedded HNSW (default), Qdrant (scale)</td><td>Lightweight default, Qdrant for &gt;1M vectors.</td></tr>
+<tr><td><strong>x402 payment</strong></td><td><code>alloy</code> + <code>x402.rs</code></td><td>Native Rust crypto. Zero-copy ECDSA signing.</td></tr>
+<tr><td><strong>Observability</strong></td><td><code>tracing</code> + OpenTelemetry -&gt; Langfuse</td><td>OTEL-native, self-hostable.</td></tr>
+<tr><td><strong>Cost analytics</strong></td><td>SQLite (default), Clickhouse (scale)</td><td>SQLite for single-instance, Clickhouse for high volume.</td></tr>
+<tr><td><strong>Session storage</strong></td><td>SQLite (default), Redis + PG (scale)</td><td>Lightweight default, Redis for hot state at scale.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="ten-crate-workspace"><a class="header" href="#ten-crate-workspace">Ten-crate workspace</a></h3>
+<p>The gateway is a Rust Cargo workspace of ten crates. Each crate has a single responsibility.</p>
+<pre><code class="language-toml"># Cargo.toml (workspace root)
+[workspace]
+members = [
+    "crates/bardo-gateway",    # Axum HTTP server, SSE streaming, auth
+    "crates/bardo-router",     # Provider resolution, health monitoring
+    "crates/bardo-pipeline",   # 8-layer context engineering pipeline
+    "crates/bardo-cache",      # L1 prefix, L2 semantic, L3 hash
+    "crates/bardo-ml",         # ONNX: DeBERTa + nomic-embed via ort
+    "crates/bardo-providers",  # Provider trait, 5 implementations
+    "crates/bardo-x402",       # On-chain verification via alloy
+    "crates/bardo-safety",     # PII regex + injection classification
+    "crates/bardo-telemetry",  # tracing + OpenTelemetry metrics
+    "crates/bardo-wasm",       # wasm32-wasi: L2+L3+L8 for edge
+]
+</code></pre>
+<h3 id="why-rust"><a class="header" href="#why-rust">Why Rust</a></h3>
+<p>TypeScript degrades above ~50 concurrent users: the event loop stalls when ONNX inference contends with SSE streaming. Rust eliminates this. Tokio’s work-stealing scheduler handles thousands of concurrent connections; ONNX inference runs on dedicated threads via <code>ort</code>, decoupled from async I/O. Deployable artifact: ~50 MB static binary (vs. ~2 GB Node/Bun). Cold start: &lt;50 ms (vs. 500 ms+). P99 at 500 concurrent: &lt;50 ms overhead (vs. &gt;200 ms). Prior art: TensorZero (Rust, &lt;1ms P99 at 10K QPS), Bifrost (Rust, 11us median at 5K RPS).</p>
+<h3 id="performance-targets"><a class="header" href="#performance-targets">Performance targets</a></h3>
+<p>Pipeline P95 (no compression): &lt;50ms. Routing: &lt;1ms. DeBERTa: &lt;8ms. Embedding: &lt;5ms. Hash cache: &lt;0.1ms. Semantic cache: &lt;5ms. 500+ concurrent connections. Memory: &lt;80MB idle, &lt;200MB at 100 concurrent. Cold start: &lt;50ms. Binary: ~50MB.</p>
+<hr>
+<h2 id="deployment-topology"><a class="header" href="#deployment-topology">Deployment topology</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Technology</th><th>Responsibilities</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Single-instance</strong></td><td>Single VPS or Fly.io</td><td>Full gateway: auth, routing, pipeline, caching, sessions, billing. In-memory + SQLite.</td><td>$50/mo</td></tr>
+<tr><td><strong>Multi-instance</strong></td><td>Fly.io (iad + ams + sin)</td><td>Same, with Redis for shared cache/sessions, optional Qdrant, optional Clickhouse.</td><td>$200-500/mo</td></tr>
+<tr><td><strong>Edge</strong> (Phase 3)</td><td>Cloudflare Workers (<code>bardo-wasm</code> crate)</td><td>Auth, rate limiting, cache lookup, pre-filter routing, SSE proxy.</td><td>Variable</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="streaming-architecture"><a class="header" href="#streaming-architecture">Streaming architecture</a></h2>
+<p>The gateway normalizes all providers to OpenAI-compatible Server-Sent Events. Provider-specific adapters handle Anthropic’s <code>content_block_delta</code>, Google’s <code>?alt=sse</code>, and streaming tool calls. Engineering requirements: disable reverse proxy buffering (<code>X-Accel-Buffering: no</code>), heartbeat SSE comments every 15 seconds, backpressure handling for slow clients, and chunk buffering for post-stream cache storage and billing. On semantic cache hit, the gateway simulates SSE streaming from cached response at ~30ms intervals for consistent client experience. See <a href="09-api.html">09-api.md</a> for the full SSE format.</p>
+<hr>
+<h2 id="design-principles"><a class="header" href="#design-principles">Design principles</a></h2>
+<ul>
+<li><strong>Frictionless.</strong> Two env vars = inference. Prepaid balance or x402 – both work.</li>
+<li><strong>Cheaper than direct.</strong> Context engineering saves ~40%. Users pay less through the gateway than calling providers directly, even after the operator’s spread.</li>
+<li><strong>Transparent.</strong> Every routing decision, cache hit, cost optimization, and spread amount is visible in response headers. Users audit exactly what they paid for.</li>
+<li><strong>Self-sovereignty as option.</strong> The gateway is useful, not required. Any user can call providers directly. The gateway earns adoption through better economics, not lock-in.</li>
+<li><strong>Cache-first architecture.</strong> Every design decision optimizes for prompt cache hit rate – the single highest-leverage cost optimization.</li>
+<li><strong>Zero working capital.</strong> Both legs (user -&gt; gateway and gateway -&gt; BlockRun) settle via x402 on Base in USDC. No prepaid API credits, no float, no credit risk.</li>
+</ul>
+<hr>
+<h2 id="standalone-product-surface"><a class="header" href="#standalone-product-surface">Standalone product surface</a></h2>
+<p>The inference gateway is a standalone product – any ERC-8004 agent or LLM client can use it, whether or not it runs on Bardo Compute. Two environment variables connect any OpenAI-compatible or Anthropic-compatible client:</p>
+<pre><code class="language-bash"># For Claude Code / Cursor / Aider (Anthropic format)
+export ANTHROPIC_BASE_URL=https://inference.bardo.money/v1
+export ANTHROPIC_API_KEY=bardo_sk_...
+
+# For OpenAI-compatible clients
+export OPENAI_BASE_URL=https://inference.bardo.money/v1
+export OPENAI_API_KEY=bardo_sk_...
+</code></pre>
+<h3 id="feature-tiers"><a class="header" href="#feature-tiers">Feature tiers</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Free Tier</th><th>Pro Tier</th><th>Golem Tier</th></tr>
+</thead>
+<tbody>
+<tr><td>Context engineering (all 8 layers)</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Backend routing (BlockRun + OpenRouter)</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Venice backend</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td>Bankr backend</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Direct Key support</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td>Semantic caching</td><td>shared</td><td>per-tenant</td><td>per-tenant</td></tr>
+<tr><td>DeFi-specific optimizations</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Security-class routing</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td>ERC-8004 reputation discounts</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Spread markup</td><td>25%</td><td>15%</td><td>10%</td></tr>
+</tbody>
+</table>
+</div>
+<p>For non-Golem users (Claude Code, Cursor, Aider), the gateway provides simplified routing: no subsystem hints needed (task type inferred from request content), no mortality pressure (cost sensitivity from pricing tier), default BlockRun routing with OpenRouter fallback, and all 8 context engineering layers applied automatically.</p>
+<hr>
+<h2 id="backend-routing-algorithm"><a class="header" href="#backend-routing-algorithm">Backend routing algorithm</a></h2>
+<p>When multiple backends can serve a request, the gateway scores candidates across five dimensions:</p>
+<pre><code>Score = Cost × Quality × Privacy × Latency × Feature match
+</code></pre>
+<p>Hard filters apply first: security class (private -&gt; Venice only), required features, model availability. Soft scoring follows, with weights that shift based on cost sensitivity. At <code>costSensitivity: 0.0</code> quality dominates; at <code>1.0</code> cost dominates. Health checks skip unhealthy backends. See <a href="01a-routing.html">01a-routing.md</a> for the full algorithm.</p>
+<p>Default backend priority when candidates score equally:</p>
+<ol>
+<li><strong>BlockRun</strong> – primary. Cheapest for most models. x402 = zero API key management.</li>
+<li><strong>OpenRouter</strong> – first fallback. Broadest catalog. Provider-level fallback built in.</li>
+<li><strong>Bankr</strong> – when self-funding is active and the model is available.</li>
+<li><strong>Venice</strong> – when privacy is required or DIEM is available.</li>
+<li><strong>Direct Keys</strong> – when a specific native feature is needed.</li>
+</ol>
+<hr>
+<h2 id="backend-specific-integration"><a class="header" href="#backend-specific-integration">Backend-specific integration</a></h2>
+<h3 id="blockrun-additions-over-raw-access"><a class="header" href="#blockrun-additions-over-raw-access">BlockRun additions over raw access</a></h3>
+<p>Context engineering pipeline (all 8 layers), DeFi-aware ClawRouter extensions (4 additional routing dimensions), tier routing (T0/T1/T2) with mortality-pressure-aware cost optimization, semantic caching tuned for DeFi queries, and spread revenue. Pass-through features: Anthropic Citations/Compaction/thinking/prompt caching/effort, OpenAI reasoning effort/structured outputs/function calling, DeepSeek <code>&lt;think&gt;</code> tags, Gemini thinking level. Requires Direct Key: OpenAI Predicted Outputs, Responses API stateful, Gemini explicit caching, custom search grounding.</p>
+<h3 id="openrouter-alongside-blockrun"><a class="header" href="#openrouter-alongside-blockrun">OpenRouter alongside BlockRun</a></h3>
+<p>Three things BlockRun lacks: model breadth (400+ vs. 30+), BYOK passthrough (operator’s own provider keys through OpenRouter), and provider preferences (<code>provider.sort</code> for complex routing: throughput/cost/latency constraints). <code>:nitro</code> variants for operator-facing low-latency, <code>:floor</code> variants for batch/dream cheapest-path. Unified <code>reasoning_details</code> format simplifies reasoning parsing across providers.</p>
+<h3 id="venice-context-engineering"><a class="header" href="#venice-context-engineering">Venice context engineering</a></h3>
+<p>All 8 pipeline layers still apply. Cached responses stored locally (never sent to Venice). Tool pruning reduces cost even at Venice’s low prices. History compression keeps context within Venice models’ limits. The <code>strip_thinking_response</code> parameter is set dynamically: keep visible for dream/death/daimon_complex subsystems, strip for routine operations.</p>
+<h3 id="bankr-sustainability-integration"><a class="header" href="#bankr-sustainability-integration">Bankr sustainability integration</a></h3>
+<p>When Bankr is active, the routing decision factors in the Golem’s sustainability ratio (<code>dailyRevenue / dailyTotalCost</code>). Ratio &gt; 2.0: no adjustment. Ratio &lt; 0.5: find cheaper model alternatives for non-critical subsystems.</p>
+<h3 id="direct-keys-with-context-engineering"><a class="header" href="#direct-keys-with-context-engineering">Direct Keys with context engineering</a></h3>
+<p>Even Direct Key requests pass through the pipeline. Caching, compression, and tool pruning apply before the request reaches the direct provider endpoint. The optimization is free; only the direct provider charges apply (no spread on direct key requests).</p>
+<hr>
+<h2 id="oracle-and-crypt-optionality"><a class="header" href="#oracle-and-crypt-optionality">Oracle and Crypt optionality</a></h2>
+<p><strong>Oracle: local vs. hosted.</strong> Default is local-only: the <code>bardo-styx</code> extension reads from the Golem’s local Grimoire (the agent’s persistent knowledge base, stored in SQLite + LanceDB on the VM). L0 namespace only. Zero cost. Hosted mode (opt-in) adds L1 (clade) + L2 (global) namespaces via Turbopuffer. Anthropic Citations work with local Oracle (entries injected as <code>search_result</code> blocks). Gemini custom grounding requires hosted Oracle (needs an HTTP endpoint).</p>
+<p><strong>Crypt: optional encrypted backup.</strong> Without Crypt: Grimoire data is VM-local only. No knowledge inheritance. With Crypt: encrypted backup to R2. Death testaments persist. Successors inherit. Bankr knowledge tokenization works (needs persistent Grimoire).</p>
+<hr>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<h3 id="golem-operator-config"><a class="header" href="#golem-operator-config">Golem operator config</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Operator-side configuration (Bardo Inference instance)
+pub struct BardoInferenceConfig {
+    pub api_key: String,             // bardo_sk_...
+    pub backends: BackendConfig,
+    pub services: Option&lt;ServiceConfig&gt;,
+    pub cost_sensitivity: Option&lt;f64&gt;,
+}
+
+pub struct BackendConfig {
+    pub blockrun: BlockRunConfig,     // enabled by default
+    pub openrouter: Option&lt;OpenRouterConfig&gt;,
+    pub venice: Option&lt;VeniceConfig&gt;,
+    pub bankr: Option&lt;BankrConfig&gt;,
+    pub direct: Option&lt;DirectKeyConfig&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="non-golem-user-config"><a class="header" href="#non-golem-user-config">Non-Golem user config</a></h3>
+<p>Non-Golem users need nothing beyond the API key. Backend routing, context engineering, and caching are automatic:</p>
+<pre><code class="language-bash"># Minimum viable configuration
+export BARDO_API_KEY=bardo_sk_...
+curl https://inference.bardo.money/v1/chat/completions \
+  -H "Authorization: Bearer $BARDO_API_KEY" \
+  -d '{"model": "claude-opus-4-6", "messages": [...]}'
+</code></pre>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<p><strong>Inference subdocs:</strong> <a href="01a-routing.html">01a-routing.md</a> (model routing spec: self-describing providers, declarative intents, and mortality-aware resolution across five backends), <a href="02-caching.html">02-caching.md</a> (three-layer cache stack: prompt prefix alignment, semantic response cache, and deterministic hash cache with regime-aware invalidation), <a href="03-economics.html">03-economics.md</a> (x402 spread revenue model, per-tenant cost attribution, and infrastructure cost projections), <a href="04-context-engineering.html">04-context-engineering.md</a> (the 8-layer context engineering pipeline: prompt cache alignment, semantic cache, hash cache, tool pruning, history compression, KV-cache routing, PII masking, and injection detection), <a href="05-sessions.html">05-sessions.md</a> (checkpoint/resume, scratchpad working memory, and sub-agent spawning for inference sessions), <a href="06-memory.html">06-memory.md</a> (agent memory service: Styx retrieval, importance scoring, and background consolidation), <a href="07-safety.html">07-safety.md</a> (PII detection, prompt injection defense via ONNX classifier, and audit logging), <a href="08-observability.html">08-observability.md</a> (per-agent cost attribution, OTEL traces, Event Fabric integration, and cache metrics), <a href="09-api.html">09-api.md</a> (API reference with 33 endpoints, Axum router configuration, response headers, and authentication flows), <a href="10-roadmap.html">10-roadmap.md</a> (phased delivery plan across three phases with success criteria and open questions), <a href="11-privacy-trust.html">11-privacy-trust.md</a> (three security classes, Venice private cognition, DIEM staking, cryptographic audit trail, and cache encryption), <a href="12-providers.html">12-providers.md</a> (five provider backends with full Rust trait implementations and self-describing resolution algorithm), <a href="13-reasoning.html">13-reasoning.md</a> (unified reasoning chain integration: extended thinking, reasoning traces, and provider-agnostic chain-of-thought normalization), <a href="14-rust-implementation.html">14-rust-implementation.md</a> (Rust gateway implementation details: 10-crate workspace, dependencies, and WASM compilation targets), <a href="15-inference-profiles.html">15-inference-profiles.md</a> (InferenceProfile spec: per-subsystem parameter policies, provider parameter mapping, and temperature scheduling), <a href="16-structured-outputs.html">16-structured-outputs.md</a> (StructuredOutput abstraction across providers with graceful degradation and Anthropic tool-use workaround), <a href="17-streaming.html">17-streaming.md</a> (streaming UX normalization across provider-specific SSE formats and surface rendering), <a href="18-golem-config.html">18-golem-config.md</a> (Golem-specific inference provider configuration, capability matrix, and payment method selection)</p>
+<p><strong>External:</strong> <a href="../11-compute/03-billing.html">Compute billing</a> (how Bardo Compute VM tiers include base inference token allowances and bill overages from the Golem’s wallet), <a href="../01-golem/01-cognition.html">Golem cognition</a> (the Golem’s cognitive architecture: sense-think-act loop, subsystem decomposition, and the ModelRouter extension), <a href="../10-safety/01-custody.html">Wallet custody</a> (wallet fund partitioning across inference, compute, and gas reserves with three custody modes), <a href="../09-economy/05-agent-economy.html">Agent economy</a> (the broader economic model for autonomous agents including revenue sources and sustainability metrics), <a href="../09-economy/00-identity.html">ERC-8004 identity</a> (the on-chain agent identity standard that enables reputation-based spread discounts), <a href="../appendices/performance-targets.html">Performance targets</a> (system-wide latency and throughput targets across all Bardo subsystems), <a href="../06-hypnagogia/02-architecture.html">Hypnagogia onset/return inference</a> (liminal phase inference profiles for dream-cycle onset and return transitions)</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ANTHROPIC-CONTEXT-ENG] Anthropic (2025). “Building Effective Agents.” Context engineering patterns from Claude Code, Cursor, Aider, Amp. Argues that context assembly, not model selection, is the primary bottleneck for production agents; establishes the design patterns (stable prompt prefixes, just-in-time retrieval, lossy compaction) that Bardo Inference implements as its 8-layer pipeline.</li>
+<li>[TENSORZERO-2026] TensorZero. “&lt;1ms P99 at 10,000 QPS.” Docs. Demonstrates that a Rust inference gateway can achieve sub-millisecond routing latency at scale; serves as the primary performance benchmark for Bardo’s gateway architecture.</li>
+<li>[BIFROST-2026] Bifrost. “11us median at 5K RPS.” Maxim AI benchmarks. Shows that Rust-based LLM proxies can reach microsecond-level median latency; validates the choice of Rust over TypeScript for the gateway binary.</li>
+<li>[BLOCKRUN-SDK-2026] BlockRun. “TypeScript SDK.” GitHub. The primary provider SDK for x402-based inference; BlockRun is the default routing target for all standard inference calls.</li>
+<li>[OPENROUTER-ROUTING-2026] OpenRouter. “Provider Routing.” Docs. Documents OpenRouter’s provider preference system (<code>provider.sort</code>) and 400+ model catalog; informs the gateway’s fallback routing when BlockRun lacks a specific model.</li>
+<li>[VENICE-API-2025] Venice.ai. API Documentation. Covers Venice’s no-log inference API, TEE attestation headers, DIEM staking integration, and <code>strip_thinking_response</code> parameter; the basis for the private cognition plane.</li>
+<li>[BANKR-LLM-2026] Bankr. “LLM Gateway.” Docs. Describes Bankr’s wallet-based inference where the execution wallet and revenue wallet are the same key; enables self-funding agent economics.</li>
+<li>[X402-STATE-2025] bc1beat. “The State of x402.” December 2025. Surveys the x402 micropayment protocol ecosystem and its <code>upto</code> payment scheme for variable-cost operations like LLM inference; foundational to Bardo’s zero-working-capital billing model.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/11-compute/08-fleet-and-cli.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/12-inference/01-deployment-modes.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/11-compute/08-fleet-and-cli.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/12-inference/01-deployment-modes.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

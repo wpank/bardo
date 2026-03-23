@@ -1,0 +1,3408 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Causal Microstructure Discovery - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/23-ta/04-causal-microstructure-discovery.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <!-- prd2/23-ta/04-causal-microstructure-discovery.md -->
+<!-- Source: tmp/research/witness-research/new/ta/04-causal-microstructure-discovery.md -->
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Active | <strong>Section</strong>: 23-ta</p>
+<p><strong>Crates</strong>: <code>bardo-ta-causal</code></p>
+<p><strong>Cross-references</strong>:</p>
+<ul>
+<li><a href="../01-golem/18-cortical-state.html">01-golem/18-cortical-state.md</a> – the 32-signal perception surface where <code>causal_density</code> tracks the richness of the discovered causal graph</li>
+<li><a href="../01-golem/02-heartbeat.html">01-golem/02-heartbeat.md</a> – the 9-step decision cycle whose Gamma ticks update causal variables and Theta ticks run structural learning</li>
+<li><a href="../14-chain/03-protocol-state.html">14-chain/03-protocol-state.md</a> – live protocol state providing the causal variable source (pool reserves, rates, positions) for structural discovery</li>
+<li><a href="../shared/hdc-vsa.html">shared/hdc-vsa.md</a> – HDC foundations for encoding causal edges as hypervector bindings that support efficient graph queries</li>
+<li><a href="00-witness-as-technical-analyst.html">23-ta/00-witness-as-technical-analyst.md</a> – Doc 0: system context including mirage-rs fork simulation used for interventional causal testing</li>
+<li><a href="01-hyperdimensional-technical-analysis.html">23-ta/01-hyperdimensional-technical-analysis.md</a> – Doc 1: HDC pattern algebra providing the encoding substrate for causal graph representation</li>
+<li><a href="02-spectral-liquidity-manifolds.html">23-ta/02-spectral-liquidity-manifolds.md</a> – Doc 2: manifold curvature events as candidate causal signals in the structural learning graph</li>
+<li><a href="03-adaptive-signal-metabolism.html">23-ta/03-adaptive-signal-metabolism.md</a> – Doc 3: evolutionary signal system where causal signals serve as fitness inputs for signal selection</li>
+<li><a href="05-predictive-geometry.html">23-ta/05-predictive-geometry.md</a> – Doc 5: topology-to-trajectory forecasting that uses causal constraints to prune impossible prediction paths</li>
+</ul>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how the Golem (mortal autonomous DeFi agent) discovers causal relationships in DeFi microstructure, climbing Pearl’s causal hierarchy from observation to intervention to counterfactual reasoning. It belongs to the <strong>TA research layer</strong> (Doc 4 of 10) and covers the PC algorithm for structural learning, Granger causality for temporal edges, mirage-rs fork simulation for interventional testing, and HDC encoding of causal graphs. You should understand causal inference basics and on-chain transaction ordering. For Bardo-specific terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h1 id="causal-microstructure-discovery-spec"><a class="header" href="#causal-microstructure-discovery-spec">Causal Microstructure Discovery [SPEC]</a></h1>
+<p>Audience: Systems engineers building autonomous DeFi agents. Assumes familiarity with Bardo’s heartbeat cycle, the Witness DAG, Mirage-rs fork simulation, and the HDC/BSC encoding from Doc 1 of this series. Prior exposure to causal inference helps but is not required; we build the theory from scratch.</p>
+<hr>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>DeFi protocols interact through shared liquidity, oracle dependencies, and arbitrage pathways, but the causal structure of these interactions is hidden. Correlation-based technical analysis cannot distinguish “X predicts Y” from “X causes Y,” and the difference matters when a Golem must decide whether intervening on X will move Y. This document presents a causal discovery engine for the Bardo runtime that operates at all three levels of Pearl’s causal hierarchy: observational discovery via the PC algorithm on streaming protocol data, interventional discovery via dream-based do(X) experiments on Mirage-rs fork state, and counterfactual reasoning via structural equation inversion. The engine maintains a live directed acyclic graph of causal relationships across DeFi primitives, with typed edges carrying strength coefficients, confidence scores subject to Ebbinghaus decay, and cryptographic provenance through the Witness DAG. We provide complete Rust implementations of the causal graph, the PC algorithm with conditional independence testing, Granger causality for irregular event-time series, an interventional dream designer, and the orchestrating CausalDiscoveryEngine that integrates with Bardo’s Gamma/Theta/Delta heartbeat and NREM/REM dream cycles. Cross-primitive causal hypotheses (large swaps causing lending rate shifts, vault outflows predicting LP removal, gas spikes triggering liquidation cascades) are mapped to specific discovery protocols. The system compounds causal knowledge across dreams and generations, giving each Golem a progressively richer model of DeFi’s hidden wiring.</p>
+<hr>
+<h2 id="the-problem"><a class="header" href="#the-problem">The problem</a></h2>
+<p>A Golem watches Uniswap V3. A whale dumps 5,000 ETH into the WETH/USDC pool. Three blocks later, the Aave ETH lending rate spikes 40 basis points. The Golem’s correlation-based models see the co-movement. They note the pattern. Next time a large swap appears, they predict a rate spike.</p>
+<p>But the prediction fails. It fails because the correlation was not a direct causal link. The swap moved the ETH spot price, which pushed several Aave borrowers closer to their liquidation thresholds, which increased utilization as borrowers scrambled to repay, which triggered the rate model’s utilization kink. The causal chain has four steps, two confounders (gas price affecting transaction ordering, MEV bots front-running the liquidations), and a feedback loop (higher rates incentivize more supply, which dampens the rate). A system that only measures P(rate_spike | large_swap) will get the direction right sometimes and the magnitude wrong almost always.</p>
+<p>This is the core limitation of Level 1 reasoning in Pearl’s causal hierarchy. The Golem sees correlations. It cannot answer: “If I inject a large swap, will the rate move?” (Level 2, intervention). It cannot answer: “Given that the rate did move, would it have stayed flat if the swap hadn’t happened?” (Level 3, counterfactual). And without those answers, it cannot reason about strategy. Should it front-run the rate spike by depositing ETH on Aave before executing a large swap on Uniswap? That question requires causal knowledge, not statistical pattern matching.</p>
+<p>The problem has several dimensions that make DeFi harder than the textbook causal inference setting.</p>
+<p><strong>Non-stationarity.</strong> The causal graph changes. When Aave governance modifies the interest rate model parameters, the edge from utilization to borrow rate changes its functional form. When a new Chainlink oracle feed goes live, new edges appear. When a lending protocol adds a new collateral type, the graph topology shifts. Any discovery algorithm must treat the graph as a living object, not a one-time computation.</p>
+<p><strong>Irregular timestamps.</strong> Ethereum blocks arrive every 12 seconds on average, but actual block times vary, and the events within a block have no meaningful sub-block ordering (they are ordered by the builder, not by causation). Cross-chain interactions through bridges add variable delays from minutes to hours. Standard time-series causal methods assume regular sampling intervals. DeFi gives us event streams with irregular spacing and batch-processed state transitions.</p>
+<p><strong>Confounders everywhere.</strong> Gas prices affect every protocol simultaneously. MEV searcher activity creates correlated behavior across pools. Macro events (rate decisions, regulatory news) move everything at once. The Golem cannot observe these exogenous forces directly; they appear as latent confounders that create spurious edges in any naive discovery algorithm.</p>
+<p><strong>Feedback loops.</strong> DeFi protocols are cybernetic systems. Lending rates affect borrowing demand, which affects utilization, which affects rates. AMM prices affect arbitrage, which affects prices. Vault yields affect TVL flows, which affect yields. These feedback loops create cycles in the causal graph, which violates the DAG assumption that most discovery algorithms require. The engine must handle cycles explicitly, either by time-indexing (the graph is a DAG when you condition on time) or by identifying and modeling the feedback structure.</p>
+<p><strong>Scale.</strong> A Golem tracking 10 protocols with 5 metrics each has 50 variables. The number of possible directed edges is 50 * 49 = 2,450. The number of possible DAGs over 50 nodes is superexponential. Even with efficient algorithms, discovery over the full variable set is expensive, and the Golem must do it incrementally at heartbeat timescales.</p>
+<p>Pearl’s causal hierarchy gives us the framework. Three levels, each strictly more powerful than the last:</p>
+<p><strong>Level 1: Association.</strong> P(Y | X). What is the probability of Y given that we observe X? This is correlation, mutual information, regression. Every standard TA indicator operates here. You see a pattern, you predict from it. No claim about what happens if you intervene.</p>
+<p><strong>Level 2: Intervention.</strong> P(Y | do(X)). What is the probability of Y if we force X to take a specific value? The do-operator is Pearl’s formalization of intervention: it severs all incoming edges to X in the causal graph (because we set X; its causes no longer matter) and propagates the effect downstream. This is the level that answers strategy questions. If I execute this swap, what happens to rates?</p>
+<p><strong>Level 3: Counterfactual.</strong> P(Y_x | X’, Y’). Given that we observed X’ and Y’, what would Y have been if X had been x instead? This requires a full structural causal model with specified functional forms and noise terms. Counterfactuals answer the hardest questions: “Was this liquidation cascade caused by the oracle update, or would it have happened anyway?”</p>
+<p>Most trading systems, including most autonomous agents, operate at Level 1. Some use Granger causality or transfer entropy, which gets partway toward Level 2 but remains observational. This document gives the Golem all three levels, using a combination of classical causal discovery algorithms, Bardo’s dream system for simulated interventions, and structural equation models for counterfactual reasoning.</p>
+<hr>
+<h2 id="mathematical-foundations-spec"><a class="header" href="#mathematical-foundations-spec">Mathematical foundations [SPEC]</a></h2>
+<h3 id="structural-causal-models"><a class="header" href="#structural-causal-models">Structural causal models</a></h3>
+<p>A structural causal model (SCM) is a triple M = (U, V, F) where:</p>
+<ul>
+<li>U is a set of exogenous (external) variables. In DeFi: whale behavior, macro events, gas market dynamics, MEV searcher strategies. These are variables the Golem cannot observe directly or can only observe through proxies.</li>
+<li>V = {V_1, …, V_n} is a set of endogenous variables. Each represents an observable DeFi quantity: swap volume on a specific pool, lending rate on a specific market, TVL of a specific vault, funding rate on a perpetual contract, and so on.</li>
+<li>F = {f_1, …, f_n} is a set of structural equations. Each equation specifies V_i as a deterministic function of its parents and its exogenous noise term: V_i = f_i(pa(V_i), U_i), where pa(V_i) is the set of endogenous variables that directly cause V_i.</li>
+</ul>
+<p>The causal graph G is the directed graph induced by F: draw an edge from V_j to V_i whenever V_j appears in f_i. If G is acyclic, M is a recursive SCM and the standard do-calculus applies directly. If G has cycles (feedback loops), we need the cyclic SCM extensions from Bongers et al. (2021) or we time-index the variables to break the cycles.</p>
+<p>An example SCM for a Uniswap-Aave interaction:</p>
+<pre><code>V_1 = swap_volume       = f_1(U_whale, U_arb)
+V_2 = spot_price        = f_2(V_1, U_market)
+V_3 = collateral_value  = f_3(V_2)
+V_4 = utilization       = f_4(V_3, V_6, U_demand)
+V_5 = borrow_rate       = f_5(V_4)                    // Aave rate model
+V_6 = borrow_demand     = f_6(V_5, U_demand)          // feedback loop
+</code></pre>
+<p>The graph has a cycle: V_4 -&gt; V_5 -&gt; V_6 -&gt; V_4. To make this a DAG, we time-index: V_4(t) depends on V_6(t-1), not V_6(t). The feedback loop becomes a temporal chain. This is the standard trick, and it matches DeFi reality: the Aave rate model updates are discrete (once per transaction), so the feedback genuinely operates across time steps.</p>
+<p>The Golem’s task: discover the graph G from data, estimate the structural equations F, and use them for intervention and counterfactual queries.</p>
+<h3 id="the-do-operator-and-interventional-distributions"><a class="header" href="#the-do-operator-and-interventional-distributions">The do-operator and interventional distributions</a></h3>
+<p>Pearl’s do-operator formalizes the difference between observation and intervention. Observing X = x gives us P(Y | X = x), which includes information from all paths between X and Y, including backdoor paths through confounders. Intervening to set X = x gives us P(Y | do(X = x)), which cuts all incoming edges to X and measures only the downstream causal effect.</p>
+<p>The adjustment formula (Pearl’s backdoor criterion) computes interventional distributions from observational data when a suitable adjustment set Z exists:</p>
+<pre><code>P(Y | do(X = x)) = sum_z P(Y | X = x, Z = z) * P(Z = z)
+</code></pre>
+<p>This works when Z blocks all backdoor paths from X to Y. Finding such a Z requires knowing the causal graph, which is what we are trying to discover. This circular dependency is why the Golem needs multiple discovery methods: observational algorithms give a candidate graph, then interventional experiments (via dreams) confirm or refute specific edges.</p>
+<p>When no valid adjustment set exists (because of unobserved confounders), do-calculus provides three inference rules that can sometimes identify the causal effect through chains of conditional independencies and interventions. The rules are mechanical and can be automated; Tian and Pearl (2002) showed that a complete identification algorithm exists for any SCM with the graph structure known.</p>
+<p>For the Golem, the practical implication: once it has a candidate causal graph from the PC algorithm, it can check whether specific causal effects are identifiable from observational data alone. When they are not, it queues an interventional dream experiment. This is the bridge between Level 1 and Level 2.</p>
+<h3 id="observational-discovery-the-pc-algorithm"><a class="header" href="#observational-discovery-the-pc-algorithm">Observational discovery: the PC algorithm</a></h3>
+<p>The PC (Peter-Clark) algorithm, introduced by Spirtes, Glymour, and Scheines (2000), discovers the causal graph skeleton from conditional independence (CI) tests on observational data. It operates in two phases.</p>
+<p><strong>Phase 1: Skeleton discovery.</strong> Start with a complete undirected graph over all n variables. For each pair (X, Y), test conditional independence X <em>||</em> Y | Z for conditioning sets Z of increasing size:</p>
+<ol>
+<li>Size 0: Test X <em>||</em> Y (marginal independence). If independent, remove the edge X – Y.</li>
+<li>Size 1: For each remaining edge X – Y, test X <em>||</em> Y | Z for each Z in adj(X) \ {Y}. If any Z renders them independent, remove the edge and record Z as the separating set sep(X, Y).</li>
+<li>Size k: Continue with conditioning sets of size k drawn from the current adjacency set.</li>
+<li>Stop when the maximum conditioning set size exceeds the maximum adjacency degree.</li>
+</ol>
+<p>The computational cost is dominated by the CI tests. In the worst case (dense graph), the number of tests is O(n^2 * 2^n), but for sparse graphs (which DeFi causal structures tend to be, since most protocols interact with only a few others), the cost is O(n^2 * d^k) where d is the maximum degree and k is the maximum conditioning set size.</p>
+<p><strong>Phase 2: Edge orientation.</strong> Given the skeleton and separating sets, orient edges using three rules:</p>
+<p>Rule 1 (v-structure detection): If X – Z – Y, X and Y are not adjacent, and Z is not in sep(X, Y), then orient as X -&gt; Z &lt;- Y. This is a collider: Z is a common effect of X and Y.</p>
+<p>Rule 2 (acyclicity): If X -&gt; Z – Y and X and Y are not adjacent, orient as Z -&gt; Y (otherwise we create a new v-structure or a cycle).</p>
+<p>Rule 3 (no new colliders): If X – Z, X – Y, Y -&gt; Z, and X and Y are not adjacent, orient as X -&gt; Z.</p>
+<p>These rules do not orient all edges. The result is a completed partially directed acyclic graph (CPDAG) representing the Markov equivalence class of DAGs consistent with the observed independencies. Some edges remain undirected, meaning the data cannot distinguish between the two possible orientations. This is where interventional experiments become necessary: a targeted do(X) experiment can orient an ambiguous edge by checking whether X -&gt; Y or Y -&gt; X.</p>
+<p><strong>Conditional independence testing.</strong> The CI test is the engine’s most critical component. Two options:</p>
+<p><em>Partial correlation test (Fisher’s z-transform).</em> For continuous Gaussian variables, X <em>||</em> Y | Z iff the partial correlation rho_{XY|Z} = 0. The test statistic is:</p>
+<pre><code>z = 0.5 * sqrt(n - |Z| - 3) * ln((1 + rho) / (1 - rho))
+</code></pre>
+<p>which is approximately N(0, 1) under the null hypothesis. This is fast (O(|Z|^3) for the matrix inversion) but assumes linearity and Gaussianity. DeFi data is neither linear nor Gaussian, but the test is a reasonable starting point and runs within the Theta tick budget.</p>
+<p><em>Conditional mutual information (CMI).</em> For non-linear relationships:</p>
+<pre><code>I(X; Y | Z) = sum_{x,y,z} p(x, y, z) * log(p(x, y | z) / (p(x | z) * p(y | z)))
+</code></pre>
+<p>CMI = 0 iff X <em>||</em> Y | Z, regardless of the functional form. Estimation requires density estimation (kernel density, k-NN, or binning), which is more expensive but handles non-linear dependencies. Runge (2018) introduced the PCMCI algorithm, which combines the PC algorithm with momentary conditional independence (MCI) testing for time series, using CMI estimated via the Kraskov-Stogbauer-Grassberger (KSG) k-nearest-neighbor estimator.</p>
+<p>For the Golem, we implement both. The partial correlation test runs at Theta tick for fast incremental updates. The CMI test runs at Delta tick for a thorough audit of the graph structure.</p>
+<h3 id="extended-granger-causality-for-defi"><a class="header" href="#extended-granger-causality-for-defi">Extended Granger causality for DeFi</a></h3>
+<p>Standard Granger causality (Granger, 1969): X Granger-causes Y if past values of X improve prediction of Y beyond what Y’s own past provides. Formally:</p>
+<pre><code>X -&gt;_G Y  iff  P(Y_t | Y_{t-1..t-k}, X_{t-1..t-k}) != P(Y_t | Y_{t-1..t-k})
+</code></pre>
+<p>In practice, this is tested by fitting two VAR models (one restricted, one unrestricted) and comparing residual variances with an F-test.</p>
+<p>Granger causality is not true causality. It measures predictive precedence, not structural causation. A confounded pair (X &lt;- Z -&gt; Y, with Z unobserved) can show Granger causality in both directions. But Granger causality has practical value as a pre-filter: edges that fail the Granger test are unlikely to be causal, so the PC algorithm can skip them.</p>
+<p>DeFi requires four extensions to the standard test:</p>
+<p><strong>1. Irregular timestamps.</strong> Ethereum events do not arrive at fixed intervals. Two approaches: (a) resample to a regular grid (e.g., per-block or per-Gamma-tick) with forward-fill for missing values, or (b) use event-time Granger causality where the lag is measured in events, not clock time. Option (b) is more natural for DeFi but requires a custom test implementation. We implement (b) by maintaining per-variable event queues and computing lagged regressions over event indices.</p>
+<p><strong>2. Multivariate conditioning.</strong> Bivariate Granger causality (testing X -&gt; Y while ignoring all other variables) produces false positives when a confounder Z causes both. Multivariate Granger causality conditions on all other observed variables:</p>
+<pre><code>X -&gt;_G Y | Z  iff  P(Y_t | Y_{&lt;t}, X_{&lt;t}, Z_{&lt;t}) != P(Y_t | Y_{&lt;t}, Z_{&lt;t})
+</code></pre>
+<p>This is the VAR formulation. The practical limitation is that with 50 variables, the VAR model has 50 * 50 * k parameters (for lag order k), which requires substantial data to estimate reliably. We mitigate this with L1-regularized (Lasso) VAR estimation, which enforces sparsity.</p>
+<p><strong>3. Non-linear extensions.</strong> Linear VAR misses non-linear causal relationships (e.g., the Aave rate model’s utilization kink, where rates are flat below 80% utilization and spike above it). Two options: (a) kernel Granger causality using reproducing kernel Hilbert spaces (Marinazzo et al., 2008), or (b) transfer entropy, which is the information-theoretic analogue of Granger causality:</p>
+<pre><code>TE(X -&gt; Y) = I(Y_t; X_{&lt;t} | Y_{&lt;t})
+</code></pre>
+<p>Transfer entropy equals Granger causality for Gaussian processes but captures non-linear dependencies in general. We implement transfer entropy using the KSG estimator, the same as for CMI in the PC algorithm.</p>
+<p><strong>4. Time-varying structure.</strong> Causal relationships in DeFi form and dissolve. A new lending market creates new edges. A governance parameter change alters edge strengths. A bridge exploit severs cross-chain edges. We use sliding-window Granger tests: compute the test statistic over a rolling window of the most recent W observations (where W is configurable, defaulting to 500 events). When an edge’s Granger p-value drops below the significance threshold in the current window, it is marked as newly active. When it rises above the threshold, the edge is flagged as potentially stale.</p>
+<h3 id="interventional-discovery-dream-based-dox-experiments"><a class="header" href="#interventional-discovery-dream-based-dox-experiments">Interventional discovery: dream-based do(X) experiments</a></h3>
+<p>The PC algorithm and Granger causality operate on observational data. They can discover the graph skeleton and orient some edges, but they cannot distinguish between Markov-equivalent DAGs without interventional data. The Golem cannot intervene on mainnet: executing a large swap to see if it moves lending rates would cost real capital and real slippage.</p>
+<p>But the Golem dreams.</p>
+<p>During REM sleep (the creative, counterfactual dream phase), the Golem has access to Mirage-rs, the fork simulation engine. Mirage-rs forks current mainnet state, and the Golem can execute arbitrary transactions against the fork. This is a perfect simulation of do(X): force a variable to a specific value by executing the transaction that would produce that value, then observe downstream effects.</p>
+<p>The do(X) experiment protocol:</p>
+<ol>
+<li>
+<p><strong>Select a hypothesis.</strong> Choose an edge X -&gt; Y from the candidate graph that is either (a) unoriented in the CPDAG, (b) low-confidence, or (c) newly discovered and unconfirmed.</p>
+</li>
+<li>
+<p><strong>Design the intervention.</strong> Determine the transaction(s) that would set X to a specific value. For “large_swap -&gt; rate_change,” the intervention is a simulated swap of a specified size on the target pool.</p>
+</li>
+<li>
+<p><strong>Fork the state.</strong> Create a Mirage-rs CoW branch from the current mainnet state. This costs ~12.8 KB of memory, not a full state clone.</p>
+</li>
+<li>
+<p><strong>Execute the intervention.</strong> Run the transaction on the fork. This sets V_X to the post-intervention value while keeping all other state at its pre-intervention mainnet values. This is exactly do(X = x): we set X, so its causes (whatever they were on mainnet) do not matter.</p>
+</li>
+<li>
+<p><strong>Simulate downstream blocks.</strong> Replay the next N blocks (typically 5-20) on the fork, using either actual pending mempool transactions (for near-future simulation) or synthetic transaction sequences sampled from historical distributions.</p>
+</li>
+<li>
+<p><strong>Measure effects.</strong> Compare Y (and all other tracked variables) between the intervention fork and a control fork (same block replay, no intervention). The difference is the estimated causal effect of X on Y.</p>
+</li>
+<li>
+<p><strong>Record evidence.</strong> Create a Witness DAG vertex linking the experiment design, the fork state, the intervention transaction, the observed outcomes, and the inferred causal edge. This provides cryptographic provenance for the causal claim.</p>
+</li>
+</ol>
+<p>The power of dream-based intervention is that it breaks confounders. On mainnet, a large swap and a lending rate change might both be caused by the same macro event. In the dream, we force the swap and observe whether the rate moves independently. If it does, the edge X -&gt; Y has interventional support. If it does not (the rate stays flat despite the swap), the observational correlation was confounded and the edge should be weakened or removed.</p>
+<p><strong>Counterfactual queries (Level 3).</strong> Given an SCM with estimated structural equations, counterfactual reasoning proceeds in three steps (Pearl’s “abduction-action-prediction” method):</p>
+<ol>
+<li><strong>Abduction:</strong> Given the observed evidence (X = x’, Y = y’), compute the posterior distribution over the exogenous noise terms U.</li>
+<li><strong>Action:</strong> In the modified model, set X = x (the counterfactual intervention).</li>
+<li><strong>Prediction:</strong> Propagate through the structural equations with the abduced noise terms to compute Y_x.</li>
+</ol>
+<p>This requires parametric structural equations, which the Golem estimates from its observational and interventional data. The estimates are imprecise, so counterfactual queries carry wider confidence intervals than interventional ones. But they answer questions that nothing else can: “Would this liquidation have happened if the oracle hadn’t updated?” The Golem uses counterfactual reasoning primarily for post-hoc analysis during NREM dreams (retrospective replay), not for real-time decision-making.</p>
+<h3 id="causal-graph-as-a-living-structure"><a class="header" href="#causal-graph-as-a-living-structure">Causal graph as a living structure</a></h3>
+<p>The causal graph is not computed once and frozen. Relationships form, strengthen, weaken, and break as DeFi protocols evolve. Each edge carries metadata that governs its lifecycle:</p>
+<p><strong>Confidence score.</strong> Initialized when the edge is first discovered, updated with each confirming or disconfirming observation. Decays over time following the Ebbinghaus forgetting curve from the Grimoire memory system:</p>
+<pre><code>confidence(t) = confidence(t_0) * exp(-lambda * (t - t_last_confirmed))
+</code></pre>
+<p>where lambda is the decay rate and t_last_confirmed is the tick when the edge was last reinforced by new evidence. Edges whose confidence drops below a pruning threshold are removed from the active graph (but retained in Grimoire as semantic knowledge, in case the relationship re-emerges).</p>
+<p><strong>Evidence type.</strong> Each edge records how it was discovered: observational (PC algorithm), temporal (Granger causality), interventional (dream experiment), or hybrid (multiple sources). When evidence types disagree, interventional evidence takes priority: it directly tests the causal mechanism, while observational evidence can be confounded.</p>
+<p><strong>Strength coefficient.</strong> The estimated magnitude of the causal effect. For linear relationships, this is the regression coefficient from the structural equation. For non-linear relationships, it is the average treatment effect estimated from interventional experiments. Strength is directional and can be positive or negative.</p>
+<p><strong>Lag.</strong> The typical delay from cause to effect, measured in Gamma ticks. A swap causing a price change has lag ~0 (same block). A price change causing a liquidation might have lag 1-5 (depending on oracle update frequency and liquidation bot response time). A TVL outflow causing yield changes might have lag 10-50 (slow rebalancing). The lag informs the Golem about the time horizon of causal effects.</p>
+<hr>
+<h2 id="architecture-spec"><a class="header" href="#architecture-spec">Architecture [SPEC]</a></h2>
+<p>The causal discovery engine sits between the chain intelligence layer and the agent runtime. It consumes observations from the protocol state system, runs discovery algorithms at heartbeat-appropriate timescales, maintains the causal graph, and exports causal knowledge to the Grimoire and attention systems.</p>
+<h3 id="integration-with-the-heartbeat"><a class="header" href="#integration-with-the-heartbeat">Integration with the heartbeat</a></h3>
+<p><strong>Gamma tick (5-15 seconds).</strong> The fastest timescale. The engine receives new observations (protocol state changes from the current block) and appends them to its observation buffer. It updates running statistics (means, variances, covariances) used by the CI tests. It does not run any discovery algorithms; the budget is too tight. But it does check recently confirmed causal edges for real-time predictions: if edge X -&gt; Y has high confidence and X just changed, the engine emits a causal prediction for Y’s expected change. This feeds the attention auction with causal relevance signals.</p>
+<p><strong>Theta tick (30-120 seconds).</strong> The incremental discovery timescale. The engine runs an incremental PC algorithm pass over the most recent observation window. “Incremental” means it does not start from scratch; it tests edges that are (a) newly possible (new variables added), (b) recently weakened (confidence dropped below a threshold), or (c) adjacent to variables that changed significantly in the last window. Theta also runs pairwise Granger tests for newly observed variable pairs. Results update the causal graph: new edges are added with observational evidence, existing edges have their confidence refreshed.</p>
+<p><strong>Delta tick (~50 Theta ticks).</strong> The full audit timescale. The engine runs a complete PC algorithm pass over all variables, using the CMI test (more expensive but handles non-linearity). It reconciles the observational graph with accumulated interventional evidence from dreams. Stale edges (confidence below threshold) are pruned. The entire graph is checked for DAG consistency (no cycles, or cycles are properly time-indexed). Updated causal knowledge is written to the Grimoire as semantic memory. The death testament is updated with the current graph state.</p>
+<p><strong>NREM dream.</strong> Retrospective replay. The engine receives sequences of past observations and replays them through the causal model. When the model’s causal predictions match the observed outcomes, edge confidence is reinforced. When predictions fail, the edge is penalized. This is the consolidation mechanism: causal knowledge that correctly explains past experience is strengthened; knowledge that fails is weakened.</p>
+<p><strong>REM dream.</strong> Interventional experimentation. The engine’s InterventionalDreamDesigner selects the highest-value experiments from the dream queue (prioritized by information gain: how much would confirming or disconfirming this edge change the graph?) and runs them on Mirage-rs. Each experiment forks state, executes an intervention, simulates downstream blocks, measures effects, and records results as interventional evidence in the causal graph with full Witness DAG provenance.</p>
+<h3 id="integration-with-the-witness-dag"><a class="header" href="#integration-with-the-witness-dag">Integration with the Witness DAG</a></h3>
+<p>Every causal claim is a vertex in the Witness DAG. The vertex links to:</p>
+<ul>
+<li>The observations that triggered the discovery (for observational edges)</li>
+<li>The CI test results (test statistic, p-value, conditioning set)</li>
+<li>The dream experiment record (for interventional edges): intervention design, fork state hash, outcome measurements</li>
+<li>The Granger test results (for temporal edges): window, lag, F-statistic</li>
+</ul>
+<p>This gives cryptographic provenance for “why do we believe X causes Y?” If a downstream decision goes wrong, the Golem (or its operator) can trace the causal reasoning back to the specific observations and experiments that supported it.</p>
+<h3 id="integration-with-other-subsystems"><a class="header" href="#integration-with-other-subsystems">Integration with other subsystems</a></h3>
+<p><strong>Grimoire.</strong> Causal edges are semantic knowledge. They are stored with the same Ebbinghaus decay as other Grimoire entries. When a Golem dies and its knowledge is inherited by a new generation (via Styx), the causal graph transfers as part of the semantic memory. The new Golem starts with its predecessor’s causal model, subject to confidence decay during the inheritance gap.</p>
+<p><strong>Mortality clocks.</strong> The epistemic clock penalizes causal graph degradation. A graph with many stale edges (low confidence, old last-confirmed timestamps) represents dying knowledge. The epistemic mortality pressure incentivizes the Golem to invest dream cycles in maintaining its causal model.</p>
+<p><strong>Attention auction.</strong> Causal relevance is a bid factor. If the Golem’s causal graph says X -&gt; Y with high confidence, and X just changed, then Y becomes causally relevant. The attention system should bid high on monitoring Y. This implements proactive attention: instead of waiting to see Y change, the Golem anticipates the change based on causal knowledge and allocates cognitive resources accordingly.</p>
+<p><strong>HDC encoding.</strong> Causal edges are encoded as hypervectors for fast similarity search. A causal edge (X, Y) is encoded as bind(hv_X, hv_Y) in BSC space. A query “what does X cause?” is answered by binding the query with hv_X and searching the causal codebook for similar vectors. This runs in O(n) time with POPCNT hardware, where n is the number of stored causal edges, fast enough for Gamma-tick queries.</p>
+<p><strong>Styx (clade knowledge sharing).</strong> When one Golem discovers a causal edge, it can share the evidence with its clade through Styx. The receiving Golem does not blindly accept the edge; it adds it to its dream queue for independent confirmation. But the prior from the shared evidence accelerates discovery: instead of testing all 2,450 possible edges, the Golem focuses on the ones its siblings found promising.</p>
+<hr>
+<h2 id="rust-implementation"><a class="header" href="#rust-implementation">Rust implementation</a></h2>
+<h3 id="core-types"><a class="header" href="#core-types">Core types</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::{HashMap, HashSet, VecDeque};
+use std::fmt;
+
+/// Unique identifier for a variable in the causal graph.
+/// Cheap to copy, hash, and compare.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct VariableId(pub u64);
+
+impl fmt::Display for VariableId {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;'_&gt;) -&gt; fmt::Result {
+        write!(f, "V{}", self.0)
+    }
+}
+
+/// A variable in the causal graph. Each represents a single observable
+/// DeFi quantity: one metric on one protocol.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct CausalVariable {
+    /// Protocol name, e.g. "uniswap_v3", "aave_v3", "lido"
+    pub protocol: String,
+    /// Metric name, e.g. "swap_volume_eth", "borrow_rate_usdc", "tvl_steth"
+    pub metric: String,
+    /// Unique identifier
+    pub id: VariableId,
+}
+
+impl CausalVariable {
+    pub fn full_name(&amp;self) -&gt; String {
+        format!("{}.{}", self.protocol, self.metric)
+    }
+}
+
+/// How a causal edge was discovered.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CausalEvidenceType {
+    /// Discovered by the PC algorithm from conditional independence tests
+    Observational,
+    /// Confirmed by a dream-based do(X) experiment on Mirage-rs
+    Interventional,
+    /// Discovered by Granger causality / transfer entropy test
+    GrangerTemporal,
+    /// Supported by multiple evidence types
+    Hybrid,
+}
+
+impl CausalEvidenceType {
+    /// Interventional evidence is strongest. Hybrid next. Then observational
+    /// and Granger (which are roughly equivalent in trustworthiness).
+    pub fn priority(&amp;self) -&gt; u8 {
+        match self {
+            CausalEvidenceType::Interventional =&gt; 3,
+            CausalEvidenceType::Hybrid =&gt; 2,
+            CausalEvidenceType::Observational =&gt; 1,
+            CausalEvidenceType::GrangerTemporal =&gt; 1,
+        }
+    }
+}
+
+/// A directed causal edge: source causes target.
+pub struct CausalEdge {
+    pub source: VariableId,
+    pub target: VariableId,
+    /// How this edge was discovered
+    pub evidence_type: CausalEvidenceType,
+    /// Estimated causal coefficient (effect size).
+    /// Positive = source increase causes target increase.
+    /// Negative = source increase causes target decrease.
+    pub strength: f64,
+    /// Confidence in [0.0, 1.0]. Decays over time via Ebbinghaus curve.
+    pub confidence: f64,
+    /// Typical delay from cause to effect, in Gamma ticks
+    pub lag_ticks: u32,
+    /// Tick when this edge was last confirmed by new evidence
+    pub last_confirmed: u64,
+    /// Number of observations or experiments supporting this edge
+    pub sample_count: u64,
+    /// Link to the Witness DAG for cryptographic provenance
+    pub witness_dag_id: Option&lt;WitnessDagNodeId&gt;,
+}
+
+/// Placeholder for the Witness DAG node reference.
+/// In the full system, this is a content-addressed hash linking
+/// to the observation/experiment that supports this edge.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct WitnessDagNodeId(pub [u8; 32]);
+
+/// Snapshot of observed variable values at a single point in time.
+#[derive(Clone, Debug)]
+pub struct Observation {
+    pub tick: u64,
+    pub values: HashMap&lt;VariableId, f64&gt;,
+}
+
+/// A timestamped observation stored in the buffer for causal analysis.
+#[derive(Clone, Debug)]
+pub struct ObservationRecord {
+    pub tick: u64,
+    pub block_number: u64,
+    pub timestamp_secs: u64,
+    pub values: HashMap&lt;VariableId, f64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-causal-graph"><a class="header" href="#the-causal-graph">The causal graph</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The causal graph: a directed graph with typed, weighted edges.
+/// Nodes are DeFi state variables. Edges are causal relationships.
+pub struct CausalGraph {
+    /// Variable metadata, keyed by ID
+    variables: HashMap&lt;VariableId, CausalVariable&gt;,
+    /// Edges keyed by (source, target) pair
+    edges: HashMap&lt;(VariableId, VariableId), CausalEdge&gt;,
+    /// Forward adjacency: variable -&gt; list of children (variables it causes)
+    adjacency: HashMap&lt;VariableId, Vec&lt;VariableId&gt;&gt;,
+    /// Reverse adjacency: variable -&gt; list of parents (variables that cause it)
+    reverse_adjacency: HashMap&lt;VariableId, Vec&lt;VariableId&gt;&gt;,
+    /// Counter for generating unique variable IDs
+    next_var_id: u64,
+}
+
+impl CausalGraph {
+    pub fn new() -&gt; Self {
+        CausalGraph {
+            variables: HashMap::new(),
+            edges: HashMap::new(),
+            adjacency: HashMap::new(),
+            reverse_adjacency: HashMap::new(),
+            next_var_id: 0,
+        }
+    }
+
+    /// Register a new variable in the graph. Returns its unique ID.
+    pub fn add_variable(&amp;mut self, protocol: &amp;str, metric: &amp;str) -&gt; VariableId {
+        let id = VariableId(self.next_var_id);
+        self.next_var_id += 1;
+        self.variables.insert(id, CausalVariable {
+            protocol: protocol.to_string(),
+            metric: metric.to_string(),
+            id,
+        });
+        self.adjacency.entry(id).or_default();
+        self.reverse_adjacency.entry(id).or_default();
+        id
+    }
+
+    /// Add or update a directed causal edge.
+    /// If the edge already exists, the new evidence is merged:
+    /// - If the new evidence type has higher priority, it replaces the old type
+    /// - Confidence is max(old, new)
+    /// - Sample count accumulates
+    /// - Strength is updated via exponential moving average
+    pub fn add_edge(&amp;mut self, edge: CausalEdge) {
+        let key = (edge.source, edge.target);
+        if let Some(existing) = self.edges.get_mut(&amp;key) {
+            // Merge evidence
+            if edge.evidence_type.priority() &gt; existing.evidence_type.priority() {
+                existing.evidence_type = edge.evidence_type;
+            } else if edge.evidence_type != existing.evidence_type
+                &amp;&amp; existing.evidence_type != CausalEvidenceType::Hybrid
+            {
+                existing.evidence_type = CausalEvidenceType::Hybrid;
+            }
+            // Exponential moving average on strength
+            let alpha = 0.3;
+            existing.strength = (1.0 - alpha) * existing.strength + alpha * edge.strength;
+            existing.confidence = existing.confidence.max(edge.confidence);
+            existing.last_confirmed = existing.last_confirmed.max(edge.last_confirmed);
+            existing.sample_count += edge.sample_count;
+            if edge.witness_dag_id.is_some() {
+                existing.witness_dag_id = edge.witness_dag_id;
+            }
+        } else {
+            // New edge: update adjacency lists
+            self.adjacency.entry(edge.source).or_default().push(edge.target);
+            self.reverse_adjacency.entry(edge.target).or_default().push(edge.source);
+            self.edges.insert(key, edge);
+        }
+    }
+
+    /// Remove a causal edge.
+    pub fn remove_edge(&amp;mut self, source: VariableId, target: VariableId) {
+        if self.edges.remove(&amp;(source, target)).is_some() {
+            if let Some(children) = self.adjacency.get_mut(&amp;source) {
+                children.retain(|&amp;v| v != target);
+            }
+            if let Some(parents) = self.reverse_adjacency.get_mut(&amp;target) {
+                parents.retain(|&amp;v| v != source);
+            }
+        }
+    }
+
+    /// Get the parents (direct causes) of a variable.
+    pub fn parents(&amp;self, var: VariableId) -&gt; &amp;[VariableId] {
+        self.reverse_adjacency
+            .get(&amp;var)
+            .map(|v| v.as_slice())
+            .unwrap_or(&amp;[])
+    }
+
+    /// Get the children (direct effects) of a variable.
+    pub fn children(&amp;self, var: VariableId) -&gt; &amp;[VariableId] {
+        self.adjacency
+            .get(&amp;var)
+            .map(|v| v.as_slice())
+            .unwrap_or(&amp;[])
+    }
+
+    /// Get edge metadata, if the edge exists.
+    pub fn edge(&amp;self, source: VariableId, target: VariableId) -&gt; Option&lt;&amp;CausalEdge&gt; {
+        self.edges.get(&amp;(source, target))
+    }
+
+    /// Edge density: ratio of actual edges to maximum possible edges.
+    pub fn edge_density(&amp;self) -&gt; f64 {
+        let n = self.variables.len();
+        if n &lt;= 1 {
+            return 0.0;
+        }
+        self.edges.len() as f64 / (n * (n - 1)) as f64
+    }
+
+    /// Number of variables in the graph.
+    pub fn variable_count(&amp;self) -&gt; usize {
+        self.variables.len()
+    }
+
+    /// Number of edges in the graph.
+    pub fn edge_count(&amp;self) -&gt; usize {
+        self.edges.len()
+    }
+
+    /// Check whether the graph is a DAG (no directed cycles).
+    /// Uses Kahn's algorithm: iteratively remove nodes with in-degree 0.
+    /// If all nodes are removed, the graph is a DAG.
+    pub fn is_dag(&amp;self) -&gt; bool {
+        self.topological_sort().is_some()
+    }
+
+    /// Topological sort via Kahn's algorithm. Returns None if the graph
+    /// contains a cycle.
+    pub fn topological_sort(&amp;self) -&gt; Option&lt;Vec&lt;VariableId&gt;&gt; {
+        let mut in_degree: HashMap&lt;VariableId, usize&gt; = HashMap::new();
+        for &amp;var in self.variables.keys() {
+            in_degree.insert(var, 0);
+        }
+        for edge in self.edges.values() {
+            *in_degree.entry(edge.target).or_insert(0) += 1;
+        }
+
+        let mut queue: VecDeque&lt;VariableId&gt; = in_degree
+            .iter()
+            .filter(|(_, &amp;deg)| deg == 0)
+            .map(|(&amp;var, _)| var)
+            .collect();
+
+        let mut sorted = Vec::with_capacity(self.variables.len());
+
+        while let Some(var) = queue.pop_front() {
+            sorted.push(var);
+            for &amp;child in self.children(var) {
+                if let Some(deg) = in_degree.get_mut(&amp;child) {
+                    *deg -= 1;
+                    if *deg == 0 {
+                        queue.push_back(child);
+                    }
+                }
+            }
+        }
+
+        if sorted.len() == self.variables.len() {
+            Some(sorted)
+        } else {
+            None // Cycle detected
+        }
+    }
+
+    /// Estimate the total causal effect of an intervention on `source`
+    /// on the `outcome` variable, by summing over all directed paths.
+    /// For linear SCMs, this is the product of edge strengths along each path.
+    ///
+    /// Returns None if no directed path exists.
+    pub fn causal_effect(
+        &amp;self,
+        intervention: VariableId,
+        outcome: VariableId,
+    ) -&gt; Option&lt;f64&gt; {
+        if intervention == outcome {
+            return Some(1.0);
+        }
+
+        // BFS to find all directed paths and sum their contributions.
+        // For a DAG with reasonable size (&lt; 100 nodes), this is fast.
+        let mut total_effect = 0.0;
+        let mut found_path = false;
+
+        // Stack: (current_node, accumulated_effect)
+        let mut stack: Vec&lt;(VariableId, f64)&gt; = vec![(intervention, 1.0)];
+
+        // Track visited to avoid infinite loops in case of cycles
+        // (though ideally the graph is a DAG)
+        let mut visited_paths: HashSet&lt;(VariableId, u64)&gt; = HashSet::new();
+        let mut path_counter: u64 = 0;
+
+        while let Some((current, acc_effect)) = stack.pop() {
+            for &amp;child in self.children(current) {
+                if let Some(edge) = self.edge(current, child) {
+                    let path_effect = acc_effect * edge.strength;
+
+                    if child == outcome {
+                        total_effect += path_effect;
+                        found_path = true;
+                    } else {
+                        path_counter += 1;
+                        if visited_paths.insert((child, path_counter)) {
+                            stack.push((child, path_effect));
+                        }
+                    }
+                }
+            }
+        }
+
+        if found_path {
+            Some(total_effect)
+        } else {
+            None
+        }
+    }
+
+    /// Test d-separation: are X and Y d-separated by the set Z?
+    /// Uses the Bayes-Ball algorithm (Shachter, 1998).
+    ///
+    /// d-separation means: conditioning on Z blocks all paths between X and Y.
+    /// If d-separated, X _||_ Y | Z in any distribution faithful to this graph.
+    pub fn d_separation(
+        &amp;self,
+        x: VariableId,
+        y: VariableId,
+        z: &amp;[VariableId],
+    ) -&gt; bool {
+        let z_set: HashSet&lt;VariableId&gt; = z.iter().copied().collect();
+
+        // Bayes-Ball: start from X, try to reach Y.
+        // Track (node, direction) where direction is "going up" (toward parents)
+        // or "going down" (toward children).
+        #[derive(Clone, Copy, PartialEq, Eq, Hash)]
+        enum Direction {
+            Up,
+            Down,
+        }
+
+        let mut visited: HashSet&lt;(VariableId, Direction)&gt; = HashSet::new();
+        let mut queue: VecDeque&lt;(VariableId, Direction)&gt; = VecDeque::new();
+
+        // Start by going both up and down from X
+        queue.push_back((x, Direction::Up));
+        queue.push_back((x, Direction::Down));
+
+        while let Some((node, dir)) = queue.pop_front() {
+            if node == y {
+                return false; // Reachable =&gt; not d-separated
+            }
+
+            if !visited.insert((node, dir)) {
+                continue;
+            }
+
+            let is_conditioned = z_set.contains(&amp;node);
+
+            match dir {
+                Direction::Up =&gt; {
+                    // Arrived going up (from a child). We can continue
+                    // through this node if it is NOT conditioned on.
+                    if !is_conditioned {
+                        // Pass through to parents (continue up)
+                        for &amp;parent in self.parents(node) {
+                            queue.push_back((parent, Direction::Up));
+                        }
+                        // Pass through to other children (go back down)
+                        for &amp;child in self.children(node) {
+                            queue.push_back((child, Direction::Down));
+                        }
+                    }
+                }
+                Direction::Down =&gt; {
+                    // Arrived going down (from a parent).
+                    if !is_conditioned {
+                        // Non-collider, not conditioned: pass through to children
+                        for &amp;child in self.children(node) {
+                            queue.push_back((child, Direction::Down));
+                        }
+                    }
+                    // Collider or conditioned: can go up to parents
+                    // (conditioning on a collider opens the path)
+                    if is_conditioned {
+                        for &amp;parent in self.parents(node) {
+                            queue.push_back((parent, Direction::Up));
+                        }
+                    }
+                }
+            }
+        }
+
+        true // Y not reachable =&gt; d-separated
+    }
+
+    /// Compute the Markov blanket of a variable: its parents, its children,
+    /// and the other parents of its children.
+    /// The Markov blanket is the minimal set that makes a variable
+    /// conditionally independent of all other variables.
+    pub fn markov_blanket(&amp;self, var: VariableId) -&gt; Vec&lt;VariableId&gt; {
+        let mut blanket: HashSet&lt;VariableId&gt; = HashSet::new();
+
+        // Parents
+        for &amp;parent in self.parents(var) {
+            blanket.insert(parent);
+        }
+
+        // Children and co-parents of children
+        for &amp;child in self.children(var) {
+            blanket.insert(child);
+            for &amp;co_parent in self.parents(child) {
+                if co_parent != var {
+                    blanket.insert(co_parent);
+                }
+            }
+        }
+
+        blanket.into_iter().collect()
+    }
+
+    /// Decay all edge confidences by the Ebbinghaus forgetting curve.
+    /// Called at Delta tick.
+    ///
+    /// decay_rate: lambda in exp(-lambda * dt). Typical value: 0.001 per tick.
+    /// current_tick: the current Gamma tick number.
+    pub fn decay_confidences(&amp;mut self, decay_rate: f64, current_tick: u64) {
+        for edge in self.edges.values_mut() {
+            let dt = current_tick.saturating_sub(edge.last_confirmed) as f64;
+            edge.confidence *= (-decay_rate * dt).exp();
+        }
+    }
+
+    /// Remove all edges with confidence below the threshold.
+    /// Returns the removed edges for logging/audit.
+    pub fn prune_stale_edges(&amp;mut self, min_confidence: f64) -&gt; Vec&lt;(VariableId, VariableId)&gt; {
+        let stale: Vec&lt;(VariableId, VariableId)&gt; = self
+            .edges
+            .iter()
+            .filter(|(_, edge)| edge.confidence &lt; min_confidence)
+            .map(|(&amp;key, _)| key)
+            .collect();
+
+        for (source, target) in &amp;stale {
+            self.remove_edge(*source, *target);
+        }
+
+        stale
+    }
+
+    /// Get all variable IDs.
+    pub fn variable_ids(&amp;self) -&gt; Vec&lt;VariableId&gt; {
+        self.variables.keys().copied().collect()
+    }
+
+    /// Get variable metadata by ID.
+    pub fn variable(&amp;self, id: VariableId) -&gt; Option&lt;&amp;CausalVariable&gt; {
+        self.variables.get(&amp;id)
+    }
+
+    /// Get all edges as an iterator.
+    pub fn all_edges(&amp;self) -&gt; impl Iterator&lt;Item = &amp;CausalEdge&gt; {
+        self.edges.values()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="conditional-independence-testing"><a class="header" href="#conditional-independence-testing">Conditional independence testing</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Trait for conditional independence tests.
+/// Implementations must provide a test for X _||_ Y | Z
+/// given observation data.
+pub trait ConditionalIndependenceTest: Send + Sync {
+    /// Test whether X and Y are conditionally independent given Z.
+    ///
+    /// Returns (independent, p_value, test_statistic).
+    /// `independent` is true if p_value &gt; significance_level.
+    fn test(
+        &amp;self,
+        x: VariableId,
+        y: VariableId,
+        z: &amp;[VariableId],
+        data: &amp;[ObservationRecord],
+        significance_level: f64,
+    ) -&gt; CiTestResult;
+}
+
+#[derive(Clone, Debug)]
+pub struct CiTestResult {
+    pub independent: bool,
+    pub p_value: f64,
+    pub test_statistic: f64,
+    /// The conditioning set that was used
+    pub conditioning_set: Vec&lt;VariableId&gt;,
+}
+
+/// Partial correlation test using Fisher's z-transform.
+/// Assumes linear Gaussian relationships. Fast (O(|Z|^3) for matrix
+/// inversion) but misses non-linear dependencies.
+///
+/// Used at Theta tick for fast incremental updates.
+pub struct PartialCorrelationTest;
+
+impl PartialCorrelationTest {
+    /// Compute the partial correlation of X and Y given Z from data.
+    /// Uses the formula: rho_{XY|Z} = -P^{-1}_{XY} / sqrt(P^{-1}_{XX} * P^{-1}_{YY})
+    /// where P is the precision matrix (inverse covariance) of [X, Y, Z].
+    fn partial_correlation(
+        &amp;self,
+        x: VariableId,
+        y: VariableId,
+        z: &amp;[VariableId],
+        data: &amp;[ObservationRecord],
+    ) -&gt; Option&lt;f64&gt; {
+        let vars: Vec&lt;VariableId&gt; = std::iter::once(x)
+            .chain(std::iter::once(y))
+            .chain(z.iter().copied())
+            .collect();
+        let n = data.len();
+        let p = vars.len();
+
+        if n &lt;= p + 3 {
+            return None; // Not enough data for reliable estimation
+        }
+
+        // Build the data matrix: n x p
+        let mut matrix: Vec&lt;Vec&lt;f64&gt;&gt; = Vec::with_capacity(n);
+        for obs in data {
+            let row: Vec&lt;f64&gt; = vars
+                .iter()
+                .map(|&amp;v| obs.values.get(&amp;v).copied().unwrap_or(0.0))
+                .collect();
+            matrix.push(row);
+        }
+
+        // Compute means
+        let mut means = vec![0.0; p];
+        for row in &amp;matrix {
+            for (j, val) in row.iter().enumerate() {
+                means[j] += val;
+            }
+        }
+        for mean in &amp;mut means {
+            *mean /= n as f64;
+        }
+
+        // Compute covariance matrix (p x p)
+        let mut cov = vec![vec![0.0; p]; p];
+        for row in &amp;matrix {
+            for i in 0..p {
+                for j in i..p {
+                    let d = (row[i] - means[i]) * (row[j] - means[j]);
+                    cov[i][j] += d;
+                    if i != j {
+                        cov[j][i] += d;
+                    }
+                }
+            }
+        }
+        let denom = (n - 1) as f64;
+        for i in 0..p {
+            for j in 0..p {
+                cov[i][j] /= denom;
+            }
+        }
+
+        // Invert the covariance matrix to get the precision matrix.
+        // For small p (typically &lt; 20), direct inversion is fine.
+        let precision = invert_matrix(&amp;cov)?;
+
+        // Partial correlation from precision matrix:
+        // rho_{XY|Z} = -P_{01} / sqrt(P_{00} * P_{11})
+        // where 0 = X index, 1 = Y index in the variable list.
+        let p_xy = precision[0][1];
+        let p_xx = precision[0][0];
+        let p_yy = precision[1][1];
+
+        if p_xx &lt;= 0.0 || p_yy &lt;= 0.0 {
+            return None;
+        }
+
+        let rho = -p_xy / (p_xx * p_yy).sqrt();
+        Some(rho.clamp(-1.0, 1.0))
+    }
+}
+
+impl ConditionalIndependenceTest for PartialCorrelationTest {
+    fn test(
+        &amp;self,
+        x: VariableId,
+        y: VariableId,
+        z: &amp;[VariableId],
+        data: &amp;[ObservationRecord],
+        significance_level: f64,
+    ) -&gt; CiTestResult {
+        let n = data.len();
+        let k = z.len();
+
+        // Need at least k + 4 observations for the Fisher z-test
+        if n &lt; k + 4 {
+            return CiTestResult {
+                independent: false,
+                p_value: 0.0,
+                test_statistic: f64::NAN,
+                conditioning_set: z.to_vec(),
+            };
+        }
+
+        let rho = match self.partial_correlation(x, y, z, data) {
+            Some(r) =&gt; r,
+            None =&gt; {
+                return CiTestResult {
+                    independent: false,
+                    p_value: 0.0,
+                    test_statistic: f64::NAN,
+                    conditioning_set: z.to_vec(),
+                };
+            }
+        };
+
+        // Fisher's z-transform
+        // z_stat = 0.5 * sqrt(n - |Z| - 3) * ln((1 + rho) / (1 - rho))
+        // Under H0 (independence), z_stat ~ N(0, 1)
+        let dof = (n as f64) - (k as f64) - 3.0;
+        if dof &lt;= 0.0 {
+            return CiTestResult {
+                independent: false,
+                p_value: 0.0,
+                test_statistic: f64::NAN,
+                conditioning_set: z.to_vec(),
+            };
+        }
+
+        let z_stat = 0.5 * dof.sqrt() * ((1.0 + rho) / (1.0 - rho)).abs().ln();
+
+        // Two-sided p-value from standard normal
+        let p_value = 2.0 * standard_normal_survival(z_stat.abs());
+
+        CiTestResult {
+            independent: p_value &gt; significance_level,
+            p_value,
+            test_statistic: z_stat,
+            conditioning_set: z.to_vec(),
+        }
+    }
+}
+
+/// Conditional mutual information test using k-NN (KSG) estimation.
+/// Handles non-linear dependencies. More expensive than partial correlation.
+///
+/// Used at Delta tick for thorough graph audits.
+pub struct MutualInformationTest {
+    /// Number of nearest neighbors for the KSG estimator
+    pub k_neighbors: usize,
+}
+
+impl MutualInformationTest {
+    pub fn new(k_neighbors: usize) -&gt; Self {
+        MutualInformationTest { k_neighbors }
+    }
+
+    /// Estimate conditional mutual information I(X; Y | Z) using the
+    /// KSG (Kraskov-Stogbauer-Grassberger) estimator.
+    ///
+    /// The KSG estimator works by:
+    /// 1. Find the k-th nearest neighbor distance in the joint space (X, Y, Z)
+    /// 2. Count neighbors within that distance in marginal spaces (X,Z) and (Y,Z) and Z
+    /// 3. CMI = psi(k) - &lt;psi(n_xz + 1) + psi(n_yz + 1) - psi(n_z + 1)&gt;
+    ///
+    /// where psi is the digamma function and &lt;&gt; denotes averaging over data points.
+    fn estimate_cmi(
+        &amp;self,
+        x: VariableId,
+        y: VariableId,
+        z: &amp;[VariableId],
+        data: &amp;[ObservationRecord],
+    ) -&gt; f64 {
+        let n = data.len();
+        if n &lt; self.k_neighbors + 1 {
+            return 0.0;
+        }
+
+        // Extract data columns
+        let x_vals: Vec&lt;f64&gt; = data
+            .iter()
+            .map(|obs| obs.values.get(&amp;x).copied().unwrap_or(0.0))
+            .collect();
+        let y_vals: Vec&lt;f64&gt; = data
+            .iter()
+            .map(|obs| obs.values.get(&amp;y).copied().unwrap_or(0.0))
+            .collect();
+        let z_vals: Vec&lt;Vec&lt;f64&gt;&gt; = data
+            .iter()
+            .map(|obs| {
+                z.iter()
+                    .map(|&amp;v| obs.values.get(&amp;v).copied().unwrap_or(0.0))
+                    .collect()
+            })
+            .collect();
+
+        // For each point i, find the k-th nearest neighbor distance
+        // in the joint (X, Y, Z) space using Chebyshev (max) distance.
+        let k = self.k_neighbors;
+        let mut cmi_sum = 0.0;
+
+        for i in 0..n {
+            // Compute distances from point i to all other points in joint space
+            let mut joint_dists: Vec&lt;(usize, f64)&gt; = (0..n)
+                .filter(|&amp;j| j != i)
+                .map(|j| {
+                    let dx = (x_vals[i] - x_vals[j]).abs();
+                    let dy = (y_vals[i] - y_vals[j]).abs();
+                    let dz: f64 = z_vals[i]
+                        .iter()
+                        .zip(z_vals[j].iter())
+                        .map(|(a, b)| (a - b).abs())
+                        .fold(0.0_f64, f64::max);
+                    let d = dx.max(dy).max(dz);
+                    (j, d)
+                })
+                .collect();
+
+            joint_dists.sort_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap());
+
+            if joint_dists.len() &lt; k {
+                continue;
+            }
+
+            let epsilon = joint_dists[k - 1].1;
+            if epsilon == 0.0 {
+                continue; // Degenerate case: k-th neighbor at distance 0
+            }
+
+            // Count neighbors within epsilon in marginal spaces
+            let n_xz = (0..n)
+                .filter(|&amp;j| {
+                    if j == i {
+                        return false;
+                    }
+                    let dx = (x_vals[i] - x_vals[j]).abs();
+                    let dz: f64 = z_vals[i]
+                        .iter()
+                        .zip(z_vals[j].iter())
+                        .map(|(a, b)| (a - b).abs())
+                        .fold(0.0_f64, f64::max);
+                    dx.max(dz) &lt;= epsilon
+                })
+                .count();
+
+            let n_yz = (0..n)
+                .filter(|&amp;j| {
+                    if j == i {
+                        return false;
+                    }
+                    let dy = (y_vals[i] - y_vals[j]).abs();
+                    let dz: f64 = z_vals[i]
+                        .iter()
+                        .zip(z_vals[j].iter())
+                        .map(|(a, b)| (a - b).abs())
+                        .fold(0.0_f64, f64::max);
+                    dy.max(dz) &lt;= epsilon
+                })
+                .count();
+
+            let n_z = (0..n)
+                .filter(|&amp;j| {
+                    if j == i {
+                        return false;
+                    }
+                    let dz: f64 = z_vals[i]
+                        .iter()
+                        .zip(z_vals[j].iter())
+                        .map(|(a, b)| (a - b).abs())
+                        .fold(0.0_f64, f64::max);
+                    dz &lt;= epsilon
+                })
+                .count();
+
+            // KSG formula: psi(k) - [psi(n_xz + 1) + psi(n_yz + 1) - psi(n_z + 1)]
+            // For unconditional MI (Z is empty), the formula simplifies.
+            if z.is_empty() {
+                // Unconditional MI: psi(k) + psi(n) - psi(n_x + 1) - psi(n_y + 1)
+                // where n_x, n_y are counts in marginal X, Y within epsilon
+                let n_x = (0..n)
+                    .filter(|&amp;j| j != i &amp;&amp; (x_vals[i] - x_vals[j]).abs() &lt;= epsilon)
+                    .count();
+                let n_y = (0..n)
+                    .filter(|&amp;j| j != i &amp;&amp; (y_vals[i] - y_vals[j]).abs() &lt;= epsilon)
+                    .count();
+                cmi_sum += digamma(k as f64) + digamma(n as f64)
+                    - digamma(n_x as f64 + 1.0)
+                    - digamma(n_y as f64 + 1.0);
+            } else {
+                cmi_sum += digamma(k as f64)
+                    - digamma(n_xz as f64 + 1.0)
+                    - digamma(n_yz as f64 + 1.0)
+                    + digamma(n_z as f64 + 1.0);
+            }
+        }
+
+        let cmi = cmi_sum / n as f64;
+        cmi.max(0.0) // CMI is non-negative; clamp numerical errors
+    }
+}
+
+impl ConditionalIndependenceTest for MutualInformationTest {
+    fn test(
+        &amp;self,
+        x: VariableId,
+        y: VariableId,
+        z: &amp;[VariableId],
+        data: &amp;[ObservationRecord],
+        significance_level: f64,
+    ) -&gt; CiTestResult {
+        let n = data.len();
+        let cmi = self.estimate_cmi(x, y, z, data);
+
+        // Permutation test for significance:
+        // Shuffle X values (breaking X-Y dependence) and re-estimate CMI.
+        // The p-value is the fraction of permuted CMI values &gt;= observed CMI.
+        let n_permutations = 100;
+        let mut rng_state: u64 = n as u64 ^ 0xDEADBEEF;
+        let mut count_above = 0u32;
+
+        let mut permuted_data: Vec&lt;ObservationRecord&gt; = data.to_vec();
+        for _ in 0..n_permutations {
+            // Fisher-Yates shuffle on the X values only
+            let mut x_vals: Vec&lt;f64&gt; = permuted_data
+                .iter()
+                .map(|obs| obs.values.get(&amp;x).copied().unwrap_or(0.0))
+                .collect();
+
+            for i in (1..x_vals.len()).rev() {
+                // Simple LCG for deterministic permutation testing
+                rng_state = rng_state.wrapping_mul(6364136223846793005).wrapping_add(1);
+                let j = (rng_state &gt;&gt; 33) as usize % (i + 1);
+                x_vals.swap(i, j);
+            }
+
+            // Write shuffled X values back
+            for (obs, &amp;val) in permuted_data.iter_mut().zip(x_vals.iter()) {
+                obs.values.insert(x, val);
+            }
+
+            let perm_cmi = self.estimate_cmi(x, y, z, &amp;permuted_data);
+            if perm_cmi &gt;= cmi {
+                count_above += 1;
+            }
+        }
+
+        let p_value = count_above as f64 / n_permutations as f64;
+
+        CiTestResult {
+            independent: p_value &gt; significance_level,
+            p_value,
+            test_statistic: cmi,
+            conditioning_set: z.to_vec(),
+        }
+    }
+}
+
+// --- Utility functions ---
+
+/// Approximate the survival function of the standard normal distribution.
+/// P(Z &gt; z) for Z ~ N(0, 1). Uses the Abramowitz and Stegun approximation.
+fn standard_normal_survival(z: f64) -&gt; f64 {
+    if z &lt; 0.0 {
+        return 1.0 - standard_normal_survival(-z);
+    }
+    let t = 1.0 / (1.0 + 0.2316419 * z);
+    let d = 0.3989422804014327; // 1 / sqrt(2 * pi)
+    let p = d * (-0.5 * z * z).exp();
+    let poly = t * (0.319381530
+        + t * (-0.356563782
+            + t * (1.781477937
+                + t * (-1.821255978
+                    + t * 1.330274429))));
+    p * poly
+}
+
+/// Digamma function (psi). Approximation using the asymptotic series
+/// with recurrence for small arguments.
+fn digamma(mut x: f64) -&gt; f64 {
+    if x &lt;= 0.0 {
+        return f64::NEG_INFINITY;
+    }
+    let mut result = 0.0;
+    // Use recurrence psi(x) = psi(x+1) - 1/x to shift x into the
+    // asymptotic region (x &gt;= 6)
+    while x &lt; 6.0 {
+        result -= 1.0 / x;
+        x += 1.0;
+    }
+    // Asymptotic expansion
+    result += x.ln() - 0.5 / x;
+    let x2 = x * x;
+    result -= 1.0 / (12.0 * x2);
+    result += 1.0 / (120.0 * x2 * x2);
+    result -= 1.0 / (252.0 * x2 * x2 * x2);
+    result
+}
+
+/// Invert a square matrix using Gauss-Jordan elimination.
+/// Returns None if the matrix is singular.
+fn invert_matrix(mat: &amp;[Vec&lt;f64&gt;]) -&gt; Option&lt;Vec&lt;Vec&lt;f64&gt;&gt;&gt; {
+    let n = mat.len();
+    // Augmented matrix [mat | I]
+    let mut aug: Vec&lt;Vec&lt;f64&gt;&gt; = Vec::with_capacity(n);
+    for i in 0..n {
+        let mut row = mat[i].clone();
+        row.resize(2 * n, 0.0);
+        row[n + i] = 1.0;
+        aug.push(row);
+    }
+
+    for col in 0..n {
+        // Find pivot
+        let mut max_row = col;
+        let mut max_val = aug[col][col].abs();
+        for row in (col + 1)..n {
+            if aug[row][col].abs() &gt; max_val {
+                max_val = aug[row][col].abs();
+                max_row = row;
+            }
+        }
+        if max_val &lt; 1e-12 {
+            return None; // Singular
+        }
+        aug.swap(col, max_row);
+
+        let pivot = aug[col][col];
+        for j in 0..(2 * n) {
+            aug[col][j] /= pivot;
+        }
+
+        for row in 0..n {
+            if row == col {
+                continue;
+            }
+            let factor = aug[row][col];
+            for j in 0..(2 * n) {
+                aug[row][j] -= factor * aug[col][j];
+            }
+        }
+    }
+
+    // Extract the inverse (right half of augmented matrix)
+    let inv: Vec&lt;Vec&lt;f64&gt;&gt; = aug
+        .iter()
+        .map(|row| row[n..].to_vec())
+        .collect();
+    Some(inv)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="pc-algorithm"><a class="header" href="#pc-algorithm">PC algorithm</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for the PC algorithm.
+pub struct PcConfig {
+    /// Significance level for conditional independence tests.
+    /// Lower = fewer edges (more conservative). Default: 0.05.
+    pub significance_level: f64,
+    /// Maximum conditioning set size. Limits computation.
+    /// Default: 4 (sufficient for most DeFi causal structures).
+    pub max_conditioning_size: usize,
+    /// Maximum number of CI tests per Theta tick (budget control).
+    pub max_tests_per_tick: usize,
+}
+
+impl Default for PcConfig {
+    fn default() -&gt; Self {
+        PcConfig {
+            significance_level: 0.05,
+            max_conditioning_size: 4,
+            max_tests_per_tick: 500,
+        }
+    }
+}
+
+/// Undirected edge in the skeleton, with its separating set.
+#[derive(Clone, Debug)]
+struct SkeletonEdge {
+    a: VariableId,
+    b: VariableId,
+    /// The conditioning set that rendered this pair independent (if removed)
+    separating_set: Option&lt;Vec&lt;VariableId&gt;&gt;,
+    /// Whether the edge has been removed
+    removed: bool,
+}
+
+/// The PC algorithm for causal skeleton discovery.
+///
+/// Operates incrementally: maintains state across Theta ticks,
+/// resuming from where it left off rather than starting over.
+pub struct PcAlgorithm {
+    config: PcConfig,
+    /// Current adjacency structure (undirected skeleton)
+    skeleton: HashMap&lt;VariableId, HashSet&lt;VariableId&gt;&gt;,
+    /// Separating sets: sep(X, Y) = the conditioning set that made X _||_ Y
+    separating_sets: HashMap&lt;(VariableId, VariableId), Vec&lt;VariableId&gt;&gt;,
+    /// Current conditioning set size being tested
+    current_cond_size: usize,
+    /// Queue of edge pairs to test at the current conditioning size
+    test_queue: VecDeque&lt;(VariableId, VariableId)&gt;,
+    /// Whether the skeleton phase is complete
+    skeleton_complete: bool,
+}
+
+impl PcAlgorithm {
+    pub fn new(config: PcConfig) -&gt; Self {
+        PcAlgorithm {
+            config,
+            skeleton: HashMap::new(),
+            separating_sets: HashMap::new(),
+            current_cond_size: 0,
+            test_queue: VecDeque::new(),
+            skeleton_complete: false,
+        }
+    }
+
+    /// Initialize with a complete undirected graph over the given variables.
+    pub fn initialize(&amp;mut self, variables: &amp;[VariableId]) {
+        self.skeleton.clear();
+        self.separating_sets.clear();
+        self.current_cond_size = 0;
+        self.skeleton_complete = false;
+
+        // Start with complete graph
+        for &amp;v in variables {
+            let mut neighbors: HashSet&lt;VariableId&gt; = variables.iter().copied().collect();
+            neighbors.remove(&amp;v);
+            self.skeleton.insert(v, neighbors);
+        }
+
+        // Initialize test queue with all pairs
+        self.rebuild_test_queue();
+    }
+
+    fn rebuild_test_queue(&amp;mut self) {
+        self.test_queue.clear();
+        let vars: Vec&lt;VariableId&gt; = self.skeleton.keys().copied().collect();
+        for i in 0..vars.len() {
+            for j in (i + 1)..vars.len() {
+                let a = vars[i];
+                let b = vars[j];
+                if self.skeleton.get(&amp;a).map_or(false, |s| s.contains(&amp;b)) {
+                    self.test_queue.push_back((a, b));
+                }
+            }
+        }
+    }
+
+    /// Run one batch of CI tests (up to max_tests_per_tick).
+    /// Returns true if the skeleton phase is complete.
+    pub fn run_batch(
+        &amp;mut self,
+        ci_test: &amp;dyn ConditionalIndependenceTest,
+        data: &amp;[ObservationRecord],
+    ) -&gt; bool {
+        if self.skeleton_complete {
+            return true;
+        }
+
+        let mut tests_run = 0;
+
+        while tests_run &lt; self.config.max_tests_per_tick {
+            if let Some((a, b)) = self.test_queue.pop_front() {
+                // Check if edge still exists (might have been removed by a previous test)
+                if !self.skeleton.get(&amp;a).map_or(false, |s| s.contains(&amp;b)) {
+                    continue;
+                }
+
+                // Get conditioning set candidates: adj(a) \ {b}
+                let adj_a: Vec&lt;VariableId&gt; = self
+                    .skeleton
+                    .get(&amp;a)
+                    .map(|s| s.iter().copied().filter(|&amp;v| v != b).collect())
+                    .unwrap_or_default();
+
+                if adj_a.len() &lt; self.current_cond_size {
+                    continue; // Not enough neighbors for this conditioning size
+                }
+
+                // Test all subsets of adj(a) of size current_cond_size
+                let subsets = combinations(&amp;adj_a, self.current_cond_size);
+                let mut found_independence = false;
+
+                for subset in subsets {
+                    let result = ci_test.test(
+                        a,
+                        b,
+                        &amp;subset,
+                        data,
+                        self.config.significance_level,
+                    );
+                    tests_run += 1;
+
+                    if result.independent {
+                        // Remove edge and record separating set
+                        self.skeleton.get_mut(&amp;a).map(|s| s.remove(&amp;b));
+                        self.skeleton.get_mut(&amp;b).map(|s| s.remove(&amp;a));
+                        let key = if a.0 &lt; b.0 { (a, b) } else { (b, a) };
+                        self.separating_sets.insert(key, subset);
+                        found_independence = true;
+                        break;
+                    }
+
+                    if tests_run &gt;= self.config.max_tests_per_tick {
+                        // Budget exhausted. Re-queue this pair for next tick.
+                        if !found_independence {
+                            self.test_queue.push_back((a, b));
+                        }
+                        return false;
+                    }
+                }
+            } else {
+                // Queue exhausted at this conditioning size. Move to next size.
+                self.current_cond_size += 1;
+                if self.current_cond_size &gt; self.config.max_conditioning_size {
+                    self.skeleton_complete = true;
+                    return true;
+                }
+                self.rebuild_test_queue();
+
+                if self.test_queue.is_empty() {
+                    self.skeleton_complete = true;
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
+
+    /// Phase 2: Orient edges using v-structure detection and orientation rules.
+    /// Call after skeleton discovery is complete.
+    ///
+    /// Returns a directed graph as a set of directed edges.
+    pub fn orient_edges(&amp;self) -&gt; Vec&lt;(VariableId, VariableId)&gt; {
+        // Start with undirected edges
+        let mut undirected: HashSet&lt;(VariableId, VariableId)&gt; = HashSet::new();
+        let mut directed: HashSet&lt;(VariableId, VariableId)&gt; = HashSet::new();
+
+        for (&amp;a, neighbors) in &amp;self.skeleton {
+            for &amp;b in neighbors {
+                if a.0 &lt; b.0 {
+                    undirected.insert((a, b));
+                }
+            }
+        }
+
+        // Rule 1: v-structure detection
+        // For each triple X -- Z -- Y where X and Y are not adjacent:
+        // If Z is NOT in sep(X, Y), orient as X -&gt; Z &lt;- Y (collider)
+        let all_vars: Vec&lt;VariableId&gt; = self.skeleton.keys().copied().collect();
+        for &amp;z in &amp;all_vars {
+            let z_neighbors: Vec&lt;VariableId&gt; = self
+                .skeleton
+                .get(&amp;z)
+                .map(|s| s.iter().copied().collect())
+                .unwrap_or_default();
+
+            for i in 0..z_neighbors.len() {
+                for j in (i + 1)..z_neighbors.len() {
+                    let x = z_neighbors[i];
+                    let y = z_neighbors[j];
+
+                    // Check X and Y are not adjacent
+                    if self.skeleton.get(&amp;x).map_or(false, |s| s.contains(&amp;y)) {
+                        continue;
+                    }
+
+                    // Check if Z is in sep(X, Y)
+                    let key = if x.0 &lt; y.0 { (x, y) } else { (y, x) };
+                    let z_in_sep = self
+                        .separating_sets
+                        .get(&amp;key)
+                        .map_or(false, |sep| sep.contains(&amp;z));
+
+                    if !z_in_sep {
+                        // Orient X -&gt; Z &lt;- Y
+                        directed.insert((x, z));
+                        directed.insert((y, z));
+                        let edge_xz = if x.0 &lt; z.0 { (x, z) } else { (z, x) };
+                        let edge_yz = if y.0 &lt; z.0 { (y, z) } else { (z, y) };
+                        undirected.remove(&amp;edge_xz);
+                        undirected.remove(&amp;edge_yz);
+                    }
+                }
+            }
+        }
+
+        // Rules 2 and 3: propagate orientations to avoid new v-structures and cycles.
+        // Iterate until no more orientations can be made.
+        let mut changed = true;
+        while changed {
+            changed = false;
+
+            for &amp;(a, b) in &amp;undirected.clone() {
+                // Check both possible orientations of the undirected edge
+                for (x, y) in [(a, b), (b, a)] {
+                    // Rule 2: If there exists Z such that Z -&gt; X and Z -- Y are
+                    // not adjacent, orient X -&gt; Y
+                    let x_parents: Vec&lt;VariableId&gt; = directed
+                        .iter()
+                        .filter(|(_, t)| *t == x)
+                        .map(|(s, _)| *s)
+                        .collect();
+
+                    for &amp;z in &amp;x_parents {
+                        if !self.skeleton.get(&amp;z).map_or(false, |s| s.contains(&amp;y)) {
+                            directed.insert((x, y));
+                            let edge = if a.0 &lt; b.0 { (a, b) } else { (b, a) };
+                            undirected.remove(&amp;edge);
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Convert remaining undirected edges to both directions (ambiguous)
+        // The caller should queue these for interventional experiments.
+        let mut result: Vec&lt;(VariableId, VariableId)&gt; =
+            directed.into_iter().collect();
+
+        // Mark undirected edges -- we include them in both directions
+        // with a convention that the caller can identify them
+        for (a, b) in undirected {
+            result.push((a, b));
+            result.push((b, a));
+        }
+
+        result
+    }
+
+    /// Get the separating set for a pair of variables, if known.
+    pub fn separating_set(
+        &amp;self,
+        a: VariableId,
+        b: VariableId,
+    ) -&gt; Option&lt;&amp;Vec&lt;VariableId&gt;&gt; {
+        let key = if a.0 &lt; b.0 { (a, b) } else { (b, a) };
+        self.separating_sets.get(&amp;key)
+    }
+}
+
+/// Generate all combinations of `k` elements from `items`.
+fn combinations(items: &amp;[VariableId], k: usize) -&gt; Vec&lt;Vec&lt;VariableId&gt;&gt; {
+    if k == 0 {
+        return vec![vec![]];
+    }
+    if items.len() &lt; k {
+        return vec![];
+    }
+
+    let mut result = Vec::new();
+    let mut stack: Vec&lt;(usize, Vec&lt;VariableId&gt;)&gt; = vec![(0, Vec::new())];
+
+    while let Some((start, current)) = stack.pop() {
+        if current.len() == k {
+            result.push(current);
+            continue;
+        }
+        let remaining = k - current.len();
+        for i in start..=(items.len() - remaining) {
+            let mut next = current.clone();
+            next.push(items[i]);
+            stack.push((i + 1, next));
+        }
+    }
+
+    result
+}
+<span class="boring">}</span></code></pre>
+<h3 id="granger-causality"><a class="header" href="#granger-causality">Granger causality</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for Granger causality tests.
+pub struct GrangerConfig {
+    /// Maximum lag order (in events, not clock time)
+    pub max_lag: usize,
+    /// Significance level for the F-test
+    pub significance_level: f64,
+    /// Sliding window size (number of events)
+    pub window_size: usize,
+    /// L1 regularization strength for Lasso VAR (0.0 = no regularization)
+    pub l1_penalty: f64,
+}
+
+impl Default for GrangerConfig {
+    fn default() -&gt; Self {
+        GrangerConfig {
+            max_lag: 10,
+            significance_level: 0.05,
+            window_size: 500,
+            l1_penalty: 0.01,
+        }
+    }
+}
+
+/// Result of a Granger causality test.
+#[derive(Clone, Debug)]
+pub struct GrangerResult {
+    pub source: VariableId,
+    pub target: VariableId,
+    /// Whether source Granger-causes target at the given significance level
+    pub granger_causes: bool,
+    /// F-statistic for the test
+    pub f_statistic: f64,
+    /// p-value from the F-distribution
+    pub p_value: f64,
+    /// Optimal lag order (the lag that gives the strongest signal)
+    pub optimal_lag: usize,
+    /// Transfer entropy estimate (non-linear alternative to F-test)
+    pub transfer_entropy: f64,
+}
+
+/// Granger causality test with extensions for DeFi event streams.
+///
+/// Supports irregular timestamps (event-time indexing), multivariate
+/// conditioning, and sliding windows for time-varying structure.
+pub struct GrangerCausalityTest {
+    config: GrangerConfig,
+    /// Per-variable event queues: ordered (event_index, value) pairs
+    event_queues: HashMap&lt;VariableId, VecDeque&lt;(u64, f64)&gt;&gt;,
+    /// Global event counter
+    event_counter: u64,
+}
+
+impl GrangerCausalityTest {
+    pub fn new(config: GrangerConfig) -&gt; Self {
+        GrangerCausalityTest {
+            config,
+            event_queues: HashMap::new(),
+            event_counter: 0,
+        }
+    }
+
+    /// Ingest a new observation. Each variable's value is appended to
+    /// its event queue with the current event index.
+    pub fn observe(&amp;mut self, observation: &amp;Observation) {
+        self.event_counter += 1;
+        for (&amp;var, &amp;value) in &amp;observation.values {
+            let queue = self.event_queues.entry(var).or_default();
+            queue.push_back((self.event_counter, value));
+
+            // Trim to window size
+            while queue.len() &gt; self.config.window_size {
+                queue.pop_front();
+            }
+        }
+    }
+
+    /// Test whether `source` Granger-causes `target`, conditioning on
+    /// all other observed variables.
+    ///
+    /// Uses a bivariate VAR(k) model comparison:
+    /// Restricted:   Y_t = a_0 + sum_{i=1}^{k} a_i * Y_{t-i} + e_t
+    /// Unrestricted: Y_t = a_0 + sum_{i=1}^{k} a_i * Y_{t-i}
+    ///                          + sum_{i=1}^{k} b_i * X_{t-i} + e_t
+    ///
+    /// F = ((RSS_r - RSS_u) / k) / (RSS_u / (n - 2k - 1))
+    pub fn test(
+        &amp;self,
+        source: VariableId,
+        target: VariableId,
+    ) -&gt; GrangerResult {
+        let x_queue = match self.event_queues.get(&amp;source) {
+            Some(q) if q.len() &gt;= self.config.max_lag + 10 =&gt; q,
+            _ =&gt; {
+                return GrangerResult {
+                    source,
+                    target,
+                    granger_causes: false,
+                    f_statistic: 0.0,
+                    p_value: 1.0,
+                    optimal_lag: 0,
+                    transfer_entropy: 0.0,
+                };
+            }
+        };
+
+        let y_queue = match self.event_queues.get(&amp;target) {
+            Some(q) if q.len() &gt;= self.config.max_lag + 10 =&gt; q,
+            _ =&gt; {
+                return GrangerResult {
+                    source,
+                    target,
+                    granger_causes: false,
+                    f_statistic: 0.0,
+                    p_value: 1.0,
+                    optimal_lag: 0,
+                    transfer_entropy: 0.0,
+                };
+            }
+        };
+
+        // Align event-time series: find common event indices
+        let x_vals: Vec&lt;f64&gt; = x_queue.iter().map(|(_, v)| *v).collect();
+        let y_vals: Vec&lt;f64&gt; = y_queue.iter().map(|(_, v)| *v).collect();
+
+        // Use the shorter series as the effective length
+        let n = x_vals.len().min(y_vals.len());
+        let x = &amp;x_vals[x_vals.len() - n..];
+        let y = &amp;y_vals[y_vals.len() - n..];
+
+        let mut best_lag = 1;
+        let mut best_f = 0.0_f64;
+        let mut best_p = 1.0_f64;
+
+        // Test each lag order and pick the one with the strongest signal
+        for lag in 1..=self.config.max_lag {
+            if n &lt;= 2 * lag + 1 {
+                break;
+            }
+
+            let effective_n = n - lag;
+
+            // Build restricted model (Y ~ Y_lagged)
+            // Build unrestricted model (Y ~ Y_lagged + X_lagged)
+            let mut rss_restricted = 0.0;
+            let mut rss_unrestricted = 0.0;
+
+            // For simplicity, use OLS via normal equations.
+            // Restricted: Y_t = c + sum a_i * Y_{t-i}
+            // Unrestricted: Y_t = c + sum a_i * Y_{t-i} + sum b_i * X_{t-i}
+
+            // Build design matrices
+            let mut y_target = Vec::with_capacity(effective_n);
+            let mut x_restricted = Vec::with_capacity(effective_n);
+            let mut x_unrestricted = Vec::with_capacity(effective_n);
+
+            for t in lag..n {
+                y_target.push(y[t]);
+
+                // Restricted features: [1, y_{t-1}, ..., y_{t-lag}]
+                let mut row_r = vec![1.0];
+                for i in 1..=lag {
+                    row_r.push(y[t - i]);
+                }
+                x_restricted.push(row_r);
+
+                // Unrestricted features: [1, y_{t-1}, ..., y_{t-lag}, x_{t-1}, ..., x_{t-lag}]
+                let mut row_u = vec![1.0];
+                for i in 1..=lag {
+                    row_u.push(y[t - i]);
+                }
+                for i in 1..=lag {
+                    row_u.push(x[t - i]);
+                }
+                x_unrestricted.push(row_u);
+            }
+
+            // Solve OLS: beta = (X'X)^{-1} X'y
+            rss_restricted = ols_rss(&amp;x_restricted, &amp;y_target);
+            rss_unrestricted = ols_rss(&amp;x_unrestricted, &amp;y_target);
+
+            // F-statistic
+            let df1 = lag as f64; // number of added parameters
+            let df2 = effective_n as f64 - 2.0 * lag as f64 - 1.0;
+            if df2 &lt;= 0.0 || rss_unrestricted &lt;= 0.0 {
+                continue;
+            }
+
+            let f_stat =
+                ((rss_restricted - rss_unrestricted) / df1) / (rss_unrestricted / df2);
+
+            // Approximate p-value from F-distribution using the
+            // incomplete beta function relationship:
+            // p = 1 - I_x(df1/2, df2/2) where x = df1*F / (df1*F + df2)
+            let p_value = f_distribution_survival(f_stat, df1, df2);
+
+            if f_stat &gt; best_f {
+                best_f = f_stat;
+                best_p = p_value;
+                best_lag = lag;
+            }
+        }
+
+        // Transfer entropy estimate (non-linear check)
+        // TE(X -&gt; Y) = I(Y_t; X_{&lt;t} | Y_{&lt;t})
+        // We approximate using the bivariate time series with lag 1
+        let te = estimate_transfer_entropy(x, y, best_lag);
+
+        GrangerResult {
+            source,
+            target,
+            granger_causes: best_p &lt; self.config.significance_level,
+            f_statistic: best_f,
+            p_value: best_p,
+            optimal_lag: best_lag,
+            transfer_entropy: te,
+        }
+    }
+
+    /// Get all variable IDs with sufficient data for testing.
+    pub fn testable_variables(&amp;self) -&gt; Vec&lt;VariableId&gt; {
+        self.event_queues
+            .iter()
+            .filter(|(_, q)| q.len() &gt;= self.config.max_lag + 10)
+            .map(|(&amp;v, _)| v)
+            .collect()
+    }
+}
+
+/// Compute residual sum of squares for OLS regression.
+/// X: n x p design matrix (rows are observations)
+/// y: n x 1 target vector
+fn ols_rss(x_matrix: &amp;[Vec&lt;f64&gt;], y: &amp;[f64]) -&gt; f64 {
+    let n = x_matrix.len();
+    let p = x_matrix[0].len();
+
+    // X'X (p x p)
+    let mut xtx = vec![vec![0.0; p]; p];
+    for row in x_matrix {
+        for i in 0..p {
+            for j in i..p {
+                let v = row[i] * row[j];
+                xtx[i][j] += v;
+                if i != j {
+                    xtx[j][i] += v;
+                }
+            }
+        }
+    }
+
+    // X'y (p x 1)
+    let mut xty = vec![0.0; p];
+    for (row, &amp;yi) in x_matrix.iter().zip(y.iter()) {
+        for j in 0..p {
+            xty[j] += row[j] * yi;
+        }
+    }
+
+    // Solve beta = (X'X)^{-1} X'y
+    let beta = match solve_linear_system(&amp;xtx, &amp;xty) {
+        Some(b) =&gt; b,
+        None =&gt; return f64::MAX, // Singular: return large RSS
+    };
+
+    // RSS = sum (y_i - x_i' * beta)^2
+    let mut rss = 0.0;
+    for (row, &amp;yi) in x_matrix.iter().zip(y.iter()) {
+        let predicted: f64 = row.iter().zip(beta.iter()).map(|(x, b)| x * b).sum();
+        let residual = yi - predicted;
+        rss += residual * residual;
+    }
+    rss
+}
+
+/// Solve a linear system Ax = b using Gaussian elimination with partial pivoting.
+fn solve_linear_system(a: &amp;[Vec&lt;f64&gt;], b: &amp;[f64]) -&gt; Option&lt;Vec&lt;f64&gt;&gt; {
+    let n = a.len();
+    let mut aug: Vec&lt;Vec&lt;f64&gt;&gt; = a
+        .iter()
+        .enumerate()
+        .map(|(i, row)| {
+            let mut r = row.clone();
+            r.push(b[i]);
+            r
+        })
+        .collect();
+
+    for col in 0..n {
+        // Partial pivoting
+        let mut max_row = col;
+        let mut max_val = aug[col][col].abs();
+        for row in (col + 1)..n {
+            if aug[row][col].abs() &gt; max_val {
+                max_val = aug[row][col].abs();
+                max_row = row;
+            }
+        }
+        if max_val &lt; 1e-12 {
+            return None;
+        }
+        aug.swap(col, max_row);
+
+        let pivot = aug[col][col];
+        for j in col..=n {
+            aug[col][j] /= pivot;
+        }
+
+        for row in 0..n {
+            if row == col {
+                continue;
+            }
+            let factor = aug[row][col];
+            for j in col..=n {
+                aug[row][j] -= factor * aug[col][j];
+            }
+        }
+    }
+
+    Some(aug.iter().map(|row| row[n]).collect())
+}
+
+/// Approximate the survival function of the F-distribution.
+/// Uses the relationship between F and the Beta distribution.
+fn f_distribution_survival(f: f64, df1: f64, df2: f64) -&gt; f64 {
+    if f &lt;= 0.0 {
+        return 1.0;
+    }
+    let x = df1 * f / (df1 * f + df2);
+    1.0 - regularized_incomplete_beta(x, df1 / 2.0, df2 / 2.0)
+}
+
+/// Regularized incomplete beta function I_x(a, b).
+/// Uses a continued fraction approximation (Lentz's method).
+fn regularized_incomplete_beta(x: f64, a: f64, b: f64) -&gt; f64 {
+    if x &lt;= 0.0 {
+        return 0.0;
+    }
+    if x &gt;= 1.0 {
+        return 1.0;
+    }
+
+    // Use the symmetry relation when x &gt; (a+1)/(a+b+2) for better convergence
+    if x &gt; (a + 1.0) / (a + b + 2.0) {
+        return 1.0 - regularized_incomplete_beta(1.0 - x, b, a);
+    }
+
+    let ln_prefix = a * x.ln() + b * (1.0 - x).ln()
+        - a.ln()
+        - ln_beta(a, b);
+    let prefix = ln_prefix.exp();
+
+    // Continued fraction (Lentz's modified method)
+    let max_iter = 200;
+    let epsilon = 1e-10;
+    let tiny = 1e-30;
+
+    let mut c = 1.0;
+    let mut d = 1.0 - (a + b) * x / (a + 1.0);
+    if d.abs() &lt; tiny {
+        d = tiny;
+    }
+    d = 1.0 / d;
+    let mut h = d;
+
+    for m in 1..=max_iter {
+        let m_f64 = m as f64;
+
+        // Even step
+        let numerator = m_f64 * (b - m_f64) * x / ((a + 2.0 * m_f64 - 1.0) * (a + 2.0 * m_f64));
+        d = 1.0 + numerator * d;
+        if d.abs() &lt; tiny {
+            d = tiny;
+        }
+        c = 1.0 + numerator / c;
+        if c.abs() &lt; tiny {
+            c = tiny;
+        }
+        d = 1.0 / d;
+        h *= d * c;
+
+        // Odd step
+        let numerator = -((a + m_f64) * (a + b + m_f64) * x)
+            / ((a + 2.0 * m_f64) * (a + 2.0 * m_f64 + 1.0));
+        d = 1.0 + numerator * d;
+        if d.abs() &lt; tiny {
+            d = tiny;
+        }
+        c = 1.0 + numerator / c;
+        if c.abs() &lt; tiny {
+            c = tiny;
+        }
+        d = 1.0 / d;
+        let delta = d * c;
+        h *= delta;
+
+        if (delta - 1.0).abs() &lt; epsilon {
+            break;
+        }
+    }
+
+    prefix * h / a
+}
+
+/// Natural log of the Beta function: ln(B(a, b)) = ln(Gamma(a)) + ln(Gamma(b)) - ln(Gamma(a+b))
+fn ln_beta(a: f64, b: f64) -&gt; f64 {
+    ln_gamma(a) + ln_gamma(b) - ln_gamma(a + b)
+}
+
+/// Stirling's approximation for ln(Gamma(x)).
+fn ln_gamma(x: f64) -&gt; f64 {
+    // Lanczos approximation
+    let g = 7.0;
+    let coefficients = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7,
+    ];
+
+    if x &lt; 0.5 {
+        // Reflection formula
+        let pi = std::f64::consts::PI;
+        return pi.ln() - (pi * x).sin().ln() - ln_gamma(1.0 - x);
+    }
+
+    let x = x - 1.0;
+    let mut ag = coefficients[0];
+    for (i, &amp;c) in coefficients.iter().enumerate().skip(1) {
+        ag += c / (x + i as f64);
+    }
+
+    let tmp = x + g + 0.5;
+    0.5 * (2.0 * std::f64::consts::PI).ln() + (x + 0.5) * tmp.ln() - tmp + ag.ln()
+}
+
+/// Estimate transfer entropy TE(X -&gt; Y) at a given lag.
+/// Uses a binning estimator for speed (adequate for screening).
+fn estimate_transfer_entropy(x: &amp;[f64], y: &amp;[f64], lag: usize) -&gt; f64 {
+    let n = x.len().min(y.len());
+    if n &lt;= lag + 1 {
+        return 0.0;
+    }
+
+    // Bin continuous values into discrete states
+    let n_bins = 8;
+    let x_bins = bin_series(x, n_bins);
+    let y_bins = bin_series(y, n_bins);
+
+    // TE(X -&gt; Y) = H(Y_t | Y_{t-lag}) - H(Y_t | Y_{t-lag}, X_{t-lag})
+    // Estimate conditional entropies from joint frequency tables
+    let effective_n = n - lag;
+
+    // Count (y_t, y_{t-lag}) pairs
+    let mut count_yy: HashMap&lt;(u8, u8), f64&gt; = HashMap::new();
+    let mut count_y_lag: HashMap&lt;u8, f64&gt; = HashMap::new();
+
+    // Count (y_t, y_{t-lag}, x_{t-lag}) triples
+    let mut count_yyx: HashMap&lt;(u8, u8, u8), f64&gt; = HashMap::new();
+    let mut count_yx_lag: HashMap&lt;(u8, u8), f64&gt; = HashMap::new();
+
+    for t in lag..n {
+        let yt = y_bins[t];
+        let yt_lag = y_bins[t - lag];
+        let xt_lag = x_bins[t - lag];
+
+        *count_yy.entry((yt, yt_lag)).or_default() += 1.0;
+        *count_y_lag.entry(yt_lag).or_default() += 1.0;
+        *count_yyx.entry((yt, yt_lag, xt_lag)).or_default() += 1.0;
+        *count_yx_lag.entry((yt_lag, xt_lag)).or_default() += 1.0;
+    }
+
+    let n_f64 = effective_n as f64;
+
+    // H(Y_t | Y_{t-lag}) = -sum p(y_t, y_lag) * log(p(y_t | y_lag))
+    let mut h_y_given_ylag = 0.0;
+    for (&amp;(yt, yl), &amp;c) in &amp;count_yy {
+        let p_joint = c / n_f64;
+        let p_cond = c / count_y_lag[&amp;yl];
+        h_y_given_ylag -= p_joint * p_cond.ln();
+    }
+
+    // H(Y_t | Y_{t-lag}, X_{t-lag})
+    let mut h_y_given_yxlag = 0.0;
+    for (&amp;(yt, yl, xl), &amp;c) in &amp;count_yyx {
+        let p_joint = c / n_f64;
+        let p_cond = c / count_yx_lag[&amp;(yl, xl)];
+        h_y_given_yxlag -= p_joint * p_cond.ln();
+    }
+
+    (h_y_given_ylag - h_y_given_yxlag).max(0.0)
+}
+
+/// Bin a continuous series into discrete bins using equal-frequency binning.
+fn bin_series(values: &amp;[f64], n_bins: usize) -&gt; Vec&lt;u8&gt; {
+    let mut sorted: Vec&lt;f64&gt; = values.to_vec();
+    sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+    // Compute bin edges at quantiles
+    let mut edges = Vec::with_capacity(n_bins - 1);
+    for i in 1..n_bins {
+        let idx = (i * sorted.len()) / n_bins;
+        edges.push(sorted[idx.min(sorted.len() - 1)]);
+    }
+
+    values
+        .iter()
+        .map(|&amp;v| {
+            let bin = edges.iter().position(|&amp;e| v &lt; e).unwrap_or(edges.len());
+            bin as u8
+        })
+        .collect()
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dream-experiment-design"><a class="header" href="#dream-experiment-design">Dream experiment design</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A planned interventional experiment to be run during REM dream.
+#[derive(Clone, Debug)]
+pub struct DreamExperiment {
+    /// Unique experiment ID
+    pub id: u64,
+    /// The causal edge being tested: source -&gt; target
+    pub hypothesis_source: VariableId,
+    pub hypothesis_target: VariableId,
+    /// The intervention: what value to force the source variable to.
+    /// Expressed as a delta from current value (e.g., +1000.0 for a 1000 ETH swap).
+    pub intervention_delta: f64,
+    /// Number of blocks to simulate after intervention
+    pub simulation_blocks: u32,
+    /// Expected information gain from this experiment.
+    /// Higher = higher priority to run.
+    pub information_gain: f64,
+    /// The variables to measure in the simulation output
+    pub measurement_targets: Vec&lt;VariableId&gt;,
+    /// Current status
+    pub status: ExperimentStatus,
+    /// Results (populated after execution)
+    pub result: Option&lt;ExperimentResult&gt;,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum ExperimentStatus {
+    Queued,
+    Running,
+    Completed,
+    Failed(String),
+}
+
+#[derive(Clone, Debug)]
+pub struct ExperimentResult {
+    /// Observed change in the target variable (intervention fork vs. control fork)
+    pub target_delta: f64,
+    /// Observed changes in all measured variables
+    pub all_deltas: HashMap&lt;VariableId, f64&gt;,
+    /// Statistical significance of the observed effect
+    /// (from comparing multiple simulation runs with noise)
+    pub p_value: f64,
+    /// The estimated causal coefficient: target_delta / intervention_delta
+    pub estimated_coefficient: f64,
+    /// Fork state hash for provenance
+    pub fork_state_hash: [u8; 32],
+    /// Number of simulation runs that were aggregated
+    pub n_runs: u32,
+}
+
+/// Designs interventional experiments for REM dreams.
+/// Prioritizes experiments by expected information gain:
+/// how much would confirming or disconfirming this edge change
+/// the causal graph?
+pub struct InterventionalDreamDesigner {
+    /// Counter for experiment IDs
+    next_id: u64,
+    /// Default number of blocks to simulate
+    default_sim_blocks: u32,
+    /// Maximum experiments to queue per REM cycle
+    max_queue_size: usize,
+}
+
+impl InterventionalDreamDesigner {
+    pub fn new() -&gt; Self {
+        InterventionalDreamDesigner {
+            next_id: 0,
+            default_sim_blocks: 10,
+            max_queue_size: 20,
+        }
+    }
+
+    /// Design experiments for edges that need interventional confirmation.
+    /// Prioritizes:
+    /// 1. Undirected edges in the CPDAG (orientation ambiguity)
+    /// 2. Low-confidence edges (need more evidence)
+    /// 3. High-impact edges (in terms of downstream causal effects)
+    pub fn design_experiments(
+        &amp;mut self,
+        graph: &amp;CausalGraph,
+        undirected_edges: &amp;[(VariableId, VariableId)],
+    ) -&gt; Vec&lt;DreamExperiment&gt; {
+        let mut candidates: Vec&lt;DreamExperiment&gt; = Vec::new();
+
+        // Category 1: Undirected edges need orientation
+        for &amp;(a, b) in undirected_edges {
+            let info_gain = self.compute_orientation_info_gain(graph, a, b);
+            candidates.push(DreamExperiment {
+                id: self.next_id(),
+                hypothesis_source: a,
+                hypothesis_target: b,
+                intervention_delta: self.default_intervention_size(graph, a),
+                simulation_blocks: self.default_sim_blocks,
+                information_gain: info_gain,
+                measurement_targets: vec![b],
+                status: ExperimentStatus::Queued,
+                result: None,
+            });
+        }
+
+        // Category 2: Low-confidence directed edges need confirmation
+        for edge in graph.all_edges() {
+            if edge.confidence &lt; 0.5 &amp;&amp; edge.evidence_type != CausalEvidenceType::Interventional {
+                let info_gain = self.compute_confirmation_info_gain(edge);
+                candidates.push(DreamExperiment {
+                    id: self.next_id(),
+                    hypothesis_source: edge.source,
+                    hypothesis_target: edge.target,
+                    intervention_delta: self.default_intervention_size(graph, edge.source),
+                    simulation_blocks: self.default_sim_blocks,
+                    information_gain: info_gain,
+                    measurement_targets: graph.children(edge.source).to_vec(),
+                    status: ExperimentStatus::Queued,
+                    result: None,
+                });
+            }
+        }
+
+        // Sort by information gain (descending) and take top N
+        candidates.sort_by(|a, b| {
+            b.information_gain
+                .partial_cmp(&amp;a.information_gain)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+        candidates.truncate(self.max_queue_size);
+
+        candidates
+    }
+
+    /// Process the result of a completed experiment.
+    /// Returns an updated CausalEdge to be added to the graph.
+    pub fn process_result(
+        &amp;self,
+        experiment: &amp;DreamExperiment,
+        current_tick: u64,
+    ) -&gt; Option&lt;CausalEdge&gt; {
+        let result = experiment.result.as_ref()?;
+
+        // If the target moved significantly in response to the intervention,
+        // we have interventional evidence for the edge.
+        if result.p_value &lt; 0.05 &amp;&amp; result.estimated_coefficient.abs() &gt; 1e-6 {
+            Some(CausalEdge {
+                source: experiment.hypothesis_source,
+                target: experiment.hypothesis_target,
+                evidence_type: CausalEvidenceType::Interventional,
+                strength: result.estimated_coefficient,
+                confidence: 1.0 - result.p_value, // Higher significance = higher confidence
+                lag_ticks: 1, // Refine with actual measurement
+                last_confirmed: current_tick,
+                sample_count: result.n_runs as u64,
+                witness_dag_id: Some(WitnessDagNodeId(result.fork_state_hash)),
+            })
+        } else {
+            // Intervention had no effect: weaken or remove the edge
+            None
+        }
+    }
+
+    fn next_id(&amp;mut self) -&gt; u64 {
+        let id = self.next_id;
+        self.next_id += 1;
+        id
+    }
+
+    /// Information gain from orienting an undirected edge.
+    /// Higher when the edge connects to many other nodes (more downstream impact).
+    fn compute_orientation_info_gain(
+        &amp;self,
+        graph: &amp;CausalGraph,
+        a: VariableId,
+        b: VariableId,
+    ) -&gt; f64 {
+        let a_degree = graph.children(a).len() + graph.parents(a).len();
+        let b_degree = graph.children(b).len() + graph.parents(b).len();
+        // More connected nodes produce higher information gain when oriented
+        (a_degree + b_degree) as f64 + 1.0
+    }
+
+    /// Information gain from confirming a low-confidence edge.
+    /// Higher when confidence is lower (more uncertainty to resolve).
+    fn compute_confirmation_info_gain(&amp;self, edge: &amp;CausalEdge) -&gt; f64 {
+        // Binary entropy of the confidence: maximum at confidence = 0.5
+        let p = edge.confidence;
+        if p &lt;= 0.0 || p &gt;= 1.0 {
+            return 0.0;
+        }
+        -(p * p.ln() + (1.0 - p) * (1.0 - p).ln())
+    }
+
+    /// Determine a reasonable intervention size for a variable.
+    /// Based on the variable's observed range in the graph.
+    fn default_intervention_size(&amp;self, _graph: &amp;CausalGraph, _var: VariableId) -&gt; f64 {
+        // In a full implementation, this would look at the variable's
+        // historical distribution and pick an intervention at the 90th percentile.
+        // For now, return a placeholder.
+        1.0
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="hdc-encoding-of-causal-edges"><a class="header" href="#hdc-encoding-of-causal-edges">HDC encoding of causal edges</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// HDC encoding for causal relationships.
+/// Each causal edge (source -&gt; target) is encoded as a hypervector
+/// using BSC bind, enabling fast similarity queries.
+pub struct CausalHdcCodebook {
+    /// Dimension of the hypervectors (matches the system-wide BSC dimension)
+    dim: usize,
+    /// Base hypervectors for each variable (randomly generated on registration)
+    variable_hvs: HashMap&lt;VariableId, Vec&lt;u64&gt;&gt;,
+    /// Encoded causal edges: bind(source_hv, target_hv)
+    edge_hvs: Vec&lt;(VariableId, VariableId, Vec&lt;u64&gt;)&gt;,
+    /// Number of u64 words per hypervector
+    words: usize,
+}
+
+impl CausalHdcCodebook {
+    /// Create a new codebook with the given hypervector dimension.
+    /// Default for Bardo: 10,240 bits.
+    pub fn new(dim: usize) -&gt; Self {
+        CausalHdcCodebook {
+            dim,
+            variable_hvs: HashMap::new(),
+            edge_hvs: Vec::new(),
+            words: (dim + 63) / 64,
+        }
+    }
+
+    /// Register a variable with a random base hypervector.
+    /// Uses a simple xorshift PRNG seeded from the variable ID.
+    pub fn register_variable(&amp;mut self, var: VariableId) {
+        if self.variable_hvs.contains_key(&amp;var) {
+            return;
+        }
+        let mut hv = vec![0u64; self.words];
+        let mut state = var.0 ^ 0x517cc1b727220a95;
+        for word in &amp;mut hv {
+            // xorshift64
+            state ^= state &lt;&lt; 13;
+            state ^= state &gt;&gt; 7;
+            state ^= state &lt;&lt; 17;
+            *word = state;
+        }
+        self.variable_hvs.insert(var, hv);
+    }
+
+    /// Encode a causal edge as bind(source_hv, target_hv).
+    /// The result is quasi-orthogonal to both source and target HVs,
+    /// representing the relationship itself as a first-class object.
+    pub fn encode_edge(&amp;mut self, source: VariableId, target: VariableId) {
+        self.register_variable(source);
+        self.register_variable(target);
+
+        let source_hv = &amp;self.variable_hvs[&amp;source];
+        let target_hv = &amp;self.variable_hvs[&amp;target];
+
+        // BSC bind = XOR
+        let edge_hv: Vec&lt;u64&gt; = source_hv
+            .iter()
+            .zip(target_hv.iter())
+            .map(|(&amp;a, &amp;b)| a ^ b)
+            .collect();
+
+        self.edge_hvs.push((source, target, edge_hv));
+    }
+
+    /// Query: "What does variable X cause?"
+    /// Bind query_hv with X's base HV, then find the closest edge HV.
+    /// The closest match's target is the answer.
+    pub fn query_effects(&amp;self, source: VariableId) -&gt; Vec&lt;(VariableId, f64)&gt; {
+        let source_hv = match self.variable_hvs.get(&amp;source) {
+            Some(hv) =&gt; hv,
+            None =&gt; return vec![],
+        };
+
+        let mut results: Vec&lt;(VariableId, f64)&gt; = self
+            .edge_hvs
+            .iter()
+            .filter(|(s, _, _)| *s == source)
+            .map(|(_, target, edge_hv)| {
+                let sim = self.cosine_similarity(source_hv, edge_hv);
+                (*target, sim)
+            })
+            .collect();
+
+        results.sort_by(|a, b| b.1.partial_cmp(&amp;a.1).unwrap_or(std::cmp::Ordering::Equal));
+        results
+    }
+
+    /// Query: "What causes variable Y?"
+    /// Find all edges whose target matches Y.
+    pub fn query_causes(&amp;self, target: VariableId) -&gt; Vec&lt;(VariableId, f64)&gt; {
+        let target_hv = match self.variable_hvs.get(&amp;target) {
+            Some(hv) =&gt; hv,
+            None =&gt; return vec![],
+        };
+
+        let mut results: Vec&lt;(VariableId, f64)&gt; = self
+            .edge_hvs
+            .iter()
+            .filter(|(_, t, _)| *t == target)
+            .map(|(source, _, edge_hv)| {
+                let sim = self.cosine_similarity(target_hv, edge_hv);
+                (*source, sim)
+            })
+            .collect();
+
+        results.sort_by(|a, b| b.1.partial_cmp(&amp;a.1).unwrap_or(std::cmp::Ordering::Equal));
+        results
+    }
+
+    /// Query: "Is this new edge similar to any known causal relationship?"
+    /// Encode the candidate edge and find nearest neighbors in the codebook.
+    pub fn query_similar_edges(
+        &amp;self,
+        source: VariableId,
+        target: VariableId,
+        top_k: usize,
+    ) -&gt; Vec&lt;(VariableId, VariableId, f64)&gt; {
+        let source_hv = match self.variable_hvs.get(&amp;source) {
+            Some(hv) =&gt; hv,
+            None =&gt; return vec![],
+        };
+        let target_hv = match self.variable_hvs.get(&amp;target) {
+            Some(hv) =&gt; hv,
+            None =&gt; return vec![],
+        };
+
+        // Encode the query edge
+        let query_hv: Vec&lt;u64&gt; = source_hv
+            .iter()
+            .zip(target_hv.iter())
+            .map(|(&amp;a, &amp;b)| a ^ b)
+            .collect();
+
+        let mut results: Vec&lt;(VariableId, VariableId, f64)&gt; = self
+            .edge_hvs
+            .iter()
+            .map(|(s, t, hv)| {
+                let sim = self.hamming_similarity(&amp;query_hv, hv);
+                (*s, *t, sim)
+            })
+            .collect();
+
+        results.sort_by(|a, b| b.2.partial_cmp(&amp;a.2).unwrap_or(std::cmp::Ordering::Equal));
+        results.truncate(top_k);
+        results
+    }
+
+    /// Hamming similarity: fraction of matching bits.
+    /// 0.5 = random (quasi-orthogonal), 1.0 = identical, 0.0 = complementary.
+    fn hamming_similarity(&amp;self, a: &amp;[u64], b: &amp;[u64]) -&gt; f64 {
+        let total_bits = self.dim;
+        let matching: u32 = a
+            .iter()
+            .zip(b.iter())
+            .map(|(&amp;x, &amp;y)| (!(x ^ y)).count_ones())
+            .sum();
+        matching as f64 / total_bits as f64
+    }
+
+    /// Cosine-like similarity in BSC space.
+    /// Maps Hamming similarity to [-1, 1] range: 2 * hamming_sim - 1.
+    fn cosine_similarity(&amp;self, a: &amp;[u64], b: &amp;[u64]) -&gt; f64 {
+        2.0 * self.hamming_similarity(a, b) - 1.0
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-orchestrating-engine"><a class="header" href="#the-orchestrating-engine">The orchestrating engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for the causal discovery engine.
+pub struct CausalConfig {
+    /// PC algorithm configuration
+    pub pc: PcConfig,
+    /// Granger test configuration
+    pub granger: GrangerConfig,
+    /// Maximum observations to buffer before oldest are evicted
+    pub max_observation_buffer: usize,
+    /// Confidence decay rate (lambda in the Ebbinghaus curve)
+    pub confidence_decay_rate: f64,
+    /// Minimum confidence to keep an edge (below this, prune)
+    pub min_edge_confidence: f64,
+    /// Whether to run CMI tests at Delta tick (expensive but thorough)
+    pub use_cmi_at_delta: bool,
+}
+
+impl Default for CausalConfig {
+    fn default() -&gt; Self {
+        CausalConfig {
+            pc: PcConfig::default(),
+            granger: GrangerConfig::default(),
+            max_observation_buffer: 10_000,
+            confidence_decay_rate: 0.001,
+            min_edge_confidence: 0.1,
+            use_cmi_at_delta: true,
+        }
+    }
+}
+
+/// An insight produced by the causal discovery engine.
+/// Emitted at Theta tick when new causal knowledge is found.
+#[derive(Clone, Debug)]
+pub struct CausalInsight {
+    /// What changed
+    pub kind: InsightKind,
+    /// The edge involved
+    pub source: VariableId,
+    pub target: VariableId,
+    /// Confidence in the insight
+    pub confidence: f64,
+}
+
+#[derive(Clone, Debug)]
+pub enum InsightKind {
+    /// A new causal edge was discovered
+    NewEdge { evidence: CausalEvidenceType },
+    /// An existing edge was strengthened by new evidence
+    EdgeStrengthened { old_confidence: f64 },
+    /// An existing edge was weakened or removed
+    EdgeWeakened { new_confidence: f64 },
+    /// An edge was confirmed by interventional experiment
+    EdgeConfirmedByDream,
+    /// An edge was refuted by interventional experiment
+    EdgeRefutedByDream,
+    /// A causal prediction was made (X changed, Y should follow)
+    CausalPrediction { predicted_delta: f64, lag_ticks: u32 },
+}
+
+/// Death testament: the causal graph state to be inherited by the next generation.
+pub struct CausalTestament {
+    /// Serialized causal graph
+    pub graph_snapshot: CausalGraph,
+    /// Variable metadata for deserialization
+    pub variable_registry: Vec&lt;CausalVariable&gt;,
+    /// Summary statistics
+    pub total_edges: usize,
+    pub interventionally_confirmed: usize,
+    pub average_confidence: f64,
+    /// Tick when the testament was created
+    pub created_at: u64,
+}
+
+/// The main causal discovery engine. Orchestrates the PC algorithm,
+/// Granger tests, dream experiments, and graph maintenance.
+///
+/// Integrates with the heartbeat via gamma_tick, theta_tick, delta_tick,
+/// and the dream system via dream_nrem and dream_rem.
+pub struct CausalDiscoveryEngine {
+    /// The live causal graph
+    graph: CausalGraph,
+    /// PC algorithm state (incremental)
+    pc: PcAlgorithm,
+    /// Granger causality tester
+    granger: GrangerCausalityTest,
+    /// Observation buffer for the sliding window
+    observation_buffer: VecDeque&lt;ObservationRecord&gt;,
+    /// Queue of dream experiments to run
+    dream_queue: VecDeque&lt;DreamExperiment&gt;,
+    /// Dream experiment designer
+    dream_designer: InterventionalDreamDesigner,
+    /// HDC codebook for fast causal queries
+    hdc_codebook: CausalHdcCodebook,
+    /// Configuration
+    config: CausalConfig,
+    /// Current tick (updated each gamma_tick)
+    current_tick: u64,
+    /// Running statistics for variables (mean, variance, covariance)
+    running_stats: RunningStats,
+    /// Pending causal predictions (emitted at gamma, checked later)
+    pending_predictions: Vec&lt;CausalPrediction&gt;,
+}
+
+/// Tracks running mean and variance for streaming computation.
+struct RunningStats {
+    means: HashMap&lt;VariableId, f64&gt;,
+    variances: HashMap&lt;VariableId, f64&gt;,
+    counts: HashMap&lt;VariableId, u64&gt;,
+}
+
+impl RunningStats {
+    fn new() -&gt; Self {
+        RunningStats {
+            means: HashMap::new(),
+            variances: HashMap::new(),
+            counts: HashMap::new(),
+        }
+    }
+
+    /// Welford's online algorithm for updating mean and variance.
+    fn update(&amp;mut self, var: VariableId, value: f64) {
+        let count = self.counts.entry(var).or_insert(0);
+        *count += 1;
+        let n = *count as f64;
+
+        let mean = self.means.entry(var).or_insert(0.0);
+        let delta = value - *mean;
+        *mean += delta / n;
+
+        let variance = self.variances.entry(var).or_insert(0.0);
+        let delta2 = value - *mean;
+        *variance += delta * delta2;
+    }
+
+    fn current_variance(&amp;self, var: VariableId) -&gt; f64 {
+        let count = self.counts.get(&amp;var).copied().unwrap_or(0);
+        if count &lt; 2 {
+            return 0.0;
+        }
+        self.variances.get(&amp;var).copied().unwrap_or(0.0) / (count - 1) as f64
+    }
+}
+
+struct CausalPrediction {
+    source: VariableId,
+    target: VariableId,
+    predicted_delta: f64,
+    expected_at_tick: u64,
+    edge_confidence: f64,
+}
+
+impl CausalDiscoveryEngine {
+    pub fn new(config: CausalConfig) -&gt; Self {
+        let pc_config = config.pc.clone();
+        let granger_config = config.granger.clone();
+
+        CausalDiscoveryEngine {
+            graph: CausalGraph::new(),
+            pc: PcAlgorithm::new(pc_config),
+            granger: GrangerCausalityTest::new(granger_config),
+            observation_buffer: VecDeque::with_capacity(config.max_observation_buffer),
+            dream_queue: VecDeque::new(),
+            dream_designer: InterventionalDreamDesigner::new(),
+            hdc_codebook: CausalHdcCodebook::new(10_240),
+            config,
+            current_tick: 0,
+            running_stats: RunningStats::new(),
+            pending_predictions: Vec::new(),
+        }
+    }
+
+    /// Register a new DeFi variable to track.
+    pub fn register_variable(&amp;mut self, protocol: &amp;str, metric: &amp;str) -&gt; VariableId {
+        let id = self.graph.add_variable(protocol, metric);
+        self.hdc_codebook.register_variable(id);
+        id
+    }
+
+    /// Gamma tick: ingest observations and emit causal predictions.
+    ///
+    /// Budget: &lt; 1ms. Only bookkeeping and prediction lookup.
+    pub fn gamma_tick(&amp;mut self, observations: &amp;[Observation]) -&gt; Vec&lt;CausalInsight&gt; {
+        let mut insights = Vec::new();
+
+        for obs in observations {
+            self.current_tick = obs.tick;
+
+            // Update running statistics
+            for (&amp;var, &amp;value) in &amp;obs.values {
+                self.running_stats.update(var, value);
+            }
+
+            // Append to observation buffer
+            self.observation_buffer.push_back(ObservationRecord {
+                tick: obs.tick,
+                block_number: 0, // Filled by caller
+                timestamp_secs: 0,
+                values: obs.values.clone(),
+            });
+
+            // Evict oldest if over capacity
+            while self.observation_buffer.len() &gt; self.config.max_observation_buffer {
+                self.observation_buffer.pop_front();
+            }
+
+            // Feed Granger test
+            self.granger.observe(obs);
+
+            // Check for causal predictions: if a variable with outgoing edges
+            // changed significantly, predict downstream effects
+            for (&amp;var, &amp;value) in &amp;obs.values {
+                let variance = self.running_stats.current_variance(var);
+                if variance &lt;= 0.0 {
+                    continue;
+                }
+                let mean = self.running_stats.means.get(&amp;var).copied().unwrap_or(0.0);
+                let z_score = (value - mean) / variance.sqrt();
+
+                // Only predict for significant deviations (|z| &gt; 2)
+                if z_score.abs() &gt; 2.0 {
+                    for &amp;child in self.graph.children(var) {
+                        if let Some(edge) = self.graph.edge(var, child) {
+                            if edge.confidence &gt; 0.3 {
+                                let predicted_delta = (value - mean) * edge.strength;
+                                insights.push(CausalInsight {
+                                    kind: InsightKind::CausalPrediction {
+                                        predicted_delta,
+                                        lag_ticks: edge.lag_ticks,
+                                    },
+                                    source: var,
+                                    target: child,
+                                    confidence: edge.confidence,
+                                });
+
+                                self.pending_predictions.push(CausalPrediction {
+                                    source: var,
+                                    target: child,
+                                    predicted_delta,
+                                    expected_at_tick: obs.tick + edge.lag_ticks as u64,
+                                    edge_confidence: edge.confidence,
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Check pending predictions against actual observations
+            self.pending_predictions.retain(|pred| {
+                if obs.tick &gt;= pred.expected_at_tick {
+                    if let Some(&amp;actual) = obs.values.get(&amp;pred.target) {
+                        let mean = self
+                            .running_stats
+                            .means
+                            .get(&amp;pred.target)
+                            .copied()
+                            .unwrap_or(0.0);
+                        let actual_delta = actual - mean;
+
+                        // If prediction direction matches, reinforce the edge
+                        let direction_match =
+                            pred.predicted_delta.signum() == actual_delta.signum();
+
+                        if let Some(edge) = self
+                            .graph
+                            .edges
+                            .get_mut(&amp;(pred.source, pred.target))
+                        {
+                            if direction_match {
+                                edge.confidence =
+                                    (edge.confidence + 0.02).min(1.0);
+                                edge.last_confirmed = obs.tick;
+                            } else {
+                                edge.confidence =
+                                    (edge.confidence - 0.05).max(0.0);
+                            }
+                        }
+                    }
+                    false // Remove prediction from pending list
+                } else {
+                    true // Keep waiting
+                }
+            });
+        }
+
+        insights
+    }
+
+    /// Theta tick: run incremental causal discovery.
+    ///
+    /// Budget: &lt; 500ms. Runs a batch of PC algorithm CI tests and
+    /// pairwise Granger tests.
+    pub fn theta_tick(&amp;mut self) -&gt; Vec&lt;CausalInsight&gt; {
+        let mut insights = Vec::new();
+        let data: Vec&lt;ObservationRecord&gt; = self.observation_buffer.iter().cloned().collect();
+
+        if data.len() &lt; 50 {
+            return insights; // Not enough data yet
+        }
+
+        // Initialize PC if needed (new variables added since last init)
+        let current_vars = self.graph.variable_ids();
+        if !current_vars.is_empty() {
+            // Run a batch of PC algorithm tests
+            let ci_test = PartialCorrelationTest;
+            let complete = self.pc.run_batch(&amp;ci_test, &amp;data);
+
+            if complete {
+                // Orient edges and update the causal graph
+                let directed = self.pc.orient_edges();
+                for (source, target) in &amp;directed {
+                    if self.graph.edge(*source, *target).is_none() {
+                        let edge = CausalEdge {
+                            source: *source,
+                            target: *target,
+                            evidence_type: CausalEvidenceType::Observational,
+                            strength: 0.0, // Estimated later
+                            confidence: 0.6, // Moderate initial confidence
+                            lag_ticks: 1,
+                            last_confirmed: self.current_tick,
+                            sample_count: data.len() as u64,
+                            witness_dag_id: None,
+                        };
+                        self.graph.add_edge(edge);
+                        self.hdc_codebook.encode_edge(*source, *target);
+
+                        insights.push(CausalInsight {
+                            kind: InsightKind::NewEdge {
+                                evidence: CausalEvidenceType::Observational,
+                            },
+                            source: *source,
+                            target: *target,
+                            confidence: 0.6,
+                        });
+                    }
+                }
+
+                // Re-initialize PC for the next cycle
+                self.pc.initialize(&amp;current_vars);
+            }
+        }
+
+        // Run pairwise Granger tests on testable variables
+        let testable = self.granger.testable_variables();
+        for i in 0..testable.len() {
+            for j in 0..testable.len() {
+                if i == j {
+                    continue;
+                }
+                let result = self.granger.test(testable[i], testable[j]);
+                if result.granger_causes {
+                    let existing = self.graph.edge(testable[i], testable[j]);
+                    if existing.is_none() {
+                        let edge = CausalEdge {
+                            source: testable[i],
+                            target: testable[j],
+                            evidence_type: CausalEvidenceType::GrangerTemporal,
+                            strength: result.transfer_entropy,
+                            confidence: 0.4, // Lower than observational (Granger != causation)
+                            lag_ticks: result.optimal_lag as u32,
+                            last_confirmed: self.current_tick,
+                            sample_count: self.config.granger.window_size as u64,
+                            witness_dag_id: None,
+                        };
+                        self.graph.add_edge(edge);
+                        self.hdc_codebook.encode_edge(testable[i], testable[j]);
+
+                        insights.push(CausalInsight {
+                            kind: InsightKind::NewEdge {
+                                evidence: CausalEvidenceType::GrangerTemporal,
+                            },
+                            source: testable[i],
+                            target: testable[j],
+                            confidence: 0.4,
+                        });
+                    } else if let Some(existing) = existing {
+                        if existing.confidence &lt; 0.4 {
+                            // Granger evidence reinforces a weak edge
+                            insights.push(CausalInsight {
+                                kind: InsightKind::EdgeStrengthened {
+                                    old_confidence: existing.confidence,
+                                },
+                                source: testable[i],
+                                target: testable[j],
+                                confidence: 0.4,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        insights
+    }
+
+    /// Delta tick: full graph audit, CMI-based testing, pruning, grimoire update.
+    ///
+    /// Budget: &lt; 30 seconds. Runs expensive operations.
+    pub fn delta_tick(&amp;mut self) {
+        let data: Vec&lt;ObservationRecord&gt; = self.observation_buffer.iter().cloned().collect();
+
+        // Decay all edge confidences
+        self.graph
+            .decay_confidences(self.config.confidence_decay_rate, self.current_tick);
+
+        // Prune stale edges
+        let pruned = self
+            .graph
+            .prune_stale_edges(self.config.min_edge_confidence);
+        for (source, target) in &amp;pruned {
+            // Log pruned edges for audit
+            let _ = (source, target); // In production: emit to audit log
+        }
+
+        // Full CMI-based PC algorithm pass (if enabled)
+        if self.config.use_cmi_at_delta &amp;&amp; data.len() &gt;= 100 {
+            let cmi_test = MutualInformationTest::new(5);
+            let vars = self.graph.variable_ids();
+            let mut full_pc = PcAlgorithm::new(PcConfig {
+                significance_level: 0.01, // Stricter for Delta audit
+                max_conditioning_size: 3,
+                max_tests_per_tick: 5000, // Larger budget at Delta
+            });
+            full_pc.initialize(&amp;vars);
+
+            // Run to completion
+            loop {
+                if full_pc.run_batch(&amp;cmi_test, &amp;data) {
+                    break;
+                }
+            }
+
+            // Compare with current graph for inconsistencies
+            let cmi_directed = full_pc.orient_edges();
+            for (source, target) in &amp;cmi_directed {
+                if let Some(edge) = self.graph.edge(*source, *target) {
+                    // Edge confirmed by CMI: reinforce
+                    let key = (*source, *target);
+                    if let Some(e) = self.graph.edges.get_mut(&amp;key) {
+                        e.last_confirmed = self.current_tick;
+                        e.confidence = (e.confidence + 0.1).min(1.0);
+                    }
+                }
+            }
+        }
+
+        // DAG consistency check
+        if !self.graph.is_dag() {
+            // Graph has cycles. This can happen when observational and Granger
+            // evidence create conflicting edges. Resolve by removing the
+            // weakest edge in each cycle.
+            self.break_cycles();
+        }
+
+        // Design dream experiments for the next REM cycle
+        let undirected: Vec&lt;(VariableId, VariableId)&gt; = Vec::new(); // From PC's unoriented edges
+        let experiments = self.dream_designer.design_experiments(&amp;self.graph, &amp;undirected);
+        for exp in experiments {
+            self.dream_queue.push_back(exp);
+        }
+    }
+
+    /// NREM dream: replay past observation sequences and validate
+    /// causal predictions.
+    pub fn dream_nrem(&amp;mut self, replay: &amp;[ObservationRecord]) {
+        // Replay the sequence through the causal model.
+        // For each observation, check if the causal graph's predictions
+        // match the actual outcome.
+        for window in replay.windows(2) {
+            let prev = &amp;window[0];
+            let curr = &amp;window[1];
+
+            // For each edge, check if the predicted direction matches
+            for edge_key in self.graph.edges.keys().cloned().collect::&lt;Vec&lt;_&gt;&gt;() {
+                let (source, target) = edge_key;
+                let source_prev = prev.values.get(&amp;source).copied();
+                let source_curr = curr.values.get(&amp;source).copied();
+                let target_prev = prev.values.get(&amp;target).copied();
+                let target_curr = curr.values.get(&amp;target).copied();
+
+                if let (Some(sp), Some(sc), Some(tp), Some(tc)) =
+                    (source_prev, source_curr, target_prev, target_curr)
+                {
+                    let source_delta = sc - sp;
+                    let target_delta = tc - tp;
+
+                    if source_delta.abs() &gt; 1e-8 &amp;&amp; target_delta.abs() &gt; 1e-8 {
+                        if let Some(edge) = self.graph.edges.get_mut(&amp;edge_key) {
+                            let predicted_sign = (source_delta * edge.strength).signum();
+                            let actual_sign = target_delta.signum();
+
+                            if predicted_sign == actual_sign {
+                                // Prediction confirmed: reinforce
+                                edge.confidence = (edge.confidence + 0.01).min(1.0);
+                                edge.last_confirmed = curr.tick;
+                            } else {
+                                // Prediction failed: penalize
+                                edge.confidence = (edge.confidence - 0.02).max(0.0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// REM dream: run interventional experiments via Mirage-rs.
+    ///
+    /// The `mirage` parameter is a handle to the fork simulation engine.
+    /// Returns the experiments that were run (with results populated).
+    ///
+    /// In a full implementation, MirageSimulator would be the mirage-rs
+    /// EvmExecutor. Here we define the interface.
+    pub fn dream_rem(
+        &amp;mut self,
+        mirage: &amp;mut dyn MirageSimulator,
+    ) -&gt; Vec&lt;DreamExperiment&gt; {
+        let mut completed = Vec::new();
+        let budget = 5; // Max experiments per REM cycle
+
+        for _ in 0..budget {
+            let mut experiment = match self.dream_queue.pop_front() {
+                Some(e) =&gt; e,
+                None =&gt; break,
+            };
+
+            experiment.status = ExperimentStatus::Running;
+
+            // Run the experiment on Mirage-rs
+            match mirage.run_experiment(&amp;experiment) {
+                Ok(result) =&gt; {
+                    experiment.result = Some(result);
+                    experiment.status = ExperimentStatus::Completed;
+
+                    // Process the result and update the causal graph
+                    if let Some(edge) =
+                        self.dream_designer.process_result(&amp;experiment, self.current_tick)
+                    {
+                        self.graph.add_edge(edge);
+                        self.hdc_codebook
+                            .encode_edge(experiment.hypothesis_source, experiment.hypothesis_target);
+                    } else {
+                        // Experiment showed no effect: weaken the edge
+                        if let Some(e) = self.graph.edges.get_mut(&amp;(
+                            experiment.hypothesis_source,
+                            experiment.hypothesis_target,
+                        )) {
+                            e.confidence *= 0.3; // Steep penalty for interventional disconfirmation
+                        }
+                    }
+                }
+                Err(msg) =&gt; {
+                    experiment.status = ExperimentStatus::Failed(msg);
+                }
+            }
+
+            completed.push(experiment);
+        }
+
+        completed
+    }
+
+    /// Generate a death testament: the causal graph state to be inherited.
+    pub fn death_testament(&amp;self) -&gt; CausalTestament {
+        let total = self.graph.edge_count();
+        let interventional = self
+            .graph
+            .all_edges()
+            .filter(|e| {
+                e.evidence_type == CausalEvidenceType::Interventional
+                    || e.evidence_type == CausalEvidenceType::Hybrid
+            })
+            .count();
+
+        let avg_conf = if total &gt; 0 {
+            self.graph.all_edges().map(|e| e.confidence).sum::&lt;f64&gt;() / total as f64
+        } else {
+            0.0
+        };
+
+        CausalTestament {
+            graph_snapshot: CausalGraph::new(), // In production: deep clone
+            variable_registry: self
+                .graph
+                .variable_ids()
+                .iter()
+                .filter_map(|&amp;id| self.graph.variable(id).cloned())
+                .collect(),
+            total_edges: total,
+            interventionally_confirmed: interventional,
+            average_confidence: avg_conf,
+            created_at: self.current_tick,
+        }
+    }
+
+    /// Break cycles in the graph by removing the weakest edge in each cycle.
+    fn break_cycles(&amp;mut self) {
+        // Repeatedly find and break cycles until the graph is a DAG.
+        // Detect a cycle via DFS, then remove the lowest-confidence edge in it.
+        loop {
+            if let Some(cycle) = self.find_cycle() {
+                // Find the weakest edge in the cycle
+                let mut weakest: Option&lt;(VariableId, VariableId, f64)&gt; = None;
+                for window in cycle.windows(2) {
+                    let (s, t) = (window[0], window[1]);
+                    if let Some(edge) = self.graph.edge(s, t) {
+                        match &amp;weakest {
+                            None =&gt; weakest = Some((s, t, edge.confidence)),
+                            Some((_, _, conf)) if edge.confidence &lt; *conf =&gt; {
+                                weakest = Some((s, t, edge.confidence));
+                            }
+                            _ =&gt; {}
+                        }
+                    }
+                }
+
+                if let Some((s, t, _)) = weakest {
+                    self.graph.remove_edge(s, t);
+                } else {
+                    break;
+                }
+            } else {
+                break; // No more cycles
+            }
+        }
+    }
+
+    /// Find a cycle in the graph using DFS. Returns the cycle as a path,
+    /// or None if the graph is acyclic.
+    fn find_cycle(&amp;self) -&gt; Option&lt;Vec&lt;VariableId&gt;&gt; {
+        let vars = self.graph.variable_ids();
+        let mut visited: HashSet&lt;VariableId&gt; = HashSet::new();
+        let mut in_stack: HashSet&lt;VariableId&gt; = HashSet::new();
+        let mut parent: HashMap&lt;VariableId, VariableId&gt; = HashMap::new();
+
+        for &amp;start in &amp;vars {
+            if visited.contains(&amp;start) {
+                continue;
+            }
+
+            let mut stack: Vec&lt;(VariableId, bool)&gt; = vec![(start, false)];
+
+            while let Some((node, processed)) = stack.pop() {
+                if processed {
+                    in_stack.remove(&amp;node);
+                    continue;
+                }
+
+                if in_stack.contains(&amp;node) {
+                    // Found a cycle. Reconstruct it.
+                    let mut cycle = vec![node];
+                    let mut current = *parent.get(&amp;node).unwrap_or(&amp;node);
+                    while current != node {
+                        cycle.push(current);
+                        current = *parent.get(&amp;current).unwrap_or(&amp;node);
+                    }
+                    cycle.push(node);
+                    cycle.reverse();
+                    return Some(cycle);
+                }
+
+                if visited.contains(&amp;node) {
+                    continue;
+                }
+
+                visited.insert(node);
+                in_stack.insert(node);
+                stack.push((node, true)); // Mark for post-processing
+
+                for &amp;child in self.graph.children(node) {
+                    parent.insert(child, node);
+                    stack.push((child, false));
+                }
+            }
+        }
+
+        None
+    }
+}
+
+/// Interface to the Mirage-rs fork simulation engine.
+/// The causal discovery engine uses this to run do(X) experiments.
+pub trait MirageSimulator {
+    /// Fork current mainnet state, execute the intervention, simulate
+    /// subsequent blocks, and return the measured effects.
+    fn run_experiment(
+        &amp;mut self,
+        experiment: &amp;DreamExperiment,
+    ) -&gt; Result&lt;ExperimentResult, String&gt;;
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="defi-primitive-coverage-the-cross-primitive-causal-graph"><a class="header" href="#defi-primitive-coverage-the-cross-primitive-causal-graph">DeFi primitive coverage: the cross-primitive causal graph</a></h2>
+<p>The causal discovery engine does not start from scratch. It begins with a set of causal hypotheses derived from known DeFi mechanisms. These are priors, not certainties. Each hypothesis enters the graph as a low-confidence edge that the engine must confirm, refute, or refine through observation and experimentation.</p>
+<h3 id="dex-to-lending-the-arbitrage-pressure-channel"><a class="header" href="#dex-to-lending-the-arbitrage-pressure-channel">DEX to lending: the arbitrage pressure channel</a></h3>
+<p><strong>Hypothesis:</strong> A large swap on a Uniswap V3 pool causes a lending rate change on Aave within 1-5 blocks.</p>
+<p><strong>Mechanism:</strong> The swap moves the spot price. Borrowers on Aave whose collateral is the swapped token see their collateral-to-debt ratio shift. If the price moves against them, they approach liquidation thresholds, increasing effective utilization. Aave’s interest rate model responds to utilization with a piecewise linear function that steepens sharply above the optimal utilization threshold (typically 80%). MEV bots may front-run liquidations, compressing the lag.</p>
+<p><strong>Causal chain:</strong> swap_volume -&gt; spot_price -&gt; collateral_value -&gt; utilization -&gt; borrow_rate</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>uniswap_v3.swap_volume_eth (source)</li>
+<li>uniswap_v3.sqrt_price_x96 (intermediate)</li>
+<li>aave_v3.collateral_value_eth (intermediate)</li>
+<li>aave_v3.utilization_usdc (intermediate)</li>
+<li>aave_v3.borrow_rate_usdc (target)</li>
+</ul>
+<p><strong>Dream experiment:</strong> Simulate a 1,000 ETH swap on the WETH/USDC pool. Fork state, execute swap, replay 10 blocks. Measure the Aave borrow rate oracle update, borrower health factor changes, and any liquidation events.</p>
+<h3 id="vault-outflows-to-lp-removal-capital-rotation"><a class="header" href="#vault-outflows-to-lp-removal-capital-rotation">Vault outflows to LP removal: capital rotation</a></h3>
+<p><strong>Hypothesis:</strong> Outflow from yield vaults (e.g., Yearn, Convex) precedes removal of LP positions on the underlying DEX pools.</p>
+<p><strong>Mechanism:</strong> Vault depositors withdrawing capital often need to unwind their positions in the underlying protocols. A vault holding Curve LP tokens must burn those tokens (removing liquidity) to return the underlying assets. The lag depends on the vault’s withdrawal queue and any lockup periods.</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>yearn.tvl_delta (source)</li>
+<li>curve.lp_removal_volume (target)</li>
+<li>curve.pool_depth (downstream)</li>
+</ul>
+<h3 id="funding-rate-deviation-to-spot-price-movement"><a class="header" href="#funding-rate-deviation-to-spot-price-movement">Funding rate deviation to spot price movement</a></h3>
+<p><strong>Hypothesis:</strong> Persistent funding rate deviation on perpetual exchanges predicts spot price movement as arbitrageurs close the basis.</p>
+<p><strong>Mechanism:</strong> When the perpetual funding rate diverges from neutral, arbitrageurs enter basis trades: long spot / short perp (when funding is positive) or short spot / long perp (when negative). This puts directional pressure on the spot market. The lag depends on arbitrageur capital availability and gas costs.</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>perp_exchange.funding_rate (source)</li>
+<li>uniswap_v3.spot_price (target)</li>
+</ul>
+<h3 id="gas-spike-to-liquidation-cascade"><a class="header" href="#gas-spike-to-liquidation-cascade">Gas spike to liquidation cascade</a></h3>
+<p><strong>Hypothesis:</strong> Sudden gas price spikes trigger liquidation cascades by preventing borrowers from topping up collateral or repaying debt.</p>
+<p><strong>Mechanism:</strong> Borrowers near liquidation thresholds rely on being able to submit collateral top-up transactions before liquidators act. A gas spike raises the cost of these transactions, causing some borrowers to delay or abandon the attempt. Liquidators, who operate with dedicated gas budgets and priority fee strategies, continue executing. The result is a burst of liquidations concentrated in the blocks immediately following the gas spike.</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>gas.base_fee_gwei (source)</li>
+<li>aave_v3.liquidation_count (target)</li>
+<li>aave_v3.utilization (downstream)</li>
+</ul>
+<h3 id="bridge-inflow-to-dex-volume"><a class="header" href="#bridge-inflow-to-dex-volume">Bridge inflow to DEX volume</a></h3>
+<p><strong>Hypothesis:</strong> Token bridge inflows (from L2s or other chains) predict DEX volume spikes on the receiving chain within 10-60 minutes.</p>
+<p><strong>Mechanism:</strong> Capital bridged to Ethereum mainnet typically needs to be swapped on arrival. Bridge users either swap immediately or deposit into DeFi protocols, both of which generate on-chain activity. The lag depends on the bridge finality time and the user’s intention.</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>bridge.eth_inflow_volume (source)</li>
+<li>uniswap_v3.total_volume (target)</li>
+</ul>
+<h3 id="restaking-delegation-to-staking-yield"><a class="header" href="#restaking-delegation-to-staking-yield">Restaking delegation to staking yield</a></h3>
+<p><strong>Hypothesis:</strong> Shifts in restaking delegation (EigenLayer) predict changes in base staking yield.</p>
+<p><strong>Mechanism:</strong> Restaking locks ETH that would otherwise be available for native staking or other yield sources. Large delegation shifts change the effective supply of staking capital, which affects the base staking yield through Ethereum’s validator reward curve (yield decreases as total staked ETH increases).</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>eigenlayer.delegation_delta (source)</li>
+<li>ethereum.staking_yield (target)</li>
+</ul>
+<h3 id="prediction-market-outcome-to-defi-position-movement"><a class="header" href="#prediction-market-outcome-to-defi-position-movement">Prediction market outcome to DeFi position movement</a></h3>
+<p><strong>Hypothesis:</strong> Resolution of prediction market events (Polymarket, Augur) on topics correlated with DeFi asset prices precedes correlated DeFi position adjustments.</p>
+<p><strong>Mechanism:</strong> Prediction market outcomes provide early information signals. A market resolving “yes” on a regulatory question affecting stablecoins could trigger stablecoin de-pegging hedges, lending rate adjustments, and LP position changes. The causal link here is informational: the prediction market reveals information faster than the DeFi protocols price it in.</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>polymarket.event_resolution (source)</li>
+<li>various.position_changes (target)</li>
+</ul>
+<h3 id="intent-based-batch-settlement-to-price-impact"><a class="header" href="#intent-based-batch-settlement-to-price-impact">Intent-based batch settlement to price impact</a></h3>
+<p><strong>Hypothesis:</strong> Batch settlement by intent-based protocols (CoW Swap, UniswapX) creates characteristic price impact patterns distinguishable from continuous AMM trading.</p>
+<p><strong>Mechanism:</strong> Intent-based systems batch multiple orders and settle them simultaneously, creating a point-in-time price impact that differs from the continuous small impacts of individual AMM swaps. The settlement transaction concentrates price movement into a single block, potentially creating arbitrage opportunities in adjacent blocks.</p>
+<p><strong>Variables to track:</strong></p>
+<ul>
+<li>cowswap.batch_settlement_volume (source)</li>
+<li>uniswap_v3.price_impact_per_block (target)</li>
+</ul>
+<hr>
+<h2 id="the-cybernetic-loop"><a class="header" href="#the-cybernetic-loop">The cybernetic loop</a></h2>
+<p>The causal discovery system is a cybernetic feedback loop. Each cycle refines the Golem’s causal model, and the model in turn directs the next cycle’s attention and experimentation.</p>
+<p><strong>Observe.</strong> At Gamma tick, the Golem ingests protocol state changes. The observation buffer grows. Running statistics update. If a tracked variable changes significantly and the causal graph predicts downstream effects, the Golem emits a causal prediction and raises its attention bid on the predicted target variable.</p>
+<p><strong>Hypothesize.</strong> At Theta tick, the PC algorithm and Granger tests discover candidate causal edges. These are hypotheses, not facts. The engine records them in the graph with moderate confidence and queues them for confirmation.</p>
+<p><strong>Test.</strong> During REM dreams, the dream designer selects the highest-information-gain hypotheses and runs do(X) experiments on Mirage-rs forks. The intervention breaks confounders: if the target variable moves in the fork despite no confounding macro event, the causal link is real.</p>
+<p><strong>Update.</strong> The dream results update the graph. Confirmed edges gain interventional evidence and higher confidence. Refuted edges lose confidence steeply (interventional disconfirmation is strong evidence). The graph’s structure changes.</p>
+<p><strong>Consolidate.</strong> During NREM dreams, the engine replays past observation sequences through the updated causal model. Edges that correctly explain past observations are reinforced. Edges that fail are weakened. This is the Ebbinghaus decay in action: causal knowledge must be periodically re-confirmed to survive.</p>
+<p><strong>Predict.</strong> The updated graph feeds back into Gamma tick predictions. Better causal models produce better predictions. Better predictions produce better attention allocation (via the attention auction). Better attention produces more relevant observations. The loop tightens.</p>
+<p><strong>Inherit.</strong> When a Golem dies, its causal graph transfers to the next generation through the death testament and Grimoire. The new Golem starts with its predecessor’s graph, subject to confidence decay during the inheritance gap. It does not need to rediscover known causal structures from scratch. Causal knowledge compounds across generations.</p>
+<p>This compounding is the system’s primary value. A first-generation Golem discovers that large swaps cause rate changes. A second-generation Golem inherits that knowledge and discovers the intermediate mechanism (collateral value -&gt; utilization). A third-generation Golem discovers the gas price confound and learns to distinguish real causal effects from confounded correlations. Each generation’s causal model is richer than the last.</p>
+<hr>
+<h2 id="evaluation-protocol-spec"><a class="header" href="#evaluation-protocol-spec">Evaluation protocol [SPEC]</a></h2>
+<h3 id="graph-accuracy-against-known-mechanisms"><a class="header" href="#graph-accuracy-against-known-mechanisms">Graph accuracy against known mechanisms</a></h3>
+<p>DeFi provides ground truth for certain causal relationships because the protocol code is public. The Aave interest rate model is a deterministic function of utilization: we know the structural equation. The Uniswap V3 price impact formula is specified in the contract. These known mechanisms serve as benchmarks.</p>
+<p><strong>Test:</strong> Initialize the engine on a period of historical data. Let it discover the causal graph. Compare discovered edges against the known protocol mechanics. Metrics:</p>
+<ul>
+<li>True positive rate: fraction of known causal edges that the engine discovers</li>
+<li>False positive rate: fraction of discovered edges that do not correspond to known mechanisms</li>
+<li>Edge strength accuracy: for known edges, how close is the estimated causal coefficient to the true value derived from the protocol math?</li>
+</ul>
+<p>Target: TPR &gt; 0.8, FPR &lt; 0.2, within 500 Theta ticks of initialization.</p>
+<h3 id="interventional-experiment-success-rate"><a class="header" href="#interventional-experiment-success-rate">Interventional experiment success rate</a></h3>
+<p>For dream-based do(X) experiments, the success metric is prediction accuracy: does the Mirage-rs fork simulation produce the effect the causal graph predicts?</p>
+<p><strong>Test:</strong> Run 100 dream experiments on known causal edges (where we can independently verify the effect). Measure:</p>
+<ul>
+<li>Directional accuracy: fraction of experiments where the predicted effect direction matches the observed direction</li>
+<li>Magnitude accuracy: mean absolute error of predicted vs. observed effect size</li>
+<li>Null detection rate: fraction of experiments on non-causal edges that correctly return no effect</li>
+</ul>
+<p>Target: directional accuracy &gt; 0.85, null detection rate &gt; 0.90.</p>
+<h3 id="causal-prediction-vs-correlation-based-prediction"><a class="header" href="#causal-prediction-vs-correlation-based-prediction">Causal prediction vs. correlation-based prediction</a></h3>
+<p>The core question: do causal-informed predictions outperform correlation-based ones?</p>
+<p><strong>Test:</strong> Run two prediction systems in parallel on live data:</p>
+<ol>
+<li>Correlation-based: predict Y from X using the raw correlation coefficient</li>
+<li>Causal-based: predict Y from X using the causal graph’s estimated causal effect (which accounts for confounders via the adjustment formula)</li>
+</ol>
+<p>Measure prediction quality (RMSE, directional accuracy) over a rolling window. The causal system should outperform in regimes where confounders are active (market stress, gas spikes, governance events) and perform comparably in stable regimes where correlations approximate causal effects.</p>
+<p>Target: causal predictions reduce RMSE by &gt; 15% during high-volatility periods.</p>
+<h3 id="graph-adaptation-speed"><a class="header" href="#graph-adaptation-speed">Graph adaptation speed</a></h3>
+<p>When the DeFi environment changes (new protocol launch, governance parameter update, market regime shift), how quickly does the causal graph adapt?</p>
+<p><strong>Test:</strong> Introduce a structural change (e.g., modify the Aave rate model parameters in a historical replay) and measure:</p>
+<ul>
+<li>Detection latency: how many Theta ticks until the engine detects the edge strength change?</li>
+<li>Convergence time: how many Theta ticks until the updated edge strength stabilizes within 10% of the new true value?</li>
+<li>False alarm rate: how often does the engine incorrectly report structural changes that didn’t happen?</li>
+</ul>
+<p>Target: detection within 10 Theta ticks, convergence within 50, false alarm rate &lt; 0.05.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<p>Bongers, S., Forre, P., Peters, J., &amp; Mooij, J. M. (2021). Foundations of structural causal models with cycles and latent variables. <em>Annals of Statistics</em>, 49(5), 2885-2915.</p>
+<p>Granger, C. W. J. (1969). Investigating causal relations by econometric models and cross-spectral methods. <em>Econometrica</em>, 37(3), 424-438.</p>
+<p>Kraskov, A., Stogbauer, H., &amp; Grassberger, P. (2004). Estimating mutual information. <em>Physical Review E</em>, 69(6), 066138.</p>
+<p>Marinazzo, D., Pellicoro, M., &amp; Stramaglia, S. (2008). Kernel method for nonlinear Granger causality. <em>Physical Review Letters</em>, 100(14), 144103.</p>
+<p>Pearl, J. (2009). <em>Causality: Models, Reasoning, and Inference</em> (2nd ed.). Cambridge University Press.</p>
+<p>Peters, J., Janzing, D., &amp; Scholkopf, B. (2017). <em>Elements of Causal Inference: Foundations and Learning Algorithms</em>. MIT Press.</p>
+<p>Runge, J. (2018). Causal network reconstruction from time series: From theoretical assumptions to practical estimation. <em>Chaos</em>, 28(7), 075310.</p>
+<p>Runge, J., Nowack, P., Kretschmer, M., Flaxman, S., &amp; Sejdinovic, D. (2019). Detecting and quantifying causal associations in large nonlinear time series datasets. <em>Science Advances</em>, 5(11), eaau4996.</p>
+<p>Shachter, R. D. (1998). Bayes-Ball: The rational pastime. <em>Proceedings of the 14th Conference on Uncertainty in Artificial Intelligence</em>, 480-487.</p>
+<p>Spirtes, P., Glymour, C., &amp; Scheines, R. (2000). <em>Causation, Prediction, and Search</em> (2nd ed.). MIT Press.</p>
+<p>Tian, J., &amp; Pearl, J. (2002). On the identification of causal effects. Technical Report R-290, UCLA Cognitive Systems Laboratory.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/23-ta/03-adaptive-signal-metabolism.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/23-ta/05-predictive-geometry.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/23-ta/03-adaptive-signal-metabolism.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/23-ta/05-predictive-geometry.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

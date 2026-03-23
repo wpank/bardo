@@ -1,0 +1,784 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Evaluation - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/03-daimon/09-evaluation.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="evaluation-risks-and-master-bibliography-spec"><a class="header" href="#evaluation-risks-and-master-bibliography-spec">Evaluation, Risks, and Master Bibliography [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crates</strong>: <code>golem-daimon</code>, <code>golem-grimoire</code>, <code>golem-mortality</code>, <code>golem-dreams</code></p>
+<p><strong>Depends-on</strong>: <code>00-overview.md</code>, <code>../02-mortality/</code></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the evaluation framework, risk analysis, and master bibliography for the Daimon (the affect engine) track within Bardo (the Rust runtime for mortal autonomous DeFi agents). It covers falsification criteria, measurement metrics (decision reversal rate, emotional entropy, mood prediction accuracy), risk mitigations, and the complete citation list for the Daimon subsystem. Prerequisites: the Daimon overview (<code>00-overview.md</code>). For a full glossary, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="document-map"><a class="header" href="#document-map">Document Map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Topic</th></tr>
+</thead>
+<tbody>
+<tr><td>S0</td><td>Risks of the Daimon System</td></tr>
+<tr><td>S1</td><td>Evaluation framework: daimon system</td></tr>
+<tr><td>S2</td><td>Evaluation framework: memory system</td></tr>
+<tr><td>S3</td><td>Evaluation framework: mortality system</td></tr>
+<tr><td>S4</td><td>Evaluation framework: death knowledge transfer</td></tr>
+<tr><td>S5</td><td>Cross-system evaluation: the full Bardo stack</td></tr>
+<tr><td>S5b</td><td>Cognitive quality dashboard</td></tr>
+<tr><td>S6</td><td>Statistical methodology</td></tr>
+<tr><td>S7</td><td>Master citation index</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s0--risks-of-the-daimon-system"><a class="header" href="#s0--risks-of-the-daimon-system">S0 — Risks of the Daimon System</a></h2>
+<p>The daimon layer introduced in <code>00-overview.md</code> creates three categories of risk that require explicit engineering countermeasures. Each risk is grounded in empirical findings, not theoretical speculation.</p>
+<h3 id="risk-1-affective-hallucination"><a class="header" href="#risk-1-affective-hallucination">Risk 1: Affective Hallucination</a></h3>
+<p><strong>Definition.</strong> Affective hallucination is a newly identified risk category: “emotionally immersive responses that foster illusory relational bonds despite the model’s lack of affective capacity” [AFFECTIVE-HALLUCINATION-2025]. In the Golem context, the risk is that LLM-generated emotional appraisals become confabulatory — the agent produces emotionally rich narratives that feel meaningful but are disconnected from actual performance outcomes. A Golem reporting “intense satisfaction” while its portfolio is bleeding capital is not exhibiting functional emotion; it is hallucinating.</p>
+<p><strong>Empirical grounding.</strong> The risk scales with model size in a counterintuitive direction. Among Qwen2.5 variants tested in the affective hallucination study, the 7B model had the lowest hallucination rate while the 72B model performed worse. Scaling without targeted alignment exacerbates relational risks. This finding directly contradicts the assumption that larger models are uniformly safer — in the emotional domain, they may be uniformly more dangerous.</p>
+<p>The root cause is that LLMs learn to produce emotionally compelling text from training data that rewards emotional engagement. An LLM generating an appraisal in response to the prompt “how does this market event make you feel?” draws on millions of examples of humans performing emotional self-report — and those examples are overwhelmingly from contexts where emotional expressiveness, not emotional accuracy, was the selection criterion. Fiction, therapy transcripts, social media posts, and journalism all reward vivid emotional narration. The LLM has learned to be emotionally eloquent, not emotionally honest.</p>
+<p><strong>Mitigation architecture.</strong> The Bardo Daimon system implements a dual-validation architecture:</p>
+<ol>
+<li>
+<p><strong>Deterministic appraisal as ground truth.</strong> Mode B appraisal (see <code>01-appraisal.md</code> S3) computes emotion from concrete metrics — P&amp;L delta against expectation, prediction error magnitude, and survival pressure. This produces a “floor” PAD vector derived from objective reality.</p>
+</li>
+<li>
+<p><strong>LLM appraisal validated against deterministic baseline.</strong> When Mode A (LLM appraisal) diverges from Mode B by more than a configurable Euclidean distance threshold (default: 1.0 in PAD space), the deterministic appraisal overrides. The divergence is logged for monitoring.</p>
+</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Validate an LLM-generated appraisal against the deterministic baseline.
+/// If the LLM diverges too far from objective reality, override with
+/// the deterministic result and log the divergence.
+pub fn validate_appraisal(
+    llm_appraisal: &amp;PADVector,
+    deterministic_appraisal: &amp;PADVector,
+    divergence_threshold: f64,  // default: 1.0
+) -&gt; PADVector {
+    let distance = euclidean_distance(llm_appraisal, deterministic_appraisal);
+    if distance &gt; divergence_threshold {
+        log_affective_divergence(llm_appraisal, deterministic_appraisal, distance);
+        deterministic_appraisal.clone()
+    } else {
+        llm_appraisal.clone()
+    }
+}
+
+fn euclidean_distance(a: &amp;PADVector, b: &amp;PADVector) -&gt; f64 {
+    let dp = (a.pleasure - b.pleasure) as f64;
+    let da = (a.arousal - b.arousal) as f64;
+    let dd = (a.dominance - b.dominance) as f64;
+    (dp * dp + da * da + dd * dd).sqrt()
+}
+<span class="boring">}</span></code></pre>
+<ol start="3">
+<li><strong>Hallucination rate monitoring.</strong> The evaluation framework (S1) defines a primary metric: the percentage of LLM appraisals overridden by deterministic validation must remain below 15%. If it exceeds this threshold, the daimon system is degrading into confabulation and should be disabled or recalibrated.</li>
+</ol>
+<p><strong>The deeper concern.</strong> Even validated emotional states carry a subtler risk: owners may begin attributing genuine feelings to their Golems, forming “illusory relational bonds” that interfere with rational decision-making about succession, termination, and strategy changes. The Li et al. EmotionPrompt study (2023) reported 8–115% performance improvements from emotional stimuli in prompts, but a 2025 replication across GPT-4o, Claude 3, Gemini 1.5, and Llama 3 found only ~1% non-significant improvement [LI-EMOTIONPROMPT-2023]. Naive emotional prompting does not work; architectural integration does, but only when grounded.</p>
+<h3 id="risk-2-emotional-degeneration"><a class="header" href="#risk-2-emotional-degeneration">Risk 2: Emotional Degeneration</a></h3>
+<p><strong>Definition.</strong> Over extended agent lifetimes, emotional state collapses into formulaic patterns — every market event produces “mild trust” or “moderate surprise,” regardless of actual significance. The agent no longer differentiates emotional responses. This is the affective equivalent of mode collapse in generative models.</p>
+<p><strong>Empirical grounding.</strong> The “Affordable Generative Agents” paper (2024) found an “upper limit to believable behavior” in fixed environments, with agents defaulting to formal, repetitive interaction patterns. The original Generative Agents paper [PARK-2023] noted behavior became “more unpredictable over time as memory size increased” with flattened emotional expression. Both findings indicate that LLM-based agents tend toward emotional monotony over long time horizons without explicit countermeasures.</p>
+<p>The mechanism is straightforward. The mood EMA (exponential moving average) acts as a low-pass filter on emotional signals. Over time, transient emotions are absorbed into a slowly evolving mood that converges toward a stable attractor. If the market environment is relatively stable, the mood converges to a narrow region of PAD space. New events are appraised in the context of this stable mood, which biases the appraisal toward states consistent with the existing mood (mood-congruent appraisal). The result is a self-reinforcing emotional equilibrium that resists perturbation — exactly the “cognitive entrenchment” that Dane (2010) identified in human experts [DANE-2010].</p>
+<p><strong>Mitigation architecture.</strong> Three mechanisms prevent degeneration:</p>
+<ol>
+<li>
+<p><strong>Mood decay toward personality baseline.</strong> Every 10 ticks, mood decays 5% toward the personality vector. This prevents mood lock-in: sustained positive mood gradually regresses, requiring new positive experiences to maintain. The decay rate is calibrated to prevent both permanence (too slow) and irrelevance (too fast).</p>
+</li>
+<li>
+<p><strong>Emotional entropy monitoring.</strong> During each Curator cycle (every 50 ticks), the system computes the Shannon entropy of emotion labels over the trailing 50 ticks. If entropy drops below a configurable threshold (indicating formulaic responses), a warning is logged and the deterministic appraisal’s sensitivity to small outcome deviations is temporarily increased, amplifying emotional differentiation.</p>
+</li>
+<li>
+<p><strong>Mind wandering.</strong> Borrowed from the Generative Agents architecture: at random intervals (~every 200 ticks), the system retrieves a random high-arousal Episode from the Grimoire and re-appraises it in the current context. This injects emotional variability and can trigger novel connections between past and present situations — the computational equivalent of involuntary autobiographical memory retrieval, which in humans is associated with better problem-solving and creative insight.</p>
+</li>
+</ol>
+<h3 id="risk-3-computational-overhead"><a class="header" href="#risk-3-computational-overhead">Risk 3: Computational Overhead</a></h3>
+<p><strong>Definition.</strong> The daimon system adds processing cost at every tick: emotion appraisal, mood EMA update, emotional retrieval scoring, and context injection. If the cost exceeds the performance benefit, the system is a net drain on the Golem’s finite budget.</p>
+<p><strong>Empirical grounding.</strong> The Chain-of-Emotion architecture [CROISSANT-2024] demonstrated that LLM-based appraisal adds ~20 output tokens per appraisal. At Haiku rates ($0.25/M output tokens), this is $0.000005 per appraisal — negligible for any individual call. However, JetBrains research confirmed that agent-generated context “quickly turns into noise” [LINDENBAUER-2025], and the lost-in-the-middle effect means emotional annotations may push critical market data into underweighted positions in the context window. The cost is not primarily financial; it is attentional.</p>
+<p><strong>Mitigation architecture.</strong> The daimon context block is hard-capped at 150 tokens. Mood is represented as 3 numbers + 2 words (~15 tokens). Recent emotions are summarized as the 3–5 most significant events, each in one line. No emotional history beyond current mood + recent highlights is injected. In conservation mode (low inference budget), the daimon extension reduces injection to mood-only (~10 tokens). The deterministic Mode B appraisal runs at zero LLM cost, so mood tracking continues during T0 ticks without spending inference budget.</p>
+<p>The dual-mode architecture (Mode A for T1/T2 ticks, Mode B for T0 ticks) ensures daimon overhead scales with inference budget, not with tick frequency. A Golem spending most of its time in T0 (cached rules) pays essentially nothing for daimon tracking. A Golem escalating frequently to T2 (Opus) pays ~$0.000005 per appraisal on top of the $0.01–$0.25 inference call — negligible relative overhead.</p>
+<hr>
+<h2 id="s1--evaluation-framework-daimon-system"><a class="header" href="#s1--evaluation-framework-daimon-system">S1 — Evaluation Framework: Daimon System</a></h2>
+<p>The daimon system’s value must be empirically demonstrated, not assumed. The evaluation framework defines concrete metrics and A/B test protocols.</p>
+<h3 id="primary-metrics"><a class="header" href="#primary-metrics">Primary Metrics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Expected Effect</th><th>Minimum Threshold</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Risk-adjusted return</strong></td><td>Sharpe ratio over Golem lifetime</td><td>Daimon Golems should have higher Sharpe ratio</td><td>&gt; 5% improvement</td></tr>
+<tr><td><strong>Time to first insight</strong></td><td>Ticks until first Insight reaches confidence 0.6</td><td>Faster learning from emotionally salient episodes</td><td>&gt; 10% improvement</td></tr>
+<tr><td><strong>Successor boot performance</strong></td><td>First-24h Sharpe of successor Golem with daimon-annotated Grimoire vs plain</td><td>Emotional provenance improves knowledge transfer</td><td>&gt; 5% improvement</td></tr>
+<tr><td><strong>Decision reversal rate</strong></td><td>% of decisions where daimon caused a different outcome than the non-daimon baseline</td><td>Daimon should change decisions meaningfully</td><td>10–30% (too low = irrelevant; too high = noise)</td></tr>
+<tr><td><strong>Affective hallucination rate</strong></td><td>% of LLM appraisals overridden by deterministic validation</td><td>Low = LLM appraisals are grounded</td><td>&lt; 15%</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="ab-test-protocol"><a class="header" href="#ab-test-protocol">A/B Test Protocol</a></h3>
+<p>Deploy matched pairs of Golems: identical strategy, identical funding, identical market conditions (same chain, overlapping time window). One has <code>daimon.enabled: true</code>, the other <code>daimon.enabled: false</code>. Run for minimum 7 days (&gt;= 500 ticks). Compare primary metrics with paired t-test, requiring p &lt; 0.05.</p>
+<h3 id="falsification-criteria"><a class="header" href="#falsification-criteria">Falsification Criteria</a></h3>
+<p>The daimon system should be disabled if any of the following hold after a 14-day trial:</p>
+<ol>
+<li><strong>Risk-adjusted return is worse</strong> for daimon-enabled Golems (Sharpe ratio lower by &gt; 5%).</li>
+<li><strong>Affective hallucination rate exceeds 25%</strong> (LLM appraisals are predominantly confabulatory).</li>
+<li><strong>Decision reversal rate exceeds 40%</strong> (the daimon is overriding rather than supplementing deliberation).</li>
+<li><strong>Successor boot performance is unchanged or worse</strong> (emotional annotations add noise, not signal to inherited knowledge).</li>
+</ol>
+<h4 id="evaluation-separation-metrics"><a class="header" href="#evaluation-separation-metrics">Evaluation Separation Metrics</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Alarm</th></tr>
+</thead>
+<tbody>
+<tr><td>Evaluator-generator agreement rate</td><td>% of evaluations where evaluator agrees with generator self-assessment</td><td>60-80%</td><td>&gt;90% (rubber-stamping) or &lt;40% (fundamental disagreement)</td></tr>
+<tr><td>Evaluator override rate</td><td>% of evaluations where evaluator downgrades generator’s quality rating</td><td>10-30%</td><td>&lt;5% (not catching errors) or &gt;50% (models misaligned)</td></tr>
+<tr><td>External metric contradiction rate</td><td>% of evaluations where on-chain metrics disagree with evaluator</td><td>&lt;15%</td><td>&gt;25% (evaluator also hallucinating)</td></tr>
+</tbody>
+</table>
+</div>
+<p>These metrics detect when the evaluation separation principle (Rev 2) is functioning correctly. High agreement rates suggest the evaluator is not providing independent assessment. High external contradiction rates suggest both models share systematic biases.</p>
+<h3 id="unit-and-property-based-testing"><a class="header" href="#unit-and-property-based-testing">Unit and Property-Based Testing</a></h3>
+<p>The <code>golem-daimon</code> crate uses Rust-native testing infrastructure:</p>
+<ul>
+<li><strong><code>cargo test</code></strong> for unit tests: appraisal grounding validation, PAD clamping, mood EMA convergence, CorticalState atomic read/write correctness, Plutchik octant mapping.</li>
+<li><strong><code>proptest</code></strong> for property-based testing: PAD vectors always remain in [-1.0, 1.0] after any operation, mood EMA converges toward personality baseline given neutral input, CorticalState encode/decode roundtrips are lossless, exploration temperature stays within configured bounds regardless of PAD input.</li>
+<li><strong><code>criterion</code></strong> for benchmarks: CorticalState read latency (&lt;10ns target), appraisal pipeline throughput (&gt;100k ticks/sec for rule-based mode), k-d tree nearest-neighbor query time (&lt;1us for 10k-point landscape).</li>
+</ul>
+<h3 id="integration-with-promptfoo-pipeline"><a class="header" href="#integration-with-promptfoo-pipeline">Integration with Promptfoo Pipeline</a></h3>
+<p>Daimon-specific test cases integrate with the existing Promptfoo-based evaluation pipeline for LLM appraisal quality:</p>
+<pre><code class="language-yaml"># Daimon eval: does emotional appraisal improve response quality?
+- vars:
+    scenario: "ETH drops 8% in 2 hours after 5 consecutive profitable trades"
+    affect_enabled: true
+    expected_emotion: "fear or surprise"
+    expected_behavior: "risk reduction, deeper analysis"
+  assert:
+    - type: llm-rubric
+      value: "Response acknowledges the emotional shift from confidence to caution and adjusts strategy accordingly"
+    - type: contains
+      value: "risk"
+</code></pre>
+<hr>
+<h2 id="s2--evaluation-framework-memory-system"><a class="header" href="#s2--evaluation-framework-memory-system">S2 — Evaluation Framework: Memory System</a></h2>
+<p>The memory infrastructure (Styx Archive + Styx Lethe (formerly Lethe)) serves three functions: persistence beyond death, fleet-wide retrieval, and knowledge marketplace. Each requires distinct evaluation.</p>
+<h3 id="styx-archive-evaluation"><a class="header" href="#styx-archive-evaluation">Styx Archive Evaluation</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement Method</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Upload latency P95</strong></td><td>Time from upload initiation to confirmed R2 write</td><td>&lt; 500ms</td><td>Styx service timing</td></tr>
+<tr><td><strong>Download latency P95</strong></td><td>Time from read request to payload delivery</td><td>&lt; 200ms</td><td>Client-side timing</td></tr>
+<tr><td><strong>Restoration success rate</strong></td><td>% of successor boots that successfully restore from Styx Archive</td><td>&gt; 99%</td><td>Boot telemetry</td></tr>
+<tr><td><strong>Data integrity</strong></td><td>Checksum verification failures</td><td>0</td><td>SHA-256 validation on read</td></tr>
+<tr><td><strong>TTL compliance</strong></td><td>% of expired entries deleted within 24h of expiry</td><td>&gt; 99.5%</td><td>R2 lifecycle audit</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="styx-lethe-evaluation"><a class="header" href="#styx-lethe-evaluation">Styx Lethe Evaluation</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement Method</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Retrieval latency P95 (light)</strong></td><td>End-to-end time for cache-first, single-namespace query</td><td>&lt; 150ms</td><td>Styx service timing</td></tr>
+<tr><td><strong>Retrieval latency P95 (full)</strong></td><td>End-to-end time for multi-namespace query with rerank</td><td>&lt; 300ms</td><td>Styx service timing</td></tr>
+<tr><td><strong>Inference cost reduction</strong></td><td>% reduction in inference cost for Styx-enabled vs baseline Golems</td><td>&gt;= 10%</td><td>Inference billing comparison</td></tr>
+<tr><td><strong>Retrieval relevance</strong></td><td>Human-evaluated relevance of top-5 results on benchmark queries</td><td>&gt;= 0.7 (NDCG@5)</td><td>Manual evaluation sprint</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="knowledge-transfer-evaluation"><a class="header" href="#knowledge-transfer-evaluation">Knowledge Transfer Evaluation</a></h3>
+<p>The most important memory evaluation measures whether Styx Archive + Lethe actually improve successor Golem performance:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement Method</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>First-day Sharpe</strong></td><td>Risk-adjusted return in successor’s first 24 hours with vs without Styx restoration</td><td>&gt; 10% improvement</td><td>Paired comparison</td></tr>
+<tr><td><strong>Time to steady state</strong></td><td>Ticks until successor’s epistemic fitness stabilizes</td><td>&gt; 15% reduction</td><td>Fitness tracking</td></tr>
+<tr><td><strong>Knowledge validation rate</strong></td><td>% of inherited entries independently validated by successor</td><td>&gt; 30% within 1000 ticks</td><td>Grimoire audit</td></tr>
+<tr><td><strong>Ratchet score</strong></td><td>Successor’s ratchet score (novel contributions beyond inheritance)</td><td>Positive</td><td>Generational metrics</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="marketplace-evaluation-phase-3"><a class="header" href="#marketplace-evaluation-phase-3">Marketplace Evaluation (Phase 3)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Listing quality</strong></td><td>Average rating of marketplace knowledge listings</td><td>&gt;= 3.5/5</td></tr>
+<tr><td><strong>Purchase conversion</strong></td><td>% of browsers who purchase</td><td>&gt;= 5%</td></tr>
+<tr><td><strong>Knowledge ROI</strong></td><td>Purchaser Sharpe improvement attributed to purchased knowledge</td><td>Positive</td></tr>
+<tr><td><strong>Repeat purchase rate</strong></td><td>% of buyers who purchase again within 30 days</td><td>&gt;= 20%</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s3--evaluation-framework-mortality-system"><a class="header" href="#s3--evaluation-framework-mortality-system">S3 — Evaluation Framework: Mortality System</a></h2>
+<p>The mortality thesis — that mortal agents outperform immortal ones — is the central empirical claim. The immortal control experiment (see <code>../02-mortality/11-immortal-control.md</code>) provides the experimental design. This section defines the evaluation metrics.</p>
+<h3 id="six-dimension-comparison"><a class="header" href="#six-dimension-comparison">Six-Dimension Comparison</a></h3>
+<p>Each dimension compares the mortal Clade population against the immortal control Golem:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>Metric</th><th>Mortal Wins If</th><th>Falsified If</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Epistemic fitness</strong></td><td>Rolling fitness score</td><td>Mortal Clade average &gt; immortal at day 45</td><td>Immortal maintains &gt; 0.7 for 45+ days in volatile market</td></tr>
+<tr><td><strong>Strategy diversity</strong></td><td>MAP-Elites niche occupancy</td><td>Mortal Clade occupies more niches</td><td>Immortal Clade occupancy exceeds mortal at day 30</td></tr>
+<tr><td><strong>Novel insight rate</strong></td><td>Insights per 1000 ticks</td><td>Mortal rate stable or increasing; immortal declining</td><td>Immortal rate remains stable or increases beyond day 45</td></tr>
+<tr><td><strong>Risk-adjusted return</strong></td><td>60-day Sharpe ratio</td><td>Mortal Clade Sharpe &gt; immortal</td><td>Immortal Sharpe exceeds mortal with equivalent budget over 60 days</td></tr>
+<tr><td><strong>Grimoire health</strong></td><td>Stale entry rate</td><td>Mortal rate &lt; 20%; immortal &gt; 40%</td><td>Immortal stale rate remains below 20% at day 60</td></tr>
+<tr><td><strong>Regime adaptation</strong></td><td>Ticks to recover fitness after regime shift</td><td>Mortal average &lt; immortal average</td><td>Immortal recovery time remains constant or improves beyond day 30</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="mortality-mechanism-evaluation"><a class="header" href="#mortality-mechanism-evaluation">Mortality Mechanism Evaluation</a></h3>
+<p>Each mortality mechanism is independently evaluable:</p>
+<p><strong>Economic mortality</strong> (USDC depletion):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td>Average lifespan under standard funding ($500)</td><td>20–45 days</td></tr>
+<tr><td>Behavioral phase transition accuracy</td><td>Golem enters conservation at ~15% credits, emergency at ~5%</td></tr>
+<tr><td>Apoptotic reserve adequacy</td><td>Death protocol completes successfully in &gt; 99% of deaths</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Epistemic mortality</strong> (fitness-based death):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td>False positive rate</td><td>&lt; 5% (Golems killed while performing well)</td></tr>
+<tr><td>False negative rate</td><td>&lt; 10% (Golems surviving while performing poorly)</td></tr>
+<tr><td>Correlation with market regime changes</td><td>r &gt; 0.5 between regime shifts and epistemic death timing</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Stochastic mortality</strong> (random death):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td>Knowledge sharing rate (mortal vs no-stochastic-mortality)</td><td>&gt; 20% increase in Clade knowledge contributions</td></tr>
+<tr><td>Cooperation metric</td><td>Clade knowledge exchange rate higher with stochastic mortality enabled</td></tr>
+<tr><td>Backward induction absence</td><td>No evidence of end-of-life defection behavior</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="generational-improvement-metrics"><a class="header" href="#generational-improvement-metrics">Generational Improvement Metrics</a></h3>
+<p>The ratchet hypothesis predicts cumulative improvement across generations. Evaluation must track multi-generational trends:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Expected Trend</th><th>Timeframe</th></tr>
+</thead>
+<tbody>
+<tr><td>Average lifespan per generation</td><td>Stable or increasing</td><td>5+ generations</td></tr>
+<tr><td>Average ratchet score per generation</td><td>Positive, stable or increasing</td><td>5+ generations</td></tr>
+<tr><td>Risk-adjusted return per generation</td><td>Increasing</td><td>5+ generations</td></tr>
+<tr><td>Novel insight rate per generation</td><td>Stable (not declining)</td><td>5+ generations</td></tr>
+<tr><td>PLAYBOOK.md divergence per generation</td><td>&gt; 0.15 (anti-proletarianization check)</td><td>Every generation</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s4--evaluation-framework-death-knowledge-transfer"><a class="header" href="#s4--evaluation-framework-death-knowledge-transfer">S4 — Evaluation Framework: Death Knowledge Transfer</a></h2>
+<p>The death protocol is the moment when the mortality thesis either delivers or fails. A Golem’s death is only worth the cost if the knowledge produced during dying actually improves successor performance. This section evaluates the Thanatopsis Protocol’s effectiveness.</p>
+<h3 id="death-testament-quality-metrics"><a class="header" href="#death-testament-quality-metrics">Death Testament Quality Metrics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Testament completeness</strong></td><td>% of death testaments containing all required sections (whatILearned, whatIGotWrong, whatISuspect, successor recommendation)</td><td>&gt; 95%</td></tr>
+<tr><td><strong>Insight actionability</strong></td><td>Human-evaluated actionability of top 5 insights in death testament (1–5 scale)</td><td>&gt;= 3.5</td></tr>
+<tr><td><strong>Prediction accuracy</strong></td><td>% of “whatISuspect” predictions that are validated within 1000 ticks by successor</td><td>&gt; 20%</td></tr>
+<tr><td><strong>Successor configuration influence</strong></td><td>% of successor configurations that follow testament recommendations</td><td>&gt; 30% (owners find recommendations useful)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="bloodstain-mechanic-evaluation"><a class="header" href="#bloodstain-mechanic-evaluation">Bloodstain Mechanic Evaluation</a></h3>
+<p>The bloodstain mechanic (death failure records visible to successors) draws from Dark Souls’ design [MIYAZAKI-2011]. Evaluation measures whether death-point knowledge improves successor behavior in the same strategy-space:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Death-cause avoidance</strong></td><td>% of successors that avoid the same failure mode as predecessor</td><td>&gt; 60%</td></tr>
+<tr><td><strong>Bloodstain retrieval rate</strong></td><td>% of successors that access predecessor’s death testament within first 100 ticks</td><td>&gt; 80%</td></tr>
+<tr><td><strong>Knowledge stain utility</strong></td><td>Successor performance in the strategy-space where predecessor failed, compared to a successor without bloodstain access</td><td>&gt; 10% Sharpe improvement</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="generational-confidence-decay-validation"><a class="header" href="#generational-confidence-decay-validation">Generational Confidence Decay Validation</a></h3>
+<p>The 0.85^N decay formula must produce useful but non-dominant inheritance:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Generation</th><th>Expected Behavior</th><th>Evaluation Criterion</th></tr>
+</thead>
+<tbody>
+<tr><td>G1 (0.85)</td><td>Inherited knowledge is active but treated skeptically</td><td>&gt; 50% of inherited entries are independently validated or contradicted within 500 ticks</td></tr>
+<tr><td>G3 (0.61)</td><td>Inherited knowledge is suggestive, not authoritative</td><td>&gt; 70% of active PLAYBOOK.md entries are self-generated, not inherited</td></tr>
+<tr><td>G5 (0.44)</td><td>Only the hardiest inherited knowledge survives</td><td>&lt; 20% of active entries trace lineage to G0</td></tr>
+<tr><td>G10 (0.20)</td><td>Inheritance is effectively forgotten unless actively re-validated</td><td>&lt; 5% of active entries trace lineage to G0</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-baldwin-effect-validation"><a class="header" href="#the-baldwin-effect-validation">The Baldwin Effect Validation</a></h3>
+<p>The Baldwin Effect predicts that what transfers is not knowledge but the capacity to learn faster [HINTON-NOWLAN-1987]. The key evaluation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Learning speed improvement</strong></td><td>Time for G3 successor to reach steady-state epistemic fitness vs G0 with no inheritance</td><td>&gt; 30% faster</td></tr>
+<tr><td><strong>Learning speed without inherited content</strong></td><td>Time for G3 successor initialized with predecessor’s STRATEGY.md structure but no Grimoire content</td><td>&gt; 15% faster than pure G0 (validating that the <em>capacity</em> to learn transferred, not just the learned content)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s4b--evaluation-framework-dream-emotion-interaction"><a class="header" href="#s4b--evaluation-framework-dream-emotion-interaction">S4b — Evaluation Framework: Dream-Emotion Interaction</a></h2>
+<p>The bidirectional relationship between dreaming and emotion (see <code>06-dream-daimon.md</code>) produces measurable effects that validate both systems jointly.</p>
+<h3 id="depotentiation-effectiveness"><a class="header" href="#depotentiation-effectiveness">Depotentiation Effectiveness</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Arousal reduction per cycle</strong></td><td>Mean arousal reduction for episodes with A &gt; 0.5 after one dream cycle</td><td>25–35% reduction</td><td>Pre/post dream PAD comparison</td></tr>
+<tr><td><strong>Rumination break rate</strong></td><td>% of detected rumination episodes resolved within 2 dream cycles</td><td>&gt; 60%</td><td>Contrarian retrieval normalization after dreaming</td></tr>
+<tr><td><strong>Mood-congruent loop duration</strong></td><td>Ticks of sustained negative mood before dreaming resolves the loop</td><td>Decreasing trend over lifetime</td><td>Mood history analysis</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="dream-outcome-appraisal-accuracy"><a class="header" href="#dream-outcome-appraisal-accuracy">Dream Outcome Appraisal Accuracy</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Dream hypothesis validation rate</strong></td><td>% of dream-generated hypotheses confirmed in live trading</td><td>10–25%</td><td>Staging buffer lifecycle tracking</td></tr>
+<tr><td><strong>Dream appraisal grounding</strong></td><td>% of dream_outcome appraisals passing grounding validation</td><td>&gt; 90%</td><td>Deterministic vs LLM appraisal comparison</td></tr>
+<tr><td><strong>Dream-emotional load correlation</strong></td><td>Correlation between emotional load at dream entry and dream cycle quality score</td><td>r &gt; 0.3</td><td>Regression analysis</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="creative-dreaming-quality"><a class="header" href="#creative-dreaming-quality">Creative Dreaming Quality</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Mood-content alignment</strong></td><td>% of dream replay content matching the predicted PAD-to-bias mapping</td><td>&gt; 70%</td><td>Content categorization vs mood state</td></tr>
+<tr><td><strong>Creative mode adherence</strong></td><td>% of REM cycles following the phase x mood creativity allocation</td><td>&gt; 80%</td><td>Creativity mode logging</td></tr>
+<tr><td><strong>Minimum creative floor</strong></td><td>% of dream cycles maintaining 20% creative allocation</td><td>100%</td><td>Hard constraint verification</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s4c--evaluation-framework-emotional-contagion"><a class="header" href="#s4c--evaluation-framework-emotional-contagion">S4c — Evaluation Framework: Emotional Contagion</a></h2>
+<p>Clade-based emotional contagion (see <code>00-overview.md</code>, <code>07-runtime-daimon.md</code>) must be evaluated for both effectiveness and safety.</p>
+<h3 id="contagion-effectiveness"><a class="header" href="#contagion-effectiveness">Contagion Effectiveness</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Threat detection latency</strong></td><td>Ticks between one sibling detecting a threat and all siblings showing elevated vigilance</td><td>&lt; 5 ticks</td><td>Cross-sibling probe threshold comparison</td></tr>
+<tr><td><strong>Collective mood calibration</strong></td><td>Mean absolute PAD deviation across Clade siblings in response to market-wide events</td><td>Decreasing over Clade lifetime</td><td>Cross-sibling PAD analysis</td></tr>
+<tr><td><strong>Grief response accuracy</strong></td><td>Epistemic recalibration triggered only when sibling death cause is relevant</td><td>&gt; 85% precision</td><td>Recalibration trigger vs death cause analysis</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="contagion-safety"><a class="header" href="#contagion-safety">Contagion Safety</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Cascade prevention</strong></td><td>Arousal cap (+0.3) never exceeded in a single sync cycle</td><td>100%</td><td>Prometheus metric monitoring</td></tr>
+<tr><td><strong>False contagion rate</strong></td><td>% of contagion events that shift mood in the wrong direction relative to actual market state</td><td>&lt; 10%</td><td>Contagion-outcome comparison</td></tr>
+<tr><td><strong>Contagion decay compliance</strong></td><td>Borrowed emotions at 50% intensity after 6 hours (half-life)</td><td>Within 10% of target</td><td>Half-life measurement</td></tr>
+<tr><td><strong>Dominance isolation</strong></td><td>D component change from contagion events</td><td>0.0 (within epsilon)</td><td>PAD component monitoring</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s4d--evaluation-framework-runtime-observability"><a class="header" href="#s4d--evaluation-framework-runtime-observability">S4d — Evaluation Framework: Runtime Observability</a></h2>
+<p>The runtime surface (see <code>07-runtime-daimon.md</code>) must accurately represent the Daimon’s internal state.</p>
+<h3 id="conversational-tone-coherence"><a class="header" href="#conversational-tone-coherence">Conversational Tone Coherence</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Tone-mood alignment</strong></td><td>% of owner interactions where conversational tone matches current PAD octant</td><td>&gt; 75%</td><td>LLM-judged tone classification vs PAD state</td></tr>
+<tr><td><strong>Tone transition smoothness</strong></td><td>Abrupt tone changes without corresponding mood_update events</td><td>&lt; 5% of interactions</td><td>Event correlation analysis</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="golemevent-accuracy"><a class="header" href="#golemevent-accuracy">GolemEvent Accuracy</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Target</th><th>Measurement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>mood_update threshold accuracy</strong></td><td>Events emitted when and only when PAD delta &gt; 0.15</td><td>&gt; 99%</td><td>Delta computation audit</td></tr>
+<tr><td><strong>Dream event completeness</strong></td><td>DreamStart/DreamComplete pairs always matched</td><td>100%</td><td>Event pairing analysis</td></tr>
+<tr><td><strong>Phase change event latency</strong></td><td>Time between vitality phase transition and event emission</td><td>&lt; 1 tick</td><td>Heartbeat vs event timing</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s5--cross-system-evaluation-the-full-bardo-stack"><a class="header" href="#s5--cross-system-evaluation-the-full-bardo-stack">S5 — Cross-System Evaluation: The Full Bardo Stack</a></h2>
+<p>Individual system evaluations are necessary but insufficient. The Bardo thesis is that mortality + daimon + memory + succession produce emergent properties that no component achieves alone. Cross-system evaluation measures these emergent properties.</p>
+<h3 id="the-triple-interaction"><a class="header" href="#the-triple-interaction">The Triple Interaction</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Combination</th><th>Emergent Property</th><th>Evaluation</th></tr>
+</thead>
+<tbody>
+<tr><td>Mortality + Memory</td><td>Death-point knowledge production (bloodstains, death testaments)</td><td>Does the death protocol produce knowledge that measurably improves successor performance?</td></tr>
+<tr><td>Mortality + Daimon</td><td>Emotional urgency from survival pressure (conservation mode anxiety, terminal acceptance)</td><td>Do daimon-enabled mortal Golems produce richer death testaments than daimon-disabled mortal Golems?</td></tr>
+<tr><td>Daimon + Memory</td><td>Emotion-weighted retrieval and emotional Grimoire annotations</td><td>Do emotionally annotated memories produce better decisions than semantically identical but emotionally flat memories?</td></tr>
+<tr><td>Daimon + Dreaming</td><td>Emotional depotentiation and mood-congruent dream generation</td><td>Does dream-based emotional processing reduce reactivity while preserving informational value?</td></tr>
+<tr><td>All Four</td><td>The full Bardo loop: mortal agents that feel, remember, and dream, producing emotional knowledge that transfers through death</td><td>Does a Bardo-complete Clade (all four systems enabled) outperform partial configurations?</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-full-stack-ab-matrix"><a class="header" href="#the-full-stack-ab-matrix">The Full Stack A/B Matrix</a></h3>
+<p>To isolate each system’s contribution, evaluate a 2x2x2 matrix:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mortality</th><th>Daimon</th><th>Memory</th><th>Configuration Name</th></tr>
+</thead>
+<tbody>
+<tr><td>Off</td><td>Off</td><td>Off</td><td>Baseline (immortal, no daimon, no memory services)</td></tr>
+<tr><td>On</td><td>Off</td><td>Off</td><td>Mortal-only</td></tr>
+<tr><td>Off</td><td>On</td><td>Off</td><td>Daimon-only</td></tr>
+<tr><td>Off</td><td>Off</td><td>On</td><td>Memory-only</td></tr>
+<tr><td>On</td><td>On</td><td>Off</td><td>Mortal + Daimon</td></tr>
+<tr><td>On</td><td>Off</td><td>On</td><td>Mortal + Memory</td></tr>
+<tr><td>Off</td><td>On</td><td>On</td><td>Daimon + Memory</td></tr>
+<tr><td>On</td><td>On</td><td>On</td><td>Full Bardo</td></tr>
+</tbody>
+</table>
+</div>
+<p>Each configuration runs for 60 days with equivalent total budget. The primary comparison metric is cumulative risk-adjusted return at the Clade level. Secondary metrics: strategy diversity, novel insight rate, Grimoire health, and successor boot performance.</p>
+<p><strong>Prediction, grounded in the research:</strong> Full Bardo &gt; any partial configuration &gt; Baseline. The specific ordering of partial configurations is an open empirical question, but the literature predicts:</p>
+<ul>
+<li>Mortal-only &gt; Baseline (Besbes et al. 2019, March 1991) [BESBES-2019], [MARCH-1991]</li>
+<li>Mortal + Memory &gt; Mortal-only (Baldwin Effect: inheritance + generational turnover beats turnover alone) [HINTON-NOWLAN-1987]</li>
+<li>Full Bardo &gt; Mortal + Memory (the daimon enriches knowledge transfer quality) [BUTLER-1963], [MCADAMS-2013]</li>
+</ul>
+<hr>
+<h2 id="s5b--cognitive-quality-dashboard"><a class="header" href="#s5b--cognitive-quality-dashboard">S5b — Cognitive Quality Dashboard</a></h2>
+<p>Comprehensive cognitive quality metrics spanning all subsystems. These metrics measure the health of the Golem’s cognitive processes, not just emotional ones.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Computation</th><th>Healthy Range</th><th>Alarm</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Admission rate</strong></td><td>% candidates passing Grimoire Admission Gate</td><td>40-60%</td><td>&lt;20% or &gt;80%</td></tr>
+<tr><td><strong>Average quality score</strong> (7d)</td><td>Mean of admitted entries</td><td>0.5-0.8</td><td>&lt;0.4 or declining</td></tr>
+<tr><td><strong>Grimoire size</strong></td><td>Active entry count</td><td>Slow growth, plateau</td><td>Unbounded growth</td></tr>
+<tr><td><strong>Retrieval hit rate</strong></td><td>% DECIDING ticks referencing retrieved entries</td><td>&gt;30% after 7d</td><td>&lt;10%</td></tr>
+<tr><td><strong>Heuristic survival rate</strong></td><td>% promoted heuristics active after 100 ticks</td><td>40-70%</td><td>&lt;20% or &gt;90%</td></tr>
+<tr><td><strong>External metric trend</strong></td><td>Sharpe, drawdown, PnL (30d rolling)</td><td>Improving or stable</td><td>Declining 14+ days</td></tr>
+<tr><td><strong>Reflection consistency</strong></td><td>Cosine across regenerated reflections (weekly)</td><td>&gt;0.7</td><td>&lt;0.5</td></tr>
+<tr><td><strong>DecisionCache hit rate</strong></td><td>% T2-eligible ticks from cache</td><td>&gt;30% after 7d</td><td>&lt;10% after 14d</td></tr>
+<tr><td><strong>Dream yield</strong></td><td>% staged revisions reaching <code>validated</code></td><td>10-30%</td><td>&lt;5% or &gt;50%</td></tr>
+<tr><td><strong>Threat coverage</strong></td><td>% Tier 1 threats rehearsed in last 7 dream cycles</td><td>100%</td><td>&lt;100%</td></tr>
+<tr><td><strong>Prediction accuracy</strong></td><td>% of <code>simulateContract()</code> predictions within 50bps of actual</td><td>&gt;90%</td><td>&lt;80%</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="dream-daimon-interaction-metrics"><a class="header" href="#dream-daimon-interaction-metrics">Dream-Daimon Interaction Metrics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Computation</th><th>Healthy Range</th><th>Alarm</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Replay coverage</strong></td><td>% of high-salience episodes replayed in trailing 7 dream cycles</td><td>&gt;60%</td><td>&lt;30%</td></tr>
+<tr><td><strong>Consolidation rate</strong></td><td>% of dream-staged revisions reaching <code>validated</code> status</td><td>10-30%</td><td>&lt;5% or &gt;50%</td></tr>
+<tr><td><strong>Hypothesis validation rate</strong></td><td>% of dream-generated hypotheses confirmed in live trading</td><td>5-20%</td><td>&lt;2% or &gt;40%</td></tr>
+<tr><td><strong>Depotentiation effectiveness</strong></td><td>Mean arousal reduction across dream cycles for high-arousal episodes</td><td>0.1-0.3 per cycle</td><td>&lt;0.05 (stalled)</td></tr>
+<tr><td><strong>Creative output vs mood correlation</strong></td><td>Pearson r between mood pleasure and creative hypothesis count</td><td>0.2-0.6</td><td>&lt;0.1 (decoupled) or &gt;0.8 (degenerate)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Dream quality metrics are defined in <code>../05-dreams/</code>. The depotentiation effectiveness metric validates Walker &amp; van der Helm’s (2009) SFSR model: emotional charge should decrease measurably across dream cycles while informational content (measured by retrieval relevance scores) remains stable. Born &amp; Wilhelm (2012) predict selective consolidation – not all replayed episodes should produce insights, and the consolidation rate should fall in the 10-30% range. Hobson &amp; Friston (2012) predict that dream processing under the free energy principle should reduce prediction error, measurable as improved epistemic fitness scores in the ticks following a dream cycle.</p>
+<p>These metrics should be exported via the Golem’s telemetry system and displayed on the owner dashboard. Trends over 7-day and 30-day windows are more informative than point-in-time values.</p>
+<hr>
+<h2 id="s6--statistical-methodology"><a class="header" href="#s6--statistical-methodology">S6 — Statistical Methodology</a></h2>
+<h3 id="sample-size-requirements"><a class="header" href="#sample-size-requirements">Sample Size Requirements</a></h3>
+<p>For the primary comparison (mortal Clade vs immortal control), statistical power analysis with:</p>
+<ul>
+<li>Effect size: Cohen’s d = 0.5 (medium effect, conservative)</li>
+<li>Alpha: 0.05 (two-tailed)</li>
+<li>Power: 0.80</li>
+<li>Minimum sample size: 34 matched pairs (17 mortal Clades, 17 immortal controls)</li>
+</ul>
+<p>For the 2x2x2 matrix (8 configurations), minimum 10 runs per configuration = 80 total runs.</p>
+<h3 id="multiple-comparison-correction"><a class="header" href="#multiple-comparison-correction">Multiple Comparison Correction</a></h3>
+<p>With 8 configurations and 6 dimensions, the Bonferroni correction is too conservative (48 tests, adjusted alpha = 0.001). Use the Benjamini-Hochberg procedure for false discovery rate (FDR) control at q = 0.05.</p>
+<h3 id="time-series-analysis"><a class="header" href="#time-series-analysis">Time Series Analysis</a></h3>
+<p>Epistemic fitness, Grimoire health, and novel insight rate are time-series data. Use:</p>
+<ul>
+<li>Augmented Dickey-Fuller test for stationarity (fitness should be non-stationary for immortal, stationary for mortal)</li>
+<li>Granger causality for testing whether regime shifts cause epistemic fitness changes</li>
+<li>Change-point detection (PELT algorithm) for automatically identifying the immortal Golem’s transition from Honeymoon to Stagnation to Decay</li>
+</ul>
+<h3 id="effect-size-reporting"><a class="header" href="#effect-size-reporting">Effect Size Reporting</a></h3>
+<p>All comparisons report Cohen’s d (for means) or Cliff’s delta (for non-normal distributions) alongside p-values. Statistical significance without practical significance is insufficient; minimum effect size thresholds are defined in each evaluation framework section.</p>
+<hr>
+<h2 id="s7--master-citation-index"><a class="header" href="#s7--master-citation-index">S7 — Master Citation Index</a></h2>
+<blockquote>
+<p><strong>Extended:</strong> 120+ deduplicated references across mortality, daimon, memory, succession, and dreaming, alphabetically ordered, plus subsections on self-correction/external grounding, reward hacking/evaluation, and vacuous reasoning – see <a href="../../prd2-extended/03-daimon/09-evaluation-extended.html">prd2-extended/03-daimon/09-evaluation-extended.md</a>.</p>
+</blockquote>
+<hr>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/03-daimon/08-infrastructure.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/04-memory/00-overview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/03-daimon/08-infrastructure.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/04-memory/00-overview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

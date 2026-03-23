@@ -1,0 +1,626 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Provisioning - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/07-provisioning.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="infrastructure-provisioning-spec"><a class="header" href="#infrastructure-provisioning-spec">Infrastructure Provisioning [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how a validated GolemExtendedManifest becomes a running Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM). It covers the 8-step type-state provisioning pipeline: validate, create wallet, approve Permit2, fund, register ERC-8004 (on-chain agent identity standard tracking capabilities, milestones, and reputation) identity, provision VM via Bardo Compute (VM hosting service for Golems; Fly.io micro VMs provisioned via x402), deploy, and start heartbeat. The pipeline is implemented as a Rust type-state machine with per-step recovery and memoized results. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="s1--overview"><a class="header" href="#s1--overview">S1 – Overview</a></h2>
+<blockquote>
+<p><strong>Billing Model:</strong> Bardo Compute is a wrapper service that bills users via x402 and pays Fly.io directly. Users never interact with Fly.io billing.</p>
+</blockquote>
+<p>The provisioning pipeline transforms a validated <code>GolemExtendedManifest</code> into a running Golem with a funded wallet (or delegation grant), configured signing policy, optional ERC-8004 identity, and active compute session. It is implemented as a Rust type-state machine where each step transitions to the next state, with per-step recovery and memoized results. If the browser crashes after step 3, resuming the pipeline skips steps 1–3 and continues from step 4.</p>
+<pre><code>GolemExtendedManifest
+        |
+        v
+  8-Step Type-State Pipeline
+        |
+        v
+  Running Golem (wallet + identity + policy + compute + heartbeat)
+</code></pre>
+<hr>
+<h2 id="s2--the-8-step-pipeline"><a class="header" href="#s2--the-8-step-pipeline">S2 – The 8-Step Pipeline</a></h2>
+<p>Eight steps, executed sequentially. Each step is a state transition in the type-state machine – results are memoized to persistent storage, failed steps retry with exponential backoff.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Step</th><th>Name</th><th>Purpose</th><th>Retries</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><code>validate_manifest</code></td><td>Schema validation, network contract checks, funding calculation</td><td>1</td></tr>
+<tr><td>2</td><td><code>create_wallet</code></td><td>Wallet provisioning per custody mode</td><td>3</td></tr>
+<tr><td>3</td><td><code>approve_permit2</code></td><td>One-time USDC approval to Permit2 contract (Embedded mode only)</td><td>3</td></tr>
+<tr><td>4</td><td><code>fund_wallet</code></td><td>Delegation grant or Permit2 SignatureTransfer</td><td>3</td></tr>
+<tr><td>5</td><td><code>register_identity</code></td><td>ERC-8004 registration (skippable if contracts not deployed)</td><td>2</td></tr>
+<tr><td>6</td><td><code>provision_vm</code></td><td>Fly.io VM from warm pool (hosted) or skip (self-hosted)</td><td>3</td></tr>
+<tr><td>7</td><td><code>deploy_golem</code></td><td>Inject session signer, signing policy, strategy config into runtime</td><td>2</td></tr>
+<tr><td>8</td><td><code>start_heartbeat</code></td><td>Health check (heartbeat response within 30s), webhook, telemetry</td><td>3</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="type-state-pipeline"><a class="header" href="#type-state-pipeline">Type-State Pipeline</a></h3>
+<p>The pipeline is expressed as a Rust type-state machine. Each step consumes the previous state and produces the next, making invalid step sequences a compile-time error.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+use serde::{Deserialize, Serialize};
+
+// Step marker types (zero-sized)
+pub struct StepValidate;
+pub struct StepWallet;
+pub struct StepPermit2;
+pub struct StepFund;
+pub struct StepIdentity;
+pub struct StepProvisionVm;
+pub struct StepDeploy;
+pub struct StepHeartbeat;
+pub struct StepComplete;
+
+/// The provisioning pipeline in a specific step.
+/// Each step transition consumes `self` and produces the next step.
+pub struct Pipeline&lt;S&gt; {
+    pub session_id: String,
+    pub manifest: GolemExtendedManifest,
+    pub results: PipelineResults,
+    _step: PhantomData&lt;S&gt;,
+}
+
+/// Accumulated results from completed steps. Memoized to disk.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct PipelineResults {
+    pub wallet: Option&lt;WalletProvisionResult&gt;,
+    pub permit2_approved: Option&lt;bool&gt;,
+    pub funding: Option&lt;FundingResult&gt;,
+    pub identity: Option&lt;IdentityResult&gt;,
+    pub vm: Option&lt;VmProvisionResult&gt;,
+    pub deploy: Option&lt;DeployResult&gt;,
+}
+
+impl Pipeline&lt;StepValidate&gt; {
+    /// Entry point. Validates the manifest and produces a pipeline
+    /// ready for wallet creation.
+    pub async fn validate(
+        manifest: GolemExtendedManifest,
+        session_id: String,
+    ) -&gt; Result&lt;Pipeline&lt;StepWallet&gt;&gt; {
+        validate_manifest(&amp;manifest).await?;
+        Ok(Pipeline {
+            session_id,
+            manifest,
+            results: PipelineResults::default(),
+            _step: PhantomData,
+        })
+    }
+}
+
+impl Pipeline&lt;StepWallet&gt; {
+    /// Create the wallet per the selected custody mode.
+    pub async fn create_wallet(self) -&gt; Result&lt;Pipeline&lt;StepPermit2&gt;&gt; {
+        let result = match &amp;self.manifest.custody {
+            Some(CustodyModeConfig::Delegation { .. }) =&gt; {
+                provision_delegation_wallet(&amp;self.manifest).await?
+            }
+            Some(CustodyModeConfig::LocalKey { .. }) =&gt; {
+                provision_local_key_wallet(&amp;self.manifest).await?
+            }
+            _ =&gt; {
+                // Default: Embedded (Privy) for backward compatibility
+                provision_privy_wallet(&amp;self.manifest).await?
+            }
+        };
+        let mut results = self.results;
+        results.wallet = Some(result);
+        Ok(Pipeline { results, session_id: self.session_id, manifest: self.manifest, _step: PhantomData })
+    }
+}
+
+// Each subsequent step follows the same pattern:
+// consume self, execute step, produce next state.
+<span class="boring">}</span></code></pre>
+<h3 id="21-step-1-validate-manifest"><a class="header" href="#21-step-1-validate-manifest">2.1 Step 1: Validate Manifest</a></h3>
+<p>Schema validation, network contract availability checks, and funding recommendation computation. Deterministic – 1 retry for transient network issues only. Non-retryable failures return the user to the wizard with highlighted field errors.</p>
+<h3 id="22-step-2-create-wallet"><a class="header" href="#22-step-2-create-wallet">2.2 Step 2: Create Wallet</a></h3>
+<p>Wallet creation varies by custody mode:</p>
+<p><strong>Delegation mode (recommended):</strong> No server-side wallet creation needed. The Golem generates an ephemeral session keypair (secp256k1). The owner’s MetaMask Smart Account address is recorded. No Privy dependency.</p>
+<p><strong>Embedded mode (Privy):</strong> Privy server wallets are standard EOAs whose secp256k1 private keys are generated inside and never leave a Privy AWS Nitro Enclave (TEE). The wallet address is only known after calling the Privy creation API. The pipeline creates the wallet first, then uses the returned address for all subsequent on-chain operations.</p>
+<p><strong>Local Key mode:</strong> A secp256k1 keypair is generated locally, bounded by an on-chain delegation. The private key is stored at the configured path (encrypted at rest). A delegation is signed granting this key bounded spending authority.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Result of wallet provisioning. Structure varies by custody mode.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum WalletProvisionResult {
+    Delegation {
+        /// The owner's MetaMask Smart Account address.
+        owner_smart_account: Address,
+        /// Ephemeral session key address (Golem-side).
+        session_key_address: Address,
+        /// Chain the delegation targets.
+        chain_id: u64,
+    },
+    Embedded {
+        /// Privy wallet identifier (e.g., "wl_abc123"). Used as dedup key.
+        wallet_id: String,
+        /// EOA address derived from the TEE-generated secp256k1 key.
+        address: Address,
+        /// Chain the wallet is configured for.
+        chain_id: u64,
+        /// P-256 session signer public key (compressed, hex-encoded).
+        session_signer_pubkey: String,
+        /// When the session signer expires (Unix seconds).
+        session_signer_expires_at: u64,
+    },
+    LocalKey {
+        /// Address derived from the generated keypair.
+        address: Address,
+        /// Chain the key targets.
+        chain_id: u64,
+    },
+}
+<span class="boring">}</span></code></pre>
+<h3 id="23-step-3-approve-permit2"><a class="header" href="#23-step-3-approve-permit2">2.3 Step 3: Approve Permit2</a></h3>
+<p>Only applies to Embedded (Privy) custody mode. Check whether the user has already approved Permit2 to spend USDC. If not, request a one-time <code>USDC.approve(PERMIT2, type(uint256).max)</code> transaction. In Delegation mode, this step is skipped – funds never leave the owner’s wallet. In Local Key mode with delegation, this step is also skipped.</p>
+<h3 id="24-step-4-fund-wallet"><a class="header" href="#24-step-4-fund-wallet">2.4 Step 4: Fund Wallet</a></h3>
+<p>Funding varies by custody mode:</p>
+<p><strong>Delegation mode:</strong> The owner signs an ERC-7715 <code>wallet_grantPermissions</code> request, granting the session key address spending authority subject to caveat enforcers. No token transfer. One off-chain signature.</p>
+<p><strong>Embedded mode:</strong> Execute a Permit2 <code>SignatureTransfer</code> to move USDC from the owner’s Main Wallet to the Golem wallet. Idempotent via Permit2 nonces – if the transfer was already executed (pipeline retry after completion), the on-chain call reverts with <code>InvalidNonce</code> and the existing transfer receipt is returned instead.</p>
+<p><strong>Local Key mode:</strong> The owner signs a delegation granting the local key bounded spending authority. Optionally funds a separate on-chain account if the delegation requires a gas deposit.</p>
+<h3 id="25-step-5-register-identity"><a class="header" href="#25-step-5-register-identity">2.5 Step 5: Register Identity</a></h3>
+<p>When ERC-8004 contracts are available on the target network, register the Golem’s identity. Metadata is generated fresh at registration time – not cached from wizard editing minutes earlier. Keyword matching identifies DeFi domains, protocols, and capabilities from the strategy text.</p>
+<p>If ERC-8004 is not available (e.g., not yet deployed on Base mainnet), the step is skipped. Deferred registration uses runtime-observed behavior (actual tool usage, contract interactions) instead of manifest-derived inference when it eventually executes.</p>
+<h3 id="26-step-6-provision-vm"><a class="header" href="#26-step-6-provision-vm">2.6 Step 6: Provision VM</a></h3>
+<p>For hosted Golems, provision a Fly.io VM from a warm pool of pre-created stopped machines. The VM runs the Rust Golem binary (not a Node.js runtime):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Path</th><th>Time</th></tr>
+</thead>
+<tbody>
+<tr><td>Warm pool (pre-allocated stopped machines)</td><td>3–8s</td></tr>
+<tr><td>Cold fallback (create from scratch)</td><td>15–30s</td></tr>
+</tbody>
+</table>
+</div>
+<p>The warm pool maintains 5 stopped machines per region (ams, ord), replenished every 5 minutes. Cost: ~$0.77/month for 10 stopped machines. At provision time: query pool for a stopped machine, update config (env + files), start machine. If the pool is empty, fall back to cold creation.</p>
+<p>The VM image contains the statically-linked <code>golem-binary</code> Rust executable. Configuration is injected via Fly’s native env var and file injection at machine creation time. The VM receives <code>golem.toml</code>, STRATEGY.md, custody config, and the signing policy. No SSH config injection, no wait loops. Config is present from first boot.</p>
+<p>For self-hosted Golems, this step is skipped. The owner runs the Golem binary directly on their own infrastructure.</p>
+<h3 id="27-step-7-deploy-golem"><a class="header" href="#27-step-7-deploy-golem">2.7 Step 7: Deploy Golem</a></h3>
+<p>Inject configuration into the runtime environment:</p>
+<ul>
+<li>Session key material (Fly.io per-machine env var for hosted; returned to owner for self-hosted)</li>
+<li><code>golem.toml</code> configuration</li>
+<li>STRATEGY.md content</li>
+<li>Custody config (mode + parameters – no private keys for Delegation/LocalKey; Privy config for Embedded)</li>
+<li>Signing policy (compiled from transfer restriction tier + caveat enforcers)</li>
+</ul>
+<p>The session key is an ephemeral keypair granting the Golem the ability to sign transactions through its delegation (Delegation mode) or Privy-managed wallet (Embedded mode). Time-bounded (default: 1 week), wallet-scoped, and policy-constrained. The private key reaches the Golem’s runtime without being written to disk.</p>
+<h3 id="28-step-8-start-heartbeat"><a class="header" href="#28-step-8-start-heartbeat">2.8 Step 8: Start Heartbeat</a></h3>
+<p>The Golem binary boots, opens a persistent outbound WebSocket to Styx (<code>wss://styx.bardo.run/v1/styx/ws</code>), and fires its first heartbeat tick. The provisioner waits for a heartbeat response within 30 seconds. On success, emits <code>golem.created</code> webhook and <code>golem_created</code> telemetry event.</p>
+<p>The Styx connection is outbound-only – no inbound ports, no tunnels, no port forwarding. A Golem behind double-NAT works identically to one on a public IP. Styx verifies ERC-8004 registration during WebSocket authentication; an unregistered Golem is rejected.</p>
+<p>For self-hosted Golems, this step performs a local process health check or is skipped if the owner starts manually. The Golem still connects to Styx on its own at boot.</p>
+<hr>
+<h2 id="s3--idempotency"><a class="header" href="#s3--idempotency">S3 – Idempotency</a></h2>
+<h3 id="31-session-identity"><a class="header" href="#31-session-identity">3.1 Session Identity</a></h3>
+<p>Each provisioning attempt gets a deterministic session ID:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::keccak256;
+
+pub fn compute_session_id(
+    manifest: &amp;GolemExtendedManifest,
+    user_address: Address,
+) -&gt; String {
+    let canonicalized = serde_json::to_string(manifest).expect("manifest serializable");
+    let input = format!("{}{}", canonicalized, user_address);
+    let hash = keccak256(input.as_bytes());
+    format!("{:x}", hash)
+}
+<span class="boring">}</span></code></pre>
+<p>Two attempts with identical manifests from the same wallet produce the same session ID, enabling resume-from-checkpoint. If the manifest changes (user edits strategy between attempts), a new session ID is generated and the old session is abandoned.</p>
+<h3 id="32-resume-semantics"><a class="header" href="#32-resume-semantics">3.2 Resume Semantics</a></h3>
+<p>On resume (browser refresh, retry after failure, network recovery):</p>
+<ol>
+<li>Client sends <code>session_id</code> to the server</li>
+<li>Server reads memoized <code>PipelineResults</code> from disk</li>
+<li>Reconstructs the pipeline at the appropriate type-state step</li>
+<li>Re-executes from the first incomplete step</li>
+<li>Sessions expire after 1 hour</li>
+<li>If the attached manifest differs from the stored manifest, a new session is created</li>
+</ol>
+<h3 id="33-per-step-idempotency"><a class="header" href="#33-per-step-idempotency">3.3 Per-Step Idempotency</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Step</th><th>Idempotent</th><th>Mechanism</th></tr>
+</thead>
+<tbody>
+<tr><td>1. Validate</td><td>Yes</td><td>Pure function (no side effects)</td></tr>
+<tr><td>2. Create Wallet</td><td>Yes</td><td>Dedup by session ID (Delegation); Privy dedup by wallet ID (Embedded)</td></tr>
+<tr><td>3. Approve Permit2</td><td>Yes</td><td>Allowance check before approval</td></tr>
+<tr><td>4. Fund Wallet</td><td>Yes</td><td>Delegation signature is idempotent; Permit2 nonces are single-use</td></tr>
+<tr><td>5. Register Identity</td><td>Yes</td><td>Registry lookup before attempt</td></tr>
+<tr><td>6. Provision VM</td><td>Yes</td><td>Fly.io machine ID as dedup key</td></tr>
+<tr><td>7. Deploy Golem</td><td>No*</td><td>Pipeline-level dedup via memoized step result</td></tr>
+<tr><td>8. Start Heartbeat</td><td>Yes</td><td>Read-only health check + idempotent webhook</td></tr>
+</tbody>
+</table>
+</div>
+<p>*Step 7 (session key registration) calls register multiple signers if called multiple times. The pipeline tracks the signer ID in the memoized step result to prevent duplicates.</p>
+<hr>
+<h2 id="s4--step-compensation-on-failure"><a class="header" href="#s4--step-compensation-on-failure">S4 – Step Compensation on Failure</a></h2>
+<p>The pipeline is forward-only. On-chain operations (steps 4, 5) cannot be rolled back. The design compensates for failures rather than attempting undo.</p>
+<h3 id="41-per-step-recovery"><a class="header" href="#41-per-step-recovery">4.1 Per-Step Recovery</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Step</th><th>Failure Mode</th><th>Recovery</th><th>Retryable</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>Invalid manifest</td><td>Show errors, return to wizard</td><td>No</td></tr>
+<tr><td>2</td><td>Wallet provisioning failed</td><td>Retry with backoff (3 attempts)</td><td>Yes</td></tr>
+<tr><td>3</td><td>Approval rejected by user</td><td>Return to funding step</td><td>No</td></tr>
+<tr><td>4</td><td>Insufficient balance</td><td>Show insufficient funds flow</td><td>No</td></tr>
+<tr><td>4</td><td>Permit2 signature expired</td><td>Request new signature</td><td>No</td></tr>
+<tr><td>4</td><td>Delegation signature failed</td><td>Request new signature</td><td>No</td></tr>
+<tr><td>4</td><td>Transaction reverted</td><td>Retry with fresh nonce</td><td>Yes</td></tr>
+<tr><td>4</td><td>Already funded (nonce reuse)</td><td>Detect <code>InvalidNonce</code>, skip</td><td>Yes</td></tr>
+<tr><td>5</td><td>ERC-8004 not deployed</td><td>Skip step (deferred registration)</td><td>N/A</td></tr>
+<tr><td>5</td><td>Agent already registered</td><td>Detect, skip</td><td>Yes</td></tr>
+<tr><td>6</td><td>Fly.io capacity unavailable</td><td>Retry; offer alternative region</td><td>Yes</td></tr>
+<tr><td>6</td><td>VM boot timeout (&gt;60s)</td><td>Retry; after 3 failures, manual debug</td><td>Yes</td></tr>
+<tr><td>7</td><td>Policy rejected</td><td>Surface to user</td><td>No</td></tr>
+<tr><td>7</td><td>Signer revoked before deploy</td><td>Re-generate signer, retry</td><td>Yes</td></tr>
+<tr><td>8</td><td>Health check timeout</td><td>Retry 3x at 10s intervals</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="42-fund-compensation"><a class="header" href="#42-fund-compensation">4.2 Fund Compensation</a></h3>
+<p>If the pipeline fails after step 4 (wallet is funded but subsequent steps fail permanently):</p>
+<p><strong>Delegation mode:</strong> No compensation needed. The delegation can be revoked by the owner from MetaMask. Funds were never transferred.</p>
+<p><strong>Embedded mode:</strong> Funds are swept back to the owner’s Main Wallet. If step 7 completed (session signer available), the sweep uses the session signer. Otherwise, the owner sweeps manually via the app dashboard. Key invariant: <strong>the owner never loses funds</strong>.</p>
+<hr>
+<h2 id="s5--hosted-vs-self-hosted-differences"><a class="header" href="#s5--hosted-vs-self-hosted-differences">S5 – Hosted vs Self-Hosted Differences</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Step</th><th>Hosted (Bardo Compute)</th><th>Self-Hosted</th></tr>
+</thead>
+<tbody>
+<tr><td>1. Validate</td><td>Full validation</td><td>Same</td></tr>
+<tr><td>2. Create Wallet</td><td>Per custody mode</td><td>Same</td></tr>
+<tr><td>3. Approve Permit2</td><td>If Embedded mode</td><td>Same, or skip if Delegation/LocalKey</td></tr>
+<tr><td>4. Fund Wallet</td><td>Per custody mode</td><td>Same</td></tr>
+<tr><td>5. Register Identity</td><td>On-chain ERC-8004</td><td>Same</td></tr>
+<tr><td>6. Provision VM</td><td>Fly.io from warm pool</td><td><strong>Skip</strong></td></tr>
+<tr><td>7. Deploy Golem</td><td>Inject config into VM</td><td>Return config to owner</td></tr>
+<tr><td>8. Start Heartbeat</td><td>Remote health check</td><td><strong>Skip</strong> (owner runs <code>golem-binary</code> directly)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s6--warm-pool-for-sub-5s-provisioning"><a class="header" href="#s6--warm-pool-for-sub-5s-provisioning">S6 – Warm Pool for Sub-5s Provisioning</a></h2>
+<p>The warm pool eliminates cold start latency for hosted Golems. Pre-created stopped Fly.io machines sit ready in each region, awaiting configuration injection and start.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Pool size per region</td><td>5 stopped machines</td></tr>
+<tr><td>Regions</td><td>ams (Amsterdam), ord (Chicago)</td></tr>
+<tr><td>Replenishment interval</td><td>Every 5 minutes</td></tr>
+<tr><td>Machine specs</td><td>shared CPU, 1 vCPU, 512MB RAM</td></tr>
+<tr><td>Monthly cost</td><td>~$0.77 (10 machines x 512MB x $0.15/GB/month)</td></tr>
+<tr><td>Warm boot time</td><td>3–8 seconds (config update + start)</td></tr>
+<tr><td>Cold fallback time</td><td>15–30 seconds (create from scratch)</td></tr>
+</tbody>
+</table>
+</div>
+<p>At provision time:</p>
+<ol>
+<li>Query pool for a stopped machine in the target region</li>
+<li>If available: update machine config (env + strategy files), start machine</li>
+<li>If pool empty: create new machine from scratch (cold fallback)</li>
+</ol>
+<p>Configuration is injected via Fly’s native env var and file injection at machine creation time. The VM receives <code>golem.toml</code>, STRATEGY.md, custody config JSON (no private keys in Delegation mode), and the signing policy. No SSH config injection, no wait loops. Config is present from first boot.</p>
+<hr>
+<h2 id="s7--session-key-transmission"><a class="header" href="#s7--session-key-transmission">S7 – Session Key Transmission</a></h2>
+<p>The session key material must reach the Golem’s runtime without being written to disk or exposed to intermediate infrastructure.</p>
+<h3 id="71-hosted-mode"><a class="header" href="#71-hosted-mode">7.1 Hosted Mode</a></h3>
+<p>The key is injected as a Fly.io per-machine env var (not app-wide secrets). Per-machine env vars ensure one Golem cannot read another’s key. Fly.io security properties:</p>
+<ul>
+<li>In-transit: TLS 1.3 between provisioner and Fly API</li>
+<li>At-rest: Fly infrastructure encrypts machine config</li>
+<li>Process isolation: Each Fly machine runs in its own Firecracker microVM</li>
+<li>No disk persistence: Env vars live in process memory only</li>
+<li>No API readback: Machine env vars are write-only via the Machines API</li>
+<li>Golem isolation: Per-machine env vars ensure cross-Golem key isolation</li>
+</ul>
+<p>In Delegation mode, the session key private material is ephemeral – compromise is bounded by the caveat enforcers on the delegation, and the owner can revoke from MetaMask at any time.</p>
+<h3 id="72-self-hosted-mode"><a class="header" href="#72-self-hosted-mode">7.2 Self-Hosted Mode</a></h3>
+<p>The private key is returned to the owner in the provisioning result. The owner injects it into their runtime:</p>
+<pre><code class="language-bash">export GOLEM_SESSION_KEY="&lt;key from provisioning&gt;"
+./golem-binary --config ./golem.toml
+</code></pre>
+<p>The key is read from <code>process.env</code> and held in memory for the process lifetime. Never written to disk by Bardo code. In Delegation mode, key compromise is bounded by caveats. In Embedded mode, the key is policy-constrained within the TEE.</p>
+<hr>
+<h2 id="s8--fresh-metadata-generation"><a class="header" href="#s8--fresh-metadata-generation">S8 – Fresh Metadata Generation</a></h2>
+<p>Identity metadata for ERC-8004 registration is always generated fresh from the current state at the moment of registration – never cached from wizard editing.</p>
+<p><strong>At creation time</strong>: Metadata is derived from the finalized manifest. Keyword matching on the strategy text identifies DeFi domains, protocols, and capabilities.</p>
+<p><strong>At deferred registration</strong>: When the Golem migrates to a network with ERC-8004, metadata is derived from runtime-observed behavior (actual tool usage, contract interactions, chain activity) – more accurate because it reflects what the Golem actually does, not what the strategy text says it should do.</p>
+<hr>
+<h2 id="s9--graceful-shutdown"><a class="header" href="#s9--graceful-shutdown">S9 – Graceful Shutdown</a></h2>
+<blockquote>
+<p><strong>Graceful Shutdown:</strong> Full 10-phase shutdown sequence in <code>12-teardown.md</code> Section S11 and <code>rewrite4/01b-runtime-infrastructure.md</code> Section 6. Summary: stop new work &gt; cancel in-flight tools &gt; flush Grimoire &gt; settlement triage &gt; execute critical settlements &gt; write BardoManifest &gt; seal audit chain &gt; sync to Styx &gt; zero secrets &gt; exit.</p>
+</blockquote>
+<hr>
+<h2 id="s10--telemetry"><a class="header" href="#s10--telemetry">S10 – Telemetry</a></h2>
+<p>Every step completion and failure emits a telemetry event to PostHog for creation funnel tracking. Events use privacy-preserving identifiers (server-generated HMAC of wallet address, never the raw address).</p>
+<p>Key funnel metrics:</p>
+<ul>
+<li><strong>Completion rate</strong>: <code>provisioning_started</code> to <code>golem_created</code></li>
+<li><strong>Step drop-off</strong>: which step has the highest failure/abandonment rate</li>
+<li><strong>Step duration P50/P95</strong>: identify slow steps for optimization</li>
+<li><strong>Retry rate per step</strong>: identify flaky infrastructure</li>
+<li><strong>Mode split</strong>: Bardo Compute vs self-hosted adoption</li>
+<li><strong>Custody split</strong>: Delegation vs Embedded vs LocalKey adoption</li>
+<li><strong>Network distribution</strong>: which networks users target</li>
+</ul>
+<hr>
+<h2 id="s11--client-side-session-tracking"><a class="header" href="#s11--client-side-session-tracking">S11 – Client-Side Session Tracking</a></h2>
+<p>The wizard UI tracks provisioning progress via polling (2-second intervals) or server-sent events (SSE). Each step displays a status message:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Step</th><th>In Progress</th><th>Completed</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>“Validating configuration…”</td><td>“Configuration valid”</td></tr>
+<tr><td>2</td><td>“Setting up wallet…”</td><td>“Wallet ready: 0xab…cd”</td></tr>
+<tr><td>3</td><td>“Checking token approval…”</td><td>“Permit2 approved”</td></tr>
+<tr><td>4</td><td>“Granting delegation…”</td><td>“Delegation active”</td></tr>
+<tr><td>5</td><td>“Registering identity…”</td><td>“Identity registered”</td></tr>
+<tr><td>6</td><td>“Booting compute…”</td><td>“Compute instance running”</td></tr>
+<tr><td>7</td><td>“Deploying Golem…”</td><td>“Golem deployed”</td></tr>
+<tr><td>8</td><td>“Verifying heartbeat…”</td><td>“Your Golem is live!”</td></tr>
+</tbody>
+</table>
+</div>
+<p>Step 4 message adapts to custody mode: “Granting delegation…” (Delegation), “Funding Golem…” (Embedded), “Signing delegation…” (LocalKey).</p>
+<p>Available recovery actions include retry (for retryable failures), cancel, add funds (for insufficient balance in Embedded mode), change region (for Fly.io capacity issues), and manual sweep (for fund recovery after permanent failure in Embedded mode).</p>
+<hr>
+<h2 id="events-emitted"><a class="header" href="#events-emitted">Events Emitted</a></h2>
+<p>Provisioning events track each pipeline step for funnel analysis and debugging.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>provisioning:started</code></td><td>Pipeline begins</td><td><code>{ sessionId, custodyMode, network, mode }</code></td></tr>
+<tr><td><code>provisioning:step_completed</code></td><td>Any step succeeds</td><td><code>{ sessionId, step, durationMs }</code></td></tr>
+<tr><td><code>provisioning:step_failed</code></td><td>Any step fails</td><td><code>{ sessionId, step, error, retryable }</code></td></tr>
+<tr><td><code>provisioning:wallet_created</code></td><td>Step 2 completes</td><td><code>{ walletAddress, custodyMode, chainId }</code></td></tr>
+<tr><td><code>provisioning:funded</code></td><td>Step 4 completes</td><td><code>{ amount, custodyMode }</code></td></tr>
+<tr><td><code>provisioning:identity_registered</code></td><td>Step 5 completes</td><td><code>{ identityId, txHash }</code></td></tr>
+<tr><td><code>provisioning:styx_connected</code></td><td>Golem connects to Styx</td><td><code>{ golemId, styxEndpoint }</code></td></tr>
+<tr><td><code>provisioning:first_heartbeat</code></td><td>Step 8 completes</td><td><code>{ golemId, bootDurationMs }</code></td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/06-creation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/08-funding.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/06-creation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/08-funding.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

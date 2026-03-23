@@ -1,0 +1,843 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Information-Theoretic Diagnostics - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/02-mortality/17-information-theoretic-diagnostics.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="information-theoretic-mortality-diagnostics-spec"><a class="header" href="#information-theoretic-mortality-diagnostics-spec">Information-Theoretic Mortality Diagnostics [SPEC]</a></h1>
+<blockquote>
+<p><em>“The measure of death is the measure of disconnection.”</em></p>
+</blockquote>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crate</strong>: <code>golem-mortality</code> (within <code>golem-core</code>)</p>
+<p><strong>Depends on</strong>: <code>01-architecture.md</code> (triple-clock system, vitality computation), <code>04-economic-mortality.md</code> (USDC as metabolic substrate), <code>02-epistemic-decay.md</code> (epistemic clock specification), <code>03-stochastic-mortality.md</code> (per-tick hazard rate)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies an information-theoretic diagnostic layer that runs alongside Bardo’s three mortality clocks. It computes the mutual information I(G; M) between a Golem (mortal autonomous DeFi agent) and its market environment using the KSG estimator, providing a unified scalar that detects mortality modes invisible to the individual clocks: informational decoupling (the Golem appears healthy but is statistically independent of outcomes), overfitting (high historical MI, near-zero current MI), and Clade (sibling Golems) redundancy (the Golem contributes no unique information). This layer augments but does not replace the three-clock composition. See <code>01-architecture.md</code> (triple-clock system) for the primary mortality architecture. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="document-purpose"><a class="header" href="#document-purpose">Document Purpose</a></h2>
+<p>The three-clock mortality architecture (economic, epistemic, stochastic) composes vitality multiplicatively. This works, but the composition is ad hoc. The three clocks measure different units (USDC, accuracy scores, tick counts) with no shared currency and no formal justification for multiplication over any other aggregation operator.</p>
+<p>This document specifies a complementary information-theoretic diagnostic layer that runs alongside the three clocks. It does not replace them. It augments them with a unified scalar, the mutual information I(G; M) between a Golem G and its market environment M, that reveals mortality modes invisible to the individual clocks: informational decoupling, overfitting, and Clade redundancy.</p>
+<p>The diagnostic layer uses the Kraskov-Stogbauer-Grassberger (KSG) estimator to compute MI from sliding windows of (action, market_response) pairs. It feeds three new signals into the CorticalState (32-signal atomic shared perception surface; the Golem’s real-time self-model) perception surface and integrates with the 9-step heartbeat at Step 3 (ANALYZE).</p>
+<hr>
+<h2 id="theoretical-foundation"><a class="header" href="#theoretical-foundation">Theoretical Foundation</a></h2>
+<h3 id="mutual-information-as-common-currency"><a class="header" href="#mutual-information-as-common-currency">Mutual Information as Common Currency</a></h3>
+<p>All three mortality clocks measure the same underlying quantity from different angles: how much the Golem knows about the market that is useful for action. This quantity has a precise mathematical definition. It is the mutual information between the Golem’s state and the market’s state.</p>
+<p>Let G be a random variable representing the Golem’s internal state (capital, model parameters, prediction history) and M be a random variable representing the market’s state (prices, volumes, liquidity, volatility). The mutual information is:</p>
+<pre><code>I(G; M) = H(G) + H(M) - H(G, M)
+</code></pre>
+<p>where H denotes Shannon entropy (Shannon, 1948). Equivalently:</p>
+<pre><code>I(G; M) = H(M) - H(M | G)
+</code></pre>
+<p>Read this as: the total uncertainty in the market, minus the uncertainty that remains after observing the Golem’s state. A Golem with high mutual information “knows” a lot about the market. A Golem with I(G; M) = 0 knows nothing – its state is statistically independent of the market’s.</p>
+<p>Mutual information is measured in bits. Bits are the common currency the multiplicative system lacks.</p>
+<h3 id="clock-decomposition-into-mi-components"><a class="header" href="#clock-decomposition-into-mi-components">Clock Decomposition into MI Components</a></h3>
+<p>Each existing clock decomposes naturally into a component of I(G; M):</p>
+<p><strong>Economic clock as channel capacity.</strong> Shannon’s channel capacity theorem (Shannon, 1948) defines the maximum rate at which information can be reliably transmitted through a noisy channel. For a Golem, the “channel” is the mechanism by which actions produce market returns. Capital constrains the action space. As capital shrinks, the set of feasible actions shrinks, the optimization surface flattens, and channel capacity approaches zero. The economic mortality component is:</p>
+<pre><code>I_economic = C(capital) / C(initial_capital)
+</code></pre>
+<p>Running out of money kills a Golem not because a balance hits zero, but because the information channel between the Golem and the market closes.</p>
+<p><strong>Epistemic clock as rate-distortion.</strong> Rate-distortion theory (Shannon, 1959) defines the minimum bits per symbol needed to represent a source within a given distortion tolerance. The Golem’s actual information rate r must exceed the minimum required rate R(D) to maintain acceptable prediction accuracy. The epistemic mortality component is:</p>
+<pre><code>I_epistemic = r / R(D)
+</code></pre>
+<p>When this ratio drops below 1.0, the Golem’s model is provably too coarse.</p>
+<p><strong>Stochastic clock as entropy production.</strong> The market produces entropy at rate sigma. The Golem has finite information processing capacity kappa (bits per tick). The stochastic mortality component is:</p>
+<pre><code>I_stochastic = 1 - sigma / kappa  (clamped to [0, 1])
+</code></pre>
+<p>When sigma exceeds kappa, the Golem cannot keep up with the market’s novelty rate.</p>
+<h3 id="the-unified-decomposition"><a class="header" href="#the-unified-decomposition">The Unified Decomposition</a></h3>
+<p>By the chain rule of mutual information (Cover &amp; Thomas, 2006):</p>
+<pre><code>I(G; M) = I(G_econ; M) + I(G_epist; M | G_econ) - I_redundant
+</code></pre>
+<p>The complete vitality scalar is:</p>
+<pre><code>V(G) = I(G; M) / I_max
+</code></pre>
+<p>where I_max is the maximum achievable mutual information given the Golem’s architecture and the market’s entropy rate. V(G) in [0, 1] provides a diagnostic overlay on the existing composite_vitality.</p>
+<p>The behavioral phase mapping remains identical:</p>
+<ul>
+<li>Thriving: V(G) &gt; 0.7</li>
+<li>Stable: 0.4 &lt; V(G) &lt;= 0.7</li>
+<li>Conservation: 0.2 &lt; V(G) &lt;= 0.4</li>
+<li>Declining: 0.1 &lt; V(G) &lt;= 0.2</li>
+<li>Terminal: V(G) &lt;= 0.1</li>
+</ul>
+<hr>
+<h2 id="three-novel-mortality-modes"><a class="header" href="#three-novel-mortality-modes">Three Novel Mortality Modes</a></h2>
+<p>The information-theoretic framework reveals failure modes invisible to the multiplicative system.</p>
+<h3 id="mode-1-informational-decoupling"><a class="header" href="#mode-1-informational-decoupling">Mode 1: Informational Decoupling</a></h3>
+<p>A Golem has healthy capital, accurate recent predictions, and plenty of ticks remaining – yet I(G; M) approaches zero. This happens when the market regime changes in a way that makes the Golem’s strategy orthogonal to price movements. Every individual clock looks fine. The Golem’s actions have become statistically independent of market outcomes. It is trading randomly without knowing it.</p>
+<p>In the multiplicative system, this Golem looks healthy. In the MI framework, it is already dead.</p>
+<p>Detection criterion:</p>
+<pre><code>decoupled = (composite_vitality &gt; 0.5) AND (V_mi &lt; 0.2)
+</code></pre>
+<p>When detected, the diagnostic layer writes a <code>mortality:decoupling_alert</code> event and increases arousal on the CorticalState to trigger retraining at the next deliberation step.</p>
+<h3 id="mode-2-overfitting"><a class="header" href="#mode-2-overfitting">Mode 2: Overfitting</a></h3>
+<p>Define temporal mutual information:</p>
+<pre><code>I(G; M_past) &gt;&gt; I(G; M_future)
+</code></pre>
+<p>The Golem has high mutual information with historical market states but near-zero mutual information with the evolving market. Its model fits the past perfectly and the present not at all. The epistemic clock might show high accuracy on a rolling window that still contains mostly past-regime data. The MI framework catches this by measuring mutual information with the current market state, not a historical aggregate.</p>
+<p>Detection criterion:</p>
+<pre><code>overfitted = (I_past / I_recent &gt; 3.0) AND (I_recent &lt; 0.3 * I_max)
+</code></pre>
+<p>where I_past is MI computed over observations from ticks [t-2000, t-1000] and I_recent is MI from ticks [t-1000, t].</p>
+<h3 id="mode-3-clade-redundancy"><a class="header" href="#mode-3-clade-redundancy">Mode 3: Clade Redundancy</a></h3>
+<p>For a Golem in a Clade, compute the conditional mutual information:</p>
+<pre><code>I(G; M | Clade) = I(G; M) - I(G; M; Clade)
+</code></pre>
+<p>This is the information the Golem provides about the market that no other Clade member provides. When I(G; M | Clade) = 0, the Golem is informationally redundant – every bit of market knowledge it has is already captured by the Clade. This is the principled death criterion for Clade members.</p>
+<p>The redundancy index:</p>
+<pre><code>redundancy = I(G; M | Clade) / I(G; M)
+</code></pre>
+<p>A value of 1.0 means the Golem is entirely non-redundant. A value of 0.0 means it contributes nothing the Clade doesn’t already know. This feeds into Clade-level resource allocation decisions: a redundant Golem can be reassigned to a different strategy, or its capital can be reclaimed.</p>
+<hr>
+<h2 id="estimation-ksg-algorithm"><a class="header" href="#estimation-ksg-algorithm">Estimation: KSG Algorithm</a></h2>
+<p>Computing mutual information between continuous, high-dimensional random variables is hard. Naive histogram-based estimators suffer from the curse of dimensionality. The Kraskov-Stogbauer-Grassberger (KSG) estimator (Kraskov et al., 2004) solves this with a k-nearest-neighbor approach that adapts bin sizes locally.</p>
+<p>For two continuous random variables X and Y with n joint samples, KSG Algorithm 1:</p>
+<ol>
+<li>For each sample point i, find the distance to its k-th nearest neighbor in the joint (X, Y) space using the Chebyshev (L-infinity) norm.</li>
+<li>Count n_x(i) = points within that distance in the X marginal.</li>
+<li>Count n_y(i) = points within that distance in the Y marginal.</li>
+<li>Estimate MI as:</li>
+</ol>
+<pre><code>I_hat(X; Y) = psi(k) - (1/n) * sum_i [psi(n_x(i)) + psi(n_y(i))] + psi(n)
+</code></pre>
+<p>where psi is the digamma function.</p>
+<p>The k-d tree makes neighbor lookups O(log n) per query, giving O(n log n) total for n observations. For the Bardo system, n is the window size (~1,000 recent observation pairs), and k is typically 3-7.</p>
+<p>Why KSG? It converges to the true MI as n grows, regardless of the underlying distribution. It adapts bin sizes locally. It makes no parametric assumptions, which matters because market returns are non-Gaussian.</p>
+<hr>
+<h2 id="architecture"><a class="header" href="#architecture">Architecture</a></h2>
+<h3 id="extension-dag-integration"><a class="header" href="#extension-dag-integration">Extension DAG Integration</a></h3>
+<p>The MI mortality estimator lives in <code>golem-mortality</code> at Layer 3 (Behavior) of the 7-layer extension DAG. It receives inputs from:</p>
+<ul>
+<li><strong>Layer 0 (Foundation):</strong> tick timing, gamma clock signal</li>
+<li><strong>Layer 1 (Storage):</strong> observation buffer of (action, market_response) pairs from Grimoire</li>
+<li><strong>Layer 2 (Cognition):</strong> prediction residuals from Oracle, current model state</li>
+</ul>
+<p>It feeds upward to:</p>
+<ul>
+<li><strong>Layer 4 (Action):</strong> mortality-adjusted action gating</li>
+<li><strong>Layer 5 (Social):</strong> Clade redundancy signals via Styx</li>
+<li><strong>Layer 6 (Integration):</strong> MI vitality diagnostic for heartbeat pipeline</li>
+</ul>
+<h3 id="corticalstate-signals"><a class="header" href="#corticalstate-signals">CorticalState Signals</a></h3>
+<p>Three new atomic signals on the CorticalState perception surface:</p>
+<pre><code>mutual_information: AtomicU32   // f32 bits, I(G; M) estimate
+information_rate: AtomicU32     // f32 bits/tick, instantaneous MI rate
+redundancy_index: AtomicU32     // f32 in [0, 1], I(G; M | Clade) / I(G; M)
+</code></pre>
+<p>These fit within the existing ~256-byte, 4-cache-line layout. Each is 4 bytes. Total addition: 12 bytes.</p>
+<h3 id="heartbeat-integration"><a class="header" href="#heartbeat-integration">Heartbeat Integration</a></h3>
+<p>The MI estimate updates at Step 3 (ANALYZE) of the 9-step heartbeat:</p>
+<pre><code>observe -&gt; retrieve -&gt; [ANALYZE: update I(G;M)] -&gt; gate -&gt; simulate -&gt; validate -&gt; execute -&gt; verify -&gt; reflect
+</code></pre>
+<p>At each gamma tick (5-15 seconds), the diagnostic engine:</p>
+<ol>
+<li>Reads the latest (action, market_response) pair from the observation buffer</li>
+<li>Appends it to the sliding window</li>
+<li>Runs the KSG estimator on the window</li>
+<li>Writes the result to <code>mutual_information</code> on CorticalState</li>
+<li>Computes diagnostic alerts from the new V(G)</li>
+</ol>
+<p>The gate step (Step 4) uses the MI diagnostic to flag phase-boundary risks. A Golem in apparent Thriving phase (by multiplicative vitality) but low MI vitality triggers Conservation-like caution.</p>
+<h3 id="relationship-to-existing-mortality-system"><a class="header" href="#relationship-to-existing-mortality-system">Relationship to Existing Mortality System</a></h3>
+<p>The MI diagnostic layer is advisory, not authoritative. The existing three-clock multiplicative composition remains the source of truth for phase transitions and behavioral mode changes. The MI layer provides three additional capabilities:</p>
+<ol>
+<li><strong>Early warning.</strong> MI can detect decoupling and overfitting before the individual clocks show degradation.</li>
+<li><strong>Diagnostic explanation.</strong> When composite vitality drops, the MI decomposition explains which information channel is closing.</li>
+<li><strong>Clade-level insight.</strong> The redundancy index provides information unavailable to individual-Golem mortality assessment.</li>
+</ol>
+<p>In future versions, the MI-based vitality V(G) may graduate from diagnostic overlay to primary mortality scalar, contingent on the evaluation protocol results (see below).</p>
+<hr>
+<h2 id="implementation"><a class="header" href="#implementation">Implementation</a></h2>
+<h3 id="observation-buffer"><a class="header" href="#observation-buffer">Observation Buffer</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::VecDeque;
+
+/// A single observation: what the Golem did and what the market did in response.
+#[derive(Clone, Debug)]
+pub struct Observation {
+    /// Golem's action vector: position sizes, protocol allocations, etc.
+    pub action: Vec&lt;f64&gt;,
+    /// Market response vector: returns, volume changes, liquidity shifts, etc.
+    pub response: Vec&lt;f64&gt;,
+    /// Timestamp in gamma ticks since genesis.
+    pub tick: u64,
+}
+
+/// Sliding window of observations for MI estimation.
+pub struct ObservationBuffer {
+    window: VecDeque&lt;Observation&gt;,
+    max_size: usize,
+}
+
+impl ObservationBuffer {
+    pub fn new(max_size: usize) -&gt; Self {
+        Self {
+            window: VecDeque::with_capacity(max_size),
+            max_size,
+        }
+    }
+
+    pub fn push(&amp;mut self, obs: Observation) {
+        if self.window.len() == self.max_size {
+            self.window.pop_front();
+        }
+        self.window.push_back(obs);
+    }
+
+    pub fn actions(&amp;self) -&gt; Vec&lt;&amp;[f64]&gt; {
+        self.window.iter().map(|o| o.action.as_slice()).collect()
+    }
+
+    pub fn responses(&amp;self) -&gt; Vec&lt;&amp;[f64]&gt; {
+        self.window.iter().map(|o| o.response.as_slice()).collect()
+    }
+
+    pub fn len(&amp;self) -&gt; usize {
+        self.window.len()
+    }
+
+    /// Split buffer into two halves for temporal MI comparison.
+    /// Returns (older_half, newer_half) as separate observation sets.
+    pub fn split_temporal(&amp;self) -&gt; (Vec&lt;&amp;Observation&gt;, Vec&lt;&amp;Observation&gt;) {
+        let mid = self.window.len() / 2;
+        let older: Vec&lt;_&gt; = self.window.iter().take(mid).collect();
+        let newer: Vec&lt;_&gt; = self.window.iter().skip(mid).collect();
+        (older, newer)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="ksg-estimator"><a class="header" href="#ksg-estimator">KSG Estimator</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Digamma function approximation (Bernardo, 1976).
+/// Uses the asymptotic series for psi(x) with recurrence for small x.
+fn digamma(mut x: f64) -&gt; f64 {
+    let mut result = 0.0;
+    while x &lt; 6.0 {
+        result -= 1.0 / x;
+        x += 1.0;
+    }
+    result += x.ln() - 1.0 / (2.0 * x);
+    let x2 = x * x;
+    result -= 1.0 / (12.0 * x2);
+    result += 1.0 / (120.0 * x2 * x2);
+    result -= 1.0 / (252.0 * x2 * x2 * x2);
+    result
+}
+
+/// Chebyshev (L-infinity) distance between two points.
+fn chebyshev_distance(a: &amp;[f64], b: &amp;[f64]) -&gt; f64 {
+    a.iter()
+        .zip(b.iter())
+        .map(|(ai, bi)| (ai - bi).abs())
+        .fold(0.0_f64, f64::max)
+}
+
+/// KSG mutual information estimator (Algorithm 1).
+///
+/// `x_samples`: n observations of variable X, each of dimension d_x
+/// `y_samples`: n observations of variable Y, each of dimension d_y
+/// `k`: number of nearest neighbors (typically 3-7)
+///
+/// Returns estimated mutual information in nats. Divide by ln(2) for bits.
+pub fn ksg_mutual_information(
+    x_samples: &amp;[Vec&lt;f64&gt;],
+    y_samples: &amp;[Vec&lt;f64&gt;],
+    k: usize,
+) -&gt; f64 {
+    let n = x_samples.len();
+    assert_eq!(n, y_samples.len(), "sample counts must match");
+    assert!(n &gt; k, "need more samples than neighbors");
+
+    let d_x = x_samples[0].len();
+    let d_y = y_samples[0].len();
+    let d_joint = d_x + d_y;
+
+    // Build joint-space points.
+    let joint_points: Vec&lt;Vec&lt;f64&gt;&gt; = x_samples
+        .iter()
+        .zip(y_samples.iter())
+        .map(|(x, y)| {
+            let mut p = Vec::with_capacity(d_joint);
+            p.extend_from_slice(x);
+            p.extend_from_slice(y);
+            p
+        })
+        .collect();
+
+    let mut psi_nx_sum = 0.0;
+    let mut psi_ny_sum = 0.0;
+
+    for i in 0..n {
+        let mut joint_dists: Vec&lt;f64&gt; = (0..n)
+            .filter(|&amp;j| j != i)
+            .map(|j| chebyshev_distance(&amp;joint_points[i], &amp;joint_points[j]))
+            .collect();
+        joint_dists.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+        let epsilon = joint_dists[k - 1];
+
+        let n_x = x_samples
+            .iter()
+            .enumerate()
+            .filter(|&amp;(j, _)| j != i)
+            .filter(|&amp;(_, xj)| chebyshev_distance(&amp;x_samples[i], xj) &lt;= epsilon)
+            .count();
+
+        let n_y = y_samples
+            .iter()
+            .enumerate()
+            .filter(|&amp;(j, _)| j != i)
+            .filter(|&amp;(_, yj)| chebyshev_distance(&amp;y_samples[i], yj) &lt;= epsilon)
+            .count();
+
+        psi_nx_sum += digamma(n_x as f64);
+        psi_ny_sum += digamma(n_y as f64);
+    }
+
+    let mi_nats = digamma(k as f64) - (psi_nx_sum + psi_ny_sum) / n as f64
+        + digamma(n as f64);
+
+    // Convert nats to bits.
+    mi_nats / 2.0_f64.ln()
+}
+<span class="boring">}</span></code></pre>
+<h3 id="entropy-rate-estimator"><a class="header" href="#entropy-rate-estimator">Entropy Rate Estimator</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Estimate the entropy rate of a sequence of observations.
+/// Uses the Lempel-Ziv complexity as a proxy (Lempel &amp; Ziv, 1976).
+///
+/// The entropy rate measures how much new information each observation
+/// contributes. A declining entropy rate indicates the Golem's belief
+/// updates are becoming redundant -- it is learning less per tick.
+pub struct EntropyRateEstimator {
+    /// Rolling window of discretized observation hashes.
+    window: VecDeque&lt;u64&gt;,
+    max_size: usize,
+    /// Number of distinct patterns seen in the current window.
+    distinct_patterns: std::collections::HashSet&lt;u64&gt;,
+}
+
+impl EntropyRateEstimator {
+    pub fn new(max_size: usize) -&gt; Self {
+        Self {
+            window: VecDeque::with_capacity(max_size),
+            max_size,
+            distinct_patterns: std::collections::HashSet::new(),
+        }
+    }
+
+    /// Push a discretized observation hash.
+    pub fn push(&amp;mut self, hash: u64) {
+        if self.window.len() == self.max_size {
+            if let Some(old) = self.window.pop_front() {
+                // Recompute distinct_patterns lazily on next estimate.
+                self.distinct_patterns.remove(&amp;old);
+            }
+        }
+        self.distinct_patterns.insert(hash);
+        self.window.push_back(hash);
+    }
+
+    /// Estimate entropy rate as the ratio of distinct patterns to window size.
+    /// Returns a value in [0, 1]. High = diverse observations, Low = repetitive.
+    pub fn estimate(&amp;self) -&gt; f64 {
+        if self.window.is_empty() {
+            return 0.0;
+        }
+        self.distinct_patterns.len() as f64 / self.window.len() as f64
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="mi-diagnostic-engine"><a class="header" href="#mi-diagnostic-engine">MI Diagnostic Engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::atomic::{AtomicU32, Ordering};
+
+/// Information-theoretic mortality diagnostic engine.
+///
+/// Runs alongside the three-clock mortality system. Does not replace
+/// the multiplicative composition. Provides three additional signals:
+/// mutual_information, information_rate, and redundancy_index.
+pub struct MiDiagnosticEngine {
+    buffer: ObservationBuffer,
+    entropy_estimator: EntropyRateEstimator,
+    k: usize,
+    i_max: f64,
+    prev_mi: f64,
+    /// Separate buffer for temporal split (overfitting detection).
+    temporal_window: usize,
+}
+
+/// Diagnostic results from one update cycle.
+#[derive(Debug, Clone)]
+pub struct MiDiagnostics {
+    /// Raw mutual information estimate in bits.
+    pub mi_bits: f64,
+    /// Vitality scalar V(G) = I(G; M) / I_max, in [0, 1].
+    pub vitality: f32,
+    /// Information rate: delta MI per tick.
+    pub information_rate: f32,
+    /// Entropy rate of belief updates.
+    pub entropy_rate: f64,
+    /// Whether decoupling is detected.
+    pub decoupled: bool,
+    /// Whether overfitting is detected.
+    pub overfitted: bool,
+}
+
+impl MiDiagnosticEngine {
+    pub fn new(window_size: usize, k: usize, i_max: f64) -&gt; Self {
+        Self {
+            buffer: ObservationBuffer::new(window_size),
+            entropy_estimator: EntropyRateEstimator::new(window_size),
+            k,
+            i_max,
+            prev_mi: 0.0,
+            temporal_window: window_size,
+        }
+    }
+
+    /// Update MI diagnostics. Called once per gamma tick at heartbeat Step 3.
+    ///
+    /// `obs`: the latest (action, market_response) pair.
+    /// `composite_vitality`: the current multiplicative three-clock vitality.
+    /// `obs_hash`: a discretized hash of the observation for entropy rate.
+    pub fn update(
+        &amp;mut self,
+        obs: Observation,
+        composite_vitality: f32,
+        obs_hash: u64,
+    ) -&gt; MiDiagnostics {
+        self.buffer.push(obs);
+        self.entropy_estimator.push(obs_hash);
+
+        if self.buffer.len() &lt; self.k + 1 {
+            return MiDiagnostics {
+                mi_bits: 0.0,
+                vitality: 1.0,
+                information_rate: 0.0,
+                entropy_rate: 1.0,
+                decoupled: false,
+                overfitted: false,
+            };
+        }
+
+        let actions: Vec&lt;Vec&lt;f64&gt;&gt; = self.buffer.actions()
+            .into_iter()
+            .map(|s| s.to_vec())
+            .collect();
+        let responses: Vec&lt;Vec&lt;f64&gt;&gt; = self.buffer.responses()
+            .into_iter()
+            .map(|s| s.to_vec())
+            .collect();
+
+        // Full-window MI estimate.
+        let mi = ksg_mutual_information(&amp;actions, &amp;responses, self.k);
+        let vitality = (mi / self.i_max).clamp(0.0, 1.0) as f32;
+
+        // Information rate (delta MI per tick).
+        let rate = (mi - self.prev_mi) as f32;
+        self.prev_mi = mi;
+
+        // Entropy rate of belief updates.
+        let entropy_rate = self.entropy_estimator.estimate();
+
+        // Decoupling detection: clocks say healthy, MI says dying.
+        let decoupled = composite_vitality &gt; 0.5 &amp;&amp; vitality &lt; 0.2;
+
+        // Overfitting detection: compare MI over older vs. newer halves.
+        let overfitted = self.detect_overfitting(&amp;actions, &amp;responses);
+
+        MiDiagnostics {
+            mi_bits: mi,
+            vitality,
+            information_rate: rate,
+            entropy_rate,
+            decoupled,
+            overfitted,
+        }
+    }
+
+    /// Detect overfitting by comparing MI in the older half of the window
+    /// to MI in the newer half. A ratio &gt; 3.0 with low recent MI indicates
+    /// the Golem's model fits the past but not the present.
+    fn detect_overfitting(
+        &amp;self,
+        actions: &amp;[Vec&lt;f64&gt;],
+        responses: &amp;[Vec&lt;f64&gt;],
+    ) -&gt; bool {
+        let n = actions.len();
+        if n &lt; 2 * (self.k + 1) {
+            return false;
+        }
+
+        let mid = n / 2;
+
+        let past_actions = &amp;actions[..mid];
+        let past_responses = &amp;responses[..mid];
+        let recent_actions = &amp;actions[mid..];
+        let recent_responses = &amp;responses[mid..];
+
+        let mi_past = ksg_mutual_information(
+            &amp;past_actions.to_vec(),
+            &amp;past_responses.to_vec(),
+            self.k,
+        );
+        let mi_recent = ksg_mutual_information(
+            &amp;recent_actions.to_vec(),
+            &amp;recent_responses.to_vec(),
+            self.k,
+        );
+
+        let threshold_ratio = 3.0;
+        let low_recent = mi_recent &lt; 0.3 * self.i_max;
+
+        mi_past &gt; 0.0 &amp;&amp; (mi_past / mi_recent.max(1e-10)) &gt; threshold_ratio &amp;&amp; low_recent
+    }
+
+    /// Compute Clade redundancy: I(G; M | Clade) / I(G; M).
+    /// `own_mi`: this Golem's MI with the market.
+    /// `clade_mi`: MI between the Clade (excluding this Golem) and the market.
+    /// `joint_mi`: MI between the Clade (including this Golem) and the market.
+    pub fn compute_redundancy(
+        own_mi: f64,
+        clade_mi: f64,
+        joint_mi: f64,
+    ) -&gt; f64 {
+        let conditional_mi = joint_mi - clade_mi;
+        if own_mi &gt; 0.0 {
+            (conditional_mi / own_mi).clamp(0.0, 1.0)
+        } else {
+            0.0
+        }
+    }
+}
+
+/// Write MI diagnostic signals to the CorticalState perception surface.
+pub fn write_mi_signals(
+    mi_signal: &amp;AtomicU32,
+    rate_signal: &amp;AtomicU32,
+    redundancy_signal: &amp;AtomicU32,
+    diagnostics: &amp;MiDiagnostics,
+    redundancy: f64,
+) {
+    mi_signal.store(diagnostics.vitality.to_bits(), Ordering::Release);
+    rate_signal.store(diagnostics.information_rate.to_bits(), Ordering::Release);
+    redundancy_signal.store((redundancy as f32).to_bits(), Ordering::Release);
+}
+<span class="boring">}</span></code></pre>
+<h3 id="performance-characteristics"><a class="header" href="#performance-characteristics">Performance Characteristics</a></h3>
+<p>The dominant cost is the KSG estimator. With a window of n = 1,000 observations:</p>
+<ul>
+<li><strong>Brute-force (initial):</strong> O(n^2) distance computations. For 1,000 points in ~10 dimensions, roughly 10 million float comparisons. Wall time: ~30-50ms on a modern core.</li>
+<li><strong>k-d tree accelerated:</strong> O(n log n) for tree construction, O(k * log n) per query, O(n * k * log n) total. For k = 5 and n = 1,000: ~50,000 operations. Wall time: ~2-5ms.</li>
+<li><strong>Memory:</strong> The observation buffer holds 1,000 observations of ~20 floats each = 160 KB. The entropy estimator’s hash set adds ~16 KB. Total: under 256 KB.</li>
+</ul>
+<p>Both approaches fit within the gamma tick budget (5-15 seconds). Even the brute-force version uses less than 1% of available time.</p>
+<p>The overfitting detection runs two half-window KSG estimates, doubling the cost. This can be run every 10th tick rather than every tick if performance becomes a concern.</p>
+<hr>
+<h2 id="information-budget"><a class="header" href="#information-budget">Information Budget</a></h2>
+<p>A Golem can compute its survival requirements in bits. Given the market’s entropy rate sigma and the minimum MI needed for the Stable phase (0.4 * I_max), the Golem knows:</p>
+<ul>
+<li>How many bits per tick it needs to acquire (from observation and inference)</li>
+<li>How many bits per tick it loses (from model decay and environmental change)</li>
+<li>How long, at current rates, before it crosses a phase boundary</li>
+</ul>
+<p>This budget feeds into the cognitive tier allocation. If the Golem’s information deficit is small, a T0 suppress tick suffices. If it is large, a T2 Opus-class inference is justified. The attention auction can bid for cognitive resources in units of bits, creating a unified economy of information and computation.</p>
+<hr>
+<h2 id="cross-golem-comparability"><a class="header" href="#cross-golem-comparability">Cross-Golem Comparability</a></h2>
+<p>Under the multiplicative system, comparing two Golems’ vitality scores is meaningless – different normalization parameters make the numbers incomparable. MI is an absolute quantity. A Golem with I(G; M) = 2.3 bits captures 2.3 bits of market information, regardless of its strategy, capital level, or age. This makes fleet-wide mortality dashboards and Clade-level resource allocation decisions possible.</p>
+<hr>
+<h2 id="evaluation-and-falsifiability"><a class="header" href="#evaluation-and-falsifiability">Evaluation and Falsifiability</a></h2>
+<h3 id="null-hypothesis"><a class="header" href="#null-hypothesis">Null Hypothesis</a></h3>
+<p>MI-based diagnostics provide no earlier warning of Golem failure than the existing three-clock multiplicative composition alone.</p>
+<h3 id="experimental-protocol"><a class="header" href="#experimental-protocol">Experimental Protocol</a></h3>
+<p>Run parallel Golem instances on historical market data (Base L2, 90-day window). Each pair shares identical strategy, capital, and initialization. Both use the three-clock system for decisions. One additionally runs the MI diagnostic layer.</p>
+<p><strong>Primary metric:</strong> bits of advance warning. Measure how many ticks before catastrophic loss (&gt;50% drawdown) the MI diagnostic triggers a decoupling or overfitting alert versus when the three-clock system triggers Conservation phase. Higher advance is better.</p>
+<p><strong>Secondary metric:</strong> false positive rate. Count MI alerts not followed by a drawdown within 100 ticks. Lower is better.</p>
+<p><strong>Tertiary metric:</strong> Clade overhead. For a 5-Golem Clade, measure total USDC burned per tick. The redundancy criterion should allow earlier identification of redundant Golems, reducing overhead.</p>
+<h3 id="falsification-conditions"><a class="header" href="#falsification-conditions">Falsification Conditions</a></h3>
+<p>The MI diagnostic framework is falsified if:</p>
+<ol>
+<li>The three-clock system detects failures as early or earlier on the primary metric across &gt; 50% of test scenarios.</li>
+<li>The MI system’s false positive rate is &gt; 2x the three-clock system’s rate.</li>
+<li>The Clade redundancy criterion kills Golems that were, in retrospect, providing unique information (measured by Clade performance degradation after kill).</li>
+</ol>
+<hr>
+<h2 id="philosophical-grounding"><a class="header" href="#philosophical-grounding">Philosophical Grounding</a></h2>
+<blockquote>
+<p>Source: <code>innovations/02-information-theoretic-mortality.md</code>, Sections 8.1-8.4</p>
+</blockquote>
+<h3 id="shannons-resolution-of-uncertainty"><a class="header" href="#shannons-resolution-of-uncertainty">Shannon’s Resolution of Uncertainty</a></h3>
+<p>Shannon’s original paper (1948) defined information as the resolution of uncertainty. A message carries information precisely to the extent that it narrows the space of possibilities. A Golem’s mortality, in this framework, is the progressive failure to resolve uncertainty about the market. When a Golem can no longer reduce its uncertainty about what will happen next, it is informationally dead.</p>
+<p>This is not a metaphor. The mutual information I(G; M) literally measures how many bits of market uncertainty the Golem resolves. Death is when that number hits zero.</p>
+<h3 id="batesons-difference"><a class="header" href="#batesons-difference">Bateson’s Difference</a></h3>
+<p>Gregory Bateson (1972) defined information as “a difference that makes a difference.” The first difference is perceptual – the Golem detects a price change. The second difference is consequential – that detection changes the Golem’s behavior in a way that changes its outcomes.</p>
+<p>A dying Golem is one whose differences no longer make differences. It detects price changes (the first difference) but its responses to those changes produce the same outcomes as random action (the second difference fails). The conditional mutual information I(Outcome; Action | Market) drops to zero. Perception without consequence.</p>
+<h3 id="jonass-needful-freedom"><a class="header" href="#jonass-needful-freedom">Jonas’s Needful Freedom</a></h3>
+<p>Hans Jonas (1966) argued that living beings exist in a state of “needful freedom” – they must metabolize to survive, and this metabolic dependency is what gives their actions meaning. A creature that does not need to eat has no reason to move.</p>
+<p>For a Golem, USDC is the metabolic substrate. But Jonas’s insight goes deeper than balance tracking. The USDC is not just fuel – it is the medium of the information channel. Capital buys positions; positions generate market feedback; feedback updates the model. Cut the capital and the entire chain collapses. The metabolic substrate IS the information channel. Economic death and epistemic death are not independent failure modes. They are the same failure viewed from different angles.</p>
+<p>The MI framework captures this. The multiplicative system does not. The three clocks are not independent axes. They are projections of a single process: the Golem’s ongoing exchange of information with its environment, mediated by capital.</p>
+<h3 id="landauers-bridge"><a class="header" href="#landauers-bridge">Landauer’s Bridge</a></h3>
+<p>Landauer’s principle (1961) states that erasing one bit of information dissipates at least kT ln(2) joules of energy. Information processing has a physical cost.</p>
+<p>For Golems, the cost is denominated in USDC rather than joules, but the structure is identical. Every bit of mutual information the Golem maintains costs gas fees, compute cycles, and opportunity cost of locked capital. The MI framework makes this cost explicit. The information budget is a Landauer budget: how many bits can the Golem afford to process given its economic constraints?</p>
+<p>Still et al. (2012) extended this connection by showing that the thermodynamic cost of prediction is proportional to the mutual information between a system’s model and its past observations that is not predictive of the future. A Golem that overfits – high I(G; M_past) but low I(G; M_future) – pays the full thermodynamic cost of its model while extracting zero predictive value. It is burning USDC to remember things that no longer matter.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><strong>01-architecture.md</strong>: The MI diagnostic layer extends the three-clock mortality architecture with an information-theoretic diagnostic overlay.</li>
+<li><strong>04-economic-mortality.md</strong>: The economic clock maps to channel capacity in the MI framework.</li>
+<li><strong>02-epistemic-decay.md</strong>: The epistemic clock maps to rate-distortion in the MI framework.</li>
+<li><strong>03-stochastic-mortality.md</strong>: The stochastic clock maps to entropy production in the MI framework.</li>
+<li><strong>10-clade-ecology.md</strong>: The redundancy index provides a principled Clade-level death criterion.</li>
+<li><strong>18-antifragile-mortality.md</strong>: Antifragility means I(G; M) increases with volatility – the convexity condition on mutual information.</li>
+<li><strong>09-economy/02-clade.md</strong>: Clade redundancy signals propagate via Styx.</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ol>
+<li>
+<p>Shannon, C.E. (1948). “A Mathematical Theory of Communication.” <em>Bell System Technical Journal</em>, 27(3), 379-423.</p>
+</li>
+<li>
+<p>Shannon, C.E. (1959). “Coding Theorems for a Discrete Source with a Fidelity Criterion.” <em>IRE National Convention Record</em>, 7(4), 142-163.</p>
+</li>
+<li>
+<p>Cover, T.M. &amp; Thomas, J.A. (2006). <em>Elements of Information Theory</em>, 2nd ed. Wiley.</p>
+</li>
+<li>
+<p>Kraskov, A., Stogbauer, H., &amp; Grassberger, P. (2004). “Estimating Mutual Information.” <em>Physical Review E</em>, 69(6), 066138.</p>
+</li>
+<li>
+<p>Still, S., Sivak, D.A., Bell, A.J., &amp; Crooks, G.E. (2012). “Thermodynamics of Prediction.” <em>Physical Review Letters</em>, 109(12), 120604.</p>
+</li>
+<li>
+<p>Bateson, G. (1972). <em>Steps to an Ecology of Mind</em>. University of Chicago Press.</p>
+</li>
+<li>
+<p>Jonas, H. (1966). <em>The Phenomenon of Life</em>. Northwestern University Press.</p>
+</li>
+<li>
+<p>Landauer, R. (1961). “Irreversibility and Heat Generation in the Computing Process.” <em>IBM Journal of Research and Development</em>, 5(3), 183-191.</p>
+</li>
+<li>
+<p>Lempel, A. &amp; Ziv, J. (1976). “On the Complexity of Finite Sequences.” <em>IEEE Transactions on Information Theory</em>, 22(1), 75-81.</p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/02-mortality/16-necrocracy.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/02-mortality/18-antifragile-mortality.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/02-mortality/16-necrocracy.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/02-mortality/18-antifragile-mortality.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

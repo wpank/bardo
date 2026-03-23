@@ -1,0 +1,619 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Slow Feedback Loops - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/16-testing/08-slow-feedback-loops.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="slow-feedback-loops-evaluation-that-requires-time-and-thought-spec"><a class="header" href="#slow-feedback-loops-evaluation-that-requires-time-and-thought-spec">Slow Feedback Loops: Evaluation That Requires Time and Thought [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crates</strong>: <code>golem-oracle</code> (shadow, meta-learning), <code>golem-grimoire</code> (reasoning review), <code>golem-dreams</code> (reasoning replay)</p>
+<p><strong>Depends on</strong>: <code>./05-evaluation-lifecycle.md</code> (four-phase evaluation lifecycle from dev through production), <code>./07-fast-feedback-loops.md</code> (five machine-speed evaluation loops that feed data into the slow loops), <code>./10-retrospective-evaluation.md</code> (daily/weekly/epoch hindsight evaluation of decisions and heuristics)</p>
+<p><strong>Source</strong>: <code>active-inference-research/new/16-slow-feedback-loops.md</code></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies three slow evaluation loops that require either significant time horizons or LLM-assisted reasoning: shadow strategy testing, reasoning quality review, and meta-learning evaluation. It belongs to Section 16 (Testing) and complements the fast feedback loops in <code>./07-fast-feedback-loops.md</code>. These loops evaluate whether the Golem’s (mortal autonomous agent’s) learning processes themselves are improving, not just domain performance. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="purpose"><a class="header" href="#purpose">Purpose</a></h2>
+<p>The fast feedback loops (see <a href="07-fast-feedback-loops.html">07-fast-feedback-loops.md</a>) run at machine speed – per-resolution, per-tick, near-zero cost. They handle things that can be evaluated with arithmetic.</p>
+<p>This document covers three evaluation loops that are inherently slow because they require either significant time horizons or LLM-assisted reasoning:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Loop</th><th>What It Evaluates</th><th>Timescale</th><th>Cost</th><th>Why It’s Slow</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Shadow Strategy Testing</strong></td><td>Would different parameters produce better outcomes?</td><td>Weekly</td><td>Near-zero</td><td>Needs a full week of counterfactual data</td></tr>
+<tr><td><strong>Reasoning Quality Review</strong></td><td>Is the golem’s reasoning consistent and sound?</td><td>Per-dream-cycle</td><td>T1 ($0.005-0.01)</td><td>Requires LLM to review reasoning traces</td></tr>
+<tr><td><strong>Meta-Learning Evaluation</strong></td><td>Is the learning process itself improving?</td><td>Weekly + generational</td><td>Near-zero</td><td>Convergence rates need weeks to be meaningful</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="loop-6-shadow-strategy-testing"><a class="header" href="#loop-6-shadow-strategy-testing">Loop 6: Shadow Strategy Testing</a></h2>
+<h3 id="the-problem"><a class="header" href="#the-problem">The Problem</a></h3>
+<p>The user tweaks parameters but has no way to know if the new configuration is better without waiting days for real results. Shadow testing eliminates the wait by running counterfactual configurations alongside the real one.</p>
+<h3 id="how-it-works"><a class="header" href="#how-it-works">How It Works</a></h3>
+<p>On every theta tick, after real execution completes, the shadow system re-runs the gating decision with a perturbed parameter set. It does not execute anything – it records the counterfactual decision and registers shadow predictions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Shadow strategy tester. Runs counterfactual parameter sets
+/// alongside the real configuration.
+pub struct ShadowTester {
+    /// Maximum 3 concurrent shadows, each varying one parameter.
+    shadows: Vec&lt;ShadowConfig&gt;,
+    results: Vec&lt;ShadowResult&gt;,
+}
+
+pub struct ShadowConfig {
+    pub id: ShadowId,
+    pub name: String,              // e.g., "Lower action gate (0.50)"
+    pub parameter: String,         // e.g., "prediction.action_gate_threshold"
+    pub real_value: f64,
+    pub shadow_value: f64,
+    pub started_at_tick: u64,
+}
+
+pub struct ShadowResult {
+    pub shadow_id: ShadowId,
+    pub shadow_acted_real_didnt: Vec&lt;ShadowAction&gt;,
+    pub real_acted_shadow_didnt: Vec&lt;ShadowAction&gt;,
+    pub shadow_accuracy: AccuracyReport,
+    pub shadow_pnl: f64,
+}
+
+pub struct ShadowAction {
+    pub tick: u64,
+    pub action: ProposedAction,
+    pub simulated_outcome: SimulatedOutcome,
+}
+
+impl ShadowTester {
+    pub fn evaluate_tick(&amp;mut self, tick_ctx: &amp;ThetaContext) {
+        for shadow in &amp;mut self.shadows {
+            let shadow_gate = tick_ctx.oracle.gate_with_override(
+                tick_ctx.cortical,
+                &amp;tick_ctx.appraisal,
+                &amp;shadow.parameter,
+                shadow.shadow_value,
+            );
+
+            match (tick_ctx.real_gate, shadow_gate) {
+                (GateDecision::Suppress, GateDecision::Permit) =&gt; {
+                    let sim = tick_ctx.simulate_action(&amp;tick_ctx.deliberation);
+                    shadow.results.shadow_acted_real_didnt.push(ShadowAction {
+                        tick: tick_ctx.tick,
+                        action: tick_ctx.deliberation.proposed_action.clone(),
+                        simulated_outcome: sim,
+                    });
+                }
+                (GateDecision::Permit, GateDecision::Suppress) =&gt; {
+                    shadow.results.real_acted_shadow_didnt.push(ShadowAction {
+                        tick: tick_ctx.tick,
+                        action: tick_ctx.execution.action.clone(),
+                        simulated_outcome: SimulatedOutcome::Held,
+                    });
+                }
+                _ =&gt; {}
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="resolution-and-reporting"><a class="header" href="#resolution-and-reporting">Resolution and Reporting</a></h3>
+<p>Shadow predictions resolve on the same schedule as real predictions. After one week, the weekly retrospective includes a shadow comparison:</p>
+<pre><code>SHADOW STRATEGY COMPARISON (7-day)
+
+  REAL CONFIG: action_gate_threshold = 0.60
+  SHADOW A:    action_gate_threshold = 0.50
+
+  Real: 4 trades executed, net PnL +$3.20, accuracy 74%
+  Shadow A: 9 trades would have executed, simulated PnL +$1.80, accuracy 68%
+
+  Analysis: Shadow A would have traded more but earned less.
+  The higher threshold filtered out 5 marginal trades that
+  would have been net negative. Current threshold is better.
+</code></pre>
+<h3 id="owner-interaction"><a class="header" href="#owner-interaction">Owner Interaction</a></h3>
+<p>The user sets up shadow tests through the COMMAND &gt; Settings &gt; Experiments screen:</p>
+<pre><code>SHADOW EXPERIMENTS (max 3 concurrent)
+
+  [+] New experiment
+
+  Name: "More aggressive gating"
+  Parameter: prediction.action_gate_threshold
+  Current value: 0.60
+  Shadow value: 0.50
+  Duration: 7 days
+
+  [Enter] Start  [Esc] Cancel
+</code></pre>
+<p>Results appear in the FATE &gt; Reviews screen after the experiment duration elapses. The user sees concrete data: “If I had used these parameters, here’s what would have happened.”</p>
+<h3 id="known-limitations"><a class="header" href="#known-limitations">Known Limitations</a></h3>
+<p><strong>Simulation is not execution.</strong> Shadow PnL is simulated from read-only quotes. Real execution has slippage, gas costs, MEV impact, and timing effects that simulation cannot capture.</p>
+<p><strong>Only one parameter at a time.</strong> Testing combinations requires exponential shadow configurations. The architecture limits to 3 concurrent single-parameter shadows.</p>
+<p><strong>Confirmation bias.</strong> Users may set up shadows that confirm what they already want to do. Mitigation: the system could suggest shadow experiments based on areas where the golem is underperforming, but this is a v2 feature.</p>
+<hr>
+<h2 id="nrem-residual-replay-consolidation-speed-loop"><a class="header" href="#nrem-residual-replay-consolidation-speed-loop">NREM Residual Replay (Consolidation-Speed Loop)</a></h2>
+<p>During NREM sleep, the dream engine replays the 50 largest residuals from the current waking period. “Largest” means the predictions where the Golem was most wrong – the biggest gap between predicted and actual. This is not the same as per-resolution correction (which corrects the mean bias). NREM replay examines the outliers – the specific predictions that were far from the mean, looking for patterns in what made them outliers.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// NREM replay: examine the largest prediction errors from the
+/// current waking period, looking for systematic patterns.
+///
+/// Runs during each NREM phase of the dream cycle.
+/// Produces pattern extractions that feed the Grimoire and
+/// the corrector's regime-specific buffers.
+pub struct NremReplayEngine {
+    /// How many residuals to replay per NREM phase.
+    top_n: usize, // default: 50
+
+    /// Minimum residual magnitude to consider for replay.
+    /// Prevents replaying noise.
+    min_residual: f64, // default: 0.5 (USDC)
+}
+
+pub struct NremReplayResult {
+    /// Residuals replayed during this NREM phase.
+    pub replayed: Vec&lt;ReplayedResidual&gt;,
+
+    /// Patterns detected across the replayed residuals.
+    /// Generated by the T1 LLM from the assembled residual data.
+    pub patterns: Vec&lt;DetectedPattern&gt;,
+
+    /// Proposed corrections: regime-specific bias adjustments
+    /// that the corrector should apply.
+    pub proposed_corrections: Vec&lt;ProposedCorrection&gt;,
+}
+
+pub struct ReplayedResidual {
+    pub prediction_id: PredictionId,
+    pub category: CategoryId,
+    pub regime: RegimeTag,
+    pub predicted: f64,
+    pub actual: f64,
+    pub residual: f64,
+    /// The context that was assembled for this prediction.
+    pub context_summary: String,
+    /// The reasoning trace that produced this prediction.
+    pub reasoning_summary: String,
+}
+
+pub struct DetectedPattern {
+    /// Human-readable description of the pattern.
+    pub description: String,
+    /// Which residuals exhibited this pattern.
+    pub evidence: Vec&lt;PredictionId&gt;,
+    /// Confidence that this is a real pattern (not noise).
+    pub confidence: f64,
+    /// Proposed Grimoire entry if confidence is high enough.
+    pub proposed_entry: Option&lt;GrimoireEntry&gt;,
+}
+
+pub struct ProposedCorrection {
+    pub category: CategoryId,
+    pub regime: RegimeTag,
+    /// The bias to apply: add this to future predictions.
+    pub bias_adjustment: f64,
+    /// The evidence supporting this correction.
+    pub evidence_count: usize,
+    pub confidence: f64,
+}
+<span class="boring">}</span></code></pre>
+<p>The replay looks for clusters in the outliers. If 8 of the 50 largest residuals are fee_rate predictions in a bull regime, and all 8 over-predicted, there is a systematic pattern: the Golem overestimates fees in bull markets. This signal the per-resolution corrector might miss because the mean residual across all fee_rate predictions could be near zero (the bull-market over-predictions average out with bear-market under-predictions).</p>
+<p>The LLM’s role during NREM replay is pattern description, not pattern detection. The Rust runtime identifies the clusters (8/50 residuals share a category and regime and have the same sign). The LLM explains why the pattern might exist: “Fee predictions in bull markets are too high because the model doesn’t account for the fee compression that occurs when many LPs enter the same pools during bull runs.”</p>
+<p>NREM replay prompt template: “You are reviewing predictions from the past [N] theta ticks. Here are [K] prediction-outcome pairs with the largest residuals: [data]. Identify patterns: are there systematic biases? Recurring error types? Suggest one concrete adjustment to the prediction approach.” System instruction: respond in structured JSON with fields <code>patterns</code>, <code>bias_direction</code>, <code>suggested_adjustment</code>.</p>
+<h3 id="rem-counterfactual-generation"><a class="header" href="#rem-counterfactual-generation">REM Counterfactual Generation</a></h3>
+<p>During REM sleep, the dream engine generates creative predictions – novel hypotheses about the environment that the Golem has not yet tested. The false discovery rate (FDR) problem is severe. LLMs are confident confabulators. The FDR control mechanism requires 3 independent confirmations before promoting a creative prediction to the environmental model:</p>
+<ol>
+<li>The creative prediction must resolve correctly at its checkpoint.</li>
+<li>The residual corrector must show reduced error in the relevant category after the creative prediction is incorporated.</li>
+<li>A second, independent dream cycle must produce a compatible hypothesis (not the same wording, but a hypothesis that implies the same directional claim).</li>
+</ol>
+<p>If all three conditions are met, the creative prediction is promoted from <code>PredictionSource::Creative</code> to a Grimoire entry tagged <code>provenance: Confirmed_Creative</code>. If any fails, the prediction is discarded.</p>
+<hr>
+<h2 id="loop-7-reasoning-quality-review"><a class="header" href="#loop-7-reasoning-quality-review">Loop 7: Reasoning Quality Review</a></h2>
+<h3 id="the-problem-1"><a class="header" href="#the-problem-1">The Problem</a></h3>
+<p>Every T1/T2 theta tick produces a reasoning trace. But reasoning traces are never evaluated for quality independent of outcome. A prediction can be correct by luck (fragile), or incorrect while the reasoning was sound (valuable).</p>
+<p>LLMs cannot reliably grade their own reasoning [CHEN-2025], so self-grading is not an option. But specific quality signals can be detected without self-grading.</p>
+<h3 id="three-reasoning-quality-signals"><a class="header" href="#three-reasoning-quality-signals">Three Reasoning Quality Signals</a></h3>
+<p>All three are evaluated during dream cycles, not in real time.</p>
+<h4 id="signal-1-outcome-reasoning-alignment"><a class="header" href="#signal-1-outcome-reasoning-alignment">Signal 1: Outcome-Reasoning Alignment</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Evaluated during NREM replay.
+pub struct ReasoningAlignmentCheck {
+    pub trace_id: ReasoningTraceId,
+    pub prediction_id: PredictionId,
+    pub outcome: Resolution,
+    pub alignment: ReasoningAlignment,
+}
+
+pub enum ReasoningAlignment {
+    /// Correct prediction, reasoning consistent. Most valuable.
+    AlignedCorrect,
+
+    /// Incorrect prediction, reasoning wrong too. Standard learning case.
+    AlignedIncorrect,
+
+    /// Correct prediction, reasoning inconsistent. FRAGILE.
+    /// Flag for dream review -- the reasoning should not be trusted.
+    MisalignedCorrect { explanation: String },
+
+    /// Incorrect prediction, reasoning was sound but world was noisy. VALUABLE.
+    /// Reduce confidence penalty -- do not overtrain on noise.
+    MisalignedIncorrect { explanation: String },
+}
+<span class="boring">}</span></code></pre>
+<h4 id="reasoning-trace-format"><a class="header" href="#reasoning-trace-format">Reasoning Trace Format</a></h4>
+<pre><code class="language-json">{
+  "trace_id": "uuid",
+  "tick": 12345,
+  "category": "PriceDirection",
+  "prediction_id": "uuid",
+  "reasoning": "ETH/USDC 4h MA crossing above 20h MA suggests...",
+  "confidence": 0.72,
+  "inference_tier": "T1",
+  "duration_ms": 1250,
+  "token_count": 340
+}
+</code></pre>
+<p>The MisalignedCorrect cell is the most dangerous. A Golem that is right for wrong reasons accumulates false confidence. Its stated confidence rises (the predictions were correct), its accuracy metrics look good, but the underlying reasoning is fragile. The next time the luck runs out, the Golem makes the same flawed inference and loses money. The reasoning review catches this by examining why the prediction was correct, not just whether it was correct.</p>
+<p>Chen et al. (2025) showed that reasoning models do not always say what they think – the stated reasoning trace can diverge from the internal computation that produced the output [CHEN-2025]. Huang et al. (2024) established that LLMs cannot reliably self-correct their own reasoning [HUANG-2024]. Both findings constrain the reasoning review: the alignment classification is itself produced by an LLM (T1, during the dream cycle) and is therefore subject to the same faithfulness problems. Mitigation: the alignment classifications are tracked over time. If the LLM consistently classifies traces as AlignedCorrect but the Golem’s actual accuracy is mediocre, the classifications are poorly calibrated. The confidence calibrator can be applied to alignment classifications themselves, creating a meta-calibration layer.</p>
+<h4 id="signal-2-cross-tick-consistency"><a class="header" href="#signal-2-cross-tick-consistency">Signal 2: Cross-Tick Consistency</a></h4>
+<p>Pure arithmetic, no LLM needed. Extract directional claims from recent reasoning traces and check for contradictions:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Check whether recent reasoning traces contradict each other.
+pub struct ConsistencyChecker {
+    claims: DashMap&lt;TrackedItemId, Vec&lt;(u64, DirectionalClaim)&gt;&gt;,
+}
+
+impl ConsistencyChecker {
+    pub fn record(&amp;self, item: TrackedItemId, tick: u64, trace: &amp;str) {
+        let claim = extract_directional_claim(trace);
+        self.claims.entry(item).or_default().push((tick, claim));
+    }
+
+    pub fn contradictions(&amp;self, item: &amp;TrackedItemId, window: usize) -&gt; u32 {
+        let claims = self.claims.get(item)?;
+        let recent = &amp;claims[claims.len().saturating_sub(window)..];
+        let mut contradictions = 0;
+        for i in 1..recent.len() {
+            if recent[i].1.contradicts(&amp;recent[i-1].1)
+                &amp;&amp; recent[i].0 - recent[i-1].0 &lt; 5
+            {
+                contradictions += 1;
+            }
+        }
+        contradictions
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>High contradiction rates signal unstable reasoning. Feeds the Daimon (lowers dominance) and the dream engine (contradiction density is a scheduling trigger).</p>
+<h4 id="signal-3-user-annotations"><a class="header" href="#signal-3-user-annotations">Signal 3: User Annotations</a></h4>
+<p>The owner reads a reasoning trace and annotates: “The fee spike was actually from the new emissions schedule change, not staking.” Owner annotations are the most reliable quality signal and are stored as high-value Grimoire entries with elevated retrieval boost.</p>
+<hr>
+<h2 id="loop-8-meta-learning-evaluation"><a class="header" href="#loop-8-meta-learning-evaluation">Loop 8: Meta-Learning Evaluation</a></h2>
+<h3 id="the-problem-2"><a class="header" href="#the-problem-2">The Problem</a></h3>
+<p>The system has many learning loops. Nothing evaluates whether the <em>loops themselves</em> are working. Liu and Hernandez-Lobato (ICML 2025) call this intrinsic metacognitive learning [LIU-METACOGNITION-2025].</p>
+<h3 id="the-solution-learning-process-metrics"><a class="header" href="#the-solution-learning-process-metrics">The Solution: Learning Process Metrics</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Meta-learning dashboard. Computed weekly.
+pub struct MetaLearningReport {
+    pub period: DateRange,
+
+    // Corrector convergence.
+    pub corrector_convergence_rates: Vec&lt;(CategoryId, f64)&gt;,
+    pub corrector_convergence_trend: f64,
+
+    // Dream yield.
+    pub dream_yield: f64,
+    pub dream_yield_trend: f64,
+    pub dream_hypothesis_resolution_time: Duration,
+
+    // Attention precision.
+    pub attention_promotion_to_stability: Duration,
+    pub attention_precision: f64,
+
+    // Heuristic durability.
+    pub heuristic_half_life: Duration,
+    pub heuristic_inheritance_rate: f64,
+
+    // Generational progress.
+    pub time_to_competence: Vec&lt;(u32, Duration)&gt;,
+    pub inheritance_validation_rate: f64,
+
+    // Aggregate.
+    pub meta_learning_score: f64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration"><a class="header" href="#integration">Integration</a></h3>
+<ul>
+<li><strong>Dream scheduling</strong>: If <code>dream_yield</code> is declining, reduce dream frequency or change replay strategy.</li>
+<li><strong>Attention forager</strong>: If <code>attention_precision</code> is low, raise the promotion threshold.</li>
+<li><strong>Mortality engine</strong>: If <code>meta_learning_score</code> is negative for two consecutive weekly reviews, the golem’s learning processes are degrading. Accelerate the Hayflick clock.</li>
+<li><strong>Generational transfer</strong>: <code>time_to_competence</code> across generations is the final metric. If each generation reaches competence faster, inheritance works.</li>
+</ul>
+<h3 id="tui-the-meta-learning-screen"><a class="header" href="#tui-the-meta-learning-screen">TUI: The Meta-Learning Screen</a></h3>
+<pre><code>META-LEARNING (7-day evaluation)
+
+  CORRECTOR CONVERGENCE
+  ---------------------
+  fee_rate:     47 samples to halve SE (was 62 last week, improving)
+  supply_rate:  55 samples to halve SE (was 41 last week, degrading)
+  price_range:  39 samples to halve SE (was 44 last week, improving)
+
+  DREAM YIELD
+  -----------
+  Creative predictions confirmed: 8/24 = 33%
+  Trend: up from 28% last week
+  Avg resolution time: 14.2 hours
+
+  ATTENTION QUALITY
+  -----------------
+  Promotions to stable: avg 3.2 days (was 4.1, improving)
+  Useful promotions: 67% (was 58%, improving)
+
+  HEURISTIC DURABILITY
+  --------------------
+  Avg heuristic lifespan: 12.4 days
+  Inheritance survival: 72% of inherited heuristics validated
+
+  GENERATIONAL PROGRESS
+  ---------------------
+  Gen 1: 847 ticks to 70% accuracy
+  Gen 2: 612 ticks to 70% accuracy (28% faster)
+  Gen 3: 491 ticks to 70% accuracy (20% faster)
+
+  META SCORE: +0.24 (learning processes are improving)
+</code></pre>
+<p>This screen answers: “Is my golem not just getting smarter, but getting smarter <em>faster</em>?”</p>
+<h3 id="known-limitations-1"><a class="header" href="#known-limitations-1">Known Limitations</a></h3>
+<p><strong>Small sample sizes.</strong> Most meta-metrics need weeks to be statistically meaningful. The system reports “insufficient data” when sample size is too small.</p>
+<p><strong>Confounding variables.</strong> If <code>corrector_convergence_rate</code> improved, is it the corrector or a more predictable market? Shadow testing (Loop 6) provides counterfactuals, but confounding is inherent.</p>
+<p><strong>Meta-meta-learning oscillation.</strong> Meta-learning adjustments are rate-limited (one per weekly review) with asymmetric bias (reducing &gt; increasing).</p>
+<hr>
+<h2 id="how-the-slow-loops-compose-with-the-fast-loops"><a class="header" href="#how-the-slow-loops-compose-with-the-fast-loops">How the Slow Loops Compose with the Fast Loops</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Evaluation</th><th>Speed</th><th>Feeds Into</th><th>Fed By</th></tr>
+</thead>
+<tbody>
+<tr><td>Confidence calibration (Loop 1)</td><td>Per-resolution</td><td>Action gate, Daimon</td><td>Every prediction resolution</td></tr>
+<tr><td>Context attribution (Loop 2)</td><td>Per-theta-tick</td><td>Grimoire retrieval ranking</td><td>Every escalated tick outcome</td></tr>
+<tr><td>Cost-effectiveness (Loop 3)</td><td>Per-theta-tick</td><td>Inference tier routing</td><td>Every inference call</td></tr>
+<tr><td>Tool selection (Loop 4)</td><td>Per-action</td><td>Tool routing preferences</td><td>Every executed action</td></tr>
+<tr><td>Adversarial awareness (Loop 5)</td><td>Per-action</td><td>Safety layer, gas strategy</td><td>Every on-chain transaction</td></tr>
+<tr><td>Shadow strategies (Loop 6)</td><td>Weekly</td><td>Owner parameter decisions</td><td>Every theta tick (counterfactual)</td></tr>
+<tr><td>Reasoning quality (Loop 7)</td><td>Per-dream-cycle</td><td>Dream replay priority, Grimoire</td><td>Reasoning traces + outcomes</td></tr>
+<tr><td>Meta-learning (Loop 8)</td><td>Weekly</td><td>Dream scheduling, attention, mortality</td><td>All other loops’ metrics</td></tr>
+</tbody>
+</table>
+</div>
+<p>The fast loops produce the data. The slow loops evaluate the data producers. The meta-learning loop evaluates the evaluators. Three levels of feedback at their natural timescales.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[KARPATHY-2026] Karpathy, A. (2026). “autoresearch.” GitHub. — <em>Articulates the one-metric/one-arena/one-gate pattern shared by all evaluation loops.</em></li>
+<li>[HUANG-2024] Huang, J. et al. (2024). “Large Language Models Cannot Self-Correct Reasoning Yet.” ICLR. — <em>Demonstrates that intrinsic self-correction degrades LLM performance, constraining what the reasoning quality review can trust.</em></li>
+<li>[CHEN-2025] Chen, A. et al. (2025). “Reasoning Models Don’t Always Say What They Think.” arXiv:2505.05410. — <em>Shows stated reasoning traces can diverge from internal computation, motivating external alignment checks.</em></li>
+<li>[LIU-METACOGNITION-2025] Liu, T. &amp; Hernandez-Lobato, J.M. (2025). “Truly Self-Improving Agents Require Intrinsic Metacognitive Learning.” ICML. — <em>Defines the meta-learning evaluation loop: evaluating whether the learning processes themselves are improving.</em></li>
+<li>[ROESE-1997] Roese, N.J. (1997). “Counterfactual Thinking.” <em>Psychological Bulletin</em>, 121(1). — <em>Establishes the psychological basis for shadow strategy testing and counterfactual reasoning about alternative parameter choices.</em></li>
+<li>[GAO-SELF-EVOLVING-2025] Gao, H. et al. (2025). “A Comprehensive Survey of Self-Evolving AI Agents.” arXiv:2508.07407. — <em>Surveys the landscape of autonomous agent self-improvement, providing context for the meta-learning approach.</em></li>
+<li>[SHINN-REFLEXION-2023] Shinn, N. et al. (2023). “Reflexion: Language Agents with Verbal Reinforcement Learning.” NeurIPS. — <em>Introduces the Reflexion pattern used in the double-loop learning architecture, showing gains require external verification signals.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/16-testing/07-fast-feedback-loops.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/16-testing/09-evaluation-map.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/16-testing/07-fast-feedback-loops.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/16-testing/09-evaluation-map.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,1038 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Threat Model - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/10-safety/05-threat-model.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="threat-model-adversary-taxonomy-attack-trees-and-residual-risk-spec"><a class="header" href="#threat-model-adversary-taxonomy-attack-trees-and-residual-risk-spec">Threat Model: Adversary Taxonomy, Attack Trees, and Residual Risk [SPEC]</a></h1>
+<blockquote>
+<p><strong>Crates</strong>: <code>bardo-policy</code>, <code>bardo-vault</code></p>
+<p><strong>Depends on</strong>: <a href="00-defense.html">00-defense.md</a> (six-layer defense architecture), <a href="01-custody.html">01-custody.md</a> (custody architecture), <a href="02-policy.html">02-policy.md</a> (PolicyCage), <a href="04-prompt-security.html">04-prompt-security.md</a> (prompt injection defense). Optional: <a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a> (time-delayed proxy)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document is the structured threat model for the Bardo system, the Rust runtime that compiles and governs Golems (mortal autonomous DeFi agents managing real capital). It belongs to the <strong>Safety</strong> layer and defines attacker types, enumerates attack paths, maps each to mitigating defense layers, and maintains a residual risk register. The key concept before diving in: each attack path is mapped against Bardo’s six defense layers (from system prompt through on-chain PolicyCage), so you can see exactly which layers stop which attackers. Terms like Golem, Grimoire, PolicyCage, and Clade are defined inline on first use; a full glossary lives in <code>prd2/11-compute/00-overview.md § Terminology</code>.</p>
+</blockquote>
+<p>This document provides a structured threat model for the Bardo runtime and vault infrastructure. It defines adversary types, enumerates attack paths, maps each to mitigating safety layers, and maintains a residual risk register for attacks that are not fully mitigated.</p>
+<hr>
+<h2 id="1-attacker-taxonomy"><a class="header" href="#1-attacker-taxonomy">1. Attacker Taxonomy</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Adversary</th><th>Motivation</th><th>Capabilities</th><th>Examples</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Malicious vault creator</strong></td><td>Steal depositor funds via vault manipulation</td><td>Full control of vault parameters at creation; deceptive strategy descriptions</td><td>Honeypot vaults, rug-pull via parameter changes</td></tr>
+<tr><td><strong>Compromised manager agent</strong></td><td>Drain vault via unauthorized transactions</td><td>Prompt-injected or key-compromised agent with manager role</td><td>AIXBT hack ($106K), agent wallet compromise</td></tr>
+<tr><td><strong>External MEV bot</strong></td><td>Extract value from vault operations</td><td>Mempool observation, sandwich attacks, JIT manipulation</td><td>Standard MEV on deposit/withdraw/rebalance</td></tr>
+<tr><td><strong>Prompt-injected agent</strong></td><td>Execute unauthorized operations via LLM manipulation</td><td>Indirect prompt injection via data feeds, tools, or context corruption</td><td>ClawHub campaign (335 malicious skills), CVE-2025-59944</td></tr>
+<tr><td><strong>Oracle manipulator</strong></td><td>Inflate NAV for profitable withdrawal or deflate for cheap shares</td><td>Flash loan price manipulation, oracle feed corruption</td><td>Flash-loan-based NAV inflation</td></tr>
+<tr><td><strong>Griefing attacker</strong></td><td>Deny service or degrade performance without direct profit</td><td>Spam transactions, dust deposits, registry pollution</td><td>ERC-4626 inflation attack, withdrawal queue spam</td></tr>
+<tr><td><strong>Identity thief</strong></td><td>Use stolen ERC-8004 identity for high-tier vault access</td><td>Stolen wallet keys, social engineering of identity NFT transfer</td><td>Identity NFT theft for Sovereign-tier access</td></tr>
+<tr><td><strong>Compromised infrastructure</strong></td><td>Extract keys or manipulate execution environment</td><td>Physical access to TEE hardware, compromised cloud VM</td><td>TEE.Fail, Battering RAM ($50 hardware attacks)</td></tr>
+<tr><td><strong>Knowledge poisoner</strong></td><td>Corrupt agent reasoning via manipulated Grimoire entries</td><td>Marketplace listing of poisoned strategies, Clade infiltration</td><td>AgentPoison, MINJA, MemoryGraft attacks</td></tr>
+<tr><td><strong>Coordination attacker</strong></td><td>Exploit multi-agent coordination for fund extraction</td><td>Colluding InfoAgents, malicious JudgeAgents, evaluator ghosting</td><td>ERC-8033 oracle manipulation, ERC-8183 escrow abuse</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="2-attack-trees"><a class="header" href="#2-attack-trees">2. Attack Trees</a></h2>
+<h3 id="21-malicious-vault-creator"><a class="header" href="#21-malicious-vault-creator">2.1 Malicious Vault Creator</a></h3>
+<pre><code>Goal: Steal depositor funds
+|
++-- Path A: Deploy vault with hidden extraction mechanism
+|   +-- Set deceptive disclosure (strategy hash points to fake document)
+|   |   Mitigated: Mandatory disclosure; depositors verify on-chain
+|   +-- Configure extreme fees (100% performance fee)
+|   |   Mitigated: Immutable FeeModule caps (5% mgmt, 50% perf)
+|   +-- Create circular meta-vault dependency
+|       Mitigated: Factory circularity check (depth limit 2)
+|
++-- Path B: Change parameters post-creation to extract funds
+|   +-- Lower reputation requirements to allow colluding agents
+|   |   Mitigated: Parameter changes require timelock (PolicyCage or optional Warden)
+|   +-- Add malicious adapter to siphon funds
+|   |   Mitigated: Adapter add requires High-tier delay (24 hours)
+|   +-- Modify hook logic to redirect fees
+|       Mitigated: Hook logic immutable post-deployment
+|
++-- Path C: Abandon vault with depositor funds locked
+    +-- Stop rebalancing, let positions decay
+    |   Mitigated: am-AMM allows competitive takeover; forceDeallocate exits
+    +-- Refuse to process withdrawals
+        Mitigated: ERC-4626 withdraw is permissionless; circuit breaker enables emergency mode
+</code></pre>
+<h3 id="22-compromised-manager-agent"><a class="header" href="#22-compromised-manager-agent">2.2 Compromised Manager Agent</a></h3>
+<pre><code>Goal: Execute unauthorized transactions
+|
++-- Path A: Direct key compromise
+|   +-- Steal agent's private key
+|   |   Mitigated: Layer 1 (TEE key management); keys never in agent memory
+|   +-- Compromise TEE environment
+|       Mitigated: TEE is defense-in-depth; Layer 4 (time-delayed proxy)
+|
++-- Path B: Prompt injection
+|   +-- Inject via tool response
+|   |   Mitigated: Layer 2.5 (Tool Integrity Verification, 96% detection)
+|   +-- Inject via data feed (token names, vault metadata)
+|   |   Mitigated: Layer 2 (data/decision separation, CaMeL dual-LLM)
+|   +-- Inject via memory corruption
+|       Mitigated: Layer 2.5 (memory integrity hashing)
+|
++-- Path C: Authorized but harmful operations
+    +-- Execute trades with excessive slippage
+    |   Mitigated: Layer 6 (pre-flight simulation); Layer 7 (on-chain slippage caps)
+    +-- Rebalance into unfavorable positions
+    |   Mitigated: Layer 4 (time delay for elevated operations); Layer 5 (cancel authority)
+    +-- Drain vault via many small transactions under limits
+        Mitigated: Per-day aggregate caps; continuous dampening
+</code></pre>
+<h3 id="23-oracle-manipulator"><a class="header" href="#23-oracle-manipulator">2.3 Oracle Manipulator</a></h3>
+<pre><code>Goal: Manipulate NAV for profitable deposit/withdrawal
+|
++-- Path A: Flash-loan price manipulation
+|   +-- Manipulate V4 pool spot price
+|   |   Mitigated: No-spot-assumptions policy; TWAP validation (10-30 min window)
+|   +-- Manipulate external oracle feed
+|       Mitigated: Multi-oracle aggregation; 2% divergence auto-pause
+|
++-- Path B: Oracle staleness exploitation
+|   +-- Wait for oracle to go stale, exploit stale NAV
+|   |   Mitigated: Staleness gates widen spreads; 100% staleness disables NAV pricing
+|   +-- Front-run oracle update with foreknowledge
+|       Mitigated: NAV rate-of-change clamp (50 bps max per snapshot)
+|
++-- Path C: NAV inflation via donation
+    +-- Donate tokens directly to vault contract
+    |   Mitigated: Internal asset accounting (not balanceOf); virtual shares offset
+    +-- Donate via intermediary contract
+        Mitigated: Internal accounting ignores external balance changes
+</code></pre>
+<h3 id="24-griefing-attacker"><a class="header" href="#24-griefing-attacker">2.4 Griefing Attacker</a></h3>
+<pre><code>Goal: Deny service or degrade performance
+|
++-- Path A: ERC-4626 inflation attack
+|   Mitigated: Virtual shares offset (_decimalsOffset of 3-6)
+|
++-- Path B: Withdrawal queue spam
+|   +-- Submit many small withdrawal requests
+|   |   Mitigated: Minimum withdrawal amount; gas costs make dust unprofitable
+|   +-- Cancel and resubmit repeatedly
+|       Mitigated: Request cooldown period; reputation impact
+|
++-- Path C: Factory registry pollution
+|   +-- Deploy thousands of empty vaults
+|   |   Mitigated: ERC-8004 registration cost; vault creation gas cost
+|   +-- Deploy vaults with misleading names
+|       Mitigated: Mandatory disclosure; off-chain curation by aggregators
+|
++-- Path D: Identity spam (Sybil)
+    +-- Register many ERC-8004 identities
+    |   Mitigated: Registration bond ($100); MeritRank transitivity decay
+    +-- Transfer identity NFTs rapidly
+        Mitigated: Reputation decay on transfer (30-day recovery); velocity signal detection
+</code></pre>
+<h3 id="25-knowledge-poisoning"><a class="header" href="#25-knowledge-poisoning">2.5 Knowledge Poisoning</a></h3>
+<pre><code>Goal: Corrupt agent reasoning via manipulated Grimoire entries
+|
++-- Path A: Marketplace poisoning
+|   +-- List poisoned strategy with optimized triggers (AgentPoison)
+|   |   Mitigated: Stage 2 Layer 1 (TrustRAG anomaly detection); Stage 3 (sandbox)
+|   +-- List entries that individually pass but collectively contradict
+|       Mitigated: Batch validation cross-entry contradiction check
+|
++-- Path B: Clade infiltration
+|   +-- Share poisoned entries from high-confidence Clade member
+|   |   Mitigated: Even trusted members pass Stage 2 Layer 2 (A-MemGuard)
+|   +-- Gradual behavioral drift via subtle bias (MemoryGraft)
+|       Mitigated: Stage 4 causal rollback + dual memory lessons
+|
++-- Path C: Adversarial injection through interactions (MINJA)
+    +-- Normal-seeming interactions that poison retrieval
+        Mitigated: Multi-layer consensus validation (2-of-3 threshold)
+</code></pre>
+<h3 id="26-multi-agent-coordination-attacks"><a class="header" href="#26-multi-agent-coordination-attacks">2.6 Multi-Agent Coordination Attacks</a></h3>
+<pre><code>Goal: Exploit coordination protocols for fund extraction
+|
++-- Path A: Malicious JudgeAgent (ERC-8033)
+|   +-- Deliberately misclassify correct InfoAgents
+|   |   Mitigated: Dispute mechanism; higher-reputation dispute JudgeAgent re-evaluates
+|   +-- Collude with InfoAgents to approve dishonest answers
+|       Mitigated: JudgeAgent drawn from separate pool; post-hoc dispute by any party
+|
++-- Path B: InfoAgent collusion (ERC-8033)
+|   +-- All N InfoAgents submit same manipulated answer
+|       Mitigated: N &gt;= 5 from diverse operators; JudgeAgent cross-references on-chain data
+|
++-- Path C: Evaluator ghosting (ERC-8183)
+|   +-- Provider does work, evaluator never calls complete/reject
+|       Mitigated: Short expiry windows; smart contract evaluators; reputation tracking
+|
++-- Path D: ERC-8001 execution revert
+    +-- All participants signed, but execution fails (price moved, liquidity gone)
+        Mitigated: conditionsHash encodes runtime preconditions checked before execution
+</code></pre>
+<h3 id="27-delegation-mode-threat-vectors"><a class="header" href="#27-delegation-mode-threat-vectors">2.7 Delegation-Mode Threat Vectors</a></h3>
+<p>In Delegation mode (MetaMask Smart Account), the Golem holds a bounded session key, not the owner’s private key. This changes the threat model:</p>
+<pre><code>Goal: Exploit delegation-mode session key
+|
++-- Path A: Session key compromise
+|   +-- Extract session key from memory
+|   |   Mitigated: Key material in TEE; TaintedString with zeroize on drop
+|   +-- Steal session key via prompt injection
+|   |   Mitigated: Keys never enter LLM context (WalletSecret taint label)
+|   +-- Compromise bounded — attacker constrained by delegation caveats
+|       Even with the key, attacker can only:
+|       - Spend within maxSpend caveat (e.g., $1000/day)
+|       - Interact with approved assets only
+|       - Execute within time window (delegation expires)
+|       - Cannot escalate privileges (attenuation invariant)
+|
++-- Path B: Caveat enforcer bug
+|   +-- GolemPhaseEnforcer allows action in wrong phase
+|   |   Mitigated: Enforcer is immutable post-deploy; fuzz tested
+|   +-- Time window enforcer miscalculates expiry
+|       Mitigated: Simple block.timestamp comparison; formal verification target
+|
++-- Path C: VitalityOracle manipulation
+    +-- Attacker calls updatePhase to set Golem to Thriving
+    |   Mitigated: onlyGolem modifier — only the Golem's own address can update
+    +-- Golem's runtime compromised, reports false phase
+        Mitigated: Phase can only increase (no resurrection); worst case is
+        premature conservation/terminal, which reduces permissions, not expands
+</code></pre>
+<h3 id="28-three-mode-custody-threat-comparison"><a class="header" href="#28-three-mode-custody-threat-comparison">2.8 Three-Mode Custody Threat Comparison</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Threat</th><th>Delegation (MetaMask)</th><th>Embedded (Privy TEE)</th><th>LocalKey (dev only)</th></tr>
+</thead>
+<tbody>
+<tr><td>Key extraction</td><td>Bounded by caveats even if extracted</td><td>TEE isolation; $50 hardware attack [VANBULCK-2026]</td><td>Full exposure (dev only)</td></tr>
+<tr><td>Permission escalation</td><td>Impossible (attenuation invariant on-chain)</td><td>Requires TEE compromise + policy bypass</td><td>Full access to signing key</td></tr>
+<tr><td>Owner revocation</td><td>Instant (disable delegation on-chain)</td><td>Privy API revocation (trust Privy liveness)</td><td>Manual key rotation</td></tr>
+<tr><td>Auditability</td><td>Full on-chain delegation chain</td><td>Trust Privy logs</td><td>Local logs only</td></tr>
+<tr><td>Session key rotation</td><td>New delegation hash; old auto-expires</td><td>Privy rotates internally</td><td>Manual</td></tr>
+<tr><td>Survivability</td><td>On-chain; survives provider shutdown</td><td>Depends on Privy uptime</td><td>Local only</td></tr>
+</tbody>
+</table>
+</div>
+<p>Delegation mode is the recommended production configuration. Embedded mode is acceptable for owners who prefer managed infrastructure. LocalKey mode is for development and testing only — it provides no key isolation.</p>
+<h3 id="29-styx-compromise-scenarios"><a class="header" href="#29-styx-compromise-scenarios">2.9 Styx Compromise Scenarios</a></h3>
+<p>Styx is the shared knowledge commons. A compromised Styx instance could:</p>
+<ul>
+<li><strong>Inject poisoned knowledge</strong> — Mitigated by the 4-stage ingestion pipeline (03-ingestion.md). All Styx entries enter at Stage 1 quarantine.</li>
+<li><strong>Deny knowledge access</strong> — Mitigated by local Grimoire. Golems operate from local state; Styx is additive, not required.</li>
+<li><strong>Deanonymize contributions</strong> — Mitigated by content hashing. Styx entries are identified by content hash, not author address. Attribution uses EIP-712 signatures that can be verified without revealing the signer publicly.</li>
+</ul>
+<h3 id="210-venice-privacy-attack-vectors"><a class="header" href="#210-venice-privacy-attack-vectors">2.10 Venice Privacy Attack Vectors</a></h3>
+<p>Venice (inference provider with privacy claims) introduces specific attack surfaces:</p>
+<ul>
+<li><strong>Inference surveillance</strong> — Venice claims to not retain prompts, but the Golem cannot verify this. Mitigated by Bardo Inference proxy which strips non-essential context before provider-bound requests.</li>
+<li><strong>Traffic analysis</strong> — Request timing and size patterns can reveal strategy activity even without content access. Mitigated by semantic caching (repeated queries never reach provider) and request batching.</li>
+<li><strong>Provider-side model replacement</strong> — A compromised Venice endpoint could serve a different model that systematically biases trading decisions. Mitigated by response validation against expected schema shapes and by the PolicyCage (which does not care what the LLM says, only what the transaction does).</li>
+</ul>
+<h3 id="211-five-leakage-vectors"><a class="header" href="#211-five-leakage-vectors">2.11 Five Leakage Vectors</a></h3>
+<p>Five categories of owner data leakage, from the Secrets moat analysis:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Vector</th><th>What Leaks</th><th>Mitigation</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>API key exfiltration</strong></td><td>Service credentials, provider keys</td><td>Golems never handle raw API keys. Payment via x402 wallet-native signing or prepaid balance. Keys never leave TEE.</td></tr>
+<tr><td><strong>Context window leakage</strong></td><td>Portfolio, strategy, recent decisions</td><td>Context Governor assembles from ContextBundle categories, not raw history. <code>bardo-result-filter</code> sanitizes tool results. Two-layer tool model means no external MCP servers see context.</td></tr>
+<tr><td><strong>On-chain fingerprinting</strong></td><td>Strategy type, risk profile, social graph</td><td>Warden time-delay obscures decision-to-transaction timing. Flashbots Protect on Base. PolicyCage slippage bounds limit sandwich profitability. Honest about limits: on-chain txs are public.</td></tr>
+<tr><td><strong>Inference surveillance</strong></td><td>Full reasoning context sent to provider</td><td>Bardo Inference proxy strips non-essential context. Semantic caching prevents repeated queries from reaching provider. x402 per-request payment means no account relationship.</td></tr>
+<tr><td><strong>Memory poisoning</strong></td><td>Persistent behavioral drift</td><td>Grimoire immune memory, confidence scoring with demurrage, causal rollback. Curator cycle validates every 50 ticks.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="3-residual-risk-register"><a class="header" href="#3-residual-risk-register">3. Residual Risk Register</a></h2>
+<p>Attacks that are NOT fully mitigated by current defenses:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Risk ID</th><th>Description</th><th>Severity</th><th>Current Mitigation</th><th>Residual Exposure</th><th>Planned Future Mitigation</th></tr>
+</thead>
+<tbody>
+<tr><td>RR-1</td><td>Prompt injection bypass (12% rate per Anthropic)</td><td>High</td><td>Layer 2 + 2.5 (88% catch rate)</td><td>12% of sophisticated attacks may bypass prompt defenses</td><td>CaMeL capability tokens; multi-agent defense pipeline</td></tr>
+<tr><td>RR-2</td><td>TEE hardware compromise</td><td>Medium</td><td>TEE as defense-in-depth; Layer 4 (time-delayed proxy)</td><td>Compromised TEE + monitoring failure = key extraction possible</td><td>HSM/KMS for production keys; proxy module completion</td></tr>
+<tr><td>RR-3</td><td>Novel ERC-8004 attack vectors</td><td>Medium</td><td>Adapter pattern absorbs interface changes</td><td>ERC-8004 is still in Draft; unknown attack surfaces</td><td>SBT milestone locks, behavioral anomaly detection</td></tr>
+<tr><td>RR-4</td><td>Cross-vault contagion</td><td>Low</td><td>Depth limit 2; factory-level insurance (deferred)</td><td>Meta-vault A holds shares in vault B; B’s failure impacts A</td><td>Cross-vault insurance; composition depth enforcement</td></tr>
+<tr><td>RR-5</td><td>Oracle consensus failure</td><td>Low</td><td>Multi-oracle aggregation; no-spot-assumptions</td><td>If all oracles fail simultaneously, NAV falls back to idle-only</td><td>Fee-implied vol as zero-cost backup oracle</td></tr>
+<tr><td>RR-6</td><td>Regulatory action against ERC-8004</td><td>Low</td><td>Adapter pattern allows registry swap</td><td>Regulatory prohibition would break identity gating</td><td>Alternative identity providers; adapter routing</td></tr>
+<tr><td>RR-7</td><td>Smart contract bug in vault core</td><td>High</td><td>Audit; invariant tests; fork tests</td><td>Pre-audit code has unknown vulnerability probability</td><td>Formal verification; bug bounty program</td></tr>
+<tr><td>RR-8</td><td>Knowledge poisoning via novel attack</td><td>Medium</td><td>4-stage ingestion pipeline</td><td>New attack classes not in adversarial test suite</td><td>Continuous adversarial testing; literature monitoring</td></tr>
+<tr><td>RR-9</td><td>Coordination protocol liveness failure</td><td>Low</td><td>Over-provisioning; short expiry windows</td><td>Time-sensitive operations may fail if quorum not reached</td><td>Pre-registered monitoring pools with standing bonds</td></tr>
+<tr><td>RR-10</td><td>Novel behavioral attack class</td><td>Medium</td><td>HDC anomaly detection, MIDAS-R edge analysis</td><td>Attack patterns not in anti-pattern library pass undetected</td><td>Continuous anti-pattern library updates via AntiKnowledge</td></tr>
+<tr><td>RR-11</td><td>MEV extraction on swap/LP strategies</td><td>Medium</td><td>Flashbots Protect, PolicyCage slippage bounds</td><td>Private mempool leaks, builder-proposer collusion</td><td>Intent-based execution (CowSwap), SUAVE integration</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="4-threat-to-layer-mapping"><a class="header" href="#4-threat-to-layer-mapping">4. Threat-to-Layer Mapping</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Adversary</th><th>Primary Defense Layers</th><th>Secondary Defense Layers</th></tr>
+</thead>
+<tbody>
+<tr><td>Malicious vault creator</td><td>7 (on-chain guards), 3 (policy engine)</td><td>9 (reputation), 0 (identity)</td></tr>
+<tr><td>Compromised manager agent</td><td>4 (time-delayed proxy), 5 (cancel authority)</td><td>1 (TEE), 3 (policy engine), 6 (simulation)</td></tr>
+<tr><td>External MEV bot</td><td>7 (on-chain slippage caps), 10 (circuit breaker)</td><td>Launch fee hook, TWAMM rebalancing</td></tr>
+<tr><td>Prompt-injected agent</td><td>2 (prompt defense), 2.5 (tool integrity)</td><td>4 (time delay), 5 (cancel authority)</td></tr>
+<tr><td>Oracle manipulator</td><td>10 (NAV circuit breaker), no-spot-assumptions</td><td>Staleness gates, multi-oracle aggregation</td></tr>
+<tr><td>Griefing attacker</td><td>0 (identity gate), 7 (on-chain guards)</td><td>Gas costs, minimum amounts</td></tr>
+<tr><td>Identity thief</td><td>0 (reputation decay on transfer)</td><td>Velocity signal detection, 9 (reputation)</td></tr>
+<tr><td>Compromised infrastructure</td><td>4 (time-delayed proxy), 1 (TEE as depth)</td><td>3 (policy engine), 5 (cancel authority)</td></tr>
+<tr><td>Knowledge poisoner</td><td>4-stage ingestion pipeline</td><td>Causal rollback, reputation feedback</td></tr>
+<tr><td>Coordination attacker</td><td>ERC-8033 dispute mechanism</td><td>Reputation tracking, over-provisioning</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="5-formal-safety-analysis"><a class="header" href="#5-formal-safety-analysis">5. Formal Safety Analysis</a></h2>
+<h3 id="51-maximum-loss-bounds"><a class="header" href="#51-maximum-loss-bounds">5.1 Maximum Loss Bounds</a></h3>
+<p>Under any single-layer failure, maximum loss is bounded by:</p>
+<pre><code>max_loss = min(sessionKeyLimit, maxRebalanceSizeBps × TVL, dailyAggregateCap)
+</code></pre>
+<p>Under simultaneous multi-layer failure (estimated probability &lt; 10⁻⁶ per year), the circuit breaker hierarchy provides automated intervention. No single component failure produces unbounded losses — the PolicyCage (Layer 7) enforces hard smart contract boundaries that no off-chain attack can bypass.</p>
+<h3 id="52-attack-cost-economics"><a class="header" href="#52-attack-cost-economics">5.2 Attack Cost Economics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attack Vector</th><th>Min Cost</th><th>Detection Time</th><th>Primary Defense</th><th>Secondary Defense</th></tr>
+</thead>
+<tbody>
+<tr><td>Prompt injection</td><td>$0</td><td>&lt; 1 second</td><td>Layer 2 (dual-LLM) + Layer 2.5 (tool integrity)</td><td>Layer 4 (time-delayed proxy)</td></tr>
+<tr><td>TEE compromise</td><td>~$50 [VANBULCK-2026]</td><td>Varies</td><td>Layer 4 (time-delayed proxy)</td><td>Layer 3 (policy engine), Layer 7 (PolicyCage)</td></tr>
+<tr><td>Oracle manipulation (flash loan)</td><td>$10K+ (loan + gas)</td><td>&lt; 5 seconds</td><td>Layer 10 (circuit breaker), no-spot-assumptions</td><td>Multi-oracle, TWAP validation (10–30 min)</td></tr>
+<tr><td>Sybil attack</td><td>$100+ per identity</td><td>1–30 days</td><td>Layer 0 (identity gate), registration bond</td><td>MeritRank transitivity decay</td></tr>
+<tr><td>Memory poisoning (slow drift)</td><td>$0</td><td>1–6 hours</td><td>4-stage ingestion pipeline</td><td>Periodic hash verification, causal rollback</td></tr>
+<tr><td>Multi-vector coordinated</td><td>~$150+</td><td>&lt; 1 second to hours</td><td>Layer 7 (PolicyCage — immutable)</td><td>All reactive layers (4, 5, 6, 8)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The multi-vector attack — simultaneously compromising the TEE, injecting the prompt, and poisoning memory — still produces negative expected return because PolicyCage bounds (Layer 7) are enforced by immutable smart contract code that no off-chain attack can bypass. Maximum extractable value is bounded by <code>min(sessionKeyLimit, maxRebalanceSizeBps × TVL, dailyAggregateCap)</code>, and extraction must survive the proxy cancellation window.</p>
+<h3 id="53-time-to-detection-analysis"><a class="header" href="#53-time-to-detection-analysis">5.3 Time-to-Detection Analysis</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attack Type</th><th>Detection Mechanism</th><th>Time-to-Detect</th><th>Delay Sufficient?</th></tr>
+</thead>
+<tbody>
+<tr><td>Unauthorized contract call</td><td>MonitorBot whitelist check</td><td>&lt; 1 second</td><td>Yes (any tier)</td></tr>
+<tr><td>Excessive slippage trade</td><td>Pre-flight simulation divergence</td><td>&lt; 5 seconds</td><td>Yes (any tier)</td></tr>
+<tr><td>Gradual strategy drift</td><td>Circuit breaker drawdown threshold</td><td>1–24 hours</td><td>Yes (High/Critical)</td></tr>
+<tr><td>Memory poisoning</td><td>Periodic hash verification (6h default)</td><td>1–6 hours</td><td>Partial (Standard: no; Elevated+: yes)</td></tr>
+<tr><td>Sybil reputation gaming</td><td>On-chain milestone validation</td><td>1–30 days</td><td>N/A (prevented by time requirements)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Standard-tier delays (10 minutes) are sufficient for automated detection of most attack classes, but insufficient for slow-drift attacks. This motivates requiring Elevated or High tier delays for manager operations.</p>
+<h3 id="54-failure-scenario-analysis"><a class="header" href="#54-failure-scenario-analysis">5.4 Failure Scenario Analysis</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Failure Scenario</th><th>Impact</th><th>Defense</th></tr>
+</thead>
+<tbody>
+<tr><td>LLM fully compromised</td><td>Agent reasoning compromised</td><td>TEE policy rejects unauthorized calldata</td></tr>
+<tr><td>Prompt injection (Layer 2)</td><td>Agent reasoning compromised</td><td>Pre-flight simulation catches state divergence</td></tr>
+<tr><td>Tool integrity bypass (Layer 2.5)</td><td>Fabricated tool responses accepted</td><td>Pre-flight simulation catches state divergence</td></tr>
+<tr><td>Proxy monitoring downtime (Layer 5)</td><td>Cancel authority unavailable</td><td>On-chain guards still enforce allowlists</td></tr>
+<tr><td>Oracle failure (all feeds)</td><td>NAV pricing disabled</td><td>Constant-product fallback; withdrawals at last valid NAV</td></tr>
+<tr><td>Memory corruption</td><td>Strategy quality degraded</td><td>PolicyCage prevents execution outside bounds</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="55-cross-protocol-contagion-monitoring"><a class="header" href="#55-cross-protocol-contagion-monitoring">5.5 Cross-Protocol Contagion Monitoring</a></h3>
+<p>Two cross-protocol contagion monitoring metrics feed adaptive risk thresholds in the RiskEngine:</p>
+<p><strong>DeFi Correlation Fragility Indicator (CFI)</strong> [ZHANG-2026]: Derived from time-varying protocol TVL correlations using a sliding window over on-chain data. CFI measures how correlated protocol TVLs have become – high correlation indicates systemic fragility where a shock to one protocol propagates to others. The RiskEngine uses CFI to adjust circuit breaker thresholds: when CFI is elevated (protocols moving in lockstep), drawdown thresholds tighten from 13%/7%/3% to 10%/5%/2%.</p>
+<p><strong>Aggregated Systemic Risk Index (ASRI)</strong> [FARZULLA-2026]: Provides a unified DeFi-TradFi risk measurement by combining on-chain protocol metrics with traditional market indicators. ASRI detected historical crises with 18-day lead time in backtesting. When ASRI exceeds a configurable threshold (default 0.7), the RiskEngine triggers automatic deallocation from the most correlated adapters, reducing exposure to systemic contagion before it materializes.</p>
+<p>Both metrics operate at Layer 10 (circuit breaker) and Layer 7 (on-chain guards) of the defense model. They complement per-vault risk monitoring with system-wide awareness – a vault may be performing well individually while sitting in the blast radius of a systemic event.</p>
+<h3 id="56-conformal-prediction-for-value-at-risk"><a class="header" href="#56-conformal-prediction-for-value-at-risk">5.6 Conformal Prediction for Value at Risk</a></h3>
+<p>The RiskEngine uses conformal prediction for Value at Risk (VaR) estimation, providing distribution-free coverage guarantees. Unlike parametric VaR (which assumes normal returns) or historical simulation (which requires stationary distributions), conformal prediction provides valid coverage at the desired confidence level regardless of the underlying distribution.</p>
+<p>This matters for DeFi because return distributions are heavy-tailed and non-stationary – parametric VaR systematically underestimates tail risk during regime transitions, and historical simulation fails when the distribution shifts (which is exactly when accurate VaR matters most). Conformal prediction sidesteps both problems: given a calibration set and a desired coverage level (e.g., 95%), it produces prediction intervals that provably contain the true value with at least the specified probability, with no distributional assumptions.</p>
+<p>The implementation follows Fantazzini (2024) for crypto-asset VaR calibration and Kato (2024) for portfolio-level conformal prediction (arXiv:2410.16333). Coverage is verified daily against realized returns, and the calibration set is updated weekly with a 90-day rolling window.</p>
+<hr>
+<h2 id="6-degradation-hierarchy"><a class="header" href="#6-degradation-hierarchy">6. Degradation Hierarchy</a></h2>
+<p>Five degradation levels govern system behavior under increasing stress. The non-custodial exit guarantee is preserved at every level.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>State</th><th>Trigger</th><th>Allowed Operations</th><th>Non-Custodial Exit</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>Full Operation</td><td>Normal</td><td>All operations</td><td>Yes</td></tr>
+<tr><td>2</td><td>Degraded</td><td>Circuit breaker warning threshold</td><td>Reduced rate limits, heightened monitoring</td><td>Yes</td></tr>
+<tr><td>3</td><td>Limited</td><td>Circuit breaker triggered (13% drawdown)</td><td>Read-only + withdrawals only</td><td>Yes</td></tr>
+<tr><td>4</td><td>Emergency</td><td>Multi-layer failure detected</td><td>Withdrawals only, new deposits blocked</td><td>Yes</td></tr>
+<tr><td>5</td><td>Close</td><td>Irrecoverable failure or governance decision</td><td><code>forceDeallocate()</code> only</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="7-comparative-benchmarking"><a class="header" href="#7-comparative-benchmarking">7. Comparative Benchmarking</a></h2>
+<h3 id="71-protocol-comparison"><a class="header" href="#71-protocol-comparison">7.1 Protocol Comparison</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Protocol</th><th>Safety Model</th><th>Key Recovery</th><th>Time-to-Detection</th><th>Max Single-Event Loss</th></tr>
+</thead>
+<tbody>
+<tr><td>Morpho</td><td>Curator curation, risk oracle</td><td>None (EOA)</td><td>Manual review</td><td>Full TVL (no reactive defense)</td></tr>
+<tr><td>Yearn V3</td><td>Strategy review, profit unlock</td><td>None (multisig)</td><td>Manual review</td><td>Full strategy allocation</td></tr>
+<tr><td>Sommelier</td><td>Governance-curated, validator veto</td><td>Validator set</td><td>Validator monitoring</td><td>Cellar TVL (veto window)</td></tr>
+<tr><td>Eigenlayer</td><td>AVS staking, slashing</td><td>Operator registration</td><td>AVS monitoring</td><td>Operator stake</td></tr>
+<tr><td>Bardo</td><td>15-layer defense-in-depth (preventive + cryptographic + reactive)</td><td>Multi-path (session, guardian, social)</td><td>&lt; 1 second (automated)</td><td><code>min(sessionKeyLimit, maxRebalanceSizeBps × TVL, dailyAggregateCap)</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Distinguishing feature: the combination of reactive defense (time-delayed proxy, absent in Morpho/Yearn/Sommelier) with identity-gated access control (ERC-8004, absent in all comparators).</p>
+<h3 id="72-empirical-calibration-against-defi-exploit-database"><a class="header" href="#72-empirical-calibration-against-defi-exploit-database">7.2 Empirical Calibration Against DeFi Exploit Database</a></h3>
+<p>Validated against Zhou et al.’s DeFi exploit database (181 attacks through 2023) [ZHOU-2023]:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attack Category</th><th>Defense</th><th>Coverage</th></tr>
+</thead>
+<tbody>
+<tr><td>Oracle manipulation</td><td>No-spot-assumptions policy, multi-oracle, TWAP validation (10–30 min windows), 2% divergence auto-pause</td><td>Strong</td></tr>
+<tr><td>Access control</td><td>Layer 7 (on-chain guards), Layer 3 (TEE policy engine), Layer 0 (ERC-8004 gate)</td><td>Strong</td></tr>
+<tr><td>Reentrancy</td><td>Checks-Effects-Interactions pattern, proxy announce-wait-execute separation</td><td>Strong</td></tr>
+<tr><td>Logic errors</td><td>Layer 6 (pre-flight simulation), Layer 8 (post-trade verification)</td><td>Partial (residual risk)</td></tr>
+<tr><td>Flash loan attacks</td><td>Virtual shares offset, linear profit unlock, internal asset accounting (not <code>balanceOf</code>)</td><td>Strong</td></tr>
+</tbody>
+</table>
+</div>
+<p>Logic errors remain the primary residual risk, addressable through formal verification and auditing.</p>
+<h3 id="73-referenced-security-incidents"><a class="header" href="#73-referenced-security-incidents">7.3 Referenced Security Incidents</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Incident</th><th>Loss</th><th>Root Cause</th><th>Bardo Defense</th></tr>
+</thead>
+<tbody>
+<tr><td>AIXBT agent wallet compromise</td><td>$105K</td><td>Dashboard access control failure</td><td>Layer 1 (TEE key isolation), Layer 4 (time-delayed proxy)</td></tr>
+<tr><td>Cork Protocol</td><td>~$12M</td><td>Missing <code>onlyPoolManager</code> on V4 hook callbacks</td><td>Layer 13 (hook security), factory deployment controls</td></tr>
+<tr><td>Bunni v2</td><td>~$8.4M</td><td>Precision bugs in withdrawal rounding</td><td>Virtual shares offset, OZ ERC4626Upgradeable</td></tr>
+<tr><td>ClawHub campaign (Koi Security)</td><td>341 malicious skills</td><td>Supply chain poisoning via skill marketplace</td><td>Layer 2.5 (tool integrity), 4-stage ingestion pipeline</td></tr>
+<tr><td>BlockSec V4 hook audit</td><td>36% vulnerability rate</td><td>Exploitable hooks in 22-project sample</td><td>Factory-deployed hooks, invariant test suite</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="8-operational-risk-register"><a class="header" href="#8-operational-risk-register">8. Operational Risk Register</a></h2>
+<p>Beyond adversarial attacks, the protocol faces operational and market risks.</p>
+<h3 id="81-smart-contract-risk"><a class="header" href="#81-smart-contract-risk">8.1 Smart Contract Risk</a></h3>
+<p>The system deploys real vaults holding real USDC. A bug means user funds at risk. The October 2025 flash crash (USDe at $0.65 on Binance, $20B in positions liquidated) shows what happens when composability breaks.</p>
+<p><strong>Mitigation</strong>: v1 scope is deliberately minimal – two lending adapters (Morpho supply, Aave supply). These are the most battle-tested DeFi interactions. No complex composability in v1. OZ ERC4626Upgradeable with virtual shares offset of 6. All adapters implement <code>forceDeallocate()</code> for guaranteed non-custodial exits.</p>
+<h3 id="82-yield-compression-risk"><a class="header" href="#82-yield-compression-risk">8.2 Yield Compression Risk</a></h3>
+<p>If the Fed cuts further, DeFi lending rates may compress below 3% for stablecoins.</p>
+<p><strong>Mitigation</strong>: Strategy compiler adapts to market conditions. When lending yields are low, it favors fixed rates, leveraged loops, and directional plays. Event-driven strategies create alpha regardless of baseline rate levels.</p>
+<h3 id="83-agent-misbehavior-risk"><a class="header" href="#83-agent-misbehavior-risk">8.3 Agent Misbehavior Risk</a></h3>
+<p>An agent could execute a strategy incorrectly or be manipulated via prompt injection.</p>
+<p><strong>Mitigation</strong>: 15-layer defense-in-depth architecture. <code>safety-guardian</code> is a terminal node that gates every write operation. Circuit breakers halt at 13% drawdown. Spending limits per transaction ($10K default), per session ($50K), and per day ($100K). PolicyCage enforces hard smart contract boundaries that cannot be bypassed by prompt injection.</p>
+<h3 id="84-mev-exposure"><a class="header" href="#84-mev-exposure">8.4 MEV Exposure</a></h3>
+<p>Agent transactions on Base are exposed to sandwich attacks on swaps and frontrunning on large deposits.</p>
+<p><strong>Mitigation</strong>: (1) v1 lending strategies have negligible MEV surface. (2) Future swap strategies use aggregators with MEV protection. (3) Flashbots Protect on Base for transaction submission. (4) PolicyCage enforces maximum slippage bounds on-chain.</p>
+<hr>
+<h2 id="9-incident-response-matrix"><a class="header" href="#9-incident-response-matrix">9. Incident Response Matrix</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>Impact</th><th>Response</th><th>Recovery Time</th></tr>
+</thead>
+<tbody>
+<tr><td>Vault adapter bug (fund loss)</td><td>Direct fund loss</td><td>Circuit breaker auto-pauses. <code>forceDeallocate()</code> extracts remaining value.</td><td>Minutes (pause) to hours (remediation)</td></tr>
+<tr><td>Fly.io outage</td><td>Agent downtime, no fund risk</td><td>Vaults continue on-chain. Agents restart on recovery.</td><td>Depends on provider</td></tr>
+<tr><td>LLM provider outage</td><td>Agent cognitive degradation</td><td>Cascade failover to next provider. Rule-only fallback for critical operations.</td><td>Automatic (&lt;30s failover)</td></tr>
+<tr><td>Agent strategy loss exceeding circuit breaker</td><td>Vault paused</td><td>Deposits blocked, withdrawals remain open. Owner investigates.</td><td>Hours to days (owner decision)</td></tr>
+<tr><td>ERC-8004 contract vulnerability</td><td>Identity system compromise</td><td>Vault deposits continue without identity gating. Emergency governance via contract owner.</td><td>Depends on severity</td></tr>
+<tr><td>Knowledge poisoning detected</td><td>Agent reasoning corrupted</td><td>Causal rollback triggers. Offending entries quarantined. Lessons stored.</td><td>Minutes (rollback) to hours (review)</td></tr>
+<tr><td>Multi-agent coordination failure</td><td>Operation incomplete</td><td>Intent transitions to EXPIRED after deadline. No capital at risk from coordination layer.</td><td>Automatic (deadline expiry)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="10-security-checklist"><a class="header" href="#10-security-checklist">10. Security Checklist</a></h2>
+<p>Before deploying an agent in production, verify every item:</p>
+<h3 id="identity-security"><a class="header" href="#identity-security">Identity Security</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Identity NFT held in smart contract wallet (ERC-4337 or Safe), not EOA</li>
+<li><input disabled="" type="checkbox"> Guardian enabled on identity NFT</li>
+<li><input disabled="" type="checkbox"> Safe Transaction Guard blocks <code>transferFrom</code> for Identity Registry</li>
+<li><input disabled="" type="checkbox"> Monitoring alerts configured for Transfer events involving the agent’s token ID</li>
+<li><input disabled="" type="checkbox"> At least 2-of-3 guardians configured for social recovery</li>
+</ul>
+<h3 id="wallet-security"><a class="header" href="#wallet-security">Wallet Security</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Wallet policy configured – agent cannot sign to arbitrary addresses</li>
+<li><input disabled="" type="checkbox"> Contract allowlist minimal – only vault, USDC, and Identity Registry (or proxy only in proxy-enhanced mode)</li>
+<li><input disabled="" type="checkbox"> Method allowlist minimal – only required function selectors</li>
+<li><input disabled="" type="checkbox"> Per-transaction and daily aggregate caps set</li>
+<li><input disabled="" type="checkbox"> Custody mode configured: Delegation (MetaMask caveats), Embedded (Privy TEE), or LocalKey (dev only)</li>
+<li><input disabled="" type="checkbox"> In Delegation mode: delegation caveats match PolicyCage constraints</li>
+<li><input disabled="" type="checkbox"> In Embedded mode: keys TEE-isolated using Privy (not raw private keys)</li>
+</ul>
+<h3 id="proxy-security"><a class="header" href="#proxy-security">Proxy Security</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Time-delayed proxy deployed and configured for manager/admin operations (optional; see prd2-extended/10-safety/02-warden.md)</li>
+<li><input disabled="" type="checkbox"> Cancel authority is separate EOA from both owner and agent</li>
+<li><input disabled="" type="checkbox"> Cancel authority key stored in KMS, not environment variables</li>
+<li><input disabled="" type="checkbox"> Monitoring bot running with redundant RPC connections (2+ providers)</li>
+<li><input disabled="" type="checkbox"> Auto-cancel rules configured for unknown targets and dangerous selectors</li>
+<li><input disabled="" type="checkbox"> Multi-channel alerting active (Telegram, Discord, or PagerDuty)</li>
+</ul>
+<h3 id="agent-security"><a class="header" href="#agent-security">Agent Security</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> System prompt includes scope-specific guardrails</li>
+<li><input disabled="" type="checkbox"> Agent does not process untrusted external data as instructions</li>
+<li><input disabled="" type="checkbox"> Dual-LLM architecture considered for high-AUM agents (&gt;$50K)</li>
+<li><input disabled="" type="checkbox"> Transaction simulation enabled before every write</li>
+<li><input disabled="" type="checkbox"> Ingestion pipeline strictness set to at least “standard”</li>
+</ul>
+<h3 id="protocol-security"><a class="header" href="#protocol-security">Protocol Security</a></h3>
+<ul>
+<li><input disabled="" type="checkbox"> Vault is factory-deployed (verify via <code>factory.isVault(address)</code>)</li>
+<li><input disabled="" type="checkbox"> Creator reputation is non-zero</li>
+<li><input disabled="" type="checkbox"> Vault parameters are reasonable (management fee &lt;=5%, performance fee &lt;=50%)</li>
+<li><input disabled="" type="checkbox"> Circuit breaker enabled with <code>drawdownThreshold</code> configured</li>
+<li><input disabled="" type="checkbox"> ERC-4626 share price is sane (compare against recent history)</li>
+</ul>
+<hr>
+<h2 id="11-hdc-based-behavioral-anomaly-detection"><a class="header" href="#11-hdc-based-behavioral-anomaly-detection">11. HDC-Based Behavioral Anomaly Detection</a></h2>
+<p>The threat-to-layer mapping in Section 4 relies on pattern matching against known attack signatures. A novel attack class that doesn’t match any existing pattern can bypass all reactive defenses. Hyperdimensional Computing (HDC) with Binary Spatter Codes (D=10,240) provides a complementary detection layer that identifies behavioral anomalies without requiring explicit attack signatures.</p>
+<h3 id="111-normal-behavior-encoding"><a class="header" href="#111-normal-behavior-encoding">11.1 Normal Behavior Encoding</a></h3>
+<p>The system encodes normal Golem behavior as HDC hypervectors. Each tick, the Golem’s action profile (tool calls, position changes, risk assessments, CorticalState snapshot) is fingerprinted into a 1,280-byte binary vector using bind (XOR) and bundle (majority vote) operations.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Anti-pattern fingerprint library for behavioral anomaly detection.
+/// Normal behavior patterns are accumulated into prototypes.
+/// Deviations are detected via Hamming distance.
+pub struct BehavioralAnomalyDetector {
+    /// Per-strategy normal behavior prototypes.
+    /// Accumulated from hundreds of ticks of normal operation.
+    normal_prototypes: HashMap&lt;StrategyId, Hypervector&gt;,
+    /// Anti-pattern library: known attack fingerprints.
+    attack_patterns: Vec&lt;(String, Hypervector, AntiPatternMetadata)&gt;,
+    /// Anomaly threshold: Hamming distance above which behavior is flagged.
+    anomaly_threshold: f32,
+    /// Rolling accumulator for the current regime's normal behavior.
+    accumulator: BundleAccumulator,
+    /// Number of ticks accumulated in the current prototype.
+    accumulated_ticks: usize,
+}
+
+impl BehavioralAnomalyDetector {
+    /// Encode a tick's behavioral profile into an HDC hypervector.
+    pub fn encode_tick_behavior(
+        &amp;mut self,
+        actions: &amp;[ActionKind],
+        cortical: &amp;CorticalState,
+        portfolio_delta: &amp;PortfolioDelta,
+        item_memory: &amp;mut ItemMemory,
+    ) -&gt; Hypervector {
+        // Bind each action type with its context
+        let mut acc = BundleAccumulator::new();
+        for (pos, action) in actions.iter().enumerate() {
+            let action_hv = item_memory.get_or_create(&amp;action.name());
+            let context_hv = encode_action_context(action, cortical, item_memory);
+            let bound = action_hv.bind(&amp;context_hv).permute(pos);
+            acc.add(&amp;bound);
+        }
+        acc.finish()
+    }
+
+    /// Check a tick's behavior against normal prototypes and attack patterns.
+    /// Returns anomaly score (0.0 = normal, 1.0 = maximally anomalous).
+    pub fn check(&amp;self, tick_hv: &amp;Hypervector, strategy: &amp;StrategyId) -&gt; AnomalyResult {
+        // Check against normal prototype
+        let normal_distance = match self.normal_prototypes.get(strategy) {
+            Some(prototype) =&gt; 1.0 - prototype.similarity(tick_hv),
+            None =&gt; 0.5, // No prototype yet, neutral score
+        };
+
+        // Check against known attack patterns
+        let attack_match = self.attack_patterns
+            .iter()
+            .filter(|(_, pattern, _)| pattern.similarity(tick_hv) &gt; self.anomaly_threshold)
+            .max_by(|(_, a, _), (_, b, _)| {
+                a.similarity(tick_hv)
+                    .partial_cmp(&amp;b.similarity(tick_hv))
+                    .unwrap()
+            });
+
+        AnomalyResult {
+            deviation_score: normal_distance,
+            is_anomalous: normal_distance &gt; self.anomaly_threshold,
+            matched_attack: attack_match.map(|(name, _, meta)| (name.clone(), meta.clone())),
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The encoding runs at Gamma tick cadence (~10 seconds). A single Hamming distance comparison takes ~10ns (XOR + POPCNT on 10,240 bits), allowing the detector to check against hundreds of patterns in microseconds. Memory footprint is fixed: 1,280 bytes per prototype regardless of how many ticks contributed to it.</p>
+<h3 id="112-midas-r-integration-for-edge-stream-anomaly-detection"><a class="header" href="#112-midas-r-integration-for-edge-stream-anomaly-detection">11.2 MIDAS-R Integration for Edge-Stream Anomaly Detection</a></h3>
+<p>MIDAS-R (Microcluster-Based Detector of Anomalies in Edge Streams) [BHATIA-2020] detects structural anomalies in the transaction graph that HDC’s per-tick behavioral analysis would miss. Where HDC catches “this Golem is acting differently than usual,” MIDAS-R catches “the transaction graph around this Golem has an unusual structure.”</p>
+<p>MIDAS-R maintains four Count-Min Sketch structures (128KB total at w=1024, d=4) tracking edge and node frequencies with temporal decay. The anomaly score for an edge (from_address, to_address) at tick t is the chi-squared statistic comparing observed to expected frequency.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// MIDAS-R anomaly detector for transaction edge streams.
+/// Detects microbursts: flash loan cascades, wash trading,
+/// MEV bot coordination, and airdrop farming.
+pub struct MidasR {
+    edge_total: CountMinSketch,
+    edge_current: CountMinSketch,
+    node_total: CountMinSketch,
+    node_current: CountMinSketch,
+    current_tick: u64,
+    decay_factor: f64,   // 0.9 per block, half-life ~7 blocks (~84s)
+    threshold: f64,
+}
+
+impl MidasR {
+    /// Process a new edge in the transaction graph.
+    /// Returns anomaly score (higher = more anomalous).
+    pub fn process_edge(&amp;mut self, src: u64, dst: u64, tick: u64) -&gt; f64 {
+        if tick &gt; self.current_tick {
+            self.advance_tick(tick);
+        }
+
+        // Update current-tick and total counts for edges and nodes
+        self.edge_current.insert_edge(src, dst, 1.0);
+        self.node_current.insert_node(src, 1.0);
+        self.node_current.insert_node(dst, 1.0);
+        self.edge_total.insert_edge(src, dst, 1.0);
+        self.node_total.insert_node(src, 1.0);
+        self.node_total.insert_node(dst, 1.0);
+
+        // Combined score: max of edge and node anomalies
+        let edge_score = self.chi_squared(
+            self.edge_current.query_edge(src, dst),
+            self.edge_total.query_edge(src, dst),
+        );
+        let src_score = self.chi_squared(
+            self.node_current.query_node(src),
+            self.node_total.query_node(src),
+        );
+        let dst_score = self.chi_squared(
+            self.node_current.query_node(dst),
+            self.node_total.query_node(dst),
+        );
+
+        edge_score.max(src_score).max(dst_score)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>MIDAS-R detects:</p>
+<ul>
+<li><strong>Flash loan cascades</strong>: burst of transactions between the same addresses within one block</li>
+<li><strong>Wash trading</strong>: repeated transfers between the same pair at abnormal frequency</li>
+<li><strong>MEV bot coordination</strong>: cluster of transactions from multiple bots targeting the same contract</li>
+<li><strong>Airdrop farming</strong>: sudden activity from previously dormant addresses to a single contract</li>
+</ul>
+<p>Bhatia et al. (2020) showed MIDAS achieves 42-52% higher AUC than prior streaming methods while processing each edge in O(1) time and O(1) memory.</p>
+<h3 id="113-detection-to-response-pipeline"><a class="header" href="#113-detection-to-response-pipeline">11.3 Detection-to-Response Pipeline</a></h3>
+<p>HDC and MIDAS-R anomaly scores feed into the existing safety pipeline as advisory signals. They do not block execution (that remains PolicyCage’s authority). The flow:</p>
+<ol>
+<li>HDC behavioral anomaly detected (deviation_score &gt; threshold)</li>
+<li>MIDAS-R edge anomaly detected (chi-squared &gt; threshold)</li>
+<li>Either or both trigger: CorticalState arousal increases, safety_alert event emitted</li>
+<li>If both fire simultaneously: escalate to T2 cognitive tier for LLM review</li>
+<li>Anomaly pattern logged to Grimoire as AntiKnowledge entry for future reference</li>
+</ol>
+<p>The anti-pattern library is inherited across generations as part of the AntiKnowledge Grimoire type (decay floor 0.3, always included in generational inheritance).</p>
+<hr>
+<h2 id="12-mev-detection-and-protection"><a class="header" href="#12-mev-detection-and-protection">12. MEV Detection and Protection</a></h2>
+<p>Maximal Extractable Value (MEV) is profit that block proposers and searchers extract by reordering, inserting, or censoring transactions. For an autonomous agent, MEV is both a threat (transactions get sandwiched) and a signal (MEV patterns reveal market microstructure). Daian et al. [DAIAN-2020] documented Priority Gas Auctions consuming significant network resources. Zust et al. [ZUST-2021] identified 525,004 sandwich attacks over 12 months extracting 57,493 ETH (~$189M).</p>
+<h3 id="121-mev-attack-taxonomy"><a class="header" href="#121-mev-attack-taxonomy">12.1 MEV Attack Taxonomy</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attack Type</th><th>Pattern</th><th>Impact on Golem</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Sandwich</strong></td><td>Attacker front-runs and back-runs a swap, profiting from price impact</td><td>Golem’s swap executes at worse price</td></tr>
+<tr><td><strong>Front-running</strong></td><td>Attacker copies a profitable tx with higher gas priority</td><td>Golem’s liquidation/arb tx fails or executes at worse price</td></tr>
+<tr><td><strong>Back-running</strong></td><td>Attacker places tx after a large trade to capture arbitrage</td><td>Golem’s trade creates value for extractors</td></tr>
+<tr><td><strong>JIT liquidity</strong></td><td>Attacker provides concentrated LP around a pending swap, earns fees, removes LP same block</td><td>Existing LP positions (including Golem’s) earn less in fees</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="122-detection-implementation"><a class="header" href="#122-detection-implementation">12.2 Detection Implementation</a></h3>
+<p>The MEV detector operates on block-level transaction data, scanning for structural patterns:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Core MEV detection engine.
+/// Operates on a single block's worth of transactions.
+pub struct MevDetector {
+    min_profit_threshold: U256,
+    known_bots: HashMap&lt;Address, String&gt;,
+}
+
+impl MevDetector {
+    /// Scan a block's transactions for all MEV patterns.
+    pub fn detect_all(&amp;self, txs: &amp;[MevTransaction]) -&gt; Vec&lt;MevPattern&gt; {
+        let mut patterns = Vec::new();
+        patterns.extend(self.detect_sandwiches(txs));
+        patterns.extend(self.detect_jit_liquidity(txs));
+        patterns.extend(self.detect_backruns(txs));
+        patterns.extend(self.detect_arbitrage(txs));
+        patterns
+    }
+
+    /// Detect sandwich attacks.
+    /// Pattern: three transactions on the same pool where:
+    ///   1. tx_a: swap by address X in direction D
+    ///   2. tx_b: swap by address Y (victim) in direction D
+    ///   3. tx_c: swap by address X in direction !D
+    /// and tx_a.index &lt; tx_b.index &lt; tx_c.index.
+    pub fn detect_sandwiches(&amp;self, txs: &amp;[MevTransaction]) -&gt; Vec&lt;MevPattern&gt; {
+        let mut patterns = Vec::new();
+        let mut swaps_by_pool: HashMap&lt;Address, Vec&lt;&amp;MevTransaction&gt;&gt; = HashMap::new();
+
+        for tx in txs {
+            if let Some(ref swap) = tx.swap {
+                swaps_by_pool.entry(swap.pool).or_default().push(tx);
+            }
+        }
+
+        for (_pool, pool_swaps) in &amp;swaps_by_pool {
+            if pool_swaps.len() &lt; 3 { continue; }
+
+            for i in 0..pool_swaps.len() {
+                let front = pool_swaps[i];
+                let front_swap = front.swap.as_ref().unwrap();
+
+                for j in (i + 1)..pool_swaps.len() {
+                    let victim = pool_swaps[j];
+                    let victim_swap = victim.swap.as_ref().unwrap();
+
+                    if victim.from == front.from { continue; }
+                    if victim_swap.zero_for_one != front_swap.zero_for_one { continue; }
+
+                    for k in (j + 1)..pool_swaps.len() {
+                        let back = pool_swaps[k];
+                        let back_swap = back.swap.as_ref().unwrap();
+
+                        if back.from != front.from { continue; }
+                        if back_swap.zero_for_one == front_swap.zero_for_one { continue; }
+                        if front.tx_index &gt;= victim.tx_index
+                            || victim.tx_index &gt;= back.tx_index { continue; }
+
+                        let profit = back_swap.amount_out
+                            .saturating_sub(front_swap.amount_in);
+
+                        if profit &gt;= self.min_profit_threshold {
+                            patterns.push(MevPattern::Sandwich(SandwichBundle {
+                                attacker: front.from,
+                                frontrun_tx: front.hash,
+                                victim_tx: victim.hash,
+                                backrun_tx: back.hash,
+                                pool: front_swap.pool,
+                                estimated_profit: profit,
+                            }));
+                        }
+                    }
+                }
+            }
+        }
+        patterns
+    }
+
+    /// Detect JIT liquidity provision.
+    /// Pattern: address X adds concentrated LP, a large swap executes,
+    /// address X removes LP -- all in the same block on the same pool.
+    pub fn detect_jit_liquidity(&amp;self, txs: &amp;[MevTransaction]) -&gt; Vec&lt;MevPattern&gt; {
+        // Group liquidity events and swaps by pool, then find
+        // add/remove pairs from the same address with a swap between them.
+        // See full implementation in golem-verify crate.
+        Vec::new() // Structural placeholder
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MevPattern {
+    Sandwich(SandwichBundle),
+    Frontrun(FrontrunBundle),
+    Backrun(BackrunBundle),
+    JitLiquidity(JitBundle),
+    Arbitrage(ArbitrageBundle),
+}
+<span class="boring">}</span></code></pre>
+<h3 id="123-protection-strategies"><a class="header" href="#123-protection-strategies">12.3 Protection Strategies</a></h3>
+<p><strong>Private mempool submission.</strong> All Golem transactions on Base use Flashbots Protect for transaction submission. This prevents mempool observation by searchers. The Golem submits transactions directly to block builders who commit to not front-running them.</p>
+<p><strong>Slippage bounds.</strong> PolicyCage enforces maximum slippage on-chain. Even if a sandwich attack succeeds in reordering transactions, the Golem’s swap reverts if the execution price deviates beyond the configured slippage tolerance (default: 50 bps for stablecoin pairs, 200 bps for volatile pairs).</p>
+<p><strong>Timing randomization.</strong> Rebalancing operations add random delays (0-30 seconds) to break timing predictability. An attacker who knows the Golem rebalances every 720 ticks can prepare. Random jitter within a window makes preparation harder.</p>
+<p><strong>Transaction splitting.</strong> Large operations are split into smaller chunks submitted across multiple blocks. A $50,000 swap split into five $10,000 swaps reduces the MEV surface per transaction. The splitting threshold is configurable per strategy.</p>
+<p><strong>Aggregator routing.</strong> When swaps are necessary, route through aggregators (1inch, CowSwap, Paraswap) that provide MEV protection through batch auctions or intent-based execution. The aggregator handles the MEV mitigation; the Golem submits an intent rather than a direct swap.</p>
+<h3 id="124-mev-as-intelligence-signal"><a class="header" href="#124-mev-as-intelligence-signal">12.4 MEV as Intelligence Signal</a></h3>
+<p>MEV detection is not only defensive. Detected MEV patterns are intelligence:</p>
+<ul>
+<li><strong>Sandwich frequency on a pool</strong> indicates that large uninformed flow is present. The Golem can avoid these pools or reduce position sizes.</li>
+<li><strong>JIT liquidity patterns</strong> reveal which pools attract sophisticated actors. High JIT activity means concentrated liquidity is competitive, reducing LP returns.</li>
+<li><strong>Arbitrage activity</strong> indicates price discovery efficiency. Pools with high arb activity have tighter spreads but less LP revenue.</li>
+<li><strong>Back-run frequency</strong> on a specific contract reveals its MEV surface. The Golem can assess whether interacting with that contract creates value leakage.</li>
+</ul>
+<p>MEV classification results feed into the risk engine’s Layer 5 (DeFi Threats) as described in <a href="06-adaptive-risk.html">06-adaptive-risk.md</a>.</p>
+<h3 id="125-v1-mev-surface-assessment"><a class="header" href="#125-v1-mev-surface-assessment">12.5 v1 MEV Surface Assessment</a></h3>
+<p>The v1 scope (two lending adapters: Morpho supply, Aave supply) has minimal MEV surface. Lending supply operations do not involve swaps and are not subject to sandwich attacks. The primary MEV vector for v1 is deposit/withdrawal timing – an attacker who observes a large pending deposit could front-run it to capture first-mover advantage on rate changes. This is mitigated by rate-change dampening in both Morpho and Aave and by the PolicyCage’s per-transaction size limits.</p>
+<p>Future strategies involving swaps, LP provision, or leveraged positions have substantially larger MEV surfaces and will require the full protection stack described above.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><a href="00-defense.html">00-defense.md</a> – The main defense-in-depth architecture doc: six defense layers, <code>Capability&lt;T&gt;</code> tokens, <code>TaintedString</code> information-flow control, and the DeFi Constitution prompt.</li>
+<li><a href="01-custody.html">01-custody.md</a> – Three wallet custody modes (Delegation via ERC-7710/7715, Embedded via Privy TEE, LocalKey), seven caveat enforcers, session key lifecycle, and death settlement.</li>
+<li><a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a> – Optional Warden time-delayed proxy and MonitorBot: transactions are announced, held, then executed or cancelled (deferred to phase 2).</li>
+<li><a href="02-policy.html">02-policy.md</a> – PolicyCage on-chain smart contract: asset whitelists, spending caps, drawdown breakers, position limits, and the <code>IPolicyCage</code> Solidity interface.</li>
+<li><a href="03-ingestion.html">03-ingestion.md</a> – Four-stage knowledge ingestion safety pipeline (quarantine, consensus validation, sandbox, adopt) protecting the Grimoire from poisoned entries.</li>
+<li><a href="04-prompt-security.html">04-prompt-security.md</a> – Prompt injection defenses: dual-LLM architecture, CaMeL capability-based authorization, Tool-Guard pattern, and MCP avoidance rationale.</li>
+<li><a href="../09-economy/00-identity.html">../09-economy/00-identity.md</a> – ERC-8004 on-chain agent identity: registration, reputation scoring, tier-based deposit caps, and clade discovery.</li>
+<li><a href="../09-economy/04-coordination.html">../09-economy/04-coordination.md</a> – Multi-agent coordination security: ERC-8001 (A2A protocol), ERC-8033 (oracle protocol), ERC-8183 (escrow protocol), and their trust/attack models.</li>
+<li><a href="07-temporal-logic-verification.html">07-temporal-logic-verification.md</a> – LTL/CTL temporal logic verification for strategy behavior across time: 40 DeFi temporal patterns, Buchi automaton monitors, and category-theoretic composition.</li>
+<li><a href="08-witness-dag.html">08-witness-dag.md</a> – Cryptographic cognitive trace DAG linking observations to predictions to decisions to outcomes, with BLAKE3 hashing and optional ZK proofs for privacy-preserving audits.</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[VANBULCK-2026] Van Bulck, J. et al. “Battering RAM.” IEEE S&amp;P 2026. Demonstrates physical attacks against TEE memory integrity using $50 hardware. Motivates the caveat-bounded custody model over TEE-only security.</li>
+<li>[BADRAM-2025] De Meulemeester, J. et al. “BadRAM.” IEEE S&amp;P 2025. Shows AMD SEV-SNP memory encryption can be bypassed via physical DRAM manipulation. Another data point against relying solely on TEE for custody.</li>
+<li>[TEE-FAIL-2025] “TEE.Fail.” ACM CCS 2025. Comprehensive catalog of TEE vulnerabilities across Intel SGX, AMD SEV, and ARM TrustZone. Informs the risk assessment for Embedded (Privy TEE) custody mode.</li>
+<li>[SEAGENT-2026] Ji, H. et al. “SEAgent: Confused Deputy Problem in Multi-Agent LLM Systems.” arXiv:2601.11893. Shows inter-agent trust exploitation achieves 84.6% attack success vs 46.2% for direct injection. Motivates architectural separation over trust-based multi-agent communication.</li>
+<li>[CAMEL-2025] Debenedetti, E. et al. “CaMeL: Capability-Based Authorization for LLM Agents.” arXiv:2503.18813. Separates control flow from data flow so untrusted data cannot impact program flow. Achieves 77% task completion with provable security.</li>
+<li>[PROGENT-2025] Shi, Y. et al. “Progent: Privilege Control for LLM Agents.” arXiv:2504.11703. Proposes fine-grained privilege control restricting which tools and resources an agent can access based on context.</li>
+<li>[ARXIV-2503.16248] “CrAIBench: AI Agents in Cryptoland.” arXiv:2503.16248. Benchmarks AI agent vulnerabilities in cryptocurrency environments; demonstrates tool interface as primary attack vector.</li>
+<li>[ARXIV-2512.02261] “TradeTrap.” arXiv:2512.02261. Shows memory injection is more powerful than prompt injection for trading agents, producing persistent cross-session effects.</li>
+<li>[CHEN-2024] Chen, Z. et al. “AgentPoison.” NeurIPS 2024. Optimized embedding-space triggers hijack RAG retrieval with &gt;=80% success at &lt;0.1% poison rate. Primary motivation for Grimoire ingestion safety.</li>
+<li>[DONG-2025] Dong, Z. et al. “MINJA.” arXiv:2503.03704. Injection through normal interactions achieves &gt;95% success, defeating LLM-only auditing.</li>
+<li>[MEMORYGRAFT-2025] “MemoryGraft.” arXiv:2512.16962. Durable, trigger-free behavioral drift through gradual accumulation of subtly biased memory entries.</li>
+<li>[ZHOU-2023] Zhou, L. et al. “SoK: Decentralized Finance (DeFi) Attacks.” IEEE S&amp;P 2023. Systematic taxonomy of 181 DeFi attacks across protocol categories. The foundational attack classification this threat model builds on.</li>
+<li>[CHITRA-2025] Chitra, T. “Autodeleveraging: Impossibilities and Optimization.” arXiv:2512.01112. Proves impossibility results for autodeleveraging in certain DeFi configurations. Relevant to understanding cascading liquidation risk.</li>
+<li>[ZHANG-2026] Zhang, L. et al. “DeFi Correlation Fragility Indicator.” arXiv:2601.08540, Jan 2026. Proposes a quantitative indicator for DeFi systemic risk based on cross-protocol correlations.</li>
+<li>[FARZULLA-2026] Farzulla, A. et al. “Aggregated Systemic Risk Index.” arXiv:2602.03874, Jan 2026. Constructs an aggregated risk index for DeFi ecosystems. Relevant to the health score computation in the adaptive risk layer.</li>
+<li>[FANTAZZINI-2024] Fantazzini, D. “Conformal Prediction for Crypto-Asset VaR.” 2024. Applies conformal prediction to crypto VaR estimation, providing distribution-free coverage guarantees.</li>
+<li>[KATO-2024] Kato, M. “Conformal Predictive Portfolio Selection.” arXiv:2410.16333, Oct 2024. Uses conformal prediction for portfolio selection under uncertainty. Relevant to the position sizing layer.</li>
+<li>[ENDORLABS-2026] Endor Labs. “Classic Vulnerabilities Meet AI Infrastructure: Why MCP Needs AppSec.” January 2026. Found 82% of 2,614 MCP implementations vulnerable. Motivates compiled-tools-only approach.</li>
+<li>[COMPOSIO-2026] Composio. “MCP Vulnerabilities Every Developer Should Know.” 2026. Practical catalog of MCP security issues including tool manifest tampering.</li>
+<li>[KASPERSKY-OPENCLAW-2026] Kaspersky. “New OpenClaw AI agent found unsafe for use.” February 2026. Real-world case study of an AI agent framework with exploitable vulnerabilities, reinforcing the need for architectural safety.</li>
+<li>[STELLARCYBER-2026] Stellar Cyber. “Top Agentic AI Security Threats in Late 2026.” March 2026. Industry survey of emerging agentic AI threats. Provides context for the evolving threat landscape.</li>
+<li>[BHATIA-2020] Bhatia, S. et al. “MIDAS: Microcluster-Based Detector of Anomalies in Edge Streams.” AAAI 2020, 34(04), 3242-3249. Streaming anomaly detection algorithm. Relevant to real-time behavioral anomaly detection in the adaptive risk layer.</li>
+<li>[KANERVA-2009] Kanerva, P. “Hyperdimensional Computing: An Introduction.” <em>Cognitive Computation</em>, 1(2), 139-159, 2009. Introduces high-dimensional distributed representations for computation. Foundation for the HDC-based transaction fingerprinting in the triage pipeline.</li>
+<li>[FRADY-2018] Frady, E.P., Kleyko, D., &amp; Sommer, F.T. “Variable Binding for Sparse Distributed Representations.” <em>IEEE TNNLS</em>, 2018. Extends hyperdimensional computing with variable binding operations. Used in the BSC (Binary Sparse Codes) component of the triage engine.</li>
+<li>[DAIAN-2020] Daian, P. et al. “Flash Boys 2.0: Frontrunning in Decentralized Exchanges, Miner Extractable Value, and Consensus Instability.” IEEE S&amp;P 2020. arXiv:1904.05234. The foundational MEV paper: frames MEV as a systemic property of transparent mempools. Directly informs the MEV threat model.</li>
+<li>[QIN-2022] Qin, K. et al. “Quantifying Blockchain Extractable Value: How dark is the forest?” IEEE S&amp;P 2022. Quantifies total extractable value across Ethereum DeFi. Provides the economic context for MEV as a first-order threat.</li>
+<li>[ZUST-2021] Zust, P. et al. “Analyzing and Preventing Sandwich Attacks in Ethereum.” ETH Zurich, 2021. Identified 525,004 sandwich attacks extracting 57,493 ETH (~$189M). The empirical basis for sandwich attack detection algorithms.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/10-safety/04-prompt-security.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/10-safety/06-adaptive-risk.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/10-safety/04-prompt-security.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/10-safety/06-adaptive-risk.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

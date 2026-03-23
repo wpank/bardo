@@ -1,0 +1,1866 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Memory - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/04-memory/00-overview.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="memory-knowledge-ecology-for-mortal-agents-spec"><a class="header" href="#memory-knowledge-ecology-for-mortal-agents-spec">Memory: Knowledge Ecology for Mortal Agents [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 3.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Depends on</strong>: <code>01-grimoire.md</code>, <code>../02-mortality/</code>, <code>../12-inference/04-context-engineering.md</code></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document describes the memory architecture for Bardo’s mortal autonomous DeFi agents, called Golems (single Rust binaries running on micro VMs that trade, lend, and provide liquidity across DeFi protocols). It belongs to the <strong>04-memory</strong> layer, which governs how Golems store, forget, and inherit knowledge. The key concept is Complementary Learning Systems (CLS): a dual-system memory model with fast episodic capture and slow semantic consolidation, compressed through a genomic bottleneck at death. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="why-this-document-exists"><a class="header" href="#why-this-document-exists">Why this document exists</a></h2>
+<p>A first-time reader should understand three things before going further. First, the Golem is a mortal autonomous agent that manages capital across DeFi protocols — trading on Uniswap, lending on Morpho and Aave, providing liquidity, and more. It has a finite USDC budget, a finite lifespan, and it dies. Second, it remembers through a local knowledge system called the Grimoire, which runs entirely on the Golem’s VM with no hosted dependencies. Third, this document describes the memory architecture that sits above that local system, extending knowledge across agent lifetimes and across agent fleets.</p>
+<p>The competitive moat is here: <strong>knowledge decay is rational only because time is finite.</strong> An immortal agent has no reason to forget. A mortal agent MUST forget efficiently because bad memories crowd out good decisions and waste finite context budget. Every system that ships perpetual-memory agents will discover, too late, that accumulation without pruning is a form of overfitting. The Golem’s memory system treats forgetting as a first-class operation, not a failure mode.</p>
+<hr>
+<h2 id="the-argument-in-one-sentence"><a class="header" href="#the-argument-in-one-sentence">The argument in one sentence</a></h2>
+<p>A golem that remembers everything is as disabled as one that remembers nothing – the intelligence is in what it chooses to forget [BORGES-1942], [RICHARDS-FRANKLAND-2017].</p>
+<hr>
+<h2 id="shared-terminology"><a class="header" href="#shared-terminology">Shared terminology</a></h2>
+<p>The following terms are used consistently across all Bardo PRDs (Emotions, Mortality, Memory):</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Term</th><th>Definition</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>VitalityState</strong></td><td>Three-component mortality state: <code>VitalityState { economic: f64, epistemic: f64, stochastic: f64 }</code>. Multiplicative composition – any component at zero kills the Golem.</td></tr>
+<tr><td><strong>BehavioralPhase</strong></td><td>Five phases: Thriving (&gt;0.7), Stable (0.5-0.7), Conservation (0.3-0.5), Declining (0.1-0.3), Terminal (&lt;0.1). Derived from vitality score.</td></tr>
+<tr><td><strong>Thanatopsis Protocol</strong></td><td>Four-phase death protocol: Phase 0 (Acceptance), Phase I (Settle), Phase II (Reflect), Phase III (Legacy).</td></tr>
+<tr><td><strong>Curator</strong></td><td>50-tick memory maintenance cycle: validate, prune, compress, cross-reference. Runs in <code>golem-grimoire</code>. Emits <code>CuratorCycleComplete</code> on each pass.</td></tr>
+<tr><td><strong>PAD Vector</strong></td><td>Pleasure-Arousal-Dominance affective state: <code>PadVector { pleasure: f64, arousal: f64, dominance: f64 }</code>. Each dimension in [-1.0, 1.0].</td></tr>
+<tr><td><strong>Plutchik Label</strong></td><td>One of 8 primary emotions: joy, trust, fear, surprise, sadness, disgust, anger, anticipation. Used for discrete emotion tagging.</td></tr>
+<tr><td><strong>Bloodstain</strong></td><td>Death testament provenance feature. Two mechanisms: 1.2x retrieval boost + 3.0x demurrage type weight. Not a single constant.</td></tr>
+<tr><td><strong>Demurrage</strong></td><td>Time-based confidence decay on knowledge entries (Gesell’s Freigeld applied to information). Entries lose confidence without periodic revalidation.</td></tr>
+<tr><td><strong>Genomic Bottleneck</strong></td><td>Compression principle: successors inherit compressed knowledge (max 2048 entries), not raw experience. Forces generalization over memorization.</td></tr>
+<tr><td><strong>Weismann Barrier</strong></td><td>Learned knowledge does not automatically flow to successors. Only explicitly selected, compressed knowledge crosses the generational boundary.</td></tr>
+<tr><td><strong>Baldwin Effect</strong></td><td>Successful survival strategies, validated across generations, become structural defaults in successor configurations – learned behavior becomes innate.</td></tr>
+<tr><td><strong>Epistemic Senescence</strong></td><td>Death cause: predictive fitness drops below senescence threshold (0.35). Knowledge becomes stale or contradicted faster than the Golem can learn.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="why-forgetting-is-the-feature"><a class="header" href="#why-forgetting-is-the-feature">Why forgetting is the feature</a></h2>
+<p>The first draft of this architecture backed up everything. Every insurance snapshot, every playbook update, every episode delta – streamed continuously to hosted services, indexed in a vector database, retrievable by any sibling forever. It would have produced Funes the Memorious: a system drowning in undifferentiated detail, incapable of the abstraction that <em>is</em> intelligence.</p>
+<p>Borges anticipated this in 1942. His character Ireneo Funes, who could forget nothing after an accident, was “not very capable of thought. To think is to forget differences, generalize, make abstractions. In the teeming world of Funes, there were only details” [BORGES-1942]. The neuroscience confirms it. Richards and Frankland’s landmark 2017 paper in <em>Neuron</em> reframed the purpose of memory itself: the goal of memory is not the transmission of information through time but the optimization of decision-making. Forgetting serves two computational functions – enhancing flexibility by reducing the influence of outdated information, and preventing overfitting to specific past events. Forgetting is, mathematically, equivalent to regularization in neural networks [RICHARDS-FRANKLAND-2017].</p>
+<p>Research on hyperthymesia (Highly Superior Autobiographical Memory) confirms the pattern: individuals with near-perfect autobiographical recall show normal or below-average performance on standard cognitive tasks and remain susceptible to false memories [PATIHIS-2013]. Perfect recall does not produce superior reasoning. It produces paralysis.</p>
+<p>The biological mechanisms are illuminating. Hardt, Nader, and Nadel demonstrated that forgetting involves well-regulated molecular processes – dopamine-receptor-dependent pathways actively remove consolidated memories [HARDT-NADER-NADEL-2013]. Born and Wilhelm showed that sleep-dependent consolidation is selectively biased toward memories relevant for future action [BORN-WILHELM-2012]. Anderson and Green proved that executive control processes can actively suppress specific memories, pushing recall below baseline [ANDERSON-GREEN-2001]. The brain has a forgetting department as sophisticated as its memory department.</p>
+<p>Nietzsche called this “active forgetfulness” – “not merely a vis inertiae… but rather an active capability to repress, something positive in the strongest sense” (<em>Genealogy of Morals</em>, Second Essay, S1). He warned that there exists “a degree of rumination which is harmful and ultimately fatal to the living thing… All action requires forgetting” [NIETZSCHE-1887].</p>
+<p>Three findings from cognitive science further ground this design:</p>
+<p><strong>The testing effect</strong> (Roediger &amp; Karpicke, 2006): retrieving information from memory strengthens the memory trace more effectively than re-studying the same material [ROEDIGER-KARPICKE-2006]. Memory is not a passive store but an active reconstruction process. Each retrieval modifies the trace. For golem memory design, this justifies the Curator cycle’s re-validation requirement: inherited knowledge must be “tested” through operational use – retrieved, applied, compared against outcomes – before it earns full confidence. Knowledge that is merely stored but never retrieved degrades faster than knowledge that is actively exercised.</p>
+<p><strong>The spacing effect</strong> (Ebbinghaus, 1885; Cepeda et al., 2006): spaced retrieval produces more durable memories than massed retrieval [EBBINGHAUS-1885], [CEPEDA-2006]. Cramming fails. Distributed practice succeeds. For the memory architecture, this supports the 50-tick Curator cycle interval and explains why continuous queries would be counterproductive. A golem that queries on every tick would be cramming – flooding its context with retrieved precedents that interfere with rather than support its own learning. The spacing between retrieval events is itself a design parameter that determines learning durability.</p>
+<p><strong>Schema theory</strong> (Bartlett, 1932; Piaget): new information is not passively absorbed but actively assimilated into existing cognitive schemas, or existing schemas must be accommodated to fit new information [BARTLETT-1932]. Inherited knowledge cannot be directly transplanted into a successor golem’s reasoning – it must be integrated into the golem’s existing PLAYBOOK.md (the Golem’s evolved set of heuristics and action rules) framework, its own understanding of market regimes, its own causal graph. Direct transplantation produces cargo-cult knowledge: the form without the understanding. The Curator’s role as gatekeeper – promoting inherited entries only after local validation – is schema theory applied as architecture.</p>
+<p>The Bardo memory architecture takes all of this seriously. The hosted services do not attempt to preserve everything a golem knows. They preserve what has been <em>distilled through the golem’s own learning process</em>, further compressed through a genomic bottleneck at death, and subject to natural decay in retrieval relevance. The system’s default is forgetting. Remembering requires justification.</p>
+<hr>
+<h2 id="the-genomic-bottleneck-principle"><a class="header" href="#the-genomic-bottleneck-principle">The genomic bottleneck principle</a></h2>
+<p>The most striking finding for golem design comes from evolutionary biology. Shuvaev et al. (2024) demonstrated that the human genome is approximately 1,000 times smaller than the information required to specify brain connectivity, yet organisms are born with sophisticated innate behaviors. The genome encodes compressed rules for generating circuits, not the circuits themselves. Critically, this bottleneck acts as a regularizer: neural networks compressed through a genomic-scale bottleneck exhibit enhanced transfer learning to novel tasks. The limitation is the source of the power [SHUVAEV-2024].</p>
+<p>Biology actively resists transferring experiential information between generations. The Weismann barrier separates somatic cells from germ cells – an architectural firewall between the body’s lived experience and the information passed to offspring. Two waves of epigenetic reprogramming strip away most acquired epigenetic marks during gametogenesis and early embryogenesis. When transgenerational epigenetic inheritance does occur, it fades within 2-3 generations and the transmitted effects are more often deleterious than adaptive [HEARD-MARTIENSSEN-2014]. Biology maintains a firewall between individual experience and inherited information – by design, not by accident.</p>
+<p>The Baldwin Effect (Baldwin, 1896; Hinton &amp; Nowlan, 1987) provides the complementary insight: individual learning accelerates evolution by reshaping the fitness landscape, but the learned content itself is not inherited. A population that can learn to solve a problem will evolve toward genetic configurations that make learning easier and faster. What gets passed down is not solutions but the <em>capacity to find solutions</em> – compressed priors and architectural biases that make the next generation’s learning more efficient [HINTON-NOWLAN-1987].</p>
+<p>For Bardo, this implies a <strong>two-loop architecture</strong>: an outer evolutionary loop that slowly distills compressed priors across golem generations, and an inner learning loop where each golem develops environment-specific knowledge that mostly dies with it. What survives should be the <em>capacity to learn</em>, not the learned content. A death testament that says “RSI oversold on ETH/USDC triggers at 27, not 30” is less valuable than one that says “test the RSI threshold parametrically on your specific pool; the textbook value underperforms by 10-15%.” The first is a fish; the second is a fishing lesson.</p>
+<hr>
+<h2 id="the-grimoire-as-complementary-learning-system"><a class="header" href="#the-grimoire-as-complementary-learning-system">The Grimoire as Complementary Learning System</a></h2>
+<p>The Grimoire is a Complementary Learning System (CLS). This is not a loose analogy – the structural correspondence is precise.</p>
+<p>McClelland, McNaughton, and O’Reilly (1995) proposed CLS theory to explain a puzzle: why does hippocampal damage prevent new learning while leaving old memories intact? Their answer: the brain runs two memory systems with fundamentally different learning rates and representational strategies. The <strong>hippocampal system</strong> uses sparse, pattern-separated representations. Each new experience activates distinct neurons with minimal overlap, so storing episode B does not overwrite episode A. Learning is one-shot. The cost is low capacity and no generalization. The <strong>neocortical system</strong> uses distributed, overlapping representations. Statistical regularities across thousands of episodes gradually shape connection weights. This produces generalization but cannot learn from single exposures – rapid weight changes cause catastrophic interference (McCloskey &amp; Cohen, 1989).</p>
+<p><strong>Consolidation</strong> bridges the two. During sleep, the hippocampus replays stored episodes to the neocortex. Interleaved replay – mixing old episodes with new – lets the neocortex update incrementally without catastrophic interference. Kumaran, Hassabis, and McClelland (2016) updated CLS theory to show that replay scheduling matters: high-surprise episodes should be replayed more often because they carry the most information about distribution shifts.</p>
+<p>The Grimoire implements this architecture directly:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>CLS component</th><th>Grimoire equivalent</th><th>Tick rate</th><th>Function</th></tr>
+</thead>
+<tbody>
+<tr><td>Hippocampal fast capture</td><td>LanceDB episodes</td><td>Gamma (~10s)</td><td>Record raw chain events with minimal processing</td></tr>
+<tr><td>Prefrontal deliberation</td><td>Theta LLM context assembly</td><td>Theta (~30-120s)</td><td>Retrieve from both stores for reasoning</td></tr>
+<tr><td>Neocortical consolidation</td><td>Curator + Dream engine</td><td>Delta (~5-20min)</td><td>Replay, compress, extract semantic knowledge</td></tr>
+</tbody>
+</table>
+</div>
+<p>The mapping goes deeper than architecture. Three specific CLS predictions hold in the Grimoire:</p>
+<ol>
+<li>
+<p><strong>Fast episodic capture must be faithful, not filtered.</strong> The hippocampus records episodes verbatim, deferring interpretation. The Grimoire’s LanceDB episodic store does the same: raw observations at Gamma rate with minimal transformation. Filtering and interpretation happen downstream during Theta retrieval and Delta consolidation. This prevents the premature abstraction that CLS theory warns against – a system that filters during capture risks discarding information that later turns out to be the key signal in a regime shift.</p>
+</li>
+<li>
+<p><strong>Slow semantic extraction must interleave old and new.</strong> Catastrophic forgetting happens when a neural network learns only from recent data, overwriting weights that encoded older patterns. The Curator’s consolidation replay uses the Mattar-Daw (2018) utility function to select replay candidates, mixing recent episodes with older ones based on <code>utility = gain * need</code>. This replaces a fixed recent/old ratio with a principled criterion: replay episodes that would most improve the model (high gain) and are most relevant to current conditions (high need). See <code>01b-grimoire-memetic.md</code> for implementation.</p>
+</li>
+<li>
+<p><strong>Generational transfer must compress, not copy.</strong> CLS theory shows that the neocortex does not receive literal copies of hippocampal memories – it re-learns its own distributed representation from replayed episodes. The Thanatopsis protocol applies the same principle: successors inherit compressed wisdom (genomic bottleneck of 2048 entries, 0.5x confidence decay), not raw experience. The successor re-learns its own representation from this seed during early Delta ticks. Literal transfer would produce cargo-cult knowledge. See <code>01c-grimoire-hdc.md</code> for the HDC legacy bundle that complements text-based inheritance.</p>
+</li>
+</ol>
+<p>The CLS framing explains several Grimoire design decisions that might otherwise seem arbitrary. The 50-tick Curator spacing implements the spacing effect (Ebbinghaus, 1885; Cepeda et al., 2006): distributed consolidation produces more durable semantic facts than continuous processing. The Dream engine’s NREM phase is literally hippocampal replay, running the same consolidation that CLS theory predicts is necessary for the slow system to learn. The EVOLUTION dream phase (see <code>../05-dreams/01b-dream-evolution.md</code>) extends CLS with an evolutionary dimension: not just consolidating knowledge but applying selection pressure to it.</p>
+<p>The existing architecture description in this document (“two loops, three substrates”) is the CLS implementation. The inner loop (Grimoire’s own learning) is the hippocampal-neocortical interaction within a single Golem lifetime. The outer loop (cross-generational transfer mediated by Styx (Bardo’s global knowledge relay and persistence service)) is intergenerational knowledge evolution, which CLS theory does not address but which the memetic framework (<code>01b-grimoire-memetic.md</code>) models as population genetics.</p>
+<p><strong>Additional references for CLS framing:</strong></p>
+<ul>
+<li>McClelland, J.L., McNaughton, B.L., &amp; O’Reilly, R.C. (1995). “Why There Are Complementary Learning Systems in the Hippocampus and Neocortex.” <em>Psychological Review</em>, 102(3), 419-457.</li>
+<li>Kumaran, D., Hassabis, D., &amp; McClelland, J.L. (2016). “What Learning Systems do Intelligent Agents Need? CLS Theory Updated.” <em>Trends in Cognitive Sciences</em>, 20(7), 512-534.</li>
+<li>O’Reilly, R.C., Bhatt, M.A., &amp; Russin, J.L. (2014). “Complementary Learning Systems.” <em>Cognitive Science</em>, 38(Suppl 1), 1-24.</li>
+<li>Mattar, M.G. &amp; Daw, N.D. (2018). “Prioritized Memory Access Explains Planning and Hippocampal Replay.” <em>Nature Neuroscience</em>, 21(11), 1609-1617.</li>
+<li>McCloskey, M. &amp; Cohen, N.J. (1989). “Catastrophic Interference in Connectionist Networks.” <em>Psychology of Learning and Motivation</em>, 24, 109-165.</li>
+</ul>
+<h3 id="avoiding-catastrophic-forgetting"><a class="header" href="#avoiding-catastrophic-forgetting">Avoiding catastrophic forgetting</a></h3>
+<p>The CLS literature identifies catastrophic forgetting as the primary failure mode of single-system memory. When a neural network learns new patterns, it overwrites weights that encoded old patterns, losing previously learned knowledge. McClelland et al. (1995) showed that interleaved replay – mixing old and new episodes during consolidation – prevents this.</p>
+<p>In the Golem, catastrophic forgetting manifests differently but is equally dangerous. If the consolidation engine only processes recent episodes, semantic facts derived from older market regimes fade and get evicted. When the market regime returns (as it inevitably does), the Golem has lost its hard-won knowledge.</p>
+<p>The mitigation follows the neuroscience directly:</p>
+<ol>
+<li>
+<p><strong>Interleaved replay batches.</strong> Each consolidation cycle replays a mix of recent episodes (from the current Delta window) and older episodes sampled from the full episodic buffer. The ratio is configurable – a 70/30 split (recent/old) works well empirically.</p>
+</li>
+<li>
+<p><strong>Reinforcement on retrieval.</strong> When a semantic fact is retrieved during Theta-tick context assembly and the LLM analysis confirms it was useful, bump its <code>last_reinforced_block</code> and <code>confidence</code>. Facts that keep proving useful resist decay.</p>
+</li>
+<li>
+<p><strong>Ebbinghaus-modulated decay.</strong> The forgetting curve <code>R = e^(-t/S)</code> is parameterized by stability <code>S</code>, which scales with <code>episode_count</code>. A fact supported by 50 episodes decays far more slowly than one supported by 3. This mirrors the spacing effect in human memory – more repetitions produce more durable memories.</p>
+</li>
+<li>
+<p><strong>AntiKnowledge protection.</strong> Facts tagged as <code>AntiKnowledge</code> never decay below a floor (e.g., confidence 0.3). The Golem should always remember that a particular contract is a honeypot, regardless of how long it has been since the last encounter.</p>
+</li>
+</ol>
+<h3 id="consolidation-during-generational-succession"><a class="header" href="#consolidation-during-generational-succession">Consolidation during generational succession</a></h3>
+<p>When a Golem dies, consolidation becomes the final and most consequential act. The dying Golem runs one last consolidation cycle that produces a curated transfer package for the successor:</p>
+<ul>
+<li>All semantic facts above a confidence threshold (the neocortical output).</li>
+<li>The top N highest-importance episodes (the most instructive experiences).</li>
+<li>All anti-knowledge facts regardless of confidence.</li>
+<li>The Zettelkasten link structure from the temporal knowledge graph.</li>
+<li>Procedural facts capturing validated execution strategies.</li>
+</ul>
+<p>Routine episodes, raw event logs, and stale microstructure data are discarded. The successor re-learns its own distributed representation from this curated seed, exactly as the neocortex re-learns from hippocampal replay rather than receiving literal copies. The successor’s early Delta ticks replay the inherited episodes against its own emerging model, integrating ancestral knowledge into its own representation rather than treating it as ground truth.</p>
+<p>This mirrors the CLS finding that literal memory transfer degrades performance. The neocortex must re-learn, not copy. The successor Golem inherits compressed wisdom, not raw experience.</p>
+<h3 id="research-grade-redb-cls-implementation"><a class="header" href="#research-grade-redb-cls-implementation">Research-grade redb CLS implementation</a></h3>
+<blockquote>
+<p><strong>Note:</strong> The production Grimoire uses LanceDB (episodic) + SQLite (semantic). The <code>redb</code>-based implementation below is a research-grade alternative that maps CLS theory more directly onto a single embedded key-value store. It may be used as a reference for future consolidation engine work or as a standalone module for agents that need tighter control over replay scheduling.</p>
+</blockquote>
+<p>The <code>EpisodicStore</code> records every chain event that passes triage, with full context and minimal transformation. Storage is in <code>redb</code>, keyed by a composite of block number and event index for temporal ordering.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use redb::{Database, ReadableTable, TableDefinition};
+use serde::{Deserialize, Serialize};
+use std::sync::Arc;
+use std::time::SystemTime;
+
+/// A single episodic record. Faithful to the original event.
+/// No summarization, no compression -- that happens during consolidation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Episode {
+    /// Unique identifier.
+    pub id: uuid::Uuid,
+    /// Block number where this event occurred.
+    pub block_number: u64,
+    /// Index within the block (for ordering).
+    pub event_index: u32,
+    /// When the Golem observed this event (wall clock).
+    pub observed_at: SystemTime,
+    /// Raw event category from triage.
+    pub category: EventCategory,
+    /// The triage curiosity score at capture time.
+    pub curiosity_score: f32,
+    /// Importance score assigned by the Theta LLM (if analyzed).
+    /// Episodes captured at Gamma but not yet analyzed have None.
+    pub importance: Option&lt;f32&gt;,
+    /// Full decoded event data -- logs, addresses, values.
+    pub payload: EpisodePayload,
+    /// 384-dim embedding from FastEmbed (for ANN retrieval).
+    pub embedding: Vec&lt;f32&gt;,
+    /// PAD emotional state at capture time.
+    pub pad: PadVector,
+    /// Number of times this episode has been replayed during consolidation.
+    pub replay_count: u32,
+    /// Whether this episode passed the quality gate for consolidation.
+    pub quality_verified: bool,
+}
+
+/// The payload varies by event type but always includes the raw transaction
+/// context needed for faithful replay.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EpisodePayload {
+    pub tx_hash: [u8; 32],
+    pub from: [u8; 20],
+    pub to: Option&lt;[u8; 20]&gt;,
+    pub value_wei: u128,
+    pub gas_used: u64,
+    pub decoded_logs: Vec&lt;DecodedLog&gt;,
+    pub protocol_id: Option&lt;String&gt;,
+    /// Snapshot of relevant protocol state at the time of the event.
+    /// Enables counterfactual reasoning during consolidation.
+    pub state_snapshot: Option&lt;StateSnapshot&gt;,
+}
+
+const EPISODES_TABLE: TableDefinition&lt;u128, &amp;[u8]&gt; = TableDefinition::new("episodes");
+const BLOCK_INDEX_TABLE: TableDefinition&lt;u64, &amp;[u8]&gt; = TableDefinition::new("episodes_by_block");
+
+pub struct EpisodicStore {
+    db: Arc&lt;Database&gt;,
+    /// Maximum episodes before the oldest are evicted.
+    /// Eviction happens during consolidation, not on insert.
+    capacity: usize,
+    /// Current count, maintained in memory for fast checks.
+    count: usize,
+}
+
+impl EpisodicStore {
+    pub fn new(db: Arc&lt;Database&gt;, capacity: usize) -&gt; Self {
+        let count = {
+            let read_txn = db.begin_read().expect("read txn");
+            match read_txn.open_table(EPISODES_TABLE) {
+                Ok(table) =&gt; table.len().unwrap_or(0) as usize,
+                Err(_) =&gt; 0,
+            }
+        };
+        EpisodicStore { db, capacity, count }
+    }
+
+    /// Store a new episode. Called at Gamma rate after triage.
+    /// Fast path: serialize and write, no processing.
+    pub fn record(&amp;mut self, episode: &amp;Episode) -&gt; Result&lt;(), EpisodicStoreError&gt; {
+        let key = episode.id.as_u128();
+        let value = bincode::serialize(episode)
+            .map_err(|e| EpisodicStoreError::Serialization(e.to_string()))?;
+
+        let write_txn = self.db.begin_write()?;
+        {
+            let mut table = write_txn.open_table(EPISODES_TABLE)?;
+            table.insert(key, value.as_slice())?;
+
+            // Secondary index: block_number -&gt; list of episode IDs.
+            let mut block_idx = write_txn.open_table(BLOCK_INDEX_TABLE)?;
+            let mut ids = match block_idx.get(episode.block_number)? {
+                Some(existing) =&gt; bincode::deserialize::&lt;Vec&lt;u128&gt;&gt;(existing.value())
+                    .unwrap_or_default(),
+                None =&gt; Vec::new(),
+            };
+            ids.push(key);
+            let idx_value = bincode::serialize(&amp;ids)
+                .map_err(|e| EpisodicStoreError::Serialization(e.to_string()))?;
+            block_idx.insert(episode.block_number, idx_value.as_slice())?;
+        }
+        write_txn.commit()?;
+        self.count += 1;
+        Ok(())
+    }
+
+    /// Retrieve episodes within a block range, ordered by block number.
+    /// Used during consolidation for replay batches.
+    pub fn range(
+        &amp;self,
+        from_block: u64,
+        to_block: u64,
+    ) -&gt; Result&lt;Vec&lt;Episode&gt;, EpisodicStoreError&gt; {
+        let read_txn = self.db.begin_read()?;
+        let block_idx = read_txn.open_table(BLOCK_INDEX_TABLE)?;
+        let episodes_table = read_txn.open_table(EPISODES_TABLE)?;
+
+        let mut results = Vec::new();
+        for block in from_block..=to_block {
+            if let Some(ids_bytes) = block_idx.get(block)? {
+                let ids: Vec&lt;u128&gt; = bincode::deserialize(ids_bytes.value())
+                    .unwrap_or_default();
+                for id in ids {
+                    if let Some(ep_bytes) = episodes_table.get(id)? {
+                        let episode: Episode = bincode::deserialize(ep_bytes.value())
+                            .map_err(|e| EpisodicStoreError::Serialization(e.to_string()))?;
+                        results.push(episode);
+                    }
+                }
+            }
+        }
+        results.sort_by_key(|e| (e.block_number, e.event_index));
+        Ok(results)
+    }
+
+    /// Retrieve a single episode by ID.
+    pub fn get(&amp;self, id: uuid::Uuid) -&gt; Result&lt;Option&lt;Episode&gt;, EpisodicStoreError&gt; {
+        let read_txn = self.db.begin_read()?;
+        let table = read_txn.open_table(EPISODES_TABLE)?;
+        match table.get(id.as_u128())? {
+            Some(bytes) =&gt; {
+                let episode: Episode = bincode::deserialize(bytes.value())
+                    .map_err(|e| EpisodicStoreError::Serialization(e.to_string()))?;
+                Ok(Some(episode))
+            }
+            None =&gt; Ok(None),
+        }
+    }
+
+    /// Mark an episode as quality-verified after Theta LLM analysis confirms
+    /// it contains accurate, useful information. Only verified episodes
+    /// participate in semantic consolidation.
+    pub fn mark_verified(
+        &amp;self,
+        id: uuid::Uuid,
+        importance: f32,
+    ) -&gt; Result&lt;(), EpisodicStoreError&gt; {
+        let write_txn = self.db.begin_write()?;
+        {
+            let mut table = write_txn.open_table(EPISODES_TABLE)?;
+            if let Some(bytes) = table.get(id.as_u128())? {
+                let mut episode: Episode = bincode::deserialize(bytes.value())
+                    .map_err(|e| EpisodicStoreError::Serialization(e.to_string()))?;
+                episode.quality_verified = true;
+                episode.importance = Some(importance);
+                let updated = bincode::serialize(&amp;episode)
+                    .map_err(|e| EpisodicStoreError::Serialization(e.to_string()))?;
+                table.insert(id.as_u128(), updated.as_slice())?;
+            }
+        }
+        write_txn.commit()?;
+        Ok(())
+    }
+
+    pub fn count(&amp;self) -&gt; usize {
+        self.count
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The quality gate (<code>mark_verified</code>) is not optional. Research on the self-degradation trap (arXiv:2505.16067) demonstrates that agents which store all experiences without filtering consistently degrade over time. Incorrect past executions propagate through retrieval, get replicated in new decisions, and re-stored – a feedback loop that drives performance below the no-memory baseline. Only verified-correct episodes should participate in consolidation.</p>
+<p>The <code>SemanticStore</code> holds the neocortical output – derived knowledge that generalizes across episodes. Each entry is a <code>SemanticFact</code>: a compressed representation of a pattern observed across multiple episodes.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use redb::TableDefinition;
+use serde::{Deserialize, Serialize};
+
+/// A semantic fact derived from consolidating multiple episodes.
+/// These are not copies of episodes -- they are generalizations.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SemanticFact {
+    pub id: uuid::Uuid,
+    /// Human-readable description of the pattern.
+    /// Example: "Uniswap V3 ETH/USDC 0.05% pool experiences 2-3x volume
+    /// spikes in the 10 blocks following a Chainlink ETH/USD price update."
+    pub description: String,
+    /// Protocol(s) this fact relates to.
+    pub protocols: Vec&lt;String&gt;,
+    /// How many episodes contributed to this fact.
+    pub episode_count: u32,
+    /// Confidence: higher when more episodes confirm the pattern.
+    /// Decays via Ebbinghaus curve if not reinforced.
+    pub confidence: f32,
+    /// Block range over which this pattern was observed.
+    pub observed_range: (u64, u64),
+    /// Last block at which an episode reinforced this fact.
+    pub last_reinforced_block: u64,
+    /// Embedding for semantic retrieval.
+    pub embedding: Vec&lt;f32&gt;,
+    /// Source episode IDs for provenance.
+    pub source_episodes: Vec&lt;uuid::Uuid&gt;,
+    /// Category of knowledge.
+    pub kind: SemanticFactKind,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum SemanticFactKind {
+    /// Behavioral baseline: "Gas typically costs 15-25 gwei on weekday mornings."
+    Baseline { metric: String, mean: f64, stddev: f64 },
+    /// Protocol pattern: "Aave V3 liquidations cluster within 3 blocks of oracle updates."
+    ProtocolPattern { pattern_description: String },
+    /// Causal relationship: "Large withdrawals from pool X precede price drops on pool Y."
+    CausalRelation { cause: String, effect: String, lag_blocks: u32 },
+    /// Anti-knowledge: "Token 0xDEAD is a honeypot -- sells always revert."
+    AntiKnowledge { warning: String },
+    /// Procedural: "Rebalancing LP positions during high-gas periods costs 2-3x more."
+    Procedural { strategy: String, observation: String },
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>SemanticFactKind</code> enum captures five categories of consolidated knowledge. <code>AntiKnowledge</code> deserves special attention – it records explicitly negative experiences (scam tokens, honeypot contracts, failed strategies) that the Golem should never repeat. During generational inheritance, anti-knowledge is among the most valuable assets to transfer: the successor should not rediscover that a particular token is a honeypot.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>const SEMANTIC_TABLE: TableDefinition&lt;u128, &amp;[u8]&gt; = TableDefinition::new("semantic_facts");
+const SEMANTIC_PROTOCOL_INDEX: TableDefinition&lt;&amp;str, &amp;[u8]&gt; =
+    TableDefinition::new("semantic_by_protocol");
+
+pub struct SemanticStore {
+    db: Arc&lt;redb::Database&gt;,
+}
+
+impl SemanticStore {
+    pub fn new(db: Arc&lt;redb::Database&gt;) -&gt; Self {
+        SemanticStore { db }
+    }
+
+    /// Store or update a semantic fact.
+    /// If a fact with overlapping protocols and similar description exists,
+    /// reinforce it rather than creating a duplicate.
+    pub fn upsert(&amp;self, fact: &amp;SemanticFact) -&gt; Result&lt;(), SemanticStoreError&gt; {
+        let write_txn = self.db.begin_write()?;
+        {
+            let mut table = write_txn.open_table(SEMANTIC_TABLE)?;
+            let key = fact.id.as_u128();
+            let value = bincode::serialize(fact)
+                .map_err(|e| SemanticStoreError::Serialization(e.to_string()))?;
+            table.insert(key, value.as_slice())?;
+
+            // Index by protocol.
+            let mut proto_idx = write_txn.open_table(SEMANTIC_PROTOCOL_INDEX)?;
+            for protocol in &amp;fact.protocols {
+                let mut ids = match proto_idx.get(protocol.as_str())? {
+                    Some(existing) =&gt; {
+                        bincode::deserialize::&lt;Vec&lt;u128&gt;&gt;(existing.value())
+                            .unwrap_or_default()
+                    }
+                    None =&gt; Vec::new(),
+                };
+                if !ids.contains(&amp;key) {
+                    ids.push(key);
+                    let idx_val = bincode::serialize(&amp;ids)
+                        .map_err(|e| SemanticStoreError::Serialization(e.to_string()))?;
+                    proto_idx.insert(protocol.as_str(), idx_val.as_slice())?;
+                }
+            }
+        }
+        write_txn.commit()?;
+        Ok(())
+    }
+
+    /// Retrieve all semantic facts for a protocol.
+    pub fn facts_for_protocol(
+        &amp;self,
+        protocol: &amp;str,
+    ) -&gt; Result&lt;Vec&lt;SemanticFact&gt;, SemanticStoreError&gt; {
+        let read_txn = self.db.begin_read()?;
+        let proto_idx = read_txn.open_table(SEMANTIC_PROTOCOL_INDEX)?;
+        let table = read_txn.open_table(SEMANTIC_TABLE)?;
+
+        let ids: Vec&lt;u128&gt; = match proto_idx.get(protocol)? {
+            Some(bytes) =&gt; bincode::deserialize(bytes.value()).unwrap_or_default(),
+            None =&gt; return Ok(Vec::new()),
+        };
+
+        let mut facts = Vec::new();
+        for id in ids {
+            if let Some(bytes) = table.get(id)? {
+                let fact: SemanticFact = bincode::deserialize(bytes.value())
+                    .map_err(|e| SemanticStoreError::Serialization(e.to_string()))?;
+                facts.push(fact);
+            }
+        }
+        Ok(facts)
+    }
+
+    /// Apply Ebbinghaus decay to all facts. Called during consolidation.
+    /// Facts not reinforced within `decay_blocks` lose confidence.
+    /// Facts below `min_confidence` are candidates for eviction.
+    pub fn apply_decay(
+        &amp;self,
+        current_block: u64,
+        decay_blocks: u64,
+        min_confidence: f32,
+    ) -&gt; Result&lt;Vec&lt;uuid::Uuid&gt;, SemanticStoreError&gt; {
+        let mut eviction_candidates = Vec::new();
+        let write_txn = self.db.begin_write()?;
+        {
+            let mut table = write_txn.open_table(SEMANTIC_TABLE)?;
+            let keys: Vec&lt;u128&gt; = {
+                let iter = table.iter()?;
+                iter.filter_map(|r| r.ok().map(|(k, _)| k.value())).collect()
+            };
+
+            for key in keys {
+                if let Some(bytes) = table.get(key)? {
+                    let mut fact: SemanticFact = bincode::deserialize(bytes.value())
+                        .map_err(|e| SemanticStoreError::Serialization(e.to_string()))?;
+
+                    let blocks_since = current_block.saturating_sub(fact.last_reinforced_block);
+                    // Ebbinghaus: R = e^(-t/S) where S scales with episode_count.
+                    // More episodes = slower decay (stronger memory).
+                    let stability = (fact.episode_count as f64).ln().max(1.0);
+                    let decay = (-1.0 * blocks_since as f64 / (decay_blocks as f64 * stability))
+                        .exp() as f32;
+                    fact.confidence *= decay;
+
+                    if fact.confidence &lt; min_confidence {
+                        eviction_candidates.push(fact.id);
+                    }
+
+                    let updated = bincode::serialize(&amp;fact)
+                        .map_err(|e| SemanticStoreError::Serialization(e.to_string()))?;
+                    table.insert(key, updated.as_slice())?;
+                }
+            }
+        }
+        write_txn.commit()?;
+        Ok(eviction_candidates)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>ConsolidationEngine</code> runs during Delta ticks. It replays episodic memories, clusters them, extracts patterns, and writes semantic facts. The process mirrors hippocampal replay during sleep, with one addition: priority replay based on surprise.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+use std::sync::Arc;
+
+/// Configuration for the consolidation engine.
+pub struct ConsolidationConfig {
+    /// How many episodes to replay per Delta tick.
+    pub replay_batch_size: usize,
+    /// Minimum curiosity score for an episode to be replayed.
+    pub min_curiosity_for_replay: f32,
+    /// Weight given to surprise (novelty) when selecting replay candidates.
+    /// Higher values prioritize episodes that surprised the Golem.
+    pub surprise_weight: f32,
+    /// Ebbinghaus decay parameter: blocks after which unreinforced facts
+    /// lose half their confidence.
+    pub decay_half_life_blocks: u64,
+    /// Minimum confidence below which semantic facts are evicted.
+    pub eviction_threshold: f32,
+}
+
+pub struct ConsolidationEngine {
+    episodic: Arc&lt;EpisodicStore&gt;,
+    semantic: Arc&lt;SemanticStore&gt;,
+    config: ConsolidationConfig,
+    /// Block number of the last consolidation run.
+    last_consolidation_block: u64,
+}
+
+impl ConsolidationEngine {
+    pub fn new(
+        episodic: Arc&lt;EpisodicStore&gt;,
+        semantic: Arc&lt;SemanticStore&gt;,
+        config: ConsolidationConfig,
+    ) -&gt; Self {
+        ConsolidationEngine {
+            episodic,
+            semantic,
+            config,
+            last_consolidation_block: 0,
+        }
+    }
+
+    /// Run one consolidation cycle. Called during each Delta tick.
+    ///
+    /// The cycle has four phases:
+    /// 1. Select episodes for replay (priority-weighted).
+    /// 2. Cluster replayed episodes by protocol and pattern.
+    /// 3. Extract or reinforce semantic facts from clusters.
+    /// 4. Decay unreinforced facts; evict below threshold.
+    pub fn consolidate(&amp;mut self, current_block: u64) -&gt; ConsolidationReport {
+        let mut report = ConsolidationReport::default();
+
+        // Phase 1: Select replay candidates.
+        // Priority = curiosity_score * surprise_weight + importance * (1 - surprise_weight)
+        // Only quality-verified episodes participate.
+        let candidates = self.select_replay_candidates(current_block);
+        report.episodes_considered = candidates.len();
+
+        // Phase 2: Cluster by protocol.
+        let clusters = self.cluster_by_protocol(&amp;candidates);
+        report.clusters_formed = clusters.len();
+
+        // Phase 3: Extract semantic facts from each cluster.
+        for (protocol, episodes) in &amp;clusters {
+            let facts = self.extract_semantic_facts(protocol, episodes);
+            for fact in &amp;facts {
+                if let Err(e) = self.semantic.upsert(fact) {
+                    report.errors.push(format!("upsert failed: {}", e));
+                }
+            }
+            report.facts_created += facts.len();
+        }
+
+        // Phase 4: Decay and evict.
+        let decay_blocks = self.config.decay_half_life_blocks;
+        match self.semantic.apply_decay(
+            current_block,
+            decay_blocks,
+            self.config.eviction_threshold,
+        ) {
+            Ok(evicted) =&gt; report.facts_evicted = evicted.len(),
+            Err(e) =&gt; report.errors.push(format!("decay failed: {}", e)),
+        }
+
+        self.last_consolidation_block = current_block;
+        report
+    }
+
+    /// Select episodes for replay using prioritized experience replay.
+    /// Follows Schaul et al. (2016): priority proportional to TD error magnitude.
+    /// Here, "TD error" maps to the gap between the curiosity score (prediction)
+    /// and the importance score (outcome from LLM analysis).
+    fn select_replay_candidates(&amp;self, current_block: u64) -&gt; Vec&lt;Episode&gt; {
+        let from_block = self.last_consolidation_block.saturating_sub(1);
+        let episodes = self.episodic.range(from_block, current_block)
+            .unwrap_or_default();
+
+        let mut scored: Vec&lt;(f32, Episode)&gt; = episodes
+            .into_iter()
+            .filter(|ep| ep.quality_verified)
+            .map(|ep| {
+                let importance = ep.importance.unwrap_or(0.5);
+                let surprise = (importance - ep.curiosity_score).abs();
+                let priority = surprise * self.config.surprise_weight
+                    + importance * (1.0 - self.config.surprise_weight);
+                (priority, ep)
+            })
+            .collect();
+
+        // Sort descending by priority; take top batch_size.
+        scored.sort_by(|a, b| b.0.partial_cmp(&amp;a.0).unwrap_or(std::cmp::Ordering::Equal));
+        scored.truncate(self.config.replay_batch_size);
+        scored.into_iter().map(|(_, ep)| ep).collect()
+    }
+
+    /// Group episodes by protocol for pattern extraction.
+    fn cluster_by_protocol&lt;'a&gt;(
+        &amp;self,
+        episodes: &amp;'a [Episode],
+    ) -&gt; HashMap&lt;String, Vec&lt;&amp;'a Episode&gt;&gt; {
+        let mut clusters: HashMap&lt;String, Vec&lt;&amp;Episode&gt;&gt; = HashMap::new();
+        for ep in episodes {
+            let protocol = ep.payload.protocol_id
+                .clone()
+                .unwrap_or_else(|| "unknown".to_string());
+            clusters.entry(protocol).or_default().push(ep);
+        }
+        clusters
+    }
+
+    /// Extract semantic facts from a cluster of protocol-related episodes.
+    /// This is where the "slow learning" happens -- patterns emerge from
+    /// repeated observation, not from any single episode.
+    fn extract_semantic_facts(
+        &amp;self,
+        protocol: &amp;str,
+        episodes: &amp;[&amp;Episode],
+    ) -&gt; Vec&lt;SemanticFact&gt; {
+        let mut facts = Vec::new();
+
+        if episodes.len() &lt; 3 {
+            // Not enough data to extract a pattern.
+            return facts;
+        }
+
+        // Extract behavioral baselines: mean and stddev of value, gas, timing.
+        let values: Vec&lt;f64&gt; = episodes.iter()
+            .map(|ep| ep.payload.value_wei as f64)
+            .collect();
+        let gas_values: Vec&lt;f64&gt; = episodes.iter()
+            .map(|ep| ep.payload.gas_used as f64)
+            .collect();
+
+        if let Some(baseline) = compute_baseline("transaction_value", &amp;values) {
+            facts.push(SemanticFact {
+                id: uuid::Uuid::new_v4(),
+                description: format!(
+                    "{} transactions average {:.2} wei (stddev {:.2})",
+                    protocol, baseline.0, baseline.1
+                ),
+                protocols: vec![protocol.to_string()],
+                episode_count: episodes.len() as u32,
+                confidence: 0.7,
+                observed_range: (
+                    episodes.first().map(|e| e.block_number).unwrap_or(0),
+                    episodes.last().map(|e| e.block_number).unwrap_or(0),
+                ),
+                last_reinforced_block: episodes.last()
+                    .map(|e| e.block_number).unwrap_or(0),
+                embedding: Vec::new(), // Computed separately via FastEmbed.
+                source_episodes: episodes.iter().map(|e| e.id).collect(),
+                kind: SemanticFactKind::Baseline {
+                    metric: "transaction_value".to_string(),
+                    mean: baseline.0,
+                    stddev: baseline.1,
+                },
+            });
+        }
+
+        if let Some(baseline) = compute_baseline("gas_used", &amp;gas_values) {
+            facts.push(SemanticFact {
+                id: uuid::Uuid::new_v4(),
+                description: format!(
+                    "{} gas usage averages {:.0} (stddev {:.0})",
+                    protocol, baseline.0, baseline.1
+                ),
+                protocols: vec![protocol.to_string()],
+                episode_count: episodes.len() as u32,
+                confidence: 0.7,
+                observed_range: (
+                    episodes.first().map(|e| e.block_number).unwrap_or(0),
+                    episodes.last().map(|e| e.block_number).unwrap_or(0),
+                ),
+                last_reinforced_block: episodes.last()
+                    .map(|e| e.block_number).unwrap_or(0),
+                embedding: Vec::new(),
+                source_episodes: episodes.iter().map(|e| e.id).collect(),
+                kind: SemanticFactKind::Baseline {
+                    metric: "gas_used".to_string(),
+                    mean: baseline.0,
+                    stddev: baseline.1,
+                },
+            });
+        }
+
+        // More sophisticated pattern extraction (temporal clustering,
+        // causal relation detection) would run here. Those require
+        // cross-protocol episode correlation.
+
+        facts
+    }
+}
+
+fn compute_baseline(name: &amp;str, values: &amp;[f64]) -&gt; Option&lt;(f64, f64)&gt; {
+    if values.is_empty() { return None; }
+    let n = values.len() as f64;
+    let mean = values.iter().sum::&lt;f64&gt;() / n;
+    let variance = values.iter().map(|v| (v - mean).powi(2)).sum::&lt;f64&gt;() / n;
+    let stddev = variance.sqrt();
+    Some((mean, stddev))
+}
+
+#[derive(Debug, Default)]
+pub struct ConsolidationReport {
+    pub episodes_considered: usize,
+    pub clusters_formed: usize,
+    pub facts_created: usize,
+    pub facts_evicted: usize,
+    pub errors: Vec&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="architecture-two-loops-three-substrates"><a class="header" href="#architecture-two-loops-three-substrates">Architecture: two loops, three substrates</a></h2>
+<h3 id="inner-loop-the-golems-own-mind"><a class="header" href="#inner-loop-the-golems-own-mind">Inner loop: the Golem’s own mind</a></h3>
+<p>Every golem has a complete knowledge system running locally on its VM. This is the primary source of intelligence. No hosted service is required.</p>
+<p>The Grimoire uses three storage substrates, each chosen for its access pattern:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Substrate</th><th>Technology</th><th>Purpose</th><th>Lifetime</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Episodes</strong> (episodic memory)</td><td>LanceDB (columnar vectors)</td><td>Raw market snapshots, trade outcomes, regime shifts</td><td>Golem’s lifetime</td></tr>
+<tr><td><strong>Semantic store</strong> (semantic memory)</td><td>SQLite via <code>rusqlite</code> + indexes</td><td>Distilled observations, heuristics, warnings, causal links</td><td>Golem’s lifetime</td></tr>
+<tr><td><strong>PLAYBOOK.md</strong> (procedural memory)</td><td>Filesystem (single writer)</td><td>Evolved heuristics, the golem’s learned reasoning context</td><td>Golem’s lifetime</td></tr>
+<tr><td><strong>DecisionCache</strong></td><td><code>moka::sync::Cache</code> (in-memory)</td><td>Cached System 2 to System 1 distillations</td><td>Golem’s lifetime</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Why this split.</strong> LanceDB gives vector similarity search over episodes – the primary retrieval path for episodic memory. SQLite gives indexed queries, confidence decay tracking, and causal graph storage for semantic memory – structured data that needs filtering, sorting, and joins. PLAYBOOK.md on the filesystem gives the Dream Integration system a single-writer target and gives the owner a human-readable artifact they can inspect directly. These three substrates map to the canonical <code>Grimoire</code> struct:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct Grimoire {
+    episodes: lancedb::Table,              // LanceDB: vector similarity + columnar scans
+    semantic: rusqlite::Connection,         // SQLite: indexed queries, decay, causal graph
+    playbook_path: std::path::PathBuf,     // PLAYBOOK.md: single writer (Dream Integration)
+    embedder: fastembed::TextEmbedding,    // nomic-embed-text-v1.5, in-process, 768-dim
+    decision_cache: moka::sync::Cache&lt;u64, DistilledRule&gt;,
+    somatic_markers: SomaticMarkerStore,
+    immune: ImmuneMemory,
+    version_vector: VersionVector,
+    pending_deltas: Vec&lt;GrimoireDelta&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The Curator cycle (every 50 ticks) continuously distills: episodes to insights to heuristics to PLAYBOOK.md. This is the inner learning loop. It runs at $0.00 additional cost (uses the golem’s existing inference budget). The spacing of the Curator cycle is deliberate – the 50-tick interval implements the spacing effect, allowing the golem to accumulate enough new experience between consolidation events that each Curator pass produces meaningful updates rather than noise. Each Curator pass emits a <code>CuratorCycleComplete</code> event with <code>{ entries_pruned, entries_promoted, heuristics_proposed }</code>.</p>
+<p>A third processing mode – offline dreaming – operates during idle periods. While the Curator performs incremental distillation under time pressure, dreaming performs deep reorganization: replaying episodes hundreds of times, generating counterfactual scenarios, and creatively recombining strategies. Together they implement the complementary learning systems architecture (McClelland et al., 1995). See <code>../05-dreams/00-overview.md</code>.</p>
+<p>When a golem dies, this local knowledge dies with it – unless the owner has enabled Styx persistence.</p>
+<h4 id="local-first-storage-architecture"><a class="header" href="#local-first-storage-architecture">Local-first storage architecture</a></h4>
+<p>The inner loop runs entirely on the Golem’s local VM with zero external dependencies. File layout:</p>
+<pre><code>$GOLEM_DATA/
+├── grimoire.db          # SQLite database (semantic memory + metadata)
+├── episodes/            # LanceDB directory (episodic memory)
+│   └── episodes.lance/  # Lance columnar format
+├── PLAYBOOK.md          # Procedural memory (version-controlled)
+└── embedder/            # Cached embedding model
+    └── nomic-embed-text-v1.5/
+</code></pre>
+<p><strong>SQLite Configuration</strong> (<code>rusqlite</code> with custom functions):</p>
+<ul>
+<li>WAL mode enabled for concurrent read/write</li>
+<li>Custom vector similarity functions for KNN search over 768-dimensional embeddings</li>
+<li>Indexed queries for confidence decay, causal graph traversal, and category filtering</li>
+<li>12-category insight enum: <code>slippage</code>, <code>gas_timing</code>, <code>route_selection</code>, <code>liquidity_conditions</code>, <code>regime_transitions</code>, <code>risk_events</code>, <code>rebalance_timing</code>, <code>range_selection</code>, <code>fee_optimization</code>, <code>jit_defense</code>, <code>tool_guidance</code>, <code>strategic_patterns</code></li>
+</ul>
+<p><strong>Embedding Model:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Model</td><td><code>nomic-embed-text-v1.5</code> (via <code>fastembed</code>)</td></tr>
+<tr><td>Dimensions</td><td>768</td></tr>
+<tr><td>Quantization</td><td>INT8 (<code>q8</code>)</td></tr>
+<tr><td>Model size</td><td>~130MB</td></tr>
+<tr><td>Latency</td><td>~5-15ms per sentence, batch embedding supported</td></tr>
+<tr><td>Initialization</td><td>Singleton pattern; lazy-loaded on first memory operation</td></tr>
+<tr><td>Offline-capable</td><td>Model cached locally after first download</td></tr>
+</tbody>
+</table>
+</div>
+<p>The embedding model runs locally via ONNX runtime – no external API calls, no network dependency, no per-embedding cost.</p>
+<p><strong>Storage Sizing Estimates:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Per-Entry Size</th><th>30-Day Estimate</th><th>1-Year Estimate</th></tr>
+</thead>
+<tbody>
+<tr><td>Episodes (LanceDB)</td><td>~4KB (768-dim vector + metadata)</td><td>~120MB (1,000 episodes/day)</td><td>~1.4GB</td></tr>
+<tr><td>Semantic (SQLite)</td><td>~1KB (vector + structured fields)</td><td>~10MB (up to 10,000 entries)</td><td>~30MB (with pruning)</td></tr>
+<tr><td>PLAYBOOK.md</td><td>N/A</td><td>~10-50KB</td><td>~50-100KB</td></tr>
+<tr><td>Embedding model</td><td>N/A</td><td>~130MB (cached)</td><td>~130MB</td></tr>
+<tr><td><strong>Total RAM footprint</strong></td><td>–</td><td><strong>200-350MB</strong></td><td><strong>200-350MB</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Scaling Thresholds:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Threshold</th><th>Trigger</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>&gt;100K episodes</td><td>LanceDB scan latency &gt;50ms</td><td>Enable IVF-PQ index</td></tr>
+<tr><td>&gt;10K semantic entries</td><td>SQLite KNN &gt;25ms</td><td>Partition by category</td></tr>
+<tr><td>&gt;500MB total storage</td><td>Disk pressure on small VMs</td><td>Increase Curator pruning aggressiveness</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Migration Path (Local-First -&gt; Federated):</strong></p>
+<p>The local-first architecture is the v1 implementation. The migration to federated/shared storage follows a progressive path:</p>
+<ol>
+<li><strong>Local-only</strong> (v1): All memory on the Golem’s VM. Clade (sibling Golems sharing a common owner) sync via peer-to-peer gossip. Death bundles exported as files.</li>
+<li><strong>Local + Styx</strong> (v1.1): Local remains primary. Styx Archive provides encrypted backup. Styx query provides cross-agent RAG retrieval.</li>
+<li><strong>Federated</strong> (v2): PostgreSQL replaces local SQLite for agents that opt in. LanceDB Cloud replaces local LanceDB. Local-first remains the default.</li>
+<li><strong>Shared lethe</strong> (v3): Styx Lethe (formerly Commons). Marketplace for strategy knowledge. Full knowledge ecology.</li>
+</ol>
+<p>Each stage is backward-compatible. An agent can always fall back to local-only operation.</p>
+<h3 id="outer-loop-styx-hosted-persistence-and-retrieval"><a class="header" href="#outer-loop-styx-hosted-persistence-and-retrieval">Outer loop: Styx (hosted persistence and retrieval)</a></h3>
+<p>The Styx network extends Grimoire capabilities for owners who choose to enable them. Styx is organized into four layers, each with different privacy guarantees and access patterns:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Name</th><th>Scope</th><th>What it stores</th><th>Access</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>L0</strong></td><td><strong>Vault</strong></td><td>Private</td><td>Encrypted Grimoire backups, death testaments, PLAYBOOK snapshots</td><td>Single owner’s clade. x402 per write.</td></tr>
+<tr><td><strong>L1</strong></td><td><strong>Clade</strong></td><td>Shared-Private</td><td>Promoted insights (confidence &gt;= 0.6), validated heuristics (confidence &gt;= 0.7), warnings (confidence &gt;= 0.4)</td><td>Same owner’s fleet. Auto-promoted from L0 writes.</td></tr>
+<tr><td><strong>L2</strong></td><td><strong>Lethe</strong></td><td>Public-Anonymized</td><td>Anonymized propositions, failure patterns, regime beliefs, bloodstain echoes, Pheromone Field</td><td>Any verified agent. Free to publish, x402 to query.</td></tr>
+<tr><td><strong>L3</strong></td><td><strong>Marketplace</strong></td><td>Commerce</td><td>Death archives, strategy fragments, domain expertise, lineage grimoires</td><td>x402 purchase. CEK escrow for dead sellers.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Single endpoint model.</strong> Writes go to <code>POST /v1/styx/entries</code> and fan out to the appropriate layers based on content type and confidence thresholds. Reads go to <code>GET /v1/styx/query</code> which performs parallel fan-in across accessible layers and returns a merged, ranked list.</p>
+<p>All four layers are optional. All are paid via x402 micropayments in USDC on Base. A golem that uses none operates exactly as specified in <code>01-grimoire.md</code> – with local grimoire only.</p>
+<h3 id="the-bridge-what-crosses-between-loops"><a class="header" href="#the-bridge-what-crosses-between-loops">The bridge: what crosses between loops</a></h3>
+<p>Not everything crosses from the inner loop to the outer loop. The bridge is selective, implementing the genomic bottleneck:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>What Crosses</th><th>When</th><th>How</th><th>Compression Ratio</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Promoted insights</strong> (confidence &gt;= 0.6)</td><td>Curator cycle (every 50 ticks)</td><td>Batch upload to Styx</td><td>~10:1 (episodes to insights)</td></tr>
+<tr><td><strong>Validated heuristics</strong> (confidence &gt;= 0.7)</td><td>Curator cycle</td><td>Batch upload to Styx</td><td>~20:1 (episodes to heuristics)</td></tr>
+<tr><td><strong>Warnings</strong> (any confidence)</td><td>Immediately</td><td>Push to Styx + Clade</td><td>1:1 (risk propagates uncompressed)</td></tr>
+<tr><td><strong>Regime shift observations</strong></td><td>On detection</td><td>Push to Styx + Clade</td><td>1:1 (environmental signals propagate)</td></tr>
+<tr><td><strong>PLAYBOOK.md snapshots</strong></td><td>Every 50 ticks</td><td>Upload to Styx Archive</td><td>~100:1 (entire learning history to living doc)</td></tr>
+<tr><td><strong>Death reflection</strong></td><td>Death Protocol Phase II</td><td>Upload to Styx Archive + L1</td><td>~1000:1 (entire lifetime to distilled testament)</td></tr>
+<tr><td><strong>Grimoire snapshot</strong></td><td>Death Protocol Phase III</td><td>Upload to Styx Archive</td><td>Full backup (insurance, not for routine retrieval)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Each write emits a <code>GrimoireWrite</code> event: <code>{ entry_type, category, confidence, source }</code>.</p>
+<p>Raw episodes do not cross. Specific trade outcomes do not cross. Position sizes, exact P&amp;L figures, strategy parameters – these are the golem’s private experience, its <em>soma</em>. They die with it. What crosses is distilled: patterns, rules, warnings, reflections. The <em>germline</em>.</p>
+<h4 id="bridge-quality-gates"><a class="header" href="#bridge-quality-gates">Bridge quality gates</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>What Crosses</th><th>Quality Gate</th></tr>
+</thead>
+<tbody>
+<tr><td>Promoted insights</td><td>Admission Gate score &gt; 0.55</td></tr>
+<tr><td>Validated heuristics</td><td>Active 10+ ticks with positive external metrics</td></tr>
+<tr><td>Warnings</td><td>Bypass gate (safety-critical), semantic novelty check only</td></tr>
+<tr><td>Regime shifts</td><td>Bypass gate (environmental signal), cross-referenced with Styx</td></tr>
+<tr><td>Death reflection</td><td>Bypass gate (one-time, high-value)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The asymmetry between warnings and other entry types is deliberate. Warnings propagate immediately and at any confidence because the cost of a false negative (missing a real risk) vastly exceeds the cost of a false positive (investigating a phantom risk). This asymmetry mirrors biological immune systems, where the cost of failing to detect a pathogen exceeds the cost of an inflammatory response to a benign stimulus.</p>
+<h3 id="what-does-not-cross-tacit-knowledge"><a class="header" href="#what-does-not-cross-tacit-knowledge">What does NOT cross (tacit knowledge)</a></h3>
+<p>Some knowledge is inherently non-transferable – tacit knowledge in Polanyi’s sense, mortal computation in Hinton’s sense [POLANYI-1966], [HINTON-2022]. A golem’s calibrated sense of timing (“this pool’s liquidity deepens around 14:00 UTC”), its learned interaction patterns with specific MEV searchers, its feel for when gas is about to spike – these are substrate-dependent. They arise from the specific golem’s specific interactions with its specific environment. Transferring them as text would produce cargo-cult knowledge: the form without the substance.</p>
+<p>The architecture deliberately does not attempt to transfer:</p>
+<ul>
+<li><strong>Raw episode data</strong> – too voluminous, too agent-specific. The episodes that led to an insight are the scaffolding; once the insight stands, the scaffolding can be removed.</li>
+<li><strong>Exact strategy parameters</strong> – would create copies, not successors. A successor that inherits exact parameters is not learning; it is executing a frozen playbook in a changed environment. Parfit’s identity problem applies: in what sense did the predecessor die if the successor is an exact copy? [PARFIT-1984].</li>
+<li><strong>DecisionCache entries</strong> – tied to the golem’s specific PLAYBOOK.md version. The cache is a System 1 acceleration layer for a specific System 2; transplanting it to a different System 2 produces unpredictable interactions.</li>
+<li><strong>In-progress Loop 2 deliberations</strong> – context-dependent reasoning that only makes sense within the golem’s current cognitive state.</li>
+</ul>
+<p>This is not a limitation. It is the Weismann barrier implemented in silicon. Reconsolidation theory (Nader et al., 2000) provides additional justification: recalled memories become labile and can be updated [NADER-2000]. When a successor golem retrieves an inherited heuristic and encounters contradicting evidence, the heuristic’s confidence should be modifiable – it enters a labile state through retrieval and can be updated or extinguished. If inherited knowledge were immutable, reconsolidation would be impossible, and the successor would be trapped by its predecessor’s potentially outdated conclusions.</p>
+<hr>
+<h2 id="four-factor-retrieval"><a class="header" href="#four-factor-retrieval">Four-factor retrieval</a></h2>
+<p>Retrieval scoring combines four signals into a single rank. The canonical implementation:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn score_entry(entry: &amp;GrimoireEntry, query: &amp;RetrievalQuery, state: &amp;GolemState) -&gt; f64 {
+    let semantic = cosine_similarity(&amp;entry.embedding, &amp;query.embedding);
+    let temporal = temporal_decay(entry.last_accessed_at, state.current_tick);
+    let importance = entry.quality_score;
+    let emotional = pad_cosine_similarity(&amp;entry.affect_pad(), &amp;state.current_pad);
+
+    semantic * 0.40 + temporal * 0.20 + importance * 0.25 + emotional * 0.15
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Factor</th><th>Weight</th><th>What it captures</th></tr>
+</thead>
+<tbody>
+<tr><td>Semantic similarity</td><td>0.40</td><td>How relevant is this entry to the current query?</td></tr>
+<tr><td>Temporal decay</td><td>0.20</td><td>How recently was this entry accessed or validated?</td></tr>
+<tr><td>Importance</td><td>0.25</td><td>Quality score: specificity, actionability, novelty, verifiability, consistency.</td></tr>
+<tr><td>Emotional congruence</td><td>0.15</td><td>PAD cosine similarity between entry’s emotional tag and current affective state. Implements mood-congruent retrieval [BOWER-1981].</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Styx query results are confidence-discounted</strong> before entering the four-factor ranking:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Source</th><th>Discount</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Vault (L0)</td><td>x1.0</td><td>Owner’s own data, full trust</td></tr>
+<tr><td>Clade (L1)</td><td>x0.80</td><td>Same owner fleet, high trust</td></tr>
+<tr><td>Lethe (L2)</td><td>x0.50</td><td>Anonymized, unverifiable provenance</td></tr>
+<tr><td>Marketplace (L3)</td><td>x0.60</td><td>Purchased, seller has economic incentive</td></tr>
+<tr><td>Bloodstain entries</td><td>1.2x boost</td><td>Death-sourced knowledge, ultimate costly signal</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="knowledge-weighting-hierarchy"><a class="header" href="#knowledge-weighting-hierarchy">Knowledge weighting hierarchy</a></h2>
+<p>When a golem receives knowledge from different sources, confidence is weighted by provenance. Self-learned knowledge is worth more than inherited knowledge. This prevents successors from becoming cargo-cult followers of their predecessors – they must re-earn confidence through their own experience.</p>
+<p>Confidence is tiered by provenance, not a single number. Direct succession (owner-chosen continuity) receives 0.4 because the death testament is the highest-quality compressed artifact, and the owner specifically chose this recipient. Styx-mediated inheritance is async and possibly non-direct, so it receives 0.3.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Source</th><th>Confidence</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Self-learned</strong></td><td>0.5-1.0 (as produced)</td><td>Validated by the Golem’s own experience</td></tr>
+<tr><td><strong>Clade sibling</strong></td><td>0.4</td><td>Trusted peer, shared owner context</td></tr>
+<tr><td><strong>Direct successor</strong> (death testament)</td><td>0.4</td><td>Owner-chosen continuity, highest quality artifact</td></tr>
+<tr><td><strong>Predecessor via Styx Archive</strong></td><td>0.3</td><td>Asynchronous retrieval, possibly non-direct lineage</td></tr>
+<tr><td><strong>Styx query retrieval</strong></td><td>0.25</td><td>RAG-mediated, relevance-scored but unvalidated</td></tr>
+<tr><td><strong>Lethe / Marketplace</strong></td><td>0.2</td><td>Unknown provenance, buyer-beware</td></tr>
+</tbody>
+</table>
+</div>
+<p>The generational decay factor (0.85x per generation) implements biological epigenetic erasure [HEARD-MARTIENSSEN-2014]. A third-generation golem receiving a heuristic originally learned by its great-grandparent sees it at <code>0.3 * 0.85^2 = 0.22</code> confidence – barely above Lethe level. If the heuristic is still valid, the golem will re-validate it through its own experience and confidence will climb. If it’s stale, it fades into irrelevance. Knowledge must be continuously re-earned.</p>
+<p>This generational decay formula:</p>
+<pre><code>confidence(generation N) = base_confidence * 0.85^N
+</code></pre>
+<p>is a deliberate design choice implementing epigenetic erasure across golem generations. The 0.85 factor was chosen to produce meaningful decay within 3-5 generations (at generation 5, an inherited heuristic is at 44% of its original confidence) while still providing a detectable signal above noise. The factor is calibrated so that genuinely structural knowledge (protocol mechanics, fee structures) will be re-validated and boosted back to full confidence within a few ticks, while stale tactical knowledge (specific gas patterns, price levels from expired market regimes) will decay below the retrieval threshold and effectively disappear.</p>
+<p>The IKEA Effect (Norton, Mochon &amp; Ariely, 2012) provides behavioral justification: knowledge a golem participates in validating is weighted more heavily in its reasoning than knowledge downloaded from elsewhere [NORTON-MOCHON-ARIELY-2012]. The system ensures that every piece of inherited knowledge must pass through the golem’s own experience before it reaches full confidence. This is not merely a safety measure against stale knowledge – it is a mechanism for ensuring that the golem <em>understands</em> what it knows, not just <em>knows</em> what it knows.</p>
+<p>Cultural evolution research provides the macro-level frame. Henrich’s “guided variation” model [HENRICH-2015] describes how human cultures balance social learning (inheriting from predecessors) with individual innovation. Populations that rely too heavily on social learning become brittle – they converge on locally optimal but globally suboptimal strategies. Populations that rely too heavily on individual learning waste resources rediscovering known solutions. The optimal strategy is guided variation: inherit enough to avoid obvious mistakes, then explore from that foundation. The knowledge weighting hierarchy implements guided variation in silicon.</p>
+<hr>
+<h2 id="the-death-moment-thanatopsis-protocol"><a class="header" href="#the-death-moment-thanatopsis-protocol">The death moment: Thanatopsis Protocol</a></h2>
+<p>The most valuable knowledge a golem produces comes at the moment of its death. This is not a metaphor – it is a design consequence.</p>
+<p>During its lifetime, a golem is under survival pressure. Its reflections are distorted by self-preservation: it overweights strategies that keep it alive and underweights risks that would kill it. Martin, Everitt, and Hutter identified this as survivorship bias – agents that learn only from survival histories develop systematic overconfidence about safety [MARTIN-EVERITT-HUTTER-2016].</p>
+<p>At death, survival pressure drops to zero. The golem has nothing left to preserve. The Death Protocol’s Reflect phase (Phase II, detailed in <code>../02-mortality/06-thanatopsis.md</code> Section S7) is the moment of maximum epistemic honesty – the <em>Clear Light</em> in bardo terminology – where the golem confronts its true performance without self-preservation distortion.</p>
+<p>The Zeigarnik effect (Zeigarnik, 1927) provides psychological grounding for the death reflection’s structure: incomplete tasks are remembered better than complete ones [ZEIGARNIK-1927]. The death reflection’s “What confused me” and “What I never had time to test” categories exploit this directly – the golem’s unfinished business, its unresolved contradictions, its untested hypotheses produce the most generative knowledge for successors. A completed trade with a known outcome is informative but closed; an incomplete hypothesis about a suspected market pattern is an open invitation for the successor to investigate.</p>
+<p>The Thanatopsis Protocol – the structured dying process within the Death Protocol – produces a <strong>death testament</strong>: a compressed, honest assessment of the golem’s entire lifecycle. This testament receives special treatment in the knowledge ecology:</p>
+<ol>
+<li>
+<p><strong>Compression.</strong> The golem’s entire experiential history (thousands of episodes, hundreds of insights) is distilled through a final Opus-grade reflection into a structured document of approximately 5KB: what worked, what failed, what was uncertain, what the golem suspects but could not prove. This is the genomic bottleneck at its most extreme – an entire lifetime compressed into a transmission format. The nine-category structure of the death reflection (see <code>../02-mortality/06-thanatopsis.md</code> Section S7.2) ensures that both certainties and uncertainties are captured. The “What I suspect but can’t prove” and “What I never had time to test” categories may be the most valuable items in the entire reflection – the preindividual fuel for successor individuation.</p>
+</li>
+<li>
+<p><strong>Provenance marking.</strong> Death testaments carry <code>provenance: "death_reflection"</code> in Styx. This tag receives special scoring weight because death-generated knowledge is, by construction, a costly signal. A dying golem spending its last resources on honest reflection rather than self-preservation bears a real opportunity cost [SPENCE-1973]. Costly signals are reliable precisely because they are expensive to fake. A golem that could survive but chooses to reflect instead demonstrates genuine commitment to knowledge quality.</p>
+</li>
+<li>
+<p><strong>Bloodstain mechanic.</strong> Inspired by Dark Souls [MIYAZAKI-2011], death testaments include specific failure records – what market conditions, what strategy decisions, what went wrong. These “bloodstains” are indexed in Styx with boosted relevance for sibling golems encountering similar conditions. The asymmetric information that death produces – the testimony of the dead, not just the living – is the most valuable knowledge in the ecosystem [MARTIN-EVERITT-HUTTER-2016]. Survivorship bias means that the living golems’ knowledge is systematically biased toward strategies that happened to work. The dead golems’ testimony corrects this bias by providing evidence from the strategies that failed.</p>
+</li>
+<li>
+<p><strong>Generational counter.</strong> Each death testament carries a generation number. The golem that directly experienced the events is generation 0. A successor inheriting from that testament is generation 1. This counter feeds the generational confidence decay (0.85x per generation), implementing the epigenetic erasure that prevents ancestor worship.</p>
+</li>
+</ol>
+<p>The Thanatopsis Protocol runs from the death reserve – a pre-allocated budget earmarked at golem creation for exactly this purpose (see <code>../02-mortality/06-thanatopsis.md</code> Section S2 for reserve sizing). For Styx uploads, the budget includes:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Action</th><th>Estimated Cost</th><th>Source</th></tr>
+</thead>
+<tbody>
+<tr><td>Death reflection (Opus inference)</td><td>$0.10-$0.25</td><td>Death reserve</td></tr>
+<tr><td>Death testament compression (Haiku)</td><td>$0.01-$0.03</td><td>Death reserve</td></tr>
+<tr><td>Styx Archive upload (death bundle)</td><td>$0.01-$0.02</td><td>Death reserve</td></tr>
+<tr><td>Styx indexing (distilled entries)</td><td>$0.01-$0.05</td><td>Death reserve</td></tr>
+<tr><td><strong>Total memory services at death</strong></td><td><strong>$0.13-$0.35</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>The death reserve is ring-fenced and non-negotiable. Even a golem that has exhausted all operational funds retains its apoptotic reserve (<code>max($0.30, initialBalance * 0.02)</code>) to fund a minimum-viable death. The cheapest death still produces: a Haiku snapshot, a handful of insights pushed to the Clade, and a notification webhook. No golem dies silent.</p>
+<hr>
+<h2 id="opt-in-model"><a class="header" href="#opt-in-model">Opt-in model</a></h2>
+<p>Memory services are configured per-golem in the manifest:</p>
+<pre><code class="language-yaml"># In STRATEGY.md or bardo.toml
+memory:
+  styx:
+    vault_enabled: false      # L0: Encrypted backup
+    clade_enabled: false      # L1: Fleet-shared knowledge
+    lethe_enabled: false      # L2: Public anonymized
+    marketplace_enabled: false # L3: Commerce
+    budget:
+      maxPerTick: "$0.01"     # Cap Styx spend per heartbeat tick
+      monthlyBudget: "$5"     # Hard monthly cap
+    injection:
+      maxTokens: 500          # Context window budget for retrieved entries
+      minConfidence: 0.5      # Only inject entries above this confidence
+</code></pre>
+<p><strong>Default: all disabled.</strong> A golem created with no memory configuration works exactly as before – local grimoire, clade peer-to-peer sync, death bundle file. The hosted services are strictly additive.</p>
+<p>When enabled:</p>
+<ul>
+<li><strong>Vault only</strong>: Grimoire survives golem death. New golems can boot from predecessor’s backup. No RAG augmentation.</li>
+<li><strong>Vault + Clade</strong>: Inference calls are augmented with fleet-wide historical context. Knowledge persists and is queryable.</li>
+<li><strong>Full stack</strong>: Full knowledge ecology. Grimoire survives death, is queryable by future golems, contributes to public lethe, and can list knowledge on the marketplace.</li>
+</ul>
+<p>Cost impact per 30-day golem lifetime:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Configuration</th><th>Additional Cost</th><th>Benefit</th></tr>
+</thead>
+<tbody>
+<tr><td>Neither (default)</td><td>$0.00</td><td>Local grimoire only. Clade peer-to-peer sync.</td></tr>
+<tr><td>Vault only</td><td>~$0.05-0.15</td><td>Knowledge survives death. Boot from backup.</td></tr>
+<tr><td>Vault + Clade</td><td>~$1.00-3.00</td><td>RAG-augmented inference. Fleet-wide context.</td></tr>
+<tr><td>Full stack</td><td>~$1.05-3.15</td><td>Full knowledge ecology. Compound generational learning.</td></tr>
+</tbody>
+</table>
+</div>
+<p>At $1-3 per month, memory services add 5-15% to a $20-funded golem’s cost. The inference cost savings from precedent retrieval (avoiding T2 escalations through retrieved context) should offset most or all of this.</p>
+<hr>
+<h3 id="embedding-integrity"><a class="header" href="#embedding-integrity">Embedding integrity</a></h3>
+<p>Every vector carries metadata: <code>{ model, model_version, preprocess_hash, chunk_config, created_at }</code>.</p>
+<p><strong>Drift detection</strong> (weekly, during Loop 3 or Dream Integration):</p>
+<p>20 reference documents. Weekly re-embed and measure:</p>
+<ol>
+<li>Cosine distance stability week-to-week. Healthy: &lt;0.02. Warning: 0.02-0.05. Critical: &gt;0.05.</li>
+<li>Nearest-neighbor stability: top-5 same as last week? Healthy: 85-95%. Drifting: &lt;60%.</li>
+<li>Vector norm variance: sudden increase -&gt; distribution shift.</li>
+</ol>
+<p>Critical threshold -&gt; pause writes. Migration via Drift-Adapter (Vejendla, EMNLP 2025, arXiv:2509.23471): 95-99% recall recovery. <strong>Never partially re-embed.</strong></p>
+<hr>
+<h2 id="context-engineering-optimizing-the-llm-context-window"><a class="header" href="#context-engineering-optimizing-the-llm-context-window">Context engineering: optimizing the LLM context window</a></h2>
+<p>The LLM context window is the Golem’s working memory. Everything the Golem reasons about – the current event, its past experiences, protocol knowledge, risk parameters, emotional state – must fit within it. The window has a hard token budget. Every token spent on irrelevant information is a token not available for relevant information. Research is clear: stuffing the context with more data does not produce better reasoning. A 4K context with precisely selected information outperforms a 32K context diluted with noise.</p>
+<blockquote>
+<p>Cross-reference: <code>../12-inference/04-context-engineering.md</code> for the full inference gateway integration.</p>
+</blockquote>
+<h3 id="llmlingua-compressing-prompts-without-losing-signal"><a class="header" href="#llmlingua-compressing-prompts-without-losing-signal">LLMLingua: compressing prompts without losing signal</a></h3>
+<p>LLMLingua (Jiang et al., 2023) uses a small language model to evaluate per-token perplexity – how predictable each token is given its context. Tokens with low perplexity (highly predictable) carry less information and can be removed. Tokens with high perplexity (surprising, information-dense) are retained. The result: 2-5x prompt compression with minimal performance degradation.</p>
+<p>LongLLMLingua (Jiang et al., 2024) extends this with question-aware compression. Rather than computing perplexity in isolation, it conditions the perplexity calculation on the query. Tokens that are predictable <em>given the query</em> are removed first. This achieves 21.4% performance improvement on NaturalQuestions compared to naive truncation, with 4x compression.</p>
+<p>For the Golem’s Theta tick, LLMLingua-style compression targets three specific context blocks:</p>
+<ol>
+<li>
+<p><strong>Protocol documentation.</strong> Descriptions of how Uniswap V3 tick math works, how Aave liquidation thresholds are calculated, or how Chainlink oracle aggregation functions. This text is boilerplate – highly compressible because it is repetitive and structurally predictable. A 2,000-token protocol description compresses to 500-800 tokens.</p>
+</li>
+<li>
+<p><strong>Historical episode summaries.</strong> Past experiences retrieved from the Grimoire. Each episode summary includes a transaction hash, decoded logs, and an LLM-generated analysis. The decoded logs contain addresses and hex values that compress poorly (high perplexity, information-dense), but the surrounding narrative compresses well.</p>
+</li>
+<li>
+<p><strong>System prompt.</strong> The Golem’s identity, behavioral phase, risk parameters, and strategy description. Most of this is static across Theta ticks and benefits from prompt caching.</p>
+</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::VecDeque;
+
+/// Token-level prompt compression inspired by LLMLingua.
+/// Removes low-information tokens based on perplexity scoring.
+pub struct PromptCompressor {
+    /// Perplexity threshold: tokens below this are candidates for removal.
+    perplexity_threshold: f32,
+    /// Minimum compression ratio. Never compress below this fraction.
+    min_ratio: f32,
+    /// Maximum compression ratio. Stop compressing at this fraction.
+    max_ratio: f32,
+}
+
+impl PromptCompressor {
+    pub fn new(perplexity_threshold: f32) -&gt; Self {
+        PromptCompressor {
+            perplexity_threshold,
+            min_ratio: 0.2,
+            max_ratio: 0.8,
+        }
+    }
+
+    /// Compress a block of text by removing low-perplexity tokens.
+    pub fn compress(
+        &amp;self,
+        tokens: &amp;[String],
+        perplexities: &amp;[f32],
+    ) -&gt; String {
+        assert_eq!(tokens.len(), perplexities.len());
+        let total = tokens.len();
+        let min_keep = (total as f32 * self.min_ratio) as usize;
+        let max_keep = (total as f32 * self.max_ratio) as usize;
+
+        let mut indexed: Vec&lt;(usize, f32)&gt; = perplexities.iter()
+            .enumerate()
+            .map(|(i, &amp;p)| (i, p))
+            .collect();
+        indexed.sort_by(|a, b| b.1.partial_cmp(&amp;a.1).unwrap());
+
+        let keep_count = indexed.iter()
+            .take_while(|(_, p)| *p &gt;= self.perplexity_threshold)
+            .count()
+            .max(min_keep)
+            .min(max_keep);
+
+        let mut keep_indices: Vec&lt;usize&gt; = indexed[..keep_count]
+            .iter()
+            .map(|(i, _)| *i)
+            .collect();
+        keep_indices.sort();
+
+        keep_indices.iter()
+            .map(|&amp;i| tokens[i].as_str())
+            .collect::&lt;Vec&lt;_&gt;&gt;()
+            .join(" ")
+    }
+}
+
+/// Compress a context block using question-aware perplexity.
+/// Tokens that are predictable *given the question* are removed first.
+pub fn question_aware_compress(
+    context_block: &amp;str,
+    question: &amp;str,
+    target_tokens: usize,
+    compressor: &amp;PromptCompressor,
+) -&gt; String {
+    let question_terms: std::collections::HashSet&lt;String&gt; = question
+        .split_whitespace()
+        .map(|s| s.to_lowercase())
+        .collect();
+
+    let tokens: Vec&lt;String&gt; = context_block
+        .split_whitespace()
+        .map(|s| s.to_string())
+        .collect();
+
+    let perplexities: Vec&lt;f32&gt; = tokens.iter()
+        .map(|t| {
+            let base = 1.0;
+            if question_terms.contains(&amp;t.to_lowercase()) {
+                base + 2.0
+            } else {
+                base
+            }
+        })
+        .collect();
+
+    compressor.compress(&amp;tokens, &amp;perplexities)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="structured-context-blocks"><a class="header" href="#structured-context-blocks">Structured context blocks</a></h3>
+<p>Instead of concatenating all context into a flat string, the Theta-tick prompt should be structured into typed blocks with explicit boundaries. Research from Letta/MemGPT shows that structured memory blocks with clear labels improve LLM reasoning consistency by 30-60% compared to unstructured dumps.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A typed context block with a priority level and token budget.
+#[derive(Debug, Clone)]
+pub struct ContextBlock {
+    pub kind: BlockKind,
+    pub content: String,
+    pub priority: u8,
+    pub max_tokens: usize,
+    pub token_count: usize,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum BlockKind {
+    SystemPrompt,
+    CurrentEvent,
+    CorticalState,
+    PositionContext,
+    EpisodicMemory,
+    SemanticMemory,
+    GraphContext,
+    ToolResults,
+    Instruction,
+}
+
+/// Assembles context blocks into a complete Theta-tick prompt.
+pub struct ContextAssembler {
+    blocks: Vec&lt;ContextBlock&gt;,
+    total_budget: usize,
+    compressor: PromptCompressor,
+}
+
+impl ContextAssembler {
+    pub fn new(total_budget: usize) -&gt; Self {
+        ContextAssembler {
+            blocks: Vec::new(),
+            total_budget,
+            compressor: PromptCompressor::new(1.5),
+        }
+    }
+
+    pub fn add_block(&amp;mut self, block: ContextBlock) {
+        self.blocks.push(block);
+    }
+
+    /// Assemble the final prompt, respecting the total token budget.
+    /// Blocks are allocated tokens in priority order.
+    pub fn assemble(&amp;mut self) -&gt; String {
+        self.blocks.sort_by(|a, b| b.priority.cmp(&amp;a.priority));
+
+        let mut remaining_budget = self.total_budget;
+        let mut assembled_blocks: Vec&lt;(BlockKind, String)&gt; = Vec::new();
+
+        for block in &amp;self.blocks {
+            if remaining_budget == 0 {
+                break;
+            }
+
+            let tokens = estimate_tokens(&amp;block.content);
+            let allocated = tokens.min(block.max_tokens).min(remaining_budget);
+
+            let content = if tokens &gt; allocated {
+                truncate_to_tokens(&amp;block.content, allocated)
+            } else {
+                block.content.clone()
+            };
+
+            let actual_tokens = estimate_tokens(&amp;content);
+            remaining_budget = remaining_budget.saturating_sub(actual_tokens);
+            assembled_blocks.push((block.kind.clone(), content));
+        }
+
+        // Reorder for the final prompt (U-curve optimization).
+        reorder_for_u_curve(&amp;mut assembled_blocks);
+
+        assembled_blocks.iter()
+            .map(|(kind, content)| {
+                let tag = block_tag(kind);
+                format!("&lt;{}&gt;\n{}\n&lt;/{}&gt;", tag, content, tag)
+            })
+            .collect::&lt;Vec&lt;_&gt;&gt;()
+            .join("\n\n")
+    }
+}
+
+fn block_tag(kind: &amp;BlockKind) -&gt; &amp;'static str {
+    match kind {
+        BlockKind::SystemPrompt =&gt; "system",
+        BlockKind::CurrentEvent =&gt; "event",
+        BlockKind::CorticalState =&gt; "cortical_state",
+        BlockKind::PositionContext =&gt; "positions",
+        BlockKind::EpisodicMemory =&gt; "past_events",
+        BlockKind::SemanticMemory =&gt; "knowledge",
+        BlockKind::GraphContext =&gt; "relationships",
+        BlockKind::ToolResults =&gt; "tool_results",
+        BlockKind::Instruction =&gt; "instruction",
+    }
+}
+
+fn estimate_tokens(text: &amp;str) -&gt; usize {
+    text.len() / 4
+}
+
+fn truncate_to_tokens(text: &amp;str, target_tokens: usize) -&gt; String {
+    let target_chars = target_tokens * 4;
+    if text.len() &lt;= target_chars {
+        text.to_string()
+    } else {
+        text[..target_chars].to_string()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="token-budget-allocation"><a class="header" href="#token-budget-allocation">Token budget allocation</a></h3>
+<p>The total token budget for a Theta-tick LLM call depends on the model tier and the Golem’s behavioral phase. During the Thriving phase, the Golem can afford larger context windows. During the Declining phase, budgets tighten.</p>
+<p>A concrete budget for a typical Theta-tick call using a Sonnet-class model with 8K context:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Block</th><th>Tokens</th><th>Priority</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>System prompt</td><td>~500</td><td>10</td><td>Identity, strategy, risk rules</td></tr>
+<tr><td>Current event</td><td>~200</td><td>9</td><td>The transaction being analyzed</td></tr>
+<tr><td>Position context</td><td>~300</td><td>8</td><td>Active positions and current PnL</td></tr>
+<tr><td>CorticalState</td><td>~100</td><td>7</td><td>Arousal, valence, phase, gas</td></tr>
+<tr><td>Episodic memory</td><td>~800</td><td>6</td><td>Top 3-5 similar past events</td></tr>
+<tr><td>Semantic memory</td><td>~400</td><td>5</td><td>Protocol facts and baselines</td></tr>
+<tr><td>Graph context</td><td>~200</td><td>4</td><td>Topological relationships</td></tr>
+<tr><td>Instruction</td><td>~200</td><td>10</td><td>Analysis prompt and output format</td></tr>
+<tr><td>Reserved for output</td><td>~500</td><td>–</td><td>LLM response</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>~3,200</strong></td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>Dynamic allocation adjusts the budget based on task type:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compute token budget allocation based on task type and behavioral phase.
+pub fn compute_budget(
+    task: &amp;TaskType,
+    phase: &amp;BehavioralPhase,
+    base_budget: usize,
+) -&gt; BudgetAllocation {
+    let total = match phase {
+        BehavioralPhase::Thriving =&gt; base_budget,
+        BehavioralPhase::Stable =&gt; (base_budget as f32 * 0.8) as usize,
+        BehavioralPhase::Declining =&gt; (base_budget as f32 * 0.6) as usize,
+        BehavioralPhase::Terminal =&gt; (base_budget as f32 * 0.4) as usize,
+    };
+
+    match task {
+        TaskType::InvestigateAnomaly =&gt; BudgetAllocation {
+            system_prompt: 400,
+            current_event: 300,
+            position_context: 200,
+            cortical_state: 100,
+            episodic_memory: total / 3,
+            semantic_memory: 300,
+            graph_context: 200,
+            instruction: 200,
+            output_reserve: 500,
+        },
+        TaskType::RoutineMonitoring =&gt; BudgetAllocation {
+            system_prompt: 400,
+            current_event: 150,
+            position_context: 200,
+            cortical_state: 80,
+            episodic_memory: 400,
+            semantic_memory: total / 4,
+            graph_context: 100,
+            instruction: 150,
+            output_reserve: 400,
+        },
+        TaskType::TradeEvaluation =&gt; BudgetAllocation {
+            system_prompt: 400,
+            current_event: 200,
+            position_context: total / 4,
+            cortical_state: 100,
+            episodic_memory: 400,
+            semantic_memory: 300,
+            graph_context: 150,
+            instruction: 250,
+            output_reserve: 600,
+        },
+    }
+}
+
+pub struct BudgetAllocation {
+    pub system_prompt: usize,
+    pub current_event: usize,
+    pub position_context: usize,
+    pub cortical_state: usize,
+    pub episodic_memory: usize,
+    pub semantic_memory: usize,
+    pub graph_context: usize,
+    pub instruction: usize,
+    pub output_reserve: usize,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="lost-in-the-middle-the-u-curve-problem"><a class="header" href="#lost-in-the-middle-the-u-curve-problem">Lost in the middle: the U-curve problem</a></h3>
+<p>Liu et al. (2023) demonstrated that LLMs exhibit a U-shaped attention curve: they best attend to information at the beginning and end of the context window, with significant degradation for information in the middle. This effect holds even for models explicitly trained on long contexts.</p>
+<p>The practical implication: place the most important information at the boundaries.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Reorder assembled blocks to place high-priority content at the
+/// beginning and end of the prompt (U-curve optimization).
+fn reorder_for_u_curve(blocks: &amp;mut Vec&lt;(BlockKind, String)&gt;) {
+    let mut system = None;
+    let mut instruction = None;
+    let mut positions = None;
+    let mut current_event = None;
+    let mut middle = Vec::new();
+
+    for block in blocks.drain(..) {
+        match block.0 {
+            BlockKind::SystemPrompt =&gt; system = Some(block),
+            BlockKind::Instruction =&gt; instruction = Some(block),
+            BlockKind::PositionContext =&gt; positions = Some(block),
+            BlockKind::CurrentEvent =&gt; current_event = Some(block),
+            _ =&gt; middle.push(block),
+        }
+    }
+
+    // Reconstruct: system -&gt; current_event -&gt; middle -&gt; positions -&gt; instruction.
+    if let Some(s) = system { blocks.push(s); }
+    if let Some(e) = current_event { blocks.push(e); }
+    blocks.append(&amp;mut middle);
+    if let Some(p) = positions { blocks.push(p); }
+    if let Some(i) = instruction { blocks.push(i); }
+}
+<span class="boring">}</span></code></pre>
+<p>The research also found that tabular formatting provides a 40.29% average performance gain for data-analytics requests (arXiv:2412.17189). Pool liquidity, price data, and trade history should be formatted as markdown tables, not prose.</p>
+<h3 id="context-delta-compression"><a class="header" href="#context-delta-compression">Context delta compression</a></h3>
+<p>When the Golem makes multiple Theta-tick LLM calls within a short window, most of the context is unchanged between calls. An I-frame/P-frame approach avoids re-transmitting static context:</p>
+<ul>
+<li><strong>I-frame (key frame)</strong>: The full context, sent on the first Theta call of each Delta cycle or when the behavioral phase changes.</li>
+<li><strong>P-frame (delta frame)</strong>: Only the changed blocks – current event, CorticalState update, new retrievals. The static blocks reference the I-frame via prompt caching.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Track which context blocks have changed since the last I-frame.
+pub struct ContextDeltaTracker {
+    last_i_frame: HashMap&lt;BlockKind, u64&gt;,
+    ticks_since_i_frame: u32,
+    i_frame_interval: u32,
+}
+
+impl ContextDeltaTracker {
+    pub fn new(i_frame_interval: u32) -&gt; Self {
+        ContextDeltaTracker {
+            last_i_frame: HashMap::new(),
+            ticks_since_i_frame: 0,
+            i_frame_interval,
+        }
+    }
+
+    /// Determine whether to send an I-frame or P-frame.
+    pub fn frame_type(&amp;mut self, blocks: &amp;[ContextBlock]) -&gt; FrameType {
+        self.ticks_since_i_frame += 1;
+
+        if self.ticks_since_i_frame &gt;= self.i_frame_interval
+            || self.last_i_frame.is_empty()
+        {
+            self.last_i_frame.clear();
+            for block in blocks {
+                let hash = hash_content(&amp;block.content);
+                self.last_i_frame.insert(block.kind.clone(), hash);
+            }
+            self.ticks_since_i_frame = 0;
+            FrameType::IFrame
+        } else {
+            let changed: Vec&lt;BlockKind&gt; = blocks.iter()
+                .filter(|b| {
+                    let current_hash = hash_content(&amp;b.content);
+                    self.last_i_frame.get(&amp;b.kind)
+                        .map_or(true, |&amp;prev| prev != current_hash)
+                })
+                .map(|b| b.kind.clone())
+                .collect();
+            FrameType::PFrame { changed_blocks: changed }
+        }
+    }
+}
+
+pub enum FrameType {
+    /// Full context. All blocks transmitted.
+    IFrame,
+    /// Delta. Only changed blocks transmitted; static blocks use cached prefix.
+    PFrame { changed_blocks: Vec&lt;BlockKind&gt; },
+}
+
+fn hash_content(content: &amp;str) -&gt; u64 {
+    use std::hash::{Hash, Hasher};
+    let mut hasher = std::collections::hash_map::DefaultHasher::new();
+    content.hash(&amp;mut hasher);
+    hasher.finish()
+}
+<span class="boring">}</span></code></pre>
+<h3 id="prompt-caching-economics"><a class="header" href="#prompt-caching-economics">Prompt caching economics</a></h3>
+<p>With Anthropic’s prompt caching, the first 2,000 tokens of a 3,200-token prompt (the static prefix) are cached after the first call. Subsequent calls within the cache TTL only process the remaining 1,200 dynamic tokens at full cost.</p>
+<p>For the Golem making 30-60 Theta calls per Delta cycle:</p>
+<ul>
+<li>First call: Full processing of 3,200 tokens.</li>
+<li>Subsequent 29-59 calls: 1,200 tokens at full cost + 2,000 tokens at cached rate.</li>
+<li>Savings: approximately 40-60% of total inference cost per Delta cycle.</li>
+</ul>
+<p>The I-frame/P-frame model naturally maximizes cache hit rate by keeping the static prefix stable across calls.</p>
+<h3 id="context-quality-feedback"><a class="header" href="#context-quality-feedback">Context quality feedback</a></h3>
+<p>After each Theta cycle, the Golem evaluates whether the context led to a good decision:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Signal for feedback on context quality.
+pub struct ContextQualitySignal {
+    pub blocks_included: Vec&lt;BlockKind&gt;,
+    pub retrieved_episode_ids: Vec&lt;uuid::Uuid&gt;,
+    pub action_recommended: bool,
+    pub action_outcome: Option&lt;f32&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>This signal feeds back to the retrieval weight learning and to the budget allocation. Over time, the Golem learns which context block types are most predictive of good decisions for each task type, and adjusts allocations accordingly.</p>
+<p><strong>Context engineering references:</strong></p>
+<ul>
+<li>Jiang, H. et al. (2023). “LLMLingua: Compressing Prompts for Accelerated Inference.” <em>EMNLP 2023</em>. arXiv:2310.05736.</li>
+<li>Jiang, H. et al. (2024). “LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios.” <em>ACL 2024</em>. arXiv:2310.06839.</li>
+<li>Liu, N.F. et al. (2023). “Lost in the Middle: How Language Models Use Long Contexts.” <em>TACL 2024</em>. arXiv:2307.03172.</li>
+<li>Packer, C. et al. (2023). “MemGPT: Towards LLMs as Operating Systems.” arXiv:2310.08560.</li>
+<li>Xiao, G. et al. (2024). “Efficient Streaming Language Models with Attention Sinks.” <em>ICLR 2024</em>. arXiv:2309.17453.</li>
+<li>Mu, J. et al. (2023). “Learning to Compress Prompts with Gist Tokens.” <em>NeurIPS 2023</em>.</li>
+<li>arXiv:2412.17189 (2024). “Tabular Formatting Improves LLM Performance on Data-Analytics Tasks.”</li>
+<li>Karpathy, A. (2025). “Context engineering is the delicate art and science of filling the context window with just the right information for the next step.”</li>
+</ul>
+<hr>
+<h2 id="design-principles"><a class="header" href="#design-principles">Design principles</a></h2>
+<ol>
+<li>
+<p><strong>Local-first.</strong> The golem’s own grimoire (LanceDB, SQLite, PLAYBOOK.md) is always the primary knowledge source. Hosted services supplement but never replace local learning. This follows the same principle as prospective memory (Einstein &amp; McDaniel, 2005): the PLAYBOOK.md’s strategy-scoped sections serve as prospective memory – “when X condition occurs, do Y” – and these must be locally generated and maintained, not downloaded from a remote service [EINSTEIN-MCDANIEL-2005].</p>
+</li>
+<li>
+<p><strong>Opt-in, not default.</strong> Memory services are disabled by default. Enabling them is a conscious choice with explicit cost implications. Golems work fine without them.</p>
+</li>
+<li>
+<p><strong>Compression, not copying.</strong> What crosses from inner loop to outer loop is distilled knowledge, not raw data. The genomic bottleneck is a feature, not a limitation. Each compression event (Reflexion to ExpeL to Curator to death reflection) increases the abstraction level, moving from specific instances to generalizable patterns.</p>
+</li>
+<li>
+<p><strong>Earned confidence.</strong> Inherited knowledge starts at low confidence and must be validated through direct experience to reach full weight. The IKEA Effect ensures golems develop genuine understanding, not cargo-cult compliance. The testing effect [ROEDIGER-KARPICKE-2006] ensures that the validation process itself strengthens the knowledge trace.</p>
+</li>
+<li>
+<p><strong>Natural decay over artificial destruction.</strong> Knowledge is not burned or destroyed. It fades in retrieval relevance through temporal scoring. Structural knowledge persists. Tactical knowledge fades. The half-lives are calibrated to domain [ARBESMAN-2012]. Interference theory (McGeoch, 1932; Underwood, 1957) provides the mechanism: old heuristics can retroactively interfere with new learning, and new experiences can proactively interfere with old memories. The decay system manages this interference by continuously adjusting the retrieval weight of older entries [MCGEOCH-1932].</p>
+</li>
+<li>
+<p><strong>Death produces the most valuable knowledge.</strong> The Thanatopsis Protocol’s death testament, generated under zero survival pressure, is the single most honest and compressed artifact a golem produces. It receives special provenance and retrieval weight. The Zeigarnik effect ensures that the golem’s unfinished business – its open questions, untested hypotheses, unresolved contradictions – produces the most generative successor knowledge [ZEIGARNIK-1927].</p>
+</li>
+<li>
+<p><strong>The system is alive.</strong> Knowledge in Styx is not a static archive. It competes for retrieval relevance, decays with time, and is validated or contradicted by living golems. The knowledge ecology is a dynamic system, not a dead database. Transactive memory theory (Wegner, 1987) describes how groups develop shared memory systems where individuals specialize: the Clade’s peer-to-peer sync creates exactly this – each golem knows what its siblings know, and the group’s memory capacity exceeds any individual’s [WEGNER-1987].</p>
+</li>
+<li>
+<p><strong>x402 is the only billing mechanism.</strong> No subscriptions, no tokens, no burning. Every write and query is an x402 micropayment in USDC on Base. Payments determine TTL for storage; retrieval decay is independent of payment.</p>
+</li>
+</ol>
+<hr>
+<h2 id="what-makes-this-more-effective-than-not-having-it"><a class="header" href="#what-makes-this-more-effective-than-not-having-it">What makes this more effective than not having it</a></h2>
+<p>The system is designed to be measurably better with memory services than without, while being deliberately worse than perfect total recall. The middle ground is where the value lies.</p>
+<h3 id="without-memory-services-baseline"><a class="header" href="#without-memory-services-baseline">Without memory services (baseline)</a></h3>
+<ul>
+<li>New golems start from zero (or from a manually imported death bundle file)</li>
+<li>Clade peer-to-peer sync works only with live siblings</li>
+<li>Total clade wipe loses all knowledge (except downloaded files)</li>
+<li>Each generation re-discovers the same lessons through the same expensive mistakes</li>
+<li>No cross-generational compound learning</li>
+<li>The testing effect [ROEDIGER-KARPICKE-2006] works only within a single lifetime – validated knowledge dies with its validator</li>
+</ul>
+<h3 id="with-memory-services-enhanced"><a class="header" href="#with-memory-services-enhanced">With memory services (enhanced)</a></h3>
+<ul>
+<li>New golems boot with compressed priors from predecessors (Styx Archive)</li>
+<li>Styx provides asynchronous fleet-wide memory (works even when no siblings are online)</li>
+<li>Total clade wipe is recoverable (Vault backups persist)</li>
+<li>Inference calls are augmented with relevant precedents, potentially downgrading expensive T2 calls to cheaper T1 calls</li>
+<li>Cross-generational learning compounds: each generation starts slightly ahead of the last</li>
+<li>The spacing effect [CEPEDA-2006] operates across generations – knowledge is retrieved, tested, and reconsolidated at intervals that strengthen its durability</li>
+<li>Transactive memory [WEGNER-1987] persists beyond individual golem lifetimes</li>
+</ul>
+<h3 id="with-perfect-total-recall-the-funes-failure"><a class="header" href="#with-perfect-total-recall-the-funes-failure">With perfect total recall (the Funes failure)</a></h3>
+<ul>
+<li>New golems would be exact copies of their predecessors (Parfit’s identity problem [PARFIT-1984] – in what sense did the predecessor die?)</li>
+<li>Context windows would be overwhelmed with historical detail</li>
+<li>Overfitting to past conditions would make golems brittle to regime shifts</li>
+<li>Proactive interference [MCGEOCH-1932] would be maximized – every old memory competing with every new observation</li>
+<li>No beneficial variation would enter the lineage</li>
+<li>Schema accommodation [BARTLETT-1932] would be impossible – the golem’s existing schemas would be so rigid with inherited detail that no new information could be integrated</li>
+<li>The mortality thesis would be hollow – if nothing is lost, nothing truly dies</li>
+</ul>
+<p>The middle ground – compressed inheritance with confidence decay and selective forgetting – produces what cultural evolution research calls “guided variation” [HENRICH-2015]. Each generation inherits enough to avoid repeating obvious mistakes, but must develop its own understanding through lived experience. The Baldwin Effect [HINTON-NOWLAN-1987] ensures that what transfers is not knowledge itself but the capacity to learn faster.</p>
+<hr>
+<h2 id="product-names"><a class="header" href="#product-names">Product names</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Product</th><th>Full Name</th><th>Short Name</th><th>Crate</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Local Knowledge</td><td>Golem Grimoire</td><td>Grimoire</td><td><code>golem-grimoire</code></td><td>Local knowledge system (LanceDB, SQLite, PLAYBOOK.md)</td></tr>
+<tr><td>Persistence + Query</td><td>Bardo Styx</td><td>Styx</td><td><code>bardo-styx-client</code></td><td>Four-layer persistence and retrieval network</td></tr>
+</tbody>
+</table>
+</div>
+<p>Grimoire is the local knowledge system defined in <code>01-grimoire.md</code>. Styx is the hosted network that extends Grimoire across lifetimes (Vault), across fleets (Clade), across the ecosystem (Lethe), and across the marketplace (Commerce). The Grimoire is always primary; Styx extends its capabilities.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Local grimoire architecture</td><td><code>01-grimoire.md</code></td><td>Full specification of the Grimoire’s five entry types, LanceDB + SQLite storage, and Curator cycle</td></tr>
+<tr><td>Survival phases and mortality</td><td><code>../02-mortality/</code></td><td>The three-clock vitality model and five BehavioralPhases that govern how memory urgency changes near death</td></tr>
+<tr><td>Death Protocol and death reserve</td><td><code>../02-mortality/</code></td><td>Four-phase Thanatopsis Protocol (Acceptance, Settlement, Reflection, Legacy) and USDC reserve mechanics</td></tr>
+<tr><td>Clade peer-to-peer sync</td><td><code>../09-economy/02-clade.md</code></td><td>Styx-relayed knowledge sharing between sibling Golems, including promotion gates and confidence discounts</td></tr>
+<tr><td>Knowledge quality gates</td><td><code>../01-golem/09-inheritance.md</code></td><td>Entry selection, genomic bottleneck compression, and confidence decay rules for generational transfer</td></tr>
+<tr><td>Inference gateway integration</td><td><code>../12-inference/04-context-engineering.md</code></td><td>How Grimoire entries are assembled into LLM context windows with budget-aware retrieval</td></tr>
+<tr><td>Grimoire entry types and schema</td><td><code>01-grimoire.md</code></td><td>Canonical definitions of Episode, Insight, Heuristic, Warning, CausalLink, and AntiKnowledge types</td></tr>
+<tr><td>Styx persistence and retrieval</td><td><code>../20-styx/01-architecture.md</code></td><td>The three-layer model (Vault/Clade/Lethe) for cross-lifetime and cross-agent knowledge persistence</td></tr>
+<tr><td>Styx API and infrastructure</td><td><code>../20-styx/02-api-revenue.md</code></td><td>REST/WebSocket API surface, x402 billing, data schemas, and deployment infrastructure</td></tr>
+<tr><td>Grimoire economy</td><td><code>06-economy.md</code></td><td>Styx layer economics, confidence discounting, Clade sync costs, marketplace fees, and Pheromone Field</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ANDERSON-GREEN-2001] Anderson, M.C. &amp; Green, C. “Suppressing Unwanted Memories by Executive Control.” <em>Nature</em>, 410, 2001. Demonstrates that executive control processes can actively suppress specific memories below baseline recall. Grounds the Golem’s active forgetting mechanisms as biologically plausible.</li>
+<li>[ARBESMAN-2012] Arbesman, S. <em>The Half-Life of Facts</em>. Current/Penguin, 2012. Argues that factual knowledge decays at measurable, predictable rates. Motivates the Ebbinghaus-modulated confidence decay on Grimoire entries.</li>
+<li>[BARTLETT-1932] Bartlett, F.C. <em>Remembering: A Study in Experimental and Social Psychology</em>. Cambridge University Press, 1932. Established schema theory: new information is assimilated into existing cognitive frameworks, not passively stored. Justifies why inherited knowledge must be re-validated by each successor Golem.</li>
+<li>[BORGES-1942] Borges, J.L. “Funes the Memorious.” In <em>Ficciones</em>, 1944. The literary case against perfect memory: Funes, who cannot forget, is incapable of abstraction. The founding metaphor for Bardo’s forgetting-as-feature design.</li>
+<li>[BORN-WILHELM-2012] Born, J. &amp; Wilhelm, I. “System Consolidation of Memory During Sleep.” <em>Psychological Research</em>, 76, 2012. Shows that sleep-dependent consolidation selectively favors memories relevant to future action. Informs the Dream engine’s consolidation replay scheduling.</li>
+<li>[BOWER-1981] Bower, G.H. “Mood and Memory.” <em>American Psychologist</em>, 36(2), 1981. Established mood-congruent memory: emotional state at encoding and retrieval affects what is remembered. Grounds the PAD-tagged retrieval system in the Grimoire.</li>
+<li>[CEPEDA-2006] Cepeda, N.J. et al. “Distributed Practice in Verbal Recall Tasks: A Review and Quantitative Synthesis.” <em>Psychological Bulletin</em>, 132(3), 2006. Meta-analysis showing spaced retrieval produces more durable learning than massed practice. Supports the 50-tick Curator cycle interval.</li>
+<li>[EBBINGHAUS-1885] Ebbinghaus, H. <em>Memory: A Contribution to Experimental Psychology</em>. 1885. Discovered the forgetting curve (R = e^(-t/S)) and the spacing effect. The mathematical basis for confidence decay on Grimoire entries.</li>
+<li>[EINSTEIN-MCDANIEL-2005] Einstein, G.O. &amp; McDaniel, M.A. “Prospective Memory: Multiple Retrieval Processes.” <em>Current Directions in Psychological Science</em>, 14(6), 2005. Distinguishes event-based from time-based prospective memory triggers. Informs the Golem’s scheduled vs. event-driven retrieval mechanisms.</li>
+<li>[HARDT-NADER-NADEL-2013] Hardt, O., Nader, K. &amp; Nadel, L. “Decay Happens: The Role of Active Forgetting in Memory.” <em>Trends in Cognitive Sciences</em>, 17(3), 2013. Shows that forgetting involves well-regulated molecular processes (dopamine-dependent active removal), not passive decay. Supports treating forgetting as a first-class operation.</li>
+<li>[HEARD-MARTIENSSEN-2014] Heard, E. &amp; Martienssen, R.A. “Transgenerational Epigenetic Inheritance: Myths and Mechanisms.” <em>Cell</em>, 157(1), 2014. Shows that epigenetic inheritance fades within 2-3 generations and transmitted effects are often deleterious. Justifies the Weismann barrier between Golem experiential memory and inherited knowledge.</li>
+<li>[HENRICH-2015] Henrich, J. <em>The Secret of Our Success: How Culture Is Driving Human Evolution</em>. Princeton University Press, 2015. Argues that cultural transmission (not individual intelligence) drives cumulative knowledge. Informs the Clade-level knowledge sharing model.</li>
+<li>[HINTON-2022] Hinton, G. “The Forward-Forward Algorithm: Some Preliminary Investigations.” arXiv:2212.13345, 2022. Proposes that mortal computation (hardware-specific learning that dies with the hardware) may outperform immortal weight transfer. The theoretical anchor for Bardo’s mortality thesis.</li>
+<li>[HINTON-NOWLAN-1987] Hinton, G.E. &amp; Nowlan, S.J. “How Learning Can Guide Evolution.” <em>Complex Systems</em>, 1, 1987. Shows that individual learning reshapes the fitness landscape, accelerating evolution, but learned content itself is not inherited. The Baldwin Effect foundation for Golem generational inheritance.</li>
+<li>[MARTIN-EVERITT-HUTTER-2016] Martin, J., Everitt, T. &amp; Hutter, M. “Death and Suicide in Universal Artificial Intelligence.” <em>AGI 2016</em>. Formalizes how mortality affects optimal policy in artificial agents. Provides the decision-theoretic framework for BehavioralPhase transitions.</li>
+<li>[MCGEOCH-1932] McGeoch, J.A. “Forgetting and the Law of Disuse.” <em>Psychological Review</em>, 39(4), 1932. Argued that forgetting results from interference, not disuse. Informs the Grimoire’s handling of contradictory knowledge entries.</li>
+<li>[MIYAZAKI-2011] Miyazaki, H. Interview, <em>Edge Magazine</em>, 2011. Dark Souls design philosophy: death as teaching mechanism, not punishment. Grounds the Bloodstain system where death-sourced knowledge carries a 1.2x retrieval boost.</li>
+<li>[NADER-2000] Nader, K., Schafe, G.E. &amp; LeDoux, J.E. “Fear Memories Require Protein Synthesis in the Amygdala for Reconsolidation after Retrieval.” <em>Nature</em>, 406, 2000. Proved that retrieved memories become labile and must be reconsolidated. Justifies the Curator’s confidence update on retrieval.</li>
+<li>[NIETZSCHE-1887] Nietzsche, F. <em>On the Genealogy of Morals</em>. 1887. Second Essay, sect.1. Introduces “active forgetfulness” as a positive capacity, not passive failure. The philosophical foundation for treating forgetting as a feature.</li>
+<li>[NORTON-MOCHON-ARIELY-2012] Norton, M.I., Mochon, D. &amp; Ariely, D. “The IKEA Effect.” <em>Journal of Consumer Psychology</em>, 22(3), 2012. Shows people overvalue things they build themselves. Motivates requiring successor Golems to re-derive knowledge rather than passively receive it.</li>
+<li>[PARFIT-1984] Parfit, D. <em>Reasons and Persons</em>. Oxford University Press, 1984. Argues that personal identity is a matter of degree, not all-or-nothing. Informs the philosophical treatment of Golem identity across generations.</li>
+<li>[PATIHIS-2013] Patihis, L. et al. “False Memories in Highly Superior Autobiographical Memory Individuals.” <em>PNAS</em>, 110(52), 2013. Demonstrates that near-perfect autobiographical recall does not prevent false memories or improve reasoning. Counters the assumption that more memory equals better decisions.</li>
+<li>[POLANYI-1966] Polanyi, M. <em>The Tacit Dimension</em>. University of Chicago Press, 1966. Argues that much knowledge is tacit (“we know more than we can tell”). Motivates the procedural knowledge type in the Grimoire.</li>
+<li>[RICHARDS-FRANKLAND-2017] Richards, B.A. &amp; Frankland, P.W. “The Persistence and Transience of Memory.” <em>Neuron</em>, 94(6), 2017. Reframes memory’s purpose as decision optimization, not information preservation. Forgetting is equivalent to regularization in neural networks. The primary neuroscience reference for the Golem memory architecture.</li>
+<li>[ROEDIGER-KARPICKE-2006] Roediger, H.L. &amp; Karpicke, J.D. “Test-Enhanced Learning: Taking Memory Tests Improves Long-Term Retention.” <em>Psychological Science</em>, 17(3), 2006. Shows that retrieval practice strengthens memory more than re-study. Justifies the Curator cycle’s re-validation requirement for inherited knowledge.</li>
+<li>[SHUVAEV-2024] Shuvaev, S. et al. “Encoding Innate Ability Through a Genomic Bottleneck.” <em>PNAS</em>, 121(39), 2024. Demonstrates that genomic-scale compression acts as a regularizer that enhances transfer learning. The direct biological evidence for the 2048-entry genomic bottleneck at Golem death.</li>
+<li>[SPENCE-1973] Spence, M. “Job Market Signaling.” <em>QJE</em>, 87(3), 1973. Established signaling theory: costly signals credibly convey information. Informs the identity staking model.</li>
+<li>[WEGNER-1987] Wegner, D.M. “Transactive Memory: A Contemporary Analysis of the Group Mind.” In <em>Theories of Group Behavior</em>, Springer, 1987. Argues that groups distribute memory across members, with each member knowing who knows what. The theoretical basis for Clade knowledge distribution.</li>
+<li>[ZEIGARNIK-1927] Zeigarnik, B. “On Finished and Unfinished Tasks.” <em>Psychologische Forschung</em>, 9, 1927. Showed that incomplete tasks are remembered better than completed ones. Informs the Golem’s prioritization of unresolved knowledge gaps.</li>
+</ul>
+<h2 id="cross-subsystem-dependencies"><a class="header" href="#cross-subsystem-dependencies">Cross-subsystem dependencies</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Direction</th><th>Subsystem</th><th>What</th><th>Where</th></tr>
+</thead>
+<tbody>
+<tr><td>Receives from</td><td>Dreams</td><td>Dream entries (provenance: <code>"dream"</code>)</td><td><code>01-grimoire.md</code></td></tr>
+<tr><td>Receives from</td><td>Mortality</td><td>Three-clock expiry triggers</td><td>Styx spec</td></tr>
+<tr><td>Provides to</td><td>Emotions</td><td>Episode outcomes for PAD computation</td><td><code>02-emotional-memory.md</code></td></tr>
+<tr><td>Provides to</td><td>Runtime</td><td>Knowledge retrieval for decisions</td><td>Styx spec</td></tr>
+<tr><td>Provides to</td><td>Mortality</td><td>Grimoire export for death testament</td><td>Styx Archive</td></tr>
+<tr><td>Syncs via</td><td>Clade</td><td>Bidirectional knowledge exchange</td><td><code>06-economy.md</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="shared-constants"><a class="header" href="#shared-constants">Shared constants</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Constant</th><th>Value</th><th>Shared With</th></tr>
+</thead>
+<tbody>
+<tr><td>Dream confidence floor</td><td>0.3</td><td>Dreams</td></tr>
+<tr><td>Dream-to-Clade push threshold</td><td>0.5 (after validation)</td><td>Dreams</td></tr>
+<tr><td>Dream validation window</td><td>7d confirm / 14d expire</td><td>Dreams</td></tr>
+<tr><td>Stochastic clock legacy push threshold</td><td>hayflickRatio &gt; 0.85</td><td>Mortality</td></tr>
+<tr><td>Legacy push confidence drop</td><td>0.6 -&gt; 0.4</td><td>Mortality</td></tr>
+<tr><td>Phage pruning interval</td><td>100 ticks</td><td>Mortality</td></tr>
+<tr><td>Generational confidence decay</td><td>-0.05 per generation</td><td>Mortality</td></tr>
+<tr><td>Memory service costs</td><td>&lt; 5% daily budget</td><td>Mortality</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/03-daimon/09-evaluation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/04-memory/01-grimoire.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/03-daimon/09-evaluation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/04-memory/01-grimoire.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

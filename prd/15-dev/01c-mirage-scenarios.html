@@ -1,0 +1,1474 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Mirage Scenarios - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/15-dev/01c-mirage-scenarios.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="mirage-rs-scenarios-historical-mode-and-targeted-follower"><a class="header" href="#mirage-rs-scenarios-historical-mode-and-targeted-follower">mirage-rs Scenarios, Historical Mode, and Targeted Follower</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-18
+<strong>Crate:</strong> <code>mirage-rs/</code></p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the scenario runner, historical replay mode, and targeted follower for mirage-rs, Bardo’s in-process EVM fork (section 15). The targeted follower replays only mainnet transactions touching watched contracts, reducing per-block compute by two orders of magnitude versus full block replay. Historical mode pins all reads to a fork block and replays a block range for retrospective analysis. The scenario runner uses Copy-on-Write state layers to branch from a shared baseline and compare strategies in parallel. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="targeted-follower"><a class="header" href="#targeted-follower">Targeted Follower</a></h2>
+<p>The TargetedFollower is the component that keeps watched protocol state current. It subscribes to new mainnet blocks, scans each block for transactions touching contracts in the watch list, and replays only those transactions through the local EVM. Everything else is ignored – the lazy-latest read path handles it.</p>
+<p>For a typical portfolio of 3-10 DeFi positions, a block with 150 transactions produces 0-5 matches. The computational cost of targeted replay is two orders of magnitude lower than v1’s full block replay.</p>
+<h3 id="classification-rules"><a class="header" href="#classification-rules">Classification Rules</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ClassificationConfig {
+    /// Minimum slots written to classify as protocol. Default: 3.
+    /// Token transfers write 1-2 slots. Protocol interactions write 3+.
+    pub protocol_slot_threshold: usize,
+
+    /// Check for ERC-20/721/1155 interfaces as a secondary signal.
+    pub check_token_interface: bool,
+
+    /// Safety valve for watch list size.
+    pub max_watched_contracts: usize,
+
+    /// Recursive contagion: watched contracts that interact with
+    /// new contracts can add those to the watch list.
+    pub enable_contagion: bool,
+
+    /// Maximum contagion depth. Default: 2.
+    /// Depth 0 = your direct transaction.
+    /// Depth 1 = contracts called by your protocol.
+    /// Depth 2 = one level deeper (vault -&gt; lending pool -&gt; oracle).
+    pub max_contagion_depth: usize,
+}
+
+impl Default for ClassificationConfig {
+    fn default() -&gt; Self {
+        Self {
+            protocol_slot_threshold: 3,
+            check_token_interface: true,
+            max_watched_contracts: 64,
+            enable_contagion: true,
+            max_contagion_depth: 2,
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-classifier"><a class="header" href="#the-classifier">The Classifier</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DiffClassifier {
+    config: ClassificationConfig,
+}
+
+pub struct StateDiff {
+    pub accounts: HashMap&lt;Address, AccountDiff&gt;,
+}
+
+pub struct AccountDiff {
+    pub info_changed: bool,
+    pub new_balance: Option&lt;U256&gt;,
+    pub new_nonce: Option&lt;u64&gt;,
+    pub new_code: Option&lt;Bytecode&gt;,
+    pub storage_written: HashMap&lt;U256, U256&gt;,
+    pub storage_read: HashSet&lt;U256&gt;,
+}
+
+impl DiffClassifier {
+    pub fn classify(
+        &amp;self,
+        diff: &amp;StateDiff,
+        dirty: &amp;DirtyStore,
+        current_block: u64,
+    ) -&gt; ClassificationResult {
+        let mut result = ClassificationResult::default();
+
+        for (address, account_diff) in &amp;diff.accounts {
+            // Already watched -- just update dirty slots.
+            if dirty.watch_list.contains_key(address) {
+                if !account_diff.storage_written.is_empty() {
+                    result.slot_overrides.push((
+                        *address,
+                        account_diff.storage_written.clone(),
+                    ));
+                }
+                continue;
+            }
+
+            // Explicitly unwatched -- slot-only regardless.
+            if dirty.unwatch_list.contains(address) {
+                if !account_diff.storage_written.is_empty() {
+                    result.slot_overrides.push((
+                        *address,
+                        account_diff.storage_written.clone(),
+                    ));
+                }
+                continue;
+            }
+
+            match self.classify_single(*address, account_diff) {
+                Classification::Protocol =&gt; {
+                    let current_count =
+                        dirty.watch_list.len() + result.new_watched.len();
+                    if current_count &gt;= self.config.max_watched_contracts {
+                        // At capacity -- demote to slot-only.
+                        result.slot_overrides.push((
+                            *address,
+                            account_diff.storage_written.clone(),
+                        ));
+                        continue;
+                    }
+                    result.new_watched.push((*address, WatchEntry {
+                        source: WatchSource::AutoClassified,
+                        added_at_block: current_block,
+                        initial_slot_count: account_diff.storage_written.len(),
+                        replay_count: 0,
+                    }));
+                    result.slot_overrides.push((
+                        *address,
+                        account_diff.storage_written.clone(),
+                    ));
+                }
+                Classification::SlotOnly =&gt; {
+                    if !account_diff.storage_written.is_empty() {
+                        result.slot_overrides.push((
+                            *address,
+                            account_diff.storage_written.clone(),
+                        ));
+                    }
+                }
+                Classification::ReadOnly =&gt; {
+                    result.read_only.push(*address);
+                }
+            }
+        }
+
+        result
+    }
+
+    fn classify_single(
+        &amp;self,
+        address: Address,
+        diff: &amp;AccountDiff,
+    ) -&gt; Classification {
+        if diff.storage_written.is_empty() {
+            return Classification::ReadOnly;
+        }
+
+        let slot_count = diff.storage_written.len();
+
+        if slot_count &gt;= self.config.protocol_slot_threshold {
+            if self.config.check_token_interface
+                &amp;&amp; self.looks_like_token(address, diff)
+            {
+                return Classification::SlotOnly;
+            }
+            return Classification::Protocol;
+        }
+
+        Classification::SlotOnly
+    }
+
+    /// Heuristic: does this contract look like a token?
+    /// If ALL written slots are high-entropy keccak outputs
+    /// (mapping entries) and none are low-numbered state slots,
+    /// it is likely a token.
+    fn looks_like_token(&amp;self, _address: Address, diff: &amp;AccountDiff) -&gt; bool {
+        let has_low_slot = diff.storage_written.keys().any(|slot| {
+            *slot &lt; U256::from(20)
+        });
+        !has_low_slot
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The 3-slot threshold is the key heuristic. An ERC-20 transfer writes 1-2 slots (sender balance, receiver balance). A protocol interaction – LP deposit, borrow, stake – writes 3+ slots (position state, total liquidity, tick bitmap, etc.). Rebasing tokens that write more slots are caught by the secondary <code>looks_like_token</code> check.</p>
+<h3 id="main-loop"><a class="header" href="#main-loop">Main Loop</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct TargetedFollower {
+    upstream: UpstreamRpc,
+    state: Arc&lt;RwLock&lt;MirageState&gt;&gt;,
+    classifier: DiffClassifier,
+    config: FollowerConfig,
+}
+
+pub struct FollowerConfig {
+    pub ws_url: String,
+    pub http_url: String,
+    /// Maximum time per block for replay. Default: 10s.
+    pub block_budget: Duration,
+    /// Check receipts for aggregator-routed transactions.
+    pub use_access_lists: bool,
+    pub enable_contagion: bool,
+    pub max_contagion_depth: usize,
+}
+
+impl TargetedFollower {
+    pub async fn run(&amp;self, mut shutdown: tokio::sync::watch::Receiver&lt;bool&gt;) {
+        let (block_tx, mut block_rx) = tokio::sync::mpsc::channel::&lt;u64&gt;(32);
+
+        // Ingestion task: subscribe to new block headers.
+        let upstream = self.upstream.clone();
+        let ws_url = self.config.ws_url.clone();
+        tokio::spawn(async move {
+            Self::block_ingestion_loop(upstream, ws_url, block_tx).await;
+        });
+
+        loop {
+            tokio::select! {
+                Some(block_num) = block_rx.recv() =&gt; {
+                    // Drain to latest (skip intermediate blocks).
+                    let mut latest = block_num;
+                    while let Ok(newer) = block_rx.try_recv() {
+                        latest = newer;
+                    }
+
+                    if let Err(e) = self.process_block(latest).await {
+                        tracing::error!(
+                            block = latest, error = %e,
+                            "block processing failed"
+                        );
+                    }
+                }
+                _ = shutdown.changed() =&gt; {
+                    tracing::info!("targeted follower shutting down");
+                    break;
+                }
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Skipping intermediate blocks is intentional. If processing is slow, we drain to the newest header rather than queuing a backlog. The lazy-latest read path ensures state remains correct even if the follower falls behind.</p>
+<h3 id="block-processing"><a class="header" href="#block-processing">Block Processing</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn process_block(&amp;self, block_number: u64) -&gt; Result&lt;()&gt; {
+    let start = Instant::now();
+    let block = self.upstream.get_block_with_txs(block_number).await?;
+
+    let watch_list: HashSet&lt;Address&gt; = {
+        let state = self.state.read();
+        state.db.dirty.watch_list.keys().copied().collect()
+    };
+
+    if watch_list.is_empty() {
+        return Ok(());
+    }
+
+    let matched_txs = self.scan_block(&amp;block, &amp;watch_list).await?;
+    if matched_txs.is_empty() {
+        return Ok(());
+    }
+
+    let mut state = self.state.write();
+    for tx in &amp;matched_txs {
+        if start.elapsed() &gt; self.config.block_budget {
+            tracing::warn!(
+                block = block_number,
+                "block budget exceeded, skipping remaining txs"
+            );
+            break;
+        }
+        self.replay_mainnet_tx(&amp;mut state, tx, block_number).await?;
+    }
+
+    state.last_mainnet_block = block_number;
+    Ok(())
+}
+<span class="boring">}</span></code></pre>
+<h3 id="transaction-matching"><a class="header" href="#transaction-matching">Transaction Matching</a></h3>
+<p>The matching logic checks in order of cost:</p>
+<ol>
+<li><code>tx.to</code> (direct call) – free, covers ~70% of matches.</li>
+<li><code>tx.from</code> (sender) – free, covers impersonated accounts.</li>
+<li>EIP-2930 access list – free if present in the transaction.</li>
+<li>Receipt logs (for aggregator-routed transactions) – one RPC call.</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn tx_matches(
+    &amp;self,
+    tx: &amp;Transaction,
+    watch_list: &amp;HashSet&lt;Address&gt;,
+) -&gt; bool {
+    if let Some(to) = tx.to {
+        if watch_list.contains(&amp;to) { return true; }
+    }
+    if watch_list.contains(&amp;tx.from) { return true; }
+
+    if let Some(ref access_list) = tx.access_list {
+        for item in access_list.iter() {
+            if watch_list.contains(&amp;item.address) { return true; }
+        }
+    }
+
+    // For aggregator-routed transactions (1inch, Universal Router,
+    // Cowswap), tx.to is the router, not the pool. Catch via receipt logs.
+    if self.config.use_access_lists &amp;&amp; Self::is_likely_aggregator(tx) {
+        if let Ok(receipt) = self.upstream.get_receipt(tx.hash).await {
+            for log in &amp;receipt.logs {
+                if watch_list.contains(&amp;log.address) { return true; }
+            }
+        }
+    }
+
+    false
+}
+<span class="boring">}</span></code></pre>
+<p>The aggregator detection heuristic checks for known router addresses (Uniswap Universal Router, 1inch, Paraswap, Cowswap) and common function selectors (<code>execute()</code>, <code>swap()</code>, <code>multicall()</code>). This limits receipt fetches to ~5-10 per block instead of ~150.</p>
+<p>If the matcher misses a transaction, the consequence is benign: one replay is skipped, and the lazy-latest read path still provides live state for that contract.</p>
+<h3 id="replay-and-contagion"><a class="header" href="#replay-and-contagion">Replay and Contagion</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>async fn replay_mainnet_tx(
+    &amp;self,
+    state: &amp;mut MirageState,
+    tx: &amp;Transaction,
+    block_number: u64,
+) -&gt; Result&lt;()&gt; {
+    state.db.pinned_block = Some(block_number - 1);
+
+    let tx_env = TxEnv {
+        caller: tx.from,
+        transact_to: match tx.to {
+            Some(to) =&gt; to.into(),
+            None =&gt; revm::primitives::TxKind::Create,
+        },
+        data: tx.input.clone(),
+        value: tx.value,
+        gas_limit: tx.gas_limit,
+        ..Default::default()
+    };
+
+    let (result, diff) = execute_and_extract(state, tx_env)?;
+    state.db.unpin_block();
+
+    match result {
+        Ok(_) =&gt; {
+            for (address, account_diff) in &amp;diff.accounts {
+                state.db.dirty.apply_account_changes(
+                    *address, account_diff,
+                );
+            }
+
+            // Contagion: classify newly touched contracts.
+            if self.config.enable_contagion {
+                let classification = self.classifier.classify(
+                    &amp;diff, &amp;state.db.dirty, block_number,
+                );
+                for (addr, mut entry) in classification.new_watched {
+                    entry.source = WatchSource::Contagion {
+                        parent: tx.to.unwrap_or_default(),
+                    };
+                    state.db.dirty.watch_list.insert(addr, entry);
+                }
+                state.db.dirty.apply_classification(
+                    ClassificationResult {
+                        new_watched: Vec::new(),
+                        slot_overrides: classification.slot_overrides,
+                        read_only: classification.read_only,
+                    },
+                );
+            }
+
+            // Invalidate read cache for all touched addresses.
+            for address in diff.accounts.keys() {
+                state.db.read_cache.invalidate_address(address);
+            }
+
+            // Update replay count.
+            if let Some(to) = tx.to {
+                if let Some(entry) = state.db.dirty.watch_list.get_mut(&amp;to) {
+                    entry.replay_count += 1;
+                }
+            }
+        }
+        Err(_) =&gt; {
+            // Mainnet tx reverted locally. Expected when local state
+            // has diverged (e.g., the golem's liquidity changed the price
+            // enough that a swap's slippage tolerance was exceeded).
+        }
+    }
+
+    Ok(())
+}
+<span class="boring">}</span></code></pre>
+<h3 id="edge-cases"><a class="header" href="#edge-cases">Edge Cases</a></h3>
+<p><strong>Same-block ordering.</strong> Multiple transactions touching a watched contract in the same block are replayed in transaction order. This preserves correct sequencing (a large swap followed by a liquidation).</p>
+<p><strong>Composability depth.</strong> A Yearn vault calls Aave which calls Chainlink which calls… Contagion depth 2 catches the vault -&gt; lending pool -&gt; oracle chain without spiraling. Contracts beyond depth 2 read through to mainnet at <code>latest</code>.</p>
+<p><strong>Watch list at capacity.</strong> When <code>max_watched_contracts</code> (default 64) is reached, new contracts fall back to slot-only classification. The lazy-latest base layer still provides correct reads – the golem just does not get causal replay for overflow contracts. Graceful degradation, not failure.</p>
+<p><strong>Mainnet tx reverts locally.</strong> When a mainnet swap replays against modified pool state, it may revert because the golem’s liquidity changed the price enough that slippage tolerance was exceeded. This is correct: in a real parallel universe, that swap would also fail. The follower logs it and moves on.</p>
+<p><strong>Proxy contracts.</strong> When a transaction calls a proxy (USDC, for example), storage writes happen at the proxy’s address. The slot count heuristic counts slots at the address where storage was actually modified. Delegatecall does not change the classification logic.</p>
+<p><strong>Reorg handling.</strong> If the upstream chain reorgs, the follower may have already replayed transactions from the old block. The impact is usually negligible – most reorgs are 1 block deep. The read cache TTL ensures stale upstream data expires within one block interval.</p>
+<h3 id="divergence-detection"><a class="header" href="#divergence-detection">Divergence Detection</a></h3>
+<p>v2 narrows divergence detection to watched contracts only, since those are the only contracts where local state intentionally detaches from mainnet. After replaying a mainnet transaction, the follower compares the resulting state diff against what mainnet produced. A divergence fires when the local replay produces a different storage value for a watched slot. This is surfaced via <code>mirage_status</code> (<code>divergence_detected: true</code>) and via <code>mirage_subscribeEvents</code>.</p>
+<hr>
+<h2 id="historical-mode"><a class="header" href="#historical-mode">Historical Mode</a></h2>
+<p>Historical mode forks mirage at a past block and replays forward to a later block. This is how golems perform retrospective analysis: understanding why a position behaved as it did, reconstructing liquidation events, backtesting strategies over historical market conditions.</p>
+<p>Historical mode is the controlled return of v1’s full-replay behavior. In live mode, v2 reads state lazily at “latest” and only replays transactions touching the watch list. That model breaks for historical work: “latest” during execution is not the same as “latest” at block N. Historical mode solves this by pinning all upstream reads to <code>--from-block</code>, disabling TargetedFollower, and using replay sub-modes to walk forward through the block range.</p>
+<p>Two research-driven extensions make historical mode more than a replay engine. Reth Execution Extensions provide zero-copy access to historical execution data when running alongside a Reth node, eliminating RPC overhead. Shadow execution replays historical blocks with modified contract bytecode, enabling counterfactual analysis of protocol changes and strategy variations against real market data.</p>
+<h3 id="invocation"><a class="header" href="#invocation">Invocation</a></h3>
+<pre><code>mirage-rs \
+  --mode historical \
+  --from-block 19499990 \
+  --to-block 19500010 \
+  --replay-mode hybrid \
+  --track-addresses 0x...golem,0x...pool \
+  --checkpoint-every 100 \
+  --output-dir ./replay-output \
+  --rpc-url https://mainnet.infura.io/v3/${API_KEY}
+</code></pre>
+<h3 id="cli-flags"><a class="header" href="#cli-flags">CLI Flags</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Flag</th><th>Default</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>--mode historical</code></td><td>required</td><td>Activates historical mode</td></tr>
+<tr><td><code>--from-block N</code></td><td>required</td><td>Block to fork at (all upstream reads pin here)</td></tr>
+<tr><td><code>--to-block M</code></td><td><code>latest</code></td><td>Block to replay up to (inclusive)</td></tr>
+<tr><td><code>--replay-mode</code></td><td><code>hybrid</code></td><td><code>replay</code>, <code>stateDiff</code>, or <code>hybrid</code></td></tr>
+<tr><td><code>--track-addresses</code></td><td>none</td><td>Comma-separated addresses for PnL attribution</td></tr>
+<tr><td><code>--checkpoint-every K</code></td><td><code>0</code> (disabled)</td><td>Save replay state to disk every K blocks</td></tr>
+<tr><td><code>--output-dir</code></td><td>none</td><td>Write PnL CSV and event log here</td></tr>
+<tr><td><code>--max-parallel-fetch</code></td><td><code>4</code></td><td>Blocks to prefetch in parallel</td></tr>
+<tr><td><code>--shadow-bytecode</code></td><td>none</td><td>Path to modified bytecode for shadow execution</td></tr>
+<tr><td><code>--exex-source</code></td><td>none</td><td>Reth ExEx socket path for direct memory access</td></tr>
+<tr><td><code>--resume-from</code></td><td>none</td><td>Resume replay from a checkpoint file</td></tr>
+<tr><td><code>--quiet</code></td><td><code>false</code></td><td>Suppress progress output</td></tr>
+<tr><td><code>--json-progress</code></td><td><code>false</code></td><td>JSON lines on stderr instead of progress bar</td></tr>
+</tbody>
+</table>
+</div>
+<p>The JSON-RPC server remains available during historical replay. Golems can submit <code>eth_call</code> and <code>eth_sendTransaction</code> against the replayed state at any point.</p>
+<h3 id="the-latest-problem"><a class="header" href="#the-latest-problem">The “latest” Problem</a></h3>
+<p>In live mode, HybridDB resolves <code>pinned_block = None</code> as <code>BlockTag::Latest</code>. In historical mode, this is wrong – fetching state at “latest” from mainnet gets the current value, not its value at block 19499990.</p>
+<p>Historical mode resolves this by setting <code>pinned_block = from_block</code> for all upstream reads from startup. The <code>resolve_block()</code> method returns <code>BlockTag::Number(from_block)</code> instead of <code>BlockTag::Latest</code>. This is never relaxed during a historical session.</p>
+<p>Key invariant: no upstream read ever fetches state newer than <code>from_block</code>. If the upstream node does not have archive data for that block, mirage fails at startup with a clear error.</p>
+<h3 id="replay-sub-modes"><a class="header" href="#replay-sub-modes">Replay Sub-Modes</a></h3>
+<p><strong><code>replay</code> (accurate):</strong> Re-executes every transaction in every block through the local EVM. Accurate gas accounting, full event emission, correct revert reasons. Slow: ~1 block/second on a typical server. When Block-STM is available, parallel execution within each block yields ~3-4x speedup on a 4-core machine. Use when: per-transaction event fidelity matters, or the position depends on event ordering within a block.</p>
+<p><strong><code>stateDiff</code> (fast-forward):</strong> Uses <code>debug_traceBlockByNumber</code> with <code>prestateTracer</code> to fetch state changes without re-executing transactions locally. ~10x faster than replay. No per-transaction events. Gas accounting unavailable (transactions were not executed locally). Requires an archive node with <code>debug_traceBlockByNumber</code> support.</p>
+<p>How it works:</p>
+<ol>
+<li>Fetch <code>debug_traceBlockByNumber(N, {tracer: "prestateTracer"})</code> from upstream.</li>
+<li>Extract the state diff: every account and storage slot that changed.</li>
+<li>Apply those diffs directly to HybridDB’s DirtyStore.</li>
+<li>Advance the local block counter.</li>
+</ol>
+<p>Use when: fast-forwarding through many blocks and only caring about final state at specific checkpoints.</p>
+<p><strong><code>hybrid</code> (default, recommended):</strong> Fast-forward most blocks via StateDiff. Switch to full Replay for blocks where <code>--track-addresses</code> have active transactions.</p>
+<p>Detection logic:</p>
+<ol>
+<li>Fetch block header. Scan transaction <code>to</code> and <code>accessList</code> fields.</li>
+<li>If any tracked address appears in the block’s transaction targets or access lists, mark the block for full Replay.</li>
+<li>All other blocks: StateDiff fast-forward.</li>
+</ol>
+<p>Accurate events and gas accounting for blocks that matter (where the position changed) without paying full replay cost for the rest. On a typical historical range, blocks needing full replay are rare (&lt; 5%), so the pipeline is almost always bound by StateDiff fetch latency rather than EVM execution.</p>
+<h3 id="reth-execution-extensions"><a class="header" href="#reth-execution-extensions">Reth Execution Extensions</a></h3>
+<p>For golems running alongside a Reth full node, Execution Extensions (ExEx) provide direct in-memory access to historical execution data. ExExes are post-execution hooks that run inside the Reth binary, sharing its memory and receiving a stream of <code>ExExNotification</code> variants on each block.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use tokio::sync::mpsc;
+
+pub enum ExExNotification {
+    ChainCommitted {
+        blocks: Vec&lt;BlockWithSenders&gt;,
+        state_diffs: Vec&lt;StateDiff&gt;,
+        receipts: Vec&lt;Vec&lt;Receipt&gt;&gt;,
+    },
+    ChainReverted {
+        blocks: Vec&lt;BlockWithSenders&gt;,
+    },
+    Reorged {
+        reverted: Vec&lt;BlockWithSenders&gt;,
+        committed: Vec&lt;BlockWithSenders&gt;,
+        state_diffs: Vec&lt;StateDiff&gt;,
+        receipts: Vec&lt;Vec&lt;Receipt&gt;&gt;,
+    },
+}
+
+pub struct ExExHistoricalSource {
+    rx: mpsc::Receiver&lt;ExExNotification&gt;,
+    cached_diffs: HashMap&lt;u64, StateDiff&gt;,
+    cached_receipts: HashMap&lt;u64, Vec&lt;Receipt&gt;&gt;,
+    range: (u64, u64),
+}
+
+impl ExExHistoricalSource {
+    /// Request state diffs for a historical range.
+    ///
+    /// If the Reth node has already executed these blocks (it has,
+    /// because ExEx runs post-execution), the diffs are available
+    /// in memory without any disk or network access.
+    pub async fn replay_range(
+        &amp;mut self,
+        from_block: u64,
+        to_block: u64,
+    ) -&gt; Result&lt;Vec&lt;(u64, StateDiff)&gt;&gt; {
+        let mut results = Vec::new();
+
+        for block_num in from_block..=to_block {
+            if let Some(diff) = self.cached_diffs.get(&amp;block_num) {
+                results.push((block_num, diff.clone()));
+                continue;
+            }
+
+            // Wait for the notification if the block hasn't
+            // been processed yet (live replay catching up).
+            while let Some(notification) = self.rx.recv().await {
+                match notification {
+                    ExExNotification::ChainCommitted {
+                        blocks,
+                        state_diffs,
+                        receipts,
+                    } =&gt; {
+                        for (i, block) in blocks.iter().enumerate() {
+                            let num = block.number;
+                            self.cached_diffs.insert(
+                                num,
+                                state_diffs[i].clone(),
+                            );
+                            self.cached_receipts.insert(
+                                num,
+                                receipts[i].clone(),
+                            );
+
+                            if num == block_num {
+                                results.push((
+                                    num,
+                                    state_diffs[i].clone(),
+                                ));
+                            }
+                        }
+                        if results.last().map(|(n, _)| *n) == Some(block_num) {
+                            break;
+                        }
+                    }
+                    ExExNotification::ChainReverted { blocks } =&gt; {
+                        // Remove reverted blocks from cache.
+                        for block in &amp;blocks {
+                            self.cached_diffs.remove(&amp;block.number);
+                            self.cached_receipts.remove(&amp;block.number);
+                        }
+                    }
+                    ExExNotification::Reorged {
+                        reverted,
+                        committed,
+                        state_diffs,
+                        receipts,
+                    } =&gt; {
+                        for block in &amp;reverted {
+                            self.cached_diffs.remove(&amp;block.number);
+                        }
+                        for (i, block) in committed.iter().enumerate() {
+                            let num = block.number;
+                            self.cached_diffs.insert(
+                                num,
+                                state_diffs[i].clone(),
+                            );
+                            self.cached_receipts.insert(
+                                num,
+                                receipts[i].clone(),
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        Ok(results)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>When <code>--exex-source</code> is specified, mirage connects to the Reth ExEx socket and uses <code>ExExHistoricalSource</code> instead of RPC-based state fetching. Benefits:</p>
+<ul>
+<li>Zero RPC overhead for state diffs (shared memory access).</li>
+<li>Receipts and logs available without separate <code>eth_getBlockReceipts</code> calls.</li>
+<li>Reorg awareness built in – if a reorg happens during replay, the ExEx notification includes both the reverted and new chain segments.</li>
+<li>State diffs are already computed by Reth’s execution engine, so there is no redundant work.</li>
+</ul>
+<h3 id="shadow-execution"><a class="header" href="#shadow-execution">Shadow Execution</a></h3>
+<p>Shadow execution replays historical blocks with modified contract bytecode. This answers “what would have happened if the pool used a different fee tier?” or “how would my custom router have performed against last week’s swap volume?”</p>
+<p>The concept comes from shadow-reth (Shadow.xyz), which implements shadow execution as a Reth ExEx. mirage-rs brings the same capability to the scenario runner without requiring a full Reth node.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ShadowConfig {
+    /// Map from contract address to replacement bytecode.
+    pub bytecode_overrides: HashMap&lt;Address, Bytes&gt;,
+    /// Whether to emit "shadow events" from modified bytecode.
+    pub emit_shadow_events: bool,
+    /// Output path for the shadow diff report.
+    pub diff_output: Option&lt;PathBuf&gt;,
+}
+
+pub struct ShadowBlockDiff {
+    pub block_number: u64,
+    pub original_diff: StateDiff,
+    pub shadow_diff: StateDiff,
+    pub divergent_slots: Vec&lt;(Address, U256, U256, U256)&gt;,
+    pub shadow_events: Vec&lt;Log&gt;,
+    pub pnl_delta: HashMap&lt;Address, i128&gt;,
+}
+
+pub struct ShadowResult {
+    pub from_block: u64,
+    pub to_block: u64,
+    pub block_diffs: Vec&lt;ShadowBlockDiff&gt;,
+    pub total_pnl_delta: HashMap&lt;Address, i128&gt;,
+    pub first_divergence_block: Option&lt;u64&gt;,
+    pub identical_blocks: usize,
+}
+<span class="boring">}</span></code></pre>
+<p>Shadow execution workflow:</p>
+<ol>
+<li>The golem provides modified bytecode (a new router, a pool with different fee logic, a lending pool with an adjusted liquidation threshold).</li>
+<li>Historical mode starts normally, pinning reads to <code>--from-block</code>.</li>
+<li>For each block, mirage runs the block twice: once with original bytecode and once with the shadow bytecode applied via <code>mirage_setCode</code>.</li>
+<li>State diffs from both runs are compared. Divergent slots, shadow-only events, and PnL deltas are recorded.</li>
+<li>The golem receives a structured report: where the modified contract behaved differently, how much PnL it would have gained or lost, and at which block the divergence first appeared.</li>
+</ol>
+<p>This closes the sim-to-real gap for protocol development. A golem testing a new LP strategy can shadow-execute it against a week of real mainnet activity and see exactly how it would have performed, including interactions with MEV bots, oracle updates, and other protocol participants that a synthetic simulation cannot reproduce.</p>
+<h3 id="pnl-attribution"><a class="header" href="#pnl-attribution">PnL Attribution</a></h3>
+<p>When <code>--track-addresses</code> and <code>--output-dir</code> are specified, mirage writes a PnL report as it replays. At each block boundary, mirage snapshots token balances and position state of tracked addresses. The balance delta from the previous snapshot is the PnL for that block, attributed to one of three sources:</p>
+<ol>
+<li><strong>Position changes (own transactions).</strong> Transactions submitted by tracked addresses.</li>
+<li><strong>Market movement (replayed mainnet transactions).</strong> Transactions replayed by the follower that modified watched contract state.</li>
+<li><strong>Accrued fees (passive).</strong> Balance changes not explained by explicit transactions.</li>
+</ol>
+<p>Attribution is approximate. It uses a rule-based classifier, not causal inference: own-address txs map to position changes; watched-contract txs involving tracked addresses map to market movement; the residual maps to accrued fees.</p>
+<p><strong>Output files:</strong></p>
+<p><code>pnl.csv</code>:</p>
+<pre><code class="language-csv">block,timestamp,pnl_usd,pnl_weth,pnl_usdc,attribution
+19499990,1700000000,0.00,0,0,baseline
+19499991,1700000012,+0.04,0,+40000,accrued_fees
+19499995,1700000060,-2.14,-0.001,0,market_movement
+19500000,1700000120,+12.45,0,+12450000,own_tx
+</code></pre>
+<p><code>events.jsonl</code>:</p>
+<pre><code class="language-json">{"block": 19499991, "tx": "0x...", "contract": "0x...pool", "event": "Swap", "decoded": {...}}
+{"block": 19499995, "tx": "0x...", "contract": "0x...oracle", "event": "AnswerUpdated", "decoded": {...}}
+</code></pre>
+<p><code>shadow_diff.jsonl</code> (when <code>--shadow-bytecode</code> is set):</p>
+<pre><code class="language-json">{"block": 19499991, "address": "0x...pool", "slot": "0x...fee_slot", "original": "0x...500", "shadow": "0x...3000", "pnl_delta_usd": 0.12}
+{"block": 19499995, "address": "0x...pool", "slot": "0x...liquidity", "original": "0x...abc", "shadow": "0x...def", "pnl_delta_usd": -0.03}
+</code></pre>
+<h3 id="progress-reporting"><a class="header" href="#progress-reporting">Progress Reporting</a></h3>
+<p>Status file at <code>--output-dir/status.json</code>, updated every 10 blocks or 5 seconds:</p>
+<pre><code class="language-json">{
+  "mode": "historical",
+  "current_block": 19499995,
+  "from_block": 19499990,
+  "to_block": 19500010,
+  "blocks_completed": 5,
+  "blocks_total": 20,
+  "pct_complete": 25.0,
+  "blocks_per_second": 3.2,
+  "estimated_remaining_seconds": 4.7,
+  "replay_blocks": 2,
+  "stateDiff_blocks": 3,
+  "last_checkpoint": null
+}
+</code></pre>
+<p>Progress bar on stderr:</p>
+<pre><code>[========--------] 52% block 19499995/19500010  3.2 blk/s  ETA 4.7s
+</code></pre>
+<p><code>--quiet</code> suppresses progress. <code>--json-progress</code> replaces the bar with JSON lines on stderr. They are mutually exclusive.</p>
+<p>Ctrl+C triggers a clean interrupt: mirage writes a final checkpoint (if <code>--checkpoint-every</code> is set), flushes output files, and exits with code 130.</p>
+<h3 id="retrospective-use-cases"><a class="header" href="#retrospective-use-cases">Retrospective Use Cases</a></h3>
+<p><strong>“Why was I liquidated?”</strong></p>
+<pre><code>mirage-rs --mode historical \
+  --from-block 19499990 \
+  --to-block 19500010 \
+  --replay-mode hybrid \
+  --track-addresses 0x...golem,0x...aave_pool,0x...price_oracle \
+  --output-dir ./liquidation-analysis
+</code></pre>
+<p>Read <code>events.jsonl</code> to find: which block had the oracle update that triggered health factor degradation, which block crossed 1.0, which block had the liquidation call and who sent it.</p>
+<p><strong>“How did this LP perform over the last week?”</strong></p>
+<pre><code>mirage-rs --mode historical \
+  --from-block 19450000 \
+  --to-block 19500000 \
+  --replay-mode hybrid \
+  --track-addresses 0x...golem,0x...pool \
+  --checkpoint-every 1000 \
+  --output-dir ./weekly-pnl
+</code></pre>
+<p>StateDiff fast-forwards through most of the ~50,000 blocks. Full replay triggers only where the golem or pool had active transactions. Result: PnL curve over the week, fee accrual timeline, impermanent loss calculation.</p>
+<p><strong>“Would my custom router have beaten the Universal Router?”</strong></p>
+<pre><code>mirage-rs --mode historical \
+  --from-block 19400000 \
+  --to-block 19500000 \
+  --replay-mode replay \
+  --shadow-bytecode ./custom_router.bin:0x...universal_router \
+  --track-addresses 0x...golem \
+  --output-dir ./router-comparison
+</code></pre>
+<p>Shadow execution replays every swap that went through the Universal Router, but with the golem’s custom bytecode in place. The <code>shadow_diff.jsonl</code> shows per-swap PnL differences. If the custom router consistently produces better fills, the golem has evidence to deploy it.</p>
+<h3 id="range-replay-efficiency"><a class="header" href="#range-replay-efficiency">Range Replay Efficiency</a></h3>
+<p><strong>Parallel block fetching:</strong> While replaying block N, mirage prefetches block N+1’s data in a background task. On high-latency RPC connections, this roughly doubles throughput. The prefetch queue holds at most <code>--max-parallel-fetch</code> blocks (default 4).</p>
+<p><strong>StateDiff bulk application:</strong> When consecutive blocks are all StateDiff (no tracked addresses active), mirage batches them: fetch diffs for blocks N through N+K in parallel, apply all in sequence. Batch size is <code>--max-parallel-fetch</code>.</p>
+<p><strong>Block-STM within replay blocks:</strong> For blocks that require full replay and contain many transactions, Block-STM (Gelashvili et al., 2023) executes transactions in parallel with optimistic concurrency. The multi-version store tracks per-slot versions; conflicting transactions re-execute sequentially. On a 4-core machine, this reduces per-block replay time by roughly 3x for blocks with low conflict rates.</p>
+<p><strong>Checkpoints:</strong> When <code>--checkpoint-every K</code> is set, mirage serializes the full DirtyStore to disk every K blocks. Written to <code>--output-dir/checkpoints/block-{N}.bin</code>.</p>
+<p>On crash or interruption, resume from the most recent checkpoint:</p>
+<pre><code>mirage-rs --mode historical \
+  --from-block 19499990 \
+  --to-block 19500010 \
+  --resume-from ./replay-output/checkpoints/block-19500000.bin
+</code></pre>
+<hr>
+<h2 id="scenario-runner"><a class="header" href="#scenario-runner">Scenario Runner</a></h2>
+<p>The scenario runner is a higher-level abstraction over mirage’s snapshot/revert primitives. A golem defines N parameter variations, runs each against a common baseline state, and receives a structured comparison table. The runner handles snapshot management, isolation, timeout enforcement, and result aggregation.</p>
+<p>Beyond fixed scenario sets, the runner integrates three research-driven parameter exploration strategies: Latin Hypercube Sampling for space-filling parameter sweeps, Bayesian optimization for iterative refinement toward optima, and Counterfactual Regret Minimization for game-theoretic exit timing analysis. These transform the scenario runner from a brute-force comparator into an intelligent search engine over the simulation space.</p>
+<h3 id="execution-models"><a class="header" href="#execution-models">Execution Models</a></h3>
+<p><strong>Sequential (low-spec VMs):</strong> All scenarios run in the same mirage process, one at a time:</p>
+<pre><code>baseline snapshot -&gt; run scenario 1 -&gt; collect -&gt; revert
+                  -&gt; run scenario 2 -&gt; collect -&gt; revert
+                  -&gt; run scenario 3 -&gt; collect -&gt; revert
+                  -&gt; aggregate -&gt; return results
+</code></pre>
+<p>Memory cost: approximately one mirage instance. The snapshot captures baseline state; each scenario modifies it, then reverts. Peak memory is not additive across scenarios. Recommended for 512MB-1GB VMs, scenarios under 30s wall time each, up to ~8 scenarios.</p>
+<p><strong>Parallel (higher-spec VMs):</strong> A coordinator spawns N mirage child processes, each pre-forked at baseline using CoW state layers. Scenarios run concurrently, results collected over JSON-RPC:</p>
+<pre><code>baseline state (Arc-shared)
+    +-- CoW overlay 1 -&gt; scenario 1
+    +-- CoW overlay 2 -&gt; scenario 2
+    +-- CoW overlay 3 -&gt; scenario 3
+    +-- coordinator -&gt; collect all -&gt; aggregate -&gt; return
+</code></pre>
+<p>With CoW overlays, per-scenario memory drops from a full state copy (~3.2 MB for 50,000 slots) to the dirty overlay only (~12.8 KB for a typical 200-slot modification). At 8 parallel scenarios: 25 MB becomes 100 KB. The coordinator is a thin wrapper.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>VM RAM</th><th>Max parallel scenarios</th></tr>
+</thead>
+<tbody>
+<tr><td>1 GB</td><td>2</td></tr>
+<tr><td>2 GB</td><td>4</td></tr>
+<tr><td>4 GB</td><td>8</td></tr>
+<tr><td>8 GB</td><td>16</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="rpc-protocol"><a class="header" href="#rpc-protocol">RPC Protocol</a></h3>
+<h4 id="mirage_beginscenarioset"><a class="header" href="#mirage_beginscenarioset"><code>mirage_beginScenarioSet</code></a></h4>
+<p>Create a new scenario set. Establishes the baseline state that all scenarios branch from.</p>
+<pre><code class="language-json">{ "baseline_state": "latest" }
+</code></pre>
+<p><code>baseline_state</code> can be <code>"latest"</code> (current mirage state, most common) or a snapshot ID from a previous <code>evm_snapshot</code> call. No state is copied yet – the actual baseline snapshot is taken when <code>mirage_runScenarioSet</code> is called, so all scenarios start from the same state even if the caller issues transactions between begin and run.</p>
+<p>Returns: <code>{ "set_id": "abc123" }</code></p>
+<h4 id="mirage_definescenario"><a class="header" href="#mirage_definescenario"><code>mirage_defineScenario</code></a></h4>
+<p>Add a scenario to an existing set.</p>
+<pre><code class="language-json">{
+  "set_id": "abc123",
+  "name": "entry_5eth",
+  "transactions": [
+    {
+      "from": "0x...",
+      "to": "0x...",
+      "data": "0x...",
+      "value": "0x...",
+      "gas": "0x7a120"
+    }
+  ],
+  "track_addresses": ["0x...weth", "0x...usdc", "0x...pool"],
+  "max_gas": 3000000,
+  "timeout_seconds": 30
+}
+</code></pre>
+<p><code>transactions</code> is an ordered sequence. They run in order, each against the state produced by the previous.</p>
+<p><code>track_addresses</code> are addresses whose balances and storage appear in results. Defaults to all addresses touched by the scenario’s transactions.</p>
+<p><code>max_gas</code> is a per-scenario cumulative gas budget. Default: 10,000,000. The scenario aborts if exceeded.</p>
+<p><code>timeout_seconds</code> is wall-clock timeout. Default: 30s. Enforced by OS-level signals in parallel mode, deadline checks between transactions in sequential mode.</p>
+<p>Returns: <code>{ "scenario_id": "abc123-0" }</code></p>
+<h4 id="mirage_runscenarioset"><a class="header" href="#mirage_runscenarioset"><code>mirage_runScenarioSet</code></a></h4>
+<p>Execute all scenarios in a set.</p>
+<pre><code class="language-json">{ "set_id": "abc123", "mode": "sequential" }
+</code></pre>
+<p><code>mode</code> is <code>"sequential"</code> or <code>"parallel"</code>. Execution is async – poll <code>mirage_getScenarioResults</code> for completion.</p>
+<p>Returns: <code>{ "job_id": "def456" }</code></p>
+<h4 id="mirage_getscenarioresults"><a class="header" href="#mirage_getscenarioresults"><code>mirage_getScenarioResults</code></a></h4>
+<p>Poll for results.</p>
+<pre><code class="language-json">{ "job_id": "def456" }
+</code></pre>
+<p>Returns:</p>
+<pre><code class="language-json">{
+  "job_id": "def456",
+  "status": "complete",
+  "set_id": "abc123",
+  "scenarios": [
+    {
+      "scenario_id": "abc123-0",
+      "name": "entry_1eth",
+      "status": "success",
+      "gas_used": 312450,
+      "wall_time_ms": 145,
+      "peak_memory_bytes": 52428800,
+      "final_balances": {
+        "0x...weth": "0",
+        "0x...usdc": "2450000000"
+      },
+      "position_state": {
+        "0x...pool": {
+          "tick": -74321,
+          "in_range": true,
+          "liquidity": "..."
+        }
+      },
+      "logs": [
+        {
+          "address": "0x...pool",
+          "topics": ["0x...Swap"],
+          "data": "0x..."
+        }
+      ],
+      "revert_reason": null
+    }
+  ],
+  "total_wall_time_ms": 412,
+  "peak_memory_bytes": 52428800
+}
+</code></pre>
+<p>Job status: <code>"running"</code> | <code>"complete"</code> | <code>"failed"</code>. When running, <code>scenarios</code> contains partial results for completed scenarios.</p>
+<p>Scenario status: <code>"success"</code> | <code>"reverted"</code> | <code>"timeout"</code> | <code>"gas_exceeded"</code> | <code>"error"</code>. Reverted scenarios are not failures – the EVM reverted the last transaction. The runner records the revert reason and continues.</p>
+<h4 id="mirage_comparescenarios"><a class="header" href="#mirage_comparescenarios"><code>mirage_compareScenarios</code></a></h4>
+<p>Produce a ranked comparison table from completed results.</p>
+<pre><code class="language-json">{ "job_id": "def456", "metric": "pnl" }
+</code></pre>
+<p><strong>Metric: pnl</strong> – rank by net balance change in tracked tokens.</p>
+<pre><code class="language-json">{
+  "metric": "pnl",
+  "baseline_balances": {
+    "0x...weth": "1000000000000000000",
+    "0x...usdc": "0"
+  },
+  "ranking": [
+    {
+      "rank": 1,
+      "scenario": "entry_5eth",
+      "pnl_usd": 12.45,
+      "pnl_token_deltas": {
+        "0x...weth": "-5000000000000000000",
+        "0x...usdc": "12450000000"
+      }
+    }
+  ]
+}
+</code></pre>
+<p><strong>Metric: gas</strong> – rank by total gas used (lower is better).</p>
+<p><strong>Metric: state_diff</strong> – per-slot storage changes across scenarios (no ranking, diff view).</p>
+<pre><code class="language-json">{
+  "metric": "state_diff",
+  "diffs": [
+    {
+      "address": "0x...pool",
+      "slot": "0x...sqrtPriceX96_slot",
+      "values": {
+        "baseline": "0x...",
+        "entry_1eth": "0x...",
+        "entry_5eth": "0x...",
+        "entry_10eth": "0x..."
+      }
+    }
+  ]
+}
+</code></pre>
+<h3 id="result-structure"><a class="header" href="#result-structure">Result Structure</a></h3>
+<pre><code>ScenarioSetResult
++-- job_id: string
++-- status: "running" | "complete" | "failed"
++-- set_id: string
++-- scenarios: ScenarioResult[]
+|   +-- scenario_id: string
+|   +-- name: string
+|   +-- status: "success" | "reverted" | "timeout" | "gas_exceeded" | "error"
+|   +-- gas_used: u64
+|   +-- wall_time_ms: u64
+|   +-- peak_memory_bytes: u64
+|   +-- final_balances: { address -&gt; amount }
+|   +-- position_state: { address -&gt; protocol-specific state }
+|   +-- logs: Log[]
+|   +-- revert_reason: string | null
++-- total_wall_time_ms: u64
++-- peak_memory_bytes: u64 (max across all scenarios)
+</code></pre>
+<h3 id="per-scenario-limits"><a class="header" href="#per-scenario-limits">Per-Scenario Limits</a></h3>
+<p>Each scenario has:</p>
+<ul>
+<li><code>max_gas</code>: cumulative gas budget across all transactions. Default 10,000,000. Prevents runaway loops.</li>
+<li><code>timeout_seconds</code>: wall-clock timeout. Default 30s. Enforced by SIGTERM in parallel mode, deadline check between transactions in sequential mode.</li>
+</ul>
+<p>A scenario that hits either limit gets status <code>"gas_exceeded"</code> or <code>"timeout"</code>. Other scenarios continue unaffected.</p>
+<p>For LHS and Bayesian optimization modes, the per-scenario limits apply to each generated scenario individually. The total evaluation budget is capped by <code>max_evaluations</code> in the optimizer config.</p>
+<h3 id="latin-hypercube-sampling-for-parameter-exploration"><a class="header" href="#latin-hypercube-sampling-for-parameter-exploration">Latin Hypercube Sampling for Parameter Exploration</a></h3>
+<p>When a golem needs to explore a continuous parameter space (entry sizes, slippage tolerances, gas prices), fixed grids waste samples by clustering. Latin Hypercube Sampling (McKay, Beckman &amp; Conover, 1979) divides each input dimension into N equal-probability intervals and draws exactly one sample per interval per dimension, producing a space-filling design that converges roughly 50% faster than pure Monte Carlo.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use rand::Rng;
+
+pub enum ParameterDimension {
+    /// Log-normal distribution for trade sizes, token amounts.
+    LogNormal { mu: f64, sigma: f64, min: f64, max: f64 },
+    /// Uniform distribution for slippage tolerances, fee tiers.
+    Uniform { min: f64, max: f64 },
+    /// Beta distribution for probability parameters.
+    Beta { alpha: f64, beta: f64, scale: f64 },
+    /// Discrete set of values (pool fee tiers, protocol addresses).
+    Discrete(Vec&lt;f64&gt;),
+}
+
+pub struct ParameterSpace {
+    pub dimensions: Vec&lt;(String, ParameterDimension)&gt;,
+}
+
+/// Generate an N x M Latin Hypercube sample matrix.
+/// Each column corresponds to a dimension. Each row is a scenario's
+/// parameter vector. Within each column, the N samples fall in
+/// distinct strata.
+pub fn latin_hypercube(
+    space: &amp;ParameterSpace,
+    n_samples: usize,
+    rng: &amp;mut impl Rng,
+) -&gt; Vec&lt;Vec&lt;f64&gt;&gt; {
+    let m = space.dimensions.len();
+    let mut matrix = vec![vec![0.0f64; m]; n_samples];
+
+    for (col, (_name, dim)) in space.dimensions.iter().enumerate() {
+        let mut strata: Vec&lt;f64&gt; = (0..n_samples)
+            .map(|i| {
+                let low = i as f64 / n_samples as f64;
+                let high = (i + 1) as f64 / n_samples as f64;
+                rng.gen_range(low..high)
+            })
+            .collect();
+
+        // Shuffle to break correlation between dimensions.
+        // The Iman-Conover method (1982) can preserve desired
+        // inter-variable correlations here if needed.
+        shuffle(&amp;mut strata, rng);
+
+        // Map each uniform [0,1] sample through the dimension's
+        // inverse CDF (quantile function).
+        for (row, &amp;u) in strata.iter().enumerate() {
+            matrix[row][col] = dim.quantile(u);
+        }
+    }
+
+    matrix
+}
+
+fn shuffle(v: &amp;mut [f64], rng: &amp;mut impl Rng) {
+    for i in (1..v.len()).rev() {
+        let j = rng.gen_range(0..=i);
+        v.swap(i, j);
+    }
+}
+
+impl ParameterDimension {
+    /// Inverse CDF: map a uniform [0,1] sample to the dimension's
+    /// distribution. This is the standard quantile transform.
+    fn quantile(&amp;self, u: f64) -&gt; f64 {
+        match self {
+            Self::LogNormal { mu, sigma, min, max } =&gt; {
+                // Approximate inverse normal CDF (Abramowitz &amp; Stegun).
+                let z = inv_normal_cdf(u);
+                let raw = (mu + sigma * z).exp();
+                raw.clamp(*min, *max)
+            }
+            Self::Uniform { min, max } =&gt; min + u * (max - min),
+            Self::Beta { alpha, beta, scale } =&gt; {
+                // Use regularized incomplete beta function inverse.
+                inv_beta_cdf(u, *alpha, *beta) * scale
+            }
+            Self::Discrete(values) =&gt; {
+                let idx = (u * values.len() as f64).floor() as usize;
+                values[idx.min(values.len() - 1)]
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The golem workflow:</p>
+<ol>
+<li>Define parameter distributions (log-normal for trade size, beta for slippage fraction, uniform for gas price).</li>
+<li>Call <code>mirage_beginScenarioSet</code> with <code>"mode": "lhs"</code> and <code>"n_samples": 32</code>.</li>
+<li>The runner generates an LHS sample matrix, creates 32 scenarios with the sampled parameters, and executes them.</li>
+<li>Results include the parameter vector for each scenario alongside PnL, gas, and state diffs.</li>
+<li>Post-processing: empirical CDF of PnL outcomes, Value-at-Risk (VaR) at the 5th percentile, Conditional VaR (expected shortfall), and sensitivity analysis (partial rank correlation between each parameter and PnL).</li>
+</ol>
+<p>For 32 LHS samples across 4 dimensions, the space-filling property means the golem has at least one sample in every region of the parameter space. A naive grid with the same coverage (3 levels per dimension) would need 81 scenarios and still miss the gaps between grid points.</p>
+<h3 id="bayesian-optimization-for-iterative-refinement"><a class="header" href="#bayesian-optimization-for-iterative-refinement">Bayesian Optimization for Iterative Refinement</a></h3>
+<p>LHS explores broadly. Bayesian optimization (Snoek, Larochelle &amp; Adams, 2012) narrows in on optima by building a Gaussian Process surrogate model and selecting the next evaluation point where improvement is most likely.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::VecDeque;
+
+pub struct GaussianProcess {
+    x_observed: Vec&lt;Vec&lt;f64&gt;&gt;,
+    y_observed: Vec&lt;f64&gt;,
+    length_scales: Vec&lt;f64&gt;,
+    noise_var: f64,
+    cholesky_cache: Option&lt;Vec&lt;Vec&lt;f64&gt;&gt;&gt;,
+}
+
+pub enum AcquisitionFunction {
+    /// Expected Improvement: exploit near the current best.
+    ExpectedImprovement,
+    /// Upper Confidence Bound: balance explore vs exploit.
+    UpperConfidenceBound { kappa: f64 },
+    /// Thompson Sampling: natural explore/exploit balance.
+    ThompsonSampling,
+}
+
+pub struct BayesianOptimizer {
+    gp: GaussianProcess,
+    acquisition: AcquisitionFunction,
+    space: ParameterSpace,
+    max_evaluations: usize,
+    /// Initial exploration via LHS before switching to GP-guided search.
+    initial_samples: usize,
+    history: VecDeque&lt;(Vec&lt;f64&gt;, f64)&gt;,
+}
+
+impl BayesianOptimizer {
+    /// Phase 1 (first initial_samples): LHS for broad prior.
+    /// Phase 2 (remaining): GP-guided search via acquisition function.
+    pub fn suggest_next(&amp;mut self) -&gt; Vec&lt;f64&gt; {
+        if self.gp.x_observed.len() &lt; self.initial_samples {
+            return self.next_lhs_point();
+        }
+        self.gp.fit();
+        match &amp;self.acquisition {
+            AcquisitionFunction::ExpectedImprovement =&gt; self.maximize_ei(),
+            AcquisitionFunction::UpperConfidenceBound { kappa } =&gt; {
+                self.maximize_ucb(*kappa)
+            }
+            AcquisitionFunction::ThompsonSampling =&gt; self.thompson_sample(),
+        }
+    }
+
+    pub fn record_observation(&amp;mut self, params: Vec&lt;f64&gt;, objective: f64) {
+        self.gp.x_observed.push(params.clone());
+        self.gp.y_observed.push(objective);
+        self.gp.cholesky_cache = None;
+        self.history.push_back((params, objective));
+    }
+}
+
+/// Expected Improvement acquisition function.
+///
+/// EI(x) = (mu(x) - f_best) * Phi(z) + sigma(x) * phi(z)
+/// where z = (mu(x) - f_best) / sigma(x)
+///
+/// High EI at points where either the predicted mean exceeds
+/// the current best (exploitation) or uncertainty is large
+/// (exploration). The balance is automatic.
+fn expected_improvement(
+    mu: f64,
+    sigma: f64,
+    f_best: f64,
+) -&gt; f64 {
+    if sigma &lt; 1e-12 {
+        return (mu - f_best).max(0.0);
+    }
+    let z = (mu - f_best) / sigma;
+    let phi = (-0.5 * z * z).exp() / (2.0 * std::f64::consts::PI).sqrt();
+    let big_phi = 0.5 * (1.0 + erf(z / std::f64::consts::SQRT_2));
+    (mu - f_best) * big_phi + sigma * phi
+}
+<span class="boring">}</span></code></pre>
+<p>The optimization loop runs as a sequence of scenario sets:</p>
+<ol>
+<li><strong>Initial exploration</strong> (8-16 LHS samples): build a broad prior over the parameter space.</li>
+<li><strong>GP-guided iteration</strong> (remaining budget): each round, the optimizer suggests 1-4 parameter vectors, the runner executes them as a scenario set, results feed back into the GP.</li>
+<li><strong>Convergence check</strong>: stop early if the best observed objective hasn’t improved in 3 consecutive rounds, or if the GP’s predicted improvement everywhere falls below a threshold.</li>
+<li><strong>Return</strong>: the full history of (parameters, objective) pairs, plus the GP’s predicted optimum.</li>
+</ol>
+<p>For a golem optimizing LP entry size, this typically converges in 20-30 total evaluations where a grid search would require 100+.</p>
+<h3 id="counterfactual-regret-minimization-for-exit-timing"><a class="header" href="#counterfactual-regret-minimization-for-exit-timing">Counterfactual Regret Minimization for Exit Timing</a></h3>
+<p>Position exit timing is a sequential decision problem: at each block, the golem can exit or hold. CFR (Zinkevich et al., 2007) decomposes overall regret into per-decision-point counterfactual regret and converges toward optimal timing policies.</p>
+<p>The scenario runner’s historical mode integration makes this practical: fork at the entry block, fast-forward via StateDiff to each candidate exit block, execute the counterfactual exit, record the PnL.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct CfrAnalyzer {
+    exit_blocks: Vec&lt;u64&gt;,
+    counterfactual_pnl: Vec&lt;f64&gt;,
+    actual_pnl: f64,
+    /// Exp3 weights for exit timing policies.
+    policy_weights: Vec&lt;f64&gt;,
+    /// Exp3 learning rate. Bounded by O(sqrt(K * T * ln(K))).
+    eta: f64,
+}
+
+impl CfrAnalyzer {
+    pub fn new(exit_blocks: Vec&lt;u64&gt;, actual_pnl: f64) -&gt; Self {
+        let k = exit_blocks.len();
+        let eta = ((k as f64).ln() / k as f64).sqrt();
+        Self {
+            policy_weights: vec![1.0 / k as f64; k],
+            exit_blocks,
+            counterfactual_pnl: Vec::new(),
+            actual_pnl,
+            eta,
+        }
+    }
+
+    pub fn record_exit_pnl(&amp;mut self, block: u64, pnl: f64) {
+        if let Some(idx) = self.exit_blocks.iter().position(|&amp;b| b == block) {
+            if self.counterfactual_pnl.len() &lt;= idx {
+                self.counterfactual_pnl.resize(idx + 1, 0.0);
+            }
+            self.counterfactual_pnl[idx] = pnl;
+        }
+    }
+
+    pub fn compute_regret(&amp;self) -&gt; CfrResult {
+        let best_pnl = self.counterfactual_pnl
+            .iter()
+            .cloned()
+            .fold(f64::NEG_INFINITY, f64::max);
+        let best_idx = self.counterfactual_pnl
+            .iter()
+            .position(|&amp;p| p == best_pnl)
+            .unwrap_or(0);
+
+        let per_exit_regret: Vec&lt;f64&gt; = self.counterfactual_pnl
+            .iter()
+            .map(|&amp;p| best_pnl - p)
+            .collect();
+
+        CfrResult {
+            best_exit_block: self.exit_blocks[best_idx],
+            best_pnl,
+            actual_pnl: self.actual_pnl,
+            total_regret: best_pnl - self.actual_pnl,
+            per_exit_regret,
+            policy_weights: self.policy_weights.clone(),
+        }
+    }
+
+    /// Update Exp3 policy weights based on observed counterfactual PnL.
+    ///
+    /// Exp3 (Auer et al., 2002) guarantees O(sqrt(KT ln K)) regret
+    /// over T rounds with K arms. The Discounted CFR variant
+    /// (Brown &amp; Sandholm, 2019) discounts early iterations for
+    /// faster convergence in non-stationary environments.
+    pub fn update_policy(&amp;mut self) {
+        let k = self.exit_blocks.len();
+        if self.counterfactual_pnl.len() != k { return; }
+
+        let min_pnl = self.counterfactual_pnl.iter()
+            .cloned().fold(f64::INFINITY, f64::min);
+        let max_pnl = self.counterfactual_pnl.iter()
+            .cloned().fold(f64::NEG_INFINITY, f64::max);
+        let range = (max_pnl - min_pnl).max(1e-12);
+
+        for i in 0..k {
+            let reward = (self.counterfactual_pnl[i] - min_pnl) / range;
+            let estimated_reward = reward / self.policy_weights[i];
+            self.policy_weights[i] *= (self.eta * estimated_reward).exp();
+        }
+
+        let sum: f64 = self.policy_weights.iter().sum();
+        for w in &amp;mut self.policy_weights {
+            *w /= sum;
+        }
+    }
+}
+
+pub struct CfrResult {
+    pub best_exit_block: u64,
+    pub best_pnl: f64,
+    pub actual_pnl: f64,
+    pub total_regret: f64,
+    pub per_exit_regret: Vec&lt;f64&gt;,
+    pub policy_weights: Vec&lt;f64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The workflow ties together the scenario runner and historical mode:</p>
+<ol>
+<li>The golem specifies an entry block, a range of candidate exit blocks (e.g., every 100 blocks over a week), and the position parameters.</li>
+<li>The runner forks at the entry block using historical mode.</li>
+<li>For each candidate exit block, it fast-forwards via StateDiff, executes the counterfactual exit transaction, and records the PnL.</li>
+<li>CFR analysis produces the regret profile: which exit point was optimal, how much the golem lost by exiting when it did (or by holding), and updated policy weights that the golem can use for future exit timing.</li>
+<li>Over multiple retrospective analyses, the Exp3 weights converge toward the timing regions that historically produced the best exits, giving the golem a learned prior for future decisions.</li>
+</ol>
+<hr>
+<h2 id="golem-use-cases"><a class="header" href="#golem-use-cases">Golem Use Cases</a></h2>
+<h3 id="entry-size-optimization"><a class="header" href="#entry-size-optimization">Entry Size Optimization</a></h3>
+<p>Scenarios: 0.1, 0.5, 1, 2, 5, 10 ETH deposits. Metric: <code>pnl</code>. Larger entries face more slippage; the golem finds the size where marginal slippage exceeds marginal capital efficiency gain. For continuous optimization: Bayesian optimization mode with a log-normal parameter distribution over [0.01, 50] ETH converges in 15-20 evaluations.</p>
+<h3 id="timing-sensitivity"><a class="header" href="#timing-sensitivity">Timing Sensitivity</a></h3>
+<p>Same swap at 5, 10, 20, 50, 100 gwei base fee (using <code>evm_setNextBlockBaseFeePerGas</code> before each scenario’s transaction). Metric: <code>pnl</code>. If outcomes diverge at high gas prices, there is a threshold above which MEV degrades fill quality.</p>
+<h3 id="protocol-comparison"><a class="header" href="#protocol-comparison">Protocol Comparison</a></h3>
+<p>10 ETH into Uniswap v3, Uniswap v4, and Curve, followed by simulated swap volume. Metric: <code>pnl</code> – total fees accrued minus impermanent loss.</p>
+<h3 id="stress-testing"><a class="header" href="#stress-testing">Stress Testing</a></h3>
+<p>32 LHS samples across 3 dimensions: ETH price change (uniform -30% to +30%), BTC price change (correlated with ETH via Iman-Conover), gas spike multiplier (log-normal). Metric: <code>state_diff</code> – which parameter combinations produce health factor below 1.0 (liquidation risk), with sensitivity analysis showing which parameter contributes most to liquidation risk.</p>
+<h3 id="exit-timing-analysis"><a class="header" href="#exit-timing-analysis">Exit Timing Analysis</a></h3>
+<p>CFR mode: candidate exits every 500 blocks (200 exit points). The runner fast-forwards via StateDiff to each candidate, simulates the exit, computes the regret profile. Over repeated analyses, Exp3 weights converge toward optimal timing heuristics.</p>
+<hr>
+<h2 id="interaction-between-live-and-historical-modes"><a class="header" href="#interaction-between-live-and-historical-modes">Interaction Between Live and Historical Modes</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Live mode</th><th>Historical mode</th></tr>
+</thead>
+<tbody>
+<tr><td>HybridDB resolve_block()</td><td><code>latest</code></td><td><code>from_block</code> (pinned)</td></tr>
+<tr><td>TargetedFollower</td><td>Active</td><td>Disabled</td></tr>
+<tr><td>DiffClassifier</td><td>Auto-classifies from local txs</td><td>Used during full Replay</td></tr>
+<tr><td>StateDiff</td><td>Not used</td><td>Core fast-forward primitive</td></tr>
+<tr><td>ReadCache TTL</td><td>12s default</td><td>Longer TTL viable (state is static)</td></tr>
+<tr><td>Snapshot/revert</td><td>Available for user use</td><td>Also used by checkpoints</td></tr>
+<tr><td>Block-STM</td><td>Not needed (few txs per block)</td><td>Applied to full-block replay</td></tr>
+<tr><td>BytecodeCache</td><td>Shared across live sessions</td><td>Shared; warm from prior replays</td></tr>
+<tr><td>ExEx source</td><td>Receives live block notifications</td><td>Receives historical block data</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="error-codes"><a class="header" href="#error-codes">Error Codes</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>Name</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>-32050</td><td>SET_NOT_FOUND</td><td>Scenario set ID not found</td></tr>
+<tr><td>-32051</td><td>SET_ALREADY_RUNNING</td><td>Cannot define scenarios after the set started</td></tr>
+<tr><td>-32052</td><td>SET_HAS_NO_SCENARIOS</td><td>Run called on empty set</td></tr>
+<tr><td>-32053</td><td>PARALLEL_UNAVAILABLE</td><td>Parallel mode not supported on this instance</td></tr>
+<tr><td>-32054</td><td>JOB_NOT_FOUND</td><td>Scenario job ID not found</td></tr>
+<tr><td>-32055</td><td>JOB_NOT_COMPLETE</td><td>Results requested before job finished</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li>Architecture overview: <a href="./01-mirage-rs.html">01-mirage-rs.md</a> – Core architecture: HybridDB three-tier database, DirtyStore, targeted follower, CoW state layers, Block-STM parallel execution</li>
+<li>RPC method reference: <a href="./01b-mirage-rpc.html">01b-mirage-rpc.md</a> – Full JSON-RPC method catalog: eth_<em>, mirage_</em>, evm_*, hardhat/anvil compatibility, error codes</li>
+<li>Bardo TUI integration, golem workflows: <a href="./01d-mirage-integration.html">01d-mirage-integration.md</a> – F6 fork workflow, Fork Inspector overlay, golem sidecar lifecycle, CorticalState pressure gating</li>
+<li>HDC fingerprints for scenario result similarity analysis: <a href="../04-hyperdimensional-computing/">04-hyperdimensional-computing/</a> – Hyperdimensional computing module used to fingerprint scenario results for similarity clustering</li>
+<li>DDSketch for PnL distribution tracking across scenario results: <a href="../05-data-structures/">05-data-structures/</a> – Probabilistic data structures (DDSketch, t-digest) used to track PnL distributions across scenario runs</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Auer, P. et al. (2002). The nonstochastic multiarmed bandit problem. <em>SIAM Journal on Computing</em>, 32(1). – <em>Introduces the Exp3 algorithm for adversarial bandit settings; informs the scenario runner’s adaptive parameter selection when exploring strategy spaces.</em></li>
+<li>Brown, N. &amp; Sandholm, T. (2019). Solving imperfect-information games via discounted regret minimization. <em>AAAI</em>. – <em>Proposes discounted regret minimization for faster convergence in game-theoretic settings; relevant to multi-agent scenario evaluation.</em></li>
+<li>Gelashvili, R. et al. (2023). Block-STM: Scaling blockchain execution by turning ordering curse to a performance blessing. <em>PPoPP</em>. – <em>Introduces optimistic parallel transaction execution with per-slot version tracking; the algorithm behind mirage-rs’s parallel historical replay.</em></li>
+<li>Kim, Y. et al. (2021). An off-the-chain execution environment for scalable testing and profiling of smart contracts. <em>USENIX ATC</em>. – <em>Describes an off-chain execution environment for smart contract profiling; informs the isolation model for scenario execution.</em></li>
+<li>McKay, M.D., Beckman, R.J. &amp; Conover, W.J. (1979). A comparison of three methods for selecting values of input variables. <em>Technometrics</em>, 21(2). – <em>Introduces Latin Hypercube Sampling, the space-filling method used by the scenario runner’s parameter sweep to efficiently cover high-dimensional strategy spaces.</em></li>
+<li>Saraph, V. &amp; Herlihy, M. (2019). An empirical study of speculative concurrency in Ethereum smart contracts. <em>arXiv:1901.01376</em>. – <em>Measures read-write conflict rates across real Ethereum blocks (&lt;5% on typical DeFi blocks); justifies Block-STM’s high effective parallelism.</em></li>
+<li>Shadow.xyz (2024). shadow-reth: Shadow execution via Reth Execution Extensions. <em>GitHub</em>. – <em>Implements shadow execution alongside a production node via Reth extensions; informs the targeted follower’s approach to selective mainnet transaction replay.</em></li>
+<li>Snoek, J., Larochelle, H. &amp; Adams, R.P. (2012). Practical Bayesian optimization of machine learning algorithms. <em>NeurIPS</em>. – <em>Demonstrates Gaussian-process-based Bayesian optimization for hyperparameter tuning; informs the scenario runner’s adaptive strategy search.</em></li>
+<li>Zinkevich, M. et al. (2007). Regret minimization in games with incomplete information. <em>NeurIPS</em>. – <em>Introduces counterfactual regret minimization (CFR) for solving extensive-form games; relevant to multi-agent DeFi strategy evaluation.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/15-dev/01b-mirage-rpc.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/15-dev/01d-mirage-integration.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/15-dev/01b-mirage-rpc.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/15-dev/01d-mirage-integration.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

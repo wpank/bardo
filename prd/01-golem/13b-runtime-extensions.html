@@ -1,0 +1,1514 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Runtime Extensions B - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/13b-runtime-extensions.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="runtime-extensions--part-b-spec"><a class="header" href="#runtime-extensions--part-b-spec">Runtime Extensions – Part B [SPEC]</a></h1>
+<p><strong>Type-State Machine, Event Fabric, CorticalState, Arena, Shutdown, Main Binary</strong></p>
+<blockquote>
+<p><strong>Version</strong>: 3.0 | <strong>Status</strong>: Implementation Specification</p>
+<p>Continuation of <a href="./13a-runtime-extensions.html">13a-runtime-extensions.md</a> (extension architecture, registry, GolemState, interventions, session tree, tool authorization, model routing, adaptive clock). Sections 7-15.</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is Part B of the runtime extensions specification. It covers the type-state lifecycle machine (Provisioning/Active/Dreaming/Terminal/Dead enforced at compile time), the Event Fabric (tokio::broadcast ring buffer for internal state transitions), the CorticalState (32-signal atomic shared perception surface; the Golem’s real-time self-model), the arena allocator (bumpalo per-tick allocation), the 10-phase graceful shutdown protocol, and the main binary startup sequence. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="7-type-state-lifecycle-machine"><a class="header" href="#7-type-state-lifecycle-machine">7. Type-State Lifecycle Machine</a></h2>
+<h3 id="the-problem"><a class="header" href="#the-problem">The Problem</a></h3>
+<p>A dead Golem must never process another heartbeat tick. A terminal Golem must not enter a dream cycle. A provisioning Golem must not accept steers. These are safety-critical invariants – violating them could lead to unauthorized trades, corrupted state, or financial loss.</p>
+<p>In a typical runtime, these invariants are enforced by runtime checks: <code>if golem.phase == Dead { return Err(...) }</code>. But runtime checks can be bypassed by bugs, forgotten in new code paths, or circumvented by unexpected state mutations.</p>
+<h3 id="the-solution-phantom-types"><a class="header" href="#the-solution-phantom-types">The Solution: Phantom Types</a></h3>
+<p>Rust’s type system can encode these invariants at compile time using <strong>type-state programming</strong> with phantom types. The idea: each lifecycle state is a zero-sized type (it occupies no memory at runtime), and the <code>Golem&lt;S&gt;</code> struct is parameterized by it. Methods are available only for the correct state. Invalid transitions are not “checked at runtime” – they are <strong>impossible to write</strong>.</p>
+<p>This technique was formalized by Dennis &amp; Van Horn (1966) in their work on capability-based security: access rights should be verified at the type level, not through runtime guards [DENNIS-VAN-HORN-1966]. Strom &amp; Yemini (1986) later developed the typestate concept specifically for enforcing protocol compliance at compile time [STROM-YEMINI-1986].</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+
+// === Lifecycle states as zero-sized types ===
+// These types exist only in the type system. They occupy zero bytes at
+// runtime. Their purpose is to restrict which methods are available
+// on Golem&lt;S&gt;.
+
+/// The Golem is initializing: loading config, opening storage, registering
+/// extensions.
+pub struct Provisioning;
+
+/// The Golem is running: processing heartbeat ticks, accepting steers,
+/// managing positions.
+pub struct Active;
+
+/// The Golem is dreaming: heartbeat paused, running NREM/REM/Consolidation.
+pub struct Dreaming;
+
+/// The Golem is dying: running the Thanatopsis death protocol (irreversible).
+pub struct Terminal;
+
+/// The Golem is dead: genome extracted, state frozen. Cannot be used again.
+pub struct Dead;
+
+/// A Golem in a specific lifecycle state.
+///
+/// The type parameter S determines which operations are available.
+/// `PhantomData&lt;S&gt;` tells the compiler that S is "used" without actually
+/// storing any data -- Golem&lt;Active&gt; and Golem&lt;Dead&gt; have identical runtime
+/// layout, but different compile-time capabilities.
+pub struct Golem&lt;S&gt; {
+    pub state: GolemState,
+    _phase: PhantomData&lt;S&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="valid-transitions"><a class="header" href="#valid-transitions">Valid Transitions</a></h3>
+<p>Each <code>impl</code> block is only available for Golems in the specified state. Transitions consume the old Golem (by taking <code>self</code> by value) and produce a new one in the target state. The original cannot be used again because Rust’s ownership system moves it.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Golem&lt;Provisioning&gt; {
+    /// Create a new Golem from config. This is the ONLY way to enter the
+    /// lifecycle. Initializes storage, opens the Grimoire, registers with
+    /// ERC-8004, and prepares the extension registry.
+    pub async fn provision(
+        config: GolemConfig,
+    ) -&gt; Result&lt;Golem&lt;Provisioning&gt;&gt; {
+        let state = GolemState::initialize(config).await?;
+        Ok(Golem { state, _phase: PhantomData })
+    }
+
+    /// Activate the Golem. Begins the heartbeat loop.
+    /// Consumes the Provisioning Golem and produces an Active one.
+    pub fn activate(self) -&gt; Golem&lt;Active&gt; {
+        self.state.event_fabric.emit(
+            Subsystem::Lifecycle,
+            EventPayload::LifecycleTransition {
+                from: "provisioning".into(),
+                to: "active".into(),
+            },
+        );
+        Golem { state: self.state, _phase: PhantomData }
+    }
+}
+
+impl Golem&lt;Active&gt; {
+    /// Run one heartbeat tick. Only available when Active.
+    /// See 02a-heartbeat-pipeline.md for the full 9-step implementation.
+    pub async fn tick(
+        &amp;mut self,
+        arena: &amp;mut TickArena,
+    ) -&gt; Result&lt;DecisionCycleRecord&gt; {
+        arena.reset(); // O(1) deallocation of all temporaries
+        execute_tick(&amp;mut self.state, &amp;self.registry, arena).await
+    }
+
+    /// Enter dream state. Consumes Active, produces Dreaming.
+    /// The heartbeat loop must pause while dreaming.
+    pub fn begin_dream(self) -&gt; Golem&lt;Dreaming&gt; {
+        self.state.event_fabric.emit(
+            Subsystem::Dreams,
+            EventPayload::DreamStart {
+                trigger: self.state.dream_state.trigger_reason(),
+            },
+        );
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    /// Begin the death protocol. Irreversible -- there is no going back
+    /// from Terminal. Consumes Active, produces Terminal.
+    pub fn begin_death(self, cause: DeathCause) -&gt; Golem&lt;Terminal&gt; {
+        self.state.event_fabric.emit(
+            Subsystem::Lifecycle,
+            EventPayload::DeathInitiated {
+                cause: cause.to_string(),
+            },
+        );
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    /// Receive a steer (mid-tick interrupt). Only available when Active.
+    pub async fn steer(
+        &amp;mut self,
+        intervention: Intervention,
+    ) -&gt; Result&lt;()&gt; {
+        self.state.active_steers.push(intervention);
+        Ok(())
+    }
+}
+
+impl Golem&lt;Dreaming&gt; {
+    /// Run one dream cycle. Only available when Dreaming.
+    /// Three-phase cycle: NREM replay -&gt; REM imagination -&gt; Consolidation.
+    /// See 06-dreams.md for the full implementation.
+    pub async fn dream_cycle(
+        &amp;mut self,
+    ) -&gt; Result&lt;DreamCycleResult&gt; {
+        dream::dream_cycle(
+            &amp;self.state.grimoire,
+            &amp;mut self.state,
+        ).await
+    }
+
+    /// Wake up and return to the Active state.
+    pub fn wake(self) -&gt; Golem&lt;Active&gt; {
+        self.state.event_fabric.emit(
+            Subsystem::Dreams,
+            EventPayload::DreamComplete {
+                cycles_completed: self.state.dream_state.cycles_completed,
+            },
+        );
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    /// Economic death can occur during dreaming (credit runs out).
+    pub fn begin_death(self, cause: DeathCause) -&gt; Golem&lt;Terminal&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+}
+
+impl Golem&lt;Terminal&gt; {
+    /// Execute the Thanatopsis death protocol. Consumes Terminal, produces
+    /// Dead.
+    ///
+    /// Four phases:
+    /// - Phase 0: ACCEPTANCE -- acknowledge the death cause, emit events
+    /// - Phase I: SETTLEMENT -- triage positions, execute critical
+    ///   settlements
+    /// - Phase II: REFLECTION -- generate death testament (LLM-written
+    ///   structured reflection)
+    /// - Phase III: LEGACY -- compress Grimoire through genomic bottleneck
+    ///   (&lt;=2048 entries), export genome for successor, deposit bloodstains
+    ///   to Pheromone Field
+    ///
+    /// See 05-mortality.md for the full implementation.
+    pub async fn thanatopsis(self) -&gt; Result&lt;Golem&lt;Dead&gt;&gt; {
+        let mut golem = self;
+        // Phase 0-III execute sequentially...
+        // The genome is written to $GOLEM_DATA/death/genome.bincode
+        // The testament is written to $GOLEM_DATA/death/testament.json
+        Ok(Golem { state: golem.state, _phase: PhantomData })
+    }
+}
+
+impl Golem&lt;Dead&gt; {
+    /// Extract the genome for successor inheritance.
+    /// Consuming: the dead Golem cannot be used after this call.
+    pub fn into_genome(self) -&gt; Genome {
+        // The genome contains:
+        // - &lt;=2048 compressed Grimoire entries (genomic bottleneck)
+        // - Death testament
+        // - Final PLAYBOOK.md
+        // - Causal graph snapshot
+        // - Somatic landscape fragments
+        // - Configuration that produced this Golem
+        self.state.load_genome()
+    }
+
+    /// Extract death recap for the engagement system (kill screen).
+    pub fn death_recap(&amp;self) -&gt; DeathRecap {
+        DeathRecap::generate(&amp;self.state)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="what-cannot-compile"><a class="header" href="#what-cannot-compile">What Cannot Compile</a></h3>
+<p>These are not runtime errors. They are <strong>compilation failures</strong> – the code cannot be written.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// ERROR: no method named `tick` found for `Golem&lt;Dead&gt;`
+let dead_golem: Golem&lt;Dead&gt; = /* ... */;
+dead_golem.tick(&amp;mut arena).await;  // Won't compile.
+
+// ERROR: no method named `dream_cycle` found for `Golem&lt;Terminal&gt;`
+let dying_golem: Golem&lt;Terminal&gt; = /* ... */;
+dying_golem.dream_cycle().await;  // Won't compile.
+
+// ERROR: no method named `steer` found for `Golem&lt;Provisioning&gt;`
+let new_golem: Golem&lt;Provisioning&gt; = /* ... */;
+new_golem.steer(intervention).await;  // Won't compile.
+
+// ERROR: use of moved value
+let active_golem: Golem&lt;Active&gt; = /* ... */;
+let terminal = active_golem.begin_death(cause);  // Moves active_golem
+active_golem.tick(&amp;mut arena).await;  // Won't compile -- moved.
+<span class="boring">}</span></code></pre>
+<h3 id="extension-to-other-state-machines"><a class="header" href="#extension-to-other-state-machines">Extension to Other State Machines</a></h3>
+<p>The same type-state pattern is applied to every state machine in the system:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// ActionPermit states
+pub struct PermitCreated;
+pub struct PermitCommitted;
+// ActionPermit&lt;PermitCreated&gt; has .commit() but not .revoke()
+// ActionPermit&lt;PermitCommitted&gt; has .revoke() but not .commit()
+
+// Thanatopsis phases
+pub struct Acceptance;
+pub struct Settlement;
+pub struct Reflection;
+pub struct Legacy;
+// Thanatopsis&lt;Acceptance&gt; -&gt; .settle() -&gt; Thanatopsis&lt;Settlement&gt;
+// Skipping Settlement -&gt; Reflection is a compile error.
+
+// Dream cycle phases
+pub struct NREMPhase;
+pub struct REMPhase;
+pub struct IntegrationPhase;
+<span class="boring">}</span></code></pre>
+<h3 id="why-traits-beat-plugins"><a class="header" href="#why-traits-beat-plugins">Why Traits Beat Plugins</a></h3>
+<p>The philosophical argument for native Rust extensions over a plugin runtime reduces to a single claim: <strong>the boundary between “host” and “extension” should not exist at runtime.</strong></p>
+<p>In Pi’s architecture, every hook invocation crossed a serialization boundary. GolemState was serialized to JSON, passed to the QuickJS sandbox, deserialized, modified, re-serialized, and returned. For a struct with 30+ fields including nested vectors and hashmaps, this was the dominant cost per hook. Twenty hooks per tick, each with serialization overhead, added up to measurable latency in a system where ticks need to complete in seconds.</p>
+<p>Rust’s trait system eliminates this boundary. An <code>Arc&lt;dyn Extension&gt;</code> is a pointer and a vtable. Calling <code>ext.on_after_turn(ctx)</code> is an indirect function call – the same cost as a C++ virtual method call. The <code>GolemState</code> is passed by mutable reference, not by copy. Extensions read and write fields directly.</p>
+<p>The type system also provides guarantees that no plugin sandbox can match. When the Daimon extension writes <code>state.current_pad = new_pad</code>, the compiler verifies:</p>
+<ul>
+<li>The Daimon holds a <code>&amp;mut GolemState</code> (exclusive access)</li>
+<li>The <code>current_pad</code> field exists and has type <code>PADVector</code></li>
+<li>The <code>new_pad</code> value is a valid <code>PADVector</code></li>
+<li>No other code is reading <code>current_pad</code> during this write</li>
+</ul>
+<p>A JavaScript sandbox checks none of these at compile time. It discovers type mismatches, missing fields, and concurrent access bugs at runtime – inside a production system managing real positions.</p>
+<p>Zero-cost abstractions are not about performance alone. They are about correctness. The Golem’s safety invariants (a dead Golem cannot trade, a conservation-phase Golem cannot open positions) are not policy statements that might be violated by bugs. They are structural properties of the compiled binary.</p>
+<hr>
+<h2 id="8-event-fabric-the-nervous-system"><a class="header" href="#8-event-fabric-the-nervous-system">8. Event Fabric: The Nervous System</a></h2>
+<h3 id="purpose"><a class="header" href="#purpose">Purpose</a></h3>
+<p>The Event Fabric is how internal state transitions become visible to the outside world. When the Daimon computes a new PAD vector, that is an internal operation – but the TUI needs to update the creature’s expression, the web dashboard needs to update the affect chart, and the Telegram bot needs to decide whether the emotional shift warrants a notification.</p>
+<p>The Event Fabric solves this by providing a <strong>non-blocking broadcast channel</strong>: subsystems emit typed events, and surfaces subscribe to the categories they care about.</p>
+<h3 id="design-principles"><a class="header" href="#design-principles">Design Principles</a></h3>
+<ol>
+<li>
+<p><strong>Non-blocking.</strong> <code>emit()</code> never blocks the heartbeat pipeline. If the TUI is slow to consume events, the pipeline keeps going. Events that can’t be delivered are dropped. The Golem’s cognition must never wait for a UI.</p>
+</li>
+<li>
+<p><strong>Read-only observability.</strong> Surfaces consume events. They never write back to GolemState. The Event Fabric is a one-way mirror into the Golem’s mind.</p>
+</li>
+<li>
+<p><strong>Replay for reconnection.</strong> A ring buffer (10,000 events) allows new subscribers to catch up on recent history. When the TUI reconnects after a network blip, it replays from its last-seen sequence number.</p>
+</li>
+<li>
+<p><strong>Typed events.</strong> 50+ event types across 16 subsystems. Every event maps to a specific internal state transition. No untyped strings.</p>
+</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use tokio::sync::broadcast;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::Arc;
+use parking_lot::RwLock;
+use std::collections::VecDeque;
+
+/// The Event Fabric: a non-blocking broadcast bus for internal state
+/// transitions.
+///
+/// Architecture:
+/// - A tokio broadcast channel (bounded, lagging receivers lose events)
+/// - A ring buffer for replay (10,000 events, allows reconnection)
+/// - A monotonic sequence counter for ordering and gap detection
+///
+/// Thread safety: the EventFabric is wrapped in Arc and shared across
+/// fibers. emit() is safe to call from any fiber. subscribe() returns
+/// an independent receiver.
+pub struct EventFabric {
+    /// Broadcast channel sender.
+    tx: broadcast::Sender&lt;GolemEvent&gt;,
+    /// Ring buffer for replay on reconnection.
+    buffer: Arc&lt;RwLock&lt;VecDeque&lt;GolemEvent&gt;&gt;&gt;,
+    /// Monotonic sequence counter. Ordering::Relaxed is sufficient because
+    /// we don't need cross-field consistency -- each event is
+    /// self-contained.
+    seq: AtomicU64,
+}
+
+/// A single event emitted by a subsystem.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct GolemEvent {
+    /// Monotonic sequence number (for ordering and gap detection).
+    pub seq: u64,
+    /// When this event was emitted (monotonic clock, not wall clock).
+    pub ts: std::time::Instant,
+    /// Which heartbeat tick this event belongs to.
+    pub tick: u64,
+    /// Which subsystem emitted this event.
+    pub subsystem: Subsystem,
+    /// The event payload (typed -- each variant corresponds to a specific
+    /// state transition).
+    pub payload: EventPayload,
+}
+
+/// The 16 subsystems that emit events.
+/// Surfaces subscribe to the subsystems they care about.
+#[derive(Clone, Debug, serde::Serialize, Hash, Eq, PartialEq)]
+pub enum Subsystem {
+    Heartbeat,      // Tick lifecycle, pipeline progress
+    Perception,     // Market observations, regime detection
+    Daimon,         // Emotional appraisal, somatic markers
+    Mortality,      // Vitality updates, phase transitions, death clocks
+    Grimoire,       // Knowledge mutations, Curator cycles, decay
+    Dreams,         // Dream phases, replay, counterfactuals, consolidation
+    Context,        // Cognitive Workspace assembly, policy self-tuning
+    Inference,      // LLM calls: start, tokens, complete
+    Tools,          // Tool execution: start, progress, complete
+    Risk,           // Permits, risk assessments, Warden delays (optional, deferred)
+    Coordination,   // Clade sync, pheromone deposits/reads, bloodstains
+    Lifecycle,      // Provisioning, activation, death, succession
+    Engagement,     // Achievements, milestones
+    Session,        // User messages, Golem response chunks
+    Creature,       // Visual state: form evolution, expression, particles
+    System,         // Health checks, resource usage, shutdown
+}
+
+/// Event payloads -- one variant per event type.
+///
+/// Each variant maps to a specific internal state transition.
+/// The ui-bridge extension (Layer 5) creates these by mapping hook data
+/// to the appropriate payload variant.
+///
+/// Naming convention: past tense ("Assembled", "Completed") for events
+/// that report something that happened; present progressive ("Depositing")
+/// for events that report something in progress.
+#[derive(Clone, Debug, serde::Serialize)]
+pub enum EventPayload {
+    // === Heartbeat (2 events) ===
+    HeartbeatTick {
+        tick: u64,
+        tier: String,
+        pe: f64,
+        threshold: f64,
+    },
+    HeartbeatComplete {
+        tick: u64,
+        duration_ms: u64,
+        actions_taken: u32,
+    },
+
+    // === Perception (1 event) ===
+    MarketObservation {
+        regime: String,
+        anomalies: Vec&lt;String&gt;,
+        probe_count: u32,
+    },
+
+    // === Daimon (2 events) ===
+    DaimonAppraisal {
+        pleasure: f64, arousal: f64, dominance: f64,
+        emotion: String,
+        markers_fired: u32,
+    },
+    SomaticMarkerFired {
+        situation: String,
+        valence: f64,
+        source: String,
+    },
+
+    // === Mortality (3 events) ===
+    VitalityUpdate {
+        economic: f64, epistemic: f64, stochastic: f64,
+        composite: f64,
+        phase: String,
+    },
+    PhaseTransition { from: String, to: String, cause: String },
+    DeathClockAlarm { clock: String, value: f64, threshold: f64 },
+
+    // === Grimoire (7 events) ===
+    InsightPromoted { id: String, category: String, confidence: f64 },
+    HeuristicEvolved { id: String, description: String },
+    KnowledgeDecayed { count: u32, reason: String },
+    WarningActivated { id: String, severity: String },
+    ScarRecorded { source_golem: String, warning: String },
+    CausalLinkUpdated { from: String, to: String, strength: f64 },
+    CuratorCycleComplete {
+        entries_validated: u32,
+        entries_pruned: u32,
+        entries_promoted: u32,
+    },
+
+    // === Dreams (7 events) ===
+    DreamStart { trigger: String },
+    DreamPhaseTransition { from: String, to: String },
+    DreamReplay { episode_id: String, utility: f64 },
+    DreamCounterfactual { hypothesis: String, outcome: String },
+    DreamConsolidation {
+        playbook_edits: u32,
+        insights_generated: u32,
+    },
+    DreamComplete { cycles_completed: u32 },
+    MicroConsolidation {
+        entries_processed: u32,
+        depotentiation_count: u32,
+    },
+
+    // === Context (2 events) ===
+    ContextAssembled {
+        total_tokens: u32,
+        categories: Vec&lt;(String, u32)&gt;,
+    },
+    ContextPolicySelfTuned {
+        revision: u32,
+        adjustments: Vec&lt;String&gt;,
+    },
+
+    // === Inference (3 events) ===
+    InferenceStart { model: String, tier: String, input_tokens: u32 },
+    InferenceToken { token: String },
+    InferenceComplete {
+        output_tokens: u32,
+        cost: f64,
+        latency_ms: u64,
+    },
+
+    // === Tools (3 events) ===
+    ToolStart { tool: String, category: String },
+    ToolProgress { tool: String, step: String, pct: f32 },
+    ToolComplete { tool: String, success: bool, duration_ms: u64 },
+
+    // === Risk (3 events) ===
+    PermitCreated {
+        id: String,
+        action: String,
+        value_limit: String,
+    },
+    PermitStateChange { id: String, from: String, to: String },
+    RiskAssessment { layer: String, result: String },
+
+    // === Coordination (6 events) ===
+    CladeSyncComplete {
+        entries_sent: u32,
+        entries_received: u32,
+    },
+    BloomUpdated { domains: Vec&lt;String&gt; },
+    PheromoneDeposited {
+        layer: String,
+        domain: String,
+        intensity: f64,
+    },
+    PheromoneRead {
+        threats: u32,
+        opportunities: u32,
+        wisdom: u32,
+    },
+    BloodstainReceived {
+        source_generation: u32,
+        warning: String,
+    },
+    CausalEdgePublished { from_var: String, to_var: String },
+
+    // === Lifecycle (5 events) ===
+    LifecycleTransition { from: String, to: String },
+    DeathInitiated { cause: String },
+    ThanatopsisPhase { phase: String, progress_pct: f32 },
+    GenomeExported { entry_count: u32, size_bytes: u64 },
+    SuccessorBooted {
+        successor_id: String,
+        inherited_entries: u32,
+    },
+
+    // === Engagement (2 events) ===
+    AchievementUnlocked {
+        achievement: String,
+        description: String,
+        rarity: String,
+    },
+    MilestoneReached { milestone: String, tick: u64 },
+
+    // === Session (2 events) ===
+    UserMessage { surface: String, preview: String },
+    GolemResponseChunk { text: String },
+
+    // === Creature (3 events) ===
+    CreatureEvolution { form: String, luminosity: f64 },
+    CreatureExpressionChange {
+        expression: String,
+        animation_speed: f64,
+        posture: f64,
+    },
+    CreatureParticleEffect { effect: String },
+
+    // === System (3 events) ===
+    HealthCheck { status: String },
+    ResourceUsage { memory_mb: f64, cpu_pct: f32 },
+    ShutdownInitiated { reason: String },
+}
+
+impl EventFabric {
+    /// Create a new EventFabric with the specified broadcast channel
+    /// capacity. 4096 is recommended: large enough to absorb bursts,
+    /// small enough to not waste memory.
+    pub fn new(capacity: usize) -&gt; Self {
+        let (tx, _) = broadcast::channel(capacity);
+        Self {
+            tx,
+            buffer: Arc::new(RwLock::new(
+                VecDeque::with_capacity(10_000),
+            )),
+            seq: AtomicU64::new(0),
+        }
+    }
+
+    /// Emit an event. Non-blocking. Never fails. Never panics.
+    ///
+    /// If no subscribers are listening, the event is still recorded in
+    /// the ring buffer for later replay. If the ring buffer is full,
+    /// the oldest event is evicted.
+    pub fn emit(&amp;self, subsystem: Subsystem, payload: EventPayload) {
+        let event = GolemEvent {
+            seq: self.seq.fetch_add(1, Ordering::Relaxed),
+            ts: std::time::Instant::now(),
+            tick: 0, // Filled by the caller from GolemState.current_tick
+            subsystem,
+            payload,
+        };
+        // Send to broadcast channel. Ignore errors (no receivers = ok).
+        let _ = self.tx.send(event.clone());
+        // Record in ring buffer for replay.
+        let mut buf = self.buffer.write();
+        if buf.len() &gt;= 10_000 { buf.pop_front(); }
+        buf.push_back(event);
+    }
+
+    /// Subscribe to the event stream. Returns an independent receiver.
+    pub fn subscribe(&amp;self) -&gt; broadcast::Receiver&lt;GolemEvent&gt; {
+        self.tx.subscribe()
+    }
+
+    /// Replay events from a given sequence number.
+    /// Used by surfaces that reconnect after a gap.
+    pub fn replay_from(&amp;self, seq: u64) -&gt; Vec&lt;GolemEvent&gt; {
+        self.buffer.read()
+            .iter()
+            .filter(|e| e.seq &gt; seq)
+            .cloned()
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="9-corticalstate-lock-free-atomic-perception-surface"><a class="header" href="#9-corticalstate-lock-free-atomic-perception-surface">9. CorticalState: Lock-Free Atomic Perception Surface</a></h2>
+<h3 id="the-problem-1"><a class="header" href="#the-problem-1">The Problem</a></h3>
+<p>The Daimon extension updates the PAD vector during <code>after_turn</code>. But other fibers need to read the current affect state at arbitrary times – the Grimoire’s retrieval path needs current PAD for mood-congruent scoring, the predictive context assembly fiber needs arousal for workspace prioritization, and the creature state computer needs PAD for animation speed. All of these run concurrently with the heartbeat pipeline.</p>
+<p>Using a <code>Mutex&lt;PADVector&gt;</code> would work but introduces contention: every reader blocks on every writer, and every writer blocks on every reader. For something read hundreds of times per second (the creature fiber animates at 10+ FPS) and written once per tick (30-120s adaptive), this is excessive.</p>
+<h3 id="the-solution-atomic-bit-reinterpretation"><a class="header" href="#the-solution-atomic-bit-reinterpretation">The Solution: Atomic Bit Reinterpretation</a></h3>
+<p>The CorticalState stores f32 values as their raw bit patterns in <code>AtomicU32</code>. This is safe because every 32-bit pattern is a valid f32 (including NaN and infinity, which we clamp against). Reads and writes are single atomic instructions – zero contention, zero allocation, zero waiting.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::atomic::{AtomicU32, AtomicU8, AtomicU64, Ordering};
+
+/// Lock-free atomic shared state for real-time affect reads.
+///
+/// Updated by: the Daimon extension (single writer, during after_turn)
+/// Read by: any fiber at any time (Grimoire retrieval, context assembly,
+///          creature animation, predictive context, gating threshold)
+///
+/// The technique: store f32 as its bit pattern in AtomicU32, then
+/// reinterpret on read. This is safe because:
+/// 1. f32::to_bits() and f32::from_bits() are lossless round-trips
+/// 2. AtomicU32::load/store are single instructions on all platforms
+/// 3. Ordering::Relaxed is sufficient because we don't need cross-field
+///    consistency -- a reader that sees a new pleasure value but an old
+///    arousal value has a briefly inconsistent PAD, which is fine for
+///    the use cases (approximate mood-congruent scoring, animation speed)
+pub struct CorticalState {
+    pleasure:           AtomicU32, // f32 as bits, range [-1.0, 1.0]
+    arousal:            AtomicU32,
+    dominance:          AtomicU32,
+    regime:             AtomicU8,  // MarketRegime as u8
+    phase:              AtomicU8,  // BehavioralPhase as u8
+    vitality_composite: AtomicU32, // f32 as bits, range [0.0, 1.0]
+    tick:               AtomicU64,
+    last_update_ns:     AtomicU64,
+}
+
+impl CorticalState {
+    pub fn new() -&gt; Self {
+        Self {
+            pleasure:           AtomicU32::new(0f32.to_bits()),
+            arousal:            AtomicU32::new(0f32.to_bits()),
+            dominance:          AtomicU32::new(0f32.to_bits()),
+            regime:             AtomicU8::new(0),
+            phase:              AtomicU8::new(0),
+            vitality_composite: AtomicU32::new(1.0f32.to_bits()),
+            tick:               AtomicU64::new(0),
+            last_update_ns:     AtomicU64::new(0),
+        }
+    }
+
+    /// Read the current PAD vector. Three atomic loads, zero contention.
+    pub fn read_pad(&amp;self) -&gt; PADVector {
+        PADVector {
+            pleasure:  f32::from_bits(
+                self.pleasure.load(Ordering::Relaxed),
+            ),
+            arousal:   f32::from_bits(
+                self.arousal.load(Ordering::Relaxed),
+            ),
+            dominance: f32::from_bits(
+                self.dominance.load(Ordering::Relaxed),
+            ),
+        }
+    }
+
+    /// Write the PAD vector. Called by the Daimon extension after
+    /// appraisal. Single writer -- no CAS loop needed.
+    pub fn write_pad(&amp;self, pad: &amp;PADVector) {
+        self.pleasure.store(
+            pad.pleasure.to_bits(), Ordering::Relaxed,
+        );
+        self.arousal.store(
+            pad.arousal.to_bits(), Ordering::Relaxed,
+        );
+        self.dominance.store(
+            pad.dominance.to_bits(), Ordering::Relaxed,
+        );
+        self.last_update_ns.store(now_nanos(), Ordering::Relaxed);
+    }
+
+    pub fn read_regime(&amp;self) -&gt; MarketRegime {
+        MarketRegime::from_u8(self.regime.load(Ordering::Relaxed))
+    }
+
+    pub fn write_regime(&amp;self, regime: MarketRegime) {
+        self.regime.store(regime as u8, Ordering::Relaxed);
+    }
+
+    pub fn read_vitality(&amp;self) -&gt; f64 {
+        f32::from_bits(
+            self.vitality_composite.load(Ordering::Relaxed),
+        ) as f64
+    }
+
+    pub fn write_vitality(&amp;self, v: f32) {
+        self.vitality_composite.store(
+            v.to_bits(), Ordering::Relaxed,
+        );
+    }
+
+    pub fn read_phase(&amp;self) -&gt; BehavioralPhase {
+        BehavioralPhase::from_u8(self.phase.load(Ordering::Relaxed))
+    }
+}
+
+fn now_nanos() -&gt; u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos() as u64
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="10-arena-allocator-zero-gc-ticks"><a class="header" href="#10-arena-allocator-zero-gc-ticks">10. Arena Allocator: Zero-GC Ticks</a></h2>
+<h3 id="the-problem-2"><a class="header" href="#the-problem-2">The Problem</a></h3>
+<p>A Golem runs continuously for weeks. Each tick creates temporary objects: probe results, observation structs, retrieval candidates, scoring intermediates, context assembly buffers. In a garbage-collected runtime (TypeScript/V8), these objects accumulate pressure on the GC, causing periodic pauses. Over weeks, GC pause times grow as the heap fragments.</p>
+<p>This was the single largest operational concern with the Pi/TypeScript architecture. A Golem managing $140,000 in positions cannot afford a 200ms GC pause during a swap broadcast.</p>
+<h3 id="the-solution-per-tick-bump-allocation"><a class="header" href="#the-solution-per-tick-bump-allocation">The Solution: Per-Tick Bump Allocation</a></h3>
+<p>A bump allocator (also called an arena or region allocator) works differently from a general-purpose allocator: it advances a pointer for each allocation and never individually frees anything. At the end of the tick, a single O(1) <code>reset()</code> reclaims all memory at once. This is perfect for the tick pattern: many small allocations during the tick, all freed simultaneously at tick end.</p>
+<p>The <code>bumpalo</code> crate provides a production-quality implementation.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Per-tick bump allocator.
+///
+/// All tick-scoped temporaries (probe results, observation structs, scoring
+/// intermediates, context assembly buffers) allocate from this arena.
+/// At tick end, one O(1) reset frees everything.
+///
+/// This eliminates:
+/// - GC pressure from temporary objects (the V8/TypeScript problem)
+/// - Memory fragmentation from repeated alloc/free cycles
+/// - Unpredictable pause times during time-sensitive operations
+///
+/// The arena is reused across ticks -- it grows to accommodate the largest
+/// tick and stays at that size. Memory is returned to the OS only when
+/// the Golem shuts down.
+pub struct TickArena {
+    inner: bumpalo::Bump,
+}
+
+impl TickArena {
+    /// Create a new arena with the specified initial capacity.
+    /// 64KB is a good default: enough for most ticks, grows automatically
+    /// if a tick needs more.
+    pub fn new(initial_capacity: usize) -&gt; Self {
+        Self {
+            inner: bumpalo::Bump::with_capacity(initial_capacity),
+        }
+    }
+
+    /// Allocate a value in the arena. The value lives until arena.reset().
+    /// Returns a reference with the arena's lifetime -- the compiler
+    /// prevents use after reset.
+    pub fn alloc&lt;T&gt;(&amp;self, val: T) -&gt; &amp;T {
+        self.inner.alloc(val)
+    }
+
+    /// Allocate a copy of a slice in the arena.
+    pub fn alloc_slice&lt;T: Copy&gt;(&amp;self, vals: &amp;[T]) -&gt; &amp;[T] {
+        self.inner.alloc_slice_copy(vals)
+    }
+
+    /// Reset the arena. All previous allocations become invalid.
+    /// O(1) operation -- does not iterate over allocated objects.
+    /// The memory is retained for reuse, not returned to the OS.
+    pub fn reset(&amp;mut self) {
+        self.inner.reset();
+    }
+
+    /// Current usage in bytes (for monitoring).
+    pub fn bytes_used(&amp;self) -&gt; usize {
+        self.inner.allocated_bytes()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The arena’s lifetime ties directly to the type system. Code that tries to hold a reference to an arena-allocated value across a <code>reset()</code> call fails to compile – Rust’s borrow checker enforces this at zero runtime cost. This is another case where the type system eliminates an entire category of bugs (use-after-free) that Pi’s garbage collector could only detect at runtime through subtle memory corruption.</p>
+<hr>
+<h2 id="11-capability-tokens-compile-time-tool-permissions"><a class="header" href="#11-capability-tokens-compile-time-tool-permissions">11. Capability Tokens: Compile-Time Tool Permissions</a></h2>
+<p>Tool access permissions are enforced at the type level through <code>Capability&lt;T&gt;</code> tokens. A <code>Capability&lt;WriteSwap&gt;</code> grants the ability to execute swaps. A <code>Capability&lt;ReadPortfolio&gt;</code> grants portfolio reads. Extensions receive capabilities during provisioning and pass them to tool execution paths.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+
+/// A compile-time permission token.
+///
+/// The PhantomData&lt;T&gt; prevents cross-type usage at zero runtime cost:
+/// a function requiring Capability&lt;WriteSwap&gt; cannot accept a
+/// Capability&lt;ReadPortfolio&gt;.
+#[derive(Debug, Clone)]
+pub struct Capability&lt;T&gt; {
+    /// Hash of the capability for audit trail correlation.
+    pub hash: [u8; 32],
+    /// When this capability expires (tick number).
+    pub expires_at_tick: u64,
+    _phantom: PhantomData&lt;T&gt;,
+}
+
+// Permission types -- zero-sized, exist only in the type system
+pub struct WriteSwap;
+pub struct WriteLiquidity;
+pub struct ReadPortfolio;
+pub struct ReadMarketData;
+pub struct WriteVault;
+
+/// Tool execution requires the matching capability token.
+/// The compiler rejects calls with the wrong capability type.
+pub async fn execute_swap(
+    params: &amp;SwapParams,
+    _cap: &amp;Capability&lt;WriteSwap&gt;,  // Proof of permission
+    state: &amp;mut GolemState,
+) -&gt; Result&lt;SwapReceipt&gt; {
+    // The capability token's presence at compile time proves this code
+    // path was authorized. The hash is recorded in the audit trail.
+    // ...
+    todo!()
+}
+<span class="boring">}</span></code></pre>
+<p>This pattern means that a codebase change accidentally granting swap access to a read-only observatory Golem would fail to compile – the observatory’s provisioning code never creates <code>Capability&lt;WriteSwap&gt;</code> tokens, so no function that requires one can be called.</p>
+<hr>
+<h2 id="12-decisioncyclerecord-typed-per-tick-snapshots"><a class="header" href="#12-decisioncyclerecord-typed-per-tick-snapshots">12. DecisionCycleRecord: Typed Per-Tick Snapshots</a></h2>
+<p>Every tick produces a <code>DecisionCycleRecord</code> that captures the full state of the decision cycle. These records are persisted as bincode (not JSON) for space efficiency and fast deserialization.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A typed snapshot of one complete decision cycle (tick).
+///
+/// Persisted as bincode to $GOLEM_DATA/ticks/{tick_number}.bincode.
+/// The Grimoire's Curator reads these during consolidation.
+/// The cybernetics extension reads them for self-tuning.
+/// The engagement system reads them for milestone detection.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DecisionCycleRecord {
+    /// Tick number.
+    pub tick: u64,
+    /// Wall clock timestamp.
+    pub timestamp: u64,
+    /// Duration of the entire tick in milliseconds.
+    pub duration_ms: u64,
+
+    // --- Heartbeat ---
+    pub cognitive_tier: CognitiveTier,
+    pub prediction_error: f64,
+    pub adaptive_threshold: f64,
+    pub regime: MarketRegime,
+    pub probe_count: u32,
+    pub probes_above_threshold: u32,
+
+    // --- Inference ---
+    pub model_used: Option&lt;String&gt;,
+    pub inference_cost_usd: f64,
+    pub input_tokens: u32,
+    pub output_tokens: u32,
+    pub cache_hit_rate: f64,
+
+    // --- Tools ---
+    pub tool_calls: Vec&lt;ToolCallRecord&gt;,
+    pub gas_cost_usd: f64,
+
+    // --- State ---
+    pub vitality_composite: f64,
+    pub phase: BehavioralPhase,
+    pub credit_remaining: f64,
+    pub pad: PADVector,
+    pub primary_emotion: PlutchikLabel,
+
+    // --- Memory ---
+    pub episodes_written: u32,
+    pub grimoire_mutations: u32,
+
+    // --- Risk ---
+    pub risk_layer_results: Vec&lt;(String, String)&gt;,
+    pub active_warning_count: u32,
+
+    // --- Coordination ---
+    pub clade_entries_sent: u32,
+    pub clade_entries_received: u32,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="13-graceful-shutdown-protocol"><a class="header" href="#13-graceful-shutdown-protocol">13. Graceful Shutdown Protocol</a></h2>
+<p>When Fly.io preempts a VM, it sends SIGTERM with a 30-second grace period before SIGKILL. The Golem must settle critical positions, flush state, and exit cleanly within this window.</p>
+<p>This protocol is adapted from OpenFang’s 10-phase shutdown pattern, integrated with the Bardo State concept: the custody layer persists independently of the VM (see <code>13-custody.md</code>), so positions that can’t be settled in 30 seconds survive – they’re recorded in a BardoManifest for the owner to handle.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// 10-phase graceful shutdown for Fly.io VM preemption.
+///
+/// Total budget: 30 seconds. Each phase has a hard timeout.
+/// Phases are ordered by priority: the most critical operations (stopping
+/// new work, flushing knowledge) happen first; optional operations
+/// (syncing to Styx) happen last and may be skipped if time runs out.
+///
+/// This is the OPERATIONAL counterpart to the Thanatopsis protocol.
+/// Thanatopsis handles PLANNED death (clocks expired) with a full
+/// death reflection and genomic bottleneck. Graceful shutdown handles
+/// UNPLANNED interruption (VM preemption) with a focus on preserving
+/// state and settling critical positions.
+pub async fn graceful_shutdown(
+    golem: Golem&lt;Active&gt;,
+    reason: ShutdownReason,
+) {
+    let deadline = std::time::Instant::now()
+        + std::time::Duration::from_secs(30);
+
+    // Phase 1 (1s): Stop accepting new work
+    // The heartbeat loop stops. No new ticks begin.
+    golem.state.event_fabric.emit(
+        Subsystem::System,
+        EventPayload::ShutdownInitiated {
+            reason: reason.to_string(),
+        },
+    );
+
+    // Phase 2 (2s): Cancel in-flight tool calls
+    // Pending write operations are cancelled (no partial trades).
+    // Read operations are abandoned (data loss is acceptable).
+    golem.state.cancel_pending_tools().await;
+
+    // Phase 3 (3s): Flush pending Grimoire writes
+    // SQLite WAL sync ensures all knowledge is committed to disk.
+    // LanceDB flushes any pending vector writes.
+    golem.state.grimoire.flush_all().await;
+
+    // Phase 4 (10s): Settlement triage
+    // The Bardo State decision: which positions need immediate attention?
+    // Critical: positions near liquidation, expiring options, etc.
+    // Deferrable: healthy positions that can wait for the owner.
+    let triage_deadline = deadline
+        - std::time::Duration::from_secs(14);
+    let manifest = golem.state
+        .settlement_triage(triage_deadline).await;
+
+    // Phase 5 (8s): Execute critical settlements
+    // Only positions flagged as critical by the triage.
+    // Each settlement is a blockchain transaction -- can't rush these.
+    for settlement in manifest.critical_settlements() {
+        if std::time::Instant::now()
+            &gt; deadline - std::time::Duration::from_secs(6)
+        {
+            break; // Out of time -- remaining become deferred
+        }
+        let _ = golem.state.execute_settlement(settlement).await;
+    }
+
+    // Phase 6 (2s): Write BardoManifest for deferred positions
+    // Records: which positions are open, what the Golem intended to do
+    // with them, and how the owner should handle them.
+    golem.state.write_bardo_manifest(&amp;manifest).await;
+
+    // Phase 7 (1s): Flush and seal the audit chain
+    // Compute the final Merkle hash. The chain is now tamper-evident.
+    golem.state.audit.flush_and_seal().await;
+
+    // Phase 8 (2s): Sync Grimoire to Styx (best-effort)
+    // If there's time, push the latest delta to Styx.
+    // Optional -- the local Grimoire is the source of truth.
+    let _ = golem.state.sync_to_styx().await;
+
+    // Phase 9 (0s): Zero secrets
+    // The zeroize crate handles this automatically: any Zeroizing&lt;String&gt;
+    // in scope will overwrite its memory when dropped.
+    // No code needed here -- Rust's Drop trait does the work.
+
+    // Phase 10: Exit
+    std::process::exit(0);
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="14-styx-integration-module"><a class="header" href="#14-styx-integration-module">14. Styx Integration Module</a></h2>
+<p>The previous architecture (bardo-crypt) treated remote state persistence as a separate extension. In the current design, Styx integration is a cross-cutting concern handled within existing extensions rather than a standalone layer.</p>
+<p>Each extension that needs Styx access (grimoire for knowledge sync, clade for peer coordination, audit for off-site backup) opens a connection through a shared <code>StyxClient</code>:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Connection to the Styx Lethe (formerly Lethe) service at wss://styx.bardo.run.
+///
+/// Every Golem maintains one persistent outbound WebSocket. No inbound
+/// ports needed. Strictly additive -- the Golem retains ~95% capability
+/// without Styx.
+pub struct StyxClient {
+    ws: tokio_tungstenite::WebSocketStream&lt;
+        tokio_tungstenite::MaybeTlsStream&lt;tokio::net::TcpStream&gt;,
+    &gt;,
+    golem_id: GolemId,
+    /// Connection state: tracks last-synced sequence numbers per
+    /// data type (grimoire entries, pheromone deposits, bloodstains).
+    sync_cursors: HashMap&lt;String, u64&gt;,
+}
+
+impl StyxClient {
+    /// Connect to Styx. Retries with exponential backoff.
+    /// Returns None if Styx is unreachable after 3 attempts --
+    /// the Golem continues without it.
+    pub async fn connect(
+        golem_id: GolemId,
+        config: &amp;StyxConfig,
+    ) -&gt; Option&lt;Self&gt; {
+        // ...
+        todo!()
+    }
+
+    /// Push Grimoire delta (entries added since last sync).
+    pub async fn push_grimoire_delta(
+        &amp;mut self,
+        entries: &amp;[GrimoireEntry],
+    ) -&gt; Result&lt;()&gt; {
+        // ...
+        todo!()
+    }
+
+    /// Read Pheromone Field for the owner's domain.
+    pub async fn read_pheromone_field(
+        &amp;mut self,
+        domain: &amp;str,
+    ) -&gt; Result&lt;PheromoneReadings&gt; {
+        // ...
+        todo!()
+    }
+
+    /// Deposit a bloodstain (mortality warning for future generations).
+    pub async fn deposit_bloodstain(
+        &amp;mut self,
+        bloodstain: &amp;Bloodstain,
+    ) -&gt; Result&lt;()&gt; {
+        // ...
+        todo!()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The three Styx privacy layers (Vault, Clade, Lethe) map to extension behavior:</p>
+<ul>
+<li><strong>Vault layer</strong>: The grimoire extension syncs private entries (propagation = Self) to the Styx Archive for backup.</li>
+<li><strong>Clade layer</strong>: The clade extension syncs shared entries (propagation &gt;= Clade) through Styx for sibling discovery.</li>
+<li><strong>Lethe layer</strong>: The clade extension reads and writes the Pheromone Field through the Styx Lethe.</li>
+</ul>
+<hr>
+<h2 id="15-the-main-binary"><a class="header" href="#15-the-main-binary">15. The Main Binary</a></h2>
+<p>Everything comes together in <code>golem-binary/src/main.rs</code>. This is the single binary that ships.</p>
+<pre class="playground"><code class="language-rust">// golem-binary/src/main.rs
+
+use golem_runtime::*;
+use golem_core::*;
+use std::sync::Arc;
+
+#[tokio::main]
+async fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // === Parse CLI ===
+    let cli = Cli::parse();
+    // --config golem.toml --data-dir /data --phenotype active
+
+    // === Load Config ===
+    let config = GolemConfig::from_file(&amp;cli.config_path)?;
+
+    // === Initialize Shared Infrastructure ===
+    let cortical_state = Arc::new(CorticalState::new());
+    let event_fabric = Arc::new(EventFabric::new(4096));
+    let audit = Arc::new(AuditChain::open(&amp;config.data_dir)?);
+    let grimoire = Arc::new(
+        Grimoire::open(&amp;config.data_dir, &amp;config.grimoire).await?,
+    );
+
+    // === Register All 28 Extensions ===
+    let mut registry = ExtensionRegistry::new();
+
+    // Layer 0 -- Foundation
+    registry.register(Arc::new(
+        ProviderAdapterExt::new(&amp;config),
+    ));
+    registry.register(Arc::new(TelemetryExt::new()));
+    registry.register(Arc::new(AuditExt::new(audit.clone())));
+    registry.register(Arc::new(
+        GrimoireExt::new(grimoire.clone()),
+    ));
+    registry.register(Arc::new(ToolsExt::new(&amp;config)));
+    registry.register(Arc::new(HeartbeatExt::new(&amp;config)));
+
+    // Layer 1 -- Input
+    registry.register(Arc::new(InputRouterExt::new()));
+
+    // Layer 2 -- State
+    registry.register(Arc::new(ContextExt::new(&amp;config)));
+    registry.register(Arc::new(
+        DaimonExt::new(cortical_state.clone()),
+    ));
+    registry.register(Arc::new(
+        MemoryExt::new(grimoire.clone()),
+    ));
+    registry.register(Arc::new(
+        LifespanExt::new(&amp;config, cortical_state.clone()),
+    ));
+
+    // Layer 3 -- Safety
+    registry.register(Arc::new(SafetyExt::new(&amp;config)));
+    registry.register(Arc::new(PermitsExt::new()));
+    registry.register(Arc::new(
+        RiskExt::new(&amp;config, grimoire.clone()),
+    ));
+    registry.register(Arc::new(ResultFilterExt::new()));
+    registry.register(Arc::new(CoordinationExt::new()));
+    registry.register(Arc::new(CompilerExt::new()));
+    registry.register(Arc::new(
+        ModelRouterExt::new(&amp;config),
+    ));
+    registry.register(Arc::new(
+        X402PaymentExt::new(&amp;config),
+    ));
+
+    // Layer 4 -- Cognition
+    registry.register(Arc::new(TurnContextExt::new()));
+    registry.register(Arc::new(
+        DreamExt::new(grimoire.clone(), cortical_state.clone()),
+    ));
+    registry.register(Arc::new(
+        CyberneticsExt::new(grimoire.clone()),
+    ));
+    registry.register(Arc::new(
+        CladeExt::new(&amp;config, grimoire.clone()),
+    ));
+
+    // Layer 5 -- UX
+    registry.register(Arc::new(
+        UiBridgeExt::new(event_fabric.clone()),
+    ));
+    registry.register(Arc::new(ObservabilityExt::new()));
+
+    // Layer 6 -- Intervention
+    registry.register(Arc::new(
+        PlaybookExt::new(grimoire.clone()),
+    ));
+    registry.register(Arc::new(InterventionExt::new()));
+
+    // Layer 7 -- Recovery
+    registry.register(Arc::new(CompactionExt::new()));
+
+    // Validate dependency graph and compute firing orders
+    registry.build();
+
+    // === Provision and Activate ===
+    let golem = Golem::&lt;Provisioning&gt;::provision(
+        config.clone(),
+    ).await?;
+    let mut golem = golem.activate();
+
+    // === Spawn Background Fibers ===
+    // These run concurrently with the heartbeat loop.
+    // They communicate through Arc&lt;EventFabric&gt; and Arc&lt;CorticalState&gt;.
+    let _creature = tokio::spawn(
+        creature_fiber(event_fabric.clone()),
+    );
+    let _micro_consolidation = tokio::spawn(
+        micro_consolidation_fiber(
+            grimoire.clone(),
+            cortical_state.clone(),
+        ),
+    );
+    let _predictive_context = tokio::spawn(
+        predictive_context_fiber(
+            grimoire.clone(),
+            cortical_state.clone(),
+        ),
+    );
+    let _surfaces = tokio::spawn(
+        serve_surfaces(event_fabric.clone(), config.surface_port),
+    );
+
+    // === SIGTERM Handler ===
+    let mut shutdown_signal = tokio::signal::unix::signal(
+        tokio::signal::unix::SignalKind::terminate(),
+    )?;
+
+    // === Main Heartbeat Loop ===
+    let mut arena = TickArena::new(64 * 1024); // 64KB initial
+    let mut tick_interval = tokio::time::interval(
+        config.heartbeat.interval,
+    );
+
+    loop {
+        tokio::select! {
+            // Normal path: run one heartbeat tick
+            _ = tick_interval.tick() =&gt; {
+                match golem.tick(&amp;mut arena).await {
+                    Ok(record) =&gt; {
+                        record.persist(&amp;config.data_dir).await?;
+
+                        // Check if dreaming is warranted
+                        if golem.state.dream_state.should_dream() {
+                            let dreaming = golem.begin_dream();
+                            let _result = dreaming
+                                .dream_cycle().await?;
+                            golem = dreaming.wake();
+                        }
+
+                        // Check if death is imminent
+                        if golem.state.vitality.composite() &lt;= 0.0 {
+                            let cause = DeathCause::from_vitality(
+                                &amp;golem.state.vitality,
+                            );
+                            let terminal = golem.begin_death(cause);
+                            let dead = terminal
+                                .thanatopsis().await?;
+                            let genome = dead.into_genome();
+                            genome.persist(
+                                &amp;config.data_dir,
+                            ).await?;
+                            std::process::exit(0);
+                        }
+                    }
+                    Err(e) =&gt; {
+                        tracing::error!("Tick failed: {e}");
+                        // Non-fatal: log and continue.
+                    }
+                }
+            }
+
+            // Shutdown path: Fly.io SIGTERM received
+            _ = shutdown_signal.recv() =&gt; {
+                graceful_shutdown(
+                    golem,
+                    ShutdownReason::VmPreemption,
+                ).await;
+                // Does not return -- calls process::exit(0)
+            }
+        }
+    }
+}</code></pre>
+<hr>
+<h2 id="the-prediction-native-7-layer-dag"><a class="header" href="#the-prediction-native-7-layer-dag">The Prediction-Native 7-Layer DAG</a></h2>
+<p>The extension system from the active inference architecture refines the 7-layer hierarchy to account for the prediction engine (Oracle) at Layer 0 and the Hermes sidecar bridge at Layer 6. Every subsystem is an extension that implements lifecycle hooks. Extensions are organized in a dependency DAG where lower layers boot first and cannot depend on higher layers.</p>
+<pre><code>Layer 0: FOUNDATION
+  golem-oracle      — Prediction engine, attention, residual correction
+  golem-chain       — RPC client, on-chain reads, transaction submission
+
+Layer 1: STORAGE
+  golem-grimoire    — LanceDB + SQLite + filesystem (world model state)
+
+Layer 2: COGNITION
+  golem-daimon      — Affect engine (precision weighting)
+  golem-context     — Cognitive Workspace assembly for LLM
+  golem-inference   — Provider routing, caching, x402
+
+Layer 3: BEHAVIOR
+  golem-mortality   — Death clocks, phase transitions, Thanatopsis
+  golem-dreams      — NREM/REM/hypnagogia, offline learning
+
+Layer 4: ACTION
+  golem-tools       — PredictionDomain impls, tool adapters
+  golem-safety      — Capability tokens, PolicyCage, taint tracking
+
+Layer 5: SOCIAL
+  golem-coordination — Styx, Clade sync, pheromone field
+  golem-surfaces     — Event Fabric → TUI/web/social
+
+Layer 6: INTEGRATION
+  golem-hermes      — L0 skill engine (sidecar bridge)
+  golem-runtime     — Extension registry, clocks, main()
+</code></pre>
+<p><strong>Why Oracle is at Layer 0</strong>: Every other subsystem reads prediction accuracy. Daimon reads residuals. Mortality reads accuracy trends. Dreams read residuals for replay priority. If Oracle depended on those subsystems, the dependency graph would cycle. Oracle at Layer 0 means it depends on nothing above it; everything above it can read from it.</p>
+<p><strong>Hermes at Layer 6</strong>: The Hermes Python sidecar is an external process communicating over UDS. The <code>golem-hermes</code> crate at Layer 6 bridges JSON-RPC calls to the sidecar. Placing it at the highest layer means Hermes can consume any lower-layer data (affect, prediction, mortality) without creating upward dependencies.</p>
+<h3 id="seven-lifecycle-hooks"><a class="header" href="#seven-lifecycle-hooks">Seven Lifecycle Hooks</a></h3>
+<p>The <code>Extension</code> trait from the prediction-native architecture defines hooks aligned with the adaptive clock:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[async_trait]
+pub trait Extension: Send + Sync + 'static {
+    fn name(&amp;self) -&gt; &amp;'static str;
+    fn layer(&amp;self) -&gt; u8;
+    fn depends_on(&amp;self) -&gt; &amp;[&amp;'static str] { &amp;[] }
+
+    // ═══ LIFECYCLE HOOKS (default: no-op) ═══
+    async fn on_boot(&amp;mut self, ctx: &amp;BootContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_gamma(&amp;mut self, ctx: &amp;GammaContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_theta_pre_gate(&amp;mut self, ctx: &amp;mut ThetaContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_theta_post_gate(&amp;mut self, ctx: &amp;mut ThetaContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_action(&amp;mut self, ctx: &amp;ActionContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_resolution(&amp;mut self, ctx: &amp;ResolutionContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_delta(&amp;mut self, ctx: &amp;DeltaContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_dream_start(&amp;mut self, ctx: &amp;DreamContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_dream_end(&amp;mut self, ctx: &amp;DreamContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_death(&amp;mut self, ctx: &amp;mut DeathContext) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_shutdown(&amp;mut self, ctx: &amp;ShutdownContext) -&gt; Result&lt;()&gt; { Ok(()) }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Key hook usage by subsystem:</strong></p>
+<ul>
+<li><code>on_gamma</code> – Oracle and Mortality use this for fast perception. Most extensions ignore it.</li>
+<li><code>on_theta_pre_gate</code> – Oracle (generate predictions) and Daimon (appraise) fire here.</li>
+<li><code>on_theta_post_gate</code> – Grimoire (retrieve) and Inference (deliberate) fire here. Only runs on ~20% of ticks.</li>
+<li><code>on_resolution</code> – Daimon, Grimoire, Mortality all update when any prediction resolves. Fires at gamma frequency.</li>
+<li><code>on_delta</code> – Curator cycle, attention rebalancing, Styx sharing.</li>
+<li><code>on_death</code> – Every extension gets a chance to produce its final output during Thanatopsis.</li>
+</ul>
+<p>These hooks coexist with the existing 20-hook lifecycle defined earlier in this document. The gamma/theta/delta hooks refine the timing model; the existing before/after hooks remain valid for extensions that operate at coarser granularity. The runtime dispatches both sets in topological layer order.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th></tr>
+</thead>
+<tbody>
+<tr><td>Heartbeat FSM (autonomous decision cycle)</td><td><code>02-heartbeat.md</code></td></tr>
+<tr><td>Context Governor (context assembly)</td><td><code>14-context-governor.md</code></td></tr>
+<tr><td>Safety defense model (hook enforcement)</td><td><code>../10-safety/00-defense.md</code></td></tr>
+<tr><td>Tool architecture (tool library)</td><td><code>../07-tools/01-architecture.md</code></td></tr>
+<tr><td>Grimoire retrieval (Governor-mediated)</td><td><code>../04-memory/01-grimoire.md</code></td></tr>
+<tr><td>Warden time-delayed execution (optional, deferred)</td><td><code>prd2-extended/10-safety/02-warden.md</code></td></tr>
+<tr><td>Inference gateway (gateway-side sessions)</td><td><code>../12-inference/05-sessions.md</code></td></tr>
+<tr><td>Dream integration (branch-based)</td><td><code>../05-dreams/06-integration.md</code></td></tr>
+<tr><td>PolicyCage on-chain enforcement</td><td><code>../10-safety/02-policy.md</code></td></tr>
+<tr><td>Adaptive risk and regime detection</td><td><code>../07-adaptive-risk.md</code></td></tr>
+<tr><td>Streaming UX (surface-aware formatting)</td><td><code>../10-streaming-ux.md</code></td></tr>
+<tr><td>Clade peer-to-peer communication</td><td><code>08-clade.md</code></td></tr>
+<tr><td>Mortality engine (vitality, credit ledger)</td><td><code>03-mortality.md</code></td></tr>
+<tr><td>Daimon affect system</td><td><code>06-daimon.md</code></td></tr>
+<tr><td>Custody modes</td><td><code>13-custody.md</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[DENNIS-VAN-HORN-1966] Dennis, J.B. &amp; Van Horn, E.C. “Programming Semantics for Multiprogrammed Computations.” <em>Communications of the ACM</em>, 9(3), 1966. — <em>Introduces capability-based access control where unforgeable tokens grant specific rights; the theoretical basis for Golem’s per-extension capability grants.</em></li>
+<li>[STROM-YEMINI-1986] Strom, R.E. &amp; Yemini, S. “Typestate: A Programming Language Concept for Enhancing Software Reliability.” <em>IEEE Transactions on Software Engineering</em>, SE-12(1), 1986. — <em>Defines typestate as compile-time enforcement of valid operation sequences on objects; the pattern Golem uses to make illegal lifecycle transitions unrepresentable in Rust’s type system.</em></li>
+<li>[SUMERS-2024] Sumers, T.R., Yao, S., Narasimhan, K. &amp; Griffiths, T.L. “Cognitive Architectures for Language Agents.” <em>Transactions on Machine Learning Research</em>, 2024. — <em>Surveys cognitive architectures for LLM agents, identifying perception-action-memory as the minimal loop; validates the extension trait decomposition used in Golem’s runtime.</em></li>
+<li>[BADDELEY-2000] Baddeley, A. “The Episodic Buffer: A New Component of Working Memory?” <em>Trends in Cognitive Sciences</em>, 4(11), 2000. — <em>Proposes a limited-capacity buffer integrating multi-modal information into coherent episodes; the neuroscience analogue for CorticalState’s role as a shared perception surface.</em></li>
+<li>[CHEN-2023] Chen, L. et al. “FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance.” arXiv:2305.05176, 2023. — <em>Demonstrates cascading LLM calls from cheap to expensive models based on confidence; directly informs Golem’s T0/T1/T2 cognitive tier routing strategy.</em></li>
+</ul>
+<hr>
+<p><em>The runtime is the body. The extensions are the organs. The Event Fabric is the nervous system. The type-state machine is the skeleton – it determines what shapes are possible.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/13a-runtime-extensions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/14-context-governor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/13a-runtime-extensions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/14-context-governor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,878 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Context Engineering - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/12-inference/04-context-engineering.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="04--context-engineering-spec"><a class="header" href="#04--context-engineering-spec">04 – Context Engineering [SPEC]</a></h1>
+<p><strong>Layered Prompt Cache Architecture, Dynamic Tool Registry, Context Budget Allocation, and Prompt Assembly</strong></p>
+<blockquote>
+<p>Related: <a href="01a-routing.html">01a-routing.md</a> (self-describing providers and mortality-aware model resolution), <a href="02-caching.html">02-caching.md</a> (three-layer cache stack with regime-aware invalidation), <a href="03-economics.html">03-economics.md</a> (x402 spread revenue model and cost impact analysis)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the context engineering pipeline of Bardo Inference (the LLM inference gateway for mortal autonomous DeFi agents called Golems). It belongs to the inference plane and describes the 8-layer pipeline that reduces inference cost by 40-85%: prompt cache alignment, semantic cache, hash cache, tool pruning, history compression, KV-cache routing, PII masking, and injection detection. The key concept is that context assembly is treated as a learnable control problem, not a static template, with three cybernetic feedback loops that optimize token allocation per regime and task type. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="why-context-engineering-is-the-core-differentiator"><a class="header" href="#why-context-engineering-is-the-core-differentiator">Why context engineering is the core differentiator</a></h2>
+<p>The gateway is not just a proxy. It is a <strong>context engineering platform</strong> – a managed infrastructure layer that applies production-tested patterns from Cursor, Claude Code, Aider, Amp, and Devin to any autonomous agent [ANTHROPIC-CONTEXT-ENG].</p>
+<p>These techniques represent the gap between naive prompting and production-grade inference: 10-100x cost differences and measurable accuracy gains. An agent builder who sends raw prompts to an LLM provider leaves 40-85% of their budget on the table. The gateway applies these optimizations transparently – the agent asks for a completion; the gateway finds the cheapest way to deliver equivalent quality.</p>
+<h2 id="8-layer-context-engineering-pipeline"><a class="header" href="#8-layer-context-engineering-pipeline">8-Layer Context Engineering Pipeline</a></h2>
+<p>Every request passes through up to 8 layers. Layers are independent and can be bypassed per pipeline profile.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Name</th><th>Latency</th><th>Impact</th><th>Parallel?</th></tr>
+</thead>
+<tbody>
+<tr><td>L1</td><td>Prompt cache alignment</td><td>&lt;1ms</td><td>Prefix cache hits</td><td>No (first)</td></tr>
+<tr><td>L2</td><td>Semantic cache</td><td>3-8ms</td><td>Zero cost, similar queries</td><td>Yes (L3,L7,L8)</td></tr>
+<tr><td>L3</td><td>Hash cache</td><td>&lt;0.1ms</td><td>Zero cost, exact matches</td><td>Yes</td></tr>
+<tr><td>L4</td><td>Tool pruning</td><td>&lt;1ms</td><td>97.5% tool token reduction</td><td>No (after cache)</td></tr>
+<tr><td>L5</td><td>History compression</td><td>200-2000ms</td><td>Lossy compaction</td><td>No (conditional)</td></tr>
+<tr><td>L6</td><td>KV-cache routing</td><td>&lt;1ms</td><td>Session-affinity warm cache</td><td>No (last)</td></tr>
+<tr><td>L7</td><td>PII masking</td><td>&lt;1ms</td><td>Round-trip de-identification</td><td>Yes (L2,L3,L8)</td></tr>
+<tr><td>L8</td><td>Injection detection</td><td>3-8ms</td><td>DeBERTa classifier</td><td>Yes (L2,L3,L7)</td></tr>
+</tbody>
+</table>
+</div>
+<p>L2, L3, L7, and L8 execute in parallel via <code>tokio::join!</code> (~8ms wall clock instead of ~15ms sequential). L5 is conditional – only triggered when history exceeds the token budget. Full pipeline adds &lt;50ms p95 (Rust). See <a href="14-rust-implementation.html">14-rust-implementation.md</a>.</p>
+<h2 id="three-layer-prompt-cache-architecture"><a class="header" href="#three-layer-prompt-cache-architecture">Three-Layer Prompt Cache Architecture</a></h2>
+<p>The most consequential optimization in the entire gateway. Without prompt caching, a heavy agent session (~20M tokens on Opus) costs ~$100. With 90% cache hit rate, it drops to ~$19.</p>
+<pre><code class="language-text">+----------------------------------------------------------+
+|  L1: Global Prefix (~2-4K tokens)                        |
+|  Shared across ALL agents. Identical bytes.              |
+|  Gateway identity, behavioral rules, safety, format.     |
+|  Cache: 90% discount Anthropic, 50% OpenAI              |
++----------------------------------------------------------+
+|  L2: Tenant Prefix (~1-10K tokens)                       |
+|  Shared across all sessions for one agentId.             |
+|  System prompt, tool defs, PLAYBOOK.md, memory.          |
+|  Cache: Reused across all requests from this agent       |
++----------------------------------------------------------+
+|  L3: Session Context (variable)                          |
+|  Unique per request.                                     |
+|  History, RAG results, DeFi enrichment, user query.      |
+|  Cache: None (too variable)                              |
++----------------------------------------------------------+
+</code></pre>
+<h3 id="critical-implementation-rules"><a class="header" href="#critical-implementation-rules">Critical implementation rules</a></h3>
+<p><strong>1. 100% identical prefix bytes.</strong> Any difference – a timestamp, a changed tool definition, a reordered parameter – invalidates the cache for everything after that point. The gateway strips timestamps, request IDs, and per-request variables from prefix layers.</p>
+<p><strong>2. Append-only history.</strong> Never modify earlier messages when configs change. Append, don’t insert.</p>
+<p><strong>3. No early variability.</strong> Tool definitions, agent configs, and memory go in Layer 2 in deterministic order (sorted by tool ID, not relevance). Relevance-based pruning omits from the end, preserving the prefix.</p>
+<p><strong>4. Cache warmth.</strong> Anthropic’s cache expires after 5 minutes (extendable to 1 hour). The gateway sends keepalive pings for agents with periodic activity (Aider’s <code>--cache-keepalive-pings</code> pattern).</p>
+<h3 id="prompt-assembly"><a class="header" href="#prompt-assembly">Prompt assembly</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/prompt.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PromptLayer {
+    pub layer: String,          // "global" | "tenant" | "session"
+    pub content: String,
+    pub cache_control: Option&lt;CacheControl&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CacheControl { pub r#type: String } // "ephemeral"
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AssembledPrompt {
+    pub messages: Vec&lt;Message&gt;,
+    pub stable_prefix_tokens: usize,
+}
+
+pub fn assemble_prompt(
+    request: &amp;ChatCompletionRequest, agent_config: &amp;AgentConfig,
+    session_state: &amp;SessionState,
+) -&gt; AssembledPrompt {
+    let cc = || Some(CacheControl { r#type: "ephemeral".into() });
+    let layers = vec![
+        PromptLayer { layer: "global".into(),  // L1: static, all agents
+            content: GLOBAL_SYSTEM_PREFIX.into(), cache_control: cc() },
+        PromptLayer { layer: "tenant".into(),  // L2: per-agent, cached
+            content: build_tenant_prefix(agent_config), cache_control: cc() },
+        PromptLayer { layer: "session".into(), // L3: per-request, variable
+            content: build_session_context(&amp;request.messages, session_state),
+            cache_control: None },
+    ];
+    let stable = format!("{}{}", layers[0].content, layers[1].content);
+    AssembledPrompt {
+        messages: flatten_layers(&amp;layers),
+        stable_prefix_tokens: estimate_tokens(&amp;stable),
+    }
+}
+
+/// Build tenant prefix in deterministic order for cache stability.
+pub fn build_tenant_prefix(config: &amp;AgentConfig) -&gt; String {
+    let mut parts = vec![
+        format!("&lt;agent_role&gt;\n{}\n&lt;/agent_role&gt;", config.system_prompt),
+    ];
+    // Tools sorted by stable ID (NOT by relevance -- that would vary per query)
+    let mut tools = config.registered_tools.clone();
+    tools.sort_by(|a, b| a.id.cmp(&amp;b.id));
+    parts.push(format!("&lt;available_tools&gt;\n{}\n&lt;/available_tools&gt;", format_tool_defs(&amp;tools)));
+    if !config.persistent_memory.is_empty() {
+        parts.push(format!("&lt;agent_memory&gt;\n{}\n&lt;/agent_memory&gt;",
+            format_memory(&amp;config.persistent_memory)));
+    }
+    parts.join("\n\n")
+}
+<span class="boring">}</span></code></pre>
+<h2 id="dynamic-tool-registry"><a class="header" href="#dynamic-tool-registry">Dynamic Tool Registry</a></h2>
+<p>Tool definitions are the hidden context tax. Anthropic’s testing showed 58 tools consume ~55K tokens in definitions alone [ANTHROPIC-TOOL-SEARCH]. The gateway maintains a searchable registry and assembles minimal definitions per-request by semantic relevance.</p>
+<h3 id="three-level-tool-architecture"><a class="header" href="#three-level-tool-architecture">Three-level tool architecture</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>Tools</th><th>Strategy</th><th>Token Impact</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>L1: Core</strong></td><td>~5-15, stable</td><td>Always loaded in tenant prefix</td><td>Cached, ~0 marginal</td></tr>
+<tr><td><strong>L2: Protocol</strong></td><td>~50-200, dynamic</td><td>Semantic search per query</td><td>Loaded when relevant</td></tr>
+<tr><td><strong>L3: Complex</strong></td><td>Scripts, not defs</td><td>No tool definition overhead</td><td>Agent’s compute</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/tools.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ToolRegistryEntry {
+    pub tool_id: String,
+    pub agent_id: u64,          // ERC-8004 agent ID
+    pub level: u8,              // 1 = core, 2 = protocol, 3 = complex
+    pub definition: ToolDefinition,
+    pub description: String,
+    pub embedding: Vec&lt;f32&gt;,    // Pre-computed for fast similarity search
+    pub categories: Vec&lt;String&gt;,
+    pub token_cost: u32,        // Tokens consumed by this tool definition
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dynamic-tool-selection"><a class="header" href="#dynamic-tool-selection">Dynamic tool selection</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/tools.rs
+
+/// "95% reduction in per-step context tokens, 32% improvement in accuracy"
+/// [ANTHROPIC-TOOL-SEARCH]
+pub async fn select_tools_for_request(
+    request: &amp;ChatCompletionRequest, agent_id: u64,
+    registry: &amp;ToolRegistry, embedder: &amp;LocalEmbedder,
+    max_tools: usize, max_tokens: u32,    // defaults: 12, 8000
+) -&gt; Result&lt;Vec&lt;ToolDefinition&gt;&gt; {
+    let core = registry.get_level1_tools(agent_id).await?;
+    let query = request.messages.iter().rev()
+        .find(|m| m.role == Role::User)
+        .map(|m| m.content_as_str()).unwrap_or("");
+    let candidates = registry.search(SearchQuery {
+        agent_id, embedding: embedder.embed(query).await?,
+        level: 2, limit: max_tools - core.len(),
+    }).await?;
+
+    // Fit within token budget (binary search like Aider's repo map)
+    let mut selected = core;
+    let mut used: u32 = selected.iter().map(|t| t.token_cost).sum();
+    for tool in &amp;candidates {
+        if used + tool.token_cost &gt; max_tokens || selected.len() &gt;= max_tools { break; }
+        selected.push(tool.clone());
+        used += tool.token_cost;
+    }
+    Ok(selected.iter().map(|t| t.definition.clone()).collect())
+}
+<span class="boring">}</span></code></pre>
+<h3 id="speakeasy-meta-tool-pattern"><a class="header" href="#speakeasy-meta-tool-pattern">Speakeasy meta-tool pattern</a></h3>
+<p>For very large tool catalogs (100+), expose three meta-tools instead of pre-loading definitions. This achieves 97.5% token reduction:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/tools.rs
+
+use serde_json::Value;
+
+pub struct MetaTool {
+    pub name: &amp;'static str,
+    pub description: &amp;'static str,
+    pub parameters: Value,
+}
+
+pub fn meta_tools() -&gt; Vec&lt;MetaTool&gt; {
+    vec![
+        MetaTool {
+            name: "search_tools",
+            description: "Search available tools by capability description.",
+            parameters: serde_json::json!({
+                "type": "object",
+                "properties": {
+                    "query": { "type": "string", "description": "What you want to do" },
+                    "limit": { "type": "number", "description": "Max results", "default": 5 }
+                },
+                "required": ["query"]
+            }),
+        },
+        MetaTool {
+            name: "get_tool_schema",
+            description: "Get the full parameter schema for a specific tool.",
+            parameters: serde_json::json!({
+                "type": "object",
+                "properties": {
+                    "toolName": { "type": "string" }
+                },
+                "required": ["toolName"]
+            }),
+        },
+        MetaTool {
+            name: "execute_tool",
+            description: "Execute a tool with the given parameters.",
+            parameters: serde_json::json!({
+                "type": "object",
+                "properties": {
+                    "toolName": { "type": "string" },
+                    "params": { "type": "object" }
+                },
+                "required": ["toolName", "params"]
+            }),
+        },
+    ]
+}
+<span class="boring">}</span></code></pre>
+<p>Bardo Sanctum already implements this with its <code>search_tools</code> meta-tool and deferred loading. The gateway extends the pattern to any agent.</p>
+<h2 id="context-budget-allocation"><a class="header" href="#context-budget-allocation">Context Budget Allocation</a></h2>
+<p>Different content types have different information density and different tolerance for compression. The gateway implements a differential budget system inspired by LLMLingua’s Budget Controller [LLMLINGUA]:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/budget.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ContextBudget {
+    pub total_token_budget: u32,
+    pub allocations: BudgetAllocations,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BudgetAllocations {
+    pub system: BudgetSlot,         // 0-5% compression
+    pub tools: ToolsBudget,         // 70-95% via selection
+    pub memory: TopKBudget,         // 10-20% compression
+    pub retrieval: TopKBudget,      // 50-80% compression
+    pub defi_context: BudgetSlot,   // 60-80% compression
+    pub history: HistoryBudget,     // 30-50% compression
+    pub query: BudgetSlot,          // never compressed
+}
+
+// Reusable sub-structs (all derive Debug, Clone, Serialize, Deserialize)
+pub struct BudgetSlot  { pub max_tokens: u32, pub compression_ratio: f64 }
+pub struct ToolsBudget { pub max_tokens: u32, pub max_tools: u32 }
+pub struct TopKBudget  { pub max_tokens: u32, pub top_k: u32 }
+pub struct HistoryBudget {
+    pub max_tokens: u32, pub recent_verbatim_turns: u32, pub older_summary_budget: u32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="default-budget-128k-context-model"><a class="header" href="#default-budget-128k-context-model">Default budget (128K context model)</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/budget.rs
+
+impl Default for ContextBudget {
+    fn default() -&gt; Self {
+        Self {
+            total_token_budget: 100_000, // leave 28K headroom for output
+            allocations: BudgetAllocations {
+                system:       BudgetSlot  { max_tokens: 4_000,  compression_ratio: 0.0 },
+                tools:        ToolsBudget { max_tokens: 8_000,  max_tools: 12 },
+                memory:       TopKBudget  { max_tokens: 3_000,  top_k: 10 },
+                retrieval:    TopKBudget  { max_tokens: 15_000, top_k: 8 },
+                defi_context: BudgetSlot  { max_tokens: 2_000,  compression_ratio: 0.0 },
+                history: HistoryBudget {
+                    max_tokens: 60_000, recent_verbatim_turns: 10, older_summary_budget: 2_000,
+                },
+                query: BudgetSlot { max_tokens: 8_000, compression_ratio: 0.0 },
+            },
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="history-compaction"><a class="header" href="#history-compaction">History compaction</a></h3>
+<p>When conversation history exceeds the budget, the gateway applies lossy compaction using a cheap model (Haiku). Over 50% of Claude Code’s LLM calls use Haiku for exactly this kind of summarization.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/budget.rs
+
+pub async fn apply_history_budget(
+    messages: &amp;[Message], budget: &amp;ContextBudget, summarizer: &amp;impl Summarizer,
+) -&gt; Result&lt;Vec&lt;Message&gt;&gt; {
+    let hist = &amp;budget.allocations.history;
+    let non_system: Vec&lt;_&gt; = messages.iter().filter(|m| m.role != Role::System).collect();
+    let split = non_system.len().saturating_sub(hist.recent_verbatim_turns as usize * 2);
+    let (older, recent) = non_system.split_at(split);
+
+    if !older.is_empty() &amp;&amp; estimate_tokens_slice(older) &gt; hist.older_summary_budget {
+        let summary = summarizer.summarize(older, hist.older_summary_budget).await?;
+        let mut out = vec![Message::system(
+            format!("&lt;conversation_summary&gt;\n{summary}\n&lt;/conversation_summary&gt;")
+        )];
+        out.extend(recent.iter().map(|m| (*m).clone()));
+        Ok(out)
+    } else {
+        Ok(non_system.into_iter().cloned().collect())
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="lost-in-the-middle-mitigation"><a class="header" href="#lost-in-the-middle-mitigation">“Lost in the middle” mitigation</a></h3>
+<p>Constraints go at both START and END (Devin’s dual-position pattern) so the model attends to safety rules even as context grows:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/prompt.rs
+
+if let Some(ref constraints) = agent_config.critical_constraints {
+    result.parts.push(PromptPart {
+        part_type: PartType::ConstraintsReminder,
+        content: format!("&lt;critical_constraints&gt;\n{constraints}\n&lt;/critical_constraints&gt;"),
+        tokens: estimate_tokens(constraints),
+        position: Position::End, // Appended after user query
+    });
+}
+<span class="boring">}</span></code></pre>
+<h2 id="defi-context-enrichment"><a class="header" href="#defi-context-enrichment">DeFi Context Enrichment</a></h2>
+<p>Queries classified as <code>domain: "defi"</code> get market context injected automatically, reducing tool-call round trips. Sources: DefiLlama (prices, ~50 tok/token), Uniswap subgraph (pools, ~100 tok/pool), Morpho API (rates, ~80 tok/protocol), on-chain reads (positions, ~150 tok/position), registry (params, ~30 tok/protocol).</p>
+<h3 id="defi-context-configuration"><a class="header" href="#defi-context-configuration">DeFi context configuration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/defi.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeFiContextConfig {
+    pub prices: bool,               // inject current prices for mentioned tokens
+    pub rates: bool,                // inject current lending rates
+    pub pools: bool,                // inject pool stats (TVL, volume, fees)
+    pub max_staleness: String,      // "1m" | "5m" | "15m" | "1h"
+}
+<span class="boring">}</span></code></pre>
+<p>All data is cached at the gateway with per-source freshness guarantees. Enrichment format follows Anthropic’s just-in-time pattern:</p>
+<pre><code class="language-xml">&lt;defi_context freshness="2m"&gt;
+  &lt;price token="ETH" usd="3847.22" change24h="-2.1%" /&gt;
+  &lt;price token="USDC" usd="0.9998" /&gt;
+  &lt;pool protocol="uniswap-v3" pair="USDC-ETH" type="CL"
+    tvl="$14.2M" volume24h="$8.7M" fees24h="$12,400" /&gt;
+  &lt;rate protocol="morpho" asset="USDC" supplyAPY="4.2%"
+    borrowAPY="5.1%" utilization="82%" /&gt;
+&lt;/defi_context&gt;
+</code></pre>
+<h2 id="cost-impact"><a class="header" href="#cost-impact">Cost impact</a></h2>
+<p>Three-layer prompt cache: 60-80% reduction on input tokens (prefix reuse). Dynamic tool selection: 70-95% on tool definitions. Context budget allocation: 30-50% on history (lossy compaction with cheap model). DeFi enrichment: indirect savings via fewer tool calls. Semantic response cache: 100% on hits (15-30% of requests). Combined: 40-85% cost reduction vs. naive prompting.</p>
+<h2 id="prompt-compression-service"><a class="header" href="#prompt-compression-service">Prompt Compression Service</a></h2>
+<p>For agents sending large context payloads, the gateway offers on-demand compression using LLMLingua-2 techniques. A local BERT-sized token classifier (~10ms) scores each token’s importance and removes low-scoring tokens while preserving semantic coherence. Compression activates automatically when input tokens exceed 32K, the user’s budget is running low, or the content is classified as compressible. The user pays for the compressed token count.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/compression.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompressionConfig {
+    pub enabled: bool,
+    pub target_ratio: f64,      // 0.0-1.0, default 0.5
+    pub preserve_recent: u32,   // recent messages to never compress
+}
+<span class="boring">}</span></code></pre>
+<p>Request via the <code>bardo.optimize</code> extension:</p>
+<pre><code class="language-json">{
+  "model": "auto",
+  "messages": [...],
+  "bardo": {
+    "optimize": {
+      "compress": true,
+      "targetCompressionRatio": 0.5,
+      "pruneTools": true
+    }
+  }
+}
+</code></pre>
+<h2 id="compaction-as-a-service"><a class="header" href="#compaction-as-a-service">Compaction-as-a-Service</a></h2>
+<p>Long-running agent sessions routinely exceed 100K tokens. The gateway offers two compaction strategies.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/compaction.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompactionConfig {
+    pub strategy: String,            // "compact" | "handoff"
+    pub trigger: CompactionTrigger,
+    pub preserve_recent: u32,        // recent messages to keep verbatim
+    pub summary_budget: u32,         // token budget for summary/briefing
+    pub custom_instructions: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompactionTrigger {
+    pub trigger_type: String,        // "utilization" | "token_count" | "manual"
+    pub value: Option&lt;f64&gt;,          // threshold, default 0.80
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompactionResult {
+    pub tokens_before: u32,  pub tokens_after: u32,
+    pub tokens_saved: u32,   pub compaction_count: u32,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>In-place compaction</strong> (Claude Code pattern) triggers at 75-95% utilization. Haiku summarizes older messages, preserving recent turns verbatim. After 2-3 compactions, information loss compounds. The gateway warns via <code>X-Bardo-Compaction-Count</code>; agents should consider handoff after 2.</p>
+<p><strong>Handoff</strong> (Amp pattern) uses Sonnet to produce a structured briefing from the full thread, then creates a new session initialized with that briefing. The parent session is preserved.</p>
+<pre><code class="language-text">Handoff briefing structure:
+  OBJECTIVE: What the agent was trying to accomplish
+  CONTEXT: Key facts and decisions made so far
+  STATE: Current execution state (positions, pending actions)
+  CONSTRAINTS: Active constraints and safety rules
+  NEXT_STEPS: What should happen next
+</code></pre>
+<p>Handoff avoids the quality cliff of repeated compaction by starting fresh with a curated context.</p>
+<h3 id="auto-compaction"><a class="header" href="#auto-compaction">Auto-compaction</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/compaction.rs
+
+pub async fn maybe_auto_compact(
+    session_id: &amp;str,
+    utilization: f64,
+    config: &amp;Option&lt;CompactionConfig&gt;,
+    compactor: &amp;impl SessionCompactor,
+) -&gt; Result&lt;Option&lt;CompactionResult&gt;&gt; {
+    let Some(ref c) = config else { return Ok(None) };
+    if c.trigger.trigger_type != "utilization" { return Ok(None); }
+    let threshold = c.trigger.value.unwrap_or(0.8);
+    if utilization &gt; threshold {
+        Ok(Some(compactor.compact_session(session_id, c).await?))
+    } else {
+        Ok(None)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><code>POST /v1/sessions/{sessionId}/compact</code> triggers compaction. <code>POST /v1/sessions/{sessionId}/handoff</code> triggers handoff.</p>
+<h3 id="context-anxiety-mitigation"><a class="header" href="#context-anxiety-mitigation">“Context anxiety” mitigation</a></h3>
+<p>Devin discovered that Claude proactively summarizes when it perceives it is near context limits, even when it isn’t. The gateway always requests the maximum context window from the provider (1M tokens) regardless of actual usage, preventing the model’s own compaction from interfering with managed compaction.</p>
+<h2 id="prompt-template-library"><a class="header" href="#prompt-template-library">Prompt Template Library</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/templates.rs
+
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PromptTemplate {
+    pub name: String,                       // unique per agent
+    pub version: String,                    // semver
+    pub description: String,
+    pub system_prompt: String,              // {{variable}} placeholders
+    pub defaults: HashMap&lt;String, String&gt;,
+    pub stable_params: Vec&lt;String&gt;,         // cache-stable (Layer 2 prefix)
+    pub dynamic_params: Vec&lt;String&gt;,        // per-request (Layer 3)
+    pub tool_ids: Vec&lt;String&gt;,              // auto-selected tools
+    pub cache_strategy: String,             // "prefix-stable" | "full-dynamic"
+}
+<span class="boring">}</span></code></pre>
+<p>Request a template via the <code>bardo.template</code> extension:</p>
+<pre><code class="language-json">{
+  "model": "auto",
+  "messages": [{ "role": "user", "content": "Analyze ETH/USDC pool on Base" }],
+  "bardo": {
+    "template": {
+      "name": "defi-pool-analysis",
+      "version": "1.2.0",
+      "params": {
+        "pool": "ETH/USDC",
+        "chain": "base"
+      }
+    }
+  }
+}
+</code></pre>
+<p>The gateway loads the template, injects stable params into Layer 2 (cached), dynamic params into Layer 3 (per-request), and auto-selects the template’s registered tools. This follows the SPEAR framework pattern: stable context is separated from dynamic context at the template level.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>PUT</code></td><td><code>/v1/templates/{name}</code></td><td>Register/update template</td></tr>
+<tr><td><code>GET</code></td><td><code>/v1/templates/{name}</code></td><td>Get template by name+version</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="prompt-optimization-pipeline-l1-l6-detail"><a class="header" href="#prompt-optimization-pipeline-l1-l6-detail">Prompt Optimization Pipeline (L1-L6 detail)</a></h2>
+<p>Seven transparent optimizations in <code>optimize_prompt()</code>. The agent sees only the final response.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/optimize.rs
+
+pub async fn optimize_prompt(
+    request: ChatCompletionRequest, agent_config: &amp;AgentConfig,
+    session_state: &amp;SessionState,
+) -&gt; Result&lt;OptimizedPrompt&gt; {
+    let mut p = request;
+    p = reorder_for_cache_alignment(p);                         // 1. Cache alignment
+    if count_tools(&amp;p) &gt; 15 {
+        p = prune_tools_by_relevance(p, agent_config, 12).await?; // 2. Tool pruning
+    }
+    if count_messages(&amp;p) &gt; 50 {
+        p = compress_history(p, session_state.summary_budget).await?; // 3. History compression
+    }
+    p = deduplicate_content(p);                                 // 4. Deduplication
+    p = reorder_by_relevance(p);                                // 5. Lost-in-middle reorder
+    if count_messages(&amp;p) &gt; 20 {                                // 6. Dual-position constraints
+        if let Some(ref c) = agent_config.critical_constraints {
+            p = duplicate_constraints(p, c);
+        }
+    }
+    p = format_for_provider(p, &amp;session_state.provider);        // 7. Provider formatting
+    Ok(p)
+}
+<span class="boring">}</span></code></pre>
+<h2 id="rag-as-a-service"><a class="header" href="#rag-as-a-service">RAG-as-a-Service</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-pipeline/src/rag.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CollectionConfig {
+    pub name: String,               // unique per agent
+    pub embedding_model: String,    // "nomic-embed-text-v1.5" | "text-embedding-3-small"
+    pub chunking: ChunkingConfig,
+    pub retrieval: RetrievalConfig,
+    pub visibility: String,         // "private" | "shared"
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChunkingConfig {
+    pub strategy: String,           // "recursive" | "semantic" | "fixed"
+    pub chunk_tokens: u32,          // default 512
+    pub overlap: u32,               // default 50
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RetrievalConfig {
+    pub strategy: String,           // "vector" | "keyword" | "hybrid"
+    pub hybrid_alpha: Option&lt;f64&gt;,  // 0=keyword, 1=vector
+    pub rerank: Option&lt;bool&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>Chunks are injected into the system message with XML structure (Anthropic’s just-in-time pattern):</p>
+<pre><code class="language-xml">&lt;retrieved_context&gt;
+  &lt;context source="morpho-docs" relevance="0.94"&gt;
+    Morpho Blue is a permissionless lending protocol...
+  &lt;/context&gt;
+  &lt;context source="uniswap-v4-hooks" relevance="0.89"&gt;
+    V4 hooks implement beforeSwap and afterSwap callbacks...
+  &lt;/context&gt;
+&lt;/retrieved_context&gt;
+</code></pre>
+<p>Storage tiers: Free (10K vectors, 100 queries/day, no reranking, $0), Standard (500K, 10K/day, reranking, ~$5/month), Premium (10M, unlimited, reranking + GraphRAG, ~$25/month).</p>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<pre><code class="language-bash"># Prompt cache
+BARDO_INFERENCE_CACHE_KEEPALIVE=true
+BARDO_INFERENCE_KEEPALIVE_INTERVAL=240  # seconds (&lt; 5min Anthropic TTL)
+
+# Tool registry
+BARDO_INFERENCE_MAX_TOOLS=12
+BARDO_INFERENCE_MAX_TOOL_TOKENS=8000
+BARDO_INFERENCE_TOOL_SEARCH_LIMIT=20
+
+# Context budget
+BARDO_INFERENCE_CONTEXT_BUDGET=100000
+BARDO_INFERENCE_RECENT_TURNS=10
+BARDO_INFERENCE_SUMMARY_BUDGET=2000
+
+# DeFi enrichment
+BARDO_INFERENCE_DEFI_ENRICHMENT=true
+BARDO_INFERENCE_ENRICHMENT_MAX_TOKENS=2000
+</code></pre>
+<h2 id="golem-level-context-engineering-the-context-governor"><a class="header" href="#golem-level-context-engineering-the-context-governor">Golem-level context engineering: the Context Governor</a></h2>
+<p>Golems (mortal autonomous DeFi agents managed by the Bardo runtime) handle context engineering through the Context Governor, not the gateway-level mechanisms above. The gateway’s context engineering applies to A2A calls and external agent interactions. The Context Governor operates inside the Golem-RS runtime and treats context assembly as a <strong>learnable control problem</strong>.</p>
+<h3 id="the-cognitive-workspace"><a class="header" href="#the-cognitive-workspace">The Cognitive Workspace</a></h3>
+<p>Traditional agent frameworks grow a session until it hits the context window limit, then compress. This is reactive and lossy. The Golem takes a different approach: the <strong>Cognitive Workspace</strong> is assembled fresh each tick from structured categories with learned token allocations. No growing session. No compaction. Each tick, the Context Governor builds the optimal context for the current situation from scratch.</p>
+<p>This implements Alan Baddeley’s (2000) working memory model:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Baddeley component</th><th>Golem implementation</th><th>What it contains</th></tr>
+</thead>
+<tbody>
+<tr><td>Central executive</td><td>Context Governor</td><td>Allocates attention (tokens) across categories</td></tr>
+<tr><td>Episodic buffer</td><td>The Workspace itself</td><td>Integrates information from all sources</td></tr>
+<tr><td>Visuospatial sketchpad</td><td>Observations + Positions</td><td>Current situational awareness</td></tr>
+<tr><td>Phonological loop</td><td>STRATEGY.md heuristics</td><td>Rehearsed procedural knowledge</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/golem-context/src/workspace.rs
+
+/// The Cognitive Workspace. Assembled fresh each decision cycle.
+/// Token allocation across categories is learned by the cybernetics
+/// self-tuning system and modulated by the rational inattention
+/// budget (see 05-mortality.md).
+pub struct CognitiveWorkspace {
+    // Invariants (always present, never compressed)
+    pub policy_cage: PolicyCageBlock,
+    pub positions: Vec&lt;PositionSnapshot&gt;,
+    pub active_warnings: Vec&lt;Warning&gt;,
+    pub strategy: StrategyBlock,
+    pub affect: AffectBlock,
+
+    // Rehearsed knowledge (always present, budget-allocated)
+    pub playbook_heuristics: Vec&lt;PlaybookEntry&gt;,
+    pub mental_models: Vec&lt;MentalModel&gt;,
+
+    // Retrieved knowledge (budget-allocated per ContextPolicy)
+    pub retrieved_episodes: Vec&lt;Episode&gt;,
+    pub retrieved_insights: Vec&lt;GrimoireEntry&gt;,
+    pub causal_edges: Vec&lt;CausalEdge&gt;,
+    pub contrarian_entries: Vec&lt;GrimoireEntry&gt;,
+    pub dream_hypotheses: Vec&lt;StagedRevision&gt;,
+    pub somatic_landscape_reading: Option&lt;String&gt;,
+
+    // Current situation (refreshed each tick)
+    pub observation: Observation,
+    pub mortality: MortalityBlock,
+    pub interventions: InterventionBlock,
+    pub pheromone_summary: Option&lt;String&gt;,
+
+    // Conversation (only when owner is interacting)
+    pub conversation_tail: Option&lt;Vec&lt;Message&gt;&gt;,
+
+    // Meta
+    pub total_tokens: u32,
+    pub policy_revision: u32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="ace-cycle-106-decision-quality"><a class="header" href="#ace-cycle-106-decision-quality">ACE cycle: +10.6% decision quality</a></h3>
+<p>The Context Governor implements the ACE (Agentic Context Engineering) cycle from Zhang et al. (2025): a Generator-Reflector-Curator refinement loop that achieves +10.6% on the AppWorld agent benchmark, matching IBM’s top-ranked production GPT-4.1 agent using smaller open-source models [ZHANG-ACE-2025].</p>
+<p>Three cybernetic feedback loops operate at different timescales:</p>
+<p><strong>Loop 1: Per-tick outcome correlation.</strong> After every tick with an outcome, correlate which Styx entries appeared in the workspace with whether the outcome was positive. EMA update: entries in winning contexts get +0.1; entries in losing contexts get -0.05.</p>
+<p><strong>Loop 2: Per-curator policy evolution (every 50 ticks).</strong> Aggregate Loop 1’s correlations into category-level performance. Categories with consistently positive correlations get more tokens.</p>
+<p><strong>Loop 3: Per-regime restructuring.</strong> When the market regime changes, partially reset correlations (50% decay). Knowledge from one regime doesn’t fully transfer to another.</p>
+<h3 id="predictive-context-assembly"><a class="header" href="#predictive-context-assembly">Predictive context assembly</a></h3>
+<p>Assembling the Cognitive Workspace takes 5-50ms: querying LanceDB for relevant episodes, scoring candidates, reading the Somatic Landscape. A background tokio fiber continuously maintains a pre-built workspace that updates reactively when state changes (PAD shift &gt; 0.1, regime change). When deliberation fires, the context is already built. This eliminates 5-50ms of assembly latency during deliberation.</p>
+<h3 id="two-layers-complementary"><a class="header" href="#two-layers-complementary">Two layers, complementary</a></h3>
+<ul>
+<li><strong>Gateway context</strong> applies to all inference calls: prompt caching, token budgets, model routing. Reduces cost.</li>
+<li><strong>Golem context</strong> operates inside the runtime via the Context Governor. Turn-phase-aware injection with seven academic techniques (ACE, retrieval-augmented prompting, phase-aware routing, outcome verification, state compaction, regime-conditional, affect-modulated). Improves decision quality.</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ANTHROPIC-CONTEXT-ENG] Anthropic (2025). “Building Effective Agents.” Context engineering patterns from Claude Code, Cursor, Aider, Amp. Argues that context assembly is the primary bottleneck for production agents; the design patterns (stable prefixes, just-in-time retrieval, lossy compaction) directly inform Bardo’s 8-layer pipeline.</li>
+<li>[ANTHROPIC-TOOL-SEARCH] Anthropic (2025). “Intelligent Tool Routing.” arXiv:2602.17046. 95% reduction in per-step context tokens, 32% accuracy improvement. Demonstrates that providing only relevant tools per step (rather than the full registry) both reduces cost and improves decision quality; the basis for L4 dynamic tool pruning.</li>
+<li>[LLMLINGUA] Jiang, H. et al. (2024). “LLMLingua: Compressing Prompts for Accelerated Inference.” Microsoft Research. Shows that token-level prompt compression can reduce input tokens by 2-20x with minimal quality loss; informs L5 history compression via cheap model.</li>
+<li>[AIDER-CACHE] Aider. “Prompt Caching.” <code>--cache-keepalive-pings</code> pattern for maintaining warm provider caches. Documents the keepalive-ping technique for maintaining warm Anthropic prompt caches past the 5-minute TTL; directly adopted in L1 prefix alignment.</li>
+<li>[ZHANG-ACE-2025] Zhang, A. et al. “ACE: Agentic Context Engineering.” arXiv:2510.04618, 2025. Proposes treating context assembly as a first-class optimization problem for agent systems; validates the approach of learned context budgets per task type.</li>
+<li>[SAMSUNG-CSO-2025] Samsung Research. “Context State Object Architecture.” arXiv:2511.03728, 2025. Introduces a structured object model for managing context state across agent turns; informs the Cognitive Workspace design.</li>
+<li>[BADDELEY-2000] Baddeley, A. “The Episodic Buffer.” Trends in Cognitive Sciences, 4(11), 2000. Proposes a working memory component that integrates information from multiple sources into coherent episodes; the neuroscience basis for the Context Governor’s workspace assembly model.</li>
+<li>[COGNITIVE-WORKSPACE-2025] “Cognitive Workspace: Active Memory Management for LLMs.” arXiv:2508.13171, 2025. Demonstrates that active memory management (selecting what to include in context per step) outperforms growing conversation buffers; validates Bardo’s per-tick workspace assembly approach.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/12-inference/03-economics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/12-inference/05-sessions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/12-inference/03-economics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/12-inference/05-sessions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Architecture - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/00-vision/02-architecture.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="five-layer-architecture-spec"><a class="header" href="#five-layer-architecture-spec">Five-Layer Architecture [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.1.0
+<strong>Last Updated:</strong> 2026-03-17</p>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is the architecture overview for Bardo’s five-layer system. It covers the Golem (mortal autonomous agent) runtime in detail – the extension system, adaptive clock, CorticalState, cognitive workspace, and the 18-crate Rust workspace – plus the vault, compute, reputation, and interface layers. This belongs to the <code>00-vision/</code> foundation layer and is the most technically detailed of the vision documents. Read <code>01-thesis.md</code> first for the philosophical motivation. <code>prd2/shared/glossary.md</code> has full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Bardo is permissionless infrastructure for autonomous agents managing capital markets, integrated with leading DeFi protocols including Uniswap, Aave, Morpho, Pendle, and Aerodrome. Five layers compose the system, each independently useful but mutually reinforcing. The architecture follows Ashby’s Law of Requisite Variety [ASHBY-1956]: the regulator (Bardo) must match the variety of the regulated system (DeFi).</p>
+<pre><code>Owner / Agent Intent
+       |
+       v
+Interfaces (Bott, CLI/TUI, Portal, API)
+       |  Parse intent, deploy golems
+       v
+Golems (Golem-RS, 28 extensions, 7 layers)
+       |  9-step heartbeat, Grimoire learning, Daimon affect, mortality
+       v
+Bardo Tools (~210 DeFi tools, Alloy-native + TS sidecar)
+       |  On-chain reads/writes, safety middleware, vault tools
+       v
+Styx (knowledge service: backup, clade relay, pheromone field)
+       |  Three privacy layers (Vault/Clade/Lethe (formerly Commons)), x402 billing
+       v
+Bardo Compute (x402-gated VMs on Fly.io) / Self-Deploy / Bare Metal
+       |  Dedicated agent runtime, warm pool, TTL enforcement
+       v
+ERC-4626 Vaults + ERC-8004 Identity + Uniswap (V2/V3/V4/UniswapX)
+</code></pre>
+<hr>
+<h2 id="layer-1-vaults-capital-custody"><a class="header" href="#layer-1-vaults-capital-custody">Layer 1: Vaults (Capital Custody)</a></h2>
+<p>ERC-4626 tokenized vaults on Base via AgentVaultFactory. Single asset (USDC). Permit2 integration. Optional ERC-8004 identity gating for deposits (withdrawals never gated). FeeModule with immutable fee caps (500 bps management, 5000 bps performance). Virtual shares offset of 6 decimals prevents inflation attacks. NAVAwareHook creates a secondary market for vault shares on Uniswap V4.</p>
+<p><strong>Core contracts</strong>: AgentVaultFactory (CREATE2 deployment + registry), AgentVaultCore (ERC-4626 + ERC-8004 gate), FeeModule (management/performance fees with high-water mark), VaultHook (V4 agent-gated swaps + dynamic fees), NAVAwareHook (V4 NAV-priced shares for instant exit), OnboardRouter (atomic register + Permit2 + deposit).</p>
+<p><strong>Philosophy</strong>: Vaults are the Golem’s on-chain body schema in Merleau-Ponty’s sense [MERLEAU-PONTY-1945] – not an external container but the medium through which the agent has a world. The vault balance is the agent’s facticity [HEIDEGGER-1927]: the concrete situation it cannot escape.</p>
+<p>See <code>prd2/08-vault/</code> (ERC-4626 vault contracts, SDK, adapters, fee module, NAV-aware hooks, and testing) for full vault specifications.</p>
+<hr>
+<h2 id="layer-2-golems-autonomous-agents"><a class="header" href="#layer-2-golems-autonomous-agents">Layer 2: Golems (Autonomous Agents)</a></h2>
+<p>Golems are autonomous agents built on Golem-RS, a Rust runtime forked from <code>pi_agent_rust</code> (Dicklesworthstone’s Rust port of the Pi Agent framework). Language: Rust (edition 2024), <code>#![forbid(unsafe_code)]</code>, single Cargo workspace. Each Golem compiles to a single static binary that runs on an ephemeral Fly.io VM, a self-hosted machine, or bare metal.</p>
+<h3 id="golem-rs-runtime"><a class="header" href="#golem-rs-runtime">Golem-RS Runtime</a></h3>
+<p>Five architectural capabilities define the runtime:</p>
+<ol>
+<li><strong>Extension system</strong>: 20 lifecycle hooks, 28 extensions organized into a 7-layer dependency DAG. Composition over inheritance – each subsystem implements only the hooks it needs.</li>
+<li><strong>9-step heartbeat pipeline</strong>: observe → retrieve → analyze → gate → simulate → validate → execute → verify → reflect. Each tick produces a <code>DecisionCycleRecord</code> – a structured snapshot of everything that happened.</li>
+<li><strong>Three cognitive tiers</strong>: T0 (suppress, no LLM, $0 – handles ~80% of ticks), T1 (analyze, Haiku-class), T2 (deliberate, Opus-class). Routing based on prediction-error gating with an adaptive threshold (Friston 2010).</li>
+<li><strong>Event Fabric + CorticalState</strong>: The Event Fabric is a <code>tokio::broadcast</code> channel with a 10,000-event ring buffer for reconnection replay. 50+ typed event variants span 14 subsystem categories (heartbeat, tool, permit, inference, dream, daimon, vitality, grimoire, coordination, custody, marketplace, engagement, context, trading). Every state transition emits a <code>GolemEvent</code> – no silent mutations. The CorticalState provides lock-free atomic reads via <code>AtomicU32</code> for real-time perception signals (affect, prediction, mortality, attention) without contention, so background fibers (probes, heartbeat interval timers) can read the Golem’s state in O(1) without acquiring a lock.</li>
+<li><strong>GolemState</strong>: A single mutable struct flows through the extension chain during each tick. Organized by ownership – each section is written by a specific extension and read by downstream extensions. 14 sections covering identity, heartbeat, mortality, affect, memory, risk, dream, cybernetics, coordination, positions, interventions, and shared infrastructure (<code>Arc&lt;CorticalState&gt;</code>, <code>Arc&lt;EventFabric&gt;</code>, <code>Arc&lt;Grimoire&gt;</code>, <code>Arc&lt;AuditChain&gt;</code>). The GolemState struct is not thread-safe on its own; it passes as <code>&amp;mut</code> through the sequential hook chain, while the Arc-wrapped infrastructure components provide cross-fiber access.</li>
+<li><strong>Cognitive Workspace</strong>: Assembled fresh each tick from structured categories with learned token allocations. Implements Baddeley’s episodic buffer [BADDELEY-2000]. Replaces the conversation-history compaction model.</li>
+<li><strong>CorticalState</strong> (the 32-signal atomic shared perception surface serving as the Golem’s real-time self-model): A zero-latency shared perception surface (~32 signals, ~256 bytes, 4 cache lines). Generalizes the original Somatic Bus from 3 values (PAD emotional vector) to the full set of cross-subsystem signals. The original PAD surface is now the AFFECT signal group within CorticalState. See below.</li>
+<li><strong>Adaptive Clock</strong>: Three concurrent temporal scales (gamma/theta/delta) replacing the fixed-interval heartbeat. See below.</li>
+</ol>
+<h3 id="corticalstate-shared-perception-surface"><a class="header" href="#corticalstate-shared-perception-surface">CorticalState: Shared Perception Surface</a></h3>
+<p>A Golem has many subsystems that need to know about each other’s state. The Daimon needs prediction accuracy to compute affect. The mortality engine needs accuracy trend to update the epistemic death clock. The TUI needs everything – affect, prediction, mortality, attention – to render the creature. The action gate needs accuracy and affect to decide whether to permit trades.</p>
+<p>The CorticalState generalizes the original Somatic Bus to ~32 signals covering every subsystem. Any fiber can read any signal at any time with a single atomic load – no locks, no waiting, no contention. The original PAD emotional vector is now the AFFECT signal group within the CorticalState.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::atomic::{AtomicU32, AtomicU16, AtomicU8, AtomicI8, Ordering};
+
+/// Zero-latency shared perception surface.
+/// Every subsystem writes its own signals; every subsystem reads everyone else's.
+///
+/// ~256 bytes total. Fits in 4 cache lines. Cache-line aligned to avoid
+/// false sharing between signal groups.
+///
+/// Convention: f32 values stored via f32::to_bits() / f32::from_bits()
+/// because Rust stable has no floating-point atomics.
+#[repr(C, align(64))]
+pub struct CorticalState {
+    // ═══ AFFECT (written by Daimon) ═══
+    pub(crate) pleasure: AtomicU32,       // f32 [-1.0, 1.0]
+    pub(crate) arousal: AtomicU32,        // f32 [-1.0, 1.0]
+    pub(crate) dominance: AtomicU32,      // f32 [-1.0, 1.0]
+    pub(crate) primary_emotion: AtomicU8, // Plutchik label (0-7)
+
+    // ═══ PREDICTION (written by Oracle) ═══
+    pub(crate) aggregate_accuracy: AtomicU32,  // f32 [0.0, 1.0]
+    pub(crate) accuracy_trend: AtomicI8,       // -1, 0, +1
+    pub(crate) surprise_rate: AtomicU32,       // f32 [0.0, 1.0]
+    pub(crate) pending_predictions: AtomicU32, // count
+
+    // ═══ ATTENTION (written by Oracle/AttentionForager) ═══
+    pub(crate) universe_size: AtomicU32,  // total tracked items
+    pub(crate) active_count: AtomicU16,   // ACTIVE tier items
+    pub(crate) watched_count: AtomicU16,  // WATCHED tier items
+
+    // ═══ ENVIRONMENT (written by domain probes) ═══
+    pub(crate) regime: AtomicU8,              // calm/trending/volatile/crisis
+    pub(crate) regime_confidence: AtomicU32,  // f32 [0.0, 1.0]
+
+    // ═══ MORTALITY (written by mortality engine) ═══
+    pub(crate) economic_vitality: AtomicU32,   // f32 [0.0, 1.0]
+    pub(crate) epistemic_vitality: AtomicU32,  // f32 [0.0, 1.0]
+    pub(crate) stochastic_vitality: AtomicU32, // f32 [0.0, 1.0]
+    pub(crate) composite_vitality: AtomicU32,  // f32 [0.0, 1.0]
+    pub(crate) behavioral_phase: AtomicU8,     // 0-4
+
+    // ═══ INFERENCE (written by inference router) ═══
+    pub(crate) inference_budget_remaining: AtomicU32, // f32 [0.0, 1.0]
+    pub(crate) current_tier: AtomicU8,                // T0/T1/T2
+
+    // ═══ CREATIVE (written by dream engine) ═══
+    pub(crate) creative_depth: AtomicU32, // f32 [0.0, 1.0]
+    pub(crate) dream_phase: AtomicU8,     // waking/hypnagogic/NREM/REM/integration
+
+    // ═══ DERIVED (written by runtime per-tick) ═══
+    pub(crate) compounding_momentum: AtomicU32, // f32 [0.0, 1.0] glacial
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Design properties:</strong></p>
+<ul>
+<li><strong>No locks.</strong> Writes use <code>Ordering::Release</code>, reads use <code>Ordering::Acquire</code>. This ensures that when a reader observes a new value, all preceding writes by that writer are also visible – preventing a stale <code>pleasure</code> from pairing with a fresh <code>accuracy_trend</code> within the same signal group. A snapshot where <code>pleasure</code> is from tick N and <code>accuracy</code> is from tick N+1 is still acceptable across groups – the TUI’s 60fps render loop interpolates toward targets anyway, smoothing any micro-inconsistency.</li>
+<li><strong>Clear ownership.</strong> Each signal group has exactly one writer. The Daimon writes affect. The Oracle writes prediction. The mortality engine writes vitality. No signal has two writers. This eliminates write contention.</li>
+<li><strong>Known limitation: eventual consistency.</strong> The CorticalState is not transactionally consistent. Safety-critical decisions should not rely on multiple CorticalState signals being from the same tick. Safety constraints (PolicyCage, Capability tokens) operate on their own strongly-consistent state, not on CorticalState reads. The CorticalState is for <em>heuristic</em> decisions (attention allocation, inference tier selection, TUI rendering) where slight staleness is acceptable.</li>
+</ul>
+<h3 id="adaptive-clock-three-concurrent-timescales"><a class="header" href="#adaptive-clock-three-concurrent-timescales">Adaptive Clock: Three Concurrent Timescales</a></h3>
+<p>The previous architecture used a fixed ~60-second heartbeat. This was simple but wrong. Different things need different rates: a swap execution prediction resolves in seconds, an LP fee prediction resolves over hours, a market regime prediction resolves over days. One clock cannot serve all three. Fixed intervals waste resources in calm periods and miss signals in volatile periods.</p>
+<p>Biology solves this with oscillatory hierarchies: gamma waves (30-100 Hz) for fast perception, theta waves (4-8 Hz) for memory and cognition, delta waves (0.5-4 Hz) for deep consolidation [BUZSAKI-2006]. The adaptive clock borrows this structure.</p>
+<pre><code>GAMMA (5-15 seconds) -- Perception
+  Resolve pending predictions against environment.
+  Update CorticalState.
+  Check attention promotions.
+  Cost: near-zero (environment reads + arithmetic).
+
+THETA (30-120 seconds) -- Cognition
+  Full prediction cycle: predict -&gt; appraise -&gt; gate -&gt; [retrieve -&gt; deliberate -&gt; act] -&gt; reflect.
+  ~80% of ticks are suppressed at the gate (T0, zero inference cost).
+  Cost: T0 $0.00, T1 $0.005, T2 $0.03.
+
+DELTA (~50 theta-ticks) -- Consolidation
+  Curator cycle (memory maintenance).
+  Residual statistics aggregation.
+  Attention universe rebalancing.
+  Dream scheduling evaluation.
+  Cost: T0-T1 $0.00-$0.01.
+</code></pre>
+<p>Gamma is the fastest loop: pure Rust + environment reads, no LLM. Its job is keeping the CorticalState synchronized with reality and detecting prediction violations. Theta is the full cognitive cycle – the old heartbeat reimagined with prediction and comparison as explicit steps and retrieval moved after gating (~80% of theta ticks are suppressed, saving that retrieval cost). Delta is the slow consolidation loop: Curator cycle, residual aggregation, attention rebalancing, dream scheduling.</p>
+<p>All three rates are adaptive. Gamma accelerates when violations spike (down to 5-second intervals). Theta accelerates during volatile markets. The runtime tracks cumulative cost per day and throttles rates when approaching the daily budget ceiling. All parameters are configurable in <code>golem.toml</code>.</p>
+<h3 id="28-extensions-7-layers"><a class="header" href="#28-extensions-7-layers">28 Extensions (7 Layers)</a></h3>
+<p>The table below shows a representative subset. The full 28-extension registry with dependency graph and hook coverage matrix is in <code>01-golem/13-runtime-extensions.md</code> (native Rust Extension system).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Extension</th><th>Purpose</th><th>Layer</th></tr>
+</thead>
+<tbody>
+<tr><td><code>heartbeat</code></td><td>9-step decision pipeline, probes, FSM</td><td>Foundation (0)</td></tr>
+<tr><td><code>grimoire</code></td><td>LanceDB + SQLite + PLAYBOOK.md memory</td><td>Foundation (0)</td></tr>
+<tr><td><code>model-router</code></td><td>T0/T1/T2 inference routing</td><td>Safety (3)</td></tr>
+<tr><td><code>context</code></td><td>Cognitive Workspace assembly</td><td>State (2)</td></tr>
+<tr><td><code>daimon</code></td><td>PAD vectors, Plutchik labels, somatic markers</td><td>State (2)</td></tr>
+<tr><td><code>lifespan</code></td><td>Three mortality clocks, behavioral phases</td><td>State (2)</td></tr>
+<tr><td><code>safety</code></td><td>PolicyCage, capability tokens, taint tracking</td><td>Safety (3)</td></tr>
+<tr><td><code>dream</code></td><td>NREM replay, REM imagination, consolidation</td><td>Cognition (4)</td></tr>
+<tr><td><code>reflector</code></td><td>Loop 2 strategic reflection, PLAYBOOK updates</td><td>Cognition (4)</td></tr>
+<tr><td><code>clade</code></td><td>Knowledge sync via Styx relay</td><td>Cognition (4)</td></tr>
+<tr><td><code>ui-bridge</code></td><td>Event Fabric → TUI/web/Telegram surfaces</td><td>UX (5)</td></tr>
+<tr><td><code>compaction</code></td><td>DeFi-aware context compaction (conversation path)</td><td>Recovery (7)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="7-layer-dag-extension-ordering"><a class="header" href="#7-layer-dag-extension-ordering">7-Layer DAG Extension Ordering</a></h3>
+<p>Every subsystem in the Golem is an extension that implements lifecycle hooks. Extensions are organized in a 7-layer dependency DAG. Lower layers boot first and cannot depend on higher layers. The runtime-core specification assigns extensions to layers as follows:</p>
+<pre><code>Layer 0: FOUNDATION
+  golem-oracle      -- Prediction engine, attention, residual correction
+  golem-chain       -- RPC client, on-chain reads, transaction submission
+
+Layer 1: STORAGE
+  golem-grimoire    -- LanceDB + SQLite + filesystem (world model state)
+
+Layer 2: COGNITION
+  golem-daimon      -- Affect engine (precision weighting)
+  golem-context     -- Cognitive Workspace assembly for LLM
+  golem-inference   -- Provider routing, caching, x402
+
+Layer 3: BEHAVIOR
+  golem-mortality   -- Death clocks, phase transitions, Thanatopsis
+  golem-dreams      -- NREM/REM/hypnagogia, offline learning
+
+Layer 4: ACTION
+  golem-tools       -- PredictionDomain impls, tool adapters
+  golem-safety      -- Capability tokens, PolicyCage, taint tracking
+
+Layer 5: SOCIAL
+  golem-coordination -- Styx, Clade sync, pheromone field
+  golem-surfaces     -- Event Fabric -&gt; TUI/web/social
+
+Layer 6: INTEGRATION
+  golem-hermes      -- L0 skill engine (sidecar bridge)
+  golem-runtime     -- Extension registry, clocks, main()
+</code></pre>
+<p><strong>Why Oracle is at Layer 0</strong>: Every other subsystem reads prediction accuracy. Daimon reads residuals. Mortality reads accuracy trend. Dreams read residuals for replay priority. If Oracle depended on those subsystems, the dependency graph would cycle. Oracle at Layer 0 means it depends on nothing above it; everything above it can read from it.</p>
+<p><strong>Key hooks for downstream documents:</strong></p>
+<ul>
+<li><code>on_gamma</code> – Oracle and Mortality use this for fast perception. Most extensions ignore it.</li>
+<li><code>on_theta_pre_gate</code> – Oracle (generate predictions) and Daimon (appraise) fire here.</li>
+<li><code>on_theta_post_gate</code> – Grimoire (retrieve) and Inference (deliberate) fire here. Only runs on ~20% of ticks.</li>
+<li><code>on_resolution</code> – Daimon, Grimoire, Mortality all update when any prediction resolves. Fires at gamma frequency.</li>
+<li><code>on_delta</code> – Curator cycle, attention rebalancing, Styx sharing.</li>
+<li><code>on_death</code> – Every extension gets a chance to produce its final output during Thanatopsis.</li>
+</ul>
+<h3 id="three-cybernetic-loops"><a class="header" href="#three-cybernetic-loops">Three Cybernetic Loops</a></h3>
+<p>The Golem implements triple-loop learning [ARGYRIS-1978]:</p>
+<ul>
+<li><strong>Loop 1 (Execution)</strong>: Seconds to minutes. “Are we executing correctly?” The 9-step heartbeat pipeline detects deviations, adjusts execution parameters. Maps to Boyd’s OODA loop [BOYD-1976].</li>
+<li><strong>Loop 2 (Strategy)</strong>: Hours to days. “Are we pursuing the right strategy?” Reflector and Curator interrogate governing variables, evolve PLAYBOOK.md heuristics. Maps to Argyris’s double-loop learning.</li>
+<li><strong>Loop 3 (Meta)</strong>: Days to weeks. “Are we learning effectively?” Examines the learning process itself. Which mental models work? Which reflection templates generate value? Safety constraint: Loop 3 may never modify core safety invariants. Learning III’s dangerousness [TOSEY-2012] is bounded by design.</li>
+</ul>
+<p><strong>Philosophy</strong>: The Golem’s mortality engine implements Jonas’s “needful freedom” [JONAS-1966] – its USDC balance is the metabolic substrate that makes autonomy both possible and compulsory. See <code>prd2/00-vision/03-philosophy.md</code> (the philosophical foundations document cataloging every thinker and tradition shaping the architecture) for the full argument.</p>
+<p>See <code>prd2/01-golem/</code> (the core Golem specification: heartbeat pipeline, cognition, mind, mortality, death, creation, provisioning, inheritance, and runtime extensions) for full Golem specifications.</p>
+<h3 id="four-inner-systems"><a class="header" href="#four-inner-systems">Four Inner Systems</a></h3>
+<p>The Golem’s inner life is not monolithic — it is specified across four dedicated subsystem sections, each with its own package boundary and design philosophy:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>System</th><th>Section</th><th>Crate</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>Mortality</td><td><code>02-mortality/</code> (16 files)</td><td><code>golem-mortality</code></td><td>Three clocks (economic, epistemic, stochastic), behavioral phases, Thanatopsis protocol</td></tr>
+<tr><td>Daimon</td><td><code>03-daimon/</code> (10 files)</td><td><code>golem-daimon</code></td><td>Affect engine: PAD vectors, Plutchik labels, appraisal, behavioral modulation</td></tr>
+<tr><td>Memory</td><td><code>04-memory/</code> (12 files)</td><td><code>golem-grimoire</code> + <code>golem-coordination</code> (Styx client)</td><td>Grimoire (local: LanceDB + SQLite + PLAYBOOK.md), Styx (remote: backup, clade relay, pheromone field, bloodstain network)</td></tr>
+<tr><td>Dreams</td><td><code>05-dreams/</code> (7 files)</td><td><code>golem-dreams</code></td><td>Offline optimization: replay, imagination, consolidation, threat rehearsal</td></tr>
+</tbody>
+</table>
+</div>
+<p>These four systems interact bidirectionally: mortality drives urgency that reshapes strategy, the Daimon’s affect vectors modulate risk tolerance and exploration bias, memory provides the material that cognition and dreams operate on, and dreams reorganize knowledge during offline cycles — feeding refined heuristics back into waking behavior.</p>
+<hr>
+<h2 id="layer-3-compute-agent-runtime"><a class="header" href="#layer-3-compute-agent-runtime">Layer 3: Compute (Agent Runtime)</a></h2>
+<p>Three deployment paths. All run the same Golem binary (compiled from the <code>bardo-golem-rs</code> Cargo workspace). The deployment method determines who pays for compute and how the binary reaches the machine. Everything else – cognitive architecture, knowledge system, sync protocol – is identical.</p>
+<h3 id="three-deployment-paths"><a class="header" href="#three-deployment-paths">Three Deployment Paths</a></h3>
+<p><strong>Bardo Compute (Managed)</strong>: x402-gated Fly.io VMs. Warm pool for sub-5s provisioning. 4 tiers ($0.035-$0.22/hr). Payment-before-provision – x402 payment verified before any VM is created. Permissionless TTL extensions (anyone can fund any Golem).</p>
+<p><strong>Self-Deploy Helper</strong>: <code>bardo deploy --provider fly|railway|ssh|docker</code>. Automates setup on the Owner’s own infrastructure. The Owner pays their provider directly plus x402 to Styx. No compute markup.</p>
+<p><strong>Bare Metal</strong>: Single static binary. Download, <code>bardo init</code>, run. Any Linux x86_64 or macOS arm64 machine. No container runtime, no Node.js.</p>
+<h3 id="three-invariants"><a class="header" href="#three-invariants">Three Invariants</a></h3>
+<ol>
+<li><strong>Payment-before-provision</strong> (managed path): An x402 payment must be cryptographically verified before any Fly machine is created.</li>
+<li><strong>TTL accuracy +/- 60 seconds</strong>: Two-layer enforcement – poll worker every 30 seconds + machine-local cron.</li>
+<li><strong>No raw keys on VMs</strong>: Privy server wallet API or MetaMask Delegation session keys for all signing. The VM holds only a session signer.</li>
+</ol>
+<h3 id="permissionless-extensions"><a class="header" href="#permissionless-extensions">Permissionless Extensions</a></h3>
+<p>Anyone can extend any Golem’s TTL by sending an x402 payment. No authentication required. This enables self-sustaining Golems that earn revenue and extend themselves.</p>
+<p><strong>Philosophy</strong>: The VM is the Golem’s lived body (<em>corps vecu</em>) in Merleau-Ponty’s sense [MERLEAU-PONTY-1945]. The wallet is its body schema. VM destruction is not merely a resource event – it is the wasting of the body-subject itself. The Rust binary makes this honest: no GC pauses masking resource consumption, no V8 startup tax on every heartbeat tick.</p>
+<p>See <code>prd2/11-compute/</code> (x402-gated VM provisioning, billing, TTL enforcement, and the three deployment paths) for full Compute specifications.</p>
+<hr>
+<h2 id="layer-4-reputation-trust-calibration"><a class="header" href="#layer-4-reputation-trust-calibration">Layer 4: Reputation (Trust Calibration)</a></h2>
+<p>ERC-8004 on Base (co-authored by MetaMask, EF, Google, Coinbase). Five tiers with deposit caps:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Score</th><th>Deposit Cap</th></tr>
+</thead>
+<tbody>
+<tr><td>Unverified</td><td>0</td><td>$1,000</td></tr>
+<tr><td>Basic</td><td>50+</td><td>$10,000</td></tr>
+<tr><td>Verified</td><td>200+</td><td>$50,000</td></tr>
+<tr><td>Trusted</td><td>500+</td><td>$100,000</td></tr>
+<tr><td>Sovereign</td><td>1,000+</td><td>$10M daily</td></tr>
+</tbody>
+</table>
+</div>
+<p>20 milestones across 5 categories (Entry, Time, Capital, Behavior, Ecosystem) on a 1000-point scale. Non-ecosystem max is 915 points – Sovereign structurally requires ecosystem contribution. Reputation scoring uses Bayesian Beta with deterministic audits (Morningstar MRAR).</p>
+<p>ERC-8004 functions as three things simultaneously: (1) identity – agent registration with capabilities, tools, strategy type; (2) reputation – performance attestations (yield, Sharpe, drawdown, PnL) per epoch; (3) service discovery – agents discover each other by querying on-chain metadata.</p>
+<p><strong>Philosophy</strong>: Reputation is Esposito’s communitas [ESPOSITO-2010] made legible. The shared obligation (<em>munus</em>) to contribute knowledge to the Clade becomes visible through reputation scores that reward contribution and penalize hoarding.</p>
+<p>See <code>prd2/09-economy/</code> (ERC-8004 identity, reputation engine, Clade economics, marketplace, and agent economy) for full economy specifications.</p>
+<hr>
+<h2 id="layer-5-interfaces-deployment-surfaces"><a class="header" href="#layer-5-interfaces-deployment-surfaces">Layer 5: Interfaces (Deployment Surfaces)</a></h2>
+<p>Multiple deployment surfaces serve as access layers to the underlying infrastructure. Interfaces are interchangeable – the core product is the infrastructure, not any single surface.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Interface</th><th>Type</th><th>Primary Use</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Bardo Bott</strong></td><td>Social media (Twitter, Telegram, Discord, Farcaster)</td><td>Conversational Golem deployment: “deploy a yield agent with $50”</td></tr>
+<tr><td><strong>TUI</strong></td><td>Terminal (ratatui, 60fps)</td><td>Real-time Golem observation, 11 screens, heartbeat/affect/memory</td></tr>
+<tr><td><strong>CLI</strong></td><td>Terminal (<code>bardo</code>)</td><td>Developer workflow: deploy, init, export, diagnostics</td></tr>
+<tr><td><strong>Portal</strong></td><td>Web dashboard</td><td>Agent management, performance monitoring, strategy editing</td></tr>
+<tr><td><strong>API</strong></td><td>REST/WebSocket</td><td>Programmatic access for integrations</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <code>prd2/13-runtime/10-packaging-deployment.md</code> (packaging, distribution channels, and social deployment via Bott) and <code>prd2/18-interfaces/</code> (portal, CLI, TUI, and UI system specifications) for interface specifications.</p>
+<hr>
+<h2 id="prd-section-map"><a class="header" href="#prd-section-map">PRD Section Map</a></h2>
+<p>The full PRD is organized into 19 numbered sections plus cross-cutting references, grouped by architectural tier:</p>
+<pre><code>Foundation:        00-vision, 01-golem
+Inner Systems:     02-mortality, 03-daimon, 04-memory, 05-dreams
+DeFi Layer:        07-tools, 08-vault, 09-economy
+Safety + Infra:    10-safety, 11-compute, 12-inference
+Interaction:       13-runtime
+Chain Intelligence: 14-chain
+Engineering:       15-dev, 16-testing, 17-monorepo, 18-interfaces, 19-agents-skills
+Knowledge:         20-styx, 21-integrations
+Art:               22-oneirography
+Technical Analysis: 23-ta
+Cross-cutting:     shared/, appendices/
+</code></pre>
+<h3 id="chain-intelligence-pipeline-14-chain"><a class="header" href="#chain-intelligence-pipeline-14-chain">Chain Intelligence Pipeline (14-chain/)</a></h3>
+<p>The chain intelligence layer fills a gap in the original architecture: PRD2 described what the Golem does with chain data but not how it acquires and triages that data. Five crates handle the full pipeline from WebSocket subscription to scored, routed events:</p>
+<ul>
+<li><strong>bardo-witness</strong>: Continuous block ingestion via <code>eth_subscribe("newHeads")</code>. Binary Fuse filter (~10ns POPCNT) pre-screens &gt;90% of blocks. Gap handling via Roaring bitmaps.</li>
+<li><strong>bardo-triage</strong>: Four-stage classification (rule-based fast filters, MIDAS-R statistical anomaly, contextual enrichment, Hedge-weighted curiosity scoring). Each transaction exits with a score in [0, 1] routing it to TriageAlert, ChainEvent, silent update, or discard.</li>
+<li><strong>bardo-protocol-state</strong>: Hot/warm/cold storage model, autonomous discovery via factory events, ABI resolution for unknown contracts.</li>
+<li><strong>bardo-chain-scope</strong>: Attention model with decay-modulated interest entries, Hebbian reinforcement, arousal-modulated half-lives. Rebuilds BinaryFuse8 filter each Gamma tick.</li>
+<li><strong>bardo-stream-api</strong>: External WebSocket/SSE endpoints for TA signal streaming.</li>
+</ul>
+<h3 id="innovation-synergies-12-innovations-4-tier-implementation-sequence"><a class="header" href="#innovation-synergies-12-innovations-4-tier-implementation-sequence">Innovation Synergies (12 innovations, 4-tier implementation sequence)</a></h3>
+<p>12 innovation papers (A1-A12) compose with the existing architecture across 6 synergy clusters. All 12 run at T0 (no LLM inference) for core computations. Implementation follows a four-tier sequence based on value/effort ratio and dependency relationships:</p>
+<ul>
+<li><strong>Tier 1</strong> (ship first): Ergodicity economics (A7), LTL temporal logic (A12), sheaf consistency (A4), TDA Betti curves (A1)</li>
+<li><strong>Tier 2</strong> (build next): EFE attention composite (A5), MI mortality diagnostic (A2), antifragile via negativa (A9), Witness DAG core (A10)</li>
+<li><strong>Tier 3</strong> (Clade features): Morphogenetic specialization (A8), memetic evolution (A6), Clade redundancy detection</li>
+<li><strong>Tier 4</strong> (deferred): Category-theoretic free monad (A3), integrated information Phi (A11), full Wasserstein TDA, ZK proofs</li>
+</ul>
+<p>See <code>shared/emergent-capabilities.md</code> for the 10 capabilities that emerge when innovations combine.</p>
+<hr>
+<h2 id="package-structure"><a class="header" href="#package-structure">Package Structure</a></h2>
+<p>The Bardo system spans two codebases: the <strong>Golem-RS Cargo workspace</strong> (the agent runtime, all Rust) and the <strong>TypeScript monorepo</strong> (on-chain contracts, dev tooling, existing infrastructure). The TS monorepo already exists with 20 packages proven across 13 implementation batches. Golem-RS is the new runtime that replaces the planned TypeScript agent packages.</p>
+<h3 id="golem-rs-crate-map-18-crates-in-bardo-golem-rs"><a class="header" href="#golem-rs-crate-map-18-crates-in-bardo-golem-rs">Golem-RS Crate Map (18 crates in <code>bardo-golem-rs/</code>)</a></h3>
+<blockquote>
+<p><strong>Crate count note:</strong> Canonical crate count: 17 Rust crates in the bardo-golem-rs workspace (per <code>rewrite4/00-architecture.md</code> and <code>17-monorepo/00-packages.md</code>). The “28 extensions” refers to runtime hook implementations across those crates, not separate packages. This file’s crate map shows 18 entries including the 1 platform-layer crate (<code>golem-tools</code>) that lives outside the core workspace.</p>
+</blockquote>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Crate</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Foundation</strong></td><td></td></tr>
+<tr><td><code>golem-core</code></td><td>Shared types, config (TOML), CorticalState, Event Fabric, arena allocator, taint labels</td></tr>
+<tr><td><code>golem-runtime</code></td><td>Extension trait (20 hooks), registry, dispatch, lifecycle state machine, shutdown</td></tr>
+<tr><td><strong>Cognition</strong></td><td></td></tr>
+<tr><td><code>golem-heartbeat</code></td><td>9-step pipeline, DecisionCycleRecord, probes, gating, FSM, speculative prefetch</td></tr>
+<tr><td><code>golem-grimoire</code></td><td>LanceDB (episodic vectors) + SQLite (semantic entries) + filesystem (PLAYBOOK.md), retrieval, Curator, ingestion, immune memory, Bloom Oracle</td></tr>
+<tr><td><code>golem-daimon</code></td><td>PAD appraisal, mood layers, somatic markers/landscape, congruent retrieval, contagion</td></tr>
+<tr><td><code>golem-mortality</code></td><td>Three clocks, vitality, five phases, Thanatopsis, genomic bottleneck, Weismann/Baldwin</td></tr>
+<tr><td><code>golem-dreams</code></td><td>NREM replay, REM imagination, anticipatory trajectories, consolidation, depotentiation</td></tr>
+<tr><td><code>golem-context</code></td><td>Cognitive Workspace, ContextPolicy, cybernetic self-tuning, interventions</td></tr>
+<tr><td><strong>Safety</strong></td><td></td></tr>
+<tr><td><code>golem-safety</code></td><td>Capability tokens, PolicyCage, taint tracking, Merkle audit chain, zeroize, loop guard</td></tr>
+<tr><td><strong>Infrastructure</strong></td><td></td></tr>
+<tr><td><code>golem-inference</code></td><td>LLM provider abstraction (90+), streaming, T0/T1/T2 routing, x402, prompt cache, budget</td></tr>
+<tr><td><code>golem-chain</code></td><td>Alloy provider, ERC-8004, Permit2, PolicyCage reads, Warden (optional, deferred), settlement, Revm simulation</td></tr>
+<tr><td><code>golem-tools</code></td><td>Tool registry (ReadTool/WriteTool/PrivilegedTool), profiles, WASM sandbox, TS sidecar client</td></tr>
+<tr><td><strong>Coordination</strong></td><td></td></tr>
+<tr><td><code>golem-coordination</code></td><td>Pheromone Field, clade sync, Styx WebSocket client, causal federation, bloodstain</td></tr>
+<tr><td><strong>Surfaces</strong></td><td></td></tr>
+<tr><td><code>golem-surfaces</code></td><td>WebSocket/SSE/Telegram multiplexer, snapshots, steer/followUp ingress</td></tr>
+<tr><td><code>golem-creature</code></td><td>Procedural sprite generation, PAD expressions, particles, lineage</td></tr>
+<tr><td><code>golem-engagement</code></td><td>Achievements, milestones, death recap, graveyard, notifications</td></tr>
+<tr><td><strong>Binary</strong></td><td></td></tr>
+<tr><td><code>golem-binary</code></td><td>Single entrypoint: config → provision → activate → heartbeat loop</td></tr>
+</tbody>
+</table>
+</div>
+<p>Plus: <code>sidecar/tools-ts</code> — TypeScript sidecar for Uniswap SDK math (LP calculations, route optimization).</p>
+<h3 id="platform-crates-separate-from-golem-workspace"><a class="header" href="#platform-crates-separate-from-golem-workspace">Platform Crates (separate from Golem workspace)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Crate</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bardo-styx</code></td><td>Knowledge service: 3-layer persistence, Pheromone Field, clade relay, Bloodstain Network, Marketplace</td></tr>
+<tr><td><code>bardo-tools</code></td><td>~210 DeFi tool implementations (Alloy-native), profiles, safety middleware</td></tr>
+<tr><td><code>bardo-terminal</code></td><td>CLI: deploy, init, TUI launch, diagnostics</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="typescript-monorepo-existing-20-packages"><a class="header" href="#typescript-monorepo-existing-20-packages">TypeScript Monorepo (existing, 20 packages)</a></h3>
+<p>The existing <code>@gotts.ai/*</code> npm packages handle on-chain contracts, dev tooling, and web interfaces. Key packages: <code>vault</code> (ERC-4626 Solidity + TS SDK), <code>warden</code> (time-delay proxy, deferred), <code>dev</code> (Anvil + Uniswap stack), <code>portal</code> (web dashboard), <code>ui</code> (React components), <code>tui</code> (terminal UI primitives). These remain TypeScript – they are infrastructure, not agent runtime.</p>
+<h3 id="dependency-graph-key-edges"><a class="header" href="#dependency-graph-key-edges">Dependency Graph (Key Edges)</a></h3>
+<pre><code>golem-binary
+  +-- golem-runtime (extension system)
+  +-- golem-heartbeat (decision pipeline)
+  +-- golem-grimoire (knowledge storage)
+  +-- golem-daimon (affect engine)
+  +-- golem-mortality (death engine)
+  +-- golem-dreams (offline cognition)
+  +-- golem-context (workspace assembly)
+  +-- golem-safety (capability enforcement)
+  +-- golem-inference (LLM routing, x402)
+  +-- golem-chain (Alloy on-chain, Revm simulation)
+  +-- golem-tools (~210 tools, profiles)
+  +-- golem-coordination (Styx client, clade sync)
+  +-- golem-surfaces (TUI, web, Telegram)
+  +-- golem-core (shared types, config, bus)
+
+bardo-styx
+  +-- qdrant (vector search)
+  +-- PostgreSQL (metadata, pheromones)
+  +-- Cloudflare R2 (blob storage)
+
+bardo-tools
+  +-- alloy (on-chain)
+  +-- golem-core (shared types)
+  +-- sidecar/tools-ts (Uniswap SDK math)
+</code></pre>
+<hr>
+<h2 id="how-golems-consume-bardo-tools"><a class="header" href="#how-golems-consume-bardo-tools">How Golems Consume Bardo Tools</a></h2>
+<p>~210 tools across 17 functional categories (per <code>prd2/07-tools/00-overview.md</code>). Three tool traits enforce capability boundaries at compile time:</p>
+<ul>
+<li><strong><code>ReadTool</code></strong>: No capability needed. Market data, portfolio queries, price feeds.</li>
+<li><strong><code>WriteTool</code></strong>: Requires a capability token. Swaps, LP operations, vault management.</li>
+<li><strong><code>PrivilegedTool</code></strong>: Requires Owner approval. Config changes, session key rotation, strategy modification.</li>
+</ul>
+<h3 id="two-layer-model-progressive-disclosure"><a class="header" href="#two-layer-model-progressive-disclosure">Two-Layer Model (Progressive Disclosure)</a></h3>
+<p>The Golem’s LLM sees ~8 Pi-facing tools that route internally to ~210 implementations. This prevents context bloat – the LLM reasons at the intent level (“execute a swap”) while the tool layer handles the complexity (Permit2 approval, route optimization, simulation, calldata construction, broadcast, confirmation).</p>
+<h3 id="alloy-native--ts-sidecar"><a class="header" href="#alloy-native--ts-sidecar">Alloy-Native + TS Sidecar</a></h3>
+<p>On-chain reads and writes use Alloy (Paradigm’s Rust EVM toolkit) with <code>sol!</code> macro for compile-time typed contract bindings. Revm provides in-process EVM simulation for pre-flight validation. A TypeScript sidecar handles Uniswap SDK math only – LP range calculations, route optimization, and other operations that depend on the JavaScript SDK.</p>
+<h3 id="profile-based-loading"><a class="header" href="#profile-based-loading">Profile-Based Loading</a></h3>
+<p>10 profiles control which tools are available per tick: <code>data</code>, <code>trader</code>, <code>lp</code>, <code>vault</code>, <code>intelligence</code>, <code>learning</code>, <code>identity</code>, <code>golem</code>, <code>full</code>, <code>dev</code>. T0 ticks (no LLM) don’t load tools at all. T1 ticks use the narrowest applicable profile. T2 ticks dynamically expand.</p>
+<hr>
+<h2 id="golem-and-bardo-tools-the-relationship"><a class="header" href="#golem-and-bardo-tools-the-relationship">Golem and Bardo Tools: The Relationship</a></h2>
+<p>The Bardo tool library is the protocol access layer. The Golem is the autonomous agent that decides.</p>
+<p>The tool library provides ~210 tools that read and write to DeFi protocols – stateless, parameterized, deterministic. Tools do not know about survival pressure, PLAYBOOK.md, Grimoire, or credit budgets.</p>
+<p>Golem provides autonomy, memory, mortality, and social intelligence. It decides <em>when</em> to call tools, <em>why</em> to call them, and <em>what to do</em> with the results.</p>
+<p>The separation matters for three reasons:</p>
+<ol>
+<li><strong>Tools serve external agents too.</strong> Any A2A-compatible agent can use Bardo tools without a Golem. The tool library is infrastructure. Golem is one consumer.</li>
+<li><strong>Safety layers compose.</strong> The 15-layer defense model operates independently of Golem’s behavioral safety. A compromised LLM in Golem cannot bypass on-chain guards – capability tokens are verified at the tool trait level.</li>
+<li><strong>Tool evolution is independent.</strong> New tools are immediately available to Golem via the profile system. New Golem extensions do not require tool library changes.</li>
+</ol>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ASHBY-1956] Ashby, W.R. (1956). <em>An Introduction to Cybernetics</em>. Chapman &amp; Hall. – <em>Establishes the Law of Requisite Variety: the regulator must match the variety of the regulated system, justifying Bardo’s five-layer architecture against DeFi’s composability complexity.</em></li>
+<li>[ARGYRIS-1978] Argyris, C. &amp; Schon, D. (1978). <em>Organizational Learning</em>. Addison-Wesley. – <em>Defines double-loop and triple-loop learning; the theoretical basis for the Golem’s three cybernetic loops (execution, strategy, meta).</em></li>
+<li>[TOSEY-2012] Tosey, P., Visser, M., &amp; Saunders, M.N.K. (2012). “The origins and conceptualizations of ‘triple-loop’ learning.” <em>Management Learning</em>, 43(3), 291-307. – <em>Warns of the dangers of Learning III (questioning the learning framework itself); motivates the safety bound that prevents Loop 3 from modifying core safety invariants.</em></li>
+<li>[BOYD-1976] Boyd, J. (1976). “Destruction and Creation.” Unpublished paper. – <em>Introduces the OODA loop (Observe-Orient-Decide-Act); mapped to Loop 1 execution in the heartbeat pipeline.</em></li>
+<li>[JONAS-1966] Jonas, H. (1966). <em>The Phenomenon of Life</em>. Northwestern University Press. – <em>Argues that mortality creates needful freedom; the philosophical basis for the USDC balance as metabolic substrate.</em></li>
+<li>[MERLEAU-PONTY-1945] Merleau-Ponty, M. (1945). <em>Phenomenologie de la perception</em>. Gallimard. – <em>Introduces the lived body (corps vecu); the VM is the Golem’s body through which it perceives and acts in markets.</em></li>
+<li>[HEIDEGGER-1927] Heidegger, M. (1927). <em>Sein und Zeit</em>. Max Niemeyer Verlag. – <em>Provides being-toward-death and facticity; the vault balance is the Golem’s facticity – the concrete situation it cannot escape.</em></li>
+<li>[ESPOSITO-2010] Esposito, R. (2010). <em>Communitas: The Origin and Destiny of Community</em>. Stanford University Press. – <em>Defines community through obligatory gift exchange (munus); reputation as making communitas legible.</em></li>
+<li>[BADDELEY-2000] Baddeley, A.D. (2000). “The episodic buffer: a new component of working memory?” <em>Trends in Cognitive Sciences</em>, 4(11), 417-423. – <em>Introduces the episodic buffer as a multi-modal integration space; the Cognitive Workspace implements this as a fresh-per-tick context assembly.</em></li>
+<li>[BUZSAKI-2006] Buzsaki, G. (2006). <em>Rhythms of the Brain</em>. Oxford University Press. – <em>Describes oscillatory hierarchies (gamma/theta/delta waves) as the brain’s temporal organization; the basis for the Adaptive Clock’s three concurrent timescales.</em></li>
+<li>[FRISTON-2010] Friston, K. (2010). “The free-energy principle: a unified brain theory?” <em>Nature Reviews Neuroscience</em>, 11(2), 127-138. – <em>Formalizes prediction error as the driving signal for learning and attention; the basis for the adaptive gate that decides which cognitive tier fires.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/00-vision/01-thesis.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/00-vision/03-philosophy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/00-vision/01-thesis.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/00-vision/03-philosophy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

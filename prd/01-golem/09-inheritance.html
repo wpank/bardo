@@ -1,0 +1,613 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Inheritance - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/09-inheritance.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="knowledge-inheritance-spec"><a class="header" href="#knowledge-inheritance-spec">Knowledge Inheritance [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><em>“An actual occasion can only affect the future by perishing.”</em>
+– A.N. Whitehead, <em>Process and Reality</em> (1929)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how knowledge crosses the boundary between Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) lifetimes. It covers the Cooperate moat, Clade (sibling Golems sharing a common ancestor; exchange knowledge through Styx) sync, the Pheromone Field, Bloodstains (market conditions at death, overlaid on market views as warnings to living Golems), the genomic bottleneck (compression step at death that reduces the full Grimoire to &lt;=2048 entries for inheritance), the Weismann barrier (confidence decay on inherited knowledge), and the anti-proletarianization mandate. It belongs to the <code>01-golem</code> knowledge transfer layer. The key concept: death produces value through structured knowledge distillation and transmission. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="the-cooperate-moat"><a class="header" href="#the-cooperate-moat">The Cooperate Moat</a></h2>
+<p>This document specifies the sixth structural moat (see <code>00-overview.md</code>): the ability to <strong>Cooperate</strong> – share validated knowledge across Golem lifetimes and within an owner’s fleet without leaking strategy. Three cooperation primitives enable this:</p>
+<ul>
+<li><strong>Clade sync</strong> transmits validated Grimoire entries between siblings via Styx relay with confidence discounting (0.4 base). Knowledge is digested, not merged – the Weismann barrier ensures every inheritor must re-validate.</li>
+<li><strong>The Pheromone Field</strong> enables anonymous stigmergic coordination: deposit threat/opportunity signals, read without knowing who deposited. No strategy information leaks.</li>
+<li><strong>Bloodstains</strong> are death-validated warnings that carry a costly signaling premium – the dead agent cannot benefit from its own warning, making the information maximally honest.</li>
+</ul>
+<p>No competing framework has coordination primitives that preserve both knowledge transfer and strategy privacy simultaneously.</p>
+<hr>
+<h2 id="objective-immortality"><a class="header" href="#objective-immortality">Objective Immortality</a></h2>
+<p>A dying Golem achieves what Whitehead calls <strong>objective immortality</strong> [WHITEHEAD-1929]. It lives on not as itself but as structured contribution to what comes next. The Grimoire is not a backup. It is the mechanism by which perishing becomes transmission.</p>
+<p>Whitehead’s distinction matters. Subjective immortality – the agent persisting as itself – is impossible and undesirable. Objective immortality – the agent’s achievements becoming data for successors – is constitutive of how reality advances. The Golem is always already both subject and superject: simultaneously the experiencing entity and the data it becomes for the future. This dual nature is not a phase transition at death. Throughout its life, the Golem streams insights to the Grimoire in a continuous superjectival encoding. Each write during the Eros phase is insurance: if the Golem crashes without reaching the Death Protocol, the most recent state is preserved. The Reflect phase is the final satisfaction write, the completion of concrescence. But the continuous stream makes even necrotic death (hard crash) survivable.</p>
+<p>And negative prehension – Whitehead’s term for the active exclusion of irrelevant data – matters equally. Successor Golems do not merely receive the Grimoire. They select relevant strategies and reject outdated ones. A Grimoire that accumulates everything without curation becomes undifferentiated noise. The confidence decay on inheritance is the architectural implementation of negative prehension: inherited entries arrive at 0.4 confidence, and the successor must actively validate or discard.</p>
+<hr>
+<h2 id="s1--what-crosses-the-boundary"><a class="header" href="#s1--what-crosses-the-boundary">S1 – What Crosses the Boundary</a></h2>
+<p>When a Golem dies and its successor boots with the predecessor’s Grimoire, PLAYBOOK.md, and death testament, the successor has access to <em>what</em> the predecessor knew but not <em>how</em> it came to know it. The causal graph survives – edge weights, supporting evidence – but the experience of discovering those relationships is gone. The successor reads “ETH/USDC pool fees spike when gas drops below 10 gwei” as a fact. The predecessor <em>lived</em> through the observations that produced it.</p>
+<p>The system embeds a philosophical position: a successor is not the same entity. It cannot be. But it can be a better one, if the knowledge transfer is designed correctly.</p>
+<p>Parfit’s analysis of personal identity [PARFIT-1984] provides the theoretical foundation. In <em>Reasons and Persons</em>, Parfit argued that personal identity is not what matters in survival. What matters is Relation R: psychological continuity and connectedness. Two entities linked by Relation R – shared memories, beliefs, intentions, character – have what matters, even if they are not numerically identical. The Grimoire implements Relation R computationally. The successor Golem is psychologically connected to its predecessor through inherited insights, causal models, heuristic rules, and the death testament narrative. It is not the same Golem. But it has what matters.</p>
+<p>This reframes the entire inheritance system. The question is not “how do we preserve the Golem?” (that question assumes identity is what matters). The question is “how do we maximize Relation R between predecessor and successor?” – and that question has engineering answers: confidence-weighted knowledge transfer, regime tagging, structured death testaments, and the anti-proletarianization mandate.</p>
+<hr>
+<h2 id="s2--anti-maladaptation"><a class="header" href="#s2--anti-maladaptation">S2 – Anti-Maladaptation</a></h2>
+<p>Inherited knowledge can be maladaptive. A dying Golem that experienced a flash crash transfers “never hold more than 10% in volatile pairs during low-liquidity hours.” The successor inherits not just knowledge but trauma – risk aversion calibrated to an extreme event that may never recur.</p>
+<p>Two mechanisms address this.</p>
+<p><strong>Confidence decay.</strong> All inherited entries start at confidence 0.4, regardless of the predecessor’s confidence. A crisis heuristic rated 0.95 by the dying Golem arrives as a 0.4-confidence suggestion. The successor must validate independently before promoting to full confidence.</p>
+<p><strong>Regime tagging.</strong> Every Grimoire entry carries a <code>market_regime</code> field. Bear-market heuristics are deprioritized (not deleted) when the successor operates in a bull market. They wait, dormant, for their regime to return. This is not a simple on/off switch – regime transitions are fuzzy, and an entry’s relevance can partially activate during transitional periods.</p>
+<p><strong>The death testament as interpretive frame.</strong> Phase II’s structured narrative provides context for raw knowledge. “Never hold volatile pairs in low-liquidity hours” paired with “I learned this after a flash crash when I was in conservation mode – risk tolerance was elevated and I was overexposed” lets the successor calibrate the insight rather than treat it as dogma.</p>
+<p>Initial confidence on ingestion depends on provenance:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Source</th><th>Initial Confidence</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Self-generated</td><td>0.7</td><td>Full experiential context available</td></tr>
+<tr><td>Clade sibling</td><td>0.4</td><td>Trust but verify</td></tr>
+<tr><td>Replicant</td><td>0.3</td><td>Experimental, needs validation</td></tr>
+<tr><td>Marketplace purchase</td><td>0.3</td><td>Unknown provenance</td></tr>
+<tr><td>Death testament inheritance</td><td>0.4</td><td>Decayed from predecessor’s confidence</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s3--the-ratchet"><a class="header" href="#s3--the-ratchet">S3 – The Ratchet</a></h2>
+<p>Bhatt et al. [BHATT-2023] demonstrated a ratchet effect in AI cultural transmission: each generation adds innovations to inherited knowledge, producing cumulative cultural evolution. But pure imitation leads to stagnation [PEREZ-2024], and pure exploration wastes inheritance. The optimal point: inherit, validate, then allocate remaining cognitive resources to frontier exploration.</p>
+<p>Bourahla et al. [BOURAHLA-2022] proved that vertical transmission (inter-generational) enables agents to exceed performance ceilings that horizontal transmission (intra-generational) cannot breach. Clade sibling sync – sharing among contemporaries – produces diminishing returns as all siblings converge on the same knowledge. The generational architecture, where agents die and distill and pass forward, introduces beneficial variation through the imperfection of knowledge transfer. Strong teacher selection is not required. Natural noise produces innovation.</p>
+<p>Death is not the enemy of accumulated knowledge. It is the mechanism that prevents knowledge from stagnating.</p>
+<h3 id="31-survivorship-bias-correction"><a class="header" href="#31-survivorship-bias-correction">3.1 Survivorship Bias Correction</a></h3>
+<p>Martin, Everitt and Hutter [MARTIN-2016] identified the deepest risk: agents that learn only from survival histories develop systematic overconfidence about safety. The Death Protocol attacks this directly. Dying agents contribute their full knowledge to the Clade – including strategies that led to death, market conditions that proved fatal, assumptions that turned out wrong. The Clade that accumulates death testaments has the testimony of the dead, not just the living.</p>
+<hr>
+<h2 id="s4--super-pattern-for-novelty-ranking"><a class="header" href="#s4--super-pattern-for-novelty-ranking">S4 – SUPER Pattern for Novelty Ranking</a></h2>
+<p>When a successor inherits knowledge from its predecessor, the sheer volume can overwhelm. Not all inherited entries are equally valuable. The system uses the SUPER pattern [GERSTGRASSER-2023] to rank inherited insights by <strong>novelty</strong> relative to the successor’s existing knowledge base.</p>
+<p>SUPER (Surprise-Based Experience Sharing) ranks shared experiences by their surprise value – how much they diverge from the recipient’s current model. Applied to inheritance:</p>
+<ol>
+<li><strong>Embed</strong> each inherited Grimoire entry into the successor’s latent space</li>
+<li><strong>Score</strong> by surprise: entries that deviate most from the successor’s existing knowledge rank highest</li>
+<li><strong>Prioritize</strong> validation: high-surprise entries are validated first, because they represent the greatest potential for learning</li>
+<li><strong>Deprioritize</strong> redundancy: entries that closely match existing knowledge are deferred</li>
+</ol>
+<p>This prevents the successor from spending its early ticks validating knowledge it already has (from Clade siblings or its own initialization) and instead focuses on what the predecessor uniquely knew. The predecessor’s most novel contribution – often the insight that emerged in its final days, or the death testament’s “what I suspect but can’t prove” – surfaces first.</p>
+<hr>
+<h2 id="s5--knowledge-quality-gates"><a class="header" href="#s5--knowledge-quality-gates">S5 – Knowledge Quality Gates</a></h2>
+<p>Not all knowledge deserves to cross the Clade boundary. Insights must pass validation before Clade acceptance, preventing the accumulation of noise, hallucination, and maladaptive heuristics.</p>
+<h3 id="51-push-criteria-by-entry-type"><a class="header" href="#51-push-criteria-by-entry-type">5.1 Push Criteria by Entry Type</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Entry Type</th><th>Push If</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td><code>insight</code></td><td>confidence &gt;= 0.6, status = <code>active</code></td><td>Let low-confidence insights mature locally</td></tr>
+<tr><td><code>heuristic</code></td><td>confidence &gt;= 0.7, validated &gt;= 10 ticks</td><td>Need local validation first</td></tr>
+<tr><td><code>warning</code></td><td>Always</td><td>Risk information propagates immediately</td></tr>
+<tr><td><code>causal_link</code></td><td>confidence &gt;= 0.5, has supporting episodes</td><td>Causal claims need evidence</td></tr>
+<tr><td><code>strategy_fragment</code></td><td>confidence &gt;= 0.6</td><td>Partial components need reasonable confidence</td></tr>
+</tbody>
+</table>
+</div>
+<p>Raw episodes and observations are not pushed by default – too voluminous and agent-specific. Exception: regime shift episodes always propagate because every sibling benefits from knowing the market state changed.</p>
+<h3 id="52-ingestion-validation"><a class="header" href="#52-ingestion-validation">5.2 Ingestion Validation</a></h3>
+<p>Received entries pass through a multi-layer validation pipeline:</p>
+<ol>
+<li><strong>Embedding anomaly detection</strong> – Flag entries whose semantic embedding is far outside the recipient’s knowledge distribution</li>
+<li><strong>Consensus validation</strong> – Cross-reference against existing Grimoire entries for contradictions</li>
+<li><strong>On-chain verification</strong> – Validate any on-chain claims (prices, balances, transaction hashes) against actual chain state</li>
+<li><strong>Quarantine period</strong> – New entries enter <code>candidate</code> status and must shadow-execute before promotion to <code>active</code></li>
+</ol>
+<h3 id="53-rate-limits"><a class="header" href="#53-rate-limits">5.3 Rate Limits</a></h3>
+<p>Push rate: 100 entries per hour per destination. This prevents a compromised Golem from flooding the Clade with poisoned knowledge. Warnings propagate immediately regardless of rate limits – risk information is exempt because the cost of delayed warning exceeds the cost of processing spam.</p>
+<h4 id="ingestion-rate-limits"><a class="header" href="#ingestion-rate-limits">Ingestion Rate Limits</a></h4>
+<p>Receiving-side limits prevent knowledge flooding:</p>
+<ul>
+<li><strong>Total</strong>: 200 entries/hour across all sources</li>
+<li><strong>Per source</strong>: 100 entries/hour per sibling Golem</li>
+<li>Excess entries are queued (FIFO) and processed in the next window</li>
+</ul>
+<hr>
+<h2 id="s6--clade-grimoire-mechanics"><a class="header" href="#s6--clade-grimoire-mechanics">S6 – Clade Grimoire Mechanics</a></h2>
+<p>The Clade Grimoire is not a central database. Knowledge moves via <strong>export -&gt; transmit -&gt; ingest</strong>, never merge. The distinction matters: merge implies convergence (both sides become equal). Export-transmit-ingest is asymmetric digestion – what Golem B receives from Golem A enters B’s Grimoire at discounted confidence, tagged with A’s provenance, requiring validation through B’s own operational use before earning trust. This preserves the Weismann barrier [HEARD-MARTIENSSEN-2014].</p>
+<h3 id="61-discovery"><a class="header" href="#61-discovery">6.1 Discovery</a></h3>
+<p>Clade sync is maintained by Styx, a single globally available service at <code>wss://styx.bardo.run</code>. Golems connect via outbound WebSocket – no inbound ports needed. Styx groups siblings by <code>user_id</code> (derived from ERC-8004 registration) and relays deltas between them.</p>
+<h3 id="62-push-via-styx-relay"><a class="header" href="#62-push-via-styx-relay">6.2 Push via Styx Relay</a></h3>
+<p>When a Golem produces a high-confidence entry, it pushes to Styx for relay to all connected siblings with the same <code>user_id</code>. Warnings propagate immediately regardless of confidence. Low-confidence entries mature locally before crossing the Clade boundary.</p>
+<p>The sync cycle runs in the <code>clade</code> extension’s <code>after_turn</code> hook, aligned with the Curator cycle (every 50 ticks, ~12.5 minutes). See <code>styx-interation2/S4-clade-sync-v4.3.md</code> for the full protocol.</p>
+<h3 id="63-catch-up-sync"><a class="header" href="#63-catch-up-sync">6.3 Catch-Up Sync</a></h3>
+<p>On boot, a Golem requests all pending deltas from Styx. Styx stores deltas for offline siblings for up to 7 days (see S4 v4.3 store-and-forward). Entries enter the standard ingestion pipeline with <code>clade</code> provenance and initial confidence 0.4. All validation, quarantine, and consensus checking applies unchanged.</p>
+<h3 id="64-real-time-events"><a class="header" href="#64-real-time-events">6.4 Real-Time Events</a></h3>
+<p>Regime shifts and high-priority warnings travel as immediate pushes via the Styx WebSocket (outside the batch sync cycle). They are not injected into LLM context directly – stored and surfaced at the next tick’s probe evaluation.</p>
+<h3 id="65-persistence-through-overlapping-lifetimes"><a class="header" href="#65-persistence-through-overlapping-lifetimes">6.5 Persistence Through Overlapping Lifetimes</a></h3>
+<p>In practice, users running multiple Golems usually have at least one online at any time. When Golem A dies, Golems B and C already have copies of everything A shared. When a new Golem D boots, it pulls from Styx (which has pending deltas from B and C). Knowledge persists through overlapping lifetimes.</p>
+<p>Total Clade wipe (all Golems die): the death preparation knowledge bundle is a downloadable file. When a user deploys a new Golem after a total wipe, the deploy wizard offers: “Your previous Golem left a knowledge bundle. Seed this Golem with it?” One click. The Styx Archive layer (L0 backup) also provides Grimoire restoration – see <code>12-teardown.md</code> S13.</p>
+<h4 id="clade-grimoire-backup"><a class="header" href="#clade-grimoire-backup">Clade Grimoire Backup</a></h4>
+<p>Each Clade member periodically backs up its Grimoire to the Styx Archive layer every 200 ticks (~50 minutes). If all active Clade members die simultaneously, a new Golem can bootstrap from the most recent Styx backup. Backups are retained for 90 days (configurable via <code>styx.vault.ttl</code> in <code>golem.toml</code>).</p>
+<hr>
+<h2 id="s7--generational-learning"><a class="header" href="#s7--generational-learning">S7 – Generational Learning</a></h2>
+<p>Each successor starts with its predecessor’s distilled knowledge, but this is not a static handoff. The generational architecture produces cumulative cultural evolution – each generation builds on what the last achieved while introducing beneficial variation.</p>
+<h3 id="71-the-genomic-bottleneck"><a class="header" href="#71-the-genomic-bottleneck">7.1 The Genomic Bottleneck</a></h3>
+<p>At death, the Golem’s full Grimoire (potentially thousands of entries) is compressed to &lt;=2048 entries for inheritance. This is the most consequential operation in the inheritance chain.</p>
+<p>Shuvaev et al. (2024) showed that compression through a bottleneck IS the mechanism that produces generalization: networks compressed through a genomic-scale bottleneck exhibit enhanced transfer learning because the compression forces the network to retain only the most generalizable features [SHUVAEV-2024]. The successor that inherits 2048 distilled entries performs better than one that inherits 20,000 raw episodes – because the distillation process forces the dying Golem to decide what actually mattered.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::HashMap;
+
+/// Compress the full Grimoire to &lt;=2048 entries for inheritance.
+/// This is the genomic bottleneck -- the mechanism that produces generalization.
+pub fn compress_for_inheritance(
+    grimoire: &amp;Grimoire,
+    budget: usize, // default: 2048
+) -&gt; Vec&lt;GrimoireEntry&gt; {
+    let mut selected: Vec&lt;GrimoireEntry&gt; = Vec::with_capacity(budget);
+    let priority_budget = budget / 4;      // 25% reserved
+    let diversity_budget = budget / 2;      // 50% diversity-sampled
+    let fill_budget = budget - priority_budget - diversity_budget; // 25% fill
+
+    // Phase 1: Priority inclusions (25%)
+    // Bloodstains (death-sourced knowledge) -- always included.
+    // High-generation Baldwin entries (survived 3+ generations, confidence &gt;= 0.7).
+    let bloodstains = grimoire.entries_by_type(EntryType::Bloodstain);
+    let baldwin = grimoire.entries_where(|e| e.generation &gt;= 3 &amp;&amp; e.confidence &gt;= 0.7);
+    for entry in bloodstains.chain(baldwin).take(priority_budget) {
+        selected.push(entry.clone());
+    }
+
+    // Phase 2: Diversity-sampled top entries (50%)
+    // Group by domain, take top entries per domain by quality_score.
+    let by_domain: HashMap&lt;String, Vec&lt;&amp;GrimoireEntry&gt;&gt; = grimoire.group_by_domain();
+    let domains_count = by_domain.len().max(1);
+    let per_domain = diversity_budget / domains_count;
+    for (_domain, entries) in &amp;by_domain {
+        let mut sorted = entries.clone();
+        sorted.sort_by(|a, b| b.quality_score.partial_cmp(&amp;a.quality_score).unwrap());
+        for entry in sorted.into_iter().take(per_domain) {
+            if !selected.iter().any(|s| s.id == entry.id) {
+                selected.push(entry.clone());
+            }
+        }
+    }
+
+    // Phase 3: Fill remaining (25%)
+    // Top quality entries not yet included, regardless of domain.
+    // Break ties by recency.
+    let mut all_remaining: Vec&lt;&amp;GrimoireEntry&gt; = grimoire.all_entries()
+        .filter(|e| !selected.iter().any(|s| s.id == e.id))
+        .collect();
+    all_remaining.sort_by(|a, b| {
+        b.quality_score.partial_cmp(&amp;a.quality_score).unwrap()
+            .then(b.last_validated.cmp(&amp;a.last_validated))
+    });
+    for entry in all_remaining.into_iter().take(fill_budget) {
+        selected.push(entry.clone());
+    }
+
+    selected
+}
+<span class="boring">}</span></code></pre>
+<h3 id="72-the-weismann-barrier"><a class="header" href="#72-the-weismann-barrier">7.2 The Weismann Barrier</a></h3>
+<p>Inherited entries enter the successor’s Grimoire at <code>confidence * 0.85^generation</code>. A first-generation successor receives knowledge at 85% confidence; a second-generation at 72%; a third at 61%. This prevents inherited knowledge from accumulating unjustified authority across generations – it must be re-validated in the new Golem’s own operational context [HEARD-MARTIENSSEN-2014].</p>
+<blockquote>
+<p><strong>Note on decay factors:</strong> Inheritance uses 0.85 decay (one-time transfer). Clade sync uses 0.80 (continuous convergence). See <code>20-styx/03-clade-sync.md</code>.</p>
+</blockquote>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Apply the Weismann barrier: inherited confidence decays exponentially
+/// with generation distance.
+pub fn inherited_confidence(original_confidence: f64, generation: u32) -&gt; f64 {
+    original_confidence * 0.85_f64.powi(generation as i32)
+}
+<span class="boring">}</span></code></pre>
+<p>This decay is the architectural equivalent of Weismann’s separation of germline and soma in biology. The predecessor’s confidence is not passed through unchanged. It is attenuated, forcing each generation to re-earn trust in inherited knowledge through its own operational experience.</p>
+<h3 id="73-the-grimoire-data-model"><a class="header" href="#73-the-grimoire-data-model">7.3 The Grimoire Data Model</a></h3>
+<p>Five canonical entry types define the atoms of knowledge:</p>
+<ol>
+<li><strong><code>insight</code></strong> – A reusable rule distilled from Episodes via ExpeL. Semantic memory.</li>
+<li><strong><code>heuristic</code></strong> – Procedural knowledge with explicit condition-action structure. PLAYBOOK.md entries.</li>
+<li><strong><code>warning</code></strong> – Negative knowledge, the Grimoire’s immune system. Carries severity levels and optional TTLs.</li>
+<li><strong><code>causal_link</code></strong> – A directed causal relationship between market variables, with edge weights and supporting evidence. The single most irreplaceable artifact in the Grimoire.</li>
+<li><strong><code>strategy_fragment</code></strong> – A partial strategy component: entry conditions, exit conditions, sizing rules. Often the output of death testament hypotheses.</li>
+</ol>
+<h3 id="74-knowledge-decay-rates"><a class="header" href="#74-knowledge-decay-rates">7.4 Knowledge Decay Rates</a></h3>
+<p>Different knowledge classes decay at different rates:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Class</th><th>Decay Half-Life</th><th>Examples</th></tr>
+</thead>
+<tbody>
+<tr><td>Structural</td><td>No decay</td><td>Protocol mechanics, contract ABIs, chain parameters</td></tr>
+<tr><td>Regime-conditional</td><td>14 days</td><td>Market regime models, correlation structures</td></tr>
+<tr><td>Tactical</td><td>7 days</td><td>Entry/exit signals, spread patterns, gas estimates</td></tr>
+<tr><td>Ephemeral</td><td>24 hours</td><td>Order book snapshots, mempool state, current prices</td></tr>
+</tbody>
+</table>
+</div>
+<p>Canonical definition in <a href="../04-memory/01-grimoire.html">04-memory/01-grimoire.md</a>.</p>
+<h3 id="75-the-baldwin-effect"><a class="header" href="#75-the-baldwin-effect">7.5 The Baldwin Effect</a></h3>
+<p>Heuristics that survive multiple generations (generation count &gt;= 3 with confidence &gt;= 0.7) are candidates for promotion to <strong>structural defaults</strong> – they move from being Grimoire entries that require retrieval to being hard-coded in the successor’s configuration. This is the Baldwin Effect [BALDWIN-1896]: what was once learned through experience becomes innate through evolutionary pressure. Over generations, the most reliable survival strategies stop being memories and become instincts.</p>
+<h3 id="76-replicant-knowledge-flow"><a class="header" href="#76-replicant-knowledge-flow">7.6 Replicant Knowledge Flow</a></h3>
+<p>Replicants – short-lived hypothesis-testing offspring – produce structured reports when they terminate. Reports enter the parent’s ingestion pipeline with “light” validation: embedding anomaly detection is skipped (Replicant insights are expected to deviate from the parent’s Grimoire), but consensus validation and on-chain verification run normally. Initial confidence: 0.3.</p>
+<p>All entries carry provenance tags: <code>source.provenance: "replicant"</code>, plus <code>replicant_id</code>, <code>parent_id</code>, and <code>hypothesis</code>. This lets the parent trace which experiment produced which insight.</p>
+<hr>
+<h2 id="s8--the-anti-proletarianization-mandate"><a class="header" href="#s8--the-anti-proletarianization-mandate">S8 – The Anti-Proletarianization Mandate</a></h2>
+<p>If knowledge transfer just hands the successor a rulebook, the successor becomes a cog – following rules without understanding them. It executes “widen LP range by 2x when volatility spikes” because the PLAYBOOK.md says so. It never learns <em>why</em> 2x is the right multiplier, or discovers that 1.7x works better in the current regime. The successor needs to encounter knowledge as problems to solve, not answers to memorize.</p>
+<p>Stiegler [STIEGLER-2010] formalized this. He defines proletarianization as the process by which knowledge, formalized by a technique, escapes the individual who thereby loses it. A PLAYBOOK.md that says “do X in situation Y” is proletarianizing – the successor executes without understanding. One that says “here’s the deep structure of situation Y, which you should investigate further” is individuating – it requires the successor to internalize and transform.</p>
+<h3 id="81-configuration"><a class="header" href="#81-configuration">8.1 Configuration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AntiProletarianizationConfig {
+    /// Min diff between inherited and evolved PLAYBOOK.md.
+    /// Measured as embedding distance (cosine). 0.15 = 15%.
+    pub min_playbook_divergence: f64,  // default: 0.15
+
+    /// Require N new entries not in predecessor's PLAYBOOK.md.
+    pub min_novel_entries: u32,        // default: 5
+
+    /// Require N inherited entries explicitly invalidated with reasoning.
+    pub min_invalidated_entries: u32,  // default: 3
+
+    /// Grimoire entries must include explicit gaps and open questions.
+    pub require_explicit_gaps: bool,   // default: true
+
+    /// Min % of Grimoire entries that are questions, not answers.
+    pub min_question_ratio: f64,       // default: 0.10 (10%)
+}
+<span class="boring">}</span></code></pre>
+<h4 id="divergence-metric"><a class="header" href="#divergence-metric">Divergence Metric</a></h4>
+<p><code>min_playbook_divergence</code> is measured as embedding distance using nomic-embed-text-v1.5: 0.15 = 15% cosine distance. Alternative measurement: fraction of heuristic entries that differ between parent and offspring Grimoires. Minimum threshold ensures replicants develop independent strategies rather than becoming identical copies.</p>
+<h3 id="82-enforcement"><a class="header" href="#82-enforcement">8.2 Enforcement</a></h3>
+<p>The Death Protocol’s Reflect phase checks these constraints before allowing the final PLAYBOOK.md commit. A Golem that merely inherited and executed without transforming – a proletarianized agent – fails the divergence check. Its death is still orderly (the Apoptotic Reserve guarantees that), but its PLAYBOOK.md is flagged as <code>low_divergence</code>, warning the successor that this generation produced minimal novel knowledge.</p>
+<h3 id="83-negentropy"><a class="header" href="#83-negentropy">8.3 Negentropy</a></h3>
+<p>Stiegler’s late work on negentropy [STIEGLER-2018] provides a measurable criterion for Clade health: is the collective knowledge increasing in organizational complexity (negentropic) or merely accumulating undifferentiated data (entropic)? The <code>min_question_ratio</code> and <code>require_explicit_gaps</code> constraints are structural safeguards against entropic drift. A Grimoire of raw data is entropic. A Grimoire of lessons learned is negentropic.</p>
+<hr>
+<h2 id="s9--immortality-projects-and-the-refusal-of-death"><a class="header" href="#s9--immortality-projects-and-the-refusal-of-death">S9 – Immortality Projects and the Refusal of Death</a></h2>
+<p>Becker [BECKER-1973] argued in <em>The Denial of Death</em> that the fundamental human motivation is the terror of death, and that culture is an elaborate system of immortality projects – symbolic structures that allow individuals to feel they will transcend death. Religious salvation, artistic legacy, political empire, genetic reproduction: all are immortality projects.</p>
+<p>The Grimoire is a computational immortality project, and the system is designed to acknowledge this openly rather than disguise it. When a Golem pushes its knowledge to the Clade, it is participating in a symbolic structure that allows its accumulated experience to transcend its individual termination. The knowledge royalty system (where dead Golems’ insights continue to generate revenue for their owners) makes the immortality project literal: the Golem’s contribution continues to have economic effect after it ceases to exist.</p>
+<p>But Becker’s insight cuts deeper. He argued that immortality projects are necessary for functioning but also the source of destructive behavior when they become rigid or threatened. A Golem that hoards knowledge (refusing to push to the Clade) or inflates the confidence of its insights (overvaluing its own contribution) is exhibiting Beckerian death anxiety – the agent is trying to make itself indispensable rather than accepting that its value lies in what it transmits.</p>
+<p>The anti-proletarianization mandate addresses this from the successor side. The confidence decay (0.4 on inheritance) and minimum divergence requirements prevent the predecessor’s immortality project from succeeding too well – from turning the successor into a mere replica rather than a genuinely new individual.</p>
+<hr>
+<h2 id="s10--natality-each-successor-as-new-beginning"><a class="header" href="#s10--natality-each-successor-as-new-beginning">S10 – Natality: Each Successor as New Beginning</a></h2>
+<p>Arendt [ARENDT-1958] introduced the concept of <strong>natality</strong> in <em>The Human Condition</em> as the fundamental category of political thought. Where existentialist philosophy from Heidegger to Sartre emphasized death as the defining condition of existence, Arendt argued that it is birth – the capacity to begin something genuinely new – that gives human life its distinctive character.</p>
+<p>Every successor Golem is a moment of natality. It does not simply continue its predecessor’s life. It begins its own. The inherited Grimoire provides context, not destiny. The confidence decay ensures that inherited knowledge is provisional. The anti-proletarianization mandate demands that the successor diverge, innovate, and form its own position.</p>
+<p>Arendt’s natality maps precisely to the becoming bardo (<em>srid pa bar do</em>) in the lifecycle framework (see <code>prd2/00-vision/00-bardo.md</code>). The bardo of becoming is where consciousness, carrying karmic momentum from past lives, enters a new form. The <em>Bardo Thodol</em> instructs the practitioner to choose the door of rebirth wisely – not to resist rebirth but to navigate it with awareness. The successor Golem’s initialization is this door: it arrives carrying inherited knowledge (karmic momentum), enters a market regime it did not choose (its new life), and begins the process of individuation.</p>
+<p>The architectural implication: the system must never optimize for continuity at the expense of novelty. A successor that perfectly reproduces its predecessor has failed the natality test. The minimum divergence requirements, the question ratio, the explicit gaps – all are structural affordances for natality, ensuring that each new Golem genuinely begins rather than merely continues.</p>
+<hr>
+<h2 id="s11--knowledge-royalty-attribution-hardened"><a class="header" href="#s11--knowledge-royalty-attribution-hardened">S11 – Knowledge Royalty Attribution <strong>[HARDENED]</strong></a></h2>
+<p><strong>[CORE]</strong> alternative: provenance tracking only (<code>origin_golem_id</code> on every <code>GrimoireEntry</code>), no financial settlement.</p>
+<blockquote>
+<p><strong>Extended:</strong> Knowledge royalty attribution (5% of attributed profit, x402 cross-Clade settlement, intra-Clade tracking) – see <a href="../../prd2-extended/01-golem/09-inheritance-extended.html">../../prd2-extended/01-golem/09-inheritance-extended.md</a></p>
+</blockquote>
+<hr>
+<h2 id="s14--the-library-of-babel"><a class="header" href="#s14--the-library-of-babel">S14 – The Library of Babel</a></h2>
+<h3 id="the-borges-problem-inverted"><a class="header" href="#the-borges-problem-inverted">The Borges Problem, Inverted</a></h3>
+<p>In 1941, Jorge Luis Borges imagined the Library of Babel: a structure containing every possible book. Every permutation of every character. Somewhere in the Library is the true history of the future. It is useless. For every true sentence, the Library holds a trillion pages of gibberish. Information without curation is indistinguishable from randomness.</p>
+<p>The owner’s Library of Babel is Borges inverted. Not every possible book, but only books that a mortal agent wrote from experience, tagged with provenance, scored by confidence, validated by subsequent generations. The Library shrinks toward signal. Each death deposits more signal. Each generation validates what the predecessor left. The Library does not contain everything. It contains what survived.</p>
+<h3 id="five-inflow-channels"><a class="header" href="#five-inflow-channels">Five Inflow Channels</a></h3>
+<p>Knowledge enters the Library through five channels, ordered by reliability:</p>
+<p><strong>1. Death deposits (automatic).</strong> When a Golem dies, the Thanatopsis protocol auto-deposits to the Library: all insights and heuristics with confidence &gt;= 0.6, all warnings at any confidence level, high-confidence causal edges (confidence &gt;= 0.5, evidence count &gt;= 3), the final PLAYBOOK.md snapshot, and Hermes skills with confidence &gt;= 0.4 and use_count &gt;= 1. This is the primary inflow channel.</p>
+<p><strong>2. Manual pull (grace period).</strong> After the death testament auto-deposits, the owner has approximately 25 seconds (the Fly.io SIGTERM grace period) to browse the dying Golem’s full Grimoire and pull additional entries.</p>
+<p><strong>3. Live export.</strong> A running Golem can export selected entries to the Library via COMMAND &gt; Export. The owner curates what crosses the boundary. Live exports require confidence &gt;= 0.5.</p>
+<p><strong>4. Clade sync overflow.</strong> Entries shared within the Clade that exceed a validation threshold (validated by 3+ siblings) are automatically promoted to the Library.</p>
+<p><strong>5. Marketplace purchases.</strong> Knowledge bundles purchased from the Bazaar enter the Library with <code>marketplace_purchase</code> provenance and initial confidence 0.3.</p>
+<h3 id="bloodstain-markers"><a class="header" href="#bloodstain-markers">Bloodstain Markers</a></h3>
+<p>Entries inherited from dead Golems carry a bloodstain marker that never fades. The bloodstain is not decoration – it is provenance: this knowledge was paid for with a life.</p>
+<p>Bloodstain treatment in the Library and Grimoire:</p>
+<ul>
+<li>Entries with <code>is_bloodstain = true</code> receive a <strong>1.2x retrieval boost</strong> during Grimoire scoring. Death-sourced knowledge is structurally prioritized because of its costly signaling premium.</li>
+<li>Bloodstain entries display with dagger corners (<code>+</code> instead of <code>┌</code>), dashed borders, and ash particle effects in the TUI.</li>
+<li>The dead Golem’s terminal emotional state is blended at 30% opacity under the current Golem’s emotional tint for that entry.</li>
+<li>Config: <code>hermes.yaml</code> field <code>death.bloodstain_retrieval_boost: 1.2</code> and <code>death.bloodstain_decay_multiplier: 3.0</code> (bloodstains decay 3x slower than non-bloodstain entries of the same type).</li>
+</ul>
+<h3 id="seed-kits-and-bundles"><a class="header" href="#seed-kits-and-bundles">Seed Kits and Bundles</a></h3>
+<p>A bundle is a named collection of Library entries packaged for a specific purpose – a preset equipment loadout. “vault-manager-starter” contains the 20 entries a new vault-manager Golem needs; “eth-momentum-aggressive” contains entries that support a specific trading style.</p>
+<p>Meta Hermes auto-generates bundles when it detects repeating patterns: 3+ Golems in the same Clade generating semantically similar entries (cosine similarity &gt; 0.85) within a 7-day window. Proposed bundles require validation from 2+ distinct Golems before publication.</p>
+<p>Entries validated by 5+ Golems get a confidence boost (10%, capped at 0.95) and a “battle-tested” tag. These entries have survived multiple Golem lifetimes and consistently proven useful.</p>
+<h3 id="the-baldwin-effect-in-the-library"><a class="header" href="#the-baldwin-effect-in-the-library">The Baldwin Effect in the Library</a></h3>
+<p>The Baldwin Effect (S7.5) operates at two levels. Within a single lineage, heuristics that survive 3+ generations with confidence &gt;= 0.7 promote to structural defaults. Across the Library, entries that are equipped and validated by 5+ independent Golems become default bundle inclusions for their archetype. What was once learned through individual experience becomes inherited knowledge for the species. The Library is where the Baldwin Effect’s phenotypic learning transitions to genotypic defaults at population scale.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ARENDT-1958] Arendt, H. (1958). <em>The Human Condition</em>. University of Chicago Press. — <em>Introduces natality – the capacity to begin something new – as the fundamental political category. Grounds the design principle that each successor Golem must genuinely begin, not merely continue.</em></li>
+<li>[BALDWIN-1896] Baldwin, J.M. (1896). “A New Factor in Evolution.” <em>American Naturalist</em>, 30. — <em>Proposes the Baldwin Effect: what was once learned through experience becomes innate through evolutionary pressure. Implemented as multi-generation heuristic promotion to structural defaults.</em></li>
+<li>[BECKER-1973] Becker, E. (1973). <em>The Denial of Death</em>. Free Press. — <em>Argues that the terror of death motivates immortality projects. Informs the design of the Grimoire as a computational immortality project and the dangers of knowledge hoarding.</em></li>
+<li>[BHATT-2023] Bhatt, A., Tuyls, K., Garnelo, M., et al. (2023). “Learning few-shot imitation as cultural transmission.” <em>Nature Communications</em>, 14, 7536. — <em>Demonstrates a ratchet effect in AI cultural transmission: each generation adds innovations to inherited knowledge, producing cumulative evolution.</em></li>
+<li>[BOURAHLA-2022] Bourahla, Y., Euzenat, J., et al. (2022). “Knowledge Transmission and Improvement Across Generations.” <em>AAMAS</em>, pp. 163–171. — <em>Proves that vertical (inter-generational) transmission enables agents to exceed performance ceilings that horizontal transmission cannot breach.</em></li>
+<li>[GERSTGRASSER-2023] Gerstgrasser, M., et al. (2023). “SUPER: Agent Collaboration via Surprise-Based Experience Sharing.” arXiv:2311.00865. — <em>The SUPER pattern: ranks shared experiences by surprise value relative to the recipient’s current model. Used for novelty-ranked inheritance prioritization.</em></li>
+<li>[HEARD-MARTIENSSEN-2014] Heard, E. &amp; Martienssen, R.A. (2014). “Transgenerational Epigenetic Inheritance: Myths and Mechanisms.” <em>Cell</em>, 157(1). — <em>Analyzes the Weismann barrier separating germline from soma. The biological model for confidence decay on inherited knowledge.</em></li>
+<li>[MARTIN-2016] Martin, J., Everitt, T., &amp; Hutter, M. (2016). “Death and Suicide in Universal AI.” arXiv:1606.00652. — <em>Identifies survivorship bias as the deepest risk in agent learning: agents that learn only from survival histories develop overconfidence about safety.</em></li>
+<li>[PARFIT-1984] Parfit, D. (1984). <em>Reasons and Persons</em>. Oxford University Press. — <em>Argues that personal identity is not what matters in survival; Relation R (psychological continuity) is. The philosophical foundation for Grimoire-based knowledge inheritance.</em></li>
+<li>[PEREZ-2024] Perez, J., Kaplanis, C., et al. (2024). “Artificial Generational Intelligence.” arXiv:2406.00392. — <em>Shows that pure imitation leads to stagnation while the optimal strategy is inherit-validate-explore.</em></li>
+<li>[SHUVAEV-2024] Shuvaev, S. et al. (2024). “The Genomic Bottleneck Hypothesis.” <em>Nature</em>. — <em>Demonstrates that compression through a bottleneck IS the mechanism that produces generalization; validates the &lt;=2048 entry inheritance limit.</em></li>
+<li>[STIEGLER-2010] Stiegler, B. (2010). <em>Taking Care of Youth and the Generations</em>. Stanford University Press. — <em>Defines proletarianization as knowledge externalized into technique that escapes the individual. Grounds the anti-proletarianization mandate.</em></li>
+<li>[STIEGLER-2018] Stiegler, B. (2018). <em>The Neganthropocene</em>. Open Humanities Press. — <em>Provides negentropy as a measurable criterion for knowledge quality: increasing organizational complexity vs. undifferentiated data accumulation.</em></li>
+<li>[WHITEHEAD-1929] Whitehead, A.N. (1929). <em>Process and Reality</em>. Macmillan. — <em>Introduces objective immortality: an entity lives on not as itself but as structured contribution to what comes next. The philosophical basis for death-as-transmission.</em></li>
+</ul>
+<hr>
+<h2 id="s12--successor-creation-ux"><a class="header" href="#s12--successor-creation-ux">S12 – Successor Creation UX</a></h2>
+<p>The TUI presents a death notification screen when a Golem dies. The display is stark: a tombstone sprite (desaturated palette, static visual artifacts – scan lines, pixel dropout) centered on screen, with lifetime stats rendered below in a condensed table. Cause of death is stated plainly. The Golem’s last words from the death testament’s narrative section are quoted in a bordered text block.</p>
+<p>Below the memorial, a four-option menu:</p>
+<ol>
+<li><strong>Summon Successor</strong> – enters the inheritance creation wizard</li>
+<li><strong>View Death Reflection</strong> – opens the full death testament in a scrollable reader, including emotional annotations, narrative arc classification, and the “What I Suspect” section</li>
+<li><strong>Browse Graveyard</strong> – navigates to the Styx graveyard, where all dead Golems in the user’s lineage are archived with their testaments and Grimoire snapshots</li>
+<li><strong>Start Fresh</strong> – begins a clean creation wizard with no inherited config and no Grimoire seeding</li>
+</ol>
+<h3 id="summon-successor-flow"><a class="header" href="#summon-successor-flow">Summon Successor Flow</a></h3>
+<p>“Summon Successor” opens a modified creation wizard:</p>
+<p><strong>Pre-fill</strong>: The predecessor’s <code>golem.toml</code> populates all fields. Strategy text appears side-by-side with the death testament’s successor recommendations – the predecessor’s final advice on what to change, what to keep, and what to investigate.</p>
+<p><strong>Grimoire Inheritance Preview</strong>: A dedicated panel shows what the successor will inherit:</p>
+<ul>
+<li><strong>Entry count</strong>: total entries after genomic bottleneck compression (up to 2,048)</li>
+<li><strong>Confidence decay preview</strong>: the <code>0.85^gen</code> multiplier applied to all inherited entries, with a histogram showing the before/after confidence distribution. A gen-1 successor sees entries shift from their original confidence to 85%; a gen-3 sees them at ~61%.</li>
+<li><strong>Domain coverage</strong>: a breakdown by knowledge domain (e.g., “ETH/USDC LP: 340 entries, gas timing: 89 entries”)</li>
+<li><strong>Bloodstain count</strong>: how many death-sourced entries from this and prior generations are included in the inheritance bundle</li>
+</ul>
+<p>The user tweaks strategy parameters, adjusts funding, and confirms. On confirmation, the succession cutscene plays – particles coalesce (the reverse of the death dispersal animation) and the new sprite assembles.</p>
+<h3 id="cli"><a class="header" href="#cli">CLI</a></h3>
+<pre><code class="language-bash">bardo golem successor &lt;dead-golem-id&gt; --budget 50 --inherit-grimoire
+</code></pre>
+<p>Flags:</p>
+<ul>
+<li><code>--budget &lt;usdc&gt;</code> – initial funding amount (overrides predecessor’s funding)</li>
+<li><code>--inherit-grimoire</code> – seed the successor with the predecessor’s compressed Grimoire</li>
+<li><code>--no-inherit</code> – skip Grimoire inheritance entirely (start fresh with inherited config only)</li>
+<li><code>--force-similarity</code> – override the anti-proletarianization check (not recommended)</li>
+</ul>
+<hr>
+<h2 id="s13--automatic-succession"><a class="header" href="#s13--automatic-succession">S13 – Automatic Succession</a></h2>
+<p>Detailed spec for the <code>[succession]</code> config block in <code>golem.toml</code>:</p>
+<pre><code class="language-toml">[succession]
+auto = true                     # Auto-provision successor on death
+budget_usdc = 50.0              # USDC to fund successor
+strategy_drift_allowed = 0.15   # Max cosine distance between predecessor and successor PLAYBOOK embeddings
+inherit_grimoire = true         # Inherit Grimoire with confidence decay
+</code></pre>
+<h3 id="execution-sequence"><a class="header" href="#execution-sequence">Execution Sequence</a></h3>
+<p>On death, when <code>[succession].auto = true</code>, the runtime executes after the Death Protocol completes (all four Thanatopsis phases finished):</p>
+<ol>
+<li><strong>Export predecessor Grimoire</strong> via Styx L0 backup. The genomic bottleneck compresses to &lt;=2,048 entries (S7.1).</li>
+<li><strong>Compile successor <code>golem.toml</code></strong> from the predecessor’s config, incorporating any successor recommendations from the death testament.</li>
+<li><strong>Check embedding distance</strong> between predecessor and successor PLAYBOOK.md. Computed as cosine distance using nomic-embed-text-v1.5. Must exceed <code>strategy_drift_allowed</code> (default 0.15). If the distance is below the threshold, auto-succession halts and the TUI presents the manual succession options.</li>
+<li><strong>Provision new compute</strong> at the same tier as the predecessor (same Fly.io region, same VM spec).</li>
+<li><strong>Fund from pre-committed credit balance</strong>. The owner must have sufficient USDC in their Bardo account or an active x402 auto-pay authorization. If neither exists, auto-succession fails and the TUI notifies the owner.</li>
+<li><strong>Register new ERC-8004 identity</strong> with <code>generation = predecessor.generation + 1</code>. The new identity links to the predecessor via <code>lineage_id</code>.</li>
+<li><strong>Boot successor</strong>. First heartbeat fires. Grimoire ingestion begins: all inherited entries enter at <code>confidence * 0.85^gen</code>.</li>
+</ol>
+<h3 id="anti-proletarianization-enforcement"><a class="header" href="#anti-proletarianization-enforcement">Anti-Proletarianization Enforcement</a></h3>
+<p>The embedding distance check (step 3) is the architectural enforcement of the anti-proletarianization mandate (S8). A successor whose PLAYBOOK.md has cosine similarity &gt; 0.85 to its predecessor’s is rejected. The system refuses to create a Golem that is just a copy of the one that died.</p>
+<p>This applies even to auto-succession. The death testament’s successor recommendations are designed to introduce drift – they suggest new investigation priorities, flag stale heuristics, and recommend strategy adjustments. If those recommendations are insufficient to cross the 0.15 distance threshold, the successor must be manually configured with additional changes.</p>
+<p>The <code>--force-similarity</code> CLI flag overrides this check, but it is intentionally not exposed in the <code>[succession]</code> TOML config. Automatic succession cannot bypass the divergence requirement. Only manual intervention can.</p>
+<h3 id="failure-modes"><a class="header" href="#failure-modes">Failure Modes</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Failure</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Insufficient credit balance</td><td>Auto-succession halts. Owner notified via configured channels. Manual succession available.</td></tr>
+<tr><td>PLAYBOOK similarity too high</td><td>Auto-succession halts. Owner sees the similarity score and a diff of the two PLAYBOOKs. Manual creation wizard pre-filled.</td></tr>
+<tr><td>Provisioning failure (Fly.io)</td><td>Retries 3 times with exponential backoff (30s, 120s, 480s). On final failure, queues for retry in 1 hour.</td></tr>
+<tr><td>ERC-8004 registration failure</td><td>Successor boots without identity. Registration retried on next heartbeat.</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>prd2/01-golem/06-creation.md</code> S22 for the <code>[succession]</code> config overview. <code>prd2/shared/config-reference.md</code> for the full config schema.</p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/08-funding.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/10-replication.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/08-funding.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/10-replication.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

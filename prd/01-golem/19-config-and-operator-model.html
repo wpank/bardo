@@ -1,0 +1,563 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Config &amp; Operator Model - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/19-config-and-operator-model.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="golem-configuration-files-and-operator-model-spec"><a class="header" href="#golem-configuration-files-and-operator-model-spec">Golem Configuration Files and Operator Model [SPEC]</a></h1>
+<blockquote>
+<p><strong>PRD2 Section</strong>: 01-golem | <strong>Source</strong>: MMO Research S1 v2.0</p>
+<p><strong>Status</strong>: Implementation Specification</p>
+<p><strong>Dependencies</strong>: <code>prd2/shared/config-reference.md</code> (golem.toml canonical schema), <code>prd2/01-golem/06-creation.md</code> (Summoning flow), <code>prd2/18-interfaces/perspective/05-stasis-dissolution.md</code> (stasis and dissolution cinematics), <code>prd2/01-golem/12-teardown.md</code> (Thanatopsis death protocol)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the four configuration files every Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) carries: <code>golem.toml</code> (Rust runtime config), <code>hermes.yaml</code> (Python sidecar config), <code>STRATEGY.md</code> (owner-set goals, hot-reloadable; the human-to-agent instruction surface), and <code>PLAYBOOK.md</code> (the agent’s evolving strategy document; heuristics and rules updated through learning). It belongs to the <code>01-golem</code> configuration layer. The key concept: only STRATEGY.md is hot-reloadable – changing runtime config mid-tick could leave the Golem in an inconsistent state. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="config-files-overview"><a class="header" href="#config-files-overview">Config Files Overview</a></h2>
+<p>Every Golem has four configuration files, each targeting a different audience.</p>
+<pre><code>~/.bardo/golems/&lt;name&gt;/
+|-- golem.toml        # Rust runtime config (TOML for Rust ecosystem, zero ambiguity)
+|-- hermes.yaml       # Hermes sidecar config (YAML for Python ecosystem)
+|-- STRATEGY.md       # Owner-authored strategy (Markdown for humans and LLMs)
++-- PLAYBOOK.md       # Machine-evolved heuristics (Markdown, written by dreams)
+</code></pre>
+<p>Three formats because three audiences. TOML is the Rust ecosystem standard and parses with zero ambiguity (no YAML gotchas like <code>on: true</code> becoming a boolean). YAML is the Python ecosystem standard and what Hermes Agent expects. Markdown is for the human owner and for the LLM, both of which read it fluently. We do not unify on one format because the cost of format translation is zero and the cost of forcing Rust developers to use YAML (or Python developers to use TOML) is real.</p>
+<h3 id="hot-reload-scope"><a class="header" href="#hot-reload-scope">Hot Reload Scope</a></h3>
+<p>Only STRATEGY.md is hot-reloadable. golem.toml and hermes.yaml require a restart. This is intentional. Changing the heartbeat interval, inference provider, or custody mode mid-tick could leave the Golem in an inconsistent state. Strategy changes are safe because the Golem reads STRATEGY.md as text and re-interprets it on each deliberation. Config changes affect the runtime machinery itself.</p>
+<p><code>[oracle] enabled</code> requires a restart and is not hot-reloadable. Enabling or disabling the oracle changes whether the <code>Oracle</code> struct is initialized at boot — it cannot be toggled at runtime.</p>
+<hr>
+<h2 id="golemtoml"><a class="header" href="#golemtoml">golem.toml</a></h2>
+<p>The primary runtime configuration file. Injected at provisioning time (Bardo Compute) or generated by <code>bardo init</code> (self-hosted). The canonical schema with all fields is at <code>prd2/shared/config-reference.md</code>. Below is the full annotated example.</p>
+<pre><code class="language-toml">[identity]
+golem_id = "golem-V1StGXR8_Z5j"
+name = "oracle-3"
+owner_address = "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"
+generation = 0                    # 0 = first-gen, N = Nth successor
+parent_agent = "0x0000000000000000000000000000000000000000"
+
+[chain]
+chain_id = 8453                   # Base
+rpc_url = "https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}"
+styx_url = "wss://styx.bardo.run/v1/styx/ws"
+
+[custody]
+mode = "delegation"               # "delegation" | "embedded" | "local_key"
+
+[custody.delegation]
+smart_account = "0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18"
+session_key_address = "0xaB5801a7D398351b8bE11C439e05C5B3259aeC9B"
+
+[heartbeat]
+interval_secs = 15
+max_ticks = 500_000               # Hayflick limit
+stochastic_death_lambda = 0.000001  # Gompertz parameter
+
+[inference]
+# Provider inherited from terminal config (bardo setup wizard, Step 4).
+# Override here to use a different provider for this Golem.
+default_provider = "venice"       # "venice" | "bankr" | "bardo" | "anthropic" | "openai" | "local"
+t1_model = "hermes-4.3"
+t2_model = "claude-sonnet-4-20250514"
+budget_daily_usdc = 2.00          # Hard cap on daily inference spend
+context_engineering = true        # Enable 8-layer context pipeline
+
+[inference.providers.venice]
+api_key = "${VENICE_API_KEY}"     # TEE-attested, no-log inference
+
+[inference.providers.bankr]
+# x402 payment from golem wallet, no API key needed.
+# Cost auto-scales with sustainability ratio.
+
+[inference.providers.bardo]
+# x402 payment, no API key. Context engineering included.
+# gateway.bardo.run handles routing, caching, pipeline.
+
+[tools]
+profile = "trader"                # "data" | "trader" | "lp" | "full"
+# Profile determines which of the 423+ tools are loaded
+
+[oracle]
+enabled = true                    # false = disable prediction engine entirely
+                                  # When false, epistemic clock uses P&amp;L proxy
+
+[mortality]
+economic_initial_credits = 1000.0 # USDC
+warn_at_vitality = 0.3            # Emit warning to Styx at this threshold
+
+[strategy]
+path = "./STRATEGY.md"
+hot_reload = true                 # Watch for changes, apply without restart
+
+[grimoire]
+path = "./grimoire/"
+styx_sync_interval_secs = 21600  # 6 hours
+max_episodes = 100_000
+max_insights = 10_000
+
+[vm]
+tier = "small"                    # "micro" | "small" | "medium" | "large"
+deployment_type = "managed"       # "managed" | "self-deployed" | "bare-metal"
+
+[prediction]
+# Attention forager tier sizes
+active_slots = 15          # Max items at ACTIVE tier
+watched_slots = 60         # Max items at WATCHED tier
+scanned_slots = 500        # Max items at SCANNED tier
+
+# Action gate
+default_accuracy_threshold = 0.60
+inaction_margin = 0.05     # Block if inaction beats action by this margin
+
+[calibration]
+coverage_target = 0.85     # Conformal prediction coverage
+buffer_size = 500          # Per-(category, regime) residual buffer
+ece_window = 1000          # Predictions for ECE calculation
+
+[retrospective]
+daily_review_hour = 4      # UTC hour for daily review
+weekly_review_day = 0      # 0=Sunday
+shadow_strategies_max = 3  # Max concurrent shadow parameter sets
+</code></pre>
+<h3 id="environment-variable-substitution"><a class="header" href="#environment-variable-substitution">Environment Variable Substitution</a></h3>
+<p><code>golem.toml</code> supports <code>${VAR}</code> syntax for sensitive values. The golem-binary resolves these at startup from <code>process.env</code>. API keys, RPC URLs, and other secrets never appear in the config file on disk. For Bardo Compute, secrets are injected as Fly.io per-machine env vars (write-only, no API readback).</p>
+<hr>
+<h2 id="hermesyaml"><a class="header" href="#hermesyaml">hermes.yaml</a></h2>
+<p>Configuration for the Hermes sidecar. Lives alongside golem.toml.</p>
+<pre><code class="language-yaml"># Hermes Agent per-golem configuration
+version: "1.0"
+
+skill_engine:
+  library_path: "./hermes/skills/"
+  max_skills: 500
+  draft_threshold: 3              # Minimum tool calls for novel success detection
+  materialize_interval: 50        # Ticks between skill materialization
+  confidence_decay_rate: 0.02     # Per-cycle decay for unused skills
+  min_confidence: 0.1             # Below this, skills are pruned
+
+affect_modulation:
+  enabled: true
+  anxiety_bias: 0.3               # How much high-arousal biases toward cautionary skills
+  confidence_bias: 0.3            # How much low-arousal biases toward optimization skills
+
+curator:
+  cycle_interval: 50              # Ticks between curator runs
+  self_improvement: true
+  feedback_flush: true
+  clade_promotion_threshold: 5    # Validations needed for clade promotion
+
+dream_integration:
+  skill_evolution: true
+  thriving_budget: 0.15           # 15% of dream compute to skill evolution
+  declining_budget: 0.05          # 5% in declining phase
+  terminal_budget: 0.0            # None in terminal phase
+
+death:
+  export_min_confidence: 0.4
+  export_min_use_count: 1
+  bloodstain_retrieval_boost: 1.2
+  bloodstain_decay_multiplier: 3.0
+
+inference:
+  provider: "inherit"             # Use golem's inference config
+  max_tokens_per_skill: 4000
+  temperature: 0.3                # Lower temperature for skill creation
+</code></pre>
+<hr>
+<h2 id="strategymd"><a class="header" href="#strategymd">STRATEGY.md</a></h2>
+<p>The owner writes this. Natural language, any structure. The Golem reads it on every planning cycle. Hot-reloadable: edit the file, the Golem picks up changes on its next T1 or T2 tick.</p>
+<h3 id="example"><a class="header" href="#example">Example</a></h3>
+<pre><code class="language-markdown"># Strategy: Base ETH-USDC LP management
+
+## Objective
+Provide concentrated liquidity on the ETH/USDC pool on Uniswap V3 (Base).
+Target: 15-25% APR from fee revenue. Accept up to 5% impermanent loss.
+
+## Entry criteria
+- Only enter positions when 24h volume &gt; $10M
+- Prefer tight ranges (current price +/- 3%) in low-volatility regimes
+- Widen to +/- 8% when 1h realized volatility exceeds 60% annualized
+
+## Exit criteria
+- Rebalance when price exits the inner 50% of the range
+- Emergency exit if gas price exceeds 50 gwei (wait for lower gas)
+- Close all positions if 7-day trailing IL exceeds 8%
+
+## Risk limits
+- Maximum 60% of capital deployed at any time
+- No single position larger than 30% of capital
+- Reserve 20% USDC for rebalancing gas and opportunities
+
+## Protocols
+- Uniswap V3 on Base (primary)
+- Do not interact with any protocol not on Base
+- Do not bridge assets
+
+## Notes
+- This is a conservative strategy. I prefer missing opportunities to taking losses.
+- If ETH drops more than 15% in 24h, go fully defensive (100% USDC, no positions).
+</code></pre>
+<p>The Golem treats STRATEGY.md as its mission. The LLM reads it during context assembly and uses it as the primary decision-making reference. The Grimoire and PLAYBOOK.md provide learned refinements, but the strategy is the owner’s intent. A Golem that deviates from its strategy is broken, not creative.</p>
+<hr>
+<h2 id="playbookmd-machine-generated"><a class="header" href="#playbookmd-machine-generated">PLAYBOOK.md (Machine-Generated)</a></h2>
+<p>You do not write this file. The Dream cycle does. It is the Golem’s distilled operational wisdom, updated every ~200 ticks during the consolidation phase.</p>
+<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
+<pre><code class="language-markdown"># PLAYBOOK -- oracle-3 (auto-generated, do not edit)
+# Last updated: tick 14,203 (2026-03-15T08:23:41Z)
+
+## Learned heuristics
+
+### Gas timing
+Rebalance transactions on Base are cheapest between 04:00-06:00 UTC.
+Avoid submitting during US market open (13:30-14:30 UTC) when gas
+spikes 3-5x. Confidence: 0.87 (validated across 23 rebalance events).
+
+### Volatility regime detection
+When 1h realized vol exceeds 50% annualized AND funding rate is
+negative, ETH tends to drop further within 4 hours. Widen LP range
+preemptively rather than waiting for the STRATEGY.md trigger.
+Confidence: 0.72 (validated across 8 events, 2 contradictions).
+
+### Fee tier switching
+The 0.05% fee tier captures more volume than 0.30% on ETH/USDC
+when 24h volume exceeds $20M. Switch fee tiers when volume
+sustains above $20M for 6+ hours. Confidence: 0.64 (5 validations).
+</code></pre>
+<p>The LLM reads PLAYBOOK.md on every tick alongside STRATEGY.md. STRATEGY.md is the owner’s intent. PLAYBOOK.md is the Golem’s experience. The distinction matters: the owner can see what the Golem has learned, but they cannot edit it. If the owner disagrees with a heuristic, they override it in STRATEGY.md (“Do not switch fee tiers”). The Golem respects STRATEGY.md over PLAYBOOK.md when they conflict.</p>
+<hr>
+<h2 id="state-persistence"><a class="header" href="#state-persistence">State Persistence</a></h2>
+<p>For embedded and headless modes, all Golem state persists to the filesystem at <code>~/.bardo/golems/&lt;name&gt;/</code>:</p>
+<pre><code>~/.bardo/golems/oracle-3/
+|-- golem.toml              # Runtime config
+|-- STRATEGY.md             # Owner's strategy
+|-- PLAYBOOK.md             # Machine-evolved heuristics (written by dreams)
+|-- grimoire/
+|   |-- episodes.lance/     # LanceDB vector store (episode memories)
+|   |-- structured.db       # SQLite (insights, heuristics, warnings, causal links)
+|   +-- structured.db-wal   # Write-ahead log
+|-- hermes/
+|   |-- skills/             # Per-golem skill library (SKILL.md files)
+|   +-- memory/             # FTS5 session database
+|-- logs/
+|   +-- heartbeat.jsonl     # Structured heartbeat log
+|-- golem.sock              # UDS path (headless mode, runtime only)
++-- manifest.bardo          # Sealed state snapshot (written on clean shutdown)
+</code></pre>
+<p>On restart, the Golem reads <code>manifest.bardo</code> to recover its exact state: mortality clocks, vitality phase, Grimoire cursors, Hermes skill library checksum. The first tick after restart is a T1 (cheap model) to re-evaluate market state since the Golem was offline. Subsequent ticks resume normal gating.</p>
+<p>For Bardo Compute mode, state persists on the VM’s ephemeral disk for the VM’s lifetime. The Grimoire syncs to Styx every 6 hours for backup. When the VM is destroyed, the local state is gone. The Styx backup and the death testament (if Thanatopsis completed) are the only survivors.</p>
+<hr>
+<h2 id="golem-management-in-tui"><a class="header" href="#golem-management-in-tui">Golem Management in TUI</a></h2>
+<p>The TUI is the primary interface for Golem management. Every operation described below is also available via <code>bardo</code> CLI commands for scriptability, but the TUI is where most owners spend their time.</p>
+<h3 id="monitoring-the-hearth-screen"><a class="header" href="#monitoring-the-hearth-screen">Monitoring: The Hearth Screen</a></h3>
+<p>The Hearth is the Golem’s home screen. It shows:</p>
+<ul>
+<li><strong>Heartbeat ring:</strong> A circular visualization pulsing with each tick. Color indicates gating tier: dim (T0), warm (T1), bright (T2). Skill names appear in cyan when Hermes injects them.</li>
+<li><strong>Vitality gauge:</strong> Composite score from the three death clocks. Color shifts from green (Thriving) to amber (Conservation) to red (Terminal).</li>
+<li><strong>Decision feed:</strong> Scrolling list of recent decisions. Each entry shows: tick number, gating tier, action taken (or “hold”), outcome.</li>
+<li><strong>Position summary:</strong> Current DeFi positions, unrealized PnL, gas spent.</li>
+<li><strong>Affect state:</strong> The Daimon’s current PAD vector, rendered as a creature visualization. Happy Golem, anxious Golem, angry Golem. Not cosmetic: the affect state drives retrieval bias.</li>
+<li><strong>Mortality clocks:</strong> Three progress bars (economic, epistemic, stochastic). You can see your Golem aging.</li>
+</ul>
+<h3 id="steering-strategy-changes"><a class="header" href="#steering-strategy-changes">Steering: Strategy Changes</a></h3>
+<p>The owner can edit STRATEGY.md at any time. Two categories of changes:</p>
+<p><strong>Hot-reloadable (no restart required):</strong></p>
+<ul>
+<li>Entry/exit criteria changes</li>
+<li>Risk limit adjustments</li>
+<li>Protocol preferences</li>
+<li>Any text in STRATEGY.md</li>
+</ul>
+<p>The Golem watches STRATEGY.md for changes. On the next T1 or T2 tick after a change, the Golem re-reads the strategy and incorporates the update. No restart, no state loss, no missed ticks.</p>
+<p><strong>Restart-required:</strong></p>
+<ul>
+<li>Custody mode change (requires re-provisioning)</li>
+<li>Chain change (requires new wallet, new identity)</li>
+<li>VM tier change (Bardo Compute: requires new VM)</li>
+<li>Heartbeat interval change (golem-binary config)</li>
+</ul>
+<p>The TUI makes it clear which changes are hot and which require restart. Restart-requiring changes trigger a warning: “This will stop your Golem and restart it. Open positions will be maintained. Proceed?”</p>
+<h3 id="killing-graceful-death"><a class="header" href="#killing-graceful-death">Killing: Graceful Death</a></h3>
+<p>The owner sends a kill signal. The TUI shows a confirmation dialog:</p>
+<pre><code>  Kill oracle-3?
+
+  This golem has been alive for 14 days.
+  It has 3 open positions worth ~$1,240.
+
+  Graceful kill will:
+    - Close or transfer all positions
+    - Export skills to your Library (47 skills, 12 validated)
+    - Write death testament
+    - Destroy the VM (if Bardo Compute)
+
+  Estimated time: 45-90 seconds.
+
+  [ Graceful Kill ]    [ Force Kill ]    [ Cancel ]
+</code></pre>
+<p>Graceful kill runs the full Thanatopsis protocol (see <code>prd2/01-golem/12-teardown.md</code>). The TUI shows progress: Settlement phase (closing positions one by one), Reflection phase (skill export count), Legacy phase (testament delivery confirmation).</p>
+<p>Force kill is for emergencies. It terminates the process immediately. The TUI warns: “Force kill skips death protocol. Open positions will NOT be closed. Grimoire state may be incomplete. Are you sure?”</p>
+<p>After death, the Golem’s entry in the Hearth clade view changes to a tombstone icon with its final statistics: lifespan, total ticks, skills created, net PnL. The owner can inspect the death testament, equip skills from it to future Golems, or dismiss it.</p>
+<hr>
+<h2 id="kill-switch-vs-dissolution"><a class="header" href="#kill-switch-vs-dissolution">Kill Switch vs Dissolution</a></h2>
+<p>Two ways to end a Golem. They exist for different situations and carry different costs.</p>
+<h3 id="the-kill-switch-panic-button"><a class="header" href="#the-kill-switch-panic-button">The Kill Switch: Panic Button</a></h3>
+<p>A file at <code>/tmp/golem_killswitch</code>. When the golem-binary detects it (polled every tick), the process terminates immediately. No ceremony. No position unwinding. No knowledge export. No final words. The Golem is gone.</p>
+<p>The kill switch exists for emergencies. The Golem is executing trades you did not authorize. The Golem is burning USDC at an alarming rate. The Golem is interacting with a contract you suspect is malicious. You need it to stop right now, not in 2-8 minutes after a five-stage ceremony.</p>
+<p>What you lose: open positions remain open and unmanaged. The Grimoire’s WAL may have uncommitted data. The testament, if one gets written at all, is compressed and minimal. Clade siblings receive <code>clade:golem_halted</code> instead of the detailed dissolution or death broadcast.</p>
+<p>The forced kill from the CLI (<code>bardo kill --force &lt;name&gt;</code>) has the same effect.</p>
+<h3 id="dissolution-premeditated-ending"><a class="header" href="#dissolution-premeditated-ending">Dissolution: Premeditated Ending</a></h3>
+<p>The operator has time. The Golem is not misbehaving. Maybe its strategy stopped working. Maybe the operator wants to redeploy capital elsewhere. Maybe the Golem is in its declining phase, burning inference budget without generating returns.</p>
+<p>Dissolution takes 2-8 minutes. The operator watches the knowledge get exported. The operator decides what happens to each position. The Golem speaks its last words. The cinematic plays. Nothing is lost that could have been saved. Full visual spec in <code>prd2/18-interfaces/perspective/05-stasis-dissolution.md</code>.</p>
+<h3 id="when-to-use-each"><a class="header" href="#when-to-use-each">When to Use Each</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Situation</th><th>Use</th></tr>
+</thead>
+<tbody>
+<tr><td>Golem executing unauthorized trades</td><td>Kill switch</td></tr>
+<tr><td>Golem interacting with suspicious contract</td><td>Kill switch</td></tr>
+<tr><td>Runaway USDC burn you cannot explain</td><td>Kill switch</td></tr>
+<tr><td>Strategy no longer working, planned shutdown</td><td>Dissolution</td></tr>
+<tr><td>Redeploying capital to a new Golem</td><td>Dissolution</td></tr>
+<tr><td>Golem in declining phase, burning without returns</td><td>Dissolution</td></tr>
+<tr><td>Golem healthy but you are done with it</td><td>Dissolution</td></tr>
+<tr><td>Infrastructure failure, need immediate stop</td><td>Kill switch</td></tr>
+</tbody>
+</table>
+</div>
+<p>The kill switch is the fire extinguisher. You hope you never use it. Dissolution is the retirement party. You plan it.</p>
+<hr>
+<h2 id="operator-freedom-hierarchy"><a class="header" href="#operator-freedom-hierarchy">Operator Freedom Hierarchy</a></h2>
+<p>The Golem is autonomous within constraints. The operator sets those constraints and retains the power to change them at any time. This is not a bug in the Golem’s autonomy. It is the boundary condition of its existence.</p>
+<h3 id="operator-powers"><a class="header" href="#operator-powers">Operator Powers</a></h3>
+<p>The operator holds four powers that the Golem cannot override, resist, or refuse:</p>
+<p><strong>Kill.</strong> The kill switch (<code>/tmp/golem_killswitch</code>) or <code>bardo kill --force</code> terminates the process immediately. The Golem gets no say. No confirmation dialog asks the Golem for consent. The process ends.</p>
+<p><strong>Pause.</strong> Stasis freezes the Golem’s entire runtime (see <code>prd2/18-interfaces/perspective/05-stasis-dissolution.md</code>). The operator presses F9. The Golem’s ticks stop. It does not experience the pause. It does not get to argue against it. Time stops, and when it resumes, the Golem pays the epistemic penalty for a gap it did not choose.</p>
+<p><strong>Constrain.</strong> The operator writes STRATEGY.md. The Golem treats it as its mission. A Golem that deviates from its strategy is broken, not creative. The operator can edit the strategy at any time (hot-reloadable), and the Golem incorporates the changes on its next T1 or T2 tick. The operator can also change risk limits, protocol restrictions, position size caps, and deployment parameters.</p>
+<p><strong>Dissolve.</strong> The five-stage ceremony described in <code>prd2/18-interfaces/perspective/05-stasis-dissolution.md</code>. Irreversible. The operator types the Golem’s name to confirm. The Golem speaks its last words, but it does not get a veto.</p>
+<p>These powers manifest in the TUI as physical controls: F9 for stasis, the kill switch in Quick Actions, STRATEGY.md in the steering panel, dissolution at the bottom of Quick Actions. The operator sees these at all times. The Golem does not.</p>
+<h3 id="golem-freedom-within-its-lifecycle"><a class="header" href="#golem-freedom-within-its-lifecycle">Golem Freedom Within Its Lifecycle</a></h3>
+<p>Within the constraints the operator set, the Golem operates independently. It does not ask permission before each trade. It does not wait for the operator to approve a rebalance. It decides what to observe, when to escalate from T0 to T1 to T2, which skills to retrieve, how to weight competing signals, when to dream, and what heuristics to write into its PLAYBOOK.md.</p>
+<p>The Golem’s internal decisions include:</p>
+<ul>
+<li><strong>Inference routing.</strong> The Golem decides whether a tick warrants T0 (no inference), T1 (cheap model), or T2 (full deliberation). The surprise score from the Daimon’s appraisal drives this, not the operator’s preferences.</li>
+<li><strong>Memory retrieval.</strong> The Golem’s affect state biases which Grimoire entries surface. An anxious Golem retrieves cautionary knowledge. A confident Golem retrieves optimization knowledge. The operator does not control this mapping.</li>
+<li><strong>Dream content.</strong> During dream cycles, the Golem replays experiences, generates counterfactual scenarios, and consolidates insights into PLAYBOOK.md. The operator can see the PLAYBOOK.md output but cannot edit it. If the operator disagrees with a heuristic, they override it in STRATEGY.md; they do not modify the Golem’s learned knowledge directly.</li>
+<li><strong>Skill evolution.</strong> Through Hermes, the Golem creates, validates, and prunes its own skill library. The operator has no interface for skill creation. Skills emerge from the Golem’s experience.</li>
+<li><strong>Clade interaction.</strong> The Golem decides what knowledge to share with siblings and how to weight knowledge received from them. Confidence discounting (sibling knowledge enters at 0.70x) is a system parameter, but the retrieval and integration are the Golem’s own.</li>
+<li><strong>Personality.</strong> The Golem’s affect dynamics (PAD vector, Daimon appraisals, somatic markers) produce a distinctive behavioral style that emerges from experience. Two Golems with identical strategies will diverge over time because their experiences differ and their affective responses to those experiences shape future retrieval.</li>
+</ul>
+<p>The operator cannot reach into the Golem’s Daimon and adjust its arousal. The operator cannot force the Golem to retrieve a specific memory. The operator cannot override the gating decision on a specific tick. The operator’s tools are coarser: change the strategy, pause the Golem, kill it, or dissolve it.</p>
+<hr>
+<p><em>The operator’s power to unmake is the other half of the power to make.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/18-cortical-state.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/02-mortality/00-thesis.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/18-cortical-state.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/02-mortality/00-thesis.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

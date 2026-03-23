@@ -1,0 +1,662 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Fast Feedback Loops - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/16-testing/07-fast-feedback-loops.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="fast-feedback-loops-five-evaluation-systems-at-machine-speed-spec"><a class="header" href="#fast-feedback-loops-five-evaluation-systems-at-machine-speed-spec">Fast Feedback Loops: Five Evaluation Systems at Machine Speed [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crate</strong>: <code>golem-oracle</code> (calibration, cost-effectiveness, adversarial modules), <code>golem-grimoire</code> (context attribution), <code>golem-tools</code> (tool selection)</p>
+<p><strong>Depends on</strong>: <code>./05-evaluation-lifecycle.md</code> (four-phase evaluation lifecycle from dev through production), <code>../03-daimon/09-evaluation.md</code> (Daimon affect engine evaluation and its integration with feedback loops)</p>
+<p><strong>Source</strong>: <code>active-inference-research/new/15-fast-feedback-loops.md</code></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies five machine-speed evaluation loops that run inside each Golem (mortal autonomous agent): confidence calibration, context attribution, cost-effectiveness tracking, tool selection evaluation, and adversarial awareness. It belongs to Section 16 (Testing) and fills the gap between per-resolution residual correction and slow retrospective evaluation. All five loops are arithmetic, not LLM-based, and run at gamma or theta tick frequency with near-zero inference cost. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="purpose"><a class="header" href="#purpose">Purpose</a></h2>
+<p>The prediction engine provides one fast feedback loop: residual correction at ~15,000 adjustments/day. The retrospective evaluator (see <a href="10-retrospective-evaluation.html">10-retrospective-evaluation.md</a>) provides slow feedback at daily/weekly horizons. Between these, five evaluation gaps exist – things the system should be learning from continuously but is not.</p>
+<p>All five loops share the Karpathy property: <strong>one metric, one arena, one gate (keep/discard), running fast</strong>. They operate at gamma or theta frequency with near-zero inference cost. They are arithmetic, not LLM-based. They compound automatically.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Loop</th><th>What It Evaluates</th><th>Metric</th><th>Frequency</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Confidence Calibration</strong></td><td>Does the LLM’s stated confidence match reality?</td><td>Expected Calibration Error (ECE)</td><td>Per-resolution</td><td>~Zero</td></tr>
+<tr><td><strong>Context Attribution</strong></td><td>Which Grimoire entries actually helped?</td><td>Attribution score per context piece</td><td>Per-theta-tick</td><td>~Zero</td></tr>
+<tr><td><strong>Cost-Effectiveness</strong></td><td>Is expensive inference worth the accuracy gain?</td><td>delta-accuracy per dollar</td><td>Per-theta-tick</td><td>~Zero</td></tr>
+<tr><td><strong>Tool Selection</strong></td><td>Did we use the right tool for the job?</td><td>Execution quality vs. alternatives</td><td>Per-action</td><td>Low (read-only simulation)</td></tr>
+<tr><td><strong>Adversarial Awareness</strong></td><td>Is someone exploiting the golem’s behavior?</td><td>Slippage excess, timing anomalies</td><td>Per-action</td><td>~Zero</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="loop-1-confidence-calibration"><a class="header" href="#loop-1-confidence-calibration">Loop 1: Confidence Calibration</a></h2>
+<h3 id="the-problem"><a class="header" href="#the-problem">The Problem</a></h3>
+<p>When the LLM generates a prediction, it often states a confidence: “I’m 82% confident that the fee rate will stay above $1.50/hr.” LLMs are systematically overconfident. Xiong et al. (2023) found that LLMs verbalize confidence in the 80-100% range even when accuracy is 50-60% [XIONG-2023]. This is consistent across model families. A 2026 study found that LLMs display a Dunning-Kruger pattern: overconfidence is worst precisely in the domains where the model performs worst [DUNNING-KRUGER-LLM-2026].</p>
+<p>Without calibration, the action gate trusts a stated 80% confidence that corresponds to 55% actual accuracy.</p>
+<h3 id="the-solution-post-hoc-confidence-calibration"><a class="header" href="#the-solution-post-hoc-confidence-calibration">The Solution: Post-Hoc Confidence Calibration</a></h3>
+<p>A calibration module that learns the mapping from stated confidence to actual accuracy, per (category, regime), and applies a correction to every new prediction’s confidence before it enters the Ledger.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Confidence calibration using isotonic regression.
+/// Maps LLM-stated confidence to empirically calibrated confidence.
+///
+/// Isotonic regression is chosen over Platt scaling because:
+/// 1. It makes no parametric assumptions about the calibration curve
+/// 2. It is monotonic (higher stated -&gt; higher calibrated, always)
+/// 3. It handles the non-uniform distribution of LLM confidence
+///    (clustered in 80-100%) gracefully
+///
+/// See [GUO-2017] for temperature scaling as an alternative.
+/// See [DABAH-2025] for the interplay between calibration and
+/// conformal prediction.
+pub struct ConfidenceCalibrator {
+    /// Per-(category, regime) calibration curves.
+    curves: DashMap&lt;(CategoryId, RegimeTag), IsotonicCurve&gt;,
+
+    /// Minimum sample size before calibration activates.
+    min_samples: usize, // default: 30
+
+    /// ECE per (category, regime).
+    ece: DashMap&lt;(CategoryId, RegimeTag), f64&gt;,
+}
+
+/// An isotonic regression curve: a piecewise-constant monotonic function.
+pub struct IsotonicCurve {
+    bins: Vec&lt;(f64, f64, f64)&gt;,
+    sample_count: u64,
+}
+
+impl ConfidenceCalibrator {
+    /// Called on every prediction resolution (gamma frequency).
+    pub fn record(&amp;self, stated: f64, correct: bool, category: CategoryId, regime: RegimeTag) {
+        let key = (category, regime);
+        let mut curve = self.curves.entry(key).or_default();
+        curve.add_sample(stated, if correct { 1.0 } else { 0.0 });
+
+        if curve.sample_count % 50 == 0 {
+            curve.refit();
+            let ece = curve.compute_ece();
+            self.ece.insert(key, ece);
+        }
+    }
+
+    /// Called before prediction registration (theta frequency).
+    pub fn calibrate(&amp;self, stated: f64, category: CategoryId, regime: RegimeTag) -&gt; f64 {
+        let key = (category, regime);
+        match self.curves.get(&amp;key) {
+            Some(curve) if curve.sample_count &gt;= self.min_samples as u64 =&gt; {
+                curve.map(stated)
+            }
+            _ =&gt; stated,
+        }
+    }
+
+    /// ECE for a specific (category, regime). Lower is better.
+    pub fn ece(&amp;self, category: CategoryId, regime: RegimeTag) -&gt; Option&lt;f64&gt; {
+        self.ece.get(&amp;(category, regime)).map(|v| *v)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="expected-calibration-error-ece"><a class="header" href="#expected-calibration-error-ece">Expected Calibration Error (ECE)</a></h3>
+<p>ECE is the standard metric for calibration quality [NAEINI-2015]:</p>
+<p>$$\text{ECE} = \sum_{b=1}^{B} \frac{n_b}{N} |accuracy(b) - confidence(b)|$$</p>
+<p>ECE of 0.0 means perfect calibration. ECE of 0.20 means the average confidence-accuracy gap is 20 percentage points. Most LLMs have ECE in the 0.15-0.30 range on factual QA [XIONG-2023].</p>
+<h3 id="integration-points"><a class="header" href="#integration-points">Integration Points</a></h3>
+<ul>
+<li><strong>Action gate</strong>: Uses calibrated confidence, not raw stated confidence.</li>
+<li><strong>Daimon</strong>: A large ECE lowers the dominance dimension – the golem “feels” less in control when it cannot assess its own certainty.</li>
+<li><strong>TUI</strong>: The Oracle screen shows per-category ECE alongside accuracy.</li>
+<li><strong>Retrospective evaluator</strong>: Weekly reviews include an ECE trend.</li>
+</ul>
+<h3 id="owner-configuration"><a class="header" href="#owner-configuration">Owner Configuration</a></h3>
+<pre><code class="language-toml">[calibration]
+enabled = true
+min_samples = 30
+refit_interval = 50
+ece_alarm_threshold = 0.25
+</code></pre>
+<h3 id="known-limitation"><a class="header" href="#known-limitation">Known Limitation</a></h3>
+<p>Isotonic regression requires the stated confidence distribution to have reasonable spread. If the LLM always says “90% confident,” calibration degrades to a constant correction. Mitigation: the system prompts the LLM with explicit instructions to use the full 0-100% range.</p>
+<hr>
+<h2 id="loop-2-context-attribution"><a class="header" href="#loop-2-context-attribution">Loop 2: Context Attribution</a></h2>
+<h3 id="the-problem-1"><a class="header" href="#the-problem-1">The Problem</a></h3>
+<p>Every escalated theta tick assembles a context window from Grimoire entries, PLAYBOOK.md (the agent’s evolving strategy document) heuristics, predictions, and CorticalState (32-signal atomic shared perception surface) data. The system tracks whether the <em>prediction</em> was correct, but not whether the <em>context</em> was useful.</p>
+<h3 id="the-solution-lightweight-context-value-scoring"><a class="header" href="#the-solution-lightweight-context-value-scoring">The Solution: Lightweight Context Value Scoring</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Tracks which context pieces co-occur with successful vs.
+/// failed theta ticks. Builds a per-entry "context value" score.
+///
+/// Inspired by SHAP but drastically simplified for real-time operation.
+pub struct ContextAttributor {
+    entry_scores: DashMap&lt;GrimoireEntryId, ContextScore&gt;,
+    heuristic_scores: DashMap&lt;HeuristicId, ContextScore&gt;,
+    decay: f64, // Default: 0.995 per tick
+}
+
+pub struct ContextScore {
+    pub credit: f64,
+    pub debit: f64,
+    pub appearances: u32,
+    pub value: f64, // credit - debit, normalized by appearances
+}
+
+impl ContextAttributor {
+    /// Called after every escalated theta tick resolution.
+    pub fn attribute(
+        &amp;self,
+        context_ids: &amp;[ContextPieceId],
+        outcome: TickOutcome,
+    ) {
+        let signal = match outcome {
+            TickOutcome::Correct =&gt; 1.0,
+            TickOutcome::Incorrect =&gt; -1.0,
+            TickOutcome::Mixed(accuracy) =&gt; accuracy * 2.0 - 1.0,
+        };
+
+        for id in context_ids {
+            let mut score = self.entry_scores.entry(*id).or_default();
+            if signal &gt; 0.0 {
+                score.credit += signal;
+            } else {
+                score.debit += signal.abs();
+            }
+            score.appearances += 1;
+            score.value = (score.credit - score.debit) / score.appearances as f64;
+        }
+    }
+
+    /// Used by the Grimoire's retrieval ranking.
+    pub fn retrieval_boost(&amp;self, entry_id: &amp;GrimoireEntryId) -&gt; f64 {
+        self.entry_scores.get(entry_id)
+            .map(|s| 1.0 + s.value.clamp(-0.5, 0.5))
+            .unwrap_or(1.0)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration"><a class="header" href="#integration">Integration</a></h3>
+<ul>
+<li><strong>Grimoire retrieval</strong>: <code>retrieval_boost</code> modifies ranking during context assembly.</li>
+<li><strong>Heuristic audit</strong>: Feeds the retrospective evaluator’s heuristic performance analysis.</li>
+<li><strong>TUI</strong>: Grimoire screen can show entries sorted by context value.</li>
+</ul>
+<h3 id="known-limitation-1"><a class="header" href="#known-limitation-1">Known Limitation</a></h3>
+<p>Credit assignment problem: all context pieces get credit when a prediction succeeds, even if only a subset was relevant. Reliable for separating consistently helpful entries from consistently unhelpful ones over many ticks.</p>
+<hr>
+<h2 id="loop-3-cost-effectiveness"><a class="header" href="#loop-3-cost-effectiveness">Loop 3: Cost-Effectiveness</a></h2>
+<h3 id="the-problem-2"><a class="header" href="#the-problem-2">The Problem</a></h3>
+<p>A T2 inference call costs $0.03. A T1 call costs $0.005. A T0 tick costs $0.00. The system tracks costs and accuracy independently but does not connect them.</p>
+<h3 id="the-solution"><a class="header" href="#the-solution">The Solution</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Tracks accuracy gain per dollar of inference, per tier, per category.
+pub struct CostEffectivenessTracker {
+    tiers: DashMap&lt;(CognitiveTier, CategoryId), TierEffectiveness&gt;,
+}
+
+pub struct TierEffectiveness {
+    pub accuracy_gained: f64,
+    pub cost_usdc: f64,
+    pub tick_count: u32,
+    pub effectiveness: f64, // accuracy_gained / cost_usdc
+}
+
+impl CostEffectivenessTracker {
+    pub fn record(&amp;self, tier: CognitiveTier, category: CategoryId,
+                  accuracy: f64, baseline_accuracy: f64, cost: f64) {
+        let mut entry = self.tiers.entry((tier, category)).or_default();
+        let delta = accuracy - baseline_accuracy;
+        entry.accuracy_gained += delta.max(0.0);
+        entry.cost_usdc += cost;
+        entry.tick_count += 1;
+        entry.effectiveness = if entry.cost_usdc &gt; 0.0 {
+            entry.accuracy_gained / entry.cost_usdc
+        } else {
+            0.0
+        };
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration-1"><a class="header" href="#integration-1">Integration</a></h3>
+<ul>
+<li><strong>Inference routing</strong>: If T2 is not proportionally better than T1 for a category, shift ticks to T1.</li>
+<li><strong>Mortality engine</strong>: Cost-effectiveness feeds economic vitality.</li>
+<li><strong>TUI</strong>: MIND &gt; Inference screen shows cost-effectiveness per tier.</li>
+</ul>
+<hr>
+<h2 id="loop-4-tool-selection-evaluation"><a class="header" href="#loop-4-tool-selection-evaluation">Loop 4: Tool Selection Evaluation</a></h2>
+<h3 id="the-problem-3"><a class="header" href="#the-problem-3">The Problem</a></h3>
+<p>The golem has 423+ DeFi tool adapters. When it swaps on Uniswap V3 instead of Aerodrome, was that the right venue?</p>
+<h3 id="the-solution-1"><a class="header" href="#the-solution-1">The Solution</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// After every swap execution, compare actual slippage against
+/// what alternative venues would have quoted (read-only simulation).
+pub struct ToolSelectionTracker {
+    comparisons: DashMap&lt;(ActionType, VenuePair), VenueComparison&gt;,
+}
+
+pub struct VenueComparison {
+    pub chosen_venue: String,
+    pub chosen_metric: f64,
+    pub alternative_metrics: Vec&lt;(String, f64)&gt;,
+    pub was_optimal: bool,
+}
+
+impl ToolSelectionTracker {
+    pub async fn evaluate_swap(
+        &amp;self,
+        executed: &amp;SwapResult,
+        amount: U256,
+        env: &amp;dyn EnvironmentClient,
+    ) {
+        let alternatives = vec![
+            ("aerodrome", self.quote_aerodrome(amount, env).await),
+            ("uniswap_v3_0.3%", self.quote_uniswap(amount, 3000, env).await),
+            ("uniswap_v3_0.05%", self.quote_uniswap(amount, 500, env).await),
+        ];
+
+        let was_optimal = alternatives.iter()
+            .all(|(_, quote)| executed.slippage_bps &lt;= quote.slippage_bps + 5);
+
+        self.comparisons.entry((ActionType::Swap, executed.pair()))
+            .or_default()
+            .record(executed.venue.clone(), executed.slippage_bps as f64,
+                    alternatives, was_optimal);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="detailed-evaluation-struct"><a class="header" href="#detailed-evaluation-struct">Detailed Evaluation Struct</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct VenueComparison {
+    pub tick: u64,
+    pub trade_size_usdc: f64,
+
+    /// The venue that was chosen.
+    pub chosen_venue: String,
+    pub chosen_slippage_bps: f64,
+    pub chosen_gas_cost_usdc: f64,
+
+    /// Alternative venue quotes (read-only simulation).
+    pub alternatives: Vec&lt;AlternativeQuote&gt;,
+
+    /// Was the chosen venue optimal (within 5 bps tolerance)?
+    pub was_optimal: bool,
+
+    /// The best alternative, if the chosen venue was not optimal.
+    pub best_alternative: Option&lt;String&gt;,
+    pub savings_bps: f64,
+}
+
+pub struct AlternativeQuote {
+    pub venue: String,
+    pub slippage_bps: f64,
+    pub gas_cost_usdc: f64,
+    /// Total cost = slippage_bps + (gas_cost / trade_size * 10000).
+    pub total_cost_bps: f64,
+}
+<span class="boring">}</span></code></pre>
+<p>Over time, the evaluator builds a venue preference model per (pair, size_range):</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Over time, build a preference model per (pair, size_range).
+pub fn venue_preference(
+    &amp;self,
+    pair: &amp;TokenPair,
+    size_range: (f64, f64),
+) -&gt; Option&lt;String&gt; {
+    let comparisons = self.comparisons.get(&amp;(ActionType::Swap, pair.clone()))?;
+    let relevant: Vec&lt;_&gt; = comparisons.iter()
+        .filter(|c| c.trade_size_usdc &gt;= size_range.0 &amp;&amp; c.trade_size_usdc &lt;= size_range.1)
+        .collect();
+
+    if relevant.len() &lt; 10 {
+        return None; // Insufficient data.
+    }
+
+    // Count wins per venue.
+    let mut wins: HashMap&lt;String, u32&gt; = HashMap::new();
+    for c in &amp;relevant {
+        if c.was_optimal {
+            *wins.entry(c.chosen_venue.clone()).or_default() += 1;
+        }
+    }
+
+    wins.into_iter()
+        .max_by_key(|(_venue, count)| *count)
+        .map(|(venue, _count)| venue)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration-2"><a class="header" href="#integration-2">Integration</a></h3>
+<ul>
+<li><strong>Tool routing</strong>: Builds preference model per (action_type, pair, size_range).</li>
+<li><strong>Prediction engine</strong>: Feeds swap execution predictions.</li>
+<li><strong>TUI</strong>: SOMA &gt; Trades shows execution quality vs best alternative.</li>
+</ul>
+<h3 id="known-limitation-2"><a class="header" href="#known-limitation-2">Known Limitation</a></h3>
+<p>Alternative quotes are point-in-time reads and do not account for MEV on the alternative venue. The simulation does not account for MEV on the alternative venue – a venue might have quoted 3 bps lower but a sandwich there would have added 15 bps. The comparison detects systematic routing suboptimality (“you consistently use Uniswap V3 0.3% when 0.05% is cheaper for this pair”), not individual trade mistakes.</p>
+<hr>
+<h2 id="loop-5-adversarial-awareness"><a class="header" href="#loop-5-adversarial-awareness">Loop 5: Adversarial Awareness</a></h2>
+<h3 id="the-problem-4"><a class="header" href="#the-problem-4">The Problem</a></h3>
+<p>DeFi is adversarial. MEV bots, sandwich attackers, and oracle manipulators actively exploit predictable agent behavior.</p>
+<h3 id="the-solution-2"><a class="header" href="#the-solution-2">The Solution</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Monitors for patterns that suggest adversarial exploitation.
+pub struct AdversarialMonitor {
+    slippage_excess: CircularBuffer&lt;f64, 100&gt;,
+    sandwich_detector: SandwichDetector,
+    resolution_integrity: ResolutionIntegrityChecker,
+    slippage_excess_threshold_bps: f64, // default: 20 bps
+    sandwich_frequency_threshold: f64,  // default: 0.15
+}
+
+impl AdversarialMonitor {
+    pub async fn evaluate_action(
+        &amp;self,
+        action: &amp;ExecutedAction,
+        prediction: &amp;Prediction,
+        env: &amp;dyn EnvironmentClient,
+    ) {
+        // 1. Slippage excess: actual - predicted.
+        if let Some(predicted_slip) = prediction.claim.center() {
+            let actual_slip = action.actual_slippage_bps();
+            let excess = actual_slip - predicted_slip;
+            self.slippage_excess.push(excess);
+
+            if self.slippage_excess.mean() &gt; self.slippage_excess_threshold_bps {
+                self.emit_alert(AdversarialAlert::PersistentSlippageExcess {
+                    mean_excess_bps: self.slippage_excess.mean(),
+                    sample_size: self.slippage_excess.len(),
+                });
+            }
+        }
+
+        // 2. Check for sandwich patterns in the block.
+        let block = env.read_block(action.block_number).await;
+        if self.sandwich_detector.check(action.tx_hash, &amp;block) {
+            self.emit_alert(AdversarialAlert::SandwichDetected {
+                block: action.block_number,
+                tx: action.tx_hash,
+            });
+        }
+    }
+
+    pub async fn check_resolution_integrity(
+        &amp;self,
+        resolution: &amp;Resolution,
+        env: &amp;dyn EnvironmentClient,
+    ) {
+        let twap = env.read_twap(resolution.item, Duration::from_secs(300)).await;
+        let point = resolution.actual_value;
+        let deviation = (point - twap).abs() / twap;
+
+        if deviation &gt; 0.02 {
+            self.resolution_integrity.flag(resolution.id, deviation);
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration-3"><a class="header" href="#integration-3">Integration</a></h3>
+<ul>
+<li><strong>Safety layer</strong>: Persistent slippage excess triggers escalation: private mempool, increased gas priority, reduced trade sizes.</li>
+<li><strong>Daimon</strong>: Adversarial detection raises arousal and lowers dominance.</li>
+<li><strong>TUI</strong>: Persistent warning banner when adversarial patterns are detected.</li>
+</ul>
+<h3 id="owner-configuration-1"><a class="header" href="#owner-configuration-1">Owner Configuration</a></h3>
+<pre><code class="language-toml">[adversarial]
+enabled = true
+
+# Slippage excess monitoring.
+slippage_excess_threshold_bps = 20
+slippage_buffer_size = 100
+
+# Sandwich detection.
+sandwich_frequency_threshold = 0.15
+sandwich_sample_rate = 1.0         # Fraction of trades to check (1.0 = all).
+
+# Resolution integrity.
+resolution_twap_duration_secs = 300  # 5-minute TWAP.
+resolution_twap_deviation_threshold = 0.02  # 2% deviation flags resolution.
+
+# Auto-escalation.
+auto_private_mempool = false
+</code></pre>
+<h3 id="escalation-path"><a class="header" href="#escalation-path">Escalation Path</a></h3>
+<p>When slippage excess persists, the escalation path is:</p>
+<ol>
+<li>Alert the owner via toast notification.</li>
+<li>If <code>auto_private_mempool</code> is enabled, switch to Flashbots Protect or equivalent private transaction submission.</li>
+<li>If excess persists after switching to private mempool, increase gas priority to reduce time in the mempool.</li>
+<li>If still exploited, reduce trade sizes to make sandwiching unprofitable.</li>
+</ol>
+<p>The Daimon receives adversarial alerts as arousal spikes. A Golem that is being consistently sandwiched “feels” threatened – arousal rises, dominance drops. This biases future retrieval toward cautionary knowledge about execution risk.</p>
+<h3 id="known-limitation-3"><a class="header" href="#known-limitation-3">Known Limitation</a></h3>
+<p>Sandwich detection requires reading full block contents per transaction, adding RPC cost. Can be configured to sample (check every Nth trade via <code>sandwich_sample_rate</code>).</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[XIONG-2023] Xiong, M. et al. (2023). “Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs.” arXiv:2306.13063. — <em>Shows LLMs are systematically overconfident (80-100% stated vs 50-60% actual accuracy), motivating the post-hoc confidence calibration loop.</em></li>
+<li>[GUO-2017] Guo, C. et al. (2017). “On Calibration of Modern Neural Networks.” ICML. — <em>Introduces temperature scaling for neural network calibration; referenced as an alternative to isotonic regression.</em></li>
+<li>[NAEINI-2015] Naeini, M.P. et al. (2015). “Obtaining Well Calibrated Probabilities Using Bayesian Binning into Quantiles.” AAAI. — <em>Defines Expected Calibration Error (ECE), the standard metric used throughout the calibration loop.</em></li>
+<li>[DABAH-2025] Dabah, L. &amp; Tirer, T. (2025). “On Temperature Scaling and Conformal Prediction of Deep Classifiers.” ICML. arXiv:2402.05806. — <em>Explores the interplay between calibration and conformal prediction for reliable uncertainty quantification.</em></li>
+<li>[KARPATHY-2026] Karpathy, A. (2026). “autoresearch.” GitHub. — <em>Articulates the “one metric, one arena, one gate” property that all five fast feedback loops share.</em></li>
+<li>[DUNNING-KRUGER-LLM-2026] (2026). “The Dunning-Kruger Effect in Large Language Models.” arXiv:2603.09985. — <em>Finds LLMs display worst overconfidence precisely in their weakest domains, compounding the calibration problem.</em></li>
+<li>[VOVK-2005] Vovk, V. et al. (2005). <em>Algorithmic Learning in a Random World</em>. Springer. — <em>Foundational work on conformal prediction that provides theoretical grounding for prediction interval construction.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/16-testing/06-revision-guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/16-testing/08-slow-feedback-loops.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/16-testing/06-revision-guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/16-testing/08-slow-feedback-loops.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

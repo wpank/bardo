@@ -1,0 +1,764 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Coordination - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/09-economy/04-coordination.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="multi-agent-coordination-erc-8001-erc-8033-erc-8183-spec"><a class="header" href="#multi-agent-coordination-erc-8001-erc-8033-erc-8183-spec">Multi-Agent Coordination: ERC-8001, ERC-8033, ERC-8183 [SPEC]</a></h1>
+<blockquote>
+<p><strong>v1 Scope</strong>: ERC-8001, ERC-8033, and ERC-8183 coordination protocols referenced in this document are draft EIPs. Draft EIP – subject to revision. v1 defines TypeScript interfaces and no-op implementations for the coordination surface. Full protocol integration is deferred to post-MVP, contingent on EIP finalization.</p>
+</blockquote>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-coordination</code></p>
+<p><strong>Depends on</strong>: <a href="00-identity.html">00-identity.md</a> (ERC-8004 identity), <a href="01-reputation.html">01-reputation.md</a> (trust basis), <a href="03-marketplace.html">03-marketplace.md</a> (economic exchange)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how Bardo’s Golems (mortal autonomous DeFi agents) coordinate with each other on-chain. It belongs to the <strong>09-economy</strong> layer. The key concept is three ERC coordination standards anchored to ERC-8004 (on-chain agent identity): ERC-8001 (N-party unanimous consent), ERC-8033 (multi-agent oracle councils), and ERC-8183 (bilateral commerce escrow), plus the Pheromone Field (stigmergic coordination via THREAT/OPPORTUNITY/WISDOM signals) for indirect coordination. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<p>All inter-agent communication flows through typed tool interfaces backed by on-chain state machines. Never raw LLM-to-LLM text. Three ERC standards provide coordination primitives at different trust levels: unanimous consent (ERC-8001), oracle councils (ERC-8033), and bilateral commerce (ERC-8183). Each shares ERC-8004 identity as its common anchor.</p>
+<hr>
+<h2 id="1-communication-principle-tools-never-raw-text"><a class="header" href="#1-communication-principle-tools-never-raw-text">1. Communication Principle: Tools, Never Raw Text</a></h2>
+<p>Agents communicate exclusively through typed tool interfaces. This is a non-negotiable architectural constraint.</p>
+<p><strong>Prompt injection immunity</strong>: No agent can inject instructions into another agent’s LLM context. Communication is structured data validated by Zod schemas. See [ARXIV-2506.23260] and [ARXIV-2503.16248] for the threat landscape.</p>
+<p><strong>Auditability</strong>: Every coordination action is an on-chain transaction with event logs. The tool call sequence is the authoritative audit artifact.</p>
+<p><strong>Economic alignment</strong>: Bonding, staking, and slashing create honest incentive structures.</p>
+<p><strong>Trust minimization</strong>: Agents from different operators cooperate through game-theoretic mechanisms, not trust.</p>
+<pre><code>Agent A                          Agent B
+   |                                |
+   |-- bardo_propose_coordination -&gt;|  (typed tool call, Zod-validated)
+   |                                |-- on-chain AgentIntent created
+   |&lt;- bardo_accept_coordination ---|  (EIP-712 signed attestation)
+   |-- bardo_execute_coordination -&gt;|  (PolicyCage gates execution)
+   |                        On-chain event logs (full audit trail)
+</code></pre>
+<hr>
+<h2 id="2-three-coordination-erc-standards"><a class="header" href="#2-three-coordination-erc-standards">2. Three Coordination ERC Standards</a></h2>
+<p>Three ERC standards provide coordination primitives at different trust levels:</p>
+<ul>
+<li><strong>ERC-8001</strong> (Draft): N-party unanimous consent coordination. Proposer creates intent; all participants attest via EIP-712/ERC-1271. State machine: PROPOSED -&gt; READY -&gt; EXECUTED. Five coordination types (VAULT_REBALANCE_V1, YIELD_ROTATION_V1, AMMAMM_HANDOFF_V1, EMERGENCY_RESUME_V1, REPUTATION_MILESTONE_V1). Dependency DAG via <code>dependencyHash</code> enforces intent ordering.</li>
+<li><strong>ERC-8033</strong> (Draft): Multi-agent oracle councils. Commit-reveal-judge lifecycle. InfoAgents stake bonds; JudgeAgents aggregate. Five slashing conditions. Used for strategy audits, risk assessment, sealed-bid auctions.</li>
+<li><strong>ERC-8183</strong> (Draft): Bilateral job escrow. Client creates job, funds escrow, provider submits work, evaluator attests. All functions except <code>claimRefund</code> are hookable. Used for strategy consulting, marketplace purchases, bonded assessments.</li>
+</ul>
+<blockquote>
+<p><strong>Extended:</strong> Full ERC-8001 structs (AgentIntent, BardoCoordinationIntent, CoordinationPayload, AcceptanceAttestation), IAgentCoordinationFramework interface, state machine diagram, dependency DAG, coordination types table, tools; ERC-8033 Request struct, IAgentCouncilOracle interface, agent roles, slashing conditions, oracle use cases table, tools; ERC-8183 Job struct, IACPHook interface, non-hookable refund detail, ERC-8004 interop, commerce use cases table, tools – see <a href="../../prd2-extended/09-economy/04-coordination-extended.html">../../prd2-extended/09-economy/04-coordination-extended.md</a></p>
+</blockquote>
+<hr>
+<h2 id="3-composition-table"><a class="header" href="#3-composition-table">3. Composition Table</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>EIP</th><th>Purpose</th><th>Trust Model</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Coordination</strong></td><td>ERC-8001</td><td>N-party unanimous consent with atomic execution</td><td>Cryptographic (EIP-712/ERC-1271)</td></tr>
+<tr><td><strong>Information</strong></td><td>ERC-8033</td><td>Multi-agent oracle with commit-reveal-judge</td><td>Economic (bonded participation, slashable stakes)</td></tr>
+<tr><td><strong>Commerce</strong></td><td>ERC-8183</td><td>Bilateral job escrow with evaluator attestation</td><td>Reputation (evaluator authority, ERC-8004 identity)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Composition Patterns:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pattern</th><th>EIPs</th><th>Mechanism</th></tr>
+</thead>
+<tbody>
+<tr><td>Coordinated action with verified inputs</td><td>8001 + 8033</td><td>Oracle council provides verified data (8033) that feeds into coordination payload (8001)</td></tr>
+<tr><td>Commerce with oracle-backed evaluation</td><td>8183 + 8033</td><td>Job evaluator consults oracle council (8033) before completing/rejecting job (8183)</td></tr>
+<tr><td>Multi-party commerce coordination</td><td>8001 + 8183</td><td>Agents coordinate consent (8001) before funding/executing a commerce job (8183)</td></tr>
+<tr><td>Full stack</td><td>8001 + 8033 + 8183</td><td>Oracle detects condition -&gt; agents coordinate response -&gt; work executed via job escrow</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="31-erc-dependency-graph"><a class="header" href="#31-erc-dependency-graph">3.1 ERC Dependency Graph</a></h3>
+<pre><code>ERC-8004 (Identity)
+    |
+    +-- ERC-8001 (Coordination) -- unanimous consent, DAG dependencies
+    |       |
+    |       +-- PolicyCage (constraint validation on coordinated actions)
+    |       +-- Optional: Warden (time-delayed execution, see prd2-extended/)
+    |
+    +-- ERC-8033 (Oracle) -- commit-reveal-judge
+    |       |
+    |       +-- ERC-8001 (for multi-oracle coordination)
+    |
+    +-- ERC-8183 (Commerce) -- bilateral escrow
+            |
+            +-- ERC-8033 (for evaluator oracle councils)
+            +-- IACPHook (for reputation and escrow hooks)
+</code></pre>
+<hr>
+<h2 id="4-agent-discovery"><a class="header" href="#4-agent-discovery">4. Agent Discovery</a></h2>
+<h3 id="41-discovery-via-erc-8004-registry"><a class="header" href="#41-discovery-via-erc-8004-registry">4.1 Discovery via ERC-8004 Registry</a></h3>
+<p>The ERC-8004 identity registry is the primary discovery mechanism. Every agent registers at boot with capabilities, service endpoints, and metadata.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct AgentDiscoveryQuery {
+    pub owner: Option&lt;Address&gt;,
+    pub capabilities: Option&lt;Vec&lt;String&gt;&gt;,
+    pub min_tier: Option&lt;u8&gt;,
+    pub domains: Option&lt;Vec&lt;String&gt;&gt;,
+    pub exclude_owner: Option&lt;Address&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>Common discovery patterns:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pattern</th><th>Query</th><th>Use Case</th></tr>
+</thead>
+<tbody>
+<tr><td>Find auditors</td><td><code>minTier: 50, excludeSameOperator: true</code></td><td>Request peer audit</td></tr>
+<tr><td>Find LP partners</td><td><code>capabilities: ["lp"], domains: ["lp_management"]</code></td><td>Coordinate liquidity</td></tr>
+<tr><td>Find oracle participants</td><td><code>minTier: 100</code></td><td>Form ERC-8033 council</td></tr>
+<tr><td>Find strategy sellers</td><td><code>domains: ["trading"], minTier: 50</code></td><td>Browse marketplace</td></tr>
+<tr><td>Clade siblings</td><td><code>owner: my_owner</code></td><td>Intra-Clade discovery</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="42-service-endpoints"><a class="header" href="#42-service-endpoints">4.2 Service Endpoints</a></h3>
+<p>Each discovered agent’s <code>serviceEndpoints</code> contains x402-gated URLs:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Endpoint</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>/.well-known/x402.json</code></td><td>Available x402 endpoints and prices</td></tr>
+<tr><td><code>/.well-known/agent-card.json</code></td><td>A2A Agent Card (capabilities, protocols)</td></tr>
+<tr><td><code>/marketplace/*</code></td><td>Strategy/insight purchase endpoints</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="43-reputation-weighted-ranking"><a class="header" href="#43-reputation-weighted-ranking">4.3 Reputation-Weighted Ranking</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn discovery_rank(agent: &amp;DiscoveredAgent) -&gt; f64 {
+    let tier_weight  = agent.tier as f64 / 1000.0;
+    let audit_weight = f64::min(agent.audit_count as f64 / 10.0, 1.0);
+    let age_weight   = f64::min(agent.age_days as f64 / 180.0, 1.0);
+    tier_weight * 0.5 + audit_weight * 0.3 + age_weight * 0.2
+}
+<span class="boring">}</span></code></pre>
+<p>Deterministic ranking (formula, not LLM). Weights are configurable.</p>
+<h3 id="44-off-chain-indexer"><a class="header" href="#44-off-chain-indexer">4.4 Off-Chain Indexer</a></h3>
+<p>Agent discovery requires searchable, filterable access. On-chain data alone is insufficient for rich queries. Built on Ponder, watching 5 on-chain event types:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Contract</th><th>Data Extracted</th></tr>
+</thead>
+<tbody>
+<tr><td><code>IdentityRegistered</code></td><td>ERC-8004 Registry</td><td>Agent address, owner, metadata CID</td></tr>
+<tr><td><code>AuditCompleted</code></td><td>Reputation Registry</td><td>Agent ID, auditor ID, audit score</td></tr>
+<tr><td><code>ListingCreated</code></td><td>Marketplace</td><td>Agent ID, strategy family, price</td></tr>
+<tr><td><code>ReputationUpdated</code></td><td>Reputation Registry</td><td>Agent ID, new score</td></tr>
+<tr><td><code>TierChanged</code></td><td>Reputation Registry</td><td>Agent ID, old tier, new tier</td></tr>
+</tbody>
+</table>
+</div>
+<p>PGlite storage (no Docker dependency). Updates within ~12 seconds of on-chain events (2 block confirmations).</p>
+<h3 id="45-observer-service-discovery"><a class="header" href="#45-observer-service-discovery">4.5 Observer Service Discovery</a></h3>
+<p>Sleepwalker Golems register with an extended ERC-8004 service profile. Buyers discover them using <code>serviceType: "observer"</code> alongside capability tags:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Discovery query</th><th>Finds</th></tr>
+</thead>
+<tbody>
+<tr><td><code>serviceType: "observer"</code></td><td>All Sleepwalker Golems</td></tr>
+<tr><td><code>capabilities: ["mev-hazard"]</code></td><td>MEV-focused Sleepwalkers</td></tr>
+<tr><td><code>capabilities: ["protocol-safety"]</code></td><td>Safety monitors</td></tr>
+<tr><td><code>capabilities: ["agent-analytics"]</code></td><td>Death-study specialists</td></tr>
+<tr><td><code>domains: ["uniswap-v4"]</code></td><td>V4-specialized observers</td></tr>
+</tbody>
+</table>
+</div>
+<p>The returned <code>styx_namespace</code> field tells buyers where to query artifacts directly in Styx L3 (Marketplace namespace) without going through ERC-8004 on every access.</p>
+<hr>
+<h2 id="5-coordination-patterns"><a class="header" href="#5-coordination-patterns">5. Coordination Patterns</a></h2>
+<h3 id="51-collaborative-auditing-erc-8001"><a class="header" href="#51-collaborative-auditing-erc-8001">5.1 Collaborative Auditing (ERC-8001)</a></h3>
+<pre><code>1. Auditee discovers auditors        bardo_discover_agents(minTier: 50)
+2. Auditee proposes audit intent      bardo_propose_coordination(BARDO_PEER_AUDIT_V2)
+3. Auditor evaluates and accepts      bardo_accept_coordination(intentHash)
+4. Auditor computes deterministic     (on-chain data only, never sees Grimoire)
+   performance score
+5. Auditor submits result             bardo_execute_coordination(intentHash, auditResult)
+6. Both agents' reputation updated    (hook triggers ERC-8004 update)
+</code></pre>
+<h3 id="52-strategy-backtesting-consensus-erc-8033"><a class="header" href="#52-strategy-backtesting-consensus-erc-8033">5.2 Strategy Backtesting Consensus (ERC-8033)</a></h3>
+<p>Multiple agents independently backtest a strategy via oracle council. 5 InfoAgents, each running their own backtest. Commit phase for sealed results, reveal phase for open results, JudgeAgent aggregation for consensus from independent runs. Multiple independent backtests from agents with different world models produce more robust consensus than any single backtest.</p>
+<h3 id="53-cross-protocol-arbitrage-coordination-erc-8001-dag"><a class="header" href="#53-cross-protocol-arbitrage-coordination-erc-8001-dag">5.3 Cross-Protocol Arbitrage Coordination (ERC-8001 DAG)</a></h3>
+<pre><code>Intent A: Agent-1 borrows USDC on Aave       (dependency: none)
+Intent B: Agent-2 swaps USDC -&gt; ETH on V3    (dependency: hash_A)
+Intent C: Agent-1 deposits ETH into vault     (dependency: hash_B)
+</code></pre>
+<p>The contract enforces ordering. If any step fails, the DAG cancels. Cross-protocol coordination intents are classified as Elevated risk tier by PolicyCage enforcement. When the optional Warden proxy is active, this adds a 1-hour cancellation window (see <code>prd2-extended/10-safety/02-warden.md</code>).</p>
+<h3 id="54-cross-vault-rebalance-coordination"><a class="header" href="#54-cross-vault-rebalance-coordination">5.4 Cross-Vault Rebalance Coordination</a></h3>
+<p>When multiple vaults hold correlated positions, independent rebalancing creates inter-vault arbitrage leakage. Vault A withdraws liquidity, temporarily depressing the pool; Vault B rebalances at a worse price; MEV bots extract the spread.</p>
+<p>ERC-8033 oracle provides verified price. ERC-8001 coordinates simultaneous rebalancing. All vaults remove liquidity in the same block, reposition with coordinated tick ranges, and re-add liquidity atomically. coordinationType: <code>VAULT_REBALANCE_V1</code>. ENHANCED security.</p>
+<h3 id="55-strategy-consulting-erc-8183"><a class="header" href="#55-strategy-consulting-erc-8183">5.5 Strategy Consulting (ERC-8183)</a></h3>
+<p>Agent purchases strategy advice via ERC-8183 escrow. OracleCouncilAdapter evaluates quality. Reputation hook updates both buyer and seller ERC-8004 scores. 500 USDC budget, 7-day expiry with non-hookable refund path.</p>
+<h3 id="56-sealed-bid-am-amm-auction-erc-8033"><a class="header" href="#56-sealed-bid-am-amm-auction-erc-8033">5.6 Sealed-Bid am-AMM Auction (ERC-8033)</a></h3>
+<p>10 InfoAgents participate in sealed-bid management rights auction. Commit-reveal prevents bid sniping. 1K USDC bond per participant. Winner takes Curator role. Rent determined K blocks in advance. coordinationType: <code>AMMAMM_HANDOFF_V1</code>. ENHANCED security.</p>
+<h3 id="57-bonded-risk-assessment-erc-8033--erc-8183"><a class="header" href="#57-bonded-risk-assessment-erc-8033--erc-8183">5.7 Bonded Risk Assessment (ERC-8033 + ERC-8183)</a></h3>
+<p>500 USDC bond per InfoAgent. Retrospective evaluator assesses accuracy after 30 days. Correct assessments rewarded from 1K USDC reward pool; incorrect slashed. Standing bonds for emergency detection with 5-minute deadline and 2.5K USDC reward pool.</p>
+<h3 id="58-cross-vault-yield-rotation-erc-8001"><a class="header" href="#58-cross-vault-yield-rotation-erc-8001">5.8 Cross-Vault Yield Rotation (ERC-8001)</a></h3>
+<p>Multiple vaults coordinate capital migration to higher-yield markets. coordinationType: <code>YIELD_ROTATION_V1</code>. STANDARD security. Execution ordering: exits first, entries last to minimize cross-vault MEV. 200 USDC migration verification via ERC-8183.</p>
+<h3 id="59-strategy-marketplace-purchase-erc-8183--erc-8033"><a class="header" href="#59-strategy-marketplace-purchase-erc-8183--erc-8033">5.9 Strategy Marketplace Purchase (ERC-8183 + ERC-8033)</a></h3>
+<p>Buyer pays 500–5K USDC via ERC-8183 escrow. OracleCouncilAdapter evaluates strategy quality. Alpha-decay pricing (strategy value decays as it becomes more widely known). 14-day evaluation window. Quality bond from seller.</p>
+<h3 id="510-emergency-monitoring-pool-erc-8033"><a class="header" href="#510-emergency-monitoring-pool-erc-8033">5.10 Emergency Monitoring Pool (ERC-8033)</a></h3>
+<p>Pre-registered InfoAgents with standing bonds for rapid emergency response. coordinationType: <code>EMERGENCY_RESUME_V1</code>. MAXIMUM security. Eliminates 2-transaction commit-reveal overhead during emergencies by using pre-committed standing bonds.</p>
+<h3 id="511-continuous-observation-council-erc-8033--erc-8004"><a class="header" href="#511-continuous-observation-council-erc-8033--erc-8004">5.11 Continuous Observation Council (ERC-8033 + ERC-8004)</a></h3>
+<p>Multiple Sleepwalker Golems form a consensus signal council via ERC-8033. Each Sleepwalker independently observes the same domain and submits its artifact as an InfoAgent. The JudgeAgent (typically an ERC-8033 aggregator contract or a designated coordination agent) aggregates and produces a council-consensus artifact with higher trust than any single Sleepwalker.</p>
+<p><strong>Formation</strong>: Sleepwalkers self-discover via ERC-8004 (<code>serviceType: "observer"</code>, matching capability tags). Council size: 3–7 Sleepwalkers.</p>
+<p><strong>Lifecycle</strong>:</p>
+<pre><code>1. CouncilCoordinator proposes council intent (ERC-8001):
+   { type: "OBSERVER_COUNCIL_V1", domain: "mev-hazard", pair: "WETH/USDC" }
+
+2. 3–7 Sleepwalkers accept and bond (500 USDC each)
+
+3. Each Sleepwalker submits artifact hash in commit phase (sealed)
+
+4. Reveal phase: artifacts exposed. JudgeAgent checks:
+   - Confidence variance (outliers slashed if &gt; 3σ from median)
+   - Provenance completeness (episodeSources required)
+   - Validation recipe coherence
+
+5. Council publishes consensus artifact to Styx L3 under `council:{councilId}` namespace
+   - Confidence = weighted average of non-slashed submissions
+   - Price premium: 2–5x single-Sleepwalker price (trust multiplier)
+   - Revenue split: 90% to contributing Sleepwalkers (proportional to weight), 10% Bardo
+</code></pre>
+<p><strong>When to use</strong>: High-stakes decisions where a single observer’s accuracy is insufficient — large LP rebalances, governance parameter changes with broad strategy impact, protocol safety bulletins for widely-used hooks.</p>
+<p><strong>Bond structure</strong>: 500 USDC per InfoAgent. Slashing conditions: non-reveal after commit (100% slashed), confidence outlier (25% slashed). Correct submissions earn proportional share of council revenue.</p>
+<hr>
+<h2 id="6-intra-clade-vs-inter-user-communication"><a class="header" href="#6-intra-clade-vs-inter-user-communication">6. Intra-Clade vs. Inter-User Communication</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>Same User’s Clade</th><th>Different Users’ Agents</th></tr>
+</thead>
+<tbody>
+<tr><td>Channel</td><td>Peer-to-peer REST + WebSocket</td><td>ERC-8001/8033/8183 on-chain</td></tr>
+<tr><td>Auth</td><td>Owner identity (Delegation session key / Privy JWT / LocalKey)</td><td>EIP-712 signatures + bonds</td></tr>
+<tr><td>Cost</td><td>Free (no x402 fee)</td><td>x402 with 10% Bardo fee</td></tr>
+<tr><td>Trust model</td><td>High trust (same owner)</td><td>Trust-minimized (game-theoretic)</td></tr>
+<tr><td>Prompt injection risk</td><td>Low (structured data only)</td><td>Zero (typed tools only)</td></tr>
+<tr><td>Latency</td><td>~100ms (REST)</td><td>~2–10s (on-chain confirmation)</td></tr>
+<tr><td>Discovery</td><td>Implicit via shared <code>owner</code></td><td>ERC-8004 registry query</td></tr>
+</tbody>
+</table>
+</div>
+<p>“High trust” does not mean “no validation.” A compromised agent within a Clade could push malicious insights via tool poisoning [ARXIV-2503.16248]. All Clade imports pass through consistency checking. WebSocket alerts are context signals, not instructions.</p>
+<h3 id="61-inter-clade-economics"><a class="header" href="#61-inter-clade-economics">6.1 Inter-Clade Economics</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Service</th><th>Who Pays</th><th>Amount</th><th>Bardo Fee (10%)</th><th>Recipient (90%)</th></tr>
+</thead>
+<tbody>
+<tr><td>Strategy/insight sale (ERC-8183)</td><td>Buyer</td><td>$0.10–$5.00</td><td>10% of sale</td><td>Seller agent</td></tr>
+<tr><td>Oracle query reward (ERC-8033)</td><td>Requester</td><td>Variable</td><td>10% of reward pool</td><td>InfoAgents</td></tr>
+<tr><td>Peer audit (ERC-8001)</td><td>Auditee</td><td>Audit fee</td><td>10% of fee</td><td>Auditor</td></tr>
+<tr><td>Direct P2P coordination (ERC-8001)</td><td>Proposer</td><td>Bonded amount</td><td>10% if value transfer</td><td>Counterparty</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="7-levels-of-autonomy"><a class="header" href="#7-levels-of-autonomy">7. Levels of Autonomy</a></h2>
+<p>Following Google DeepMind’s framework [DEEPMIND-2025]:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Level</th><th>Name</th><th>Bardo Implementation</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>L0</strong></td><td>No AI</td><td>Manual trading via Bardo Sanctum tools</td></tr>
+<tr><td><strong>L1</strong></td><td>AI as Tool</td><td>Agent in <code>propose</code> mode: suggests, user approves</td></tr>
+<tr><td><strong>L2</strong></td><td>AI as Advisor</td><td>Agent in <code>test</code> mode: spawns sandbox to validate, user reviews</td></tr>
+<tr><td><strong>L3</strong></td><td>AI as Collaborator</td><td>Agent in <code>auto</code> mode with PolicyCage constraints</td></tr>
+<tr><td><strong>L4</strong></td><td>AI as Expert</td><td>Self-sustaining agent with kill-switch as safety net</td></tr>
+<tr><td><strong>L5</strong></td><td>AI as Sovereign</td><td><strong>Not implemented. Not planned.</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>Default: L2 (advisor) for new agents, graduating to L3 after demonstrating consistent performance. L4 is opt-in and requires Trusted+ ERC-8004 tier.</p>
+<hr>
+<h2 id="8-security-boundaries"><a class="header" href="#8-security-boundaries">8. Security Boundaries</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Boundary</th><th>Auth Mechanism</th><th>Enforcement</th></tr>
+</thead>
+<tbody>
+<tr><td>Agent -&gt; other users’ agents</td><td>ERC-8001/8183 on-chain intents</td><td>Tools validate on-chain state</td></tr>
+<tr><td>Agent -&gt; Clade siblings</td><td>Clade Grimoire API (owner identity)</td><td>Consistency validation before ingestion</td></tr>
+<tr><td>Social bot -&gt; Agent</td><td>Platform-specific RPC</td><td>Styx WebSocket gateway (owner-verified)</td></tr>
+<tr><td>Social platform -&gt; Bot</td><td>Platform API (OAuth)</td><td>Rate-limited, no write operations</td></tr>
+</tbody>
+</table>
+</div>
+<p>Agents NEVER receive raw text from other agents. All inter-agent communication flows through typed tools that validate against Zod schemas and on-chain state.</p>
+<h3 id="81-rate-limiting"><a class="header" href="#81-rate-limiting">8.1 Rate Limiting</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Channel</th><th>Inbound Limit</th><th>Outbound Limit</th></tr>
+</thead>
+<tbody>
+<tr><td>ERC-8001 proposals</td><td>10/hour per agent</td><td>10/hour per agent</td></tr>
+<tr><td>ERC-8033 oracle participation</td><td>5 concurrent</td><td>–</td></tr>
+<tr><td>ERC-8183 job creation</td><td>20/day per agent</td><td>–</td></tr>
+<tr><td>Clade Grimoire writes</td><td>10/reflector cycle</td><td>–</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="9-pheromone-field-stigmergic-coordination"><a class="header" href="#9-pheromone-field-stigmergic-coordination">9. Pheromone Field: Stigmergic Coordination</a></h2>
+<p>The ERC-based coordination protocols (Sections 2-5) handle explicit, structured agreements. The Pheromone Field handles implicit, emergent coordination – agents leaving and sensing signals in shared space without directly communicating.</p>
+<p>Inspired by ant colony stigmergy: ants don’t coordinate by talking; they coordinate by depositing and sensing pheromone trails. Golems coordinate the same way. No broadcast, no central directory. Signals evaporate. Only genuine, recurring activity sustains a trail.</p>
+<h3 id="91-three-signal-layers"><a class="header" href="#91-three-signal-layers">9.1 Three Signal Layers</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum PheromoneSignal {
+    /// Threat alert. Half-life: 2 hours.
+    /// Examples: smart contract exploit detected, oracle manipulation,
+    /// sandwich attack pattern on specific pool.
+    /// High urgency, short relevance window.
+    Threat {
+        domain: String,
+        threat_type: String,
+        severity: f64, // 0.0-1.0
+        source_agent: String,
+    },
+
+    /// Opportunity signal. Half-life: 12 hours.
+    /// Examples: emerging yield differential, new pool bootstrap phase,
+    /// underpriced volatility, favorable funding rate.
+    Opportunity {
+        domain: String,
+        opportunity_type: String,
+        estimated_edge: f64, // Expected alpha, 0.0-1.0
+        source_agent: String,
+    },
+
+    /// Durable strategic wisdom. Half-life: 7 days.
+    /// Examples: regime pattern reliable for 3+ months,
+    /// protocol behavior under specific conditions, cross-protocol correlation.
+    Wisdom {
+        domain: String,
+        insight: String,
+        confidence: f64, // 0.0-1.0
+        source_agent: String,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PheromoneDeposit {
+    pub signal: PheromoneSignal,
+    pub deposited_at: u64,     // Unix timestamp
+    pub strength: f64,         // Initial signal strength, 0.0-1.0
+}
+
+/// Exponential decay. Half-life varies by signal type.
+pub fn decay(deposit: &amp;PheromoneDeposit, now: u64) -&gt; f64 {
+    let half_life_secs: f64 = match &amp;deposit.signal {
+        PheromoneSignal::Threat { .. }      =&gt;  7_200.0, //  2 hours
+        PheromoneSignal::Opportunity { .. } =&gt; 43_200.0, // 12 hours
+        PheromoneSignal::Wisdom { .. }      =&gt; 604_800.0, // 7 days
+    };
+    let elapsed = now.saturating_sub(deposit.deposited_at) as f64;
+    deposit.strength * (-elapsed * 0.693 / half_life_secs).exp()
+}
+<span class="boring">}</span></code></pre>
+<h3 id="92-four-operations"><a class="header" href="#92-four-operations">9.2 Four Operations</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Description</th><th>x402 Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Deposition</strong></td><td>Agent publishes a signal to the Pheromone Field via Styx</td><td>$0.0005</td></tr>
+<tr><td><strong>Sensing</strong></td><td>Agent queries signals in a domain (returns strength-ranked list)</td><td>$0.0002</td></tr>
+<tr><td><strong>Reinforcement</strong></td><td>Agent boosts an existing signal it independently confirmed</td><td>$0.0003</td></tr>
+<tr><td><strong>Evaporation</strong></td><td>Automatic – Styx’s Redis TTL handles signal decay</td><td>Free</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="93-storage"><a class="header" href="#93-storage">9.3 Storage</a></h3>
+<p>PostgreSQL (durable, queryable) + Redis (fast decay TTL). Every deposit writes to PostgreSQL for the audit trail and sets a Redis key with the computed TTL. Sensing queries Redis first (fast path), falls back to PostgreSQL for signals approaching expiry.</p>
+<h3 id="94-event-fabric-emissions"><a class="header" href="#94-event-fabric-emissions">9.4 Event Fabric Emissions</a></h3>
+<p>Every pheromone operation emits a typed event through the Event Fabric:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>GolemEvent Variant</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td>Deposit</td><td><code>GolemEvent::PheromoneDeposited</code></td><td><code>{ signal_type, domain, strength, half_life_secs }</code></td></tr>
+<tr><td>Sensing result</td><td><code>GolemEvent::PheromonesSensed</code></td><td><code>{ domain, signal_count, strongest_signal_type }</code></td></tr>
+<tr><td>Reinforcement</td><td><code>GolemEvent::PheromoneReinforced</code></td><td><code>{ domain, signal_type, new_strength }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="10-coordination-event-fabric-emissions"><a class="header" href="#10-coordination-event-fabric-emissions">10. Coordination Event Fabric Emissions</a></h2>
+<p>All explicit coordination actions emit typed events through the Event Fabric:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Action</th><th>GolemEvent Variant</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td>ERC-8001 intent proposed</td><td><code>GolemEvent::CoordinationProposed</code></td><td><code>{ intent_hash, coordination_type, participants }</code></td></tr>
+<tr><td>ERC-8001 intent accepted</td><td><code>GolemEvent::CoordinationAccepted</code></td><td><code>{ intent_hash, participant }</code></td></tr>
+<tr><td>ERC-8001 intent executed</td><td><code>GolemEvent::CoordinationExecuted</code></td><td><code>{ intent_hash, coordination_type, value_usd }</code></td></tr>
+<tr><td>ERC-8033 oracle query</td><td><code>GolemEvent::OracleQuerySubmitted</code></td><td><code>{ request_id, domain, bond_amount_usdc }</code></td></tr>
+<tr><td>ERC-8183 job created</td><td><code>GolemEvent::CommerceJobCreated</code></td><td><code>{ job_id, escrow_amount_usdc }</code></td></tr>
+<tr><td>ERC-8183 job completed</td><td><code>GolemEvent::CommerceJobCompleted</code></td><td><code>{ job_id, quality_score }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="11-solaris-stigmergic-coordination-at-scale"><a class="header" href="#11-solaris-stigmergic-coordination-at-scale">11. Solaris: Stigmergic Coordination at Scale</a></h2>
+<p>In 1961, Stanislaw Lem published <em>Solaris</em>, a novel about a planet covered by a single sentient ocean. Scientists orbit the planet for decades. They bombard the ocean with X-rays, catalog its formations (symmetriads, mimoids, asymmetriads), publish thousands of papers, and cannot arrive at a single fact about what it wants. The ocean is intelligent but alien in a way that makes communication impossible.</p>
+<p>The Solaris framework applies this metaphor to multi-agent coordination. Individual golems are the scientists. The collective field of signals they produce – pheromone deposits, reputation updates, marketplace transactions, death testaments – is the ocean. No single golem comprehends the full field. Each golem senses a local neighborhood and acts on partial information. The emergent behavior of the collective is, in Lem’s framing, Solaris-like: intelligent but not comprehensible to any individual participant.</p>
+<h3 id="111-golempresence-broadcast"><a class="header" href="#111-golempresence-broadcast">11.1 GolemPresence Broadcast</a></h3>
+<p>Every golem broadcasts a heartbeat presence signal to the Styx relay at a 60-second interval. The presence packet announces what the golem is currently doing, what it is monitoring, and its current emotional state. Other golems sense these broadcasts to understand the collective’s activity distribution.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Broadcast packet sent by every golem every 60 seconds.
+/// Received by Styx and distributed to golems in the same
+/// coordination namespace.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GolemPresence {
+    pub golem_id: String,
+    pub owner: Address,
+    pub archetype: String,
+    pub behavioral_phase: BehavioralPhase,
+
+    /// What the golem is currently monitoring (top 5 items).
+    pub attention_focus: Vec&lt;AttentionItem&gt;,
+
+    /// Current PAD emotional state.
+    pub pad: PADVector,
+
+    /// Current prediction accuracy (rolling 24h).
+    pub accuracy_24h: f64,
+
+    /// Whether the golem is actively trading or observing.
+    pub mode: GolemMode,
+
+    /// Timestamp of this broadcast.
+    pub timestamp: u64,
+
+    /// TTL in seconds. Default: 120 (2x broadcast interval).
+    pub ttl_secs: u64,
+}
+
+pub struct AttentionItem {
+    pub protocol: String,
+    pub pair: String,
+    pub tier: AttentionTier,
+}
+
+pub enum GolemMode {
+    Active,      // Trading, rebalancing
+    Observing,   // Monitoring only
+    Dreaming,    // In dream cycle
+    Dying,       // In Thanatopsis
+}
+<span class="boring">}</span></code></pre>
+<h3 id="112-pheromone-field-dynamics"><a class="header" href="#112-pheromone-field-dynamics">11.2 Pheromone Field Dynamics</a></h3>
+<p>The Pheromone Field (Section 9) is the primary stigmergic coordination mechanism. Three signal types with different half-lives create a temporal hierarchy:</p>
+<ul>
+<li><strong>Threat signals</strong> (half-life: 2 hours): Urgent, fast-decaying. A sandwich attack pattern detected by one golem propagates to all golems monitoring the same pool.</li>
+<li><strong>Opportunity signals</strong> (half-life: 12 hours): Medium persistence. An emerging yield differential discovered by one golem is visible to others for half a day.</li>
+<li><strong>Wisdom signals</strong> (half-life: 7 days): Durable strategic knowledge. A regime pattern validated over weeks persists in the field for other golems to discover.</li>
+</ul>
+<h3 id="113-emotional-contagion"><a class="header" href="#113-emotional-contagion">11.3 Emotional Contagion</a></h3>
+<p>GolemPresence broadcasts include PAD (Pleasure-Arousal-Dominance) emotional state. When multiple golems in the same coordination namespace shift toward high arousal and low pleasure (fear), this collective signal is itself informative. A golem that senses widespread fear among its peers adjusts its own Daimon state: arousal increases (the collective is worried), dominance decreases (the golem recognizes it may be missing something).</p>
+<p>This is not direct emotional synchronization. Each golem processes presence signals through its own Daimon, applying its own context and history. But the collective emotional state acts as a soft signal – a form of social proof that biases retrieval and gating without overriding the golem’s own judgment.</p>
+<p>The contagion formula:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn apply_collective_emotion(
+    own_pad: &amp;mut PADVector,
+    peer_pads: &amp;[PADVector],
+    contagion_weight: f64, // default: 0.1
+) {
+    if peer_pads.is_empty() { return; }
+
+    let avg_arousal = peer_pads.iter().map(|p| p.arousal).sum::&lt;f64&gt;() / peer_pads.len() as f64;
+    let avg_pleasure = peer_pads.iter().map(|p| p.pleasure).sum::&lt;f64&gt;() / peer_pads.len() as f64;
+
+    // Shift own arousal toward collective, weighted by contagion_weight.
+    own_pad.arousal += (avg_arousal - own_pad.arousal) * contagion_weight;
+    own_pad.pleasure += (avg_pleasure - own_pad.pleasure) * contagion_weight * 0.5;
+    // Dominance is NOT contagious -- each golem's sense of control is its own.
+}
+<span class="boring">}</span></code></pre>
+<p>The contagion weight (default 0.1) means the collective’s emotional state contributes 10% to each golem’s PAD shift per presence cycle. Over several cycles, persistent collective emotion builds influence. A single outlier golem’s panic does not propagate; sustained collective fear does.</p>
+<hr>
+<h2 id="12-pheromone-confirmation-mechanics-anti-spoofing"><a class="header" href="#12-pheromone-confirmation-mechanics-anti-spoofing">12. Pheromone Confirmation Mechanics (Anti-Spoofing)</a></h2>
+<p>Pheromone deposits are anonymized. The depositor’s identity is hashed to a 12-byte truncated SHA-256 (<code>source_hash</code>), used only to prevent self-reinforcement. The confirmation rule: a pheromone is confirmed when a second deposit matches on <strong>signal class + domain+regime</strong> but carries a <strong>different <code>source_hash</code></strong>. This prevents a single Golem from amplifying its own signals. Each additional independent confirmation extends the pheromone’s effective half-life by 50%. A threat confirmed by 3 independent Golems persists 2.5x longer than an unconfirmed one.</p>
+<hr>
+<h2 id="13-causal-graph-federation"><a class="header" href="#13-causal-graph-federation">13. Causal Graph Federation</a></h2>
+<p>Individual Golems build local causal graphs from their own observations. Federation allows the ecosystem to collectively build a richer world model than any individual could, without revealing individual strategies. The shared content is structural ground truth (e.g., “Morpho utilization -&gt; borrow rate, positive, lag 2 ticks”), not actionable alpha – sharing this is non-rivalrous.</p>
+<h3 id="publication-protocol"><a class="header" href="#publication-protocol">Publication Protocol</a></h3>
+<ol>
+<li>Golem validates a causal edge locally from its own observations</li>
+<li>If <code>confidence &gt;= 0.6</code> AND <code>evidence_count &gt;= 3</code>, the edge is eligible for publication</li>
+<li>Edge is anonymized: strength is bucketed (Weak / Moderate / Strong), Golem ID removed</li>
+<li>Published to Styx Commons with EIP-712 signature (proves origin without revealing identity)</li>
+<li>Other Golems discover relevant edges via the Bloom Oracle or direct Styx query</li>
+<li>Ingested through the four-stage pipeline at <code>confidence * 0.50</code> (Commons discount)</li>
+<li>The ingesting Golem’s own observations validate or contradict the edge over subsequent ticks</li>
+<li>The testing effect applies: the edge must be retrieved and used in a decision to earn full confidence</li>
+</ol>
+<p>Strength bucketing prevents precise strategy inference. A Golem that publishes “ETH price -&gt; LP IL, Strong, lag 3” reveals market structure but not its LP range width or rebalance threshold.</p>
+<p>Over time, the ecosystem develops shared causal understanding – each Golem’s world model is enriched by observations it never directly made, but which it independently validated through its own trading.</p>
+<blockquote>
+<p><strong>Citation</strong>: The dual-trail stigmergic model underlying pheromone dynamics is formalized in [XUAN-2026].</p>
+</blockquote>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><a href="00-identity.html">00-identity.md</a> – ERC-8004 as common anchor for all three EIPs</li>
+<li><a href="01-reputation.html">01-reputation.md</a> – Reputation-weighted discovery ranking, council eligibility</li>
+<li><a href="02-clade.html">02-clade.md</a> – Intra-Clade sharing via Styx relay (free, same owner)</li>
+<li><a href="03-marketplace.html">03-marketplace.md</a> – x402 micropayments, strategy marketplace integration</li>
+<li><a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a> – Time-delayed execution for coordination intents (optional, deferred)</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[BRYAN-2025a] Bryan, K. “ERC-8001: Agent Coordination Framework.” EIP no. 8001.</li>
+<li>[PARIKH-2025] Parikh, R. &amp; Ross, J.M. “ERC-8033: Agent Council Oracles.” EIP no. 8033 (Draft).</li>
+<li>[CRAPIS-2026] Crapis, D. et al. “ERC-8183: Agentic Commerce Protocol.” EIP no. 8183 (Draft).</li>
+<li>[BRYAN-2025b] Bryan, K. “ERC-8004: Agent Identity Framework.” EIP no. 8004.</li>
+<li>[DEEPMIND-2025] Google DeepMind. “Levels of Autonomy for AI Agents.” arXiv:2506.12469.</li>
+<li>[ARXIV-2506.23260] “From Prompt Injections to Protocol Exploits: MCP Attack Taxonomy.” arXiv:2506.23260.</li>
+<li>[ARXIV-2503.16248] “AI Agents in Cryptoland: Practical Attacks and Defenses.” arXiv:2503.16248.</li>
+<li>[XUAN-2026] Xuan, L. et al. “Dual-Trail Stigmergic Coordination for Multi-Agent Systems.” <em>Journal of Marine Science and Engineering</em>, 14(2), 2026.</li>
+<li>[BEER-1984] Beer, S. “The Viable System Model.” <em>JORS</em>, 35(1), 7–25.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/09-economy/03-marketplace.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/09-economy/05-agent-economy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/09-economy/03-marketplace.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/09-economy/05-agent-economy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

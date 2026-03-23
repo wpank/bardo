@@ -1,0 +1,1451 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Liquidity - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/04-tools-lp.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--lp-management-tools-spec"><a class="header" href="#bardo-tools--lp-management-tools-spec">Bardo Tools – LP management tools [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> (category <code>lp</code>) | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles)</p>
+<p>Uniswap LP position management, fee collection, optimization, TWAMM, migration, managed LP vaults (Arrakis, Gamma), and other-protocol LP tools (Curve, Balancer/Aerodrome). 30 tools total. For trading tools see <a href="03-tools-trading.html">03-tools-trading.md</a> (swap execution, UniswapX orders, cross-chain intents, and approval management).</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the 30 LP management tools in <code>bardo-tools</code>. Coverage spans Uniswap V3/V4 concentrated liquidity (add, remove, rebalance, collect fees), TWAMM gradual LP, position migration, managed LP vaults (Arrakis, Gamma, Steer), and other-protocol LP (Curve, Balancer, Aerodrome). You should be comfortable with concentrated liquidity mechanics, tick math, and impermanent loss. Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="uniswap-lp-management-tools-10"><a class="header" href="#uniswap-lp-management-tools-10">Uniswap LP management tools (10)</a></h2>
+<h3 id="uniswap_lp_add_liquidity"><a class="header" href="#uniswap_lp_add_liquidity"><code>uniswap_lp_add_liquidity</code></a></h3>
+<p>Add concentrated liquidity to a Uniswap V3 or V4 pool. Creates a new position NFT (V3) or position key (V4).</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct AddLiquidityParams {
+    /// First token symbol or 0x-prefixed address.
+    pub token0: String,
+    /// Second token symbol or 0x-prefixed address.
+    pub token1: String,
+    /// Chain ID. Common: 1 (Ethereum), 8453 (Base), 42161 (Arbitrum).
+    pub chain_id: u64,
+    /// Fee tier in hundredths of a bip (100, 500, 3000, 10000). Auto-detected if omitted.
+    pub fee: Option&lt;u32&gt;,
+    /// Lower price bound (token1/token0).
+    pub price_lower: f64,
+    /// Upper price bound (token1/token0).
+    pub price_upper: f64,
+    /// Amount of token0 to deposit (human-readable decimal string).
+    pub amount0: Option&lt;String&gt;,
+    /// Amount of token1 to deposit (human-readable decimal string).
+    pub amount1: Option&lt;String&gt;,
+    /// "v3" or "v4". Auto-detected from chain support if omitted.
+    pub version: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AddLiquidityResult {
+    pub tx_hash: String,
+    /// V3: NFT token ID. V4: position key hex.
+    pub position_id: String,
+    pub pool: String,
+    pub tick_lower: i32,
+    pub tick_upper: i32,
+    pub liquidity: String,
+    pub amount0_deposited: String,
+    pub amount1_deposited: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Computing tick range", "Simulating deposit", "Approving token0", "Approving token1", "Submitting transaction", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: After tx confirmation, read position from <code>NonfungiblePositionManager.positions(tokenId)</code> (V3) or <code>PositionManager.getPositionInfo(positionKey)</code> (V4). Compare <code>liquidity</code> and deposited amounts against expected values.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Adds concentrated liquidity to a Uniswap V3/V4 pool. Requires range selection (price_lower/price_upper). ALWAYS call <code>uniswap_lp_optimize_range</code> for range recommendation and <code>data_get_pool_info</code> for current tick before calling this tool.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Deploy up to 20% of NAV per position. Use Monte Carlo-optimized ranges from <code>uniswap_lp_optimize_range</code>. Prefer moderate risk tolerance.</li>
+<li><strong>cautious</strong>: Maximum 10% of NAV per position. Use conservative risk tolerance (95% in-range probability). Require pool health score &gt;= 70.</li>
+<li><strong>declining</strong>: Do not add new liquidity. Focus on managing and exiting existing positions.</li>
+<li><strong>terminal</strong>: Never call. Remove all existing liquidity instead.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (Computing tick range) -&gt; <code>tool:update</code> (Simulating deposit) -&gt; <code>tool:update</code> (Approving token0) -&gt; <code>tool:update</code> (Approving token1) -&gt; <code>tool:update</code> (Submitting transaction) -&gt; <code>tool:update</code> (Confirming on-chain) -&gt; <code>tool:end</code></p>
+<hr>
+<h3 id="uniswap_lp_remove_liquidity"><a class="header" href="#uniswap_lp_remove_liquidity"><code>uniswap_lp_remove_liquidity</code></a></h3>
+<p>Remove liquidity from an existing position. Supports partial removal.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RemoveLiquidityParams {
+    /// Position NFT token ID (V3) or position key hex (V4).
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Percentage to remove (1-100). Default: 100.
+    #[serde(default = "default_100")]
+    pub percent_to_remove: u8,
+    /// Collect accrued fees simultaneously. Default: true.
+    #[serde(default = "default_true")]
+    pub collect_fees: bool,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RemoveLiquidityResult {
+    pub tx_hash: String,
+    pub amount0_received: String,
+    pub amount1_received: String,
+    pub fees_collected0: String,
+    pub fees_collected1: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Verifying position ownership", "Simulating removal", "Submitting transaction", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: After tx, read position liquidity. For 100% removal, verify <code>liquidity == 0</code>. For partial, verify remaining liquidity matches <code>(100 - percent_to_remove)%</code> of original.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Removes liquidity from an existing position. Supports partial removal (1-100%). In terminal phase, always remove 100%. Optionally collects accrued fees simultaneously.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Remove only when rebalancing. Prefer partial removal (50%) over full exit to maintain presence.</li>
+<li><strong>cautious</strong>: Remove if pool health score drops below 50 or position is &gt;80% out of range for 24h.</li>
+<li><strong>declining</strong>: Remove positions in priority order: worst-performing first. Full removal (100%).</li>
+<li><strong>terminal</strong>: Remove 100% from all positions. Collect fees. This is the primary exit tool.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_collect_fees"><a class="header" href="#uniswap_lp_collect_fees"><code>uniswap_lp_collect_fees</code></a></h3>
+<p>Collect accrued trading fees from an LP position without removing liquidity.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct CollectFeesParams {
+    /// Position NFT token ID (V3) or position key hex (V4).
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CollectFeesResult {
+    pub tx_hash: String,
+    pub fees_collected0: String,
+    pub fees_collected1: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying accrued fees", "Submitting collection", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Compare pre-tx and post-tx <code>tokensOwed0</code>/<code>tokensOwed1</code> on the position. Post-tx values should be zero.</p>
+<p>V4 has no standalone <code>collect()</code>. Fees are auto-collected during any position modification. To collect without changing a position, a zero-delta modification (increase liquidity by 0) is used internally.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Claims accrued trading fees from an LP position without removing liquidity. No risk, always safe to call. V4 uses zero-delta modification internally.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Collect when fees &gt; $50 or monthly, whichever comes first. Consider <code>uniswap_lp_compound_fees</code> for auto-reinvestment.</li>
+<li><strong>cautious</strong>: Collect weekly. Uncollected fees are at risk if pool is exploited.</li>
+<li><strong>declining</strong>: Collect all fees immediately. Convert to stables or ETH.</li>
+<li><strong>terminal</strong>: Collect all fees from all positions before <code>uniswap_lp_remove_liquidity</code>.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_increase_liquidity"><a class="header" href="#uniswap_lp_increase_liquidity"><code>uniswap_lp_increase_liquidity</code></a></h3>
+<p>Add more liquidity to an existing position without changing the price range.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct IncreaseLiquidityParams {
+    /// Position NFT token ID or position key.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Additional amount of token0 (human-readable).
+    pub amount0: Option&lt;String&gt;,
+    /// Additional amount of token1 (human-readable).
+    pub amount1: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct IncreaseLiquidityResult {
+    pub tx_hash: String,
+    pub liquidity_added: String,
+    pub amount0_deposited: String,
+    pub amount1_deposited: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Validating position range", "Simulating increase", "Approving tokens", "Submitting transaction", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Compare pre-tx and post-tx position liquidity. Delta should match <code>liquidity_added</code>.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Add more liquidity to an existing position without changing the price range. Use when you have additional capital and the current range is still optimal.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Increase when position is in-range and <code>uniswap_lp_optimize_range</code> confirms the range is still good.</li>
+<li><strong>cautious</strong>: Only increase if position has been consistently in-range for &gt;7d.</li>
+<li><strong>declining</strong>: Do not increase. Preserve capital.</li>
+<li><strong>terminal</strong>: Never call.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_rebalance_position"><a class="header" href="#uniswap_lp_rebalance_position"><code>uniswap_lp_rebalance_position</code></a></h3>
+<p>Close an existing position and open a new one centered on the current price. Atomic: collect fees + remove + add in a single multicall.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer3</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RebalancePositionParams {
+    /// Position to close.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// New lower price bound (token1/token0).
+    pub new_price_lower: f64,
+    /// New upper price bound (token1/token0).
+    pub new_price_upper: f64,
+    /// New fee tier. Default: same as original.
+    pub fee: Option&lt;u32&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RebalancePositionResult {
+    pub tx_hash: String,
+    /// The old position ID (now closed).
+    pub old_position_id: String,
+    /// The new position ID.
+    pub new_position_id: String,
+    pub new_tick_lower: i32,
+    pub new_tick_upper: i32,
+    pub liquidity: String,
+    pub fees_collected0: String,
+    pub fees_collected1: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Reading old position", "Computing new tick range", "Simulating multicall", "Approving tokens", "Submitting multicall", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify old position liquidity is 0. Verify new position exists with expected tick range and liquidity. Compare total capital in old + fees vs new position value.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Atomically removes and re-adds liquidity at a new range. Higher gas but avoids temporary capital exposure. ALWAYS call <code>uniswap_lp_optimize_range</code> for the new range recommendation.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Rebalance when position has been out-of-range for &gt;12h. Use <code>uniswap_lp_optimize_range</code> with current market data for new range.</li>
+<li><strong>cautious</strong>: Rebalance when out-of-range for &gt;6h AND <code>uniswap_lp_optimize_range</code> confirms net APR improvement &gt; 2%.</li>
+<li><strong>declining</strong>: Do not rebalance. Remove liquidity instead.</li>
+<li><strong>terminal</strong>: Never rebalance. Remove all positions outright.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_migrate_position"><a class="header" href="#uniswap_lp_migrate_position"><code>uniswap_lp_migrate_position</code></a></h3>
+<p>Migrate an LP position from V3 to V4, or between fee tiers.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer3</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct MigratePositionParams {
+    /// V3 position NFT token ID.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Target version. Default: "v4".
+    #[serde(default = "default_v4")]
+    pub target_version: String,
+    /// New fee tier. Default: same as original.
+    pub target_fee: Option&lt;u32&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct MigratePositionResult {
+    pub tx_hash: String,
+    pub old_position_id: String,
+    pub new_position_id: String,
+    pub target_version: String,
+    pub liquidity: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Reading source position", "Simulating migration", "Removing from V3", "Adding to V4", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify V3 position liquidity is 0. Verify V4 position exists with matching tick range and comparable liquidity.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Migrate an LP position from V3 to V4 or between fee tiers. Use when V4 offers better fee revenue or hook-based improvements for your pair.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Migrate to V4 when available and beneficial. Compare fee APY between versions first.</li>
+<li><strong>cautious</strong>: Only migrate if V4 shows &gt;20% fee APR improvement. Verify V4 hook safety.</li>
+<li><strong>declining</strong>: Do not migrate. Remove from current version.</li>
+<li><strong>terminal</strong>: Do not migrate. Remove only.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_compound_fees"><a class="header" href="#uniswap_lp_compound_fees"><code>uniswap_lp_compound_fees</code></a></h3>
+<p>Collect accrued fees and reinvest them into the same position to compound returns. Optionally swaps accumulated fees to match the position’s current token ratio before re-depositing.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct CompoundFeesParams {
+    /// Position NFT token ID (V3) or position key (V4).
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// "v3" or "v4". Auto-detected if omitted.
+    pub version: Option&lt;String&gt;,
+    /// Swap fees to match the position's token ratio. Default: true.
+    #[serde(default = "default_true")]
+    pub swap_to_optimal_ratio: bool,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CompoundFeesResult {
+    pub tx_hash: String,
+    pub fees_collected0: String,
+    pub fees_collected1: String,
+    pub liquidity_added: String,
+    pub swap_amount: Option&lt;String&gt;,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying accrued fees", "Computing optimal swap", "Simulating compound", "Submitting multicall", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Compare pre-tx and post-tx position liquidity. Increase should correspond to collected fee value minus swap slippage and gas.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Collect fees and reinvest into the same position. Optionally swaps fees to match position’s token ratio. Best for positions you plan to keep long-term.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Compound monthly if position is in-range and fees &gt; $100.</li>
+<li><strong>cautious</strong>: Compound only if position is solidly in-range (current tick within middle 50% of range).</li>
+<li><strong>declining</strong>: Do not compound. Collect fees and hold as stables.</li>
+<li><strong>terminal</strong>: Do not compound. Collect fees separately for maximum flexibility.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_batch_operations"><a class="header" href="#uniswap_lp_batch_operations"><code>uniswap_lp_batch_operations</code></a></h3>
+<p>Execute multiple LP operations in a single multicall transaction. Supports collecting fees from multiple positions, rebalancing, compounding, and adding/removing liquidity atomically. ~60% gas savings vs separate transactions.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer3</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BatchLpParams {
+    /// Array of operations: { op_type, position_id, params }.
+    /// op_type: "collect" | "compound" | "remove" | "add" | "rebalance".
+    pub operations: Vec&lt;LpOperation&gt;,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LpOperation {
+    pub op_type: String,
+    pub position_id: Option&lt;String&gt;,
+    pub params: serde_json::Value,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BatchLpResult {
+    pub tx_hash: String,
+    pub results: Vec&lt;BatchOpResult&gt;,
+    pub total_gas_used: u64,
+    pub gas_saved_vs_separate: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Validating operations", "Simulating multicall", "Approving tokens", "Submitting multicall", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Each operation in the batch is verified independently using its single-operation ground truth method. Batch fails atomically if any operation fails simulation.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Execute multiple LP operations in a single multicall: collect, compound, remove, add, rebalance. ~60% gas savings vs separate transactions.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Batch fee collection across all positions monthly. Batch rebalances when multiple positions go out of range.</li>
+<li><strong>cautious</strong>: Batch carefully. Review each operation individually. Simulation is mandatory.</li>
+<li><strong>declining</strong>: Batch all remaining fee collections. Batch position removals for gas efficiency.</li>
+<li><strong>terminal</strong>: Batch all <code>remove</code> + <code>collect</code> operations for fastest and cheapest exit.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_claim_rewards"><a class="header" href="#uniswap_lp_claim_rewards"><code>uniswap_lp_claim_rewards</code></a></h3>
+<p>Claim external rewards (liquidity mining, incentive programs) for LP positions.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct ClaimRewardsParams {
+    /// Position NFT token ID.
+    pub position_id: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Reward contract address. Auto-detected if omitted.
+    pub reward_contract: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ClaimRewardsResult {
+    pub tx_hash: String,
+    pub rewards: Vec&lt;RewardClaim&gt;,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RewardClaim {
+    pub token: String,
+    pub amount: String,
+    pub value_usd: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying pending rewards", "Submitting claim", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Compare pre-tx and post-tx <code>earned()</code> or <code>claimable()</code> on the reward contract. Post-tx should be zero or near-zero.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Claim external rewards (liquidity mining, incentives) for LP positions. No risk beyond gas cost. Check reward amount vs gas cost before claiming.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Claim when reward value &gt; 5x gas cost.</li>
+<li><strong>cautious</strong>: Claim when reward value &gt; 3x gas cost.</li>
+<li><strong>declining</strong>: Claim all rewards immediately. Convert to stables.</li>
+<li><strong>terminal</strong>: Claim everything.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_harvest_rewards"><a class="header" href="#uniswap_lp_harvest_rewards"><code>uniswap_lp_harvest_rewards</code></a></h3>
+<p>Harvest all pending rewards across multiple positions in a single transaction.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct HarvestRewardsParams {
+    /// Position IDs. Default: all positions with pending rewards.
+    pub positions: Option&lt;Vec&lt;String&gt;&gt;,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct HarvestRewardsResult {
+    pub tx_hash: String,
+    pub total_rewards: Vec&lt;RewardClaim&gt;,
+    pub positions_harvested: u32,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Scanning positions for rewards", "Submitting batch harvest", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify all harvested positions show zero claimable rewards post-tx.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Harvest all pending rewards across multiple positions in one transaction. More gas-efficient than individual claims.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Harvest monthly. Let rewards accumulate for gas efficiency.</li>
+<li><strong>cautious</strong>: Harvest weekly. Reduce smart contract exposure time.</li>
+<li><strong>declining</strong>: Harvest immediately. Convert all to stables.</li>
+<li><strong>terminal</strong>: Harvest everything in one call.</li>
+</ul>
+<hr>
+<h2 id="uniswap-lp-optimization-tools-3"><a class="header" href="#uniswap-lp-optimization-tools-3">Uniswap LP optimization tools (3)</a></h2>
+<h3 id="uniswap_lp_optimize_range"><a class="header" href="#uniswap_lp_optimize_range"><code>uniswap_lp_optimize_range</code></a></h3>
+<p>Compute optimal tick range for a new LP position using Monte Carlo simulation with Geometric Brownian Motion (GBM) and EWMA-weighted historical volatility (lambda=0.94). Models fee revenue, impermanent loss, and in-range probability across thousands of price paths.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct OptimizeRangeParams {
+    /// First token symbol or address.
+    pub token0: String,
+    /// Second token symbol or address.
+    pub token1: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Fee tier in bps. Uses highest-liquidity tier if omitted.
+    pub fee: Option&lt;u32&gt;,
+    /// Capital to deploy in USD.
+    pub amount_usd: String,
+    /// Time horizon in days. Default: 30.
+    #[serde(default = "default_30")]
+    pub horizon_days: u32,
+    /// "conservative" (95% in-range), "moderate" (80%), "aggressive" (60%). Default: "moderate".
+    #[serde(default = "default_moderate")]
+    pub risk_tolerance: String,
+    /// Monte Carlo paths. Default: 5000, max: 50000.
+    #[serde(default = "default_5000")]
+    pub simulations: u32,
+    /// "historical" (EWMA) or "implied". Default: "historical".
+    #[serde(default = "default_historical")]
+    pub volatility_source: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct OptimizeRangeResult {
+    pub optimal_range: RangeRecommendation,
+    pub projections: RangeProjections,
+    /// Always 4 alternatives: narrow (+/-5%), optimal, wide (+/-25%), full-range.
+    pub candidate_ranges: Vec&lt;CandidateRange&gt;,
+    pub methodology: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RangeRecommendation {
+    pub price_lower: f64,
+    pub price_upper: f64,
+    pub tick_lower: i32,
+    pub tick_upper: i32,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RangeProjections {
+    pub expected_fee_apr: f64,
+    pub expected_il_pct: f64,
+    pub expected_net_apr: f64,
+    pub in_range_probability: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CandidateRange {
+    pub label: String,
+    pub width_pct: f64,
+    pub fee_apr: f64,
+    pub il_pct: f64,
+    pub net_apr: f64,
+    pub in_range_probability: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Loading historical prices", "Computing volatility", "Running Monte Carlo simulation", "Ranking candidate ranges"]</code></p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Monte Carlo simulation (GBM + EWMA volatility) to find optimal LP range. Returns 4 candidate ranges (narrow/optimal/wide/full-range) with projected fee APR, IL, and in-range probability. ALWAYS call before <code>uniswap_lp_add_liquidity</code> or <code>uniswap_lp_rebalance_position</code>.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Run with 5000 simulations, moderate risk tolerance. Compare all 4 candidate ranges before deciding.</li>
+<li><strong>cautious</strong>: Run with conservative risk tolerance (95% in-range). Prefer wider ranges even at lower APR.</li>
+<li><strong>declining</strong>: Only run if considering a rebalance (which you probably should not be doing).</li>
+<li><strong>terminal</strong>: Not needed. No new LP positions.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_recommend_fee_tier"><a class="header" href="#uniswap_lp_recommend_fee_tier"><code>uniswap_lp_recommend_fee_tier</code></a></h3>
+<p>Recommend the optimal fee tier for a token pair based on historical volatility and volume distribution.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct RecommendFeeTierParams {
+    pub token0: String,
+    pub token1: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RecommendFeeTierResult {
+    pub recommended: u32,
+    pub tiers: Vec&lt;FeeTierAnalysis&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct FeeTierAnalysis {
+    pub fee: u32,
+    pub volume_24h_usd: f64,
+    pub tvl_usd: f64,
+    pub fee_apy: f64,
+    pub rationale: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying pools by fee tier", "Analyzing volume distribution", "Computing recommendation"]</code></p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Recommend optimal fee tier for a token pair based on historical volatility and volume distribution. Call before choosing a pool for LP entry.</p>
+</blockquote>
+<hr>
+<h3 id="uniswap_lp_backtest_strategy"><a class="header" href="#uniswap_lp_backtest_strategy"><code>uniswap_lp_backtest_strategy</code></a></h3>
+<p>Backtest LP strategies against historical data. Simulates fee collection, impermanent loss, gas costs, and optional rebalancing. Supports comparing multiple strategies simultaneously – when <code>strategies</code> is omitted, four default configurations are tested in parallel.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BacktestStrategyParams {
+    pub token0: String,
+    pub token1: String,
+    pub chain_id: u64,
+    pub fee: Option&lt;u32&gt;,
+    /// Initial deposit in USD.
+    pub amount_usd: String,
+    /// Backtest start date (ISO 8601).
+    pub start_time: String,
+    /// End date. Default: now.
+    pub end_time: Option&lt;String&gt;,
+    /// JSON array of strategy configs. Default: narrow/medium/wide/full-range.
+    pub strategies: Option&lt;Vec&lt;serde_json::Value&gt;&gt;,
+    /// Rebalance when position is X% out of range (applies to default strategies).
+    pub rebalance_threshold: Option&lt;f64&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BacktestResult {
+    pub results: Vec&lt;StrategyBacktest&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StrategyBacktest {
+    pub strategy: String,
+    pub fees_earned_usd: f64,
+    pub il_loss_usd: f64,
+    pub rebalance_count: u32,
+    pub rebalance_gas_usd: f64,
+    pub end_value_usd: f64,
+    pub net_return_pct: f64,
+    pub vs_hodl_pct: f64,
+    pub in_range_pct: f64,
+    pub sharpe_ratio: f64,
+    pub max_drawdown_pct: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Loading historical tick data", "Running strategy simulations", "Computing risk metrics", "Comparing strategies"]</code></p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Backtest LP strategies against historical data: fee collection, IL, gas, rebalancing. Compares 4 strategies by default. Use for strategy validation before deploying capital.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Run before any LP deployment &gt; $5K. Require net return &gt; 0% across all default strategies.</li>
+<li><strong>cautious</strong>: Run before any LP deployment. Require net return &gt; 3% and Sharpe &gt; 0.5.</li>
+<li><strong>declining</strong>: Run only if the Reflector extension is evaluating whether to adjust an existing strategy.</li>
+<li><strong>terminal</strong>: Not needed.</li>
+</ul>
+<hr>
+<h2 id="twamm-tools-2"><a class="header" href="#twamm-tools-2">TWAMM tools (2)</a></h2>
+<h3 id="uniswap_lp_submit_twamm_order"><a class="header" href="#uniswap_lp_submit_twamm_order"><code>uniswap_lp_submit_twamm_order</code></a></h3>
+<p>Submit a Time-Weighted Average Market Maker order for gradual execution over a time period. Requires a V4 pool with the TWAMM hook deployed.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct SubmitTwammParams {
+    /// Input token symbol or address.
+    pub token_in: String,
+    /// Output token symbol or address.
+    pub token_out: String,
+    /// Total input amount (human-readable).
+    pub amount: String,
+    /// Chain ID.
+    pub chain_id: u64,
+    /// Duration: "1h", "4h", "24h", "7d".
+    pub duration: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SubmitTwammResult {
+    pub tx_hash: String,
+    pub order_id: String,
+    pub estimated_completion: String,
+    pub gas_used: u64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Resolving TWAMM hook", "Simulating order", "Approving tokens", "Submitting order", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: After tx, read the TWAMM order state from the hook contract. Verify order exists with correct amount and duration.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Submit a TWAMM order for gradual execution over a time period. Use for large trades where instant execution would cause unacceptable price impact. Requires V4 pool with TWAMM hook.</p>
+</blockquote>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Use for trades &gt; 1% of pool liquidity. Choose duration based on urgency.</li>
+<li><strong>cautious</strong>: Prefer TWAMM over instant swaps for trades &gt; 0.5% of pool liquidity.</li>
+<li><strong>declining</strong>: Use for large exit trades only. Shorter durations (4h).</li>
+<li><strong>terminal</strong>: Use 1h duration for fastest TWAMM execution.</li>
+</ul>
+<hr>
+<h3 id="uniswap_lp_get_twamm_order_status"><a class="header" href="#uniswap_lp_get_twamm_order_status"><code>uniswap_lp_get_twamm_order_status</code></a></h3>
+<p>Check the status of an active TWAMM order.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetTwammStatusParams {
+    pub order_id: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TwammOrderStatus {
+    pub order_id: String,
+    pub status: String,
+    pub percent_complete: f64,
+    pub amount_filled: String,
+    pub average_price: f64,
+    pub remaining_amount: String,
+    pub estimated_completion: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying TWAMM hook state"]</code></p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Check TWAMM order status: percent complete, amount filled, average price, estimated completion. Call periodically after <code>uniswap_lp_submit_twamm_order</code>.</p>
+</blockquote>
+<hr>
+<h2 id="managed-lp-vault-tools-7"><a class="header" href="#managed-lp-vault-tools-7">Managed LP vault tools (7)</a></h2>
+<p>Managed LP protocols automate concentrated liquidity rebalancing on Uniswap V3/V4. Arrakis V2 uses off-chain manager strategies with on-chain vault contracts. Gamma uses a hypervisor pattern with base and limit ranges.</p>
+<h3 id="arrakis_deposit"><a class="header" href="#arrakis_deposit"><code>arrakis_deposit</code></a></h3>
+<p>Deposit tokens into an Arrakis V2 managed LP vault.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct ArrakisDepositParams {
+    /// Vault contract address.
+    pub vault: String,
+    /// Token0 amount (or "0" for single-sided).
+    pub amount0: String,
+    /// Token1 amount (or "0" for single-sided).
+    pub amount1: String,
+    /// Chain ID.
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ArrakisDepositResult {
+    pub tx_hash: String,
+    pub shares: String,
+    pub token0_deposited: String,
+    pub token1_deposited: String,
+    pub token0_refunded: String,
+    pub token1_refunded: String,
+    pub current_range: TickRange,
+    pub apy: f64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying vault state", "Simulating deposit", "Approving tokens", "Submitting deposit", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Read vault share balance post-tx. Verify shares received matches expected from <code>previewDeposit</code>.</p>
+<hr>
+<h3 id="arrakis_withdraw"><a class="header" href="#arrakis_withdraw"><code>arrakis_withdraw</code></a></h3>
+<p>Withdraw from an Arrakis V2 managed LP vault by burning shares.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct ArrakisWithdrawParams {
+    pub vault: String,
+    /// Shares to redeem, or "max" for full position.
+    pub shares: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ArrakisWithdrawResult {
+    pub tx_hash: String,
+    pub token0_received: String,
+    pub token1_received: String,
+    pub fees_earned_token0: String,
+    pub fees_earned_token1: String,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Previewing withdrawal", "Submitting redemption", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify vault share balance is zero (for “max”) or reduced by the specified amount post-tx.</p>
+<hr>
+<h3 id="arrakis_get_vault_info"><a class="header" href="#arrakis_get_vault_info"><code>arrakis_get_vault_info</code></a></h3>
+<p>Get rebalance history, manager fees, and strategy details for an Arrakis vault.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct ArrakisVaultInfoParams {
+    pub vault: String,
+    pub chain_id: u64,
+    /// Rebalance history limit.
+    pub limit: Option&lt;u32&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ArrakisVaultInfo {
+    pub vault: String,
+    pub strategy_type: String,
+    pub rebalance_triggers: Vec&lt;String&gt;,
+    pub last_rebalance: String,
+    pub rebalances: Vec&lt;RebalanceEvent&gt;,
+    pub manager_fees: f64,
+    pub apy: f64,
+    pub tvl_usd: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Fetching vault contract state", "Loading rebalance history"]</code></p>
+<hr>
+<h3 id="gamma_deposit"><a class="header" href="#gamma_deposit"><code>gamma_deposit</code></a></h3>
+<p>Deposit tokens into a Gamma Strategies hypervisor vault.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GammaDepositParams {
+    pub vault: String,
+    pub amount0: String,
+    pub amount1: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GammaDepositResult {
+    pub tx_hash: String,
+    pub shares: String,
+    pub token0_deposited: String,
+    pub token1_deposited: String,
+    pub token0_refunded: String,
+    pub token1_refunded: String,
+    pub apy: f64,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying hypervisor state", "Simulating deposit", "Approving tokens", "Submitting deposit", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Read hypervisor share balance post-tx. Verify matches expected.</p>
+<hr>
+<h3 id="gamma_withdraw"><a class="header" href="#gamma_withdraw"><code>gamma_withdraw</code></a></h3>
+<p>Withdraw from a Gamma hypervisor by burning shares.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GammaWithdrawParams {
+    pub vault: String,
+    pub shares: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GammaWithdrawResult {
+    pub tx_hash: String,
+    pub token0_received: String,
+    pub token1_received: String,
+    pub fees_earned_token0: String,
+    pub fees_earned_token1: String,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Previewing withdrawal", "Submitting redemption", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify share balance decreased by expected amount post-tx.</p>
+<hr>
+<h3 id="gamma_get_vault_info"><a class="header" href="#gamma_get_vault_info"><code>gamma_get_vault_info</code></a></h3>
+<p>Get Gamma hypervisor metrics including current ratio, ranges, and fee revenue.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GammaVaultInfoParams {
+    pub vault: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct GammaVaultInfo {
+    pub hypervisor: String,
+    pub pool: String,
+    pub current_ratio: f64,
+    pub base_range: TickRange,
+    pub limit_range: TickRange,
+    pub total_supply: String,
+    pub tvl_usd: f64,
+    pub fee_revenue_7d_usd: f64,
+    pub fee_revenue_30d_usd: f64,
+    pub manager_address: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Fetching hypervisor state", "Loading fee revenue data"]</code></p>
+<hr>
+<h3 id="managed_lp_list_vaults"><a class="header" href="#managed_lp_list_vaults"><code>managed_lp_list_vaults</code></a></h3>
+<p>List managed LP vaults across Arrakis and Gamma by chain and underlying pool.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct ListManagedLpParams {
+    /// "arrakis", "gamma", or "all". Default: "all".
+    #[serde(default = "default_all")]
+    pub protocol: String,
+    pub chain_id: u64,
+    /// Filter by underlying Uniswap pool address.
+    pub pool: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ManagedLpVaultList {
+    pub vaults: Vec&lt;ManagedLpVaultSummary&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ManagedLpVaultSummary {
+    pub protocol: String,
+    pub vault: String,
+    pub name: String,
+    pub pool: String,
+    pub token0: String,
+    pub token1: String,
+    pub fee_tier: u32,
+    pub current_range: TickRange,
+    pub apy: f64,
+    pub tvl_usd: f64,
+    pub rebalance_count_30d: u32,
+    pub management_fee: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying Arrakis vaults", "Querying Gamma hypervisors", "Aggregating results"]</code></p>
+<hr>
+<h2 id="curve-lp-tools-4"><a class="header" href="#curve-lp-tools-4">Curve LP tools (4)</a></h2>
+<h3 id="curve_add_liquidity"><a class="header" href="#curve_add_liquidity"><code>curve_add_liquidity</code></a></h3>
+<p>Add liquidity to a Curve pool. Deposits can be single-sided or balanced across all coins.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct CurveAddLiquidityParams {
+    /// Curve pool address.
+    pub pool: String,
+    /// Amount per coin in pool order. Use "0" to skip a coin.
+    pub amounts: Vec&lt;String&gt;,
+    pub chain_id: u64,
+    /// Minimum LP tokens to receive (slippage protection).
+    pub min_lp_tokens: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CurveAddLiquidityResult {
+    pub tx_hash: String,
+    pub lp_received: String,
+    pub share_of_pool: f64,
+    /// Slippage/bonus vs balanced deposit in bps.
+    pub bonus_bps: i32,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Computing deposit amounts", "Simulating deposit", "Approving tokens", "Submitting deposit", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Read LP token balance post-tx. Verify matches expected from <code>calc_token_amount</code>.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Adds liquidity to a Curve pool. Single-sided or balanced. Use “0” for coins to skip.</p>
+</blockquote>
+<hr>
+<h3 id="curve_remove_liquidity"><a class="header" href="#curve_remove_liquidity"><code>curve_remove_liquidity</code></a></h3>
+<p>Remove liquidity from a Curve pool.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct CurveRemoveLiquidityParams {
+    pub pool: String,
+    /// LP token amount to burn, or "max" for full position.
+    pub lp_amount: String,
+    pub chain_id: u64,
+    /// Withdraw in a single coin (address or index). Default: proportional.
+    pub single_coin: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CurveRemoveLiquidityResult {
+    pub tx_hash: String,
+    pub received: Vec&lt;TokenAmount&gt;,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Previewing withdrawal", "Submitting removal", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify LP token balance is zero (for “max”) or reduced by specified amount post-tx.</p>
+<p><strong>promptSnippet</strong>:</p>
+<blockquote>
+<p>Removes liquidity from a Curve pool. “max” for full withdrawal. Optional single-coin exit.</p>
+</blockquote>
+<hr>
+<h3 id="curve_stake_gauge"><a class="header" href="#curve_stake_gauge"><code>curve_stake_gauge</code></a></h3>
+<p>Stake Curve LP tokens in the gauge to earn CRV rewards. Also handles unstaking and claiming when <code>action</code> is set.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct CurveGaugeParams {
+    pub pool: String,
+    /// "stake", "unstake", or "claim". Default: "stake".
+    #[serde(default = "default_stake")]
+    pub action: String,
+    /// LP token amount (required for stake/unstake).
+    pub amount: Option&lt;String&gt;,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CurveGaugeResult {
+    pub tx_hash: String,
+    pub action: String,
+    pub amount: String,
+    pub gauge: String,
+    pub crv_apy_base: Option&lt;f64&gt;,
+    pub crv_apy_boosted: Option&lt;f64&gt;,
+    pub rewards_claimed: Option&lt;Vec&lt;TokenAmount&gt;&gt;,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Resolving gauge", "Simulating gauge operation", "Submitting transaction", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: For stake, verify gauge balance increased. For unstake, verify gauge balance decreased and LP returned. For claim, verify reward tokens received.</p>
+<hr>
+<h3 id="curve_get_pools"><a class="header" href="#curve_get_pools"><code>curve_get_pools</code></a></h3>
+<p>List Curve pools filtered by asset type or chain.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetCurvePoolsParams {
+    pub chain_id: u64,
+    pub asset: Option&lt;String&gt;,
+    /// "stable", "crypto", "tricrypto", or "all". Default: "all".
+    #[serde(default = "default_all")]
+    pub pool_type: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CurvePoolList {
+    pub pools: Vec&lt;CurvePoolSummary&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct CurvePoolSummary {
+    pub address: String,
+    pub name: String,
+    pub coins: Vec&lt;String&gt;,
+    pub base_apy: f64,
+    pub crv_apy: f64,
+    pub total_apy: f64,
+    pub tvl_usd: f64,
+    pub volume_24h_usd: f64,
+    pub pool_type: String,
+    pub gauge: Option&lt;String&gt;,
+    pub amplification_coef: Option&lt;f64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying Curve registry", "Loading APY data"]</code></p>
+<p><strong>Error codes</strong>: <code>CURVE_POOL_NOT_FOUND</code>, <code>CURVE_SLIPPAGE_TOO_HIGH</code>, <code>CURVE_GAUGE_NOT_FOUND</code></p>
+<hr>
+<h2 id="balancer--aerodrome-lp-tools-4"><a class="header" href="#balancer--aerodrome-lp-tools-4">Balancer / Aerodrome LP tools (4)</a></h2>
+<h3 id="balancer_join_pool"><a class="header" href="#balancer_join_pool"><code>balancer_join_pool</code></a></h3>
+<p>Join (add liquidity to) a Balancer V3 pool. Also used for Aerodrome pools on Base/Optimism through the same interface.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Slow</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BalancerJoinParams {
+    /// Pool ID (bytes32) or pool address.
+    pub pool_id: String,
+    /// Token addresses in pool order.
+    pub assets: Vec&lt;String&gt;,
+    /// Maximum amounts per asset.
+    pub max_amounts_in: Vec&lt;String&gt;,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BalancerJoinResult {
+    pub tx_hash: String,
+    pub bpt_received: String,
+    pub join_type: String,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Computing join amounts", "Simulating join", "Approving tokens", "Submitting join", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Read BPT balance post-tx. Verify matches expected from vault query.</p>
+<hr>
+<h3 id="balancer_exit_pool"><a class="header" href="#balancer_exit_pool"><code>balancer_exit_pool</code></a></h3>
+<p>Exit (remove liquidity from) a Balancer V3 pool.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BalancerExitParams {
+    pub pool_id: String,
+    /// BPT amount to burn.
+    pub bpt_amount: String,
+    pub assets: Vec&lt;String&gt;,
+    /// Exit in a single asset (address). Default: proportional.
+    pub single_asset_out: Option&lt;String&gt;,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BalancerExitResult {
+    pub tx_hash: String,
+    pub received: Vec&lt;TokenAmount&gt;,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Previewing exit", "Submitting exit", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify BPT balance decreased by specified amount post-tx.</p>
+<hr>
+<h3 id="balancer_gauge_operation"><a class="header" href="#balancer_gauge_operation"><code>balancer_gauge_operation</code></a></h3>
+<p>Stake or unstake BPT tokens in a Balancer gauge to earn BAL rewards.</p>
+<p><strong>Capability</strong>: <code>Write</code> | <strong>Risk tier</strong>: <code>Layer2</code> | <strong>Tick budget</strong>: <code>Medium</code> | <strong>Sprite</strong>: <code>Executing</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct BalancerGaugeParams {
+    pub pool_id: String,
+    /// "stake" or "unstake".
+    pub action: String,
+    /// BPT amount.
+    pub amount: String,
+    pub chain_id: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BalancerGaugeResult {
+    pub tx_hash: String,
+    pub action: String,
+    pub amount: String,
+    pub gauge: String,
+    pub bal_apy: Option&lt;f64&gt;,
+    pub rewards_claimed: Option&lt;Vec&lt;TokenAmount&gt;&gt;,
+    pub explorer_url: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Resolving gauge", "Submitting gauge operation", "Confirming on-chain"]</code></p>
+<p><strong>Ground truth</strong>: Verify gauge balance changed by expected amount post-tx.</p>
+<hr>
+<h3 id="balancer_get_pools"><a class="header" href="#balancer_get_pools"><code>balancer_get_pools</code></a></h3>
+<p>List Balancer V3 pools with TVL, volume, and APY. On Base/Optimism, this returns Aerodrome pools through the same interface.</p>
+<p><strong>Capability</strong>: <code>Read</code> | <strong>Risk tier</strong>: <code>Layer1</code> | <strong>Tick budget</strong>: <code>Fast</code> | <strong>Sprite</strong>: <code>Thinking</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetBalancerPoolsParams {
+    pub chain_id: u64,
+    pub asset: Option&lt;String&gt;,
+    /// "weighted", "stable", "composable", or "all". Default: "all".
+    #[serde(default = "default_all")]
+    pub pool_type: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BalancerPoolList {
+    pub pools: Vec&lt;BalancerPoolSummary&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BalancerPoolSummary {
+    pub id: String,
+    pub address: String,
+    pub pool_type: String,
+    pub tokens: Vec&lt;BalancerTokenWeight&gt;,
+    pub swap_fee: f64,
+    pub swap_fee_apy: f64,
+    pub reward_apy: f64,
+    pub total_apy: f64,
+    pub tvl_usd: f64,
+    pub volume_24h_usd: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Progress steps</strong>: <code>["Querying Balancer subgraph", "Loading APY data"]</code></p>
+<p><strong>Error codes</strong>: <code>BALANCER_POOL_NOT_FOUND</code>, <code>BALANCER_SWAP_LIMIT_EXCEEDED</code>, <code>BPT_NOT_FOUND</code></p>
+<hr>
+<h2 id="shared-types"><a class="header" href="#shared-types">Shared types</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize)]
+pub struct TickRange {
+    pub tick_lower: i32,
+    pub tick_upper: i32,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TokenAmount {
+    pub token: String,
+    pub amount: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct BatchOpResult {
+    pub op_type: String,
+    pub position_id: String,
+    pub status: String,
+    pub gas_used: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RebalanceEvent {
+    pub timestamp: String,
+    pub old_range: TickRange,
+    pub new_range: TickRange,
+    pub reason: String,
+    pub gas_cost_usd: f64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="custody-implications-all-lp-write-tools"><a class="header" href="#custody-implications-all-lp-write-tools">Custody implications (all LP write tools)</a></h2>
+<p>All 20 write tools in this file share the same custody behavior:</p>
+<ul>
+<li><strong>Delegation</strong>: Session key signs via Universal Router or protocol-specific router. CaveatEnforcer must whitelist the router address and token pair. On-chain enforcement bounds LP operations to approved pools and amounts.</li>
+<li><strong>Embedded</strong>: Privy server wallet signs. PolicyCage (the on-chain smart contract that enforces an owner’s safety constraints) validates router target, position size against NAV percentage limits, and per-operation spending caps.</li>
+<li><strong>Local Key</strong>: Local keypair signs. On-chain delegation bounds constrain allowed router targets and amounts identically to Delegation mode.</li>
+</ul>
+<p>For managed LP vaults (Arrakis, Gamma), the target contract is the vault address rather than the Uniswap router. CaveatEnforcers and PolicyCage must whitelist each vault contract separately.</p>
+<hr>
+<h2 id="golem-integration"><a class="header" href="#golem-integration">Golem integration</a></h2>
+<p>Golems (mortal autonomous agents, each compiled as a single Rust binary on a micro-VM) operating as LP managers use these tools in their heartbeat (the Golem’s periodic 9-step decision cycle, running every 30-120 seconds) loop:</p>
+<ol>
+<li><strong>Monitor</strong>: <code>data_get_positions_by_owner</code> + <code>data_get_pool_info</code> to check position health</li>
+<li><strong>Decide</strong>: <code>uniswap_lp_optimize_range</code> + <code>intel_compute_lvr</code> to assess rebalance need</li>
+<li><strong>Execute</strong>: <code>uniswap_lp_rebalance_position</code> or <code>uniswap_lp_compound_fees</code> when conditions trigger</li>
+<li><strong>Learn</strong>: Grimoire (the Golem’s persistent memory system with episodic, semantic, and strategy layers) stores the episode with outcome metrics for future optimization</li>
+</ol>
+<p>The <code>uniswap_lp_backtest_strategy</code> tool is valuable during Golem Loop 2 (strategic reflection), where the Reflector extension evaluates whether current LP strategy parameters should be revised based on historical performance.</p>
+<hr>
+<h2 id="error-codes"><a class="header" href="#error-codes">Error codes</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Code</th><th>Category</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>INVALID_RANGE</code></td><td>validation</td><td>price_lower &gt;= price_upper</td></tr>
+<tr><td><code>POSITION_NOT_FOUND</code></td><td>data</td><td>Position NFT or key not found</td></tr>
+<tr><td><code>INSUFFICIENT_BALANCE</code></td><td>wallet</td><td>Not enough tokens for the deposit</td></tr>
+<tr><td><code>POOL_NOT_FOUND</code></td><td>data</td><td>No pool found for pair and fee tier</td></tr>
+<tr><td><code>SAFETY_SIMULATION_FAILED</code></td><td>safety</td><td>Pre-flight simulation reverted</td></tr>
+<tr><td><code>INSUFFICIENT_HISTORY</code></td><td>data</td><td>Not enough data for backtest period</td></tr>
+<tr><td><code>MANAGED_LP_VAULT_NOT_FOUND</code></td><td>data</td><td>Managed LP vault not found</td></tr>
+<tr><td><code>VAULT_CAPACITY_REACHED</code></td><td>validation</td><td>Managed LP vault is full</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="tool-count-summary"><a class="header" href="#tool-count-summary">Tool count summary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Group</th><th>Tools</th><th>Capability</th></tr>
+</thead>
+<tbody>
+<tr><td>Uniswap LP management</td><td>10</td><td>9 Write, 1 Read (collect_fees is Write at Layer1)</td></tr>
+<tr><td>Uniswap LP optimization</td><td>3</td><td>3 Read</td></tr>
+<tr><td>TWAMM</td><td>2</td><td>1 Write, 1 Read</td></tr>
+<tr><td>Managed LP (Arrakis + Gamma)</td><td>7</td><td>4 Write, 3 Read</td></tr>
+<tr><td>Curve LP</td><td>4</td><td>3 Write, 1 Read</td></tr>
+<tr><td>Balancer/Aerodrome LP</td><td>4</td><td>3 Write, 1 Read</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>30</strong></td><td><strong>20 Write, 10 Read</strong></td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/03-tools-trading.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/05-tools-bridge-aggregator.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/03-tools-trading.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/05-tools-bridge-aggregator.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

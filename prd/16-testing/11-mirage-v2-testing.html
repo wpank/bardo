@@ -1,0 +1,709 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Mirage V2 Testing - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/16-testing/11-mirage-v2-testing.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="mirage-rs-v2-engine-testing-spec"><a class="header" href="#mirage-rs-v2-engine-testing-spec">Mirage-RS v2 Engine Testing [SPEC]</a></h1>
+<p><strong>Version:</strong> 1.0.0
+<strong>Last Updated:</strong> 2026-03-18
+<strong>Companion to:</strong> <code>16-testing/04-mirage.md</code> (v1 mirage testing)</p>
+<blockquote>
+<p>Tests for the mirage-rs v2 simulation engine: HybridDB three-tier reads, DirtyStore correctness, Copy-on-Write branching isolation, state diff classification, TargetedFollower replay, and Block-STM parallel execution determinism.</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies tests for the mirage-rs v2 simulation engine, covering HybridDB three-tier reads, DirtyStore correctness, Copy-on-Write branching isolation, state diff classification, TargetedFollower replay, and Block-STM parallel execution determinism. It belongs to Section 16 (Testing) and verifies the structural correctness of the simulation layer that Golems (mortal autonomous agents) use during development and backtesting. Simulation accuracy against on-chain results is covered separately in <code>./12-simulation-validation.md</code> (sim-to-real accuracy tests). See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="document-map"><a class="header" href="#document-map">Document Map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Topic</th></tr>
+</thead>
+<tbody>
+<tr><td>Overview</td><td>What v2 testing covers and why it differs from v1</td></tr>
+<tr><td>HybridDB Read Priority</td><td>Three-tier read ordering correctness</td></tr>
+<tr><td>DirtyStore Correctness</td><td>Write isolation, snapshot/revert, watch list integrity</td></tr>
+<tr><td>CoW Branching Isolation</td><td>Branch independence, overlay-only mutation, baseline immutability</td></tr>
+<tr><td>State Diff Classification</td><td>Protocol vs token vs read-only classification accuracy</td></tr>
+<tr><td>TargetedFollower Replay</td><td>Transaction matching, replay correctness, contagion bounds</td></tr>
+<tr><td>Block-STM Determinism</td><td>Parallel execution produces same results as sequential</td></tr>
+<tr><td>Snapshot/Revert</td><td>Snapshot consumption, revert correctness, nested snapshots</td></tr>
+<tr><td>Property Test Sketches</td><td>Rust <code>proptest</code> harnesses for key invariants</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>mirage-rs v1 replayed every mainnet block through a local revm instance. v2 inverts that model: lazy-latest reads from upstream, automatic dirty tracking of local mutations, and targeted replay of only the mainnet transactions touching watched contracts. This inversion changes what needs testing.</p>
+<p>v1 testing focused on “does the full replay produce the same state as mainnet?” v2 testing focuses on “does the three-tier read priority produce correct results when local mutations overlap with upstream state?” and “do parallel scenarios running on CoW branches contaminate each other?”</p>
+<p>The test properties here are structural. They verify the database layer, the classification heuristics, and the branching model. Simulation accuracy against actual on-chain results is covered separately in <code>16-testing/12-simulation-validation.md</code>.</p>
+<h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
+<ul>
+<li><code>16-testing/04-mirage.md</code> – v1 mirage testing (predecessor)</li>
+<li><code>16-testing/12-simulation-validation.md</code> – accuracy validation against on-chain data</li>
+<li>Research: <code>02-mirage-rs/00-architecture.md</code> – HybridDB, DirtyStore, CoW, Block-STM</li>
+</ul>
+<hr>
+<h2 id="1-hybriddb-read-priority-spec"><a class="header" href="#1-hybriddb-read-priority-spec">1. HybridDB Read Priority [SPEC]</a></h2>
+<p>The HybridDB implements revm’s <code>Database</code> trait with a three-tier read priority: DirtyStore first, then ReadCache, then upstream RPC at <code>latest</code> (or at <code>pinned_block</code> in historical mode). Every read must respect this ordering. A violation means the golem sees stale or incorrect state during simulation.</p>
+<h3 id="11-property-dirtystore-always-overrides-readcache-and-upstream-spec"><a class="header" href="#11-property-dirtystore-always-overrides-readcache-and-upstream-spec">1.1 Property: DirtyStore always overrides ReadCache and upstream [SPEC]</a></h3>
+<p><strong>Statement:</strong> For any address A and storage slot S, if <code>DirtyStore</code> contains a value V for (A, S), then <code>HybridDB::storage(A, S)</code> returns V regardless of what the ReadCache or upstream would return.</p>
+<p><strong>Test approach:</strong> Property test with random address/slot/value triples.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use proptest::prelude::*;
+
+proptest! {
+    #[test]
+    fn dirty_store_always_wins(
+        addr in any::&lt;[u8; 20]&gt;().prop_map(Address::from),
+        slot in any::&lt;U256&gt;(),
+        dirty_value in any::&lt;U256&gt;(),
+        cache_value in any::&lt;U256&gt;(),
+    ) {
+        let mut db = HybridDB::test_instance();
+
+        // Plant a value in the read cache.
+        db.read_cache.insert_storage(addr, slot, cache_value, 100);
+
+        // Plant a different value in the dirty store.
+        db.dirty.accounts
+            .entry(addr)
+            .or_default()
+            .storage
+            .insert(slot, dirty_value);
+
+        // Read must return the dirty value.
+        let result = db.storage(addr, slot).unwrap();
+        prop_assert_eq!(result, dirty_value);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Failure mode:</strong> If the DirtyStore lookup is skipped or short-circuited, the golem would read upstream state for slots it has already modified locally. This silently corrupts simulation results.</p>
+<h3 id="12-property-readcache-serves-reads-when-dirtystore-has-no-entry-spec"><a class="header" href="#12-property-readcache-serves-reads-when-dirtystore-has-no-entry-spec">1.2 Property: ReadCache serves reads when DirtyStore has no entry [SPEC]</a></h3>
+<p><strong>Statement:</strong> For any (A, S) not in DirtyStore, if ReadCache holds value V, <code>HybridDB::storage(A, S)</code> returns V without making an upstream RPC call.</p>
+<p><strong>Test approach:</strong> Instrument the upstream client with a call counter. Verify zero RPC calls when the cache is warm.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn read_cache_prevents_rpc_calls() {
+    let mut db = HybridDB::test_instance();
+    let counter = db.upstream.call_counter();
+
+    let addr = address!("0xdead...");
+    let slot = U256::from(42);
+    let cached = U256::from(999);
+
+    db.read_cache.insert_storage(addr, slot, cached, 100);
+
+    let result = db.storage(addr, slot).unwrap();
+    assert_eq!(result, cached);
+    assert_eq!(counter.get(), 0, "should not call upstream when cache is warm");
+}
+<span class="boring">}</span></code></pre>
+<h3 id="13-property-cache-ttl-expiry-forces-upstream-re-fetch-spec"><a class="header" href="#13-property-cache-ttl-expiry-forces-upstream-re-fetch-spec">1.3 Property: Cache TTL expiry forces upstream re-fetch [SPEC]</a></h3>
+<p><strong>Statement:</strong> After <code>cache_ttl</code> elapses, a ReadCache entry is stale. The next read for that slot must fetch from upstream and update the cache.</p>
+<p><strong>Test approach:</strong> Set a short TTL (10ms), insert a value, sleep past TTL, read again, verify an upstream call was made.</p>
+<h3 id="14-property-pinned_block-consistency-within-a-single-evm-execution-spec"><a class="header" href="#14-property-pinned_block-consistency-within-a-single-evm-execution-spec">1.4 Property: <code>pinned_block</code> consistency within a single EVM execution [SPEC]</a></h3>
+<p><strong>Statement:</strong> When <code>pinned_block</code> is set (historical mode), all upstream reads within a single <code>transact()</code> call use the same block number. No read sees state from a different block.</p>
+<p><strong>Test approach:</strong> Mock the upstream to log requested block numbers. Execute a transaction that reads multiple slots. Assert all upstream requests specify the same block.</p>
+<h3 id="15-property-basic-merges-dirty-fields-with-upstream-spec"><a class="header" href="#15-property-basic-merges-dirty-fields-with-upstream-spec">1.5 Property: <code>basic()</code> merges dirty fields with upstream [SPEC]</a></h3>
+<p><strong>Statement:</strong> When DirtyStore contains partial account info (e.g., only a balance override), the remaining fields (nonce, code) are fetched from upstream and merged correctly.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn basic_merges_partial_dirty(
+        addr in any::&lt;[u8; 20]&gt;().prop_map(Address::from),
+        dirty_balance in any::&lt;U256&gt;(),
+        upstream_nonce in any::&lt;u64&gt;(),
+    ) {
+        let mut db = HybridDB::test_instance();
+
+        // Dirty store: only balance overridden.
+        db.dirty.accounts.entry(addr).or_default().balance = Some(dirty_balance);
+
+        // Upstream returns a different nonce.
+        db.upstream.mock_account(addr, AccountInfo {
+            nonce: upstream_nonce,
+            balance: U256::from(0),
+            ..Default::default()
+        });
+
+        let info = db.basic(addr).unwrap().unwrap();
+        prop_assert_eq!(info.balance, dirty_balance, "balance from dirty store");
+        prop_assert_eq!(info.nonce, upstream_nonce, "nonce from upstream");
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="2-dirtystore-correctness-spec"><a class="header" href="#2-dirtystore-correctness-spec">2. DirtyStore Correctness [SPEC]</a></h2>
+<h3 id="21-property-local-transactions-write-only-to-dirtystore-spec"><a class="header" href="#21-property-local-transactions-write-only-to-dirtystore-spec">2.1 Property: Local transactions write only to DirtyStore [SPEC]</a></h3>
+<p><strong>Statement:</strong> After <code>handle_local_transaction()</code>, all state changes land in <code>DirtyStore.accounts</code>. The ReadCache and upstream are not modified.</p>
+<p><strong>Test approach:</strong> Execute a local transaction. Check that ReadCache entry count did not increase. Check that the upstream mock received no write calls.</p>
+<h3 id="22-property-watch-list-grows-only-from-classified-transactions-spec"><a class="header" href="#22-property-watch-list-grows-only-from-classified-transactions-spec">2.2 Property: Watch list grows only from classified transactions [SPEC]</a></h3>
+<p><strong>Statement:</strong> The watch list gains entries only through <code>DiffClassifier</code> during local transaction processing or through manual <code>mirage_watchContract</code> calls. No other code path adds to the watch list.</p>
+<p><strong>Test approach:</strong> Run a sequence of read-only <code>eth_call</code> operations. Assert watch list size remains zero.</p>
+<h3 id="23-property-unwatch-list-prevents-re-addition-spec"><a class="header" href="#23-property-unwatch-list-prevents-re-addition-spec">2.3 Property: Unwatch list prevents re-addition [SPEC]</a></h3>
+<p><strong>Statement:</strong> An address in <code>DirtyStore.unwatch_list</code> is never added back to <code>watch_list</code> by auto-classification, even if a subsequent transaction writes 10+ slots to it.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn unwatch_prevents_readd() {
+    let mut store = DirtyStore::new();
+    let addr = address!("0xbeef...");
+
+    store.unwatch_list.insert(addr);
+
+    // Simulate a state diff with 10 written slots.
+    let diff = make_diff(addr, 10);
+    let classification = DiffClassifier::default().classify(&amp;diff, &amp;store, 100);
+
+    store.apply_classification(classification);
+    assert!(!store.watch_list.contains_key(&amp;addr));
+}
+<span class="boring">}</span></code></pre>
+<h3 id="24-property-total_dirty_slots-tracks-accurately-spec"><a class="header" href="#24-property-total_dirty_slots-tracks-accurately-spec">2.4 Property: <code>total_dirty_slots</code> tracks accurately [SPEC]</a></h3>
+<p><strong>Statement:</strong> <code>DirtyStore.total_dirty_slots</code> equals the sum of <code>storage.len()</code> across all <code>DirtyAccount</code> entries. Verified after every mutation.</p>
+<hr>
+<h2 id="3-copy-on-write-branching-isolation-spec"><a class="header" href="#3-copy-on-write-branching-isolation-spec">3. Copy-on-Write Branching Isolation [SPEC]</a></h2>
+<p>CoW state layers are the foundation for parallel scenario execution and Sanctum F6 forks. Isolation failures here mean one scenario’s state leaks into another, producing incorrect comparisons.</p>
+<h3 id="31-property-branches-share-the-same-baseline-spec"><a class="header" href="#31-property-branches-share-the-same-baseline-spec">3.1 Property: Branches share the same baseline [SPEC]</a></h3>
+<p><strong>Statement:</strong> Two <code>CowState::branch()</code> calls from the same <code>Arc&lt;baseline&gt;</code> start with identical state. Any slot readable in branch A is readable in branch B with the same value, before either branch writes anything.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn cow_branches_share_baseline(
+        slots in prop::collection::hash_map(
+            (any::&lt;[u8; 20]&gt;().prop_map(Address::from), any::&lt;U256&gt;()),
+            any::&lt;U256&gt;(),
+            1..100
+        ),
+    ) {
+        let baseline = Arc::new(slots.clone());
+        let branch_a = CowState::branch(&amp;baseline);
+        let branch_b = CowState::branch(&amp;baseline);
+
+        for ((addr, slot), expected) in &amp;slots {
+            let a_val = branch_a.read(*addr, *slot);
+            let b_val = branch_b.read(*addr, *slot);
+            prop_assert_eq!(a_val, Some(*expected));
+            prop_assert_eq!(b_val, Some(*expected));
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="32-property-writes-to-branch-a-do-not-appear-in-branch-b-spec"><a class="header" href="#32-property-writes-to-branch-a-do-not-appear-in-branch-b-spec">3.2 Property: Writes to branch A do not appear in branch B [SPEC]</a></h3>
+<p><strong>Statement:</strong> After <code>branch_a.write(addr, slot, new_value)</code>, <code>branch_b.read(addr, slot)</code> still returns the baseline value (or <code>None</code> if the slot was not in the baseline). This is the core isolation guarantee.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn cow_branches_are_isolated(
+        addr in any::&lt;[u8; 20]&gt;().prop_map(Address::from),
+        slot in any::&lt;U256&gt;(),
+        baseline_val in any::&lt;U256&gt;(),
+        branch_a_val in any::&lt;U256&gt;(),
+    ) {
+        let baseline = Arc::new(
+            [((addr, slot), baseline_val)].into_iter().collect()
+        );
+        let mut branch_a = CowState::branch(&amp;baseline);
+        let branch_b = CowState::branch(&amp;baseline);
+
+        branch_a.write(addr, slot, branch_a_val);
+
+        // Branch B must still see baseline.
+        prop_assert_eq!(branch_b.read(addr, slot), Some(baseline_val));
+        // Branch A sees its own write.
+        prop_assert_eq!(branch_a.read(addr, slot), Some(branch_a_val));
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="33-property-baseline-is-never-mutated-spec"><a class="header" href="#33-property-baseline-is-never-mutated-spec">3.3 Property: Baseline is never mutated [SPEC]</a></h3>
+<p><strong>Statement:</strong> The <code>Arc&lt;HashMap&gt;</code> baseline is immutable after creation. No write to any branch modifies the baseline’s reference count contents. Verified by <code>Arc::strong_count()</code> remaining stable and by re-reading baseline values after branch mutations.</p>
+<h3 id="34-property-overlay-size-reflects-only-branch-local-writes-spec"><a class="header" href="#34-property-overlay-size-reflects-only-branch-local-writes-spec">3.4 Property: Overlay size reflects only branch-local writes [SPEC]</a></h3>
+<p><strong>Statement:</strong> <code>CowState::overlay_size()</code> equals the number of unique (address, slot) pairs written to that specific branch. Writing the same slot twice in one branch counts as 1. Writing the same slot in two different branches counts as 1 in each.</p>
+<h3 id="35-memory-scaling-spec"><a class="header" href="#35-memory-scaling-spec">3.5 Memory scaling [SPEC]</a></h3>
+<p><strong>Test:</strong> Create a baseline with 50,000 slots. Branch 8 times. Each branch writes 200 unique slots. Verify total memory is approximately <code>50,000 * sizeof(entry) + 8 * 200 * sizeof(entry)</code>, not <code>9 * 50,000 * sizeof(entry)</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn cow_memory_scales_with_overlays_not_baseline() {
+    let baseline: HashMap&lt;(Address, U256), U256&gt; =
+        (0..50_000u64).map(|i| {
+            let addr = Address::from_word(B256::from(U256::from(i)));
+            ((addr, U256::from(i)), U256::from(i * 100))
+        }).collect();
+    let baseline = Arc::new(baseline);
+
+    let mut branches: Vec&lt;CowState&gt; = (0..8)
+        .map(|_| CowState::branch(&amp;baseline))
+        .collect();
+
+    for (b, branch) in branches.iter_mut().enumerate() {
+        for s in 0..200u64 {
+            let addr = Address::from_word(B256::from(U256::from(b as u64 * 1000 + s)));
+            branch.write(addr, U256::from(s), U256::from(999));
+        }
+        assert_eq!(branch.overlay_size(), 200);
+    }
+
+    // Baseline Arc has 1 (owner) + 8 (branches) strong references.
+    assert_eq!(Arc::strong_count(&amp;baseline), 9);
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="4-state-diff-classification-spec"><a class="header" href="#4-state-diff-classification-spec">4. State Diff Classification [SPEC]</a></h2>
+<p>The <code>DiffClassifier</code> decides whether a contract enters the watch list (protocol), gets slot-level overrides only (token), or is ignored (read-only). Misclassification means either unnecessary replay overhead (token classified as protocol) or missing state updates (protocol classified as token).</p>
+<h3 id="41-property-contracts-with--n-written-slots-classify-as-protocol-spec"><a class="header" href="#41-property-contracts-with--n-written-slots-classify-as-protocol-spec">4.1 Property: Contracts with &gt;= N written slots classify as Protocol [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a single transaction writes N or more storage slots to a contract (where N = <code>protocol_slot_threshold</code>, default 3), the contract is classified as <code>Classification::Protocol</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn protocol_classification_at_threshold(
+        slot_count in 3..100usize,
+    ) {
+        let config = ClassificationConfig::default();
+        let diff = make_diff_with_slots(test_address(), slot_count);
+        let result = DiffClassifier::new(config).classify_contract(&amp;diff);
+        prop_assert_eq!(result, Classification::Protocol);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="42-property-contracts-with--n-written-slots-classify-as-slotonly-spec"><a class="header" href="#42-property-contracts-with--n-written-slots-classify-as-slotonly-spec">4.2 Property: Contracts with &lt; N written slots classify as SlotOnly [SPEC]</a></h3>
+<p><strong>Statement:</strong> A contract with 1-2 written slots (below default threshold) classifies as <code>Classification::SlotOnly</code>, not Protocol.</p>
+<h3 id="43-property-erc-20-heuristic-overrides-slot-count-for-token-transfers-spec"><a class="header" href="#43-property-erc-20-heuristic-overrides-slot-count-for-token-transfers-spec">4.3 Property: ERC-20 heuristic overrides slot count for token transfers [SPEC]</a></h3>
+<p><strong>Statement:</strong> When <code>check_token_interface</code> is enabled, a contract with 3+ written slots that match the token transfer pattern (high-entropy keccak slots, no low-numbered state variables) classifies as <code>Classification::SlotOnly</code> instead of <code>Protocol</code>.</p>
+<p><strong>Test case:</strong> Simulate a rebasing token (stETH) that writes to <code>totalSupply</code>, <code>rebaseIndex</code>, and <code>balanceOf[user]</code> in a single transfer – 3 slots, all mapping-derived keccak outputs.</p>
+<h3 id="44-property-read-only-transactions-produce-no-classification-spec"><a class="header" href="#44-property-read-only-transactions-produce-no-classification-spec">4.4 Property: Read-only transactions produce no classification [SPEC]</a></h3>
+<p><strong>Statement:</strong> A transaction that reads but writes zero storage slots produces <code>Classification::ReadOnly</code>. No watch list or slot override changes.</p>
+<h3 id="45-contagion-depth-bound-spec"><a class="header" href="#45-contagion-depth-bound-spec">4.5 Contagion depth bound [SPEC]</a></h3>
+<p><strong>Statement:</strong> Recursive contagion from <code>TargetedFollower</code> replay never exceeds <code>max_contagion_depth</code>. After depth D, new contracts encountered during replay fall back to <code>Classification::SlotOnly</code>.</p>
+<p><strong>Test approach:</strong> Create a chain of contracts: A calls B calls C calls D. Set <code>max_contagion_depth = 2</code>. Replay from A. Verify A and B enter the watch list, but C does not (depth exceeded).</p>
+<h3 id="46-watch-list-saturation-spec"><a class="header" href="#46-watch-list-saturation-spec">4.6 Watch list saturation [SPEC]</a></h3>
+<p><strong>Statement:</strong> When the watch list reaches <code>max_watched_contracts</code>, new contracts always classify as <code>SlotOnly</code> regardless of slot count.</p>
+<hr>
+<h2 id="5-targetedfollower-replay-spec"><a class="header" href="#5-targetedfollower-replay-spec">5. TargetedFollower Replay [SPEC]</a></h2>
+<h3 id="51-property-matching-precision-for-direct-calls-spec"><a class="header" href="#51-property-matching-precision-for-direct-calls-spec">5.1 Property: Matching precision for direct calls [SPEC]</a></h3>
+<p><strong>Statement:</strong> A transaction where <code>tx.to</code> matches a watched contract address is always identified as a match. False negative rate on direct calls = 0%.</p>
+<h3 id="52-property-empty-watch-list-means-zero-replays-spec"><a class="header" href="#52-property-empty-watch-list-means-zero-replays-spec">5.2 Property: Empty watch list means zero replays [SPEC]</a></h3>
+<p><strong>Statement:</strong> When <code>watch_list.is_empty()</code>, <code>process_block()</code> returns immediately without fetching block data. Verified by zero upstream calls.</p>
+<h3 id="53-property-replay-respects-transaction-ordering-within-a-block-spec"><a class="header" href="#53-property-replay-respects-transaction-ordering-within-a-block-spec">5.3 Property: Replay respects transaction ordering within a block [SPEC]</a></h3>
+<p><strong>Statement:</strong> When multiple matched transactions appear in the same block, they are replayed in the same order they appeared on-chain (by transaction index).</p>
+<h3 id="54-property-reverted-mainnet-transactions-are-handled-gracefully-spec"><a class="header" href="#54-property-reverted-mainnet-transactions-are-handled-gracefully-spec">5.4 Property: Reverted mainnet transactions are handled gracefully [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a replayed mainnet transaction reverts locally (because the golem’s state has diverged), the follower logs the revert and continues processing subsequent transactions. No panic, no state corruption.</p>
+<h3 id="55-contagion-from-replayed-transactions-spec"><a class="header" href="#55-contagion-from-replayed-transactions-spec">5.5 Contagion from replayed transactions [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a replayed mainnet transaction touches a new contract that exceeds the slot threshold, that contract enters the watch list with <code>WatchSource::Contagion { parent }</code>.</p>
+<hr>
+<h2 id="6-block-stm-parallel-execution-determinism-spec"><a class="header" href="#6-block-stm-parallel-execution-determinism-spec">6. Block-STM Parallel Execution Determinism [SPEC]</a></h2>
+<p>Block-STM enables parallel transaction execution within a single block for historical replay. The core property: the final state after parallel execution must be identical to sequential execution.</p>
+<h3 id="61-property-parallel-execution-matches-sequential-execution-spec"><a class="header" href="#61-property-parallel-execution-matches-sequential-execution-spec">6.1 Property: Parallel execution matches sequential execution [SPEC]</a></h3>
+<p><strong>Statement:</strong> For any block of N transactions, executing them through Block-STM with K worker threads produces the same final state as executing them sequentially (one at a time, in order).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn block_stm_deterministic(
+        // Generate random blocks with known state interactions.
+        txs in prop::collection::vec(arb_transaction(), 10..200),
+        num_threads in 1..8usize,
+    ) {
+        let base_state = default_test_state();
+
+        // Sequential execution.
+        let sequential_result = execute_sequential(&amp;base_state, &amp;txs);
+
+        // Parallel execution via Block-STM.
+        let parallel_result = execute_block_stm(
+            &amp;base_state, &amp;txs, num_threads,
+        );
+
+        // Final state must match exactly.
+        prop_assert_eq!(
+            sequential_result.final_state,
+            parallel_result.final_state,
+        );
+        // Receipt ordering must match.
+        prop_assert_eq!(
+            sequential_result.receipts,
+            parallel_result.receipts,
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="62-property-conflict-detection-catches-read-write-overlaps-spec"><a class="header" href="#62-property-conflict-detection-catches-read-write-overlaps-spec">6.2 Property: Conflict detection catches read-write overlaps [SPEC]</a></h3>
+<p><strong>Statement:</strong> If transaction T_i reads slot (A, S) and transaction T_j (where j &gt; i) writes to (A, S), the MultiVersionStore detects this conflict. T_i is re-executed with T_j’s written value.</p>
+<h3 id="63-property-version-ordering-respects-transaction-index-spec"><a class="header" href="#63-property-version-ordering-respects-transaction-index-spec">6.3 Property: Version ordering respects transaction index [SPEC]</a></h3>
+<p><strong>Statement:</strong> <code>MultiVersionStore::read(addr, slot, tx_index)</code> returns the value written by the highest-indexed transaction below <code>tx_index</code>. It never returns a value written by a later transaction.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn mvs_read_respects_ordering(
+        values in prop::collection::vec(any::&lt;U256&gt;(), 5..20),
+        reader_index in 0..20usize,
+    ) {
+        let store = MultiVersionStore::new();
+        let addr = test_address();
+        let slot = U256::from(0);
+
+        // Write values at sequential tx indices.
+        for (i, val) in values.iter().enumerate() {
+            store.write(addr, slot, i, 0, *val);
+        }
+
+        let result = store.read(addr, slot, reader_index);
+        if reader_index == 0 {
+            // No prior writer.
+            assert!(matches!(result, ReadResult::NotFound));
+        } else {
+            let expected_idx = reader_index.min(values.len()) - 1;
+            match result {
+                ReadResult::Found(val, writer_idx) =&gt; {
+                    assert!(writer_idx &lt; reader_index);
+                    assert_eq!(val, values[writer_idx]);
+                }
+                ReadResult::NotFound if reader_index &gt; values.len() =&gt; {
+                    // Reader beyond last writer: should find the last write.
+                    panic!("should have found the last writer");
+                }
+                _ =&gt; {}
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="64-property-incarnation-numbers-increment-on-re-execution-spec"><a class="header" href="#64-property-incarnation-numbers-increment-on-re-execution-spec">6.4 Property: Incarnation numbers increment on re-execution [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a transaction is re-executed after conflict detection, its incarnation number increments. The MultiVersionStore stores the latest incarnation only for each (tx_index, slot) pair.</p>
+<h3 id="65-performance-conflict-rate-on-typical-defi-blocks-spec"><a class="header" href="#65-performance-conflict-rate-on-typical-defi-blocks-spec">6.5 Performance: Conflict rate on typical DeFi blocks [SPEC]</a></h3>
+<p><strong>Benchmark, not property test.</strong> Replay 100 historical mainnet blocks through Block-STM. Measure the conflict rate (transactions requiring re-execution / total transactions). Expected: &lt; 5% for typical blocks (Saraph &amp; Herlihy, 2019). Flag if any block exceeds 20%.</p>
+<hr>
+<h2 id="7-snapshot-and-revert-spec"><a class="header" href="#7-snapshot-and-revert-spec">7. Snapshot and Revert [SPEC]</a></h2>
+<h3 id="71-property-revert-restores-exact-prior-state-spec"><a class="header" href="#71-property-revert-restores-exact-prior-state-spec">7.1 Property: Revert restores exact prior state [SPEC]</a></h3>
+<p><strong>Statement:</strong> After <code>snapshot() -&gt; id</code>, followed by arbitrary writes, <code>revert(id)</code> restores the DirtyStore to the exact state at snapshot time. Every account, every slot, every watch list entry matches.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn snapshot_revert_roundtrip(
+        initial_slots in prop::collection::hash_map(
+            (any::&lt;[u8; 20]&gt;().prop_map(Address::from), any::&lt;U256&gt;()),
+            any::&lt;U256&gt;(),
+            1..50
+        ),
+        mutations in prop::collection::vec(
+            (any::&lt;[u8; 20]&gt;().prop_map(Address::from), any::&lt;U256&gt;(), any::&lt;U256&gt;()),
+            1..20
+        ),
+    ) {
+        let mut store = DirtyStore::from_slots(initial_slots.clone());
+
+        let snap_id = store.snapshot(100, 0);
+
+        // Apply random mutations.
+        for (addr, slot, val) in &amp;mutations {
+            store.accounts.entry(*addr).or_default()
+                .storage.insert(*slot, *val);
+        }
+
+        // Revert.
+        store.revert(snap_id).unwrap();
+
+        // Verify state matches initial.
+        for ((addr, slot), expected) in &amp;initial_slots {
+            let actual = store.accounts.get(addr)
+                .and_then(|a| a.storage.get(slot).copied());
+            prop_assert_eq!(actual, Some(*expected));
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="72-property-snapshot-ids-are-consumed-on-revert-spec"><a class="header" href="#72-property-snapshot-ids-are-consumed-on-revert-spec">7.2 Property: Snapshot IDs are consumed on revert [SPEC]</a></h3>
+<p><strong>Statement:</strong> Calling <code>revert(id)</code> a second time with the same ID returns <code>Err(SnapshotNotFound)</code>. Snapshots are single-use.</p>
+<h3 id="73-property-later-snapshots-are-invalidated-on-revert-spec"><a class="header" href="#73-property-later-snapshots-are-invalidated-on-revert-spec">7.3 Property: Later snapshots are invalidated on revert [SPEC]</a></h3>
+<p><strong>Statement:</strong> If snapshot A is taken before snapshot B, reverting to A removes snapshot B. Attempting to revert to B after reverting to A fails.</p>
+<h3 id="74-property-watch-list-is-included-in-snapshots-spec"><a class="header" href="#74-property-watch-list-is-included-in-snapshots-spec">7.4 Property: Watch list is included in snapshots [SPEC]</a></h3>
+<p><strong>Statement:</strong> Reverting restores the watch list and unwatch list to their snapshot-time state. Contracts added to the watch list after the snapshot are removed on revert.</p>
+<hr>
+<h2 id="8-bytecodecache-spec"><a class="header" href="#8-bytecodecache-spec">8. BytecodeCache [SPEC]</a></h2>
+<h3 id="81-property-bytecode-cache-entries-never-expire-spec"><a class="header" href="#81-property-bytecode-cache-entries-never-expire-spec">8.1 Property: Bytecode cache entries never expire [SPEC]</a></h3>
+<p><strong>Statement:</strong> Once bytecode is cached for a given code hash, it remains available indefinitely (LRU eviction aside). No TTL, no invalidation.</p>
+<h3 id="82-property-cache-is-shared-across-forks-via-arc-spec"><a class="header" href="#82-property-cache-is-shared-across-forks-via-arc-spec">8.2 Property: Cache is shared across forks via Arc [SPEC]</a></h3>
+<p><strong>Statement:</strong> Two HybridDB instances created with the same <code>Arc&lt;BytecodeCache&gt;</code> share cache entries. A bytecode fetched by one instance is immediately available to the other without an upstream call.</p>
+<h3 id="83-property-lru-eviction-respects-capacity-spec"><a class="header" href="#83-property-lru-eviction-respects-capacity-spec">8.3 Property: LRU eviction respects capacity [SPEC]</a></h3>
+<p><strong>Statement:</strong> The cache never holds more than <code>capacity</code> entries. When full, the least recently accessed entry is evicted.</p>
+<hr>
+<h2 id="9-integration-test-scenarios-spec"><a class="header" href="#9-integration-test-scenarios-spec">9. Integration Test Scenarios [SPEC]</a></h2>
+<h3 id="91-full-pipeline-local-transaction---classify---watch---replay-spec"><a class="header" href="#91-full-pipeline-local-transaction---classify---watch---replay-spec">9.1 Full pipeline: local transaction -&gt; classify -&gt; watch -&gt; replay [SPEC]</a></h3>
+<p><strong>Scenario:</strong></p>
+<ol>
+<li>Start mirage-rs v2 connected to a mainnet archive node.</li>
+<li>Execute a Uniswap v3 LP deposit via <code>eth_sendTransaction</code>.</li>
+<li>Verify the pool contract enters the watch list (&gt;= 3 slots written).</li>
+<li>Wait for a new mainnet block containing a swap on the same pool.</li>
+<li>Verify the TargetedFollower replays the swap.</li>
+<li>Verify the golem’s position reflects accrued fees from the replayed swap.</li>
+</ol>
+<h3 id="92-scenario-runner-parallel-scenarios-with-cow-spec"><a class="header" href="#92-scenario-runner-parallel-scenarios-with-cow-spec">9.2 Scenario runner: parallel scenarios with CoW [SPEC]</a></h3>
+<p><strong>Scenario:</strong></p>
+<ol>
+<li>Create a baseline state with an active LP position.</li>
+<li>Define 4 scenarios: exit at 100%, 75%, 50%, 25% of position.</li>
+<li>Run in parallel mode with CoW branches.</li>
+<li>Verify each scenario produces different final balances.</li>
+<li>Verify reverting to baseline after all scenarios restores original state.</li>
+</ol>
+<h3 id="93-historical-mode-pin-block--replay-range-spec"><a class="header" href="#93-historical-mode-pin-block--replay-range-spec">9.3 Historical mode: pin block + replay range [SPEC]</a></h3>
+<p><strong>Scenario:</strong></p>
+<ol>
+<li>Start mirage-rs in <code>--mode historical --from-block N --to-block N+100</code>.</li>
+<li>Verify all upstream reads use block N (never <code>latest</code>).</li>
+<li>Replay 100 blocks in <code>hybrid</code> mode.</li>
+<li>Verify PnL output matches expected attribution.</li>
+</ol>
+<hr>
+<h2 id="test-infrastructure-requirements"><a class="header" href="#test-infrastructure-requirements">Test Infrastructure Requirements</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>HybridDB::test_instance()</code></td><td>Pre-configured HybridDB with mock upstream</td></tr>
+<tr><td><code>MockUpstreamRpc</code></td><td>Returns configurable state, tracks call counts</td></tr>
+<tr><td><code>arb_transaction()</code></td><td>proptest <code>Arbitrary</code> impl for test transactions</td></tr>
+<tr><td><code>DirtyStore::from_slots()</code></td><td>Convenience constructor from a slot map</td></tr>
+<tr><td><code>default_test_state()</code></td><td>Baseline state for Block-STM tests</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<ul>
+<li><code>16-testing/04-mirage.md</code> – v1 mirage testing (Anvil-based fork infrastructure and regime scenario tests)</li>
+<li><code>16-testing/12-simulation-validation.md</code> – sim-to-real accuracy tests comparing mirage outputs against actual on-chain results</li>
+<li>Research: <code>02-mirage-rs/00-architecture.md</code> – HybridDB three-tier read model, DirtyStore write isolation, CoW branching, and Block-STM parallel execution</li>
+<li>Research: <code>02-mirage-rs/02-scenario-runner.md</code> – LHS parameter exploration, Bayesian optimization, and parallel scenario execution</li>
+<li>Research: <code>02-mirage-rs/03-historical-mode.md</code> – historical block replay, shadow execution with modified bytecode, and PnL attribution</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Gelashvili, R. et al. (2023). Block-STM: Scaling blockchain execution by turning ordering curse to a performance blessing. <em>PPoPP</em>. — <em>The parallel execution algorithm tested in Section 6; proves that optimistic concurrency with multi-version data structures achieves deterministic results matching sequential execution.</em></li>
+<li>Saraph, V. &amp; Herlihy, M. (2019). An empirical study of speculative concurrency in Ethereum smart contracts. <em>arXiv:1901.01376</em>. — <em>Measures real-world read/write conflict rates in Ethereum blocks; establishes that most transactions are parallelizable, motivating Block-STM adoption for historical replay.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/16-testing/10-retrospective-evaluation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/16-testing/12-simulation-validation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/16-testing/10-retrospective-evaluation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/16-testing/12-simulation-validation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

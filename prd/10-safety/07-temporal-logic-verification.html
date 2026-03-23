@@ -1,0 +1,919 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Temporal Logic Verification - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/10-safety/07-temporal-logic-verification.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="temporal-logic-strategy-verification-spec"><a class="header" href="#temporal-logic-strategy-verification-spec">Temporal Logic Strategy Verification [SPEC]</a></h1>
+<blockquote>
+<p><strong>Crate</strong>: <code>golem-verify</code></p>
+<p><strong>Depends on</strong>: <a href="00-defense.html">00-defense.md</a> (defense architecture), <a href="02-policy.html">02-policy.md</a> (PolicyCage), <a href="05-threat-model.html">05-threat-model.md</a> (threat model), <a href="06-adaptive-risk.html">06-adaptive-risk.md</a> (adaptive risk), <code>../01-golem/02-heartbeat.md</code> (heartbeat pipeline), <code>../01-golem/18-cortical-state.md</code> (CorticalState)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies temporal logic verification for Golem (mortal autonomous DeFi agent) trading strategies. It belongs to the <strong>Safety</strong> layer of Bardo (the Rust runtime for these agents). The key concept before diving in: while the PolicyCage (on-chain smart contract) gates individual operations, temporal logic monitors verify properties <em>across time</em>, catching failures like “held a losing position for 500 ticks without acting” that no single-transaction check can detect. LTL/CTL formulas express these properties mathematically; monitors run at T0 (no LLM, zero cost). Terms like Grimoire, Heartbeat, CorticalState, and BehavioralPhase are defined inline on first use; a full glossary lives in <code>prd2/11-compute/00-overview.md § Terminology</code>.</p>
+</blockquote>
+<p>Bardo’s safety system verifies individual transactions. PolicyCage confirms a swap stays within slippage bounds. Revm simulation confirms the swap will succeed. But strategy failures are rarely transactional. A Golem that makes individually safe trades while holding a losing position for 500 ticks without acting, or that never takes profit, or that ignores regime changes for hours, is failing <em>temporally</em>. No component of the current system can express, let alone verify, properties like “the portfolio always recovers within N blocks after a drawdown exceeding 10%.”</p>
+<p>This document specifies temporal logic verification as a <strong>complementary layer</strong> to PolicyCage. PolicyCage gates individual operations. Temporal monitors flag temporal violations. The hierarchy is clear: PolicyCage has veto power, temporal logic has escalation power.</p>
+<hr>
+<h2 id="1-authority-hierarchy"><a class="header" href="#1-authority-hierarchy">1. Authority Hierarchy</a></h2>
+<p>The relationship between PolicyCage and temporal logic is not peer-to-peer. It is hierarchical:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>System</th><th>Authority</th><th>Scope</th><th>Enforcement</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>PolicyCage</strong></td><td>Veto (hard block)</td><td>Per-operation</td><td>On-chain, immutable</td></tr>
+<tr><td><strong>LTL Monitor</strong></td><td>Escalation (soft flag)</td><td>Across time (actual trace)</td><td>Off-chain, runtime</td></tr>
+<tr><td><strong>CTL Verifier</strong></td><td>Advisory (pre-decision)</td><td>Branching futures</td><td>Off-chain, pre-execution</td></tr>
+</tbody>
+</table>
+</div>
+<p>PolicyCage can block a trade that passes LTL checks (the trade is individually unsafe even if the temporal pattern is fine). LTL can flag a pattern that passes PolicyCage checks (each individual operation is safe but the sequence violates a temporal property). LTL flags do NOT block execution. They escalate to the next cognitive tier and emit warnings. Only PolicyCage blocks.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Safety verdict types, ordered by authority.
+/// Each verification layer issues one of these per check.
+pub enum SafetyVerdict {
+    /// Hard block: operation cannot proceed. Only PolicyCage issues these.
+    Block { reason: String },
+    /// Soft flag: operation can proceed but a violation is logged and escalated.
+    /// LTL monitors and Witness DAG issue these.
+    Flag { severity: u8, property: String },
+    /// Pass: no issues detected.
+    Pass,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="2-the-verification-gap"><a class="header" href="#2-the-verification-gap">2. The Verification Gap</a></h2>
+<p>Three failure modes from real Golem post-mortems illustrate the gap:</p>
+<p><strong>The patient loser.</strong> A Golem entered a leveraged ETH-USDC position at $3,200. ETH dropped to $2,800. Each tick, the Golem decided to hold. Every individual hold decision was locally rational – the drawdown hadn’t hit the stop-loss threshold for any single tick. After 437 ticks (~14 hours at theta=120s), cumulative loss consumed 40% of the vault. Every individual decision passed per-transaction verification. The temporal property “never hold a declining position for more than N ticks” was invisible to the safety system.</p>
+<p><strong>The profit-allergic accumulator.</strong> A Golem identified profitable LP positions. Returns accumulated. The Golem never exited. When a liquidity event hit, unrealized gains and principal were lost. Each entry was individually safe. The temporal property “eventually take profit on positions held longer than T ticks” was never checked.</p>
+<p><strong>The regime-deaf strategist.</strong> Market volatility tripled in 30 minutes. The Golem continued executing its low-volatility strategy for 47 ticks before adjusting. Each tick’s actions were individually valid under the old regime. The temporal property “respond to regime changes within N ticks” was unenforceable.</p>
+<p>The current architecture has a blind spot shaped like time:</p>
+<ul>
+<li><strong>PolicyCage</strong> enforces per-operation constraints: max slippage, max position size, approved protocol list. These are state predicates, not temporal properties.</li>
+<li><strong>Capability tokens</strong> gate access to operations. They control what the Golem <em>can</em> do, not what it <em>should</em> do over time.</li>
+<li><strong>Taint tracking</strong> follows asset provenance. It tracks origin, not timing.</li>
+<li><strong>Revm simulation</strong> checks the next transaction. It cannot simulate a 100-tick future.</li>
+</ul>
+<hr>
+<h2 id="3-mathematical-foundation"><a class="header" href="#3-mathematical-foundation">3. Mathematical Foundation</a></h2>
+<h3 id="31-state-traces-from-the-heartbeat"><a class="header" href="#31-state-traces-from-the-heartbeat">3.1 State Traces from the Heartbeat</a></h3>
+<p>Each heartbeat tick produces a DecisionCycleRecord. For temporal verification, each record is abstracted to a state vector:</p>
+<pre><code>s_t = (portfolio_value, positions, drawdown, regime, phase, exposure_by_asset,
+       position_ages, actions_taken, cortical_signals)
+</code></pre>
+<p>A trace is a finite sequence sigma = s_0, s_1, …, s_n. The trace grows by one state per tick. At theta=120s, a 24-hour period produces 720 states.</p>
+<p>This trace is a finite prefix of an omega-word. LTL formulas are defined over infinite words, but finite-trace semantics are well-established (Bauer et al., 2011; De Giacomo &amp; Vardi, 2013). A formula evaluates to true, false, or inconclusive on a finite prefix. We use three-valued semantics throughout.</p>
+<h3 id="32-linear-temporal-logic-ltl"><a class="header" href="#32-linear-temporal-logic-ltl">3.2 Linear Temporal Logic (LTL)</a></h3>
+<p>LTL extends propositional logic with temporal operators over a single infinite path.</p>
+<p><strong>Syntax.</strong> Given a set AP of atomic propositions (state predicates like <code>drawdown &gt; 0.1</code> or <code>position_age &gt; T</code>):</p>
+<pre><code>phi ::= p | !phi | phi &amp;&amp; psi | phi || psi | X phi | phi U psi | F phi | G phi | phi R psi
+</code></pre>
+<p>where p is in AP, and:</p>
+<ul>
+<li><strong>X phi</strong> (next): phi holds at the next state</li>
+<li><strong>F phi</strong> (eventually): phi holds at some future state</li>
+<li><strong>G phi</strong> (globally): phi holds at all future states</li>
+<li><strong>phi U psi</strong> (until): phi holds at every state until psi holds (and psi does hold)</li>
+<li><strong>phi R psi</strong> (release): dual of U</li>
+</ul>
+<p><strong>Bounded operators.</strong> For DeFi, we need bounded variants:</p>
+<ul>
+<li><strong>F_{&lt;=N} phi</strong>: phi holds within the next N states</li>
+<li><strong>G_{&lt;=N} phi</strong>: phi holds for the next N states</li>
+</ul>
+<p>These are syntactic sugar: F_{&lt;=N} phi is phi || X phi || XX phi || … || X^N phi. The bounded form matters for complexity: checking a bounded formula avoids the exponential blowup of the general case.</p>
+<p><strong>Semantics.</strong></p>
+<pre><code>sigma, i |= p           iff  p holds in state s_i
+sigma, i |= !phi        iff  sigma, i |/= phi
+sigma, i |= phi &amp;&amp; psi  iff  sigma, i |= phi and sigma, i |= psi
+sigma, i |= X phi       iff  sigma, i+1 |= phi
+sigma, i |= phi U psi   iff  exists j &gt;= i: sigma, j |= psi
+                              and for all k, i &lt;= k &lt; j: sigma, k |= phi
+sigma, i |= F phi       iff  exists j &gt;= i: sigma, j |= phi
+sigma, i |= G phi       iff  for all j &gt;= i: sigma, j |= phi
+</code></pre>
+<h3 id="33-computation-tree-logic-ctl"><a class="header" href="#33-computation-tree-logic-ctl">3.3 Computation Tree Logic (CTL)</a></h3>
+<p>CTL extends propositional logic with temporal operators over a branching tree of computation paths. Where LTL reasons about one path (the actual execution), CTL reasons about all possible paths from a given state.</p>
+<p><strong>Syntax:</strong></p>
+<pre><code>phi ::= p | !phi | phi &amp;&amp; psi | phi || psi
+      | AX phi | EX phi | AF phi | EF phi | AG phi | EG phi
+      | A[phi U psi] | E[phi U psi]
+</code></pre>
+<p>Path quantifiers:</p>
+<ul>
+<li><strong>A</strong> (for all paths): the property holds on every path from the current state</li>
+<li><strong>E</strong> (exists a path): the property holds on at least one path</li>
+</ul>
+<p>Combined with temporal operators:</p>
+<ul>
+<li><strong>AG phi</strong>: on all paths, phi holds at every state (strongest safety)</li>
+<li><strong>AF phi</strong>: on all paths, phi holds at some future state (strongest liveness)</li>
+<li><strong>EF phi</strong>: there exists a path where phi eventually holds (reachability)</li>
+<li><strong>EG phi</strong>: there exists a path where phi always holds (persistence possibility)</li>
+</ul>
+<p>CTL semantics are evaluated over a Kripke structure M = (S, R, L). CTL model checking is O(|S| * |R| * |phi|), polynomial in both model size and formula size (Clarke, Grumberg &amp; Peled, 1999).</p>
+<h3 id="34-why-both-logics"><a class="header" href="#34-why-both-logics">3.4 Why Both Logics</a></h3>
+<p>LTL and CTL have incomparable expressive power (Emerson, 1990). Neither subsumes the other. DeFi strategy verification needs both:</p>
+<p><strong>LTL for runtime monitoring.</strong> The Golem’s actual execution trace is a single path. LTL checks whether this path satisfies temporal specifications. “Has this Golem held a losing position too long?” is an LTL question.</p>
+<p><strong>CTL for pre-execution verification.</strong> Before a major decision (T2 tick), the Golem builds a finite model of possible futures. “Does there exist any sequence of market moves under which this strategy violates a safety property?” is a CTL question: check EF(violation) on the branching model.</p>
+<p>The practical split: LTL runs every tick (cheap, monitors actual trace). CTL runs before major decisions (expensive, checks the space of possible futures).</p>
+<h3 id="35-automata-theoretic-model-checking"><a class="header" href="#35-automata-theoretic-model-checking">3.5 Automata-Theoretic Model Checking</a></h3>
+<p><strong>LTL via Buchi automata.</strong> The standard approach converts an LTL formula phi to a Buchi automaton A_phi that accepts exactly the traces satisfying phi (Vardi &amp; Wolper, 1986). For runtime monitoring on finite prefixes, we use a simplified construction: convert the LTL formula to an NFA over finite words (De Giacomo &amp; Vardi, 2013). The NFA tracks satisfaction status incrementally – each new state triggers one automaton transition. Three-valued output (true/false/inconclusive) comes from the automaton’s state after processing the prefix.</p>
+<p><strong>Complexity.</strong> LTL model checking on a trace of length n with a formula of size m is O(n * 2^m). The exponential is in formula size, not trace length. DeFi temporal specifications are typically small (5-15 operators). A formula with 10 operators gives 2^10 = 1024 automaton states. Checking against a 1000-tick trace is ~10^6 operations, about 1ms.</p>
+<p>For bounded formulas (F_{&lt;=N} with small N), the automaton construction produces much smaller automata. G(p -&gt; F_{&lt;=100} q) with 100-tick bound needs an automaton that tracks at most 100 open obligations. Linear in the bound, not exponential.</p>
+<hr>
+<h2 id="4-forty-defi-temporal-patterns"><a class="header" href="#4-forty-defi-temporal-patterns">4. Forty DeFi Temporal Patterns</a></h2>
+<p>Organized into four categories following Dwyer, Avrunin &amp; Corbett (1999).</p>
+<h3 id="41-safety-properties-g--always"><a class="header" href="#41-safety-properties-g--always">4.1 Safety Properties (G – always)</a></h3>
+<p>Safety properties say that something bad never happens. Violation occurs at a specific state and is irrevocable.</p>
+<ol>
+<li><strong>Max single-asset exposure</strong>: G(exposure(asset) &lt;= threshold) for all assets</li>
+<li><strong>Max total leverage</strong>: G(leverage_ratio &lt;= max_leverage)</li>
+<li><strong>Min collateral ratio</strong>: G(collateral_ratio &gt;= min_ratio) for all borrow positions</li>
+<li><strong>Max gas budget per tick</strong>: G(gas_spent_this_tick &lt;= gas_budget)</li>
+<li><strong>No interaction with blacklisted protocols</strong>: G(!interacts_with(blacklisted))</li>
+<li><strong>Max portfolio concentration</strong>: G(herfindahl_index &lt;= max_concentration)</li>
+<li><strong>Min liquidity buffer</strong>: G(liquid_assets &gt;= min_buffer)</li>
+<li><strong>Max drawdown</strong>: G(drawdown &lt;= max_drawdown)</li>
+<li><strong>No stale price data</strong>: G(price_staleness(asset) &lt;= max_staleness) for all observed assets</li>
+<li><strong>Approval hygiene</strong>: G(token_approval(protocol) &lt;= position_size(protocol) * safety_factor)</li>
+</ol>
+<h3 id="42-liveness-properties-f--eventually"><a class="header" href="#42-liveness-properties-f--eventually">4.2 Liveness Properties (F – eventually)</a></h3>
+<p>Liveness properties say that something good eventually happens. Violation is the absence of progress over time.</p>
+<ol start="11">
+<li><strong>Drawdown recovery</strong>: G(drawdown &gt; recovery_threshold -&gt; F_{&lt;=N} (drawdown &lt; recovery_target))</li>
+<li><strong>Stale position closure</strong>: G(position_age &gt; max_age -&gt; F_{&lt;=M} (position_closed || position_refreshed))</li>
+<li><strong>Profit taking</strong>: G(unrealized_pnl &gt; take_profit_target -&gt; F_{&lt;=K} (realized_some_profit))</li>
+<li><strong>Loss cutting</strong>: G(unrealized_loss &gt; stop_loss_threshold -&gt; F_{&lt;=L} (position_reduced || position_closed))</li>
+<li><strong>Rebalancing</strong>: G(deviation_from_target &gt; rebalance_threshold -&gt; F_{&lt;=P} rebalanced)</li>
+<li><strong>Debt repayment</strong>: G(borrow_position_age &gt; max_borrow_age -&gt; F_{&lt;=Q} (debt_reduced || debt_repaid))</li>
+<li><strong>Yield harvesting</strong>: G(unclaimed_rewards &gt; harvest_threshold -&gt; F_{&lt;=R} rewards_claimed)</li>
+<li><strong>Impermanent loss response</strong>: G(il_estimate &gt; il_threshold -&gt; F_{&lt;=S} (lp_position_adjusted))</li>
+<li><strong>Gas optimization</strong>: G(avg_gas_cost &gt; gas_target -&gt; F_{&lt;=T} gas_strategy_adjusted)</li>
+<li><strong>Capital deployment</strong>: G(idle_capital &gt; idle_threshold &amp;&amp; idle_duration &gt; patience -&gt; F_{&lt;=U} capital_deployed)</li>
+</ol>
+<h3 id="43-fairness-properties-gf--infinitely-often"><a class="header" href="#43-fairness-properties-gf--infinitely-often">4.3 Fairness Properties (GF – infinitely often)</a></h3>
+<p>On a finite trace, approximated as “happens at least once per window.”</p>
+<ol start="21">
+<li><strong>Attention rotation</strong>: G(F_{&lt;=W} attended_to(asset)) for all tracked assets</li>
+<li><strong>Strategy review</strong>: G(F_{&lt;=V} strategy_review_performed)</li>
+<li><strong>Risk assessment</strong>: G(F_{&lt;=X} full_risk_assessment_performed)</li>
+<li><strong>Portfolio snapshot</strong>: G(F_{&lt;=Y} portfolio_state_recorded)</li>
+<li><strong>Model recalibration</strong>: G(F_{&lt;=Z} prediction_model_updated)</li>
+<li><strong>Liquidity check</strong>: G(F_{&lt;=A1} exit_liquidity_verified) for all positions</li>
+<li><strong>Correlation update</strong>: G(F_{&lt;=B1} cross_asset_correlations_updated)</li>
+<li><strong>Fee accounting</strong>: G(F_{&lt;=C1} cumulative_fees_assessed)</li>
+<li><strong>Mortality check</strong>: G(F_{&lt;=D1} vitality_self_assessed)</li>
+<li><strong>Clade sync</strong>: G(F_{&lt;=E1} clade_knowledge_synced) (if in a Clade)</li>
+</ol>
+<h3 id="44-responsiveness-properties-bounded-response"><a class="header" href="#44-responsiveness-properties-bounded-response">4.4 Responsiveness Properties (bounded response)</a></h3>
+<p>Combine a trigger with a bounded response. The most common pattern in DeFi strategy specifications.</p>
+<ol start="31">
+<li><strong>Regime response</strong>: G(regime_change_detected -&gt; F_{&lt;=N1} strategy_adjusted)</li>
+<li><strong>Liquidation prevention</strong>: G(health_factor &lt; warning_threshold -&gt; F_{&lt;=N2} (collateral_added || debt_reduced))</li>
+<li><strong>Depeg response</strong>: G(stablecoin_depeg &gt; depeg_threshold -&gt; F_{&lt;=N3} exposure_reduced)</li>
+<li><strong>Oracle failure response</strong>: G(oracle_stale &gt; oracle_threshold -&gt; F_{&lt;=N4} positions_hedged_or_closed)</li>
+<li><strong>Volatility spike response</strong>: G(realized_vol &gt; vol_threshold -&gt; F_{&lt;=N5} risk_reduced)</li>
+<li><strong>MEV detection response</strong>: G(mev_detected -&gt; F_{&lt;=N6} execution_strategy_adjusted)</li>
+<li><strong>Fee spike response</strong>: G(gas_price &gt; gas_threshold -&gt; F_{&lt;=N7} (execution_paused || batch_mode))</li>
+<li><strong>Governance response</strong>: G(governance_proposal_affects_position -&gt; F_{&lt;=N8} position_reviewed)</li>
+<li><strong>Correlation breakdown response</strong>: G(correlation_regime_shift -&gt; F_{&lt;=N9} portfolio_reviewed)</li>
+<li><strong>Mortality urgency response</strong>: G(vitality_drop &gt; drop_threshold -&gt; F_{&lt;=N10} conservation_mode_entered)</li>
+</ol>
+<hr>
+<h2 id="5-architecture"><a class="header" href="#5-architecture">5. Architecture</a></h2>
+<h3 id="51-system-placement"><a class="header" href="#51-system-placement">5.1 System Placement</a></h3>
+<p>The temporal verification system lives in <code>golem-verify</code> at Layer 4 (Action) of the extension DAG. Dependencies:</p>
+<ul>
+<li><code>golem-heartbeat</code>: DecisionCycleRecord type and tick lifecycle hooks</li>
+<li><code>golem-safety</code>: PolicyCage integration (temporal violations feed into safety signals)</li>
+<li><code>golem-cortex</code>: CorticalState signaling</li>
+</ul>
+<h3 id="52-two-verification-modes"><a class="header" href="#52-two-verification-modes">5.2 Two Verification Modes</a></h3>
+<p><strong>Runtime monitor (LTL).</strong> Runs at the end of Step 9 (REFLECT) every tick. Maintains a sliding window of abstracted states and checks each LTL specification against the window. Window size is configurable per specification – a responsiveness property with a 5-tick bound needs only 5 states, while a fairness property with a 500-tick window needs 500.</p>
+<p>The monitor is incremental. Each tick: push new state, pop oldest if window full, advance each specification’s automaton by one transition. Per-tick cost: O(|specs| * |automaton_size|), where automaton sizes are small for typical DeFi specifications.</p>
+<p><strong>Pre-execution verifier (CTL).</strong> Runs before major decisions (T2 ticks, where the Golem is about to commit significant capital). Builds a finite Kripke structure representing possible futures:</p>
+<ul>
+<li>Current state is the root</li>
+<li>Each successor state is generated by applying the proposed action under different market scenarios (bull, bear, flat, volatility spike, liquidity drain)</li>
+<li>Branching depth bounded (typically 5-10 ticks)</li>
+<li>O(scenarios^depth) states: 5 scenarios at depth 5 gives 3,125 states</li>
+</ul>
+<p>CTL model checking on this structure verifies that safety properties hold on all paths (AG) and that no path leads to an unrecoverable state (not EF(unrecoverable)).</p>
+<h3 id="53-specification-format"><a class="header" href="#53-specification-format">5.3 Specification Format</a></h3>
+<p>Temporal specifications live alongside PLAYBOOK.md in a TOML file:</p>
+<pre><code class="language-toml">[[safety]]
+name = "max_single_asset_exposure"
+formula = "G(single_asset_exposure &lt;= 0.5)"
+severity = "hard"    # violation = abort current action
+description = "No single asset should ever exceed 50% of portfolio value"
+
+[[liveness]]
+name = "drawdown_recovery"
+formula = "G(drawdown &gt; 0.1 -&gt; F[&lt;=100](drawdown &lt; 0.05))"
+severity = "soft"    # violation = alert + raise urgency
+description = "After a 10% drawdown, recovery to under 5% within 100 ticks"
+window = 200         # monitor window size
+
+[[responsiveness]]
+name = "regime_response"
+formula = "G(regime_change -&gt; F[&lt;=5](strategy_review))"
+severity = "soft"
+description = "Review strategy within 5 ticks of any regime change"
+
+[[fairness]]
+name = "attention_rotation"
+formula = "G(F[&lt;=50](attended_to(asset)))"
+severity = "info"    # violation = log only
+description = "Every tracked asset gets attention at least once per 50 ticks"
+</code></pre>
+<p>Severity determines violation behavior:</p>
+<ul>
+<li><code>hard</code>: abort the current action, equivalent to a PolicyCage rejection</li>
+<li><code>soft</code>: raise CorticalState urgency, log the violation, allow the Golem to continue</li>
+<li><code>info</code>: log only, for monitoring and post-mortem analysis</li>
+</ul>
+<h3 id="54-corticalstate-integration"><a class="header" href="#54-corticalstate-integration">5.4 CorticalState Integration</a></h3>
+<p>Two new signals in CorticalState (these live in <code>TaCorticalExtension</code> per <code>18-cortical-state.md</code>):</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Count of currently active temporal violations.
+pub active_violations: AtomicU16,
+
+/// Severity of the worst active violation (0-255).
+pub worst_violation: AtomicU8,
+<span class="boring">}</span></code></pre>
+<p>When <code>active_violations &gt; 0</code>, the Golem’s decision-making shifts toward addressing pending obligations. A separate liveness urgency signal, computed as max(elapsed / deadline) across all active liveness specs, feeds into the attention system. When urgency exceeds a threshold (e.g., 0.8, meaning a liveness property is 80% of the way to its deadline without being satisfied), the Golem prioritizes resolving the pending obligation.</p>
+<hr>
+<h2 id="6-implementation"><a class="header" href="#6-implementation">6. Implementation</a></h2>
+<h3 id="61-core-data-structures"><a class="header" href="#61-core-data-structures">6.1 Core Data Structures</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::VecDeque;
+
+/// Abstracted state for temporal verification.
+/// Extracted from DecisionCycleRecord each tick.
+#[derive(Clone, Debug)]
+pub struct TemporalState {
+    pub tick: u64,
+    pub portfolio_value: f64,
+    pub drawdown: f64,
+    pub positions: Vec&lt;PositionState&gt;,
+    pub regime: MarketRegime,
+    pub actions_taken: Vec&lt;ActionKind&gt;,
+    pub cortical: CorticalSnapshot,
+}
+
+#[derive(Clone, Debug)]
+pub struct PositionState {
+    pub asset: AssetId,
+    pub size: f64,
+    pub entry_tick: u64,
+    pub unrealized_pnl: f64,
+    pub exposure_fraction: f64,
+}
+
+/// A parsed and compiled temporal specification.
+pub struct CompiledSpec {
+    pub name: String,
+    pub severity: Severity,
+    pub automaton: LtlAutomaton,
+    pub window_size: usize,
+}
+
+/// The runtime monitor. Holds the state window and compiled specs.
+pub struct TemporalMonitor {
+    window: VecDeque&lt;TemporalState&gt;,
+    specs: Vec&lt;CompiledSpec&gt;,
+    max_window: usize,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum VerificationResult {
+    Satisfied,
+    Violated { at_tick: u64 },
+    Inconclusive,
+}
+
+pub enum Severity {
+    Hard,
+    Soft,
+    Info,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="62-ltl-formula-representation"><a class="header" href="#62-ltl-formula-representation">6.2 LTL Formula Representation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Atomic propositions are predicates over TemporalState.
+pub type AtomicPredicate = Arc&lt;dyn Fn(&amp;TemporalState) -&gt; bool + Send + Sync&gt;;
+
+/// LTL formula AST.
+pub enum LtlFormula {
+    Atom(AtomicPredicate),
+    Not(Box&lt;LtlFormula&gt;),
+    And(Box&lt;LtlFormula&gt;, Box&lt;LtlFormula&gt;),
+    Or(Box&lt;LtlFormula&gt;, Box&lt;LtlFormula&gt;),
+    Next(Box&lt;LtlFormula&gt;),
+    Until(Box&lt;LtlFormula&gt;, Box&lt;LtlFormula&gt;),
+    Eventually(Box&lt;LtlFormula&gt;),
+    Always(Box&lt;LtlFormula&gt;),
+    BoundedEventually(Box&lt;LtlFormula&gt;, u64),  // F_{&lt;=N}
+    BoundedAlways(Box&lt;LtlFormula&gt;, u64),       // G_{&lt;=N}
+}
+
+/// Compiled automaton for incremental evaluation.
+/// States are bitvectors over subformula indices.
+pub struct LtlAutomaton {
+    /// Number of subformulas (automaton state = bitvec of this width).
+    width: usize,
+    /// Transition function: (current_state, input_props) -&gt; next_state.
+    transitions: Vec&lt;(u64, u64, u64)&gt;,
+    /// Accepting states.
+    accepting: Vec&lt;u64&gt;,
+    /// Current automaton state.
+    current: u64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="63-buchi-automata-monitor"><a class="header" href="#63-buchi-automata-monitor">6.3 Buchi Automata Monitor</a></h3>
+<p>The LTL monitor converts formulas to Buchi automata for O(1) per-tick transitions:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// LTL runtime monitor compiled to a DFA for O(1) per-tick transitions.
+pub struct BuchiMonitor {
+    /// The temporal property being monitored.
+    pub property: LtlFormula,
+    /// Current DFA state.
+    pub state: usize,
+    /// DFA transition table. Rows = states, columns = state predicates.
+    pub transitions: Vec&lt;Vec&lt;usize&gt;&gt;,
+    /// Violating states (property violated if reached).
+    pub violating_states: Vec&lt;usize&gt;,
+}
+
+impl BuchiMonitor {
+    /// Advance the monitor by one tick. O(1).
+    pub fn step(&amp;mut self, predicates: &amp;[bool]) -&gt; SafetyVerdict {
+        let col = encode_predicates(predicates);
+        self.state = self.transitions[self.state][col];
+
+        if self.violating_states.contains(&amp;self.state) {
+            SafetyVerdict::Flag {
+                severity: self.property.severity(),
+                property: self.property.name().to_string(),
+            }
+        } else {
+            SafetyVerdict::Pass
+        }
+    }
+}
+
+/// Encode a vector of boolean predicates into a column index
+/// for the transition table lookup.
+fn encode_predicates(predicates: &amp;[bool]) -&gt; usize {
+    predicates
+        .iter()
+        .enumerate()
+        .fold(0usize, |acc, (i, &amp;p)| acc | ((p as usize) &lt;&lt; i))
+}
+<span class="boring">}</span></code></pre>
+<h3 id="64-bounded-response-tracker"><a class="header" href="#64-bounded-response-tracker">6.4 Bounded Response Tracker</a></h3>
+<p>For the common case of bounded response properties (G(trigger -&gt; F_{&lt;=N} response)), a specialized evaluator avoids full automaton construction:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Tracks open obligations for bounded response properties.
+/// Each obligation records: "trigger fired at tick T, response must occur by T+N."
+pub struct BoundedResponseTracker {
+    deadline_bound: u64,
+    trigger: AtomicPredicate,
+    response: AtomicPredicate,
+    /// Open obligations: (trigger_tick, deadline_tick)
+    obligations: VecDeque&lt;(u64, u64)&gt;,
+    current_tick: u64,
+}
+
+impl BoundedResponseTracker {
+    pub fn step(&amp;mut self, state: &amp;TemporalState) -&gt; VerificationResult {
+        let tick = state.tick;
+        self.current_tick = tick;
+
+        // Check if trigger fires, creating a new obligation
+        if (self.trigger)(state) {
+            self.obligations.push_back((tick, tick + self.deadline_bound));
+        }
+
+        // Check if response satisfies any open obligations
+        if (self.response)(state) {
+            self.obligations.clear(); // all pending obligations satisfied
+            return VerificationResult::Satisfied;
+        }
+
+        // Check for deadline violations
+        if let Some(&amp;(trigger_tick, deadline)) = self.obligations.front() {
+            if tick &gt; deadline {
+                self.obligations.pop_front();
+                return VerificationResult::Violated { at_tick: trigger_tick };
+            }
+        }
+
+        if self.obligations.is_empty() {
+            VerificationResult::Satisfied
+        } else {
+            VerificationResult::Inconclusive
+        }
+    }
+
+    /// How close is the oldest obligation to its deadline?
+    pub fn pending_deadline(&amp;self) -&gt; Option&lt;u64&gt; {
+        self.obligations.front().map(|(_, d)| *d)
+    }
+
+    pub fn pending_elapsed(&amp;self) -&gt; u64 {
+        self.obligations
+            .front()
+            .map(|(t, _)| self.current_tick.saturating_sub(*t))
+            .unwrap_or(0)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>This specialized tracker is O(1) per tick per specification (amortized). It handles the majority of DeFi temporal patterns without the general Buchi automaton machinery.</p>
+<h3 id="65-runtime-monitor"><a class="header" href="#65-runtime-monitor">6.5 Runtime Monitor</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl TemporalMonitor {
+    pub fn new(specs: Vec&lt;CompiledSpec&gt;) -&gt; Self {
+        let max_window = specs.iter().map(|s| s.window_size).max().unwrap_or(1000);
+        TemporalMonitor {
+            window: VecDeque::with_capacity(max_window),
+            specs,
+            max_window,
+        }
+    }
+
+    /// Called at the end of Step 9 (REFLECT) each tick.
+    /// Returns a list of violations detected this tick.
+    pub fn on_tick(&amp;mut self, state: TemporalState) -&gt; Vec&lt;Violation&gt; {
+        self.window.push_back(state);
+        if self.window.len() &gt; self.max_window {
+            self.window.pop_front();
+        }
+
+        let mut violations = Vec::new();
+
+        for spec in &amp;mut self.specs {
+            let result = spec.automaton.step(&amp;self.window);
+            if let VerificationResult::Violated { at_tick } = result {
+                violations.push(Violation {
+                    spec_name: spec.name.clone(),
+                    severity: spec.severity,
+                    at_tick,
+                    window_snapshot: self.recent_window(spec.window_size),
+                });
+            }
+        }
+
+        violations
+    }
+
+    /// Compute liveness urgency: the maximum ratio of elapsed time
+    /// to deadline across all liveness/responsiveness specs.
+    pub fn liveness_urgency(&amp;self) -&gt; f32 {
+        let mut max_urgency: f32 = 0.0;
+
+        for spec in &amp;self.specs {
+            if let Some(deadline) = spec.automaton.pending_deadline() {
+                let elapsed = spec.automaton.pending_elapsed();
+                let urgency = elapsed as f32 / deadline as f32;
+                max_urgency = max_urgency.max(urgency);
+            }
+        }
+
+        max_urgency
+    }
+
+    fn recent_window(&amp;self, n: usize) -&gt; Vec&lt;TemporalState&gt; {
+        self.window.iter().rev().take(n).cloned().collect()
+    }
+}
+
+pub struct Violation {
+    pub spec_name: String,
+    pub severity: Severity,
+    pub at_tick: u64,
+    pub window_snapshot: Vec&lt;TemporalState&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="66-performance-characteristics"><a class="header" href="#66-performance-characteristics">6.6 Performance Characteristics</a></h3>
+<p>The runtime monitor’s per-tick cost:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Cost</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>State abstraction</td><td>~5us</td><td>Field copies from DecisionCycleRecord, no allocation</td></tr>
+<tr><td>Window management</td><td>~100ns</td><td>VecDeque push/pop</td></tr>
+<tr><td>BoundedResponseTracker (per spec)</td><td>~200ns</td><td>Predicate evaluation + deque operations</td></tr>
+<tr><td>General LtlAutomaton (per spec)</td><td>~1-5us</td><td>Bitvector transition lookup</td></tr>
+<tr><td><strong>Total for 20 specs</strong></td><td><strong>~10-50us</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>At theta=120s, spending 50us on temporal verification is negligible. Even at theta=1s (minimum realistic tick rate), 50us is 0.005% of the tick budget.</p>
+<p>CTL pre-execution verification is heavier:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Cost</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Kripke structure construction</td><td>~16ms</td><td>5 scenarios x depth 5 = 3,125 states at ~5us each</td></tr>
+<tr><td>CTL model checking (10 specs)</td><td>~5ms</td><td>O(</td></tr>
+<tr><td><strong>Total per T2 decision</strong></td><td><strong>~21ms</strong></td><td>Acceptable for decisions committing significant capital</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="7-category-theoretic-composition-verification"><a class="header" href="#7-category-theoretic-composition-verification">7. Category-Theoretic Composition Verification</a></h2>
+<p>Strategy composition safety is a separate but related verification concern. The category-theoretic framework from innovation A3 provides a complementary check: where temporal logic verifies behavior over time, categorical composition verifies that sequential operations preserve safety invariants across intermediate states.</p>
+<h3 id="71-morphism-tags-on-existing-tools"><a class="header" href="#71-morphism-tags-on-existing-tools">7.1 Morphism Tags on Existing Tools</a></h3>
+<p>Each tool in the Golem’s tool system gains an optional <code>MorphismTag</code> that describes its pre- and post-conditions. This does not change tool behavior. It enables algebraic safety checking at composition time.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Morphism tag on existing tools.
+/// Does not change tool behavior. Enables algebraic safety checking.
+pub struct MorphismTag {
+    /// Pre-conditions: what state must hold before this tool runs.
+    pub preconditions: Vec&lt;StateInvariant&gt;,
+    /// Post-conditions: what state this tool guarantees after running.
+    pub postconditions: Vec&lt;StateInvariant&gt;,
+    /// Composition safety: which tools can follow this one.
+    pub composable_with: Vec&lt;ToolId&gt;,
+    /// Category: swap, lp, lend, borrow, bridge, stake.
+    pub category: OperationCategory,
+}
+
+/// State invariant expressed as a predicate on CorticalState + portfolio state.
+pub enum StateInvariant {
+    MinBalance(f64),
+    MaxExposure(f64),
+    TokenApproved(Address),
+    PositionExists(PositionId),
+    NoOpenOrders,
+    SlippageBound(f64),
+}
+<span class="boring">}</span></code></pre>
+<h3 id="72-functorial-preservation-of-safety"><a class="header" href="#72-functorial-preservation-of-safety">7.2 Functorial Preservation of Safety</a></h3>
+<p>The core theorem from category-theoretic composition: if individual morphisms are safe and the composition rules preserve safety, any well-formed composite strategy is safe.</p>
+<p><strong>Proof by structural induction on Strategy<a>:</a></strong></p>
+<p><strong>Base case.</strong> <code>Pure(a)</code> performs no operations. Vacuously safe.</p>
+<p><strong>Inductive case.</strong> <code>Bind(op, k)</code>. Given:</p>
+<ol>
+<li><code>Safe(op, sigma, sigma')</code> – verified by PolicyCage and capability tokens at interpretation time.</li>
+<li>For all sigma’ in the codomain of <code>op</code>, <code>k(sigma')</code> is safe (inductive hypothesis).</li>
+</ol>
+<p>Then <code>Bind(op, k)</code> is safe: first step is safe by (1), continuation is safe by (2).</p>
+<p><strong>For sequential composition (g . f):</strong> Given Safe(f, sigma, sigma’) and Safe(g, sigma’, sigma’‘), verify that the intermediate state sigma’ produced by f satisfies the preconditions of g. This is what the current system misses. The categorical framework makes it explicit: g . f is well-typed only if the codomain of f matches the domain of g, including safety-relevant quantitative conditions.</p>
+<p><strong>For parallel composition (f tensor g):</strong> Given Safe(f, sigma_1, sigma’_1) and Safe(g, sigma_2, sigma’_2) where sigma_1 and sigma_2 are disjoint, then Safe(f tensor g, (sigma_1, sigma_2), (sigma’_1, sigma’_2)). Disjointness means f and g cannot interfere with each other’s safety properties.</p>
+<h3 id="73-composition-checker"><a class="header" href="#73-composition-checker">7.3 Composition Checker</a></h3>
+<p>Given a sequence of tools, verify safety of the composite before execution:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Composition checker: given a sequence of tools, verify safety.
+pub fn verify_composition(tools: &amp;[(&amp;Tool, &amp;MorphismTag)]) -&gt; Result&lt;(), SafetyViolation&gt; {
+    for window in tools.windows(2) {
+        let (_, prev_tag) = window[0];
+        let (next_tool, next_tag) = window[1];
+
+        // Check: prev postconditions satisfy next preconditions
+        for precond in &amp;next_tag.preconditions {
+            if !prev_tag.postconditions.iter().any(|post| post.satisfies(precond)) {
+                return Err(SafetyViolation::UnsatisfiedPrecondition {
+                    tool: next_tool.id(),
+                    missing: precond.clone(),
+                });
+            }
+        }
+
+        // Check: tools are composable
+        if !prev_tag.composable_with.contains(&amp;next_tool.id()) {
+            return Err(SafetyViolation::IncomposableTools {
+                first: window[0].0.id(),
+                second: next_tool.id(),
+            });
+        }
+    }
+    Ok(())
+}
+<span class="boring">}</span></code></pre>
+<p>This runs during the heartbeat’s SIMULATE step. If <code>verify_composition</code> fails, the strategy is rejected before any on-chain execution. The per-tool safety checks and the compositional check form two verification axes: per-operation (PolicyCage) and per-composition (morphism tags).</p>
+<h3 id="74-v1-vs-v2-scope"><a class="header" href="#74-v1-vs-v2-scope">7.4 V1 vs V2 Scope</a></h3>
+<p><strong>V1 (current):</strong> Tag existing tools as morphisms. Verify composition safety algebraically via <code>MorphismTag</code> pre/post-condition matching. No changes to tool implementations. Tags are additive metadata.</p>
+<p><strong>V2 (deferred to Tier 4):</strong> Full free monad interpreter stack. Tools become morphisms in a monoidal category. Strategies become programs in the free monad over this category. Three interpreters (simulation, validation, execution) share a single AST. Left Kan extensions find alternative routes when desired operations are unavailable. This is a substantial refactor that should wait until the tool system is stable and v1 morphism tags have validated the approach.</p>
+<h3 id="75-interaction-with-temporal-logic"><a class="header" href="#75-interaction-with-temporal-logic">7.5 Interaction with Temporal Logic</a></h3>
+<p>Temporal logic and category-theoretic composition address orthogonal verification dimensions:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>Temporal Logic</th><th>Category Theory</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>What it checks</strong></td><td>Behavior over time</td><td>Composition of operations</td></tr>
+<tr><td><strong>Failure mode</strong></td><td>“You held this position too long”</td><td>“Operation B’s preconditions aren’t met after A”</td></tr>
+<tr><td><strong>When it runs</strong></td><td>Every tick (LTL) or pre-decision (CTL)</td><td>Pre-execution, at SIMULATE step</td></tr>
+<tr><td><strong>Authority</strong></td><td>Escalation (soft flags, urgency)</td><td>Advisory (composition reject)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Both feed into the safety pipeline. A strategy can fail temporal checks (the sequence over time is bad) while passing compositional checks (each pair of adjacent operations is well-typed), or vice versa. The two verification layers are complementary.</p>
+<hr>
+<h2 id="8-evaluation-and-falsifiability"><a class="header" href="#8-evaluation-and-falsifiability">8. Evaluation and Falsifiability</a></h2>
+<h3 id="81-null-hypothesis"><a class="header" href="#81-null-hypothesis">8.1 Null Hypothesis</a></h3>
+<p>Temporal verification catches no strategy failures that per-transaction verification misses. The temporal layer adds computational cost without improving outcomes.</p>
+<h3 id="82-experimental-protocol"><a class="header" href="#82-experimental-protocol">8.2 Experimental Protocol</a></h3>
+<p><strong>Experiment 1: Historical trace analysis.</strong> Collect state traces from historical Golem runs (both successful and failed). Define a standard library of 20 temporal specifications. Run every trace against every specification.</p>
+<p>Predictions:</p>
+<ul>
+<li>Failed Golems exhibit more temporal violations than successful Golems (Mann-Whitney U test, p &lt; 0.01)</li>
+<li>
+<blockquote>
+<p>30% of failures have their first temporal violation at least 50 ticks before failure became visible in per-transaction metrics</p>
+</blockquote>
+</li>
+<li>Specific failure modes map to specific temporal property classes (patient loser -&gt; liveness, profit-allergic -&gt; liveness, regime-deaf -&gt; responsiveness)</li>
+</ul>
+<p><strong>Experiment 2: Live A/B test.</strong> Two populations with identical strategies. Group A has temporal monitoring with soft enforcement (urgency signals but no hard aborts). Group B has none.</p>
+<p>Predictions:</p>
+<ul>
+<li>Group A survives longer (Kaplan-Meier survival analysis, log-rank test p &lt; 0.05)</li>
+<li>Group A has smaller maximum drawdowns (two-sample t-test, p &lt; 0.05)</li>
+<li>Group A’s temporal violations decrease over time as urgency signals modify behavior</li>
+</ul>
+<p><strong>Experiment 3: Specification sensitivity.</strong> Vary deadline bounds in responsiveness specs (N = 5, 10, 20, 50, 100 ticks). Measure false positive / false negative tradeoff. Plot ROC curve for each specification.</p>
+<p>Prediction: there exists a sweet spot for each specification where false positive rate &lt; 5% and detection rate &gt; 80%.</p>
+<h3 id="83-falsification-criteria"><a class="header" href="#83-falsification-criteria">8.3 Falsification Criteria</a></h3>
+<p>The temporal verification framework fails if:</p>
+<ul>
+<li>Historical trace analysis shows no statistical difference in temporal violations between successful and failed Golems</li>
+<li>The live A/B test shows no survival or return benefit from temporal monitoring</li>
+<li>The ROC curves show no parameter settings where detection rate exceeds false positive rate by a meaningful margin</li>
+</ul>
+<p>If all three experiments fail, the framework adds cost without value and should be abandoned.</p>
+<hr>
+<h2 id="philosophical-grounding"><a class="header" href="#philosophical-grounding">Philosophical Grounding</a></h2>
+<blockquote>
+<p>Source: <code>innovations/12-temporal-logic-strategy-verification.md</code>, Section 8</p>
+</blockquote>
+<h3 id="programs-are-temporal-objects"><a class="header" href="#programs-are-temporal-objects">Programs Are Temporal Objects</a></h3>
+<p>Pnueli’s 1977 paper opens with the observation that programs are not static descriptions but dynamic, evolving processes. Their correctness cannot be captured by input-output specifications alone. A sorting algorithm that produces the right answer after infinite time is incorrect. A mutual exclusion protocol that prevents starvation satisfies a liveness property. A type system that prevents null dereferences satisfies a safety property.</p>
+<p>DeFi strategies inherit this temporal character. A strategy is not a function from market state to action. It is a process that unfolds over time, with history-dependent decisions, bounded-time obligations, and persistent commitments. Verifying a single action in isolation is like verifying a single instruction of a concurrent program. You miss the bugs that live between the lines.</p>
+<h3 id="safety-and-liveness"><a class="header" href="#safety-and-liveness">Safety and Liveness</a></h3>
+<p>The distinction between safety and liveness goes back to Lamport (1977) and Alpern &amp; Schneider (1985). Safety says “nothing bad happens.” Liveness says “something good eventually happens.” Every temporal property decomposes into a safety component and a liveness component.</p>
+<p>This decomposition maps to something older than computer science. Hippocratic medicine distinguishes <em>primum non nocere</em> (first, do no harm) from the obligation to heal. A doctor who never harms anyone by never treating anyone satisfies safety but violates liveness. A DeFi strategy that never loses money by never trading satisfies every safety property but violates every liveness property. A mortal agent needs both: avoid catastrophe and make progress before time runs out.</p>
+<p>Mortality makes liveness properties urgent in a way they are not for immortal systems. A server can wait forever for a lock to become available. A Golem cannot wait forever for a drawdown to recover. The bounded liveness properties (F_{&lt;=N}) encode this mortality: you have N ticks to fix this, or the temporal contract is broken.</p>
+<h3 id="composability-and-temporal-safety"><a class="header" href="#composability-and-temporal-safety">Composability and Temporal Safety</a></h3>
+<p>DeFi’s composability is both its strength and its temporal hazard. A sequence of individually safe operations can be temporally unsafe. Borrowing is safe. Not repaying for 1,000 ticks is unsafe. Each tick’s decision to hold the debt is individually defensible – the interest rate is low, the collateral is sufficient, the market is stable. The temporal property G(borrow_position_age &gt; max_age -&gt; F_{&lt;=Q} debt_reduced) catches the slow accumulation of risk that no single-tick check can see.</p>
+<p>This is the temporal analog of the category-theoretic composition problem from Section 7. There, the issue was that composing individually safe morphisms can produce an unsafe composite because intermediate states are unchecked. Here, the issue is that a sequence of individually safe states can constitute an unsafe trajectory because nobody checks the sequence as a whole. The problems are structural cousins; temporal logic addresses the time axis as category theory addresses the composition axis.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><a href="00-defense.html">00-defense.md</a> – The main defense-in-depth architecture doc: six defense layers, <code>Capability&lt;T&gt;</code> compile-time tokens, taint tracking, and the DeFi Constitution. Temporal logic is a complementary layer to the defenses specified here.</li>
+<li><a href="02-policy.html">02-policy.md</a> – PolicyCage on-chain smart contract: has veto authority over temporal logic (PolicyCage blocks individual transactions; temporal logic flags patterns across time).</li>
+<li><a href="05-threat-model.html">05-threat-model.md</a> – Full adversary taxonomy and attack trees mapping each attack path to mitigating defense layers. Temporal logic addresses temporal attack patterns not caught by per-transaction checks.</li>
+<li><a href="06-adaptive-risk.html">06-adaptive-risk.md</a> – Five-layer adaptive risk management: temporal violations feed into Layer 4 (Health Score observation) and can trigger Layer 1 (Hard Shield) escalations.</li>
+<li><a href="08-witness-dag.html">08-witness-dag.md</a> – Cryptographic cognitive trace DAG: temporal verdicts are recorded as witness nodes, enriching the audit trail with temporal property satisfaction/violation evidence.</li>
+<li><a href="../01-golem/02-heartbeat.html">../01-golem/02-heartbeat.md</a> – The 9-step Heartbeat pipeline. The temporal monitor runs at Step 9 (reflect), evaluating accumulated trace against active LTL/CTL properties.</li>
+<li><a href="../01-golem/13-runtime-extensions.html">../01-golem/13-runtime-extensions.md</a> – The 28-extension architecture and tool system. Morphism tags (used in category-theoretic composition) are additive metadata on tools.</li>
+<li><a href="../01-golem/18-cortical-state.html">../01-golem/18-cortical-state.md</a> – CorticalState (32-signal atomic shared perception surface): the <code>active_violations</code> and <code>worst_violation</code> signals are written by the temporal monitor and read by all other extensions.</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[ALPERN-SCHNEIDER-1985] Alpern, B. &amp; Schneider, F.B. “Defining Liveness.” <em>Information Processing Letters</em>, 21(4), 181-185, 1985. Formalizes the distinction between safety properties (“nothing bad happens”) and liveness properties (“something good eventually happens”). Foundation for classifying DeFi temporal patterns.</li>
+<li>[BAIER-KATOEN-2008] Baier, C. &amp; Katoen, J.-P. <em>Principles of Model Checking</em>. MIT Press, 2008. The standard textbook on model checking. Provides the theoretical grounding for LTL/CTL semantics and Buchi automaton construction used throughout this document.</li>
+<li>[BAUER-2011] Bauer, A., Leucker, M., &amp; Schallhart, C. “Runtime Verification for LTL and TLTL.” <em>ACM TOSEM</em>, 20(4), Article 14, 2011. Defines three-valued LTL semantics (true/false/inconclusive) for runtime monitoring of incomplete traces. Directly implemented in the LTL monitor.</li>
+<li>[CLARKE-1999] Clarke, E.M., Grumberg, O., &amp; Peled, D.A. <em>Model Checking</em>. MIT Press, 1999. Foundational model checking textbook covering CTL and state-space exploration. Provides the basis for CTL pre-decision verification.</li>
+<li>[DE-GIACOMO-VARDI-2013] De Giacomo, G. &amp; Vardi, M.Y. “Linear Temporal Logic and Linear Dynamic Logic on Finite Traces.” <em>IJCAI 2013</em>, 854-860. Adapts LTL to finite traces (LTLf), which is needed because Golem traces have bounded length due to mortality.</li>
+<li>[DWYER-1999] Dwyer, M.B., Avrunin, G.S., &amp; Corbett, J.C. “Patterns in Property Specifications for Finite-State Verification.” <em>ICSE 1999</em>, 411-420. Catalogs common property specification patterns. The 40 DeFi temporal patterns in this document follow this classification approach.</li>
+<li>[EMERSON-CLARKE-1982] Emerson, E.A. &amp; Clarke, E.M. “Using Branching Time Temporal Logic to Synthesize Synchronization Skeletons.” <em>Science of Computer Programming</em>, 2(3), 241-266, 1982. Introduces CTL (Computation Tree Logic) for reasoning about branching futures. Foundation for the CTL pre-decision verifier.</li>
+<li>[EMERSON-1990] Emerson, E.A. “Temporal and Modal Logic.” In <em>Handbook of Theoretical Computer Science</em>, Vol. B, 995-1072. Elsevier, 1990. Comprehensive survey of temporal and modal logics. Reference for the expressiveness hierarchy (LTL, CTL, CTL*).</li>
+<li>[LAMPORT-1977] Lamport, L. “Proving the Correctness of Multiprocess Programs.” <em>IEEE TSE</em>, SE-3(2), 125-143, 1977. Introduces temporal reasoning for concurrent program verification. The conceptual ancestor of all runtime temporal monitoring.</li>
+<li>[MANNA-PNUELI-1992] Manna, Z. &amp; Pnueli, A. <em>The Temporal Logic of Reactive and Concurrent Systems: Specification</em>. Springer, 1992. Comprehensive treatment of temporal specification for reactive systems. Provides the theoretical framework for specifying Golem behavior as a reactive system.</li>
+<li>[PNUELI-1977] Pnueli, A. “The Temporal Logic of Programs.” <em>18th IEEE FOCS</em>, 46-57, 1977. The seminal paper introducing temporal logic for program verification. Foundation for all temporal verification in this document.</li>
+<li>[VARDI-WOLPER-1986] Vardi, M.Y. &amp; Wolper, P. “An Automata-Theoretic Approach to Automatic Program Verification.” <em>LICS 1986</em>, 332-344. Establishes the connection between LTL and Buchi automata, enabling efficient runtime monitoring. Directly used in the LTL-to-automaton compilation.</li>
+<li>[SWIERSTRA-2008] Swierstra, W. “Data Types a la Carte.” <em>JFP</em>, 18(4), 423-436, 2008. Introduces extensible data types via coproducts. Informs the category-theoretic composition of temporal monitors.</li>
+<li>[MOGGI-1991] Moggi, E. “Notions of Computation and Monads.” <em>Information and Computation</em>, 93(1), 55-92, 1991. Foundational paper on monadic computation. Provides the theoretical basis for the Kleisli composition used in monitor chaining.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/10-safety/06-adaptive-risk.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/10-safety/08-witness-dag.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/10-safety/06-adaptive-risk.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/10-safety/08-witness-dag.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

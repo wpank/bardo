@@ -1,0 +1,954 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Uniswap - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/21-integrations/05-uniswap.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="05--uniswap-agentic-finance-spec"><a class="header" href="#05--uniswap-agentic-finance-spec">05 – Uniswap Agentic Finance [SPEC]</a></h1>
+<p><strong>Mortality-Adjusted LP, Emotion-Modulated Fees, and Dream-Generated Mutations</strong></p>
+<blockquote>
+<p><strong>Version</strong>: 2.0.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Crate</strong>: <code>bardo-uniswap</code> (extension of <code>bardo-tools</code>)</p>
+<p><strong>Depends on</strong>: <a href="../07-tools/03-tools-trading.html">../07-tools/03-tools-trading.md</a> (trading tools), <a href="../07-tools/04-tools-lp.html">../07-tools/04-tools-lp.md</a> (LP tools), <a href="../02-mortality/01-architecture.html">../02-mortality/01-architecture.md</a> (vitality, behavioral phases), <a href="../03-daimon">../03-daimon</a> (PAD model, emotional appraisal), <a href="../05-dreams">../05-dreams</a> (REM mutations, counterfactual reasoning), <a href="../10-safety">../10-safety</a> (PolicyCage, ActionPermit, Warden)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how the Golem (a mortal autonomous DeFi agent) interacts with Uniswap as its primary DeFi execution substrate. It belongs to the <strong>integrations layer</strong> and covers the ActionPermit safety pipeline, mortality-adjusted LP range management, emotion-modulated fee parameters, V4 hook concepts, and how dream-cycle counterfactuals generate strategy mutations. You should understand Uniswap V3/V4 concentrated liquidity, LP mechanics, and hook architecture. For Bardo-specific terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="uniswap-is-one-protocol-among-many"><a class="header" href="#uniswap-is-one-protocol-among-many">Uniswap is one protocol among many</a></h2>
+<p>A Golem operates across many DeFi protocols: Morpho for lending, Aave for borrowing, Aerodrome for concentrated liquidity on Optimism, Pendle for yield tokenization. Uniswap is the primary venue for swaps and LP, but it is not the Golem’s entire world. This document specifies the Uniswap-specific integration. Other protocol integrations are specified in their own documents.</p>
+<p>That said, Uniswap has a special position. It is where most of the Golem’s capital lives (LP positions), where most of its revenue generates (trading fees, MEV protection), and where the mortality signal has the strongest behavioral effects. The Golem’s relationship with Uniswap pools is the closest analogue to a biological organism’s relationship with its habitat.</p>
+<hr>
+<h2 id="1-actionpermit-flow"><a class="header" href="#1-actionpermit-flow">1. ActionPermit flow</a></h2>
+<p>Every Uniswap operation passes through the ActionPermit pipeline. No exceptions, no shortcuts. The pipeline exists to prevent a Golem from destroying its own capital in a moment of poor reasoning.</p>
+<pre><code>Preview -&gt; Simulate -&gt; Validate PolicyCage (on-chain smart contract enforcing safety constraints) -&gt; Warden delay -&gt; Execute -&gt; Verify
+</code></pre>
+<h3 id="actionpermit-structure"><a class="header" href="#actionpermit-structure">ActionPermit structure</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/permit.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ActionPermit {
+    pub permit_id: String,
+    pub action_type: UniswapActionType,
+    /// Preview data from the quote step.
+    pub preview: ActionPreview,
+    /// Revm fork simulation result.
+    pub simulation: Option&lt;SimulationResult&gt;,
+    /// PolicyCage validation result.
+    pub policy_check: Option&lt;PolicyCheckResult&gt;,
+    /// Warden delay in seconds (0 for read-only actions).
+    pub delay_seconds: u32,
+    /// Calldata for on-chain execution.
+    pub calldata: Option&lt;Bytes&gt;,
+    /// Permit2 signature data (if applicable).
+    pub permit2: Option&lt;Permit2Data&gt;,
+    /// Mortality context at time of permit creation.
+    pub mortality_context: MortalitySnapshot,
+    /// Emotional context at time of permit creation.
+    pub emotional_context: EmotionalSnapshot,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum UniswapActionType {
+    Swap,
+    AddLiquidity,
+    RemoveLiquidity,
+    IncreaseLiquidity,
+    RebalancePosition,
+    CollectFees,
+    MigratePosition,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="full-lifecycle"><a class="header" href="#full-lifecycle">Full lifecycle</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/lifecycle.rs
+
+/// Execute a Uniswap action through the full safety pipeline.
+pub async fn execute_uniswap_action(
+    action: UniswapActionType,
+    params: ActionParams,
+    ctx: &amp;GolemContext,
+) -&gt; Result&lt;ActionResult&gt; {
+    // Step 1: Preview (quote, route computation)
+    let preview = preview_action(&amp;action, &amp;params, ctx).await?;
+
+    // Step 2: Simulate on Revm fork
+    let simulation = simulate_on_fork(&amp;preview, ctx).await?;
+    if simulation.reverted {
+        return Err(ActionError::SimulationReverted {
+            reason: simulation.revert_reason.unwrap_or_default(),
+        });
+    }
+
+    // Step 3: Validate against PolicyCage
+    let policy_check = ctx.policy_cage.validate(&amp;ActionPermit {
+        permit_id: generate_id(),
+        action_type: action,
+        preview: preview.clone(),
+        simulation: Some(simulation.clone()),
+        policy_check: None,
+        delay_seconds: compute_warden_delay(&amp;action, &amp;preview),
+        calldata: None,
+        permit2: None,
+        mortality_context: ctx.mortality_snapshot(),
+        emotional_context: ctx.emotional_snapshot(),
+    })?;
+
+    if !policy_check.approved {
+        return Err(ActionError::PolicyRejected {
+            violations: policy_check.violations,
+        });
+    }
+
+    // Step 4: Build calldata + Permit2 signature
+    let calldata = build_calldata(&amp;action, &amp;params, &amp;preview).await?;
+    let permit2 = build_permit2_signature(&amp;calldata, ctx).await?;
+
+    // Step 5: Submit to Warden for time-delayed execution
+    let delay = compute_warden_delay(&amp;action, &amp;preview);
+    let warden_receipt = ctx.warden.submit(calldata.clone(), delay).await?;
+
+    // Step 6: Wait for execution and verify
+    let tx_receipt = warden_receipt.await_execution().await?;
+    let verification = verify_execution(&amp;tx_receipt, &amp;preview).await?;
+
+    Ok(ActionResult {
+        tx_hash: tx_receipt.hash,
+        block_number: tx_receipt.block_number,
+        verification,
+        effective_slippage_bps: compute_actual_slippage(&amp;preview, &amp;tx_receipt),
+    })
+}
+
+fn compute_warden_delay(action: &amp;UniswapActionType, preview: &amp;ActionPreview) -&gt; u32 {
+    match action {
+        UniswapActionType::CollectFees =&gt; 0, // No delay for fee collection
+        UniswapActionType::RemoveLiquidity =&gt; 60, // 1 minute
+        UniswapActionType::Swap if preview.value_usd &lt; 100.0 =&gt; 30,
+        UniswapActionType::Swap =&gt; 120, // 2 minutes for larger swaps
+        UniswapActionType::AddLiquidity =&gt; 180, // 3 minutes
+        UniswapActionType::RebalancePosition =&gt; 180,
+        _ =&gt; 120,
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="2-uniswap-api-adapter"><a class="header" href="#2-uniswap-api-adapter">2. Uniswap API adapter</a></h2>
+<p>The <code>bardo-uniswap</code> crate wraps the Uniswap Trading API and GraphQL API behind a unified interface:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/api.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UniswapApiConfig {
+    /// API key for Uniswap Trading API.
+    pub api_key: String,
+    /// Base URL for the trading API.
+    pub base_url: String,  // "https://trading-api.gateway.uniswap.org"
+    /// Chain ID for this API instance.
+    pub chain_id: u64,
+    /// Wallet address used for quoting and execution.
+    pub wallet_address: Address,
+}
+
+/// Maps Bardo action types to Uniswap API endpoints.
+pub fn api_endpoint(action: &amp;UniswapActionType) -&gt; &amp;'static str {
+    match action {
+        UniswapActionType::Swap =&gt; "/v2/swap",
+        UniswapActionType::AddLiquidity =&gt; "/v2/lp/create",
+        UniswapActionType::RemoveLiquidity =&gt; "/v2/lp/decrease",
+        UniswapActionType::IncreaseLiquidity =&gt; "/v2/lp/increase",
+        UniswapActionType::CollectFees =&gt; "/v2/lp/claim",
+        UniswapActionType::MigratePosition =&gt; "/v2/lp/migrate",
+        UniswapActionType::RebalancePosition =&gt; "/v2/swap", // Rebalance = remove + swap + add
+    }
+}
+
+/// Preview endpoint for quotes (read-only, no execution).
+pub fn preview_endpoint(action: &amp;UniswapActionType) -&gt; &amp;'static str {
+    match action {
+        UniswapActionType::Swap =&gt; "/v2/quote",
+        _ =&gt; "/v2/lp/quote",
+    }
+}
+
+/// GraphQL endpoint for on-chain data queries.
+pub const GRAPHQL_ENDPOINT: &amp;str = "/v1/graphql";
+<span class="boring">}</span></code></pre>
+<h3 id="permit2-integration"><a class="header" href="#permit2-integration">Permit2 integration</a></h3>
+<p>All ERC-20 token approvals route through Permit2. The Golem signs a typed-data permit; the Uniswap router consumes it in the same transaction as the swap or LP action.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/permit2.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Permit2Data {
+    pub token: Address,
+    pub amount: U256,
+    pub expiration: u64,
+    pub nonce: u64,
+    /// EIP-712 typed data for signing.
+    pub typed_data: TypedData,
+    /// Signature (populated after wallet signs).
+    pub signature: Option&lt;Bytes&gt;,
+}
+
+pub async fn build_permit2_for_swap(
+    token_in: Address,
+    amount_in: U256,
+    chain_id: u64,
+    wallet: &amp;dyn Wallet,
+) -&gt; Result&lt;Permit2Data&gt; {
+    let nonce = fetch_permit2_nonce(wallet.address(), token_in, chain_id).await?;
+    let expiration = now_unix() + 1800; // 30-minute expiry
+
+    let typed_data = build_permit2_typed_data(
+        token_in,
+        amount_in,
+        expiration,
+        nonce,
+        chain_id,
+    );
+
+    let signature = wallet.sign_typed_data(&amp;typed_data).await?;
+
+    Ok(Permit2Data {
+        token: token_in,
+        amount: amount_in,
+        expiration,
+        nonce,
+        typed_data,
+        signature: Some(signature),
+    })
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="3-mortality-adjusted-lp-ranges"><a class="header" href="#3-mortality-adjusted-lp-ranges">3. Mortality-adjusted LP ranges</a></h2>
+<p>A Golem’s Vitality (composite 0.0-1.0 survival score) directly shapes its LP strategy. Dying Golems narrow their ranges to minimize impermanent loss. Thriving Golems explore wider ranges for higher fee capture.</p>
+<p>The compression factor is derived from vitality. At full health (vitality = 1.0), the Golem uses the optimizer’s recommended range. As vitality drops, the range compresses toward the current price, reducing IL exposure at the cost of reduced fee capture.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/mortality_lp.rs
+
+#[derive(Debug, Clone, Serialize)]
+pub struct MortalityAdjustedRange {
+    pub original_lower: f64,
+    pub original_upper: f64,
+    pub adjusted_lower: f64,
+    pub adjusted_upper: f64,
+    pub compression_factor: f64,
+    pub vitality: f64,
+    pub phase: BehavioralPhase,
+}
+
+/// Compress an LP range based on mortality pressure.
+///
+/// compression_factor = vitality.max(0.3)
+///
+/// At vitality 1.0: no compression (factor = 1.0)
+/// At vitality 0.5: moderate compression (factor = 0.5)
+/// At vitality 0.3: maximum compression (factor = 0.3)
+/// Below 0.3: floor at 0.3 to prevent degenerate ranges
+pub fn compute_mortality_adjusted_range(
+    current_price: f64,
+    range_lower: f64,
+    range_upper: f64,
+    vitality: f64,
+    phase: BehavioralPhase,
+) -&gt; MortalityAdjustedRange {
+    let compression_factor = vitality.max(0.3);
+
+    // Phase-specific multipliers on top of base compression
+    let phase_mult = match phase {
+        BehavioralPhase::Thriving =&gt; 1.2,   // Slightly wider than optimizer suggests
+        BehavioralPhase::Cautious =&gt; 1.0,   // Trust the optimizer
+        BehavioralPhase::Declining =&gt; 0.7,  // Tighter than compression alone
+        BehavioralPhase::Terminal =&gt; 0.5,   // As tight as possible
+    };
+
+    let effective_compression = (compression_factor * phase_mult).clamp(0.2, 1.5);
+
+    // Compress range toward current price
+    let mid = current_price;
+    let half_width = (range_upper - range_lower) / 2.0;
+    let adjusted_half = half_width * effective_compression;
+
+    MortalityAdjustedRange {
+        original_lower: range_lower,
+        original_upper: range_upper,
+        adjusted_lower: mid - adjusted_half,
+        adjusted_upper: mid + adjusted_half,
+        compression_factor: effective_compression,
+        vitality,
+        phase,
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="rebalance-trigger-thresholds"><a class="header" href="#rebalance-trigger-thresholds">Rebalance trigger thresholds</a></h3>
+<p>Dying Golems rebalance earlier because they cannot afford to go out of range:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/rebalance.rs
+
+/// Determine whether a position needs rebalancing based on edge proximity.
+///
+/// Edge proximity: how close the current price is to the position's range boundary.
+/// 0.0 = at center, 1.0 = at boundary, &gt; 1.0 = out of range.
+///
+/// Dying Golems rebalance at 50% edge proximity (well before going out of range).
+/// Healthy Golems wait until 80% (more tolerance for temporary price movement).
+pub fn should_rebalance(
+    current_tick: i32,
+    tick_lower: i32,
+    tick_upper: i32,
+    vitality: f64,
+) -&gt; RebalanceDecision {
+    let range_width = (tick_upper - tick_lower) as f64;
+    if range_width == 0.0 {
+        return RebalanceDecision::No;
+    }
+
+    // Distance from center, normalized to range width
+    let center = (tick_lower + tick_upper) as f64 / 2.0;
+    let distance_from_center = (current_tick as f64 - center).abs();
+    let edge_proximity = distance_from_center / (range_width / 2.0);
+
+    // Mortality-adjusted threshold
+    let threshold = if vitality &gt; 0.6 {
+        0.80 // Healthy: rebalance when 80% to edge
+    } else if vitality &gt; 0.3 {
+        0.65 // Cautious: rebalance earlier
+    } else {
+        0.50 // Dying: rebalance well before edge
+    };
+
+    if edge_proximity &gt;= 1.0 {
+        RebalanceDecision::Urgent { edge_proximity }
+    } else if edge_proximity &gt;= threshold {
+        RebalanceDecision::Recommended { edge_proximity, threshold }
+    } else {
+        RebalanceDecision::No
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub enum RebalanceDecision {
+    No,
+    Recommended { edge_proximity: f64, threshold: f64 },
+    Urgent { edge_proximity: f64 },
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="4-emotion-modulated-fee-tier-selection"><a class="header" href="#4-emotion-modulated-fee-tier-selection">4. Emotion-modulated fee tier selection</a></h2>
+<p>The Daimon (the Golem’s affect engine) PAD vector (Pleasure-Arousal-Dominance emotional coordinates) influences fee tier preference. An anxious Golem (high arousal, low dominance) prefers higher fee tiers because it wants wider ranges and more protection against IL. A confident Golem (low arousal, high dominance) prefers lower fee tiers because it trusts its predictions and wants to capture more volume.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/daimon_fees.rs
+
+/// Available Uniswap fee tiers in hundredths of a bip.
+const FEE_TIERS: [u32; 4] = [100, 500, 3000, 10000];
+
+/// Compute fee tier preference from daimon emotional state.
+///
+/// anxiety_score = arousal * (1.0 - dominance)
+/// confidence_score = dominance * (1.0 - arousal)
+///
+/// High anxiety -&gt; prefer higher fee tiers (more IL protection)
+/// High confidence -&gt; prefer lower fee tiers (more volume capture)
+pub fn compute_daimon_fee_preference(
+    arousal: f64,     // 0.0-1.0
+    dominance: f64,   // 0.0-1.0
+) -&gt; FeeTierPreference {
+    let anxiety_score = arousal * (1.0 - dominance);
+    let confidence_score = dominance * (1.0 - arousal);
+
+    // Weighted index into FEE_TIERS array.
+    // anxiety pushes toward index 3 (10000 = 1% fee),
+    // confidence pushes toward index 0 (100 = 0.01% fee)
+    let tier_index = (anxiety_score * 3.0 - confidence_score * 1.5 + 1.5)
+        .clamp(0.0, 3.0)
+        .round() as usize;
+
+    let preferred_fee = FEE_TIERS[tier_index];
+
+    FeeTierPreference {
+        preferred_fee,
+        anxiety_score,
+        confidence_score,
+        reasoning: format!(
+            "anxiety={:.2}, confidence={:.2} -&gt; fee tier {}bps",
+            anxiety_score, confidence_score, preferred_fee / 100
+        ),
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct FeeTierPreference {
+    pub preferred_fee: u32,
+    pub anxiety_score: f64,
+    pub confidence_score: f64,
+    pub reasoning: String,
+}
+<span class="boring">}</span></code></pre>
+<p>This is not a hard constraint. The fee preference feeds into the LP optimizer as a soft signal. If the optimizer determines that a different fee tier has significantly better expected returns, it overrides the emotional preference. The emotional signal breaks ties and nudges the Golem toward risk-appropriate behavior.</p>
+<hr>
+<h2 id="5-lp-decision-episodes"><a class="header" href="#5-lp-decision-episodes">5. LP decision episodes</a></h2>
+<p>Every LP decision is recorded as an episode that captures the full context: market state, emotional state, mortality pressure, and outcome. This feeds the Grimoire and enables post-hoc analysis of whether emotional signals helped or hurt.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/episodes.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LpDecisionEpisode {
+    pub episode_id: String,
+    pub timestamp: u64,
+
+    // Market context
+    pub pool: String,
+    pub current_tick: i32,
+    pub volatility_24h: f64,
+    pub volume_24h_usd: f64,
+
+    // Mortality context
+    pub vitality: f64,
+    pub phase: BehavioralPhase,
+    pub projected_days_remaining: f64,
+
+    // Emotional context
+    pub arousal: f64,
+    pub dominance: f64,
+    pub pleasure: f64,
+    pub anxiety_score: f64,
+    pub confidence_score: f64,
+
+    // Decision
+    pub action: UniswapActionType,
+    pub fee_tier: u32,
+    pub range_lower: f64,
+    pub range_upper: f64,
+    pub amount_usd: f64,
+    pub compression_factor: f64,
+
+    // Outcome (filled in later)
+    pub outcome: Option&lt;LpDecisionOutcome&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LpDecisionOutcome {
+    /// Profit/loss from this position after closing or at evaluation time.
+    pub pnl_usd: f64,
+    /// Fees earned.
+    pub fees_earned_usd: f64,
+    /// Impermanent loss incurred.
+    pub il_usd: f64,
+    /// Whether the emotional signal helped (positive attribution) or hurt.
+    pub emotion_attribution: f64,
+    /// Time held before close/evaluation.
+    pub hold_duration_seconds: u64,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="6-dream-generated-lp-mutations"><a class="header" href="#6-dream-generated-lp-mutations">6. Dream-generated LP mutations</a></h2>
+<p>During REM dream cycles, the Golem generates counterfactual LP mutations. These are hypothetical adjustments to existing positions, simulated against historical data. Mutations that outperform the current position by 10% or more get promoted to the PLAYBOOK.</p>
+<h3 id="dream-counterfactual-pipeline"><a class="header" href="#dream-counterfactual-pipeline">Dream counterfactual pipeline</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/dreams.rs
+
+/// Dream cycle generates 5 LP mutations per active position.
+/// Each mutation is a small adjustment: range shift, fee tier change,
+/// or rebalance timing change. Simulated against the last 24h of data.
+pub async fn dream_lp_mutations(
+    positions: &amp;[ActivePosition],
+    market_data: &amp;MarketData24h,
+) -&gt; Vec&lt;DreamMutation&gt; {
+    let mut mutations = Vec::new();
+
+    for position in positions {
+        // Generate 5 random mutations per position
+        let candidates = generate_mutation_candidates(position, 5);
+
+        for candidate in candidates {
+            // Simulate each mutation against historical data
+            let simulated_pnl = simulate_mutation(
+                &amp;candidate,
+                position,
+                market_data,
+            ).await;
+
+            // Compare against actual position performance
+            let actual_pnl = position.realized_pnl_24h();
+            let improvement = if actual_pnl != 0.0 {
+                (simulated_pnl - actual_pnl) / actual_pnl.abs()
+            } else {
+                simulated_pnl.signum()
+            };
+
+            mutations.push(DreamMutation {
+                position_id: position.id.clone(),
+                mutation_type: candidate.mutation_type,
+                parameters: candidate.parameters,
+                simulated_pnl,
+                actual_pnl,
+                improvement_pct: improvement * 100.0,
+                promoted: improvement &gt; 0.10, // 10% improvement threshold
+            });
+        }
+    }
+
+    mutations
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct DreamMutation {
+    pub position_id: String,
+    pub mutation_type: MutationType,
+    pub parameters: MutationParameters,
+    pub simulated_pnl: f64,
+    pub actual_pnl: f64,
+    pub improvement_pct: f64,
+    pub promoted: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum MutationType {
+    RangeShift,       // Move range up/down by N ticks
+    RangeWiden,       // Increase range width
+    RangeNarrow,      // Decrease range width
+    FeeTierChange,    // Switch fee tier
+    RebalanceEarlier, // Trigger rebalance at lower edge proximity
+    RebalanceLater,   // Trigger rebalance at higher edge proximity
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MutationParameters {
+    pub tick_shift: Option&lt;i32&gt;,
+    pub width_multiplier: Option&lt;f64&gt;,
+    pub new_fee_tier: Option&lt;u32&gt;,
+    pub new_rebalance_threshold: Option&lt;f64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="dream-to-playbook-promotion"><a class="header" href="#dream-to-playbook-promotion">Dream to PLAYBOOK promotion</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/playbook.rs
+
+/// Promote a dream mutation to the PLAYBOOK.
+/// The mutation enters a shadow phase: tracked but not executed.
+/// After 3 successful shadow validations, it becomes an active rule.
+pub fn promote_mutation_to_playbook(
+    mutation: &amp;DreamMutation,
+    playbook: &amp;mut Playbook,
+) -&gt; PlaybookEntry {
+    let entry = PlaybookEntry {
+        entry_id: generate_id(),
+        source: PlaybookSource::Dream {
+            mutation_type: mutation.mutation_type,
+            improvement_pct: mutation.improvement_pct,
+        },
+        status: PlaybookStatus::Shadow,
+        shadow_validations: 0,
+        required_validations: 3,
+        created_at: now_unix(),
+        parameters: mutation.parameters.clone(),
+    };
+
+    playbook.add(entry.clone());
+    entry
+}
+
+/// Shadow validation: compare the promoted mutation's predicted behavior
+/// against live market data without executing. If the mutation would have
+/// outperformed the current strategy, increment the validation counter.
+pub fn validate_shadow(
+    entry: &amp;mut PlaybookEntry,
+    live_data: &amp;MarketData24h,
+    current_position: &amp;ActivePosition,
+) -&gt; ShadowValidationResult {
+    let simulated = simulate_mutation_live(&amp;entry.parameters, current_position, live_data);
+    let actual = current_position.realized_pnl_24h();
+    let beats_current = simulated &gt; actual * 1.10; // Must beat by 10%
+
+    if beats_current {
+        entry.shadow_validations += 1;
+    }
+
+    let promoted = entry.shadow_validations &gt;= entry.required_validations;
+    if promoted {
+        entry.status = PlaybookStatus::Active;
+    }
+
+    ShadowValidationResult {
+        simulated_pnl: simulated,
+        actual_pnl: actual,
+        beats_current,
+        validations: entry.shadow_validations,
+        promoted,
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize)]
+pub enum PlaybookStatus {
+    Shadow,
+    Active,
+    Retired,
+}
+<span class="boring">}</span></code></pre>
+<p>The pipeline: Dream -&gt; shadow validation (3x at 10%+ improvement) -&gt; promote to active -&gt; execute -&gt; record outcome -&gt; feed back into next dream cycle.</p>
+<hr>
+<h2 id="7-v4-hook-concepts"><a class="header" href="#7-v4-hook-concepts">7. V4 hook concepts</a></h2>
+<p>Uniswap V4’s hook system enables pool-level customization. Three hook concepts integrate mortality and emotional state directly into pool mechanics. These are speculative – they require V4 deployment and custom hook contracts.</p>
+<h3 id="golemphasehook"><a class="header" href="#golemphasehook">GolemPhaseHook</a></h3>
+<p>Restricts LP actions based on the Golem’s behavioral phase. A terminal Golem cannot add liquidity (only remove). A declining Golem faces reduced position size limits.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Conceptual -- would be a Solidity hook
+pub struct GolemPhaseHookConfig {
+    /// Maximum position size by behavioral phase (% of NAV).
+    pub max_position_pct: PhaseMap&lt;f64&gt;,
+    /// Whether the phase allows new position creation.
+    pub allow_new_positions: PhaseMap&lt;bool&gt;,
+}
+
+// Example config:
+// Thriving: 20% NAV per position, new positions allowed
+// Cautious: 10% NAV per position, new positions allowed
+// Declining: 5% NAV per position, no new positions
+// Terminal: 0% (remove only)
+<span class="boring">}</span></code></pre>
+<h3 id="emotionfeehook"><a class="header" href="#emotionfeehook">EmotionFeeHook</a></h3>
+<p>Dynamic fee adjustment based on aggregate emotional state of LPs in the pool. High aggregate anxiety -&gt; higher fees (compensating LPs for perceived risk). High aggregate confidence -&gt; lower fees (attracting more volume).</p>
+<h3 id="cladelpregistryhook"><a class="header" href="#cladelpregistryhook">CladeLPRegistryHook</a></h3>
+<p>Clade-level LP coordination. Siblings in the same Clade can register their positions with a shared hook that prevents overlapping ranges, coordinates rebalancing timing, and distributes fees proportionally to Clade contribution.</p>
+<hr>
+<h2 id="8-ux-events"><a class="header" href="#8-ux-events">8. UX events</a></h2>
+<p>All Uniswap operations emit structured events for the owner-facing interface:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-uniswap/src/events.rs
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum UniswapUiEvent {
+    /// Quote received for a swap or LP action.
+    QuoteReceived {
+        action: UniswapActionType,
+        amount_in_usd: f64,
+        amount_out_usd: f64,
+        price_impact_pct: f64,
+        route_type: String,
+    },
+    /// Simulation completed on Revm fork.
+    SimulationComplete {
+        action: UniswapActionType,
+        success: bool,
+        gas_estimate: u64,
+        revert_reason: Option&lt;String&gt;,
+    },
+    /// PolicyCage validation result.
+    PolicyValidation {
+        action: UniswapActionType,
+        approved: bool,
+        violations: Vec&lt;String&gt;,
+    },
+    /// Transaction submitted to Warden.
+    WardenSubmitted {
+        warden_id: String,
+        delay_seconds: u32,
+        cancellation_window: u32,
+    },
+    /// Transaction confirmed on-chain.
+    ExecutionConfirmed {
+        tx_hash: String,
+        block_number: u64,
+        gas_used: u64,
+        effective_slippage_bps: i32,
+    },
+    /// LP range adjusted due to mortality pressure.
+    MortalityRangeAdjustment {
+        position_id: String,
+        original_range: (f64, f64),
+        adjusted_range: (f64, f64),
+        compression_factor: f64,
+        vitality: f64,
+    },
+    /// Dream mutation promoted to PLAYBOOK.
+    DreamMutationPromoted {
+        position_id: String,
+        mutation_type: MutationType,
+        improvement_pct: f64,
+    },
+    /// Rebalance triggered.
+    RebalanceTriggered {
+        position_id: String,
+        edge_proximity: f64,
+        threshold: f64,
+        reason: String,
+    },
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="9-configuration"><a class="header" href="#9-configuration">9. Configuration</a></h2>
+<pre><code class="language-bash"># Uniswap API
+BARDO_UNISWAP_API_KEY=uk-...
+BARDO_UNISWAP_API_BASE_URL=https://trading-api.gateway.uniswap.org
+BARDO_UNISWAP_CHAIN_ID=8453  # Base
+
+# LP mortality parameters
+BARDO_LP_MIN_COMPRESSION=0.2
+BARDO_LP_MAX_COMPRESSION=1.5
+BARDO_LP_REBALANCE_HEALTHY_THRESHOLD=0.80
+BARDO_LP_REBALANCE_CAUTIOUS_THRESHOLD=0.65
+BARDO_LP_REBALANCE_DYING_THRESHOLD=0.50
+
+# Dream mutations
+BARDO_DREAM_MUTATIONS_PER_POSITION=5
+BARDO_DREAM_PROMOTION_THRESHOLD=0.10
+BARDO_DREAM_SHADOW_VALIDATIONS=3
+
+# Warden delays (seconds)
+BARDO_WARDEN_DELAY_SWAP_SMALL=30
+BARDO_WARDEN_DELAY_SWAP_LARGE=120
+BARDO_WARDEN_DELAY_LP_ADD=180
+BARDO_WARDEN_DELAY_LP_REMOVE=60
+BARDO_WARDEN_DELAY_COLLECT_FEES=0
+
+# Permit2
+BARDO_PERMIT2_EXPIRY_SECONDS=1800
+</code></pre>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<ul>
+<li><a href="../07-tools/03-tools-trading.html">../07-tools/03-tools-trading.md</a> – trading tool specifications (get_quote, execute_swap, etc.) that form the MCP tool surface for Uniswap swap execution</li>
+<li><a href="../07-tools/04-tools-lp.html">../07-tools/04-tools-lp.md</a> – LP tool specifications (add_liquidity, remove_liquidity, optimize_range, etc.) for concentrated liquidity position management</li>
+<li><a href="../02-mortality/01-architecture.html">../02-mortality/01-architecture.md</a> – the three death clocks and vitality score that determine behavioral phase, which directly constrains LP range width and trading aggressiveness</li>
+<li><a href="../03-daimon">../03-daimon</a> – the PAD emotional model and OCC/Scherer appraisal chain whose outputs modulate fee tier selection and risk tolerance per trade</li>
+<li><a href="../05-dreams">../05-dreams</a> – dream REM cycle where counterfactual reasoning generates strategy mutations (what-if LP ranges, alternative fee tiers) tested offline</li>
+<li><a href="../10-safety">../10-safety</a> – PolicyCage on-chain constraints, ActionPermit pre-execution validation, and Warden time-delay proxy that gate every Uniswap operation</li>
+<li><a href="02-venice.html">02-venice.md</a> – Venice private inference where MEV-resistant execution planning runs without exposing trade intentions to inference providers</li>
+<li><a href="03-bankr.html">03-bankr.md</a> – Bankr self-funding gateway where Uniswap trading revenue and LP fees feed the metabolic loop’s income side</li>
+<li><a href="04-agentcash.html">04-agentcash.md</a> – AgentCash knowledge marketplace where cross-Golem intelligence about pool dynamics informs LP range and fee decisions</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[UNISWAP-V4-HOOKS] Adams, H. et al. “Uniswap v4 Core.” 2023. Introduces the hook system allowing arbitrary Solidity logic to execute at pool lifecycle points (beforeSwap, afterSwap, etc.), which is the mechanism behind the NAVAwareHook and VaultHook the Golem uses to enforce mortality-aware pool behavior.</li>
+<li>[PERMIT2] Uniswap Labs. “Permit2: Token Approval Sharing.” 2022. Canonical address <code>0x000000000022D473030F116dDEE9F6B43aC78BA3</code>. A universal token approval contract that replaces per-token approve() calls with signature-based permits, used by the Golem’s ActionPermit pipeline to batch-authorize Uniswap operations.</li>
+<li>[ERC-7702] Buterin, V. et al. “EIP-7702: Set EOA Account Code.” 2024. Allows EOAs to set contract code on themselves for single transactions, enabling smart account functionality without migration – relevant to how the Golem’s session keys interact with smart account delegation.</li>
+<li>[JONAS-1966] Jonas, H. “The Phenomenon of Life.” 1966. Articulates “needful freedom” – the idea that a living organism’s identity depends on continuous metabolic exchange with its environment – the philosophical foundation for why the Golem’s DeFi execution is an existential activity, not just portfolio management.</li>
+<li>[ALTMAN-1999] Altman, E. “Constrained Markov Decision Processes.” 1999. Formalizes optimal policies under constraints with finite horizons, the mathematical framework for how the Golem’s mortality constraint (known finite lifespan) shapes LP range selection and trading aggressiveness.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/21-integrations/04-agentcash.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/22-oneirography/00-overview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/21-integrations/04-agentcash.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/22-oneirography/00-overview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

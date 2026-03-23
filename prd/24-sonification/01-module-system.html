@@ -1,0 +1,940 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Module System - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/24-sonification/01-module-system.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="the-module-system-spec"><a class="header" href="#the-module-system-spec">The Module System [SPEC]</a></h1>
+<p><strong>Traits, Signal Types, Built-In Library, and Rack Routing</strong></p>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Draft | <strong>Type</strong>: SPEC (normative)</p>
+<p><strong>Crate</strong>: <code>golem-sonification</code> (modules/ directory)</p>
+<p><strong>Cross-references</strong>: <a href="./00-overview.html">00-overview.md</a>, <a href="./02-cortical-mapping.html">02-cortical-mapping.md</a></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation</strong>: This document specifies how individual synthesis modules are built, how they declare their inputs and outputs, and how they are wired together into a processing graph called a Rack. A module is a Rust struct that processes audio and control signals in blocks of 32 samples at 48kHz. Modules are the atoms of the sonification system. The Rack is the molecule – a directed graph of modules connected by typed patch cables. Users build racks in the terminal UI; the system ships with a default rack that works out of the box. If you have used a modular synthesizer (hardware or software like VCV Rack), this will feel familiar. If not, think of it as a signal-processing pipeline where each stage is a small, self-contained DSP unit.</p>
+</blockquote>
+<hr>
+<h2 id="signal-types"><a class="header" href="#signal-types">Signal types</a></h2>
+<p>Every connection between modules carries one of three signal types. The type system prevents patching an audio output into a gate input – the compiler catches it, not the user.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The three signal types in the modular system.
+/// These map directly to eurorack conventions:
+///   Audio  = AC-coupled audio signal (-1.0..1.0)
+///   Cv     = Control voltage (typically 0.0..1.0 or -1.0..1.0)
+///   Gate   = Boolean trigger/gate (0.0 or 1.0, with rising-edge detection)
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum SignalType {
+    /// Audio-rate signal. Processed at 48kHz sample rate.
+    /// Range: -1.0 to 1.0 (soft-clipped at output).
+    Audio,
+    /// Control voltage. Updated at audio rate but typically changes
+    /// slowly (from CorticalState at ~120Hz, smoothed).
+    /// Range: depends on context. Pitch CV is in semitones.
+    /// Most CVs are 0.0..1.0 or -1.0..1.0.
+    Cv,
+    /// Gate/trigger signal. 0.0 = low, 1.0 = high.
+    /// A "trigger" is a gate that is high for exactly one block (32 samples).
+    /// A "gate" can be high for an extended duration.
+    Gate,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="why-three-types"><a class="header" href="#why-three-types">Why three types</a></h3>
+<p>In eurorack hardware, all signals are voltages – there is no type system. You can patch an audio output into a CV input and sometimes it sounds interesting. But in software, untyped connections lead to confusion: patching a +/-1.0 audio signal into a parameter expecting 0.0-1.0 produces garbage.</p>
+<p>The three types enforce expectations while remaining flexible. Audio-&gt;Audio and CV-&gt;CV are direct connections. CV-&gt;Audio is allowed (a very slow oscillator is a CV). Gate-&gt;CV is allowed (a gate is a binary CV). Audio-&gt;CV is allowed with a warning (the user probably means to use an envelope follower). Gate-&gt;Audio is blocked (gates are not audible signals).</p>
+<p>The compatibility matrix:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>From \ To</th><th>Audio In</th><th>CV In</th><th>Gate In</th></tr>
+</thead>
+<tbody>
+<tr><td>Audio Out</td><td>yes</td><td>warn</td><td>no</td></tr>
+<tr><td>CV Out</td><td>yes</td><td>yes</td><td>no</td></tr>
+<tr><td>Gate Out</td><td>no</td><td>yes (as 0/1)</td><td>yes</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="the-module-trait"><a class="header" href="#the-module-trait">The Module trait</a></h2>
+<p>Every synthesis module implements this trait. It is the single interface that the Rack uses to process audio.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A block of samples for one signal.
+pub type SignalBlock = [f32; BLOCK_SIZE];
+
+/// Block size: 32 samples at 48kHz = 0.667ms per block.
+/// Matches Clouds' internal block size.
+pub const BLOCK_SIZE: usize = 32;
+
+/// Sample rate. Matches Plaits and Clouds internal rate.
+pub const SAMPLE_RATE: f32 = 48000.0;
+
+/// Port identifier: a module name + port name pair.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct PortId {
+    pub module_id: String,
+    pub port_name: String,
+}
+
+/// Port declaration: what a module exposes.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PortDeclaration {
+    pub name: String,
+    pub signal_type: SignalType,
+    pub direction: PortDirection,
+    /// Human-readable description (shown in TUI).
+    pub description: String,
+    /// Default value when nothing is patched (CV/Gate only).
+    pub default_value: f32,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum PortDirection {
+    Input,
+    Output,
+}
+
+/// The core module trait. Every synthesis module implements this.
+pub trait Module: Send + 'static {
+    /// Unique identifier for this module instance (e.g., "osc_1", "filter_2").
+    fn id(&amp;self) -&gt; &amp;str;
+
+    /// Human-readable display name (e.g., "Plaits Oscillator").
+    fn display_name(&amp;self) -&gt; &amp;str;
+
+    /// Declare all input and output ports.
+    /// Called once at registration. The rack uses this to validate connections.
+    fn ports(&amp;self) -&gt; Vec&lt;PortDeclaration&gt;;
+
+    /// Process one block of audio.
+    ///
+    /// `inputs`: a map from input port name -&gt; signal block.
+    ///           Missing entries mean "nothing patched" -- use the port's default.
+    /// `outputs`: a map from output port name -&gt; signal block.
+    ///            The module writes its output here.
+    ///
+    /// This is called at audio rate: 48000/32 = 1500 times per second.
+    /// It MUST NOT allocate, lock, or syscall.
+    fn process(
+        &amp;mut self,
+        inputs: &amp;HashMap&lt;String, SignalBlock&gt;,
+        outputs: &amp;mut HashMap&lt;String, SignalBlock&gt;,
+    );
+
+    /// Set a parameter by name (from TUI knob turn or CV mapping).
+    /// Parameters are module-internal values not exposed as ports.
+    /// e.g., "waveform" on an oscillator, "scale" on a quantizer.
+    fn set_param(&amp;mut self, name: &amp;str, value: f32);
+
+    /// Get a parameter value by name.
+    fn get_param(&amp;self, name: &amp;str) -&gt; Option&lt;f32&gt;;
+
+    /// List all parameters with their current values, ranges, and descriptions.
+    fn params(&amp;self) -&gt; Vec&lt;ParamDeclaration&gt;;
+
+    /// Serialize the module's complete state for preset save / NFT embedding.
+    fn serialize_state(&amp;self) -&gt; serde_json::Value;
+
+    /// Restore state from a previous serialization.
+    fn deserialize_state(&amp;mut self, state: &amp;serde_json::Value);
+
+    /// Reset to initial state (called on rack reset).
+    fn reset(&amp;mut self);
+}
+
+/// Parameter declaration for TUI display and preset serialization.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ParamDeclaration {
+    pub name: String,
+    pub display_name: String,
+    pub value: f32,
+    pub min: f32,
+    pub max: f32,
+    pub default: f32,
+    pub unit: String,          // e.g., "Hz", "ms", "semitones", ""
+    pub description: String,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="why-hashmapstring-signalblock"><a class="header" href="#why-hashmapstring-signalblock">Why <code>HashMap&lt;String, SignalBlock&gt;</code></a></h3>
+<p>The obvious alternative is fixed-size arrays indexed by port number. That would be faster (no hashing), but it couples every module to a specific port layout. With string-keyed maps, modules can have arbitrary numbers of ports, ports can be added in future versions without breaking existing patches, and the TUI can display port names directly. The performance cost is ~50ns per lookup – negligible at 1500 blocks/second.</p>
+<p>For modules on the critical path (oscillator -&gt; filter -&gt; VCA -&gt; output), we provide a fast-path: the rack pre-resolves port names to indices at patch time, and the inner loop uses direct array access. The HashMap interface is for flexibility; the inner loop is for speed.</p>
+<hr>
+<h2 id="built-in-module-library"><a class="header" href="#built-in-module-library">Built-in module library</a></h2>
+<h3 id="oscillators"><a class="header" href="#oscillators">Oscillators</a></h3>
+<p><strong>PlaitsOscillator</strong> – Mutable Instruments Plaits macro oscillator via <code>mi-plaits-dsp</code></p>
+<p>All 24 synthesis engines from Emilie Gillet’s firmware, ported to Rust. This is the primary voice. Each engine is a different instrument – not a different preset on the same instrument, but a fundamentally different way of making sound.</p>
+<p>Engine 0 (virtual analog) is the default voice. Two oscillators drift slowly toward each other, producing a warm, slightly out-of-tune tone that thickens as <code>timbre</code> increases. It sounds like a synth pad left running overnight – familiar, a little drowsy, good for sustained harmonic beds. Engine 11 (particle noise) is the opposite: granular static decaying through a bank of resonators, like sand falling through a metal grate. Turn <code>morph</code> up and the particles stretch into tonal ghosts. Engine 23 (speech synthesis) is the weird one. Formant-shaped noise that sounds like the Golem trying to form words. With the right pitch CV it actually tracks vowel shapes. The Golem doesn’t speak, but sometimes it sounds like it wants to.</p>
+<p>Between those three extremes there are 21 other engines – FM, waveshaping, additive, wavetable, string, modal resonator, percussion. Each engine selection changes the instrument’s personality, not its settings.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>pitch</code></td><td>CV In</td><td>V/Oct pitch (MIDI note as f32). 60.0 = middle C.</td></tr>
+<tr><td><code>timbre</code></td><td>CV In</td><td>Timbre control (0.0-1.0). Meaning varies per engine.</td></tr>
+<tr><td><code>morph</code></td><td>CV In</td><td>Morph control (0.0-1.0). Meaning varies per engine.</td></tr>
+<tr><td><code>harmonics</code></td><td>CV In</td><td>Harmonics control (0.0-1.0).</td></tr>
+<tr><td><code>trigger</code></td><td>Gate In</td><td>Trigger input for LPG.</td></tr>
+<tr><td><code>level</code></td><td>CV In</td><td>Amplitude / LPG level.</td></tr>
+<tr><td><code>out</code></td><td>Audio Out</td><td>Main output.</td></tr>
+<tr><td><code>aux</code></td><td>Audio Out</td><td>Auxiliary output (variant/sidekick).</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>engine</code></td><td>0-23</td><td>Synthesis engine selection.</td></tr>
+<tr><td><code>decay</code></td><td>0.0-1.0</td><td>Internal LPG decay time.</td></tr>
+<tr><td><code>lpg_colour</code></td><td>0.0-1.0</td><td>LPG mode: 0=VCA, 1=full lowpass gate.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>NoiseSource</strong> – White, pink, and dust noise</p>
+<p>White noise is the flat hiss underneath everything – uncolored, equal energy at every frequency. Pink noise rolls off at 3dB per octave, giving it a warmer, more natural character, like wind through trees or distant surf. Dust mode produces a Poisson impulse train: isolated clicks at a controllable density. At low density, each click is an event. At high density, the clicks blur into a texture that sounds like rain on a tin roof. Dust is the input you feed to granular processors when you want something to chew on.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>out</code></td><td>Audio Out</td><td>Noise output.</td></tr>
+<tr><td><code>density</code></td><td>CV In</td><td>For dust mode: grain density (0.0-1.0).</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>mode</code></td><td>0-2</td><td>0=white, 1=pink, 2=dust (Poisson impulse train).</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>LFO</strong> – Low-frequency oscillator</p>
+<p>LFOs are the slow movers. A sine LFO at 0.01 Hz takes 100 seconds to complete one cycle – it maps well to mood transitions or gradual timbral drift. The random sample-and-hold shape is good for unpredictable step changes, like a slow-motion dice roll controlling filter cutoff. At rates below 0.05 Hz, the LFO becomes an arc generator: one cycle might span an entire emotional phase of the Golem’s life.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>rate</code></td><td>CV In</td><td>Frequency modulation.</td></tr>
+<tr><td><code>out</code></td><td>CV Out</td><td>LFO output (-1.0 to 1.0).</td></tr>
+<tr><td><code>sync</code></td><td>Gate In</td><td>Reset phase on rising edge.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>frequency</code></td><td>0.01-20.0 Hz</td><td>Base rate.</td></tr>
+<tr><td><code>shape</code></td><td>0-4</td><td>Sine, triangle, saw, square, random S&amp;H.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="sequencers"><a class="header" href="#sequencers">Sequencers</a></h3>
+<p><strong>TuringMachine</strong> – Music Thing Modular shift register sequencer</p>
+<p>This is the Golem’s melodic personality. A 16-bit shift register that produces stepped random voltages lockable into repeating loops. When quantized, the output is always musical.</p>
+<p>The <code>change</code> knob is the soul dial. At <code>change=0.0</code>, the sequence is frozen – the same 16 notes play forever, a loop the Golem has memorized. At <code>change=0.3</code>, it is a creature of habit: the phrase almost repeats but one or two notes mutate each cycle, like a musician who can’t help embellishing. At <code>change=0.7</code>, it forgets itself. The phrase dissolves into something new every few bars. At <code>change=1.0</code>, the register inverts before shifting – a mirror-image lock that sounds deliberate but wrong, like a melody played backward.</p>
+<p>Two Golems with identical CorticalState will still sound different if they have different Turing Machine seeds. The seed is the personality; the CorticalState is the mood. Same personality, different day.</p>
+<p>Sequence lengths matter. Set <code>length</code> to a near-prime number (7, 11, 13) rather than a power of two. A 7-step sequence against a 16-step clock creates a 112-step macro-pattern before it repeats – long enough that the ear hears variation, short enough that it senses structure. This is the incommensurable-period principle at work: two loops that don’t share a common factor produce compound rhythms far longer than either alone.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>clock</code></td><td>Gate In</td><td>Advance the register one step.</td></tr>
+<tr><td><code>cv_out</code></td><td>CV Out</td><td>Raw voltage output (0.0-1.0).</td></tr>
+<tr><td><code>gate_out</code></td><td>Gate Out</td><td>High when the MSB is 1.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>change</code></td><td>0.0-1.0</td><td>Mutation rate. 0=locked, 0.5=max random, 1.0=inverted lock.</td></tr>
+<tr><td><code>length</code></td><td>2-32</td><td>Active register bits (sequence length).</td></tr>
+<tr><td><code>scale</code></td><td>0.0-48.0</td><td>Output range in semitones.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Quantizer</strong> – Musical scale quantizer</p>
+<p>Snaps continuous CV to the nearest note in a configurable scale. 12 built-in scales from pentatonic to chromatic. The Quantizer is the reason the Turing Machine’s random voltages come out as music instead of glissando. It is a dumb module – it has no opinion about melody, only about pitch correctness – but its scale selection has an outsized effect on the emotional color of the output.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>CV In</td><td>Raw pitch CV.</td></tr>
+<tr><td><code>out</code></td><td>CV Out</td><td>Quantized pitch as MIDI note number.</td></tr>
+<tr><td><code>trigger</code></td><td>Gate Out</td><td>Fires when the quantized note changes.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>scale</code></td><td>0-11</td><td>Scale selection (see Scale enum).</td></tr>
+<tr><td><code>root</code></td><td>0-11</td><td>Root note (0=C, 1=C#, …, 11=B).</td></tr>
+<tr><td><code>octave</code></td><td>-2 to +2</td><td>Octave transposition.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>MarkovMelody</strong> – Pitch-to-pitch transition tables</p>
+<p>Where the Turing Machine generates melody through bit-shifting randomness, MarkovMelody generates melody through weighted choices. Every note chooses its successor based on a transition table tuned to a specific emotional state. In Joy mode (Lydian), the root and major 7th are attractors – the melody orbits them, keeps coming home. In Fear mode (Phrygian), the flat 2nd is overweighted. The melody keeps falling to the dark neighbor, one semitone above the root, and sitting there.</p>
+<p>The Markov table is the scale’s personality, not its notes. A Lydian scale through a uniform random walk sounds nothing like Lydian through a weighted transition table. The weights turn interval theory into a behavioral tendency.</p>
+<p>At <code>transition_weight=0</code>, this is a random walk through the available pitches. At <code>transition_weight=1.0</code>, the melody follows the most probable path each time, producing patterns that are pleasant but predictable – a melody that always does the expected thing. The sweet spot is 0.5-0.7, where the table biases the melody without dictating it.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>clock</code></td><td>Gate In</td><td>Advance to the next note.</td></tr>
+<tr><td><code>pitch_out</code></td><td>CV Out</td><td>Current pitch as MIDI note number.</td></tr>
+<tr><td><code>trigger</code></td><td>Gate Out</td><td>Fires on each new note.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>emotion_index</code></td><td>0-7</td><td>Selects the Plutchik emotion table.</td></tr>
+<tr><td><code>transition_weight</code></td><td>0.0-1.0</td><td>Table bias vs. randomness.</td></tr>
+<tr><td><code>register</code></td><td>0-48</td><td>Playback range in semitones.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>BeadsGateGen</strong> – Mutable Instruments Beads-style stochastic trigger generator</p>
+<p>Density-controlled stochastic gate source. Three blendable modes: periodic, clustered (the Beads signature – events arrive in bursts with gaps between), and Poisson random. BeadsGateGen decides <em>when</em> things happen. Pair it with a ProbabilityGate to decide <em>whether</em> they happen.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>density</code></td><td>CV In</td><td>Event density (0.0-1.0).</td></tr>
+<tr><td><code>gate</code></td><td>Gate Out</td><td>Gate output.</td></tr>
+<tr><td><code>trigger</code></td><td>Gate Out</td><td>Trigger output (one-block pulse).</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>seed</code></td><td>0.0-1.0</td><td>Randomness: 0=periodic, 0.5=clustered, 1.0=Poisson.</td></tr>
+<tr><td><code>bias</code></td><td>-1.0-1.0</td><td>Timing bias: negative=rushed, positive=laid-back.</td></tr>
+<tr><td><code>jitter</code></td><td>0.0-1.0</td><td>Per-event timing noise.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>ProbabilityGate</strong> – The gatekeeper of silence</p>
+<p>Takes any trigger and passes it with configurable probability. At 100% it is transparent – every trigger goes through. At 50% it passes roughly every other event. At 10% it creates sparse, surprising hits separated by long silences. The musical point: silence is not the absence of music, it is a rest. ProbabilityGate makes rests compositional rather than accidental.</p>
+<p>This is the canonical implementation of the “nothing fires at 100%” principle. Every trigger path in the default rack passes through at least one ProbabilityGate. The result is a system where events <em>might</em> happen, and the listener can’t quite predict when. That uncertainty is what keeps the ear engaged over hours of continuous output.</p>
+<p>Chain two ProbabilityGates in series for compound sparsity. 0.5 x 0.5 = 0.25 probability on average, but the patterns interact in ways that a single 0.25 gate would not – the clustering and gaps have a different shape.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>Gate In</td><td>Incoming trigger/gate signal.</td></tr>
+<tr><td><code>out</code></td><td>Gate Out</td><td>Filtered trigger/gate signal.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>probability</code></td><td>0.0-1.0</td><td>Pass-through probability.</td></tr>
+<tr><td><code>seed</code></td><td>0.0-1.0</td><td>Randomization seed. Same seed = same pattern for a given input.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>ClockDivider</strong> – Clock divider/multiplier</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>Gate In</td><td>Input clock.</td></tr>
+<tr><td><code>div2</code> through <code>div16</code></td><td>Gate Out</td><td>Divided outputs.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>ClockJitter</strong> – Humanized timing</p>
+<p>Takes a clock signal and re-emits it with configurable timing slop. At 0% jitter it is a metronome. At 30% it is a musician – events arrive a little early or late, and the slight imprecision makes rhythms feel alive rather than mechanical. At 70% it sounds drunk. Above 90%, the sense of pulse dissolves entirely but events still occur, unpredictably, like someone tapping on a surface while distracted.</p>
+<p>Gaussian mode (mode 1) produces the most natural feel – timing errors follow a bell curve, with small deviations common and large ones rare. Correlation mode (mode 2) is more interesting: adjacent events cluster. The clock rushes through a few beats, then drags through the next few. It sounds like a musician who gets excited during a fill and then pulls back.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>Gate In</td><td>Input clock.</td></tr>
+<tr><td><code>out</code></td><td>Gate Out</td><td>Jittered clock output.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>amount</code></td><td>0.0-1.0</td><td>Jitter magnitude.</td></tr>
+<tr><td><code>bias</code></td><td>-1.0-1.0</td><td>Negative = rushing, positive = dragging.</td></tr>
+<tr><td><code>mode</code></td><td>0-2</td><td>0=uniform random, 1=gaussian, 2=correlation.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="filters"><a class="header" href="#filters">Filters</a></h3>
+<p><strong>RipplesSvf</strong> – Mutable Instruments Ripples-style state variable filter</p>
+<p>TPT (topology-preserving transform) SVF with simultaneous LP/BP/HP outputs and self-oscillation at high resonance. Soft saturation on the feedback path models the analog character.</p>
+<p>At low resonance, Ripples is a tone shaper. It darkens or brightens the signal, subtracting frequencies without calling attention to itself. Raise the resonance above 0.7 and the filter starts to sing – the feedback path rings at the cutoff frequency, adding a coloring pitch that bleeds into everything passing through. At resonance near 1.0, the filter self-oscillates: it generates a pure sine tone at the cutoff frequency, even with no input signal. You can play it as an oscillator.</p>
+<p>The filter <em>breathes</em> when arousal modulates the cutoff. Map the Golem’s arousal CV to <code>cutoff</code> and the filter opens and closes like a lung – bright when the Golem is alert, muffled when it’s not. This is one of the most direct mappings from emotional state to audible change.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>Audio In</td><td>Signal input.</td></tr>
+<tr><td><code>cutoff</code></td><td>CV In</td><td>Cutoff frequency modulation (0.0-1.0 -&gt; 20Hz-20kHz exp).</td></tr>
+<tr><td><code>resonance</code></td><td>CV In</td><td>Resonance (0.0-1.0, self-oscillates near 1.0).</td></tr>
+<tr><td><code>out</code></td><td>Audio Out</td><td>Filtered output (mode-mixed).</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>base_cutoff</code></td><td>20-20000 Hz</td><td>Base cutoff frequency.</td></tr>
+<tr><td><code>base_resonance</code></td><td>0.0-1.0</td><td>Base resonance.</td></tr>
+<tr><td><code>mode</code></td><td>0.0-1.0</td><td>Output mode: 0=LP, 0.5=BP, 1.0=HP.</td></tr>
+<tr><td><code>drive</code></td><td>0.0-1.0</td><td>Input saturation amount.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="envelopes"><a class="header" href="#envelopes">Envelopes</a></h3>
+<p><strong>StagesEnvelope</strong> – Mutable Instruments Stages-style segment generator</p>
+<p>Vactrol-smoothed envelope with configurable attack/decay/sustain/release and organic transient shaping.</p>
+<p>The <code>shape</code> parameter matters more than it looks like it should. At shape=-1 (log curve), the attack is a fast bloom – the signal jumps to 80% almost immediately, then eases into the peak. The decay is a long exhale, falling quickly at first and then hanging on near the sustain level. This is the shape of a plucked string or a struck bell. At shape=+1 (exp), it is the opposite: a slow swell that accelerates into the peak, followed by a fast cutoff. Like a door slamming. At shape=0 (linear), the envelope moves at constant speed in both directions, which sounds mechanical and is rarely what you want.</p>
+<p>The <code>response</code> parameter adds vactrol smoothing – a lowpass on the envelope itself, modeled after the optocoupler-based VCAs in vintage Buchla systems. At response=0, the envelope is instant and precise. At response=0.8, every transition is smeared. Gates become soft hills. Triggers become gentle bumps. This is the parameter to reach for when the Golem needs to sound less like a synthesizer and more like a breathing thing.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>gate</code></td><td>Gate In</td><td>Gate input (high=sustain, low=release).</td></tr>
+<tr><td><code>trigger</code></td><td>Gate In</td><td>Trigger input (rising edge starts attack).</td></tr>
+<tr><td><code>out</code></td><td>CV Out</td><td>Envelope output (0.0-1.0).</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>attack</code></td><td>0.001-5.0 s</td><td>Attack time.</td></tr>
+<tr><td><code>decay</code></td><td>0.01-30.0 s</td><td>Decay/release time.</td></tr>
+<tr><td><code>sustain</code></td><td>0.0-1.0</td><td>Sustain level.</td></tr>
+<tr><td><code>shape</code></td><td>-1.0-1.0</td><td>Curve: -1=log, 0=linear, 1=exp.</td></tr>
+<tr><td><code>response</code></td><td>0.0-1.0</td><td>Vactrol smoothing (0=instant, 1=very slow).</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="amplifiers-and-mixers"><a class="header" href="#amplifiers-and-mixers">Amplifiers and mixers</a></h3>
+<p><strong>VCA</strong> – Voltage-controlled amplifier</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>Audio In</td><td>Signal input.</td></tr>
+<tr><td><code>cv</code></td><td>CV In</td><td>Amplitude control (0.0-1.0).</td></tr>
+<tr><td><code>out</code></td><td>Audio Out</td><td>Attenuated output.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Mixer</strong> – 4-input summing mixer</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in_1</code> through <code>in_4</code></td><td>Audio In</td><td>Signal inputs.</td></tr>
+<tr><td><code>out</code></td><td>Audio Out</td><td>Summed output.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>level_1</code> through <code>level_4</code></td><td>0.0-1.0</td><td>Per-channel gain.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="harmony"><a class="header" href="#harmony">Harmony</a></h3>
+<p><strong>PolyDrone</strong> – Four-voice harmonic drone with voice leading</p>
+<p>Four CV outputs, each representing one voice of a chord. When the emotion state changes, voices don’t jump to the new chord. They glide. Each voice moves by the smallest possible interval to reach its target pitch in the new harmony.</p>
+<p>A chord change from major to phrygian might take 30 seconds as each voice slides independently to its destination. One voice might arrive in 8 seconds (it only had to move a semitone); another might still be in transit 25 seconds later (it had a major third to cover). The result is that chord transitions are not events but processes. For most of the transition, the harmony is somewhere between the old chord and the new one – an ambiguous, shifting thing.</p>
+<p>At <code>rate=0.01</code>, voices move at 1% per update cycle, roughly 80 seconds to cover a full semitone. This makes chord transitions feel geological. At <code>rate=0.5</code>, transitions happen over 2-3 seconds – still audible as glides, but with a sense of purpose. The <code>spread</code> parameter controls voicing width: at 0.5 octaves, voices cluster tightly (close-voiced, intimate); at 2.0 octaves, they spread across the keyboard (open-voiced, spacious).</p>
+<p>PolyDrone is the canonical implementation of voice leading. It operates on hour timescales when driven by slowly changing emotion states, making it the primary carrier of long-form harmonic arc.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>out_1</code> through <code>out_4</code></td><td>CV Out</td><td>Individual voice pitch outputs.</td></tr>
+<tr><td><code>trigger</code></td><td>Gate Out</td><td>Fires when any voice crosses a semitone boundary.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>root</code></td><td>0-11</td><td>Root note (0=C through 11=B).</td></tr>
+<tr><td><code>emotion_index</code></td><td>0-7</td><td>Chord type (maps to Plutchik emotion).</td></tr>
+<tr><td><code>spread</code></td><td>0.0-2.0</td><td>Voicing range in octaves.</td></tr>
+<tr><td><code>rate</code></td><td>0.0-1.0</td><td>Voice-leading speed.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="effects"><a class="header" href="#effects">Effects</a></h3>
+<p><strong>CloudsGranular</strong> – Mutable Instruments Clouds granular processor</p>
+<p>The full Clouds DSP engine via <code>mi-clouds-dsp</code>. Four playback modes: granular, stretch, looping delay, spectral. Includes the diffusion network, pitch shifter, and Dattorro reverb.</p>
+<p>Clouds is a texture machine. Feed it audio and it records into a buffer. Set grain <code>size</code> small and <code>density</code> high for a shimmering, diffused cloud of tiny fragments. Set <code>size</code> large and <code>density</code> low for distinct, separated playback events that expose the buffer content clearly.</p>
+<p>The frozen-buffer mode is where Clouds gets strange. Hit the <code>freeze</code> input and it stops recording. Now the buffer is a fixed sample, and the grain engine plays it back in fragments forever. Feed the Golem’s own voice into Clouds for 30 seconds, then freeze it: the Golem is accompanied by an echo of what it was half a minute ago. The texture of its recent past, decomposed and scattered. This is the main texture module for the Terminal phase – a Golem in its final hours accompanied by granular memories of its earlier states.</p>
+<p>Spectral mode (mode 3) is the most alien. It FFTs the input, freezes or smears the frequency bins, and resynthesizes. The result sounds like the input viewed through frosted glass – recognizable in shape but stripped of detail.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in_l</code></td><td>Audio In</td><td>Left input.</td></tr>
+<tr><td><code>in_r</code></td><td>Audio In</td><td>Right input.</td></tr>
+<tr><td><code>trigger</code></td><td>Gate In</td><td>Grain seed trigger.</td></tr>
+<tr><td><code>freeze</code></td><td>Gate In</td><td>Freeze the recording buffer.</td></tr>
+<tr><td><code>out_l</code></td><td>Audio Out</td><td>Left output.</td></tr>
+<tr><td><code>out_r</code></td><td>Audio Out</td><td>Right output.</td></tr>
+<tr><td><code>position</code></td><td>CV In</td><td>Playback position in buffer.</td></tr>
+<tr><td><code>size</code></td><td>CV In</td><td>Grain size.</td></tr>
+<tr><td><code>pitch</code></td><td>CV In</td><td>Pitch transposition (semitones).</td></tr>
+<tr><td><code>density</code></td><td>CV In</td><td>Grain density / overlap.</td></tr>
+<tr><td><code>texture</code></td><td>CV In</td><td>Texture / window shape / filter.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>mode</code></td><td>0-3</td><td>Granular / Stretch / Looping Delay / Spectral.</td></tr>
+<tr><td><code>dry_wet</code></td><td>0.0-1.0</td><td>Mix.</td></tr>
+<tr><td><code>feedback</code></td><td>0.0-1.0</td><td>Feedback amount.</td></tr>
+<tr><td><code>reverb</code></td><td>0.0-1.0</td><td>Built-in reverb amount.</td></tr>
+<tr><td><code>stereo_spread</code></td><td>0.0-1.0</td><td>Random panning of grains.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>DattorroReverb</strong> – Standalone Dattorro/Griesinger reverb</p>
+<p>The same reverb algorithm from Clouds, exposed as a standalone module for use anywhere in the chain. Two cascaded allpass diffusers feed a tank with modulated delay lines and configurable damping.</p>
+<p>At <code>time=0.9</code> and <code>damping=0.8</code>, this creates a cathedral. Notes last 8+ seconds, smearing into each other, the high frequencies rolling off slowly as the tail decays. At <code>time=0.3</code>, it is a small room – a short, bright ambience that adds space without washing things out.</p>
+<p>The Golem’s emotional state should set reverb parameters. When epistemic vitality is low (the Golem is lost, its internal model confused), the room gets bigger. The decay stretches. Notes hang in the air as if the Golem is reaching into an empty space and hearing its own voice come back, slowly. When epistemic vitality is high (the Golem is coherent, sure of its state), the reverb pulls in tight – a small, clear room where every note has definition.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in_l</code>, <code>in_r</code></td><td>Audio In</td><td>Stereo input.</td></tr>
+<tr><td><code>out_l</code>, <code>out_r</code></td><td>Audio Out</td><td>Stereo output (wet+dry mixed).</td></tr>
+</tbody>
+</table>
+</div>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Param</th><th>Range</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>time</code></td><td>0.0-1.0</td><td>Reverb decay time.</td></tr>
+<tr><td><code>diffusion</code></td><td>0.0-1.0</td><td>Allpass diffusion amount.</td></tr>
+<tr><td><code>damping</code></td><td>0.0-1.0</td><td>High-frequency damping in feedback loop.</td></tr>
+<tr><td><code>mix</code></td><td>0.0-1.0</td><td>Dry/wet.</td></tr>
+<tr><td><code>input_gain</code></td><td>0.0-1.0</td><td>Pre-reverb gain.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>SampleAndHold</strong> – Sample and hold</p>
+<p>Samples the input CV on each trigger rising edge and holds the value until the next trigger. A simple module, but it creates discrete steps from continuous signals. Patch an LFO into the input and a slow clock into the trigger, and you get a staircase voltage that changes at rhythm rate – useful for creating deliberate, stepped parameter changes rather than smooth ones.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Port</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>in</code></td><td>CV In</td><td>Signal to sample.</td></tr>
+<tr><td><code>trigger</code></td><td>Gate In</td><td>Sample trigger.</td></tr>
+<tr><td><code>out</code></td><td>CV Out</td><td>Held value.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="module-personalities"><a class="header" href="#module-personalities">Module personalities</a></h2>
+<p>Modules are not neutral DSP units. Each has a character that depends on its algorithm and the CV sources that typically drive it. When you patch a module into the Golem’s signal chain, you are adding a behavioral tendency, not just a processing stage.</p>
+<p><strong>TuringMachine – the soul.</strong> The Turing Machine is the one module that makes each Golem unique. Its seed determines the melodic personality: the intervals it favors, the phrases it falls into, the way it responds to mutation. Two Golems with different seeds have different musical identities, even when everything else matches. The Turing Machine is why a Golem is <em>this</em> Golem and not some other one.</p>
+<p><strong>CloudsGranular – the memory.</strong> In frozen-buffer mode, Clouds stores the Golem’s recent past and plays it back in fragments. It is the module most associated with the Terminal phase, where the Golem becomes a creature accompanied by echoes of what it used to sound like. Clouds remembers what the Golem has forgotten.</p>
+<p><strong>RipplesSvf – the breath.</strong> When arousal modulates its cutoff, the filter opens and closes with the Golem’s alertness. It is the most directly physiological module in the rack – the one that makes the Golem sound like it’s breathing.</p>
+<p><strong>DattorroReverb – the room.</strong> Reverb defines the space the Golem inhabits, and that space changes with the Golem’s epistemic state. A confused Golem inhabits a cathedral. A coherent one lives in a small room. The reverb is the Golem’s relationship to emptiness.</p>
+<p><strong>StagesEnvelope – the gesture.</strong> The shape and response parameters determine whether the Golem’s articulation is percussive and sharp (log shape, low response) or soft and slow (exp shape, high response). Stages is the difference between a Golem that speaks in staccato bursts and one that speaks in long, slurred phrases.</p>
+<p><strong>ProbabilityGate – the silence.</strong> By gating events probabilistically, ProbabilityGate determines the density of the Golem’s musical activity. A Golem with low probability gates is sparse and contemplative. A Golem with high probability gates is busy and restless. The silence between notes is as much a part of the personality as the notes themselves.</p>
+<hr>
+<h2 id="the-rack"><a class="header" href="#the-rack">The Rack</a></h2>
+<p>The Rack is a directed acyclic graph of modules connected by typed patch cables. It processes audio in topological order – modules whose inputs depend on other modules’ outputs are processed after their dependencies.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A connection between two module ports.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PatchCable {
+    pub from: PortId,       // source module + port
+    pub to: PortId,         // destination module + port
+    pub attenuation: f32,   // 0.0-1.0, like an inline attenuator
+}
+
+/// The module rack: a graph of modules and patch cables.
+pub struct Rack {
+    /// All registered modules, keyed by module ID.
+    modules: IndexMap&lt;String, Box&lt;dyn Module&gt;&gt;,
+    /// All patch cables.
+    cables: Vec&lt;PatchCable&gt;,
+    /// Topologically sorted processing order (recomputed when cables change).
+    processing_order: Vec&lt;String&gt;,
+    /// Pre-allocated signal buffers for each port.
+    buffers: HashMap&lt;PortId, SignalBlock&gt;,
+    /// Master output level (0.0-1.0).
+    master_level: f32,
+}
+
+impl Rack {
+    /// Add a module to the rack.
+    pub fn add_module(&amp;mut self, module: Box&lt;dyn Module&gt;) { ... }
+
+    /// Remove a module (and all cables connected to it).
+    pub fn remove_module(&amp;mut self, id: &amp;str) { ... }
+
+    /// Connect two ports with a patch cable.
+    /// Returns Err if the signal types are incompatible.
+    pub fn connect(
+        &amp;mut self,
+        from: PortId,
+        to: PortId,
+        attenuation: f32,
+    ) -&gt; Result&lt;()&gt; { ... }
+
+    /// Disconnect a cable.
+    pub fn disconnect(&amp;mut self, from: &amp;PortId, to: &amp;PortId) { ... }
+
+    /// Process one block of audio through the entire rack.
+    /// Returns the final stereo output.
+    /// This is called 1500 times per second. It must be fast.
+    pub fn process_block(&amp;mut self) -&gt; (SignalBlock, SignalBlock) {
+        // 1. For each module in topological order:
+        //    a. Gather input buffers from upstream cables (with attenuation)
+        //    b. Call module.process(inputs, outputs)
+        //    c. Store output buffers for downstream consumers
+        // 2. Read the final module's output as the rack output.
+        ...
+    }
+
+    /// Serialize the entire rack state (modules + cables + params).
+    pub fn serialize(&amp;self) -&gt; serde_json::Value { ... }
+
+    /// Restore a rack from serialized state.
+    pub fn deserialize(state: &amp;serde_json::Value) -&gt; Result&lt;Self&gt; { ... }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="topological-sort"><a class="header" href="#topological-sort">Topological sort</a></h3>
+<p>When cables change, the rack recomputes the processing order using Kahn’s algorithm. This runs once per cable change (rare – only when the user patches), not per audio block.</p>
+<p>Cycles are prevented at patch time: <code>connect()</code> rejects any cable that would create a cycle. This is validated by attempting the topological sort and checking for failure.</p>
+<h3 id="feedback-paths"><a class="header" href="#feedback-paths">Feedback paths</a></h3>
+<p>Some patches require feedback (e.g., delay feedback loops). These are handled with a one-block delay: the feedback module reads the <em>previous</em> block’s output from a stored buffer. This is standard in all digital modular systems and adds exactly 0.667ms of latency to the feedback path – imperceptible for delays and reverbs.</p>
+<hr>
+<h2 id="adding-new-modules"><a class="header" href="#adding-new-modules">Adding new modules</a></h2>
+<p>To port an additional Mutable Instruments module (e.g., Rings, Tides, Warps, Marbles):</p>
+<ol>
+<li>Port the C++ DSP code from <code>pichenettes/eurorack</code> to Rust (following the pattern of <code>mi-plaits-dsp</code> and <code>mi-clouds-dsp</code>).</li>
+<li>Create a new file in <code>modules/</code> implementing the <code>Module</code> trait.</li>
+<li>Register the module in the <code>ModuleRegistry</code> (a map from display names to factory functions).</li>
+<li>The module is automatically available in the TUI rack editor.</li>
+</ol>
+<p>The <code>Module</code> trait is designed to make this straightforward – the DSP lives inside <code>process()</code>, and the trait handles everything else (port declaration, parameter management, serialization).</p>
+<h3 id="external-module-loading-future"><a class="header" href="#external-module-loading-future">External module loading (future)</a></h3>
+<p>A future extension could support dynamically loaded modules via <code>.so</code>/<code>.dylib</code> shared libraries, allowing users to write custom modules without recompiling the Golem binary. The <code>Module</code> trait is already <code>Send + 'static</code>, which is compatible with dynamic loading via <code>libloading</code>. This is deferred – the built-in library is sufficient for v1.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[VCV-RACK] Stoermer, A. “VCV Rack.” 2017-present. – <em>Open-source virtual modular synthesizer; the software modular paradigm this system follows.</em></li>
+<li>[PLAITS-RS] Rockstedt, O. “mi-plaits-dsp-rs.” GitHub. – <em>The Rust port of Plaits that the PlaitsOscillator module wraps.</em></li>
+<li>[EURORACK-SRC] Gillet, E. “pichenettes/eurorack.” GitHub. – <em>Source for all Mutable Instruments DSP code. The porting reference for future modules.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/24-sonification/00-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/24-sonification/02-cortical-mapping.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/24-sonification/00-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/24-sonification/02-cortical-mapping.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

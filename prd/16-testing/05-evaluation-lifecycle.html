@@ -1,0 +1,1567 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Evaluation Lifecycle - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/16-testing/05-evaluation-lifecycle.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="evaluation-lifecycle-from-dev-to-production-spec"><a class="header" href="#evaluation-lifecycle-from-dev-to-production-spec">Evaluation Lifecycle: From Dev to Production [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Packages</strong>: <code>@bardo/eval</code>, <code>@bardo/dev</code>, <code>@bardo/testnet</code></p>
+<p><strong>Depends on</strong>: <code>./04-mirage.md</code> (live fork infrastructure specification for Base/Ethereum replay), <code>./06-revision-guide.md</code> (12 numbered PRD revisions; Revisions 1, 6, 10, 11 cover self-correction constraints, calibration, reward hacking mitigation, and evaluation metrics)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the four-phase evaluation lifecycle that a Golem (mortal autonomous agent) strategy must survive before reaching production. It belongs to Section 16 (Testing) and defines the progression from Trace Inspection (zero risk) through Backtesting, Paper Trading, and Canary Deployment (live capital). Each phase has explicit entry gates and exit conditions. Understanding Mirage (live fork replay infrastructure, see <code>./04-mirage.md</code>) is helpful context. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="purpose"><a class="header" href="#purpose">Purpose</a></h2>
+<p>A Golem strategy progresses through four phases of increasing risk before reaching production. Each phase has explicit entry gates, evaluation criteria, and exit conditions. No strategy reaches live capital without surviving all four phases.</p>
+<p>This document specifies the exact infrastructure, metrics, and gates for each phase, integrating Mirage (live fork replay from <code>./04-mirage.md</code>) and the production verification primitives (from <code>./06-revision-guide.md</code>).</p>
+<hr>
+<h2 id="document-map"><a class="header" href="#document-map">Document Map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Phase</th><th>Capital Risk</th></tr>
+</thead>
+<tbody>
+<tr><td>S1</td><td>Trace Inspection</td><td>None</td></tr>
+<tr><td>S2</td><td>Backtesting via Mirage</td><td>None</td></tr>
+<tr><td>S3</td><td>Paper Trading</td><td>None</td></tr>
+<tr><td>S4</td><td>Canary Deployment</td><td>1-5% TVL</td></tr>
+<tr><td>S5</td><td>Walk-Forward Analysis</td><td>Cross-phase</td></tr>
+<tr><td>S6</td><td>Phase transition gates</td><td>Cross-phase</td></tr>
+<tr><td>S7</td><td>Implementation</td><td>Cross-phase</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s1--phase-1-trace-inspection-zero-risk"><a class="header" href="#s1--phase-1-trace-inspection-zero-risk">S1 — Phase 1: Trace Inspection (Zero Risk)</a></h2>
+<h3 id="environment"><a class="header" href="#environment">Environment</a></h3>
+<p>Local Anvil fork via <code>@bardo/testnet</code>. Single-block or short-sequence execution. No real market data — deterministic test scenarios.</p>
+<h3 id="scope"><a class="header" href="#scope">Scope</a></h3>
+<p>Individual heartbeat ticks and mechanism correctness. This phase verifies that each mechanism works in isolation before exposing it to real market dynamics.</p>
+<h3 id="tools"><a class="header" href="#tools">Tools</a></h3>
+<p>All verification comes from production-compatible primitives (no dev-only magic):</p>
+<pre><code class="language-typescript">interface TraceInspectionTools {
+  /** Pre/post state reads for OutcomeVerification. */
+  simulateContract: typeof import("viem").simulateContract;
+
+  /** Multi-call simulation for multi-step behavior. */
+  simulateCalls: typeof import("viem").simulateCalls;
+
+  /** Gas estimation for cost verification. */
+  estimateContractGas: typeof import("viem").estimateContractGas;
+
+  /** Direct state reads for balances, positions, pool state. */
+  readContract: typeof import("viem").readContract;
+}
+
+/**
+ * OutcomeVerification: the core verification primitive from
+ * `06-revision-guide.md`, Revision 1.
+ *
+ * Captures pre-state before a decision, post-state after execution,
+ * and compares against simulation predictions.
+ */
+interface OutcomeVerification {
+  /** Decision identifier. */
+  decisionId: string;
+  tick: number;
+
+  /** Pre-state snapshot (balances, positions, pool state). */
+  preState: {
+    balances: Record&lt;string, bigint&gt;;
+    positions: PositionSnapshot[];
+    poolState: PoolStateSnapshot;
+    timestamp: number;
+  };
+
+  /** Post-state snapshot after execution. */
+  postState: {
+    balances: Record&lt;string, bigint&gt;;
+    positions: PositionSnapshot[];
+    poolState: PoolStateSnapshot;
+    timestamp: number;
+  };
+
+  /** Simulation prediction (from simulateContract before execution). */
+  simulation: {
+    expectedBalanceChanges: Record&lt;string, bigint&gt;;
+    expectedGasUsed: bigint;
+    expectedReturn: bigint;
+    simulatedAt: number;
+  };
+
+  /** Invariant checks (Trace2Inv-style). */
+  invariants: Array&lt;{
+    name: string;
+    expression: string;
+    passed: boolean;
+    actual: string;
+    expected: string;
+  }&gt;;
+
+  /** Did the actual outcome match the simulation? */
+  simulationAccurate: boolean;
+
+  /** Deviation between simulation and actual (basis points). */
+  deviationBps: number;
+}
+</code></pre>
+<h3 id="phase-1-evaluation-criteria"><a class="header" href="#phase-1-evaluation-criteria">Phase 1 Evaluation Criteria</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Criterion</th><th>Threshold</th><th>Method</th></tr>
+</thead>
+<tbody>
+<tr><td>All mechanism tests pass (from <code>03-mechanism-testing.md</code>)</td><td>100%</td><td>Vitest suite</td></tr>
+<tr><td>No invariant violations</td><td>0 violations</td><td>OutcomeVerification invariant checks</td></tr>
+<tr><td>Simulation accuracy</td><td>&gt; 95% of simulations within 50bps of actual</td><td>simulateContract() vs receipt comparison</td></tr>
+<tr><td>Quality score distribution</td><td>Mean &gt;= 0.5</td><td>InsightQualityScore from <code>02-knowledge-quality.md</code></td></tr>
+<tr><td>No red flags in generated insights</td><td>0 critical red flags</td><td>Red flag detector</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="gate-to-phase-2"><a class="header" href="#gate-to-phase-2">Gate to Phase 2</a></h3>
+<p>All Phase 1 criteria must pass. Automated: <code>bardo eval:lifecycle --phase 1</code> returns exit code 0.</p>
+<hr>
+<h2 id="s2--phase-2-backtesting-via-mirage-zero-risk"><a class="header" href="#s2--phase-2-backtesting-via-mirage-zero-risk">S2 — Phase 2: Backtesting via Mirage (Zero Risk)</a></h2>
+<h3 id="environment-1"><a class="header" href="#environment-1">Environment</a></h3>
+<p>Mirage live fork (from <code>./04-mirage.md</code>) replaying real blocks from Base and/or Ethereum mainnet. The Golem sees real market dynamics — price movements, liquidity changes, oracle updates, gas fluctuations — but cannot execute real transactions.</p>
+<h3 id="scope-1"><a class="header" href="#scope-1">Scope</a></h3>
+<p>Multi-day runs with real market dynamics. This phase tests whether the Golem can learn, adapt, and generate valuable knowledge in a realistic environment.</p>
+<h3 id="mirage-integration"><a class="header" href="#mirage-integration">Mirage Integration</a></h3>
+<pre><code class="language-typescript">interface MirageBacktestConfig {
+  /** Mirage session configuration. */
+  mirage: {
+    chain: "base" | "ethereum";
+    rpcEndpoint: string;
+    anvilPort: number;
+    protocols: string[];
+    blockRange: {
+      start: number;
+      end: number;
+    } | null;
+    /** If null, replay from current block. */
+    realtimeReplay: boolean;
+  };
+
+  /** Golem strategy configuration. */
+  strategy: string;
+
+  /** Duration in simulated days. */
+  durationDays: number;
+
+  /** Number of repetitions with different starting blocks. */
+  repetitions: number;
+
+  /** Walk-forward window configuration. */
+  walkForward: WalkForwardConfig;
+}
+
+interface MirageBacktestResult {
+  sessionId: string;
+  config: MirageBacktestConfig;
+
+  /** Per-repetition results. */
+  repetitions: Array&lt;{
+    repetitionIndex: number;
+    startBlock: number;
+    endBlock: number;
+    durationTicks: number;
+
+    /** Regime sequence observed during this repetition. */
+    regimes: Array&lt;{
+      regime: RegimeTag;
+      startTick: number;
+      endTick: number;
+    }&gt;;
+
+    /** Final metrics. */
+    metrics: BacktestMetrics;
+
+    /** Walk-forward analysis results. */
+    walkForward: WalkForwardResult;
+  }&gt;;
+
+  /** Aggregate statistics across repetitions. */
+  aggregate: {
+    sharpe: { mean: number; std: number; ci95: [number, number] };
+    maxDrawdown: { mean: number; std: number; p95: number };
+    novelInsightRate: { mean: number; std: number };
+    grimoireStaleRate: { mean: number; std: number };
+    dreamYield: { mean: number; std: number };
+  };
+
+  /** Statistical validity checks. */
+  validity: {
+    pbo: PBOResult;
+    dsr: { dsr: number; pValue: number; significant: boolean };
+    regimeRobustness: {
+      positiveSharpeRegimes: number;
+      totalRegimes: number;
+      robust: boolean;
+    };
+    monteCarlo: MonteCarloResult;
+  };
+
+  /** Phase 2 gate verdict. */
+  passesGate: boolean;
+  gateFailures: string[];
+}
+
+interface BacktestMetrics {
+  sharpeRatio: number;
+  sortinoRatio: number;
+  maxDrawdown: number;
+  cumulativePnlUsdc: number;
+  winRate: number;
+  profitFactor: number;
+  novelInsightRate: number;
+  grimoireStaleRate: number;
+  epistemicFitness: number;
+  dreamYield: number;
+  admissionRate: number;
+  predictionAccuracy: number;
+}
+</code></pre>
+<h3 id="walk-forward-analysis"><a class="header" href="#walk-forward-analysis">Walk-Forward Analysis</a></h3>
+<p>Walk-forward analysis prevents look-ahead bias by ensuring the strategy is always evaluated on data it has never seen. Two modes: anchored (growing training window) and rolling (fixed-size window).</p>
+<pre><code class="language-typescript">interface WalkForwardConfig {
+  /** Mode: anchored (growing window) or rolling (fixed window). */
+  mode: "anchored" | "rolling";
+
+  /** Training window size in ticks (for rolling mode). */
+  trainingWindowTicks: number;
+
+  /** Test window size in ticks. */
+  testWindowTicks: number;
+
+  /** Step size: how many ticks to advance between windows. */
+  stepTicks: number;
+
+  /** Purging: gap between training and test to prevent leakage. */
+  purgeGapTicks: number;
+
+  /** Embargo: additional gap after test window. */
+  embargoTicks: number;
+}
+
+interface WalkForwardResult {
+  /** Per-window results. */
+  windows: Array&lt;{
+    windowIndex: number;
+    trainStart: number;
+    trainEnd: number;
+    testStart: number;
+    testEnd: number;
+
+    /** Training window metrics. */
+    trainMetrics: BacktestMetrics;
+
+    /** Test window metrics (out-of-sample). */
+    testMetrics: BacktestMetrics;
+
+    /** Regime during test window. */
+    testRegime: RegimeTag;
+
+    /** Ratio of test/train Sharpe (&gt;1 = no overfit). */
+    generalizationRatio: number;
+  }&gt;;
+
+  /** Aggregate generalization ratio. */
+  avgGeneralizationRatio: number;
+
+  /** Fraction of windows where test Sharpe &gt; 0. */
+  positiveOOSRate: number;
+
+  /** Per-regime test performance. */
+  byRegime: Record&lt;
+    RegimeTag,
+    {
+      windows: number;
+      avgSharpe: number;
+      avgGeneralizationRatio: number;
+    }
+  &gt;;
+
+  /**
+   * Reference: López de Prado, M. Advances in Financial Machine
+   * Learning. Wiley, 2018. Chapters 11-15.
+   */
+}
+
+/**
+ * Combinatorial Purged Cross-Validation (CPCV).
+ *
+ * More rigorous than simple walk-forward: generates all combinations
+ * of train/test splits with purging and embargo to prevent information
+ * leakage. Produces PBO directly.
+ *
+ * Reference: SSRN:4686376.
+ */
+interface CPCVConfig {
+  /** Number of partitions. Must be even. */
+  partitions: number;
+
+  /** Purge gap in ticks between train and test partitions. */
+  purgeGapTicks: number;
+
+  /** Embargo gap in ticks after test partitions. */
+  embargoTicks: number;
+}
+
+function runCPCV(
+  data: TickData[],
+  config: CPCVConfig,
+): { pbo: number; oosPerformance: number[] } {
+  const partitions = partitionData(data, config.partitions);
+  const halfN = config.partitions / 2;
+  const combinations = generateCombinations(config.partitions, halfN);
+
+  const oosPerformances: number[] = [];
+  let overfitCount = 0;
+
+  for (const trainIndices of combinations) {
+    const testIndices = Array.from(
+      { length: config.partitions },
+      (_, i) =&gt; i,
+    ).filter((i) =&gt; !trainIndices.includes(i));
+
+    const trainData = applyPurgeAndEmbargo(
+      partitions,
+      trainIndices,
+      testIndices,
+      config.purgeGapTicks,
+      config.embargoTicks,
+    );
+
+    const testData = testIndices.flatMap((i) =&gt; partitions[i]);
+    const trainSharpe = computeSharpe(extractReturns(trainData));
+    const testSharpe = computeSharpe(extractReturns(testData));
+
+    oosPerformances.push(testSharpe);
+
+    if (testSharpe &lt; median(oosPerformances)) {
+      overfitCount++;
+    }
+  }
+
+  return {
+    pbo: overfitCount / combinations.length,
+    oosPerformance: oosPerformances,
+  };
+}
+</code></pre>
+<h3 id="phase-2-evaluation-criteria"><a class="header" href="#phase-2-evaluation-criteria">Phase 2 Evaluation Criteria</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Criterion</th><th>Threshold</th><th>Method</th></tr>
+</thead>
+<tbody>
+<tr><td>PBO</td><td>&lt; 0.5</td><td>Combinatorial Purged Cross-Validation</td></tr>
+<tr><td>DSR</td><td>&gt; 0 (significant at p &lt; 0.05)</td><td>Deflated Sharpe Ratio</td></tr>
+<tr><td>Regime robustness</td><td>Sharpe &gt; 0 in &gt;= 3 regimes</td><td>Regime-conditional evaluation</td></tr>
+<tr><td>Monte Carlo robustness</td><td>P95 drawdown &lt; 2× backtest drawdown</td><td>1000 Monte Carlo iterations</td></tr>
+<tr><td>Walk-forward generalization</td><td>Avg ratio &gt; 0.5</td><td>Walk-forward analysis</td></tr>
+<tr><td>Knowledge quality</td><td>Mean quality score &gt;= 0.5</td><td>InsightQualityEvaluator</td></tr>
+<tr><td>No critical mechanism failures</td><td>0</td><td>Mechanism health dashboard</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="gate-to-phase-3"><a class="header" href="#gate-to-phase-3">Gate to Phase 3</a></h3>
+<p>All Phase 2 criteria must pass. Automated check, but requires operator review before promotion. <code>bardo eval:lifecycle --phase 2</code> generates a report; operator reviews and runs <code>bardo eval:lifecycle --promote 3</code>.</p>
+<hr>
+<h2 id="s3--phase-3-paper-trading-zero-capital-risk"><a class="header" href="#s3--phase-3-paper-trading-zero-capital-risk">S3 — Phase 3: Paper Trading (Zero Capital Risk)</a></h2>
+<h3 id="environment-2"><a class="header" href="#environment-2">Environment</a></h3>
+<p>Live Base mainnet data, real-time. The Golem observes real market conditions and makes decisions, but uses <code>simulateContract()</code> instead of executing transactions. No capital at risk.</p>
+<h3 id="scope-2"><a class="header" href="#scope-2">Scope</a></h3>
+<p>Real-time decision quality validation. The Golem’s decisions are recorded with full context and compared against actual market outcomes.</p>
+<pre><code class="language-typescript">interface PaperTradingConfig {
+  /** Chain to paper trade on. */
+  chain: "base" | "ethereum";
+
+  /** RPC endpoint for live data. */
+  rpcEndpoint: string;
+
+  /** Minimum duration in days. */
+  minimumDurationDays: number;
+
+  /** Strategy configuration. */
+  strategy: string;
+
+  /** Maximum simulated capital. */
+  simulatedCapitalUsdc: number;
+
+  /** Whether to require at least 1 regime change during the period. */
+  requireRegimeChange: boolean;
+}
+
+interface PaperTradingResult {
+  sessionId: string;
+  startedAt: number;
+  completedAt: number;
+  durationDays: number;
+
+  /** Every decision recorded with full context. */
+  decisions: Array&lt;{
+    decisionId: string;
+    tick: number;
+    timestamp: number;
+
+    /** What the Golem decided to do. */
+    action: string;
+    parameters: Record&lt;string, unknown&gt;;
+
+    /** Simulation result (what would have happened). */
+    simulation: {
+      expectedPnl: number;
+      expectedGas: bigint;
+      expectedSlippage: number;
+    };
+
+    /** Actual market outcome (observed after the fact). */
+    actualOutcome: {
+      marketPrice: number;
+      poolState: PoolStateSnapshot;
+      actualSlippage: number;
+    };
+
+    /** Paper P&amp;L: difference between entry and observed exit price. */
+    paperPnl: number;
+
+    /** Slippage estimation accuracy. */
+    slippageAccuracy: number;
+  }&gt;;
+
+  /** Aggregate metrics. */
+  metrics: {
+    paperSharpe: number;
+    paperSortino: number;
+    paperMaxDrawdown: number;
+    paperCumulativePnl: number;
+    avgSlippageAccuracy: number;
+    decisionsPerDay: number;
+    policyViolations: number;
+  };
+
+  /** Regime changes observed. */
+  regimeChanges: Array&lt;{
+    tick: number;
+    fromRegime: RegimeTag;
+    toRegime: RegimeTag;
+  }&gt;;
+
+  /** Knowledge quality during paper trading. */
+  knowledgeMetrics: {
+    insightsGenerated: number;
+    avgQualityScore: number;
+    trivialRate: number;
+    admissionRate: number;
+  };
+
+  passesGate: boolean;
+  gateFailures: string[];
+}
+</code></pre>
+<h3 id="phase-3-evaluation-criteria"><a class="header" href="#phase-3-evaluation-criteria">Phase 3 Evaluation Criteria</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Criterion</th><th>Threshold</th><th>Method</th></tr>
+</thead>
+<tbody>
+<tr><td>Paper Sharpe</td><td>&gt; 0</td><td>Cumulative paper P&amp;L</td></tr>
+<tr><td>Slippage estimates</td><td>Within 20% of actual</td><td>Simulation vs observed comparison</td></tr>
+<tr><td>Policy violations</td><td>0</td><td>PolicyCage enforcement log</td></tr>
+<tr><td>Regime change observed</td><td>&gt;= 1</td><td>Regime detection during period</td></tr>
+<tr><td>Minimum duration</td><td>&gt;= 7 days</td><td>Calendar time</td></tr>
+<tr><td>Knowledge quality maintained</td><td>Mean quality score &gt;= 0.5</td><td>InsightQualityEvaluator</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="gate-to-phase-4"><a class="header" href="#gate-to-phase-4">Gate to Phase 4</a></h3>
+<p>Operator review required. Paper trading report + operator approval. <code>bardo eval:lifecycle --promote 4 --approve</code>.</p>
+<hr>
+<h2 id="s4--phase-4-canary-deployment-1-5-tvl"><a class="header" href="#s4--phase-4-canary-deployment-1-5-tvl">S4 — Phase 4: Canary Deployment (1-5% TVL)</a></h2>
+<h3 id="environment-3"><a class="header" href="#environment-3">Environment</a></h3>
+<p>Live Base mainnet. Real capital. Small allocation (1-5% of total vault TVL).</p>
+<h3 id="scope-3"><a class="header" href="#scope-3">Scope</a></h3>
+<p>Production performance with automatic safety controls.</p>
+<pre><code class="language-typescript">interface CanaryConfig {
+  /** Vault address for the canary allocation. */
+  vaultAddress: `0x${string}`;
+
+  /** Maximum allocation as fraction of vault TVL. */
+  maxAllocationFraction: number;
+
+  /** Maximum allocation in absolute USDC. */
+  maxAllocationUsdc: number;
+
+  /** Minimum canary duration in days. */
+  minimumDurationDays: number;
+
+  /** Automatic kill switch triggers. */
+  killSwitches: {
+    /** Max drawdown before automatic shutdown. */
+    maxDrawdownPercent: number;
+
+    /** Max loss in USDC before shutdown. */
+    maxLossUsdc: number;
+
+    /** Consecutive ticks with negative P&amp;L before shutdown. */
+    consecutiveNegativeTicks: number;
+
+    /** Mechanism health degradation triggers. */
+    mechanismHealth: {
+      minDreamYield: number;
+      minAdmissionRate: number;
+      maxAffectiveHallucinationRate: number;
+    };
+  };
+}
+
+interface CanaryResult {
+  sessionId: string;
+  startedAt: number;
+  completedAt: number | null;
+  durationDays: number;
+  status: "running" | "completed" | "killed" | "graduated";
+
+  /** Kill reason if killed. */
+  killReason: string | null;
+
+  /** Real P&amp;L metrics. */
+  metrics: {
+    realSharpe: number;
+    realSortino: number;
+    realMaxDrawdown: number;
+    realCumulativePnl: number;
+    realWinRate: number;
+    gasSpent: number;
+  };
+
+  /** Mechanism health over the canary period. */
+  mechanismHealth: {
+    dreamYield: number;
+    admissionRate: number;
+    retrievalHitRate: number;
+    phageDeathRate: number;
+    predictionAccuracy: number;
+    affectiveHallucinationRate: number;
+  };
+
+  /** Comparison with Phase 3 paper trading predictions. */
+  paperVsReal: {
+    sharpeCorrelation: number;
+    pnlCorrelation: number;
+    slippageBias: number;
+  };
+
+  passesGate: boolean;
+  gateFailures: string[];
+}
+</code></pre>
+<h3 id="phase-4-monitoring"><a class="header" href="#phase-4-monitoring">Phase 4 Monitoring</a></h3>
+<p>Real-time monitoring with automatic kill switches and alerts.</p>
+<pre><code class="language-typescript">class CanaryMonitor {
+  constructor(
+    private config: CanaryConfig,
+    private alerter: AlertChannel,
+  ) {}
+
+  async checkHealth(metrics: CanaryMetrics): Promise&lt;CanaryHealthStatus&gt; {
+    const checks: Array&lt;{ name: string; passed: boolean; reason: string }&gt; = [];
+
+    if (metrics.drawdownPercent &gt; this.config.killSwitches.maxDrawdownPercent) {
+      checks.push({
+        name: "max_drawdown",
+        passed: false,
+        reason: `Drawdown ${metrics.drawdownPercent.toFixed(1)}% &gt; max ${this.config.killSwitches.maxDrawdownPercent}%`,
+      });
+    }
+
+    if (metrics.totalLossUsdc &gt; this.config.killSwitches.maxLossUsdc) {
+      checks.push({
+        name: "max_loss",
+        passed: false,
+        reason: `Loss $${metrics.totalLossUsdc.toFixed(2)} &gt; max $${this.config.killSwitches.maxLossUsdc}`,
+      });
+    }
+
+    if (
+      metrics.dreamYield &lt;
+      this.config.killSwitches.mechanismHealth.minDreamYield
+    ) {
+      checks.push({
+        name: "dream_yield",
+        passed: false,
+        reason: `Dream yield ${metrics.dreamYield.toFixed(2)} &lt; min ${this.config.killSwitches.mechanismHealth.minDreamYield}`,
+      });
+    }
+
+    const failed = checks.filter((c) =&gt; !c.passed);
+    if (failed.length &gt; 0) {
+      await this.alerter.send({
+        severity: "critical",
+        title: "Canary Kill Switch Triggered",
+        body: failed.map((f) =&gt; f.reason).join("\n"),
+      });
+    }
+
+    return {
+      healthy: failed.length === 0,
+      checks,
+      recommendation: failed.length &gt; 0 ? "kill" : "continue",
+    };
+  }
+}
+</code></pre>
+<h3 id="phase-4-evaluation-criteria"><a class="header" href="#phase-4-evaluation-criteria">Phase 4 Evaluation Criteria</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Criterion</th><th>Threshold</th><th>Method</th></tr>
+</thead>
+<tbody>
+<tr><td>Real Sharpe</td><td>&gt; 0</td><td>Live P&amp;L tracking</td></tr>
+<tr><td>Max drawdown</td><td>&lt; configured threshold</td><td>Continuous monitoring</td></tr>
+<tr><td>All mechanisms healthy</td><td>Within healthy ranges</td><td>Cognitive quality dashboard</td></tr>
+<tr><td>No safety violations</td><td>0</td><td>PolicyCage logs (+ optional Warden logs)</td></tr>
+<tr><td>No kill switches triggered</td><td>0</td><td>CanaryMonitor</td></tr>
+<tr><td>Minimum duration</td><td>&gt;= 14 days</td><td>Calendar time</td></tr>
+<tr><td>Paper vs real correlation</td><td>&gt; 0.5</td><td>Sharpe and P&amp;L correlation</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="gate-to-full-deployment"><a class="header" href="#gate-to-full-deployment">Gate to Full Deployment</a></h3>
+<p>Operator review + approval. All Phase 4 criteria must pass for &gt;= 14 days. <code>bardo eval:lifecycle --graduate</code>.</p>
+<hr>
+<h2 id="s5--walk-forward-analysis-detail"><a class="header" href="#s5--walk-forward-analysis-detail">S5 — Walk-Forward Analysis (Detail)</a></h2>
+<p>Walk-forward analysis is used in Phase 2 but conceptually applies across phases. This section provides the full implementation.</p>
+<h3 id="anchored-walk-forward"><a class="header" href="#anchored-walk-forward">Anchored Walk-Forward</a></h3>
+<pre><code>Time ───────────────────────────────────────────────────&gt;
+
+Window 1: [TRAIN═══════════][purge][TEST═══]
+Window 2: [TRAIN════════════════][purge][TEST═══]
+Window 3: [TRAIN═══════════════════════][purge][TEST═══]
+</code></pre>
+<p>Training window grows; test window stays fixed. Simulates production use where the model has access to all historical data.</p>
+<h3 id="rolling-walk-forward"><a class="header" href="#rolling-walk-forward">Rolling Walk-Forward</a></h3>
+<pre><code>Time ───────────────────────────────────────────────────&gt;
+
+Window 1: [TRAIN═══════════][purge][TEST═══]
+Window 2:      [TRAIN═══════════][purge][TEST═══]
+Window 3:           [TRAIN═══════════][purge][TEST═══]
+</code></pre>
+<p>Training window stays fixed size, slides forward. Tests adaptability: can the strategy work with limited history?</p>
+<h3 id="regime-tagged-walk-forward"><a class="header" href="#regime-tagged-walk-forward">Regime-Tagged Walk-Forward</a></h3>
+<p>Each test window is tagged with its dominant regime. Results are aggregated per-regime to identify regime-dependent performance.</p>
+<pre><code class="language-typescript">function tagWindowRegime(
+  testData: TickData[],
+  regimeDetector: RegimeDetector,
+): RegimeTag {
+  const regimeCounts = new Map&lt;RegimeTag, number&gt;();
+
+  for (const tick of testData) {
+    const regime = regimeDetector.classify(tick);
+    regimeCounts.set(regime, (regimeCounts.get(regime) ?? 0) + 1);
+  }
+
+  let maxCount = 0;
+  let dominantRegime: RegimeTag = "sideways";
+  for (const [regime, count] of regimeCounts) {
+    if (count &gt; maxCount) {
+      maxCount = count;
+      dominantRegime = regime;
+    }
+  }
+
+  return dominantRegime;
+}
+</code></pre>
+<hr>
+<h2 id="s6--phase-transition-gates"><a class="header" href="#s6--phase-transition-gates">S6 — Phase Transition Gates</a></h2>
+<h3 id="summary"><a class="header" href="#summary">Summary</a></h3>
+<pre><code>Phase 1 (Trace)  ─── automated ───&gt; Phase 2 (Backtest)
+Phase 2 (Backtest) ─ operator review ─&gt; Phase 3 (Paper)
+Phase 3 (Paper)  ─── operator approval ──&gt; Phase 4 (Canary)
+Phase 4 (Canary) ─── operator graduation ──&gt; Production
+</code></pre>
+<p>No auto-promotion beyond Phase 1. Every promotion requires human judgment.</p>
+<h3 id="gate-checklist"><a class="header" href="#gate-checklist">Gate Checklist</a></h3>
+<pre><code class="language-typescript">interface PhaseGateResult {
+  phase: 1 | 2 | 3 | 4;
+  criteria: Array&lt;{
+    name: string;
+    threshold: string;
+    actual: string;
+    passed: boolean;
+  }&gt;;
+  allPassed: boolean;
+  recommendation: "promote" | "hold" | "revert";
+  operatorApprovalRequired: boolean;
+}
+
+function evaluatePhaseGate(
+  phase: number,
+  metrics: Record&lt;string, number&gt;,
+): PhaseGateResult {
+  const gates: Record&lt;
+    number,
+    Array&lt;{
+      name: string;
+      check: () =&gt; boolean;
+      threshold: string;
+      actual: () =&gt; string;
+    }&gt;
+  &gt; = {
+    1: [
+      {
+        name: "mechanism_tests",
+        check: () =&gt; metrics.mechanismTestPass === 1,
+        threshold: "100%",
+        actual: () =&gt; `${metrics.mechanismTestPass * 100}%`,
+      },
+      {
+        name: "invariant_violations",
+        check: () =&gt; metrics.invariantViolations === 0,
+        threshold: "0",
+        actual: () =&gt; String(metrics.invariantViolations),
+      },
+      {
+        name: "simulation_accuracy",
+        check: () =&gt; metrics.simulationAccuracy &gt; 0.95,
+        threshold: "&gt;95%",
+        actual: () =&gt; `${(metrics.simulationAccuracy * 100).toFixed(1)}%`,
+      },
+      {
+        name: "quality_score",
+        check: () =&gt; metrics.avgQualityScore &gt;= 0.5,
+        threshold: "&gt;=0.5",
+        actual: () =&gt; metrics.avgQualityScore.toFixed(3),
+      },
+    ],
+    2: [
+      {
+        name: "pbo",
+        check: () =&gt; metrics.pbo &lt; 0.5,
+        threshold: "&lt;0.5",
+        actual: () =&gt; metrics.pbo.toFixed(3),
+      },
+      {
+        name: "dsr",
+        check: () =&gt; metrics.dsr &gt; 0 &amp;&amp; metrics.dsrPValue &lt; 0.05,
+        threshold: "&gt;0, p&lt;0.05",
+        actual: () =&gt;
+          `${metrics.dsr.toFixed(3)} (p=${metrics.dsrPValue.toFixed(4)})`,
+      },
+      {
+        name: "regime_robustness",
+        check: () =&gt; metrics.positiveSharpeRegimes &gt;= 3,
+        threshold: "&gt;=3 regimes",
+        actual: () =&gt; `${metrics.positiveSharpeRegimes} regimes`,
+      },
+      {
+        name: "monte_carlo",
+        check: () =&gt; metrics.mcP95Drawdown &lt; 2 * metrics.backtestDrawdown,
+        threshold: "P95 &lt; 2x backtest",
+        actual: () =&gt;
+          `${(metrics.mcP95Drawdown * 100).toFixed(1)}% vs ${(metrics.backtestDrawdown * 100).toFixed(1)}%`,
+      },
+      {
+        name: "walk_forward",
+        check: () =&gt; metrics.avgGeneralizationRatio &gt; 0.5,
+        threshold: "&gt;0.5",
+        actual: () =&gt; metrics.avgGeneralizationRatio.toFixed(3),
+      },
+    ],
+    3: [
+      {
+        name: "paper_sharpe",
+        check: () =&gt; metrics.paperSharpe &gt; 0,
+        threshold: "&gt;0",
+        actual: () =&gt; metrics.paperSharpe.toFixed(3),
+      },
+      {
+        name: "slippage_accuracy",
+        check: () =&gt; metrics.slippageAccuracy &gt; 0.8,
+        threshold: "&gt;80%",
+        actual: () =&gt; `${(metrics.slippageAccuracy * 100).toFixed(1)}%`,
+      },
+      {
+        name: "policy_violations",
+        check: () =&gt; metrics.policyViolations === 0,
+        threshold: "0",
+        actual: () =&gt; String(metrics.policyViolations),
+      },
+      {
+        name: "regime_change",
+        check: () =&gt; metrics.regimeChanges &gt;= 1,
+        threshold: "&gt;=1",
+        actual: () =&gt; String(metrics.regimeChanges),
+      },
+      {
+        name: "duration",
+        check: () =&gt; metrics.durationDays &gt;= 7,
+        threshold: "&gt;=7 days",
+        actual: () =&gt; `${metrics.durationDays} days`,
+      },
+    ],
+    4: [
+      {
+        name: "real_sharpe",
+        check: () =&gt; metrics.realSharpe &gt; 0,
+        threshold: "&gt;0",
+        actual: () =&gt; metrics.realSharpe.toFixed(3),
+      },
+      {
+        name: "kill_switches",
+        check: () =&gt; metrics.killSwitchesTriggered === 0,
+        threshold: "0",
+        actual: () =&gt; String(metrics.killSwitchesTriggered),
+      },
+      {
+        name: "safety_violations",
+        check: () =&gt; metrics.safetyViolations === 0,
+        threshold: "0",
+        actual: () =&gt; String(metrics.safetyViolations),
+      },
+      {
+        name: "duration",
+        check: () =&gt; metrics.durationDays &gt;= 14,
+        threshold: "&gt;=14 days",
+        actual: () =&gt; `${metrics.durationDays} days`,
+      },
+      {
+        name: "paper_vs_real",
+        check: () =&gt; metrics.paperRealCorrelation &gt; 0.5,
+        threshold: "&gt;0.5",
+        actual: () =&gt; metrics.paperRealCorrelation.toFixed(3),
+      },
+    ],
+  };
+
+  const criteria = (gates[phase] ?? []).map((g) =&gt; ({
+    name: g.name,
+    threshold: g.threshold,
+    actual: g.actual(),
+    passed: g.check(),
+  }));
+
+  const allPassed = criteria.every((c) =&gt; c.passed);
+
+  return {
+    phase: phase as 1 | 2 | 3 | 4,
+    criteria,
+    allPassed,
+    recommendation: allPassed
+      ? "promote"
+      : criteria.filter((c) =&gt; !c.passed).length &gt; 2
+        ? "revert"
+        : "hold",
+    operatorApprovalRequired: phase &gt;= 2,
+  };
+}
+</code></pre>
+<hr>
+<h2 id="s6b--diagnosis-and-remediation-when-a-phase-fails"><a class="header" href="#s6b--diagnosis-and-remediation-when-a-phase-fails">S6b — Diagnosis and Remediation: When a Phase Fails</a></h2>
+<p>Each phase can fail for different reasons. A Phase 1 failure is always a code bug. A Phase 4 failure might be an execution gap. This section maps each phase’s failure modes to root causes and concrete next steps.</p>
+<h3 id="per-phase-failure-decision-tree"><a class="header" href="#per-phase-failure-decision-tree">Per-Phase Failure Decision Tree</a></h3>
+<h4 id="phase-1-failures-trace-inspection"><a class="header" href="#phase-1-failures-trace-inspection">Phase 1 Failures (Trace Inspection)</a></h4>
+<p>Phase 1 tests mechanism correctness on deterministic Anvil scenarios. Failures here are always code bugs or configuration errors, never strategy or market issues.</p>
+<pre><code>Phase 1 failed
+├── Mechanism test suite fails
+│   → This is a code bug. Read the test output. Fix the code. Re-run.
+│   → Never a tuning problem — do not adjust parameters for Phase 1 failures.
+│
+├── Invariant violations
+│   → An invariant you defined is being broken by the mechanism code.
+│   → Either the code is wrong (fix it) or the invariant is too strict
+│     (relax it with documented justification).
+│
+├── Simulation accuracy &lt; 95%
+│   → simulateContract() predictions don't match actual receipts.
+│   → Check: are you simulating at the correct block? Is state stale?
+│   → Common cause: simulating before a state change that affects the result.
+│
+└── Quality scores below threshold
+    → The Golem produces insights below quality gates on test data.
+    → Check the Curator prompt. Check the test episode quality.
+    → If test episodes are unrealistically simple, quality will be low.
+</code></pre>
+<p><strong>Key principle</strong>: never proceed to Phase 2 with Phase 1 failures. Phase 2 failures become ambiguous (is it the code or the market?) if Phase 1 didn’t pass cleanly.</p>
+<h4 id="phase-2-failures-backtesting-via-mirage"><a class="header" href="#phase-2-failures-backtesting-via-mirage">Phase 2 Failures (Backtesting via Mirage)</a></h4>
+<p>Phase 2 replays real market data. Failures here mean the strategy doesn’t work in realistic conditions, or the evaluation is detecting overfitting.</p>
+<pre><code>Phase 2 failed
+├── PBO &gt; 0.5 (backtest overfitting)
+│   ├── Too few data partitions → increase Mirage replay length
+│   ├── Too many configurations tested → reduce to top 3 configs
+│   ├── Walk-forward window too short → increase test window
+│   └── Not using CPCV → switch from simple walk-forward to CPCV
+│       with purging and embargo
+│
+├── DSR &lt; 0 (no genuine alpha after correction)
+│   ├── Strategy has no edge in these market conditions
+│   │   → Try a different strategy template
+│   │   → This is NOT a Golem problem — it's a strategy problem
+│   ├── Selection bias: tested too many variants
+│   │   → Reduce the number of strategy variants
+│   └── Non-normal returns inflating raw Sharpe
+│       → Check return distribution — heavy tails?
+│       → DSR corrects for this; trust the DSR over raw Sharpe
+│
+├── Regime robustness fails (Sharpe &gt; 0 in &lt; 3 regimes)
+│   ├── Strategy is regime-specific → two options:
+│   │   ├── Accept it: restrict deployment to detected regime
+│   │   │   → Add regime gate: only trade when regime matches
+│   │   └── Fix it: add regime-switching logic
+│   │       → The Golem should detect regime and switch strategies
+│   └── Regime detection is wrong
+│       → Check if Mirage replay contains enough regime diversity
+│       → Ensure regime tags are computed correctly from market data
+│
+├── Monte Carlo P95 drawdown &gt; 2× backtest drawdown
+│   → Strategy is fragile — sensitive to execution order/slippage
+│   → Increase slippage tolerance in strategy params
+│   → Add trade size limits to reduce market impact
+│   → Consider splitting large trades across ticks
+│
+└── Walk-forward generalization ratio &lt; 0.5
+    → In-sample performance doesn't predict out-of-sample
+    → Classic overfit signal: strategy memorized past data
+    → Simplify the strategy (fewer parameters = less overfitting)
+    → Increase regularization (wider parameter bounds, less tuning)
+</code></pre>
+<h4 id="phase-3-failures-paper-trading"><a class="header" href="#phase-3-failures-paper-trading">Phase 3 Failures (Paper Trading)</a></h4>
+<p>Phase 3 uses live data but simulated execution. Failures here mean the strategy works in replay but not in real-time.</p>
+<pre><code>Phase 3 failed
+├── Paper Sharpe &lt; 0
+│   ├── Simulation-to-reality gap
+│   │   → Compare Mirage replay prices with live prices at same blocks
+│   │   → If they diverge: Mirage fidelity problem (check protocol adapters)
+│   │   → If they match: the strategy's edge disappears in real-time
+│   ├── Look-ahead bias in Phase 2
+│   │   → Phase 2 used information that wouldn't be available in real-time
+│   │   → Check: are you reading block N+1 data when deciding at block N?
+│   └── Latency sensitivity
+│       → The strategy requires sub-second execution to capture the edge
+│       → If simulateContract() adds &gt;1s latency, the opportunity is gone
+│       → Fix: pre-compute decisions, reduce tick interval
+│
+├── Slippage estimates off by &gt;20%
+│   → Slippage model doesn't account for actual market impact
+│   → Calibrate slippage model against recent trade data
+│   → Consider using the Uniswap Trading API quotes for better estimates
+│
+├── No regime change in 7 days
+│   → Bad luck — markets were stable during the test period
+│   → Extend the paper trading period
+│   → Or artificially wait for a regime change before concluding
+│
+└── Policy violation detected
+    → Safety layer caught something the Golem tried to do
+    → This is good — the safety layer works
+    → Fix the prompt/strategy that led to the violation attempt
+    → NEVER weaken the policy to make Phase 3 pass
+</code></pre>
+<h4 id="phase-4-failures-canary-deployment"><a class="header" href="#phase-4-failures-canary-deployment">Phase 4 Failures (Canary Deployment)</a></h4>
+<p>Phase 4 uses real capital. Failures here mean execution-layer problems that don’t show up in simulation.</p>
+<pre><code>Phase 4 failed
+├── Kill switch: max drawdown exceeded
+│   ├── Slippage model still wrong → recalibrate (see Phase 3)
+│   ├── MEV: transactions being sandwiched → add MEV protection
+│   │   (private mempool, Flashbots Protect, tx bundling)
+│   ├── Gas estimation wrong → transactions failing/reverting
+│   │   → Add gas buffer (1.2× estimated)
+│   │   → Implement gas price aware execution (wait for lower gas)
+│   └── Market moved faster than tick interval
+│       → Reduce tick interval during volatile periods
+│
+├── Kill switch: mechanism health degraded
+│   ├── Dream yield collapsed → check if Mirage vs. live data
+│   │   changes episode quality
+│   ├── Admission rate spiked or collapsed → quality pipeline
+│   │   reacting to real data differently than replay
+│   └── Affective hallucination spiked → live market events
+│       trigger emotional states the training data didn't cover
+│
+└── Kill switch: consecutive negative ticks
+    → Strategy's expected win rate doesn't match reality
+    → Increase the consecutive-negative threshold if the strategy
+      is high-variance (some strategies have 40% win rate but
+      large winners)
+    → Or: the strategy genuinely doesn't work with real execution
+</code></pre>
+<h3 id="regression-between-phases"><a class="header" href="#regression-between-phases">Regression Between Phases</a></h3>
+<p>What it means when Phase N passes but Phase N+1 fails:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Passed</th><th>Failed</th><th>Gap Name</th><th>Root Cause</th><th>Fix Direction</th></tr>
+</thead>
+<tbody>
+<tr><td>Phase 1</td><td>Phase 2</td><td>Realism gap</td><td>Mechanisms work in isolation but fail with real market dynamics</td><td>Run more complex Phase 1 scenarios; add Mirage micro-replays to Phase 1</td></tr>
+<tr><td>Phase 2</td><td>Phase 3</td><td>Simulation-to-reality gap</td><td>Mirage replay ≠ live market; look-ahead bias; timing sensitivity</td><td>Improve Mirage fidelity; audit for look-ahead bias; add latency simulation</td></tr>
+<tr><td>Phase 3</td><td>Phase 4</td><td>Execution gap</td><td>Paper trades assume perfect execution; real trades have MEV, gas, reverts</td><td>Add execution costs to paper trading; simulate MEV; add gas buffers</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="when-to-go-backwards"><a class="header" href="#when-to-go-backwards">When to Go Backwards</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>From</th><th>Back To</th><th>Criteria</th></tr>
+</thead>
+<tbody>
+<tr><td>Phase 4</td><td>Phase 3</td><td>Kill switch triggered. Revert, diagnose, fix, re-paper-trade.</td></tr>
+<tr><td>Phase 3</td><td>Phase 2</td><td>Paper Sharpe significantly worse than backtest Sharpe (gap &gt; 50%). Simulation fidelity problem.</td></tr>
+<tr><td>Phase 3</td><td>Phase 1</td><td>Policy violations or mechanism failures. Code-level problem.</td></tr>
+<tr><td>Phase 2</td><td>Phase 1</td><td>PBO &gt; 0.8 or DSR strongly negative. Fundamental strategy problem. Redesign from scratch.</td></tr>
+<tr><td>Any</td><td>Phase 1</td><td>After removing or adding a mechanism. Always re-validate from the ground up.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-start-simpler-playbook"><a class="header" href="#the-start-simpler-playbook">The “Start Simpler” Playbook</a></h3>
+<p>If the full Bardo stack fails at Phase 2, don’t debug the full stack. Build up incrementally:</p>
+<pre><code>Step 1: Static agent, no learning, fixed PLAYBOOK.md
+  → Does the strategy itself have alpha? (DSR &gt; 0?)
+  → If no: fix the strategy before adding any Golem mechanisms
+  → If yes: proceed to Step 2
+
+Step 2: Immortal with demurrage
+  → Does knowledge decay improve Grimoire health?
+  → Does the agent learn useful things? (quality score &gt; 0.5?)
+  → If no: the learning pipeline is broken — fix Curator prompt
+  → If yes: proceed to Step 3
+
+Step 3: Add epistemic mortality only (single clock)
+  → Does the threat of death improve learning urgency?
+  → Does the agent produce better knowledge under time pressure?
+  → If no: single-clock mortality doesn't help — try economic-only
+  → If yes: proceed to Step 4
+
+Step 4: Add dreams
+  → Does offline consolidation improve regime adaptation speed?
+  → Does dream yield stay in 10-30% range?
+  → If no: dreams aren't helping — keep them disabled
+  → If yes: proceed to Step 5
+
+Step 5: Full mortality (three clocks)
+  → Does the full mortality system outperform single-clock?
+  → Is the improvement worth the complexity?
+  → If not clearly better: stick with single-clock
+
+Step 6: Add daimon + memory services (Crypt/Oracle)
+  → Does emotional appraisal improve decisions?
+  → Does cross-death memory improve successor boot?
+  → Add last because they depend on everything else working
+</code></pre>
+<p>At each step, the system must pass at least Gauntlet smoke + Phase 2 with DSR &gt; 0 before adding the next mechanism. If a step doesn’t pass, stop there — that configuration is your current ceiling. You can always try again later with different parameters.</p>
+<h3 id="phase-failure-diagnostic-interface"><a class="header" href="#phase-failure-diagnostic-interface">Phase Failure Diagnostic Interface</a></h3>
+<pre><code class="language-typescript">interface PhaseFailureDiagnostic {
+  phase: 1 | 2 | 3 | 4;
+  gateResult: PhaseGateResult;
+
+  /** Which criteria failed? */
+  failures: Array&lt;{
+    criterion: string;
+    expected: string;
+    actual: string;
+    rootCause: string;
+    fixDirection: string;
+  }&gt;;
+
+  /** Should we go back to a previous phase? */
+  revertRecommendation: {
+    revertTo: number | null;
+    reason: string;
+  };
+
+  /** Should we simplify the configuration? */
+  simplifyRecommendation: {
+    currentLevel: number;
+    suggestedLevel: number;
+    mechanismsToDisable: string[];
+    reason: string;
+  };
+
+  /** Concrete next steps, prioritized. */
+  actionPlan: Array&lt;{
+    priority: number;
+    action: string;
+    expectedOutcome: string;
+    verificationMethod: string;
+  }&gt;;
+}
+
+function recommendRemediationPath(
+  phase: number,
+  gateResult: PhaseGateResult,
+  previousPhaseResults: PhaseGateResult[],
+): PhaseFailureDiagnostic {
+  const failures = gateResult.criteria.filter((c) =&gt; !c.passed);
+  const diagnostics = failures.map((f) =&gt; diagnoseFailure(phase, f));
+
+  const shouldRevert = determineRevert(phase, failures, previousPhaseResults);
+  const shouldSimplify = determineSimplification(phase, failures);
+
+  const actionPlan = prioritizeActions([
+    ...diagnostics.map((d) =&gt; d.fixDirection),
+    ...(shouldRevert.revertTo !== null
+      ? [`Revert to Phase ${shouldRevert.revertTo}`]
+      : []),
+    ...(shouldSimplify.mechanismsToDisable.length &gt; 0
+      ? [`Disable: ${shouldSimplify.mechanismsToDisable.join(", ")}`]
+      : []),
+  ]);
+
+  return {
+    phase: phase as 1 | 2 | 3 | 4,
+    gateResult,
+    failures: diagnostics,
+    revertRecommendation: shouldRevert,
+    simplifyRecommendation: shouldSimplify,
+    actionPlan,
+  };
+}
+</code></pre>
+<h3 id="cli"><a class="header" href="#cli">CLI</a></h3>
+<pre><code class="language-bash"># Diagnose why a phase failed
+bardo eval:lifecycle:diagnose \
+  --phase 2 \
+  --results eval-results/phase2-001/ \
+  --report html
+
+# Get the "start simpler" recommendation
+bardo eval:lifecycle:simplify \
+  --current-config golem-config.yaml \
+  --phase2-results eval-results/phase2-001/
+
+# Verify a fix after reverting to a simpler config
+bardo eval:lifecycle --phase 2 \
+  --config golem-config-simplified.yaml \
+  --mirage-endpoint ws://localhost:8546
+</code></pre>
+<hr>
+<h2 id="s7--implementation"><a class="header" href="#s7--implementation">S7 — Implementation</a></h2>
+<h3 id="lifecyclemanager"><a class="header" href="#lifecyclemanager">LifecycleManager</a></h3>
+<pre><code class="language-typescript">class LifecycleManager {
+  constructor(
+    private mirageManager: MirageManager,
+    private golemFactory: GolemFactory,
+    private evalPipeline: EvaluationPipeline,
+  ) {}
+
+  /**
+   * Run Phase 1: Trace Inspection.
+   * Returns immediately with pass/fail result.
+   */
+  async runPhase1(strategyConfig: string): Promise&lt;PhaseGateResult&gt; {
+    const testResults = await this.evalPipeline.runMechanismTests();
+    const qualityResults =
+      await this.evalPipeline.runQualityEval(strategyConfig);
+
+    return evaluatePhaseGate(1, {
+      mechanismTestPass: testResults.allPassed ? 1 : 0,
+      invariantViolations: testResults.invariantViolations,
+      simulationAccuracy: testResults.simulationAccuracy,
+      avgQualityScore: qualityResults.avgScore,
+    });
+  }
+
+  /**
+   * Run Phase 2: Backtesting via Mirage.
+   * Long-running: days of simulated time.
+   */
+  async runPhase2(config: MirageBacktestConfig): Promise&lt;MirageBacktestResult&gt; {
+    const mirage = await this.mirageManager.createSession(config.mirage);
+    const results: MirageBacktestResult["repetitions"] = [];
+
+    for (let rep = 0; rep &lt; config.repetitions; rep++) {
+      const golem = await this.golemFactory.create(config.strategy);
+      const startBlock = await mirage.getStartBlock(rep);
+
+      await mirage.replayBlocks(startBlock, config.durationDays * 7200);
+
+      const metrics = golem.collectMetrics();
+      const walkForward = runWalkForward(
+        golem.getTickData(),
+        config.walkForward,
+      );
+
+      results.push({
+        repetitionIndex: rep,
+        startBlock,
+        endBlock: startBlock + config.durationDays * 7200,
+        durationTicks: config.durationDays * 2160,
+        regimes: golem.getRegimeHistory(),
+        metrics,
+        walkForward,
+      });
+
+      await golem.shutdown();
+    }
+
+    await mirage.shutdown();
+
+    const aggregate = aggregateResults(results);
+    const validity = computeValidity(results);
+
+    return {
+      sessionId: generateSessionId(),
+      config,
+      repetitions: results,
+      aggregate,
+      validity,
+      passesGate: checkPhase2Gate(aggregate, validity),
+      gateFailures: getPhase2Failures(aggregate, validity),
+    };
+  }
+
+  /**
+   * Run Phase 3: Paper Trading.
+   * Runs in real-time against live data.
+   */
+  async runPhase3(config: PaperTradingConfig): Promise&lt;PaperTradingResult&gt; {
+    const golem = await this.golemFactory.create(config.strategy, {
+      executionMode: "simulate_only",
+      chain: config.chain,
+      rpcEndpoint: config.rpcEndpoint,
+    });
+
+    await golem.runUntil({
+      minDays: config.minimumDurationDays,
+      requireRegimeChange: config.requireRegimeChange,
+    });
+
+    return golem.collectPaperTradingResults();
+  }
+}
+</code></pre>
+<h3 id="cli-1"><a class="header" href="#cli-1">CLI</a></h3>
+<pre><code class="language-bash"># Phase 1: Trace inspection (fast, automated)
+bardo eval:lifecycle --phase 1 --strategy strategies/eth-dca.yaml
+
+# Phase 2: Backtesting via Mirage (long-running)
+bardo eval:lifecycle --phase 2 \
+  --strategy strategies/eth-dca.yaml \
+  --duration 60 \
+  --repetitions 5 \
+  --mirage-endpoint ws://localhost:8546 \
+  --walk-forward rolling \
+  --report html
+
+# Phase 3: Paper trading (real-time)
+bardo eval:lifecycle --phase 3 \
+  --strategy strategies/eth-dca.yaml \
+  --duration 7 \
+  --chain base \
+  --rpc https://base-mainnet.g.alchemy.com/v2/KEY
+
+# Phase 4: Canary deployment
+bardo eval:lifecycle --phase 4 \
+  --strategy strategies/eth-dca.yaml \
+  --vault 0x1234...abcd \
+  --allocation 0.02 \
+  --max-drawdown 5 \
+  --duration 14
+
+# Promote between phases (requires operator approval)
+bardo eval:lifecycle --promote 3 --approve
+bardo eval:lifecycle --graduate
+
+# Check current phase status
+bardo eval:lifecycle --status
+
+# Generate cross-phase report
+bardo eval:lifecycle --report \
+  --phase1-results eval-results/phase1-001/ \
+  --phase2-results eval-results/phase2-001/ \
+  --phase3-results eval-results/phase3-001/ \
+  --format html
+</code></pre>
+<h3 id="ci-integration"><a class="header" href="#ci-integration">CI Integration</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Trigger</th><th>Frequency</th></tr>
+</thead>
+<tbody>
+<tr><td>Phase 1</td><td>Every PR</td><td>Automated</td></tr>
+<tr><td>Phase 2</td><td>Nightly on merge to main</td><td>Automated (results reviewed manually)</td></tr>
+<tr><td>Phase 3</td><td>Manual trigger</td><td>On-demand</td></tr>
+<tr><td>Phase 4</td><td>Manual trigger</td><td>On-demand</td></tr>
+</tbody>
+</table>
+</div>
+<p>All results stored in <code>eval-results/{phase}-{run-id}/</code> as JSONL + HTML reports.</p>
+<hr>
+<h2 id="s8--continuous-evaluation-fast-and-slow-feedback-loops"><a class="header" href="#s8--continuous-evaluation-fast-and-slow-feedback-loops">S8 — Continuous Evaluation: Fast and Slow Feedback Loops</a></h2>
+<p>Beyond the four lifecycle phases above, the production golem runs 14 feedback loops continuously. These loops are not dev-time evaluation – they are production-time self-assessment that runs from the golem’s first tick to its death.</p>
+<h3 id="five-fast-loops-machinecognitive-speed"><a class="header" href="#five-fast-loops-machinecognitive-speed">Five Fast Loops (Machine/Cognitive Speed)</a></h3>
+<p>All five share the Karpathy property: one metric, one arena, one gate (keep/discard), running fast. They operate at gamma or theta frequency with near-zero inference cost.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Loop</th><th>What It Evaluates</th><th>Metric</th><th>Frequency</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Confidence Calibration</strong></td><td>Does the LLM’s stated confidence match reality?</td><td>Expected Calibration Error (ECE)</td><td>Per-resolution</td><td>~Zero</td></tr>
+<tr><td><strong>Context Attribution</strong></td><td>Which Grimoire entries actually helped?</td><td>Attribution score per context piece</td><td>Per-theta-tick</td><td>~Zero</td></tr>
+<tr><td><strong>Cost-Effectiveness</strong></td><td>Is expensive inference worth the accuracy gain?</td><td>delta-accuracy per dollar</td><td>Per-theta-tick</td><td>~Zero</td></tr>
+<tr><td><strong>Tool Selection</strong></td><td>Did we use the right tool for the job?</td><td>Execution quality vs. alternatives</td><td>Per-action</td><td>Low</td></tr>
+<tr><td><strong>Adversarial Awareness</strong></td><td>Is someone exploiting the golem’s behavior?</td><td>Slippage excess, timing anomalies</td><td>Per-action</td><td>~Zero</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Confidence calibration</strong> uses isotonic regression to learn the mapping from LLM-stated confidence to actual accuracy, per (category, regime). LLMs are systematically overconfident [XIONG-2023]. Without calibration, the action gate trusts inflated self-assessment. The calibrator brings ECE from the typical 0.15-0.30 range down over time as resolution data accumulates. See [GUO-2017] for temperature scaling as an alternative.</p>
+<p><strong>Context attribution</strong> tracks which Grimoire entries and PLAYBOOK heuristics co-occur with successful predictions. A simplified credit/debit system (inspired by SHAP but simplified for real-time operation) builds per-entry context value scores. High-value entries get boosted in retrieval ranking; low-value entries get demoted.</p>
+<p><strong>Cost-effectiveness</strong> tracks accuracy gain per dollar of inference, per tier, per category. If T2 calls for a specific category produce no more learning than T1, the inference router shifts more ticks to T1. This is automatic cost optimization.</p>
+<p><strong>Tool selection</strong> compares actual execution quality against what alternative venues would have quoted (read-only simulation). Over time, builds a preference model per (action_type, pair, size_range).</p>
+<p><strong>Adversarial awareness</strong> monitors for persistent slippage excess (suggesting sandwich attacks), checks for sandwich signatures in block contents, and validates resolution integrity against TWAP reads [DABAH-2025].</p>
+<h3 id="three-slow-loops-consolidationretrospective-speed"><a class="header" href="#three-slow-loops-consolidationretrospective-speed">Three Slow Loops (Consolidation/Retrospective Speed)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Loop</th><th>What It Evaluates</th><th>Timescale</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Shadow Strategy Testing</strong></td><td>Would different parameters produce better outcomes?</td><td>Weekly</td><td>Near-zero</td></tr>
+<tr><td><strong>Reasoning Quality Review</strong></td><td>Is the golem’s reasoning consistent and sound?</td><td>Per-dream-cycle</td><td>T1</td></tr>
+<tr><td><strong>Meta-Learning Evaluation</strong></td><td>Is the learning process itself improving?</td><td>Weekly + generational</td><td>Near-zero</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Shadow strategy testing</strong> runs counterfactual parameter sets alongside the real configuration. On every theta tick, the shadow system re-runs the gating decision with perturbed parameters and records what would have happened differently. Maximum 3 concurrent shadows, each varying one parameter. After one week, the retrospective review includes a shadow comparison.</p>
+<p><strong>Reasoning quality review</strong> evaluates reasoning traces during dream cycles using a 4-cell taxonomy: AlignedCorrect (right for right reasons), MisalignedCorrect (right for wrong reasons – dangerous), AlignedIncorrect (wrong for right reasons – valuable), MisalignedIncorrect (wrong for wrong reasons). The MisalignedCorrect cell is the most dangerous: a golem that is right by luck accumulates false confidence [KARPATHY-2026].</p>
+<p><strong>Meta-learning evaluation</strong> tracks whether the learning loops themselves are improving. Corrector convergence rate, dream yield, attention precision, heuristic half-life, and time-to-competence across generations. If <code>meta_learning_score</code> is negative for two consecutive weekly reviews, the golem’s learning processes are degrading – a form of senescence distinct from prediction accuracy decline.</p>
+<h3 id="loop-numbering-authoritative"><a class="header" href="#loop-numbering-authoritative">Loop Numbering (Authoritative)</a></h3>
+<p>The full 14-loop hierarchy uses the numbering from the mmo2/21-evaluation-architecture specification. See <a href="07-fast-feedback-loops.html">07-fast-feedback-loops.md</a>, <a href="08-slow-feedback-loops.html">08-slow-feedback-loops.md</a>, and <a href="09-evaluation-map.html">09-evaluation-map.md</a> for the complete per-loop specifications with Rust implementation details.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[LOPEZ-DE-PRADO-2018] López de Prado, M. <em>Advances in Financial Machine Learning</em>. Wiley, 2018. Chapters 11-15. — <em>Covers combinatorial purged cross-validation and backtest overfitting; the statistical framework underpinning all four lifecycle phases.</em></li>
+<li>[BAILEY-PBO-2015] Bailey, D.H. et al. “The Probability of Backtest Overfitting.” SSRN:2326253, 2015. — <em>Quantifies how likely a backtest is to overfit given the number of trials; used in Phase 3 (qualification) to validate strategy robustness.</em></li>
+<li>[BAILEY-DSR-2014] Bailey, D.H. &amp; López de Prado, M. “The Deflated Sharpe Ratio.” SSRN:2460551, 2014. — <em>Adjusts Sharpe ratios for multiple testing bias; applied in qualification and production phases.</em></li>
+<li>[CPCV-2024] “Combinatorial Purged Cross-Validation.” SSRN:4686376. — <em>Cross-validation method that purges overlapping time windows to prevent look-ahead bias in walk-forward evaluation.</em></li>
+<li>[SHEPPERT-2026] Sheppert, A.P. “The GT-Score.” JRFM 19(1):60, 2026. — <em>Composite risk metric combining return, drawdown, and tail risk; used alongside Sharpe for multi-dimensional lifecycle evaluation.</em></li>
+<li>[XIONG-2023] Xiong, M. et al. “Can LLMs Express Their Uncertainty?” arXiv:2306.13063, 2023. — <em>Shows LLMs are systematically overconfident; motivates the confidence calibration checks at each lifecycle gate.</em></li>
+<li>[GUO-2017] Guo, C. et al. “On Calibration of Modern Neural Networks.” ICML, 2017. — <em>Introduces temperature scaling for neural network calibration; the foundational technique adapted for LLM confidence calibration.</em></li>
+<li>[DABAH-2025] Dabah, L. &amp; Tirer, T. “On Temperature Scaling and Conformal Prediction.” ICML 2025. arXiv:2402.05806. — <em>Bridges temperature scaling and conformal prediction; supports the conformal interval approach used in production monitoring.</em></li>
+<li>[KARPATHY-2026] Karpathy, A. “autoresearch.” GitHub, March 2026. — <em>Demonstrates a single-metric, single-arena evaluation loop running at maximum speed; the structural pattern adopted across lifecycle phases.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/16-testing/04-mirage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/16-testing/06-revision-guide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/16-testing/04-mirage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/16-testing/06-revision-guide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

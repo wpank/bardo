@@ -1,0 +1,757 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Mirage Integration - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/15-dev/01d-mirage-integration.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="mirage-rs-integration-bardo-tui-and-golem-workflows"><a class="header" href="#mirage-rs-integration-bardo-tui-and-golem-workflows">mirage-rs Integration: Bardo TUI and Golem Workflows</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-18
+<strong>Crate:</strong> <code>mirage-rs/</code></p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how mirage-rs integrates with the Bardo TUI (terminal user interface) and the Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) sidecar lifecycle (section 15). The key concept is F6 fork: pressing F6 in the Sanctum (Bardo’s DeFi protocol interaction surface) spawns a mirage fork at the current block, letting operators simulate trades against live market state. The document also covers the Fork Inspector overlay for managing multiple forks, golem sidecar spawn/teardown, resource pressure gating via CorticalState (the Golem’s 32-signal atomic shared perception surface), and core golem workflows (position monitoring, hypothesis testing, risk scenarios). See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<h2 id="bardo-tui-integration"><a class="header" href="#bardo-tui-integration">Bardo TUI Integration</a></h2>
+<p>mirage-rs is a command-line tool and a library, but most golems and operators interact with it through bardo-terminal’s Sanctum layer. The Sanctum is bardo’s DeFi protocol interaction surface. When a user presses F6 in a protocol view, the terminal spawns a mirage fork, replaces live chain data with simulated state, and exposes fork management through the Fork Inspector overlay.</p>
+<h3 id="f6--fork-here"><a class="header" href="#f6--fork-here">F6 – Fork Here</a></h3>
+<p>F6 is the “fork this state” key. Its behavior depends on the current context.</p>
+<p><strong>Not in Paper Mode:</strong> F6 enters Paper/Mirage mode and spawns a mirage fork at the current block. The chain header shows the fork as the active context.</p>
+<p><strong>Already in Paper/Mirage mode with one fork:</strong> F6 creates a second parallel fork branch at the current block, adds it to the chain selector, and switches the protocol view to it.</p>
+<p><strong>Already viewing a fork:</strong> F6 opens the Fork Inspector overlay (see below).</p>
+<p><strong>mirage unavailable</strong> (binary not found, or RPC unreachable): F6 falls back to Estimation mode and shows an <code>[EST]</code> indicator in the chain header. No mirage process is started.</p>
+<p><strong>Spawn fails due to insufficient memory:</strong> F6 opens the resource overlay instead of attempting to fork. The overlay explains the failure and suggests actions: reduce the profile, stop other forks, or check <code>mirage_getResourceUsage</code>. If <code>resource_pressure</code> from <code>mirage_getResourceUsage</code> exceeds 0.7, the TUI refuses the new fork without attempting spawn.</p>
+<h3 id="chain-header-in-mirage-mode"><a class="header" href="#chain-header-in-mirage-mode">Chain Header in Mirage Mode</a></h3>
+<p>When one or more forks are active, the chain header shows all available contexts:</p>
+<pre><code>[ CHAIN ]  * Mainnet  o Fork #1 (blk 21400000)  o Fork #2 (blk 21400000)
+</code></pre>
+<p>The active context is filled. Inactive contexts are open circles. When the active context is a fork, the indicator is amber. When on mainnet, white.</p>
+<h3 id="spawn-sequence"><a class="header" href="#spawn-sequence">Spawn Sequence</a></h3>
+<ol>
+<li>Check <code>resource_pressure</code> from any running mirage instance. If &gt; 0.7, refuse and show resource overlay.</li>
+<li>Check OS free memory: <code>available &gt;= profile.max_memory + 128 MB</code>. If not, refuse with an error message naming the shortfall.</li>
+<li>Spawn <code>mirage-rs</code> with the RPC URL from <code>~/.bardo/config.toml</code> (or from the golem’s connection if one is active).</li>
+<li>Poll <code>mirage_status</code> every 500ms. If not ready within 10 seconds, show a timeout error.</li>
+<li>On success, switch the protocol view to the fork context and update the chain header.</li>
+</ol>
+<p>The fork inherits the current protocol view’s watched addresses. If the user is viewing a Uniswap v3 pool, mirage auto-watches that pool contract via <code>mirage_watchContract</code> at spawn.</p>
+<h3 id="fork-cycling"><a class="header" href="#fork-cycling">Fork Cycling</a></h3>
+<p>Within the Sanctum, <code>Shift+Left</code> / <code>Shift+Right</code> cycles through available chain contexts:</p>
+<ul>
+<li>Mainnet (always present)</li>
+<li>Fork #1, Fork #2, … (if spawned)</li>
+<li>Testnet (if configured in <code>~/.bardo/config.toml</code>)</li>
+</ul>
+<p>This is distinct from chain switching (<code>Alt+C</code>), which moves between actual chains (Ethereum, Base, Arbitrum). Chain-switch navigates to a different network. Fork-cycle navigates to a different fork of the current network.</p>
+<p>When the active context is a fork, the protocol view panel border gets an amber tint. If the fork is frozen (block replay paused via <code>F3+F</code>), the header shows <code>Fork #1 (blk 21400000, frozen)</code> and the border tint shifts to rose.</p>
+<h3 id="fork-inspector-overlay"><a class="header" href="#fork-inspector-overlay">Fork Inspector Overlay</a></h3>
+<p>When F6 is pressed while already viewing a fork, it opens the Fork Inspector as a floating overlay. Dismiss with Esc.</p>
+<pre><code>+-- Fork Inspector --------------------------------------------------+
+|  Golem: EMBER-3f   |  2 active forks   Total: 847MB / 2048MB      |
+|  ----------------------------------------------------------------- |
+|  Fork #1 (live)     Mainnet  blk 21400012  312MB  cpu 2.1%        |
+|    Watching: 7 contracts  Dirty: 143 slots  Hit rate: 82%          |
+|    [Snapshot] [Freeze] [Stop]                                      |
+|                                                                    |
+|  Fork #2 (frozen)   Mainnet  blk 21400000  198MB  cpu 0.0%        |
+|    Watching: 3 contracts  Dirty: 47 slots   Hit rate: 71%          |
+|    [Resume] [Cleanup] [Stop]                                       |
+|                                                                    |
+|  [+ New Fork]  [Stop All]  [Cleanup Artifacts]                     |
+|  Disk: 52MB checkpoints in /tmp/replay-abc  [Clean up]             |
++--------------------------------------------------------------------+
+</code></pre>
+<p>Navigation: arrow keys move between fork entries, Enter selects and switches to the focused fork, Tab cycles action buttons, <code>d</code> on a focused fork prompts for confirmation before stopping it.</p>
+<h3 id="action-buttons"><a class="header" href="#action-buttons">Action Buttons</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Button</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td>Snapshot</td><td>Calls <code>evm_snapshot</code> on the fork. Shows the snapshot ID briefly.</td></tr>
+<tr><td>Freeze</td><td>Pauses TargetedFollower, stops block processing.</td></tr>
+<tr><td>Resume</td><td>Resumes TargetedFollower, catches up to chain head.</td></tr>
+<tr><td>Stop</td><td>Sends <code>mirage_shutdown</code>. Waits up to 5s, then SIGTERM. Removes fork from list.</td></tr>
+<tr><td>Cleanup</td><td>Runs <code>mirage cleanup --stale-pids</code> for the fork’s artifacts.</td></tr>
+<tr><td>+ New Fork</td><td>Spawns a new fork at the current block (same as F6 from a non-fork view).</td></tr>
+<tr><td>Stop All</td><td>Stops all forks in order: sends shutdown to each, waits, force-kills stragglers.</td></tr>
+<tr><td>Cleanup Artifacts</td><td>Runs <code>mirage cleanup --all</code> to sweep all orphaned PID files, sockets, checkpoints.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="resource-display"><a class="header" href="#resource-display">Resource Display</a></h3>
+<p>Each fork entry shows:</p>
+<ul>
+<li><strong>Memory:</strong> current RSS in MB vs. the profile cap. Green below 70%, amber 70-90%, rose above 90%.</li>
+<li><strong>CPU:</strong> rolling 5-second average.</li>
+<li><strong>Upstream RPC calls:</strong> total since spawn.</li>
+<li><strong>Cache hit rate:</strong> from <code>mirage_getResourceUsage</code>.</li>
+<li><strong>Watch list size:</strong> number of watched contracts.</li>
+<li><strong>Dirty slot count:</strong> slots modified locally.</li>
+</ul>
+<p>The header row shows aggregate memory across all forks vs. the system budget. This number comes from the same <code>mirage_getResourceUsage</code> endpoint that governs pressure gating.</p>
+<p>The three pressure tiers (0.5 warning, 0.7 throttle, 0.9 emergency) are hard-coded in mirage-rs v2. The TUI reflects them as color transitions – it does not override them.</p>
+<h3 id="resource-pressure-flow"><a class="header" href="#resource-pressure-flow">Resource Pressure Flow</a></h3>
+<pre><code>mirage_getResourceUsage (polled every block)
+    |
+    v
+resource_pressure value
+    |-- &lt; 0.5  -&gt; green indicators, new forks allowed
+    |-- &gt;= 0.5 -&gt; amber indicators (warning), new forks with warning
+    |-- &gt;= 0.7 -&gt; rose indicators (throttle), new forks refused
+    |-- &gt;= 0.9 -&gt; flashing rose (emergency), CorticalState signal emitted
+    v
+Fork Inspector header color matches the highest pressure across all forks
+</code></pre>
+<h3 id="no-golem-mode"><a class="header" href="#no-golem-mode">No-Golem Mode</a></h3>
+<p>When bardo runs without a golem connected, Sanctum is fully operational. Protocol data flows through the terminal’s own RPC connections configured in <code>~/.bardo/config.toml</code>. F6 spawns a mirage fork using the same RPC config.</p>
+<p>Unavailable without a golem:</p>
+<ul>
+<li>Emotional overlays (F4 Portal)</li>
+<li>Golem Perspective (F2)</li>
+<li>Steer integration</li>
+<li>CorticalState resource gating (replaced by OS-level memory check only)</li>
+</ul>
+<p>The Spectre sidebar shows an empty/ghost sprite in this state. Resource gating for fork spawn falls back to the OS-level free-memory check: if <code>available &lt; profile.max_memory + 128 MB</code>, the fork is refused with the resource overlay.</p>
+<p>No-golem mode is the primary interface for operators who want to use mirage-rs for manual protocol exploration without an autonomous agent.</p>
+<h3 id="keybinding-map"><a class="header" href="#keybinding-map">Keybinding Map</a></h3>
+<p>Three bindings from the engagement-prd spec have been replaced due to terminal conflicts.</p>
+<p><strong><code>Ctrl+C</code> replaced by <code>Alt+C</code>.</strong> <code>Ctrl+C</code> sends SIGINT in every POSIX terminal emulator. Intercepting it either prevents normal process termination or silently swallows a quit signal. The chain-cycling binding moves to <code>Alt+C</code>.</p>
+<p><strong><code>Ctrl+H</code> avoided.</strong> <code>Ctrl+H</code> maps to the backspace character (0x08) in most terminals. Emergency halt should not share a binding with backspace. Use <code>Ctrl+Alt+H</code> or a dedicated function key.</p>
+<p><strong><code>Ctrl+Up/Down</code> replaced by <code>Alt+Up/Down</code>.</strong> tmux intercepts <code>Ctrl+Up/Down</code> by default for pane resizing. Any binding relying on it breaks in multiplexer sessions.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Key</th><th>Context</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>F2</td><td>Protocol view</td><td>Golem Perspective overlay</td></tr>
+<tr><td>F3</td><td>Protocol view</td><td>Toggle Paper Mode / Mirage mode</td></tr>
+<tr><td>F3+F</td><td>Mirage mode</td><td>Freeze fork</td></tr>
+<tr><td>F3+R</td><td>Mirage mode</td><td>Resume frozen fork</td></tr>
+<tr><td>F4</td><td>Anywhere</td><td>Portal mode / first-person view</td></tr>
+<tr><td>F5</td><td>Protocol view</td><td>Force refresh all data</td></tr>
+<tr><td>F6</td><td>Protocol view, not on a fork</td><td>Fork here (spawn mirage at current block)</td></tr>
+<tr><td>F6</td><td>Protocol view, on a fork</td><td>Open Fork Inspector overlay</td></tr>
+<tr><td>Alt+C</td><td>Sanctum</td><td>Cycle chains (Ethereum / Base / Arbitrum / …)</td></tr>
+<tr><td>Shift+Left</td><td>Sanctum, Mirage mode</td><td>Previous fork or mainnet</td></tr>
+<tr><td>Shift+Right</td><td>Sanctum, Mirage mode</td><td>Next fork</td></tr>
+<tr><td>Alt+Up / Alt+Down</td><td>Sanctum</td><td>Cycle golem (multi-golem setups)</td></tr>
+<tr><td>Esc</td><td>Fork Inspector</td><td>Dismiss overlay</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Grouping rationale:</strong> F2, F3, F4 shift perspective (how you see the data). F5, F6 control environment state (what state you are looking at). <code>Alt+C</code>, <code>Shift+Left/Right</code> handle chain and fork navigation (where you are in the chain topology).</p>
+<h3 id="sanctum-spec-gaps"><a class="header" href="#sanctum-spec-gaps">Sanctum Spec Gaps</a></h3>
+<p>The engagement-prd documents (<code>bardo-v4-04-sanctum-protocol-layer.md</code> and <code>bardo-v4-06-protocol-view-catalog.md</code>) contain the complete Sanctum spec. Neither has been pulled into prd2 yet. The following are specified in the engagement-prd but missing from prd2:</p>
+<ul>
+<li>Entry points: SOMA tab 6 (Sanctum), and the drill path from position cards</li>
+<li>Chain selector component and its binding (corrected to <code>Alt+C</code> here)</li>
+<li>Protocol Browser layout: 40/60 split with category groupings</li>
+<li>Per-protocol tab structure (Uniswap: Swap / Pools / Positions / Tokens; Aave: Markets / Supply / Borrow / Overview)</li>
+<li>Paper Mode (F3) with Mirage and Estimation sub-modes</li>
+<li>No-golem operation mode</li>
+</ul>
+<hr>
+<h2 id="golem-sidecar-lifecycle"><a class="header" href="#golem-sidecar-lifecycle">Golem Sidecar Lifecycle</a></h2>
+<p>mirage runs as a binary sidecar. Each golem spawns one mirage process, communicates over local JSON-RPC, and tears it down on exit.</p>
+<h3 id="spawn"><a class="header" href="#spawn">Spawn</a></h3>
+<pre><code>mirage-rs \
+  --rpc-url wss://mainnet.infura.io/v3/${API_KEY} \
+  --http-url https://mainnet.infura.io/v3/${API_KEY} \
+  --port 8545 \
+  --chain-id 1 \
+  --max-memory 512mb \
+  --max-watched-contracts 64 \
+  --watchdog-timeout 30s
+</code></pre>
+<p>Startup sequence:</p>
+<ol>
+<li>Bind to <code>--port</code> on localhost.</li>
+<li>Write PID file at <code>/tmp/mirage-${port}.pid</code>.</li>
+<li>Call <code>eth_blockNumber</code> to verify upstream connectivity.</li>
+<li>Write status file at <code>/tmp/mirage-${port}-status.json</code>.</li>
+<li>Emit startup log: <code>mirage ready port=8545 chain=1 upstream=connected</code>.</li>
+</ol>
+<p>The golem polls <code>mirage_status</code> every 500ms until <code>status == "ready"</code>. If not ready within 10 seconds, treat as spawn failure and retry once.</p>
+<h3 id="warm"><a class="header" href="#warm">Warm</a></h3>
+<p>After spawn, the golem pre-warms optionally:</p>
+<ul>
+<li>Call <code>mirage_watchContract</code> for known protocol addresses.</li>
+<li>Submit baseline transactions to establish local position state.</li>
+</ul>
+<p>Pre-warming is optional. mirage auto-classifies contracts from the first real transaction.</p>
+<h3 id="simulate"><a class="header" href="#simulate">Simulate</a></h3>
+<p>Normal operation. The golem sends <code>eth_call</code>, <code>eth_sendTransaction</code>, and <code>mirage_*</code> calls as needed. TargetedFollower runs in the background, keeping watched contracts current.</p>
+<h3 id="extract-results"><a class="header" href="#extract-results">Extract Results</a></h3>
+<p>After a simulation sequence, the golem reads results via:</p>
+<ul>
+<li><code>eth_call</code> for final state.</li>
+<li><code>mirage_getPosition</code> for convenience position snapshots.</li>
+<li><code>mirage_getResourceUsage</code> to check memory pressure.</li>
+</ul>
+<h3 id="teardown"><a class="header" href="#teardown">Teardown</a></h3>
+<p>On golem shutdown:</p>
+<ol>
+<li>Send <code>mirage_shutdown</code> (graceful drain).</li>
+<li>mirage flushes pending status writes, closes WebSocket subscription.</li>
+<li>mirage exits with code 0.</li>
+<li>Golem removes PID file.</li>
+</ol>
+<p>If the golem process dies without sending <code>mirage_shutdown</code>, the watchdog timer fires after <code>--watchdog-timeout</code> (default 30s) and mirage exits cleanly.</p>
+<h3 id="resource-envelope"><a class="header" href="#resource-envelope">Resource Envelope</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Resource</th><th>Default</th><th>Config flag</th></tr>
+</thead>
+<tbody>
+<tr><td>Max memory</td><td>512 MB</td><td><code>--max-memory</code></td></tr>
+<tr><td>Max watched contracts</td><td>64</td><td><code>--max-watched-contracts</code></td></tr>
+<tr><td>Watchdog timeout</td><td>30s</td><td><code>--watchdog-timeout</code></td></tr>
+<tr><td>ReadCache capacity</td><td>10,000 entries</td><td><code>--cache-capacity</code></td></tr>
+<tr><td>Cache TTL</td><td>12s</td><td><code>--cache-ttl</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="resource-model"><a class="header" href="#resource-model">Resource Model</a></h2>
+<h3 id="resource-profiles"><a class="header" href="#resource-profiles">Resource Profiles</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>Memory cap</th><th>Max watched contracts</th><th>Cache entries</th></tr>
+</thead>
+<tbody>
+<tr><td><code>micro</code></td><td>256 MB</td><td>32</td><td>5,000</td></tr>
+<tr><td><code>standard</code> (default)</td><td>512 MB</td><td>64</td><td>10,000</td></tr>
+<tr><td><code>power</code></td><td>2 GB</td><td>256</td><td>50,000</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>micro</code> targets constrained VMs and parallel scenario runs where memory is shared across many processes. <code>standard</code> is the shipped default for single-instance use. <code>power</code> is for dedicated simulation machines or heavy historical replay where wall-clock time matters more than memory footprint.</p>
+<p>Set with <code>--profile micro|standard|power</code>. Individual flags override profile defaults:</p>
+<ul>
+<li><code>--max-memory BYTES</code> overrides the memory cap.</li>
+<li><code>--max-contracts N</code> overrides the contract watch limit.</li>
+<li><code>--cache-size N</code> overrides the cache entry limit.</li>
+</ul>
+<p>Override flags apply after profile defaults load, so <code>--profile micro --cache-size 8000</code> works without specifying the other values.</p>
+<h3 id="os-level-spawn-gating"><a class="header" href="#os-level-spawn-gating">OS-Level Spawn Gating</a></h3>
+<p>Before starting, mirage checks whether the host has enough free memory:</p>
+<pre><code>required  = profile.max_memory + 128 MB
+available = OS query:
+              /proc/meminfo        (Linux)
+              vm_stat              (macOS)
+              GetMemoryStatus      (Windows)
+
+if available &lt; required:
+    exit(2) with message
+</code></pre>
+<p>If the check fails, mirage exits with code 2 and a structured error:</p>
+<pre><code>error: insufficient memory to start mirage
+  required:  640 MB (512 MB profile + 128 MB headroom)
+  available: 380 MB
+  suggestion: use --profile micro (384 MB required) or free memory first
+</code></pre>
+<p>Golems also run this check before spawning a mirage process. A golem that receives exit code 2 can retry later, reduce the profile, or signal CorticalState. It is not limited to logging a crash.</p>
+<h3 id="memory-pressure-response"><a class="header" href="#memory-pressure-response">Memory Pressure Response</a></h3>
+<p>When mirage approaches <code>--max-memory</code>:</p>
+<ol>
+<li><strong>Warning (50%).</strong> Log warning. Emit <code>resource_pressure = 0.5</code>.</li>
+<li><strong>Throttle (70%).</strong> Evict ReadCache LRU entries. New contracts demoted to SlotOnly. Emit <code>resource_pressure = 0.7</code>.</li>
+<li><strong>Emergency (90%).</strong> Stop replaying mainnet transactions entirely. All reads pass through to upstream. Local dirty state preserved but no longer updated by TargetedFollower. Emit <code>resource_pressure = 0.9</code> and <code>mode = "proxy"</code>.</li>
+</ol>
+<p>Proxy mode is a safety valve. The golem receives a signal it can use to decide whether to continue, reduce positions, or pause.</p>
+<h3 id="corticalstate-pressure-gating"><a class="header" href="#corticalstate-pressure-gating">CorticalState Pressure Gating</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th><code>resource_pressure</code></th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt; 0.5</td><td>Allow new forks</td></tr>
+<tr><td>0.5 (warning)</td><td>Allow new forks, log a warning</td></tr>
+<tr><td>0.7 (throttle)</td><td>Refuse new forks; degrade to sequential scenario mode</td></tr>
+<tr><td>0.9 (emergency)</td><td>Refuse all new forks; emit a CorticalState signal</td></tr>
+</tbody>
+</table>
+</div>
+<p>Three tiers: 0.5 (warning), 0.7 (throttle), 0.9 (emergency). Hard-coded in v2.</p>
+<h3 id="fork-budget"><a class="header" href="#fork-budget">Fork Budget</a></h3>
+<p>Golems maintain a <code>fork_budget</code>: the maximum concurrent mirage instances. Default is 2 (one live, one for scenarios). Configurable per golem.</p>
+<p>Pre-spawn decision logic:</p>
+<ol>
+<li>Check <code>fork_budget</code>. At limit: refuse spawn.</li>
+<li>OS memory check: <code>available &gt;= profile.max_memory + 128 MB</code>.</li>
+<li>Both pass: spawn and record PID in the fork registry.</li>
+<li>Either fails: degrade to estimation mode or sequential scenarios.</li>
+</ol>
+<h3 id="fork-registry"><a class="header" href="#fork-registry">Fork Registry</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct ForkEntry {
+    pid: u32,
+    port: u16,
+    mode: ForkMode,      // Live | Historical | Scenario
+    profile: Profile,    // Micro | Standard | Power
+    spawned_at: Instant,
+    output_dir: Option&lt;PathBuf&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The registry is ephemeral, per session. Used to enforce <code>fork_budget</code>, track resource attribution, and execute ordered teardown.</p>
+<h3 id="ephemeral-artifact-lifecycle"><a class="header" href="#ephemeral-artifact-lifecycle">Ephemeral Artifact Lifecycle</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Artifact</th><th>Created when</th><th>Default location</th><th>Cleaned when</th><th>Max size</th></tr>
+</thead>
+<tbody>
+<tr><td>PID file</td><td>mirage starts</td><td><code>/tmp/mirage-${port}.pid</code></td><td>Graceful exit; watchdog exit; <code>mirage cleanup</code></td><td>bytes</td></tr>
+<tr><td>Status JSON</td><td>mirage starts</td><td><code>/tmp/mirage-${port}-status.json</code></td><td>Same as PID file</td><td>~2 KB</td></tr>
+<tr><td>Unix socket file</td><td>mirage starts (Unix socket mode)</td><td><code>/tmp/mirage-${port}.sock</code></td><td>Same as PID file</td><td>bytes</td></tr>
+<tr><td>Historical replay output (PnL CSV, <code>events.jsonl</code>)</td><td><code>--output-dir</code> specified</td><td>User-chosen path</td><td>User’s responsibility; <code>mirage cleanup --output-dir PATH</code></td><td>unbounded</td></tr>
+<tr><td>Checkpoint files</td><td><code>--checkpoint-every K</code> set</td><td><code>${output-dir}/checkpoints/</code></td><td><code>mirage cleanup --checkpoints</code></td><td>K x ~50 MB per checkpoint</td></tr>
+</tbody>
+</table>
+</div>
+<p>Stale PID files occur when a mirage process exits without cleanup (SIGKILL, host crash). <code>mirage cleanup</code> detects them by checking whether the recorded PID is alive. If the process is gone, the PID file, its corresponding status JSON, and any associated socket file are removed.</p>
+<p>On graceful shutdown:</p>
+<ol>
+<li>Send <code>mirage_shutdown</code> to each instance in the fork registry.</li>
+<li>Wait up to 5s per process.</li>
+<li>Force SIGTERM after 5s if still running.</li>
+<li>Run <code>mirage cleanup --stale-pids</code> to sweep orphaned artifacts.</li>
+</ol>
+<p>On crash: the watchdog timer in each mirage instance triggers after <code>--watchdog-timeout</code>. PID and status files are removed by mirage’s exit handler. Checkpoint files are left for crash recovery.</p>
+<h3 id="mirage-cleanup-subcommand"><a class="header" href="#mirage-cleanup-subcommand"><code>mirage cleanup</code> Subcommand</a></h3>
+<pre><code>mirage cleanup [OPTIONS]
+  --all                  Remove all artifacts: stale PIDs, orphaned sockets, old checkpoints
+  --stale-pids           Remove PID and status files for dead processes only
+  --checkpoints PATH     Remove checkpoint files in the given replay output directory
+  --older-than DURATION  Only remove artifacts older than this (e.g., 7d, 24h)
+  --dry-run              Print what would be removed without removing anything
+  --verbose              List each file removed and the bytes freed
+</code></pre>
+<p>The subcommand prints a summary line: files removed and total bytes freed. With <code>--dry-run</code>, the summary describes what would be removed.</p>
+<hr>
+<h2 id="standalone-cli-ux-for-historical-mode"><a class="header" href="#standalone-cli-ux-for-historical-mode">Standalone CLI UX for Historical Mode</a></h2>
+<p>Progress output goes to stderr so that files written to <code>--output-dir</code> are not polluted by progress characters.</p>
+<p>Default progress bar format:</p>
+<pre><code>[========--------] 52% block 19499995/19500010  3.2 blk/s  ETA 4.7s
+</code></pre>
+<p><code>--quiet</code> suppresses the progress bar entirely. Use this in scripts where stderr is captured or where progress output would interfere with downstream processing.</p>
+<p><code>--json-progress</code> replaces the rendered bar with JSON lines emitted to stderr, one per update:</p>
+<pre><code class="language-json">{"block":19499995,"total":19500010,"pct":52.0,"blk_per_sec":3.2,"eta_sec":4.7}
+</code></pre>
+<p><code>--json-progress</code> and <code>--quiet</code> are mutually exclusive. If both are passed, mirage exits with code 1 and an error message.</p>
+<p>Ctrl+C triggers a clean interrupt. If <code>--checkpoint-every</code> is set, mirage writes a final checkpoint before exiting. The exit code is 130 (SIGINT convention).</p>
+<hr>
+<h2 id="core-golem-workflows"><a class="header" href="#core-golem-workflows">Core Golem Workflows</a></h2>
+<h3 id="1-live-position-monitoring"><a class="header" href="#1-live-position-monitoring">1. Live Position Monitoring</a></h3>
+<p>The golem has an open LP position and needs to know when it drifts out of range.</p>
+<pre><code>POST mirage_watchContract { "address": "0x...pool" }
+
+POST mirage_subscribeEvents {
+  "filter": {
+    "addresses": ["0x...pool"],
+    "topics": ["Swap(address,address,int256,int256,uint160,uint128,int24)"]
+  }
+}
+
+// Heartbeat loop (every new block).
+POST mirage_getPosition {
+  "owner": "0x...golem",
+  "protocols": [
+    { "address": "0x...pool", "type": "uniswap-v3-position" }
+  ],
+  "tokens": ["0x...token0", "0x...token1"]
+}
+</code></pre>
+<p>TargetedFollower replays every Swap touching the pool, keeping <code>sqrtPriceX96</code>, <code>tick</code>, and <code>liquidity</code> current.</p>
+<h3 id="2-hypothesis-testing"><a class="header" href="#2-hypothesis-testing">2. Hypothesis Testing</a></h3>
+<p>“If I swap 1 ETH for USDC right now, what’s my slippage?”</p>
+<pre><code>POST eth_call {
+  "to": "0x...router",
+  "data": "&lt;exactInputSingle(...)&gt;",
+  "from": "0x...golem",
+  "gas": "500000"
+}
+</code></pre>
+<p>No snapshot needed. <code>eth_call</code> never mutates state.</p>
+<h3 id="3-trade-simulation"><a class="header" href="#3-trade-simulation">3. Trade Simulation</a></h3>
+<p>“What if I execute approve -&gt; deposit -&gt; stake?”</p>
+<pre><code>POST evm_snapshot {}  // Returns: { "id": 1 }
+
+POST eth_sendTransaction { "to": "0x...token", "data": "&lt;approve(...)&gt;" }
+POST eth_sendTransaction { "to": "0x...vault", "data": "&lt;deposit(...)&gt;" }
+POST eth_sendTransaction { "to": "0x...staker", "data": "&lt;stake(...)&gt;" }
+
+POST mirage_getPosition { ... }
+
+// Accept: keep state. Reject: POST evm_revert { "id": 1 }
+</code></pre>
+<h3 id="4-risk-scenario"><a class="header" href="#4-risk-scenario">4. Risk Scenario</a></h3>
+<p>“What happens to my Aave position if ETH drops 20%?”</p>
+<pre><code>POST evm_snapshot {}
+
+POST hardhat_impersonateAccount { "address": "0x...oracle_keeper" }
+POST mirage_setStorageAt {
+  "address": "0x...ethusd_feed",
+  "slot": "0x...latestRoundData_slot",
+  "value": "0x...new_price_80pct"
+}
+
+POST eth_call {
+  "to": "0x...aave_pool",
+  "data": "&lt;getUserAccountData(golem_address)&gt;"
+}
+// Returns: healthFactor (&lt; 1e18 = liquidatable)
+
+// If liquidatable, simulate the liquidation.
+POST eth_sendTransaction {
+  "from": "0x...liquidator",
+  "to": "0x...aave_pool",
+  "data": "&lt;liquidationCall(...)&gt;"
+}
+
+// Observe balances, then revert.
+POST evm_revert { "id": 2 }
+</code></pre>
+<h3 id="5-retrospective-analysis"><a class="header" href="#5-retrospective-analysis">5. Retrospective Analysis</a></h3>
+<p>“Why did my position get liquidated at block 19500000?” Uses historical mode.</p>
+<pre><code>mirage-rs \
+  --mode historical \
+  --from-block 19499990 \
+  --to-block 19500010 \
+  --replay-mode hybrid \
+  --track-addresses 0x...golem,0x...pool \
+  --output-dir ./replay-output
+</code></pre>
+<h3 id="6-parallel-comparison"><a class="header" href="#6-parallel-comparison">6. Parallel Comparison</a></h3>
+<p>“Which entry size gives better PnL?” Uses the scenario runner.</p>
+<pre><code>POST mirage_beginScenarioSet { "baseline_state": "latest" }
+POST mirage_defineScenario { "set_id": "abc", "name": "1eth", "transactions": [...] }
+POST mirage_defineScenario { "set_id": "abc", "name": "5eth", "transactions": [...] }
+POST mirage_defineScenario { "set_id": "abc", "name": "10eth", "transactions": [...] }
+POST mirage_runScenarioSet { "set_id": "abc", "mode": "sequential" }
+// Poll mirage_getScenarioResults, then mirage_compareScenarios.
+</code></pre>
+<hr>
+<h2 id="golem-specific-rpc-methods"><a class="header" href="#golem-specific-rpc-methods">Golem-Specific RPC Methods</a></h2>
+<h3 id="mirage_getresourceusage"><a class="header" href="#mirage_getresourceusage"><code>mirage_getResourceUsage</code></a></h3>
+<p>Returns current resource utilization. Golems should poll periodically and feed <code>resource_pressure</code> into CorticalState.</p>
+<pre><code class="language-json">{
+  "memory_bytes": 134217728,
+  "memory_limit_bytes": 536870912,
+  "resource_pressure": 0.25,
+  "cache_hit_rate": 0.82,
+  "cache_entries": 4231,
+  "watch_list_size": 7,
+  "dirty_slot_count": 143,
+  "mode": "live",
+  "upstream_rpc_calls": 891
+}
+</code></pre>
+<h3 id="mirage_setresourcelimits"><a class="header" href="#mirage_setresourcelimits"><code>mirage_setResourceLimits</code></a></h3>
+<p>Adjust limits at runtime without restarting. Useful when a golem enters a high-load simulation phase and needs to expand cache capacity temporarily.</p>
+<h3 id="mirage_subscribeevents"><a class="header" href="#mirage_subscribeevents"><code>mirage_subscribeEvents</code></a></h3>
+<p>Subscribe to EVM events from local transactions (including TargetedFollower replays). Returns an SSE or WebSocket stream URL.</p>
+<p>Each event on the stream:</p>
+<pre><code class="language-json">{
+  "block_number": 19500001,
+  "tx_hash": "0x...",
+  "contract": "0x...pool",
+  "topics": ["0xc42079..."],
+  "data": "0x...",
+  "source": "follower_replay",
+  "decoded": {
+    "event": "Swap",
+    "amount0": "-1000000000000000000",
+    "amount1": "2450000000",
+    "sqrtPriceX96": "...",
+    "tick": -74321
+  }
+}
+</code></pre>
+<p><code>source</code> is <code>"local_tx"</code> (submitted by the golem) or <code>"follower_replay"</code> (replayed from mainnet).</p>
+<h3 id="mirage_getposition"><a class="header" href="#mirage_getposition"><code>mirage_getPosition</code></a></h3>
+<p>Convenience method: reads token balances and protocol-specific position state in a single call.</p>
+<p>Supported <code>type</code> values:</p>
+<ul>
+<li><code>"uniswap-v3-position"</code> – reads <code>slot0</code>, <code>positions</code>, <code>ticks</code></li>
+<li><code>"aave-v3-account"</code> – reads <code>getUserAccountData</code></li>
+<li><code>"raw-balances"</code> – token balances only</li>
+</ul>
+<hr>
+<h2 id="corticalstate-integration"><a class="header" href="#corticalstate-integration">CorticalState Integration</a></h2>
+<p>mirage feeds into the golem’s CorticalState in three places:</p>
+<h3 id="1-resource-pressure"><a class="header" href="#1-resource-pressure">1. Resource Pressure</a></h3>
+<pre><code>mirage_getResourceUsage -&gt; CorticalState.resource_pressure
+</code></pre>
+<p>Polled every block. When <code>resource_pressure &gt; 0.8</code>, CorticalState elevates caution. When <code>mode == "proxy"</code>, the golem should consider pausing new positions.</p>
+<h3 id="2-pnl-residual"><a class="header" href="#2-pnl-residual">2. PnL Residual</a></h3>
+<pre><code>mirage_getPosition (post-simulation) -&gt; prediction_engine.residual_correction
+</code></pre>
+<p>After each simulation cycle, the golem compares simulated PnL against its predictive model’s estimate. The delta feeds into the prediction engine as a residual correction signal.</p>
+<h3 id="3-event-stream-to-gamma-ticks"><a class="header" href="#3-event-stream-to-gamma-ticks">3. Event Stream to Gamma Ticks</a></h3>
+<pre><code>mirage_subscribeEvents -&gt; heartbeat_loop.gamma_tick_processor
+</code></pre>
+<p>Events from the mirage stream act as “gamma ticks” (the fastest tier of the Heartbeat, the Golem’s 9-step decision cycle, running at ~250ms) – high-frequency signals that trigger position re-evaluation outside the normal block-cadence loop. A large Swap crossing a tick boundary triggers an immediate range check rather than waiting for the next heartbeat.</p>
+<hr>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Condition</th><th>mirage behavior</th><th>Golem behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Upstream RPC timeout</td><td>Return cached value if within TTL; else error</td><td>Fall back to last known state</td></tr>
+<tr><td>Watch list at capacity</td><td>New protocols demoted to SlotOnly</td><td>Accept; monitor dirty_slot_count</td></tr>
+<tr><td>Memory limit reached</td><td>Degrade to proxy mode</td><td>Pause new positions; alert</td></tr>
+<tr><td>Snapshot not found</td><td>Return <code>-32001</code> error</td><td>Do not revert; log and continue</td></tr>
+<tr><td>WebSocket disconnect</td><td>Reconnect with exponential backoff</td><td>No action; mirage auto-recovers</td></tr>
+<tr><td>mirage process crash</td><td>N/A</td><td>Respawn; warm from scratch or checkpoint</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="mirage-status-subcommand"><a class="header" href="#mirage-status-subcommand"><code>mirage status</code> Subcommand</a></h2>
+<pre><code>mirage status [--port PORT] [--all]
+</code></pre>
+<p>Reads all PID files matching <code>mirage-*.pid</code>, verifies processes are alive, prints a table:</p>
+<pre><code>PORT   MODE        MEMORY     UPTIME   BLOCK      WATCHING
+8545   live        312/512MB  1h 23m   21400012   7 contracts
+8546   historical  198/256MB  4m  2s   19499997   3 contracts
+</code></pre>
+<p><code>--all</code> includes stale (dead) entries, marking them as such.</p>
+<p>Fields:</p>
+<ul>
+<li><strong>PORT</strong>: the port mirage is bound to.</li>
+<li><strong>MODE</strong>: <code>live</code> (following chain head) or <code>historical</code> (replay run).</li>
+<li><strong>MEMORY</strong>: current RSS against the profile cap.</li>
+<li><strong>UPTIME</strong>: time since start.</li>
+<li><strong>BLOCK</strong>: most recently processed block number.</li>
+<li><strong>WATCHING</strong>: count of contracts in the watch list.</li>
+</ul>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li>Architecture overview: <a href="./01-mirage-rs.html">01-mirage-rs.md</a> – Core architecture: HybridDB three-tier database, DirtyStore, targeted follower, CoW state layers, Block-STM parallel execution</li>
+<li>RPC method reference: <a href="./01b-mirage-rpc.html">01b-mirage-rpc.md</a> – Full JSON-RPC method catalog: eth_<em>, mirage_</em>, evm_*, hardhat/anvil compatibility, error codes</li>
+<li>Scenario runner and historical mode: <a href="./01c-mirage-scenarios.html">01c-mirage-scenarios.md</a> – Classification rules, targeted follower pipeline, historical replay modes, scenario runner with CoW branching</li>
+<li>Heartbeat integration: <a href="../01-chain-intelligence/05-heartbeat-integration.html">../01-chain-intelligence/05-heartbeat-integration.md</a> – How chain intelligence hooks into the Heartbeat’s (9-step decision cycle) Gamma/Theta/Delta ticks for CorticalState updates and perception processing</li>
+<li>Agent runtime: <a href="../03-agent-runtime/">../03-agent-runtime/</a> – CorticalState signals, Daimon (sub-agent personality modules) lifecycle, and behavioral phase management</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/15-dev/01c-mirage-scenarios.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/15-dev/01e-mirage-tx-compatibility.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/15-dev/01c-mirage-scenarios.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/15-dev/01e-mirage-tx-compatibility.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

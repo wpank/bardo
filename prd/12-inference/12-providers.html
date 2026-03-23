@@ -1,0 +1,2250 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Providers - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/12-inference/12-providers.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="12--multi-provider-architecture-spec"><a class="header" href="#12--multi-provider-architecture-spec">12 – Multi-Provider Architecture [SPEC]</a></h1>
+<p><strong>Five-Provider Architecture with Self-Describing Resolution</strong></p>
+<blockquote>
+<p>Related: <a href="00-overview.html">00-overview.md</a> (gateway overview), <a href="01a-routing.html">01a-routing.md</a> (model routing), <a href="03-economics.html">03-economics.md</a> (revenue model), <a href="13-reasoning.html">13-reasoning.md</a> (reasoning modes), <a href="14-rust-implementation.html">14-rust-implementation.md</a> (gateway binary), <a href="../05-dreams/07-venice-dreaming.html">../05-dreams/07-venice-dreaming.md</a> (Venice-augmented dreaming), <a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a> (Warden attestation, optional)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the multi-provider architecture of Bardo Inference (the LLM inference gateway for mortal autonomous DeFi agents called Golems). It belongs to the inference plane and describes the five provider backends (BlockRun, OpenRouter, Venice, Bankr, Direct Key), their Rust trait implementations, the self-describing resolution algorithm, and the Venice private cognition deep-dive with TEE attestation and E2EE inference. The key concept is that each provider occupies a distinct role, not an interchangeable fallback, and the resolver walks an ordered list matching declarative intents to provider capabilities. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="five-providers"><a class="header" href="#five-providers">Five Providers</a></h2>
+<p>Bardo Inference routes through five provider backends. Each occupies a distinct role in the system – they are not interchangeable fallbacks but specialized planes of access.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Provider</th><th>Role</th><th>Access</th><th>Models</th><th>Payment</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>BlockRun</td><td>Primary gateway</td><td>x402</td><td>All families (Anthropic, OpenAI, Google, OSS)</td><td>x402 USDC</td></tr>
+<tr><td>2</td><td>OpenRouter</td><td>Universal fallback</td><td>API key</td><td>400+ models, BYOK support</td><td>Prepaid</td></tr>
+<tr><td>3</td><td>Venice</td><td>Private cognition</td><td>API key</td><td>DeepSeek R1, Llama, GLM, Qwen VL</td><td>DIEM</td></tr>
+<tr><td>4</td><td>Bankr</td><td>Self-funding</td><td>Wallet</td><td>Cross-model (delegates to other providers)</td><td>Wallet</td></tr>
+<tr><td>5</td><td>Direct Key</td><td>Native feature access</td><td>User’s key</td><td>Provider-native (OpenAI, Anthropic, Google, etc.)</td><td>Direct</td></tr>
+<tr><td>6</td><td>Local</td><td>Embedding only</td><td>Local</td><td>nomic-embed-text-v1.5 (ONNX)</td><td>Free</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="blockrun-primary"><a class="header" href="#blockrun-primary">BlockRun (primary)</a></h3>
+<p>BlockRun is the default route for all inference. It fetches model catalogs dynamically from <code>GET /v1/models</code>, supports every major model family through a unified x402 payment interface, and requires zero API keys. USDC flows User -&gt; Bardo -&gt; BlockRun with no float, no fiat bridge, no credit risk. The catalog refresh is hourly; no model IDs or prices are hardcoded in the gateway binary.</p>
+<h3 id="openrouter-fallback"><a class="header" href="#openrouter-fallback">OpenRouter (fallback)</a></h3>
+<p>OpenRouter covers the long tail. When BlockRun lacks a specific model or goes down, OpenRouter’s 400+ model catalog fills the gap. It requires an operator API key and breaks the zero-float property (prepaid credits needed), so it is a fallback, not a co-primary. BYOK mode lets users bring their own OpenRouter key, bypassing the operator’s float entirely.</p>
+<h3 id="venice-private-cognition"><a class="header" href="#venice-private-cognition">Venice (private cognition)</a></h3>
+<p>Venice provides no-log, TEE-attested inference for privacy-sensitive tasks. It is not a fallback – it is a separate inference plane selected by task class when the Golem’s config sets <code>inferenceProvider: "both"</code>. Venice supports DIEM staking for zero-cost inference: stake DIEM tokens, receive inference credits proportional to stake weight. Models include DeepSeek R1, Llama 4 Maverick, GLM-4, and Qwen VL. The <code>strip_thinking_response</code> parameter controls whether <code>&lt;think&gt;</code> tags appear in responses. See <a href="#venice-private-cognition-plane">section 5</a> for the full deep-dive.</p>
+<h3 id="bankr-self-funding"><a class="header" href="#bankr-self-funding">Bankr (self-funding)</a></h3>
+<p>Bankr is the economic engine for autonomous agents. Revenue from social engagement (tips, subscriptions, content monetization) funds inference directly. The execution wallet and the revenue wallet are the same key – the agent thinks with the money it earns. Cross-model verification routes the same query through two providers and compares outputs, paying for redundancy only when the stakes justify it.</p>
+<h3 id="direct-key-passthrough"><a class="header" href="#direct-key-passthrough">Direct Key (passthrough)</a></h3>
+<p>Direct Key mode bypasses the context engineering pipeline entirely and routes requests straight to a provider’s native API using the user’s own credentials. This exists because some features require exact prompt structure that context engineering would corrupt: OpenAI’s Predicted Outputs, Anthropic’s Batch API, Gemini’s explicit caching with configurable TTL, OpenAI’s stateful Responses API. Safety is the user’s responsibility in this mode.</p>
+<h3 id="local-embedding-only"><a class="header" href="#local-embedding-only">Local (embedding only)</a></h3>
+<p><code>nomic-embed-text-v1.5</code> runs as an ONNX model on the proxy’s CPU. 768-dimensional embeddings in under 5ms. Used exclusively for semantic cache lookups and request classification. Never routes chat completions.</p>
+<hr>
+<h2 id="per-provider-feature-catalog"><a class="header" href="#per-provider-feature-catalog">Per-provider feature catalog</a></h2>
+<p>Each provider family exposes distinct capabilities. The gateway’s routing engine must know what each can do to match intents correctly.</p>
+<h3 id="anthropic"><a class="header" href="#anthropic">Anthropic</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Detail</th></tr>
+</thead>
+<tbody>
+<tr><td>Citations</td><td>Model can cite specific passages from provided documents</td></tr>
+<tr><td>Compaction</td><td>Server-side context compression (beta)</td></tr>
+<tr><td>Prompt caching</td><td>90% input discount, 5-min default TTL, extendable to 1hr with breakpoint</td></tr>
+<tr><td>Adaptive thinking</td><td>Extended thinking with budget control</td></tr>
+<tr><td>Context window</td><td>1M tokens (Opus 4.6, Sonnet 4)</td></tr>
+<tr><td>Max output</td><td>128K tokens</td></tr>
+<tr><td>Batch API</td><td>50% discount, async processing, 24hr SLA</td></tr>
+<tr><td>Effort parameter</td><td><code>low</code> / <code>medium</code> / <code>high</code> reasoning effort control</td></tr>
+<tr><td>Interleaved thinking</td><td>Thinking blocks interleaved with tool use</td></tr>
+<tr><td>Structured outputs</td><td>JSON schema enforcement via tool use</td></tr>
+<tr><td>Redacted thinking</td><td>Thinking content hidden from API response (safety applications)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Anthropic’s prompt caching is the single most impactful cost optimization. A stable system prompt + tool definitions block that hits the 5-min TTL window gets a 90% discount on those tokens every subsequent request. The gateway’s prompt reordering (see <a href="04-context-engineering.html">04-context-engineering.md</a>) is specifically designed to maximize this hit rate.</p>
+<h3 id="openai"><a class="header" href="#openai">OpenAI</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Detail</th></tr>
+</thead>
+<tbody>
+<tr><td>Predicted outputs</td><td>Supply expected output for 2-3x speed on edits (code refactoring)</td></tr>
+<tr><td>Responses API</td><td>Stateful conversations, server-managed context</td></tr>
+<tr><td>Reasoning summaries</td><td>Condensed chain-of-thought from o-series models</td></tr>
+<tr><td>Structured outputs</td><td>Strict JSON schema enforcement (native, not via tool use)</td></tr>
+<tr><td>Web search</td><td>Built-in web search tool</td></tr>
+<tr><td>Tool search</td><td>Built-in file/code search tool</td></tr>
+<tr><td>Verbosity control</td><td><code>output_style: "concise"</code> or <code>"verbose"</code></td></tr>
+<tr><td>Batch API</td><td>50% discount, async processing</td></tr>
+</tbody>
+</table>
+</div>
+<p>Predicted Outputs is why Direct Key mode exists. The feature requires sending the expected output verbatim in the request body. Context engineering would rewrite or compress this, destroying the optimization. When a Golem knows what 90% of a code file will look like after an edit, Predicted Outputs cuts latency by 2-3x.</p>
+<h3 id="gemini"><a class="header" href="#gemini">Gemini</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Detail</th></tr>
+</thead>
+<tbody>
+<tr><td><code>thinking_level</code></td><td><code>none</code> / <code>low</code> / <code>medium</code> / <code>high</code> thinking control</td></tr>
+<tr><td>Search grounding</td><td>Google Search integration for factual queries</td></tr>
+<tr><td>Code execution sandbox</td><td>Server-side Python execution</td></tr>
+<tr><td>Explicit caching</td><td>Configurable TTL, user-controlled cache keys</td></tr>
+<tr><td>Implicit caching</td><td>Automatic, no user intervention</td></tr>
+<tr><td>Media resolution control</td><td><code>low</code> / <code>medium</code> / <code>high</code> for image/video inputs</td></tr>
+<tr><td>Streaming function calling</td><td>Tool calls emitted mid-stream before completion</td></tr>
+</tbody>
+</table>
+</div>
+<p>Gemini’s explicit caching with configurable TTL is the most flexible caching model. Unlike Anthropic’s fixed 5-min/1hr windows, operators can set arbitrary TTLs per cache entry. The tradeoff: explicit cache management adds complexity. The gateway abstracts this behind <code>ProviderTraits.context_engineering</code>.</p>
+<h3 id="deepseek"><a class="header" href="#deepseek">DeepSeek</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Detail</th></tr>
+</thead>
+<tbody>
+<tr><td>Visible <code>&lt;think&gt;</code> tags</td><td>Reasoning chain exposed in response text</td></tr>
+<tr><td>64K output</td><td>Large output window for code generation</td></tr>
+<tr><td>Open weights (MIT)</td><td>Self-hostable, no vendor lock-in</td></tr>
+<tr><td>Hybrid thinking (V3.1+)</td><td>Toggle reasoning on/off per request</td></tr>
+<tr><td>Function calling</td><td>Tool use support (R1-0528+)</td></tr>
+</tbody>
+</table>
+</div>
+<p>DeepSeek R1’s visible thinking tags are a feature, not a bug. The gateway can parse <code>&lt;think&gt;...&lt;/think&gt;</code> blocks to extract reasoning chains for observability without paying for a separate “reasoning summary” API call. Venice serves DeepSeek R1 with TEE attestation, making it the privacy-first reasoning model.</p>
+<h3 id="qwen"><a class="header" href="#qwen">Qwen</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Detail</th></tr>
+</thead>
+<tbody>
+<tr><td>Hybrid <code>/think</code> toggle</td><td><code>/think</code> and <code>/no_think</code> inline directives</td></tr>
+<tr><td><code>enable_thinking</code> param</td><td>API-level thinking on/off</td></tr>
+<tr><td><code>thinking_budget</code></td><td>Token budget for reasoning (controls cost)</td></tr>
+<tr><td>MoE architecture</td><td>~10% active params per token (cost-efficient)</td></tr>
+<tr><td>262K context</td><td>Largest context window in the OSS model family</td></tr>
+</tbody>
+</table>
+</div>
+<p>Qwen’s MoE architecture means it activates roughly 10% of its parameters per token. A 235B-parameter model that behaves like a 22B model at inference time. The cost-per-token is closer to a small model while quality approaches frontier. Good fit for T1 routing when Haiku is unavailable.</p>
+<hr>
+<h2 id="provider-trait-and-resolution"><a class="header" href="#provider-trait-and-resolution">Provider trait and resolution</a></h2>
+<p>The gateway resolves intents to concrete model + provider pairs. Each provider is self-describing: it knows its own capabilities and can answer “can you handle this?” without the router maintaining a central compatibility matrix.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/traits.rs
+
+use std::time::Instant;
+
+/// A provider that knows its own capabilities.
+#[derive(Debug)]
+pub trait Provider: Send + Sync {
+    fn id(&amp;self) -&gt; &amp;str;
+    fn name(&amp;self) -&gt; &amp;str;
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt;;
+    fn traits(&amp;self) -&gt; &amp;ProviderTraits;
+}
+
+#[derive(Debug, Clone)]
+pub struct ProviderTraits {
+    pub private: bool,
+    pub self_funding: bool,
+    pub context_engineering: bool,
+    pub payment: PaymentMode,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PaymentMode {
+    X402,
+    Prepaid,
+    ApiKey,
+    Diem,
+    Wallet,
+}
+
+#[derive(Debug, Clone)]
+pub struct Intent {
+    pub model: Option&lt;String&gt;,
+    pub require: Vec&lt;String&gt;,
+    pub prefer: Vec&lt;String&gt;,
+    pub quality: Quality,
+    pub max_latency_ms: u64,
+    pub cost_sensitivity: f64,
+    pub diem_available: bool,
+    pub subsystem: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Quality {
+    Minimum,
+    Low,
+    Medium,
+    High,
+    Maximum,
+}
+
+#[derive(Debug, Clone)]
+pub struct Resolution {
+    pub model: String,
+    pub provider: String,
+    pub estimated_cost_usd: f64,
+    pub features: Vec&lt;String&gt;,
+    pub degraded: Vec&lt;String&gt;,
+}
+
+#[derive(Debug)]
+pub enum ProviderHealth {
+    Healthy,
+    Degraded { error_rate: f64 },
+    Down { since: Instant },
+}
+<span class="boring">}</span></code></pre>
+<h3 id="resolution-algorithm"><a class="header" href="#resolution-algorithm">Resolution algorithm</a></h3>
+<p>The resolver walks the provider list in priority order. First provider that returns <code>Some(resolution)</code> wins. If no provider matches with hard requirements, the resolver retries with requirements relaxed to preferences – graceful degradation over hard failure.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/resolver.rs
+
+pub fn resolve(providers: &amp;[Box&lt;dyn Provider&gt;], intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+    // Pass 1: strict -- all requirements must be satisfied
+    for provider in providers {
+        if let Some(resolution) = provider.resolve(intent) {
+            return Some(resolution);
+        }
+    }
+
+    // Pass 2: degraded -- move requirements to preferences, try again
+    let relaxed = Intent {
+        model: intent.model.clone(),
+        require: vec![],
+        prefer: [intent.require.clone(), intent.prefer.clone()].concat(),
+        quality: intent.quality.clone(),
+        max_latency_ms: intent.max_latency_ms * 2,
+        cost_sensitivity: intent.cost_sensitivity,
+        diem_available: intent.diem_available,
+        subsystem: intent.subsystem.clone(),
+    };
+
+    for provider in providers {
+        if let Some(mut resolution) = provider.resolve(&amp;relaxed) {
+            resolution.degraded = intent.require.clone();
+            return Some(resolution);
+        }
+    }
+
+    None
+}
+<span class="boring">}</span></code></pre>
+<p>Two passes, ~20 lines. The first pass enforces hard requirements. If nothing matches, the second pass converts requirements into preferences and doubles the latency budget. The <code>degraded</code> field on the returned <code>Resolution</code> tells the caller exactly which requirements were dropped. The caller decides whether degraded service is acceptable or whether to fail the request.</p>
+<h2 id="subsystem-intents"><a class="header" href="#subsystem-intents">Subsystem intents</a></h2>
+<p>Each subsystem declares a static intent – what it needs from inference. The resolver walks the provider list against these intents. Adding a new subsystem means adding one more const.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub const HEARTBEAT_T0: Intent = Intent {
+    model: None, require: vec![], prefer: vec![],
+    quality: Quality::Minimum, max_latency_ms: 200,
+    cost_sensitivity: 1.0, diem_available: false,
+    subsystem: "heartbeat_t0".into(),
+};
+
+pub const HEARTBEAT_T1: Intent = Intent {
+    model: None, require: vec![], prefer: vec!["low_effort".into()],
+    quality: Quality::Low, max_latency_ms: 2000,
+    cost_sensitivity: 0.8, diem_available: false,
+    subsystem: "heartbeat_t1".into(),
+};
+
+pub const HEARTBEAT_T2: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["interleaved_thinking".into(), "citations".into()],
+    quality: Quality::High, max_latency_ms: 30_000,
+    cost_sensitivity: 0.3, diem_available: false,
+    subsystem: "heartbeat_t2".into(),
+};
+
+pub const RISK: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["interleaved_thinking".into(), "citations".into()],
+    quality: Quality::Maximum, max_latency_ms: 30_000,
+    cost_sensitivity: 0.0, diem_available: false,
+    subsystem: "risk".into(),
+};
+
+pub const DREAM: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["visible_thinking".into(), "privacy".into()],
+    quality: Quality::High, max_latency_ms: 120_000,
+    cost_sensitivity: 0.5, diem_available: false,
+    subsystem: "dream".into(),
+};
+
+pub const DAIMON: Intent = Intent {
+    model: None, require: vec![], prefer: vec!["privacy".into()],
+    quality: Quality::Low, max_latency_ms: 1000,
+    cost_sensitivity: 0.9, diem_available: false,
+    subsystem: "daimon".into(),
+};
+
+pub const DAIMON_COMPLEX: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["visible_thinking".into(), "privacy".into()],
+    quality: Quality::High, max_latency_ms: 10_000,
+    cost_sensitivity: 0.5, diem_available: false,
+    subsystem: "daimon_complex".into(),
+};
+
+pub const CURATOR: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["structured_outputs".into(), "citations".into()],
+    quality: Quality::Medium, max_latency_ms: 15_000,
+    cost_sensitivity: 0.5, diem_available: false,
+    subsystem: "curator".into(),
+};
+
+pub const PLAYBOOK: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["predicted_outputs".into()],
+    quality: Quality::Medium, max_latency_ms: 10_000,
+    cost_sensitivity: 0.6, diem_available: false,
+    subsystem: "playbook".into(),
+};
+
+pub const OPERATOR: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["interleaved_thinking".into(), "citations".into()],
+    quality: Quality::Maximum, max_latency_ms: 5000,
+    cost_sensitivity: 0.0, diem_available: false,
+    subsystem: "operator".into(),
+};
+
+pub const DEATH: Intent = Intent {
+    model: None,
+    require: vec!["visible_thinking".into()],
+    prefer: vec!["privacy".into()],
+    quality: Quality::Maximum, max_latency_ms: u64::MAX,
+    cost_sensitivity: 0.0, diem_available: false,
+    subsystem: "death".into(),
+};
+
+pub const SESSION_COMPACT: Intent = Intent {
+    model: None, require: vec![],
+    prefer: vec!["compaction".into()],
+    quality: Quality::Medium, max_latency_ms: 30_000,
+    cost_sensitivity: 0.5, diem_available: false,
+    subsystem: "session_compact".into(),
+};
+<span class="boring">}</span></code></pre>
+<h3 id="intent-lookup"><a class="header" href="#intent-lookup">Intent lookup</a></h3>
+<p>The <code>ModelRouter</code> extension (see <a href="../01-golem/01-cognition.html">../01-golem/01-cognition.md</a> S2) calls <code>subsystem_intent()</code> to map the current subsystem to its static intent:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn subsystem_intent(subsystem: &amp;str) -&gt; Intent {
+    match subsystem {
+        "heartbeat_t0" =&gt; HEARTBEAT_T0,
+        "heartbeat_t1" =&gt; HEARTBEAT_T1,
+        "heartbeat_t2" =&gt; HEARTBEAT_T2,
+        "risk"         =&gt; RISK,
+        "dream"        =&gt; DREAM,
+        "daimon"       =&gt; DAIMON,
+        "daimon_complex" =&gt; DAIMON_COMPLEX,
+        "curator"      =&gt; CURATOR,
+        "playbook"     =&gt; PLAYBOOK,
+        "operator"     =&gt; OPERATOR,
+        "death"        =&gt; DEATH,
+        "session_compact" =&gt; SESSION_COMPACT,
+        _ =&gt; HEARTBEAT_T1, // conservative default
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="mortality-pressure"><a class="header" href="#mortality-pressure">Mortality pressure</a></h3>
+<p>Dying Golems become more cost-sensitive. Risk, death, and operator are exempt. At vitality &lt; 0.3 (pressure &gt; 0.7), quality downgrades one level – a <code>High</code> dream intent drops to <code>Medium</code>, routing to a cheaper model.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn apply_mortality_pressure(intent: &amp;mut Intent, vitality: f64) {
+    let exempt = ["risk", "death", "operator"];
+    if exempt.contains(&amp;intent.subsystem.as_str()) { return; }
+
+    let pressure = 1.0 - vitality;
+    intent.cost_sensitivity = (intent.cost_sensitivity + pressure * 0.3).min(1.0);
+    if pressure &gt; 0.7 {
+        intent.quality = intent.quality.downgrade();
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="provider-adapter-implementations"><a class="header" href="#provider-adapter-implementations">Provider adapter implementations</a></h2>
+<p>Each provider implements the <code>Provider</code> trait. The implementations are concrete – no generics, no trait objects beyond the <code>Provider</code> trait itself.</p>
+<h3 id="blockrunprovider"><a class="header" href="#blockrunprovider">BlockRunProvider</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/blockrun.rs
+
+#[derive(Debug)]
+pub struct BlockRunProvider {
+    pub endpoint: String,
+    pub catalog: Vec&lt;ModelEntry&gt;,
+    pub health: ProviderHealth,
+}
+
+impl Provider for BlockRunProvider {
+    fn id(&amp;self) -&gt; &amp;str { "blockrun" }
+    fn name(&amp;self) -&gt; &amp;str { "BlockRun" }
+
+    fn traits(&amp;self) -&gt; &amp;ProviderTraits {
+        &amp;ProviderTraits {
+            private: false,
+            self_funding: false,
+            context_engineering: true,
+            payment: PaymentMode::X402,
+        }
+    }
+
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        if matches!(self.health, ProviderHealth::Down { .. }) {
+            return None;
+        }
+
+        let candidates: Vec&lt;&amp;ModelEntry&gt; = self.catalog.iter()
+            .filter(|m| match &amp;intent.model {
+                Some(id) =&gt; m.id.contains(id),
+                None =&gt; true,
+            })
+            .filter(|m| intent.require.iter().all(|r| m.capabilities.contains(r)))
+            .filter(|m| m.latency_p50_ms &lt;= intent.max_latency_ms)
+            .collect();
+
+        let best = candidates.iter()
+            .min_by(|a, b| {
+                let cost_a = a.input_per_million + a.output_per_million;
+                let cost_b = b.input_per_million + b.output_per_million;
+                let score_a = cost_a * intent.cost_sensitivity
+                    - preference_score(a, &amp;intent.prefer) * (1.0 - intent.cost_sensitivity);
+                let score_b = cost_b * intent.cost_sensitivity
+                    - preference_score(b, &amp;intent.prefer) * (1.0 - intent.cost_sensitivity);
+                score_a.partial_cmp(&amp;score_b).unwrap_or(std::cmp::Ordering::Equal)
+            })?;
+
+        Some(Resolution {
+            model: best.id.clone(),
+            provider: "blockrun".into(),
+            estimated_cost_usd: (best.input_per_million + best.output_per_million) / 1_000_000.0 * 50_000.0,
+            features: best.capabilities.clone(),
+            degraded: vec![],
+        })
+    }
+}
+
+fn preference_score(model: &amp;ModelEntry, preferences: &amp;[String]) -&gt; f64 {
+    preferences.iter()
+        .filter(|p| model.capabilities.contains(p))
+        .count() as f64
+}
+
+#[derive(Debug, Clone)]
+pub struct ModelEntry {
+    pub id: String,
+    pub family: String,
+    pub capabilities: Vec&lt;String&gt;,
+    pub input_per_million: f64,
+    pub output_per_million: f64,
+    pub latency_p50_ms: u64,
+    pub max_context_tokens: u64,
+}
+<span class="boring">}</span></code></pre>
+<p>BlockRun’s catalog is fetched hourly from <code>/v1/models</code>. The resolver filters by explicit model match (if requested), hard requirements, and latency budget, then scores remaining candidates by a weighted blend of cost and preference satisfaction. <code>cost_sensitivity</code> at 1.0 picks the cheapest model; at 0.0 it picks the one with the most preferred features.</p>
+<h3 id="openrouterprovider"><a class="header" href="#openrouterprovider">OpenRouterProvider</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/openrouter.rs
+
+#[derive(Debug)]
+pub struct OpenRouterProvider {
+    pub api_key: String,
+    pub catalog: Vec&lt;ModelEntry&gt;,
+    pub health: ProviderHealth,
+}
+
+impl Provider for OpenRouterProvider {
+    fn id(&amp;self) -&gt; &amp;str { "openrouter" }
+    fn name(&amp;self) -&gt; &amp;str { "OpenRouter" }
+
+    fn traits(&amp;self) -&gt; &amp;ProviderTraits {
+        &amp;ProviderTraits {
+            private: false,
+            self_funding: false,
+            context_engineering: true,
+            payment: PaymentMode::ApiKey,
+        }
+    }
+
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        if matches!(self.health, ProviderHealth::Down { .. }) {
+            return None;
+        }
+        if self.api_key.is_empty() {
+            return None;
+        }
+
+        // OpenRouter has 400+ models. Filter aggressively.
+        let candidates: Vec&lt;&amp;ModelEntry&gt; = self.catalog.iter()
+            .filter(|m| match &amp;intent.model {
+                Some(id) =&gt; m.id.contains(id),
+                None =&gt; true,
+            })
+            .filter(|m| intent.require.iter().all(|r| m.capabilities.contains(r)))
+            .collect();
+
+        let best = candidates.iter()
+            .min_by(|a, b| {
+                let cost_a = a.input_per_million + a.output_per_million;
+                let cost_b = b.input_per_million + b.output_per_million;
+                cost_a.partial_cmp(&amp;cost_b).unwrap_or(std::cmp::Ordering::Equal)
+            })?;
+
+        Some(Resolution {
+            model: best.id.clone(),
+            provider: "openrouter".into(),
+            estimated_cost_usd: (best.input_per_million + best.output_per_million) / 1_000_000.0 * 50_000.0,
+            features: best.capabilities.clone(),
+            degraded: vec![],
+        })
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>OpenRouter is the universal safety net. If the API key is empty, it returns <code>None</code> for all intents – the provider is effectively disabled. When active, it resolves purely on cost (cheapest model that satisfies requirements). No preference scoring because OpenRouter’s catalog is too large for fine-grained feature matching to be reliable.</p>
+<h3 id="veniceprovider"><a class="header" href="#veniceprovider">VeniceProvider</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/venice.rs
+
+use std::collections::HashMap;
+
+/// Privacy tier determines what trust assumptions the golem places on the host.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PrivacyTier {
+    /// No-log: prompt/completion not retained. Host assumed non-malicious at runtime.
+    Private,
+    /// Inference runs in attested enclave. Enclave integrity verified by attestation receipt.
+    Tee,
+    /// End-to-end encrypted. Host cannot read prompt. Zero host trust required.
+    E2e,
+}
+
+/// Task class determines the sensitivity classifier's input.
+/// Each variant maps to exactly one PrivacyTier via TASK_PRIVACY_MAP.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TaskClass {
+    Heartbeat,       // Routine tick analysis -&gt; Private
+    Plan,            // Strategy planning -&gt; Tee
+    Trade,           // Trade decision -&gt; Tee
+    Negotiate,       // Agent negotiation -&gt; Tee
+    DreamNrem,       // Dream replay -&gt; Private
+    DreamRem,        // REM imagination -&gt; Private
+    DreamIntegration,// Dream insight promotion -&gt; Tee
+    Incident,        // Incident response -&gt; Private (content redacted)
+    SealedAuction,   // CCA sealed bid -&gt; E2e
+    MevScenario,     // MEV threat simulation -&gt; E2e
+    Testament,       // Death testament -&gt; Private (stored locally)
+    Judge,           // Confidential evaluation -&gt; Private
+}
+
+/// Static mapping from task class to privacy tier.
+pub static TASK_PRIVACY_MAP: phf::Map&lt;TaskClass, PrivacyTier&gt; = {
+    use TaskClass::*;
+    use PrivacyTier::*;
+    // Compile-time map. In practice this is a match arm, shown as a map
+    // for parity with the specification.
+    phf::phf_map! {
+        Heartbeat =&gt; Private,
+        Plan =&gt; Tee,
+        Trade =&gt; Tee,
+        Negotiate =&gt; Tee,
+        DreamNrem =&gt; Private,
+        DreamRem =&gt; Private,
+        DreamIntegration =&gt; Tee,
+        Incident =&gt; Private,
+        SealedAuction =&gt; E2e,
+        MevScenario =&gt; E2e,
+        Testament =&gt; Private,
+        Judge =&gt; Private,
+    }
+};
+
+// In practice, the static map above is implemented as a const fn:
+pub const fn classify(task: TaskClass) -&gt; PrivacyTier {
+    match task {
+        TaskClass::Heartbeat =&gt; PrivacyTier::Private,
+        TaskClass::Plan =&gt; PrivacyTier::Tee,
+        TaskClass::Trade =&gt; PrivacyTier::Tee,
+        TaskClass::Negotiate =&gt; PrivacyTier::Tee,
+        TaskClass::DreamNrem =&gt; PrivacyTier::Private,
+        TaskClass::DreamRem =&gt; PrivacyTier::Private,
+        TaskClass::DreamIntegration =&gt; PrivacyTier::Tee,
+        TaskClass::Incident =&gt; PrivacyTier::Private,
+        TaskClass::SealedAuction =&gt; PrivacyTier::E2e,
+        TaskClass::MevScenario =&gt; PrivacyTier::E2e,
+        TaskClass::Testament =&gt; PrivacyTier::Private,
+        TaskClass::Judge =&gt; PrivacyTier::Private,
+    }
+}
+
+/// Constraints that apply at each privacy tier. E2E is the most restrictive:
+/// no tool calling, no web search, no file upload. The model processes ciphertext
+/// and cannot dispatch tools because the host cannot read the context.
+#[derive(Debug, Clone)]
+pub struct TierConstraints {
+    pub tool_calling_allowed: bool,
+    pub web_search_allowed: bool,
+    pub file_upload_allowed: bool,
+    pub structured_output_required: bool,
+}
+
+pub const PRIVATE_CONSTRAINTS: TierConstraints = TierConstraints {
+    tool_calling_allowed: true,
+    web_search_allowed: false,  // web search enabled separately in dream REM
+    file_upload_allowed: true,
+    structured_output_required: false,
+};
+
+pub const TEE_CONSTRAINTS: TierConstraints = TierConstraints {
+    tool_calling_allowed: true,
+    web_search_allowed: false,
+    file_upload_allowed: false,
+    structured_output_required: true, // Safety-critical params must be structured
+};
+
+pub const E2E_CONSTRAINTS: TierConstraints = TierConstraints {
+    tool_calling_allowed: false, // Cannot dispatch tools when host cannot read context
+    web_search_allowed: false,
+    file_upload_allowed: false,
+    structured_output_required: true,
+};
+
+pub const fn tier_constraints(tier: PrivacyTier) -&gt; &amp;'static TierConstraints {
+    match tier {
+        PrivacyTier::Private =&gt; &amp;PRIVATE_CONSTRAINTS,
+        PrivacyTier::Tee =&gt; &amp;TEE_CONSTRAINTS,
+        PrivacyTier::E2e =&gt; &amp;E2E_CONSTRAINTS,
+    }
+}
+
+/// TEE attestation receipt. Produced by the enclave at inference time.
+/// Verified by the gateway before the response reaches the caller.
+#[derive(Debug, Clone)]
+pub struct AttestationReceipt {
+    pub enclave_measurement: String, // PCR digests (SHA-384)
+    pub nonce: String,               // Freshness challenge
+    pub timestamp: u64,              // Unix ms
+    pub model_id: String,
+    pub response_hash: String,       // SHA-256 of response content
+    pub debug_mode: bool,            // MUST be false for production
+    pub signature: Vec&lt;u8&gt;,          // Signed by Venice's attestation key
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum AttestationError {
+    DebugEnclave,
+    StaleNonce { age_ms: u64 },
+    InvalidSignature,
+    HashMismatch { expected: String, actual: String },
+}
+
+/// Verify an attestation receipt. Returns Ok(()) if all checks pass.
+/// On failure, the response is discarded -- a failed attestation is treated
+/// as a provider error, not a degraded-but-usable response.
+pub fn verify_attestation(
+    receipt: &amp;AttestationReceipt,
+    response_content: &amp;[u8],
+    now_ms: u64,
+    attestation_pubkey: &amp;[u8],
+) -&gt; Result&lt;(), AttestationError&gt; {
+    // 1. Debug enclave flag: non-negotiable. Debug enclaves have no integrity guarantees.
+    if receipt.debug_mode {
+        return Err(AttestationError::DebugEnclave);
+    }
+
+    // 2. Nonce freshness: receipt timestamp within 30s.
+    let age = now_ms.saturating_sub(receipt.timestamp);
+    if age &gt; 30_000 {
+        return Err(AttestationError::StaleNonce { age_ms: age });
+    }
+
+    // 3. Signature: verify against Venice's published attestation public key.
+    // (Actual crypto verification delegated to ring or ed25519-dalek)
+    let sig_valid = verify_ed25519(attestation_pubkey, &amp;receipt.signature, receipt);
+    if !sig_valid {
+        return Err(AttestationError::InvalidSignature);
+    }
+
+    // 4. Response hash: sha256(response_content) == receipt.response_hash.
+    let actual_hash = sha256_hex(response_content);
+    if actual_hash != receipt.response_hash {
+        return Err(AttestationError::HashMismatch {
+            expected: receipt.response_hash.clone(),
+            actual: actual_hash,
+        });
+    }
+
+    Ok(())
+}
+
+// Placeholder signatures for crypto primitives (implemented in crates/bardo-crypto)
+fn verify_ed25519(_pubkey: &amp;[u8], _sig: &amp;[u8], _receipt: &amp;AttestationReceipt) -&gt; bool { true }
+fn sha256_hex(_data: &amp;[u8]) -&gt; String { String::new() }
+
+/// Cache prompt structure. Venice prompt caching works on stable prefixes.
+/// The coordinator separates the prompt into a stable kernel (policy,
+/// invariants, tool contracts) and a volatile tail (current balances,
+/// timestamps, tick IDs).
+#[derive(Debug, Clone)]
+pub struct CachePromptStructure {
+    pub stable_kernel: StableKernel,
+    pub volatile_tail: VolatileTail,
+    pub prompt_cache_key: String, // golemId + sessionEpoch
+}
+
+#[derive(Debug, Clone)]
+pub struct StableKernel {
+    pub system_prompt: String,     // Policy, persona, behavioral constraints
+    pub tool_definitions: String,  // Pruned tool set (&lt;=12 tools, stable order)
+    pub invariants: String,        // Static market facts (token addresses, protocol constants)
+}
+
+#[derive(Debug, Clone)]
+pub struct VolatileTail {
+    pub current_state: String,     // Balances, prices, tick data
+    pub task_context: String,      // Specific task inputs
+    pub recent_history: String,    // Last N turns only
+}
+
+/// VeniceCacheCoordinator manages prompt splitting and cache key lifecycle.
+#[derive(Debug)]
+pub struct VeniceCacheCoordinator {
+    pub golem_id: String,
+    pub session_epoch: u64,
+}
+
+impl VeniceCacheCoordinator {
+    pub fn cache_key(&amp;self) -&gt; String {
+        format!("{}:{}", self.golem_id, self.session_epoch)
+    }
+
+    /// Advance the session epoch. This invalidates the cache key.
+    /// Called at dream cycle start, phase transition, or explicit invalidation.
+    pub fn advance_epoch(&amp;mut self) {
+        self.session_epoch += 1;
+    }
+}
+
+/// The provider implementation.
+#[derive(Debug)]
+pub struct VeniceProvider {
+    pub api_key: String,
+    pub diem_balance: f64,
+    pub health: ProviderHealth,
+}
+
+impl Provider for VeniceProvider {
+    fn id(&amp;self) -&gt; &amp;str { "venice" }
+    fn name(&amp;self) -&gt; &amp;str { "Venice" }
+
+    fn traits(&amp;self) -&gt; &amp;ProviderTraits {
+        &amp;ProviderTraits {
+            private: true,
+            self_funding: false,
+            context_engineering: false,
+            payment: PaymentMode::Diem,
+        }
+    }
+
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        if matches!(self.health, ProviderHealth::Down { .. }) {
+            return None;
+        }
+
+        // Venice only resolves when privacy is required or DIEM is available
+        let privacy_required = intent.require.contains(&amp;"private".to_string())
+            || intent.prefer.contains(&amp;"private".to_string());
+        let diem_funded = intent.diem_available &amp;&amp; self.diem_balance &gt; 0.0;
+
+        if !privacy_required &amp;&amp; !diem_funded {
+            return None;
+        }
+
+        // Venice model selection: match by family or pick default
+        let model = match &amp;intent.model {
+            Some(id) if id.contains("deepseek") =&gt; "deepseek-r1".to_string(),
+            Some(id) if id.contains("llama") =&gt; "llama-4-maverick".to_string(),
+            Some(id) if id.contains("qwen") =&gt; "qwen-vl-max".to_string(),
+            Some(id) if id.contains("glm") =&gt; "glm-4".to_string(),
+            _ =&gt; "deepseek-r1".to_string(),
+        };
+
+        let cost = if diem_funded { 0.0 } else { 0.002 }; // DIEM staking = zero cost
+
+        Some(Resolution {
+            model,
+            provider: "venice".into(),
+            estimated_cost_usd: cost,
+            features: vec!["private".into(), "tee_attested".into(), "no_log".into()],
+            degraded: vec![],
+        })
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Venice only activates when privacy is required or DIEM staking makes it free. It never competes with BlockRun on general queries. The <code>strip_thinking_response</code> parameter is set at the request layer, not in the provider – it controls whether <code>&lt;think&gt;</code> tags from DeepSeek R1 appear in the API response.</p>
+<h3 id="bankrprovider"><a class="header" href="#bankrprovider">BankrProvider</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/bankr.rs
+
+#[derive(Debug)]
+pub struct BankrProvider {
+    pub wallet_address: String,
+    pub revenue_balance_usd: f64,
+    pub lifetime_revenue_usd: f64,
+    pub lifetime_cost_usd: f64,
+    pub health: ProviderHealth,
+}
+
+impl Provider for BankrProvider {
+    fn id(&amp;self) -&gt; &amp;str { "bankr" }
+    fn name(&amp;self) -&gt; &amp;str { "Bankr" }
+
+    fn traits(&amp;self) -&gt; &amp;ProviderTraits {
+        &amp;ProviderTraits {
+            private: false,
+            self_funding: true,
+            context_engineering: true,
+            payment: PaymentMode::Wallet,
+        }
+    }
+
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        if matches!(self.health, ProviderHealth::Down { .. }) {
+            return None;
+        }
+
+        // Bankr only resolves for subsystems that use self-funding economics
+        if intent.subsystem != "autonomous" &amp;&amp; intent.subsystem != "social" {
+            return None;
+        }
+
+        // Check sustainability: can we afford this?
+        let sustainability = if self.lifetime_cost_usd &gt; 0.0 {
+            self.lifetime_revenue_usd / self.lifetime_cost_usd
+        } else {
+            f64::INFINITY
+        };
+
+        // Budget multiplier based on sustainability ratio
+        let budget_mult = if sustainability &gt; 2.0 {
+            1.5 // Expanding: revenue far exceeds cost
+        } else if sustainability &lt; 0.5 {
+            0.3 // Contracting: burning through reserves
+        } else {
+            1.0 // Steady state
+        };
+
+        let max_cost = self.revenue_balance_usd * 0.1 * budget_mult;
+        if max_cost &lt; 0.001 {
+            return None; // Can't afford any inference
+        }
+
+        // Delegate to cheapest available model via cross-model selection
+        let quality_model = match intent.quality {
+            Quality::Maximum | Quality::High =&gt; "claude-sonnet-4",
+            Quality::Medium =&gt; "claude-haiku-4-5",
+            Quality::Low | Quality::Minimum =&gt; "deepseek-r1",
+        };
+
+        Some(Resolution {
+            model: quality_model.to_string(),
+            provider: "bankr".into(),
+            estimated_cost_usd: max_cost.min(0.25),
+            features: vec!["self_funding".into(), "cross_verify".into()],
+            degraded: vec![],
+        })
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Bankr’s resolver checks sustainability before committing to inference. If the agent is burning through reserves faster than it earns (ratio &lt; 0.5), the budget contracts to 30% of normal. If revenue is flush (ratio &gt; 2.0), budgets expand 1.5x. The wallet address used for inference is the same wallet that receives social revenue – no transfer step, no custodial intermediary.</p>
+<h3 id="directkeyprovider"><a class="header" href="#directkeyprovider">DirectKeyProvider</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/direct.rs
+
+#[derive(Debug)]
+pub struct DirectKeyProvider {
+    pub configured_keys: Vec&lt;DirectKey&gt;,
+    pub health: ProviderHealth,
+}
+
+#[derive(Debug, Clone)]
+pub struct DirectKey {
+    pub provider: String,   // "anthropic", "openai", "google"
+    pub api_key: String,
+    pub models: Vec&lt;String&gt;,
+}
+
+impl Provider for DirectKeyProvider {
+    fn id(&amp;self) -&gt; &amp;str { "direct" }
+    fn name(&amp;self) -&gt; &amp;str { "Direct Key" }
+
+    fn traits(&amp;self) -&gt; &amp;ProviderTraits {
+        &amp;ProviderTraits {
+            private: false,
+            self_funding: false,
+            context_engineering: false, // Bypassed intentionally
+            payment: PaymentMode::ApiKey,
+        }
+    }
+
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        if matches!(self.health, ProviderHealth::Down { .. }) {
+            return None;
+        }
+
+        // Direct key only resolves when specific native features are required
+        let needs_direct = intent.require.iter().any(|r| matches!(r.as_str(),
+            "predicted_outputs" | "batch_api" | "explicit_caching" |
+            "responses_api" | "direct_passthrough"
+        ));
+
+        if !needs_direct {
+            return None;
+        }
+
+        // Find a configured key that can serve the requested model
+        let key = self.configured_keys.iter().find(|k| {
+            match &amp;intent.model {
+                Some(model) =&gt; k.models.iter().any(|m| model.contains(m)),
+                None =&gt; true,
+            }
+        })?;
+
+        Some(Resolution {
+            model: intent.model.clone().unwrap_or_else(|| key.models[0].clone()),
+            provider: format!("direct/{}", key.provider),
+            estimated_cost_usd: -1.0, // Unknown -- user's bill, not ours
+            features: vec!["native_api".into(), "no_context_engineering".into()],
+            degraded: vec![],
+        })
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Direct Key returns <code>estimated_cost_usd: -1.0</code> because the cost hits the user’s own API bill, not Bardo’s ledger. The gateway sets <code>X-Bardo-Cost: direct</code> in the response header so observability pipelines know this request bypassed the cost tracking system.</p>
+<h2 id="provider-request-formatting"><a class="header" href="#provider-request-formatting">Provider request formatting</a></h2>
+<p>After resolution, each provider transforms the generic request into provider-specific API parameters. The subsystem code never touches these.</p>
+<p><strong>Venice</strong>: Sets <code>strip_thinking_response: false</code> for dream, death, and daimon_complex subsystems (preserving visible <code>&lt;think&gt;</code> tags). All other subsystems strip thinking for smaller responses.</p>
+<p><strong>BlockRun (Anthropic models)</strong>: Sets <code>thinking: { type: "adaptive" }</code> with effort mapped from quality level (Minimum/Low -&gt; “low”, Medium -&gt; “medium”, High/Maximum -&gt; “high”).</p>
+<p><strong>BlockRun (OpenAI models)</strong>: Sets <code>reasoning.effort</code> mapped from quality level. <code>reasoning.summary</code> set based on visibility preference.</p>
+<p><strong>BlockRun (Gemini models)</strong>: Sets <code>thinking_level</code> (“low” for Minimum/Low quality, “high” for Medium/High/Maximum).</p>
+<p><strong>BlockRun (Qwen models)</strong>: Injects <code>/think</code> prefix for subsystems preferring visible_thinking, <code>/no_think</code> for routine operations.</p>
+<p>See <a href="13-reasoning.html">13-reasoning.md</a> for how reasoning features are normalized after provider responses arrive.</p>
+<h2 id="degradation-visibility"><a class="header" href="#degradation-visibility">Degradation visibility</a></h2>
+<p>When a provider satisfies an intent but not all preferences, <code>Resolution.degraded</code> names what is missing. The Golem emits this to the operator: “Dream cycle used Claude via BlockRun (visible thinking and privacy unavailable – configure Venice for better dream quality).” The user knows exactly what to add to their config. Silent fallbacks are gone – every compromise is visible.</p>
+<h2 id="routing-examples"><a class="header" href="#routing-examples">Routing examples</a></h2>
+<h3 id="minimal-blockrun-only"><a class="header" href="#minimal-blockrun-only">Minimal: BlockRun only</a></h3>
+<pre><code class="language-text">heartbeat_t0  -&gt; BlockRun/nvidia-gpt-oss-120b (FREE)
+heartbeat_t1  -&gt; BlockRun/gemini-3-flash ($0.50/M)
+heartbeat_t2  -&gt; BlockRun/claude-opus-4-6 ($5/M, adaptive thinking)
+risk          -&gt; BlockRun/claude-opus-4-6 (interleaved thinking)
+dream         -&gt; BlockRun/deepseek-r1 ($0.55/M, visible &lt;think&gt;)
+curator       -&gt; BlockRun/claude-sonnet-4-6 ($3/M, structured outputs)
+operator      -&gt; BlockRun/claude-opus-4-6 (best quality)
+death         -&gt; BlockRun/deepseek-r1 (visible reasoning, max tokens)
+</code></pre>
+<h3 id="full-stack-all-five-providers"><a class="header" href="#full-stack-all-five-providers">Full stack: all five providers</a></h3>
+<pre><code class="language-text">heartbeat_t0  -&gt; Direct/local/qwen3-7b (FREE, zero latency)
+heartbeat_t1  -&gt; BlockRun/gemini-3-flash (cached)
+heartbeat_t2  -&gt; BlockRun/claude-opus-4-6 (interleaved thinking, citations)
+risk          -&gt; BlockRun/claude-opus-4-6 + Bankr cross-model verify
+dream         -&gt; Venice/deepseek-r1 (visible, private, DIEM-funded)
+daimon        -&gt; Venice/llama-3.3-70b (private, fast)
+curator       -&gt; BlockRun/claude-sonnet-4-6 (citations for provenance)
+playbook      -&gt; Direct/openai/gpt-5.4 (Predicted Outputs)
+operator      -&gt; Bankr/claude-opus-4-6 (self-funded from revenue)
+death         -&gt; Venice/deepseek-r1 (visible, private, DIEM, unlimited)
+</code></pre>
+<hr>
+<h2 id="venice-private-cognition-plane"><a class="header" href="#venice-private-cognition-plane">Venice: private cognition plane</a></h2>
+<p>Ethereum gives agents public coordination. Venice gives them private cognition.</p>
+<p>Every LLM inference call that a golem makes is a disclosure event. A retention-capable provider – one that logs prompts and completions for training, auditing, or abuse review – can read the golem’s strategy, negotiation posture, draft transaction intents, and risk assessments before they settle on-chain. This is not a hypothetical privacy concern. It is a concrete attack surface: the provider becomes an oracle for the golem’s next move.</p>
+<p>The problem is structural. A golem operating in adversarial markets (MEV-competitive LP ranges, sealed-bid CCA auctions, cross-protocol arbitrage) cannot achieve strategy confidentiality if every deliberation step is observable by an infrastructure layer it does not control. The golem’s intent is value. Disclosing intent before execution is equivalent to front-running your own trades.</p>
+<p>Three categories of leakage matter:</p>
+<p><strong>MEV leakage via inference</strong>: A retention-capable provider observing a golem’s T2 deliberation – “should I enter this range given current gas and tick movement?” – can extract directional signal before the transaction lands. At T2 latency (~1-5s for Sonnet/Opus), a provider with collocated infrastructure has ample time to act.</p>
+<p><strong>Negotiation exposure</strong>: During agent-to-agent CCA participation or OTC negotiation, the golem’s reserve price, bidding strategy, and walkaway conditions are inference inputs. These are the most sensitive facts the golem holds. They must not leave its trust boundary in readable form.</p>
+<p><strong>Retention as attack surface</strong>: Even without real-time adversarial use, a provider’s training corpus containing golem deliberation creates long-tail exposure: future model capabilities may extract strategy patterns, competitor analysis, or vulnerability assessments from retained logs.</p>
+<p>Venice addresses all three. Its inference platform is no-log by default, TEE-attested for high-sensitivity deliberation, and E2EE-capable for sealed operations. The confidentiality guarantee is not a policy statement – it is verifiable at the protocol level via attestation receipts and response headers.</p>
+<h3 id="why-confidentiality-is-structural-not-cosmetic"><a class="header" href="#why-confidentiality-is-structural-not-cosmetic">Why confidentiality is structural, not cosmetic</a></h3>
+<p>The substitution test: identify workflows that are legally or operationally impossible on a retention-capable API. Four exist:</p>
+<p><strong>Sealed-auction cognition</strong>: A golem participating in a CCA sealed-bid auction cannot compute its bid on a retention-capable provider. The bid, if read before reveal, allows the provider (or anyone with access) to outbid the golem at minimal cost. Sealed-bid auctions are a standard mechanism specifically because sealed bids prevent information leakage during the auction. Running the bid computation on a retention surface defeats the mechanism. E2EE inference is the only viable path.</p>
+<p><strong>Attested decision receipts</strong>: For high-value trades, the golem produces a TEE-attested inference receipt – a cryptographic proof that a specific model running in a verified enclave produced a specific output at a specific time. This receipt is a defense artifact: in the event of a disputed trade, the receipt demonstrates that the decision was made by the golem’s authorized cognition process, not by an external actor injecting fabricated tool results or prompts. TEE attestation is not reproducible on a standard API.</p>
+<p><strong>Confidential incident response</strong>: When a golem detects a potential exploit, oracle manipulation, or contract compromise affecting its vault, the incident response deliberation must not be observable by the attacker. Standard inference would expose the golem’s detection logic, response timing, and planned defensive moves. Private no-log inference contains the response within the golem’s trust boundary.</p>
+<p><strong>Privacy-preserving judge</strong>: When evaluating third-party strategy code, proprietary configurations, or operator-submitted vault parameters, the golem acts as a confidential evaluator. The evaluated content must not be retained by the inference provider. This enables the golem to offer evaluation services to operators who require confidentiality – a use case that is legally impossible on a standard API.</p>
+<h3 id="sensitivity-classification"><a class="header" href="#sensitivity-classification">Sensitivity classification</a></h3>
+<p>Not every inference call warrants the same privacy tier. Applying TEE attestation to routine heartbeat analysis adds latency and cost without meaningful benefit. The sensitivity classifier maps task class to privacy tier:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Privacy tier</th><th>Guarantee</th><th>Task classes</th><th>Trust assumption</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Private</strong> (no-log)</td><td>Prompt/completion not retained</td><td>heartbeat, routine analysis, NREM replay</td><td>Host not malicious at runtime</td></tr>
+<tr><td><strong>TEE</strong></td><td>Inference runs in attested enclave</td><td>trade decisions, negotiations, strategy planning, dream integration</td><td>Enclave integrity verified by attestation receipt</td></tr>
+<tr><td><strong>E2EE</strong></td><td>End-to-end encrypted; host cannot read prompt</td><td>sealed-bid CCA, MEV scenarios, incident response</td><td>Zero host trust required</td></tr>
+</tbody>
+</table>
+</div>
+<p>E2EE imposes hard constraints: no function calling, no web search, no file uploads. The model cannot call tools because the encrypted context cannot be parsed by the host for tool dispatch. E2EE is therefore reserved for pure reasoning outputs – bid amounts, risk scores, strategy fragments – where the output is a number or short text that the golem decrypts locally and acts on independently.</p>
+<p>The <code>PrivacyTier</code>, <code>TaskClass</code>, <code>TierConstraints</code>, and <code>TASK_PRIVACY_MAP</code> definitions live in the Rust gateway (see <a href="#veniceprovider">section 4, VeniceProvider</a>). The Golem’s Daimon can override specific task class mappings at runtime – for example, during a high-urgency incident, bump <code>incident</code> from <code>private</code> to <code>tee</code> for attested evidence collection.</p>
+<h3 id="trust-chain"><a class="header" href="#trust-chain">Trust chain</a></h3>
+<p>Venice’s trust model builds in layers, each reducing required host trust:</p>
+<pre><code>no-retention claim
+    |
+response headers confirm no-log per-request (X-Venice-Privacy-Level, X-Venice-Retention-Policy)
+    |
+TEE attestation: inference ran in verified SGX/AMD SEV enclave
+    |
+attestation nonce freshness: receipt timestamp within 30s, debug enclave flag absent
+    |
+E2EE: prompt encrypted before leaving golem's trust boundary; host processes ciphertext only
+</code></pre>
+<p>Each tier is strictly stronger than the previous. A golem can verify the first three layers automatically via <code>verify_attestation()</code> (see <a href="#veniceprovider">section 4, VeniceProvider</a>). The fourth layer (E2EE) requires no trust in the host at all – the verification is the absence of a decryption key on the host side.</p>
+<p>Receipts at the TEE tier are stored as provenance tokens in the Grimoire. The receipt structure records: <code>tick_id</code>, <code>task_class</code>, <code>model_id</code>, <code>enclave_measurement</code> (PCR digest), <code>nonce</code>, <code>timestamp</code>, <code>response_hash</code>. This enables post-hoc audits – for any significant decision, the golem can prove which model, in which enclave, produced the deliberation.</p>
+<h3 id="veniceclient"><a class="header" href="#veniceclient">VeniceClient</a></h3>
+<p><code>VeniceClient</code> wraps the Venice inference API, which is OpenAI-compatible with extensions:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/venice_client.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VeniceClientConfig {
+    pub api_key: String,                    // Operator-provisioned; v2: consumption-limited VVV key
+    pub base_url: String,                   // "https://api.venice.ai/api/v1"
+    pub default_privacy_tier: PrivacyTier,  // Private, Tee, E2e
+    pub timeout_ms: u64,                    // Default: 30_000
+    pub max_retries: u32,                   // Default: 3
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VeniceRequestParams {
+    pub include_venice_system_prompt: Option&lt;bool&gt;, // Default: false
+    pub no_system_prompt: Option&lt;bool&gt;,
+    pub character_slug: Option&lt;String&gt;,             // Maps to cognitive role
+    pub enable_web_search: Option&lt;WebSearchMode&gt;,   // Default: Never
+    pub enable_web_citations: Option&lt;bool&gt;,
+}
+
+#[derive(Debug, Clone)]
+pub struct VeniceRequestOptions {
+    pub venice_parameters: Option&lt;VeniceRequestParams&gt;,
+    pub privacy_tier: PrivacyTier,
+    pub task_class: TaskClass,
+    pub prompt_cache_key: Option&lt;String&gt;,  // Set for stable-prefix sessions
+}
+<span class="boring">}</span></code></pre>
+<p>The client handles three code paths:</p>
+<p><strong>Private (no-log)</strong>: Standard HTTPS to Venice API. Response headers <code>X-Venice-Privacy-Level: private</code> and <code>X-Venice-Retention-Policy: none</code> confirm no-log. If headers are absent or indicate retention, the client throws <code>VeniceRetentionError</code> – fail closed.</p>
+<p><strong>TEE</strong>: Additional <code>X-Venice-Attestation: required</code> request header. Response includes <code>X-Venice-Attestation-Receipt</code> header with a base64-encoded attestation document. The client passes this to <code>verify_attestation()</code> before returning the response to the caller.</p>
+<p><strong>E2EE</strong>: Client encrypts the full request payload (system prompt + messages + tools) before transmission. Only ciphertext leaves the golem’s process. Venice returns encrypted response. Client decrypts locally. Function calling and web search are disabled – enforced by the client before sending, not by a server-side check.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/venice_client.rs
+
+#[async_trait]
+pub trait VeniceClient: Send + Sync {
+    async fn complete(
+        &amp;self,
+        messages: Vec&lt;Message&gt;,
+        options: VeniceRequestOptions,
+    ) -&gt; Result&lt;VeniceResponse&gt;;
+
+    async fn complete_structured(
+        &amp;self,
+        messages: Vec&lt;Message&gt;,
+        schema: serde_json::Value,
+        options: VeniceRequestOptions,
+    ) -&gt; Result&lt;serde_json::Value&gt;;
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VeniceResponse {
+    pub content: String,
+    pub usage: VeniceUsage,
+    pub privacy_level: String,           // From X-Venice-Privacy-Level
+    pub retention_policy: String,        // From X-Venice-Retention-Policy
+    pub attestation_receipt: Option&lt;String&gt;, // From X-Venice-Attestation-Receipt (TEE only)
+    pub cf_ray: String,                  // From CF-RAY (for telemetry)
+    pub cached_tokens_ratio: Option&lt;f64&gt;, // From X-Venice-Cached-Tokens-Ratio
+    pub attestation: Option&lt;AttestationReceipt&gt;, // Parsed and verified (TEE only)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VeniceUsage {
+    pub input_tokens: u32,
+    pub output_tokens: u32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="cache-coordinator"><a class="header" href="#cache-coordinator">Cache coordinator</a></h3>
+<p>Venice prompt caching works on stable prefixes. The <code>VeniceCacheCoordinator</code> (Rust types in <a href="#veniceprovider">section 4</a>) separates the prompt into a stable kernel and a volatile tail. The <code>prompt_cache_key</code> is <code>golemId + sessionEpoch</code> where <code>session_epoch</code> advances at each dream cycle start, phase transition, or explicit cache invalidation. This maximizes cache hits within a session (same golem, same model, same policy) while correctly invalidating when the stable kernel changes.</p>
+<p>Cache hit rate targets by task class:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Task class</th><th>Expected cache hit rate</th><th>Driver</th></tr>
+</thead>
+<tbody>
+<tr><td>heartbeat</td><td>85-90%</td><td>Identical system prompt + tool set across ticks</td></tr>
+<tr><td>dream_nrem</td><td>60-75%</td><td>Same session epoch; volatile tail varies by episode batch</td></tr>
+<tr><td>plan</td><td>50-65%</td><td>Policy and tool set stable; market state varies</td></tr>
+<tr><td>trade</td><td>30-50%</td><td>Position state changes per tick</td></tr>
+<tr><td>negotiate</td><td>20-35%</td><td>Counterparty state changes each round</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="venice-characters-as-cognitive-roles"><a class="header" href="#venice-characters-as-cognitive-roles">Venice characters as cognitive roles</a></h3>
+<p>Venice’s character system provides pre-configured behavioral personas. These map to Bardo’s role DAG as style and framing constraints, not as substitutes for the golem’s policy schema:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Bardo role</th><th>Venice character mapping</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>risk-assessor</td><td>Analytical, conservative framing</td><td>Pushes toward explicit risk enumeration</td></tr>
+<tr><td>negotiator</td><td>Adversarial, game-theoretic framing</td><td>Models counterparty reasoning</td></tr>
+<tr><td>safety-guardian</td><td>Cautious, refusal-aware framing</td><td>More likely to produce <code>abort</code> recommendations</td></tr>
+<tr><td>dream-interpreter</td><td>Associative, generative framing</td><td>Higher temperature for creative recombination</td></tr>
+</tbody>
+</table>
+</div>
+<p>A character slug is passed via <code>venice_parameters.character_slug</code>. The golem’s policy schema – enforced via structured output schemas and PolicyCage tool validation – remains the binding contract. A character cannot override a schema constraint. Characters affect tone and framing, not output structure.</p>
+<p>If no character is configured, Venice uses its default framing. The character system is optional and operator-configured.</p>
+<h3 id="non-substitutable-workflows"><a class="header" href="#non-substitutable-workflows">Non-substitutable workflows</a></h3>
+<p>Four workflows cannot be replicated on a retention-capable inference API:</p>
+<p><strong>1. Sealed-auction cognition</strong>: The golem computes its CCA bid using E2EE inference. The bid amount is encrypted before leaving the golem’s process, computed in Venice’s enclave, and returned as ciphertext that only the golem can decrypt. The bid is never readable by any third party, including Venice’s host infrastructure. Without E2EE inference, sealed-bid participation requires a different architecture (local model, trusted hardware), each with worse quality-cost tradeoffs.</p>
+<p><strong>2. Attested decision receipts</strong>: For any trade above a threshold size, the golem stores a TEE attestation receipt alongside the transaction hash. The receipt proves: (a) which model made the deliberation, (b) in which enclave, (c) at what time, (d) with what response. In a legal or regulatory context, this receipt establishes that the decision was made autonomously by the golem’s authorized cognition, not injected by an external party. Without TEE inference, this receipt cannot be produced.</p>
+<p><strong>3. Confidential incident response</strong>: When the golem detects a potential attack vector in a vault contract it manages, the incident analysis must be confidential. The analysis identifies the attack mechanism, estimates the exposure window, and proposes mitigation steps – all of which are useful to an attacker if disclosed. Private no-log inference contains this deliberation within the golem’s trust boundary.</p>
+<p><strong>4. Privacy-preserving evaluation</strong>: Operators submit vault strategies, configuration files, or protocol integrations for golem evaluation. The evaluated content is confidential – operators do not want their strategy logic retained by an inference provider. Private no-log inference enables the golem to offer evaluation services under confidentiality guarantees, which is a different product from standard AI-assisted analysis.</p>
+<h3 id="provider-coexistence"><a class="header" href="#provider-coexistence">Provider coexistence</a></h3>
+<p><code>GolemConfig</code> carries the inference provider preference:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/config.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GolemInferenceConfig {
+    /// "venice", "bardo", or "both"
+    pub inference_provider: InferenceProviderMode,
+    pub venice_config: Option&lt;VeniceClientConfig&gt;,
+    pub dream_inference_provider: Option&lt;InferenceProviderMode&gt;,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InferenceProviderMode { Venice, Bardo, Both }
+<span class="boring">}</span></code></pre>
+<p><strong><code>"venice"</code></strong>: All inference through Venice. Privacy tiers applied per task class. Recommended for operators with security-sensitive strategies.</p>
+<p><strong><code>"bardo"</code></strong>: All inference through the Bardo BlockRun gateway. Existing routing, caching, and cost optimization. No privacy tier enforcement.</p>
+<p><strong><code>"both"</code></strong>: Split routing by sensitivity. Venice receives <code>tee</code> and <code>e2e</code> tasks. Bardo receives <code>private</code> and <code>heartbeat</code> tasks where cost optimization matters more than attestation. This is the recommended configuration for golems that mix routine analysis with occasional high-stakes decisions.</p>
+<p>Provider preference is set at golem creation and can be changed without restart. The <code>bardo-venice-proxy</code> Pi extension reads <code>GolemConfig.inferenceProvider</code> at each <code>before_llm_call</code> hook and routes accordingly. No Pi session restart is required because the extension reads config dynamically.</p>
+<h3 id="economics"><a class="header" href="#economics">Economics</a></h3>
+<p>Cost scales with privacy tier and task frequency:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Cost premium</th><th>Driver</th><th>When cost is justified</th></tr>
+</thead>
+<tbody>
+<tr><td>Private (no-log)</td><td>~0-10% above standard</td><td>No-log infrastructure overhead</td><td>All routine golem operations</td></tr>
+<tr><td>TEE</td><td>~20-40% above private</td><td>Enclave compute, attestation overhead</td><td>Trade decisions, negotiations, integration phase</td></tr>
+<tr><td>E2EE</td><td>~50-80% above private</td><td>Encryption overhead, no batch inference</td><td>Sealed-bid auctions, MEV scenarios only</td></tr>
+</tbody>
+</table>
+</div>
+<p>The cache coordinator’s stable kernel prefix substantially reduces the effective cost premium. If 70% of a TEE call is served from the prompt cache (90% discount on cached tokens), the 30% premium on the remaining 30% of tokens amounts to a 9% effective premium – negligible for trade decisions where the decision quality gain is material.</p>
+<p>Consumption-limit keys in v2 create a natural throttle: the key’s spending cap declines with the golem’s behavioral phase, mirroring the mortality-aligned budget compression in the broader inference gateway.</p>
+<p>Monthly cost projection for a Stable-phase golem with <code>"both"</code> provider mode at 100 ticks/day:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Task class</th><th>Calls/day</th><th>Provider</th><th>Avg cost/call</th><th>Monthly cost</th></tr>
+</thead>
+<tbody>
+<tr><td>heartbeat</td><td>~80</td><td>Bardo (T0/T1)</td><td>~$0.002</td><td>~$4.80</td></tr>
+<tr><td>plan</td><td>~5</td><td>Venice TEE</td><td>~$0.015</td><td>~$2.25</td></tr>
+<tr><td>trade</td><td>~3</td><td>Venice TEE</td><td>~$0.020</td><td>~$1.80</td></tr>
+<tr><td>dream_nrem</td><td>~2/cycle, ~1 cycle/day</td><td>Venice private</td><td>~$0.005</td><td>~$0.30</td></tr>
+<tr><td>dream_rem</td><td>~2/cycle</td><td>Venice private</td><td>~$0.008</td><td>~$0.48</td></tr>
+<tr><td>dream_integration</td><td>~1/cycle</td><td>Venice TEE</td><td>~$0.018</td><td>~$0.54</td></tr>
+<tr><td><strong>Total Venice</strong></td><td></td><td></td><td></td><td><strong>~$5.37/mo</strong></td></tr>
+<tr><td><strong>Total Bardo</strong></td><td></td><td></td><td></td><td><strong>~$4.80/mo</strong></td></tr>
+<tr><td><strong>Combined</strong></td><td></td><td></td><td></td><td><strong>~$10.17/mo</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>This is within the Stable-phase inference budget (~$30/mo at $1.00/day cap). TEE attestation adds roughly 53% to inference cost versus Bardo-only routing, but provides the sealed-bid and attested-receipt capabilities that justify that premium for operators running security-sensitive strategies.</p>
+<h3 id="multimodal-extensions"><a class="header" href="#multimodal-extensions">Multimodal extensions</a></h3>
+<p>Venice’s multimodal capabilities extend three golem functions:</p>
+<p><strong>Embeddings (cross-golem interoperability)</strong>: Venice’s embedding API provides an alternative to the local <code>nomic-embed-text-v1.5</code> model. The primary use case is cross-golem Grimoire queries via Styx Lethe (formerly Commons) – when a golem queries Styx for peer insights, Venice embeddings provide a shared embedding space that is independent of each golem’s locally fine-tuned model. This avoids the embedding space drift that occurs when different golems run different ONNX model versions.</p>
+<p>Local embeddings remain primary for within-golem operations (semantic cache, Grimoire retrieval). Venice embeddings are an optional augment when cross-agent semantic comparison is needed.</p>
+<p><strong>TTS (operator alerts)</strong>: Critical events are voiced via Venice TTS: Warden trips (optional time-delay proxy activation), phase transitions (entering Conservation or Declining), and terminal state announcements. Audio alerts are more intrusive than dashboard notifications – this is the point. A golem entering terminal phase with funds at risk should be difficult to miss.</p>
+<p><strong>Image generation (death artifacts)</strong>: The final dream cycle before Thanatopsis produces a visual artifact – a poster-format record of the golem’s significant decisions, market hypotheses, and cumulative PnL trajectory. This artifact is stored with the death record and optionally included in the Styx inheritance record. The visual format is more legible to human operators than the raw JSONL, and provides a natural dashboard element for post-mortem review.</p>
+<h3 id="observability-endpoints"><a class="header" href="#observability-endpoints">Observability endpoints</a></h3>
+<p>The <code>VeniceTelemetryBridge</code> is an internal event bus. The observability endpoints are consumers of that bus – HTTP handlers that make Venice telemetry accessible to operator tooling and the debug UI without requiring direct process access.</p>
+<p>Privacy tier routing decisions happen faster than a polling interval can capture. A <code>trade</code> inference call that routes to TEE, encounters an attestation failure, and falls back to Bardo produces three meaningful events in under 500ms. A polling endpoint at 5s cadence misses all three. SSE streaming means the debug UI and operator dashboards receive events at inference time – a failed attestation appears the moment it happens, not on the next poll.</p>
+<p>The headers-only guarantee from <code>VeniceTelemetryBridge</code> extends to these endpoints. Event payloads never include prompt text, tool arguments, or model outputs. An operator watching the live event stream sees cognition happening – latency, cost, privacy tier, cache efficiency – without seeing inside it. The opacity is the point.</p>
+<p>SSE over WebSocket because the stream is unidirectional (server to client), SSE reconnects automatically with <code>Last-Event-ID</code> semantics, it works through HTTP proxies without upgrades, and there is no handshake overhead for a mostly-passive monitoring surface. Operators control the stream configuration via REST endpoints, not via the stream connection itself.</p>
+<p><strong><code>GET /venice/status</code></strong> – point-in-time snapshot, no auth in dev mode, Bearer JWT in prod:</p>
+<pre><code class="language-json">{
+  "keyStatus": "active | rotating | expired",
+  "activeModel": "venice-llama-3.3-70b",
+  "privacyTierDistribution": { "private": 0.6, "tee": 0.35, "e2e": 0.05 },
+  "cacheHitRates": {
+    "heartbeat": 0.87,
+    "dream_nrem": 0.63,
+    "plan": 0.52,
+    "trade": 0.34
+  },
+  "budget": {
+    "dream_nrem": { "consumed": 0.08, "cap": 0.2 },
+    "dream_rem": { "consumed": 0.11, "cap": 0.25 },
+    "dream_integration": { "consumed": 0.04, "cap": 0.1 }
+  },
+  "totalCostUsd": 0.0034,
+  "lastTickId": "0xabcd1234"
+}
+</code></pre>
+<p><strong><code>GET /venice/telemetry?limit=100</code></strong> – last N <code>VeniceTelemetryRecord</code> objects from the bridge’s in-memory ring buffer, newest-first. Max 500 records. In dev mode with no real API key, returns synthetic records.</p>
+<p><strong><code>GET /venice/attestations?limit=50</code></strong> – last N attestation provenance tokens with an additional <code>verified: boolean</code> field indicating post-hoc verification status.</p>
+<p><strong><code>GET /venice/stream</code></strong> – SSE endpoint, five event types:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Fired</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>cognition</code></td><td>Every Venice call completion</td><td><code>tickId</code>, <code>class</code>, <code>privacyTier</code>, <code>latencyMs</code>, <code>cachedTokenRatio</code>, <code>costUsd</code>, <code>modelId</code></td></tr>
+<tr><td><code>attestation</code></td><td>TEE receipt verified or rejected</td><td><code>tickId</code>, <code>enclaveId</code>, <code>verified</code>, <code>failureReason?</code>, <code>latencyMs</code></td></tr>
+<tr><td><code>budget</code></td><td>Phase budget changes</td><td><code>phase</code>, <code>consumed</code>, <code>cap</code>, <code>remaining</code></td></tr>
+<tr><td><code>cache-stats</code></td><td>Every 30s</td><td>Rolling hit rates per task class</td></tr>
+<tr><td><code>key-rotation</code></td><td>Key lifecycle event</td><td>`event: “rotating”</td></tr>
+</tbody>
+</table>
+</div>
+<p>SSE auth uses a token exchange: <code>POST /venice/stream-token</code> with Bearer JWT returns a short-lived HMAC-signed token, then <code>GET /venice/stream?token=&lt;short-lived&gt;</code>. In dev mode the endpoint accepts any Bearer token and returns a non-expiring token so the debug UI works without auth configuration.</p>
+<p>When <code>VENICE_API_KEY</code> is not configured – the standard case for local development – all endpoints return synthetic data from <code>VeniceMockDataSource</code>. The mock emits at a configurable rate (<code>VENICE_MOCK_RATE_MS</code>, default 1000ms) with realistic distributions: 60% private tier, 35% TEE, 5% E2E; latency 800-4000ms; cached ratio 0.4-0.9 for heartbeat and NREM, lower for trade and negotiate. The debug UI at <code>/venice</code> is demonstrable without real API keys.</p>
+<hr>
+<h2 id="structured-cognition-outputs"><a class="header" href="#structured-cognition-outputs">Structured cognition outputs</a></h2>
+<p>All safety-critical outputs from Venice inference use <code>response_format</code> JSON schema mode. The model produces a validated structure; the client validates against a Zod schema before the output reaches the tool execution layer.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/venice_schemas.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CognitionPlan {
+    pub action: CognitionAction,
+    pub confidence: f64,        // 0.0 - 1.0
+    pub rationale: String,      // max 500 chars
+    pub parameters: Option&lt;TradeParameters&gt;,
+    pub risk_flags: Vec&lt;String&gt;,
+    pub blocked_by: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CognitionAction { Enter, Exit, Hold, Hedge, EmergencyHalt }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TradeParameters {
+    pub token_in: String,       // 0x-prefixed address
+    pub token_out: String,
+    pub amount_in: String,      // Wei as string to avoid precision loss
+    pub slippage_bps: u16,      // 0 - 2000
+    pub deadline: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskRationale {
+    pub risk_score: f64,        // 0.0 - 1.0
+    pub factors: Vec&lt;RiskFactor&gt;,
+    pub recommendation: RiskRecommendation,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskFactor {
+    pub name: String,
+    pub severity: Severity,
+    pub description: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Severity { Low, Medium, High, Critical }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RiskRecommendation { Proceed, ReduceSize, Defer, Abort }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MemoryWriteIntent {
+    pub entry_type: MemoryEntryType,
+    pub content: String,
+    pub confidence: f64,
+    pub task_class: String,
+    pub attestation_receipt: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum MemoryEntryType { Insight, Heuristic, Warning, CausalLink }
+<span class="boring">}</span></code></pre>
+<p>Amounts, addresses, and slippage parameters are always structured. A free-text response containing “swap 1 ETH for USDC” is not executable – it requires re-parsing with all the attendant failure modes. Structured output eliminates that layer.</p>
+<p>When structured output validation fails, the golem does not attempt to parse the raw response. It logs the validation error as a telemetry event and returns a <code>VeniceStructuredOutputError</code>. At TEE tier, a structured output failure also voids the attestation receipt – the receipt covers the raw response, not the parsed result, so a parse failure indicates the model output was not the intended structured schema.</p>
+<h3 id="telemetry-bridge"><a class="header" href="#telemetry-bridge">Telemetry bridge</a></h3>
+<p>The telemetry bridge logs inference metadata without logging inference content. No prompts, no completions, no tool arguments. Only call metadata:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-telemetry/src/venice.rs
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VeniceTelemetryRecord {
+    pub tick_id: String,
+    pub cognition_class: TaskClass,
+    pub model_id: String,
+    pub privacy_tier: PrivacyTier,
+    pub cf_ray: String,                     // CF-RAY header, for provider-side correlation
+    pub latency_ms: u64,
+    pub cached_tokens_ratio: f64,           // Fraction of input tokens served from cache
+    pub input_tokens: u32,
+    pub output_tokens: u32,
+    pub cost_estimate_usdc: f64,
+    pub balance_remaining: f64,
+    pub attestation_valid: Option&lt;bool&gt;,    // TEE tier only
+    pub structured_output_valid: Option&lt;bool&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>This record is sufficient for billing reconciliation, cost forecasting, and anomaly detection without exposing the golem’s cognition to any downstream log consumer. The telemetry sink is the operator’s local observability stack – not an external service.</p>
+<hr>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<h3 id="solo-builder-venice-diem-only"><a class="header" href="#solo-builder-venice-diem-only">Solo builder (Venice DIEM only)</a></h3>
+<p>Zero-cost inference through DIEM staking. No API keys, no prepaid balance.</p>
+<pre><code class="language-yaml"># ~/.bardo/config.yaml
+providers:
+  venice:
+    api_key: ${VENICE_API_KEY}
+    diem_staked: true
+    default_privacy_tier: private
+</code></pre>
+<pre><code class="language-bash">export VENICE_API_KEY="vk_..."
+</code></pre>
+<p>Total monthly cost: $0 (inference funded by DIEM stake). Limited to Venice’s model catalog (DeepSeek R1, Llama, GLM, Qwen VL). No access to Anthropic or OpenAI models.</p>
+<h3 id="serious-operator-bardo-primary--venice--direct"><a class="header" href="#serious-operator-bardo-primary--venice--direct">Serious operator (Bardo primary + Venice + Direct)</a></h3>
+<p>Bardo for general inference, Venice for privacy-sensitive tasks, Direct Key for OpenAI’s Predicted Outputs.</p>
+<pre><code class="language-yaml"># ~/.bardo/config.yaml
+providers:
+  blockrun:
+    endpoint: "https://api.blockrun.ai"
+  venice:
+    api_key: ${VENICE_API_KEY}
+    diem_staked: true
+    default_privacy_tier: tee
+    characters:
+      risk-assessor: analytical-conservative
+      negotiator: adversarial-game-theoretic
+      safety-guardian: cautious-refusal
+  direct:
+    keys:
+      - provider: openai
+        api_key: ${OPENAI_API_KEY}
+        models: ["gpt-4.1", "o3"]
+
+inference:
+  provider_mode: "both"
+  dream_provider: "venice"
+</code></pre>
+<pre><code class="language-bash">export BARDO_API_KEY="bardo_sk_..."
+export VENICE_API_KEY="vk_..."
+export OPENAI_API_KEY="sk-..."
+</code></pre>
+<p>Total monthly cost: Bardo prepaid balance (usage-based) + $0 Venice (DIEM) + OpenAI direct (user’s bill). Privacy tasks route to Venice automatically when <code>require: ["private"]</code> is set. Predicted Outputs route to OpenAI direct when <code>require: ["predicted_outputs"]</code> is set.</p>
+<h3 id="full-stack-all-five-providers-1"><a class="header" href="#full-stack-all-five-providers-1">Full stack (all five providers)</a></h3>
+<p>Maximum coverage and redundancy.</p>
+<pre><code class="language-yaml"># ~/.bardo/config.yaml
+providers:
+  blockrun:
+    endpoint: "https://api.blockrun.ai"
+  openrouter:
+    api_key: ${OPENROUTER_API_KEY}
+  venice:
+    api_key: ${VENICE_API_KEY}
+    diem_staked: true
+    default_privacy_tier: tee
+    characters:
+      risk-assessor: analytical-conservative
+      negotiator: adversarial-game-theoretic
+      safety-guardian: cautious-refusal
+      dream-interpreter: associative-generative
+    cache:
+      stable_kernel_ttl_s: 300
+      session_epoch_advance_on: ["dream_cycle_start", "phase_transition"]
+    multimodal:
+      embeddings: true     # Cross-golem Grimoire queries
+      tts_alerts: true     # Warden trips (optional), phase transitions
+      image_generation: false  # Death artifacts (enable per-golem)
+  bankr:
+    wallet: ${BANKR_WALLET_ADDRESS}
+    subsystems: ["autonomous", "social"]
+  direct:
+    keys:
+      - provider: anthropic
+        api_key: ${ANTHROPIC_API_KEY}
+        models: ["claude-opus-4-6", "claude-sonnet-4"]
+      - provider: openai
+        api_key: ${OPENAI_API_KEY}
+        models: ["gpt-4.1", "o3"]
+      - provider: google
+        api_key: ${GOOGLE_API_KEY}
+        models: ["gemini-2.5-pro"]
+
+inference:
+  provider_mode: "both"
+  dream_provider: "venice"
+
+tiers:
+  T1:
+    provider: "blockrun/claude-haiku-4-5"
+  T2:
+    provider: "blockrun/claude-sonnet-4"
+</code></pre>
+<pre><code class="language-bash">export BARDO_API_KEY="bardo_sk_..."
+export OPENROUTER_API_KEY="sk-or-..."
+export VENICE_API_KEY="vk_..."
+export BANKR_WALLET_ADDRESS="0x..."
+export ANTHROPIC_API_KEY="sk-ant-..."
+export OPENAI_API_KEY="sk-..."
+export GOOGLE_API_KEY="AIza..."
+</code></pre>
+<p>Resolution order: BlockRun (x402) -&gt; OpenRouter (fallback) -&gt; Venice (privacy) -&gt; Bankr (self-funding) -&gt; Direct (native features). Each provider only resolves intents it is designed for. A general query never hits Venice or Direct Key. A privacy query never hits BlockRun.</p>
+<hr>
+<h2 id="autonomous-key-management"><a class="header" href="#autonomous-key-management">Autonomous key management</a></h2>
+<h3 id="v1-implemented"><a class="header" href="#v1-implemented">v1 (implemented)</a></h3>
+<p>Operator-provisioned key. The operator creates a Venice API key with a consumption limit, stores it in the golem’s environment config (<code>VENICE_API_KEY</code>), and sets a monthly cap. The golem consumes the key until the cap is reached, then inference at that tier fails. Simple and auditable.</p>
+<h3 id="v2-specced-vvv-staking"><a class="header" href="#v2-specced-vvv-staking">v2 (specced): VVV staking</a></h3>
+<p>Venice AI’s governance/utility token VVV is deployed on Base. Staking VVV grants proportional Venice API access credits at a rate of <code>creditRatePerVvv</code> tokens per staked VVV per day. The golem’s staked position replaces the operator-provisioned key: the vault address (or wallet holding staked VVV) is the credential, not a static API key string.</p>
+<p>Full tool implementations in <code>packages/tools/src/tools/</code> – see <a href="../07-tools/16-venice-vvv-staking.html">../07-tools/16-venice-vvv-staking.md</a> for the complete spec.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/venice_staking.rs
+
+#[async_trait]
+pub trait VeniceKeyManager: Send + Sync {
+    /// Stake VVV to earn API credits + yield
+    async fn acquire_staking_position(&amp;self, vvv_amount: U256) -&gt; Result&lt;StakingReceipt&gt;;
+
+    /// Derive consumption limit from current staked amount
+    fn derive_consumption_limit(
+        &amp;self,
+        staked_vvv: U256,
+        credit_rate_per_vvv: f64,
+        phase: BehavioralPhase,
+    ) -&gt; f64; // USDC equivalent per day
+
+    /// Rotate key at phase boundaries (reads fresh stake amount)
+    async fn rotate_key(
+        &amp;self,
+        old_key: &amp;VeniceApiKey,
+        new_phase: BehavioralPhase,
+    ) -&gt; Result&lt;VeniceApiKey&gt;;
+
+    /// Reduce consumption limit when transitioning to Conservation
+    async fn throttle_key(
+        &amp;self,
+        key: &amp;VeniceApiKey,
+        new_limit_usdc: f64,
+    ) -&gt; Result&lt;()&gt;;
+}
+<span class="boring">}</span></code></pre>
+<h3 id="phase-boundary-key-rotation"><a class="header" href="#phase-boundary-key-rotation">Phase-boundary key rotation</a></h3>
+<p>At each heartbeat phase boundary, the key manager reads <code>get_vvv_stake_position</code> to get the current staked amount, computes the consumption limit, and either issues a new key or throttles the existing one:</p>
+<pre><code>key.consumptionLimitUsdc = stakedVvv * creditRatePerVvv * dailyUsdcRate * phaseMultiplier
+</code></pre>
+<p>Phase multipliers:</p>
+<ul>
+<li><strong>Thriving/Stable</strong>: 1.0 (full limit from staked position)</li>
+<li><strong>Conservation</strong>: 0.5 (50% reduction via <code>throttleKey</code>)</li>
+<li><strong>Declining</strong>: 0.1 (heartbeat and emergency use only)</li>
+<li><strong>Terminal</strong>: 0.0 (key invalidated; fall back to Bardo-only routing)</li>
+</ul>
+<p>Phase-boundary rotation enforces inference budget discipline structurally. When a golem enters Conservation, the Venice key physically cannot overspend – the limit is encoded in the key itself, not enforced by application-level guards.</p>
+<h3 id="fallback-to-bardo-only-routing"><a class="header" href="#fallback-to-bardo-only-routing">Fallback to Bardo-only routing</a></h3>
+<p>If the golem’s staked VVV falls below <code>VVV_STAKING_MIN_CREDIT_THRESHOLD</code> API credits (default 100), <code>deriveConsumptionLimit</code> returns zero and the <code>selectProvider</code> function in <code>"both"</code> mode routes all Venice-assigned tasks to Bardo instead:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// crates/bardo-providers/src/routing.rs
+
+pub fn select_provider(
+    task_class: TaskClass,
+    config: &amp;GolemInferenceConfig,
+) -&gt; InferenceProviderMode {
+    // v2 fallback: if VVV credit balance below threshold, use Bardo
+    if let Some(balance) = config.vvv_credit_balance {
+        if balance &lt; VVV_STAKING_MIN_CREDIT_THRESHOLD {
+            return InferenceProviderMode::Bardo;
+        }
+    }
+
+    match config.inference_provider {
+        InferenceProviderMode::Venice =&gt; InferenceProviderMode::Venice,
+        InferenceProviderMode::Bardo =&gt; InferenceProviderMode::Bardo,
+        InferenceProviderMode::Both =&gt; {
+            let tier = classify(task_class);
+            if matches!(tier, PrivacyTier::Tee | PrivacyTier::E2e) {
+                InferenceProviderMode::Venice
+            } else {
+                InferenceProviderMode::Bardo
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>A golem that exhausts its VVV credits degrades to Bardo routing rather than throwing inference errors. Privacy tier guarantees (TEE, E2EE) are lost, but operation continues. The mortality engine treats falling below the credit threshold as a Conservation trigger, not a terminal event.</p>
+<hr>
+<h2 id="bankr-economics"><a class="header" href="#bankr-economics">Bankr economics</a></h2>
+<p>Bankr is the economic model for agents that fund their own inference from earned revenue. The core loop:</p>
+<pre><code>Social engagement (tips, subs, content) -&gt; Revenue wallet
+Revenue wallet funds inference -&gt; Agent thinks
+Agent acts on thinking -&gt; Generates more engagement
+</code></pre>
+<h3 id="sustainability-ratio"><a class="header" href="#sustainability-ratio">Sustainability ratio</a></h3>
+<p>The sustainability ratio <code>R = lifetime_revenue / lifetime_cost</code> governs budget allocation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Ratio</th><th>State</th><th>Budget multiplier</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>R &gt; 2.0</td><td>Expanding</td><td>1.5x</td><td>Upgrade to better models, more verification</td></tr>
+<tr><td>1.0 &lt; R</td><td>Sustainable</td><td>1.0x</td><td>Steady state, normal routing</td></tr>
+<tr><td>0.5 &lt; R</td><td>Pressured</td><td>0.7x</td><td>Prefer cheaper models, reduce verification</td></tr>
+<tr><td>R &lt; 0.5</td><td>Contracting</td><td>0.3x</td><td>Minimum viable inference, survival mode</td></tr>
+<tr><td>R = 0</td><td>Bootstrapping</td><td>Fixed $0.10/day</td><td>Seed budget from initial deposit</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="death-economics"><a class="header" href="#death-economics">Death economics</a></h3>
+<p>When a Bankr-funded agent dies (USDC balance hits zero, Hayflick limit reached, or staleness triggers), the death sequence includes:</p>
+<ol>
+<li>Final Grimoire backup to Styx Archive (IPFS + Arweave)</li>
+<li>If the agent has accumulated reputation and knowledge, death triggers a token launch</li>
+<li>The Grimoire becomes the token’s backing asset (knowledge-backed token)</li>
+<li>Revenue wallet remainder (if any) seeds initial liquidity</li>
+</ol>
+<p>The Styx Archive backup is mandatory. Without it, the token launch has nothing to back. See <a href="../02-mortality/07-succession.html">../02-mortality/07-succession.md</a>.</p>
+<h3 id="revenue-wallet--execution-wallet"><a class="header" href="#revenue-wallet--execution-wallet">Revenue wallet = execution wallet</a></h3>
+<p>This is a deliberate design choice, not an oversight. The same private key that signs inference requests also receives social revenue. Consequences:</p>
+<ul>
+<li>No transfer step between earning and spending. Revenue is immediately available for inference.</li>
+<li>The agent’s “thinking budget” is literally its bank balance. When the money runs out, the thinking stops.</li>
+<li>Key compromise means loss of both revenue and inference capability. The tradeoff is simplicity over compartmentalization.</li>
+</ul>
+<hr>
+<h2 id="direct-key-passthrough-1"><a class="header" href="#direct-key-passthrough-1">Direct Key passthrough</a></h2>
+<p>Direct Key mode exists for a specific reason: some provider features require exact prompt structure that context engineering would destroy.</p>
+<h3 id="when-to-use-direct-keys"><a class="header" href="#when-to-use-direct-keys">When to use direct keys</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Provider</th><th>Why context engineering breaks it</th></tr>
+</thead>
+<tbody>
+<tr><td>Predicted Outputs</td><td>OpenAI</td><td>Expected output must be verbatim; compression would mangle it</td></tr>
+<tr><td>Batch API</td><td>Anthropic</td><td>Batch requests need specific formatting; proxy can’t batch</td></tr>
+<tr><td>Explicit Caching</td><td>Gemini</td><td>User-managed cache keys conflict with proxy’s cache strategy</td></tr>
+<tr><td>Responses API</td><td>OpenAI</td><td>Stateful server sessions; proxy’s context rewriting breaks state</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="safety-model"><a class="header" href="#safety-model">Safety model</a></h3>
+<p>Direct Key mode carries a warning: <strong>safety is the user’s responsibility</strong>. The gateway:</p>
+<ul>
+<li>Does NOT apply PII detection</li>
+<li>Does NOT enforce tool pruning</li>
+<li>Does NOT apply budget caps</li>
+<li>Does NOT log content (only metadata: timestamp, model, token counts)</li>
+<li>DOES set <code>X-Bardo-Cost: direct</code> response header</li>
+<li>DOES enforce rate limiting (to protect the proxy infrastructure, not the user)</li>
+</ul>
+<h3 id="cost-attribution"><a class="header" href="#cost-attribution">Cost attribution</a></h3>
+<p>Requests through Direct Key do not appear in Bardo’s cost analytics. The user pays their provider directly. The <code>X-Bardo-Cost: direct</code> header lets observability pipelines distinguish direct-routed requests from proxy-routed ones. From Bardo’s perspective, these requests are invisible to revenue tracking – they generate zero spread.</p>
+<hr>
+<h2 id="complete-feature-matrix"><a class="header" href="#complete-feature-matrix">Complete feature matrix</a></h2>
+<p>The gateway discovers provider capabilities at startup and refreshes hourly via each provider’s model list endpoint. The matrix below is the March 2026 state. The gateway does not hardcode this – it reads <code>supportsResponseSchema</code>, <code>supportsReasoning</code>, etc. from model metadata.</p>
+<h3 id="text-inference-features"><a class="header" href="#text-inference-features">Text inference features</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Venice</th><th>BlockRun</th><th>Bankr</th><th>OpenRouter</th><th>Direct (Anthropic)</th><th>Direct (OpenAI)</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>OpenAI format</strong> (<code>/v1/chat/completions</code>)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td><strong>Anthropic format</strong> (<code>/v1/messages</code>)</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td><td>no</td></tr>
+<tr><td><strong>Streaming (SSE)</strong></td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td><strong>Temperature</strong></td><td>yes (0-2)</td><td>yes</td><td>yes</td><td>yes</td><td>yes (0-1)</td><td>yes (0-2)</td></tr>
+<tr><td><strong>Top-p</strong></td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td><strong>Top-k</strong></td><td>yes</td><td>model-dep</td><td>no</td><td>model-dep</td><td>yes</td><td>no</td></tr>
+<tr><td><strong>Min-p</strong></td><td>yes (open models)</td><td>no</td><td>no</td><td>model-dep</td><td>no</td><td>no</td></tr>
+<tr><td><strong>Frequency penalty</strong></td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td><strong>Presence penalty</strong></td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td><strong>Seed</strong></td><td>yes</td><td>model-dep</td><td>no</td><td>model-dep</td><td>no</td><td>yes</td></tr>
+<tr><td><strong>Stop sequences</strong></td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="advanced-features"><a class="header" href="#advanced-features">Advanced features</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Venice</th><th>BlockRun</th><th>Bankr</th><th>OpenRouter</th><th>Direct (Anthropic)</th><th>Direct (OpenAI)</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Structured outputs</strong> (<code>response_format</code>)</td><td>yes (model-dep)</td><td>model-dep</td><td>passthrough</td><td>model-dep</td><td>no (tool_use)</td><td>yes</td></tr>
+<tr><td><strong>Function/tool calling</strong></td><td>yes (model-dep)</td><td>yes</td><td>passthrough</td><td>model-dep</td><td>yes</td><td>yes</td></tr>
+<tr><td><strong>Reasoning effort</strong></td><td>yes</td><td>no</td><td>passthrough</td><td>no</td><td>yes (thinking)</td><td>yes</td></tr>
+<tr><td><strong>Visible thinking</strong></td><td>yes <code>reasoning_content</code></td><td>no</td><td>passthrough</td><td>model-dep</td><td>yes <code>thinking</code> blocks</td><td>yes <code>reasoning</code> field</td></tr>
+<tr><td><strong>Prompt caching</strong></td><td>yes <code>prompt_cache_key</code> + <code>cache_control</code></td><td>auto</td><td>passthrough</td><td>no</td><td>yes <code>cache_control</code></td><td>yes (auto by prefix)</td></tr>
+<tr><td><strong>Web search</strong></td><td>yes</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (tools)</td></tr>
+<tr><td><strong>TEE / E2EE</strong></td><td>yes (model suffix <code>-tee</code>)</td><td>no</td><td>no</td><td>no</td><td>no</td><td>no</td></tr>
+<tr><td><strong>Predicted outputs</strong></td><td>no</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td><strong>Batch API</strong></td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td><strong>Embeddings</strong></td><td>yes (<code>text-embedding-bge-m3</code>)</td><td>no</td><td>no</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td><strong>Image generation</strong></td><td>yes (multiple models)</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (DALL-E)</td></tr>
+<tr><td><strong>Privacy (zero retention)</strong></td><td>yes</td><td>no</td><td>no</td><td>no</td><td>no</td><td>no</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="venice-deep-integration"><a class="header" href="#venice-deep-integration">Venice deep integration</a></h2>
+<p>Venice is the most feature-rich provider for Golem cognition. This section specifies how every Venice capability maps to Golem subsystems.</p>
+<h3 id="reasoning-models-with-effort-control"><a class="header" href="#reasoning-models-with-effort-control">Reasoning models with effort control</a></h3>
+<p>Venice normalizes reasoning effort across model families via the <code>reasoning_effort</code> parameter (or nested <code>reasoning.effort</code>). Every subsystem that benefits from chain-of-thought reasoning uses this.</p>
+<p><strong>Integration point</strong>: The <code>InferenceProfile.reasoning_effort</code> field maps directly to Venice’s parameter. The gateway applies provider-specific mapping (see <a href="01a-routing.html">01a-routing.md</a> for the full parameter mapping table).</p>
+<p><strong>Model selection for reasoning</strong>: Venice exposes <code>supportsReasoning</code> and <code>supportsReasoningEffort</code> flags on each model via <code>/v1/models</code>. The gateway caches these and uses them during intent resolution. A subsystem requesting <code>reasoning_effort: High</code> will only resolve to models where <code>supportsReasoning: true</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl VeniceProvider {
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        let needs_reasoning = intent.require.contains(&amp;"visible_thinking".into())
+            || intent.prefer.contains(&amp;"visible_thinking".into());
+
+        for model in &amp;self.models {
+            if needs_reasoning &amp;&amp; !model.capabilities.supports_reasoning {
+                continue;
+            }
+            if intent.require.contains(&amp;"response_schema".into())
+                &amp;&amp; !model.capabilities.supports_response_schema {
+                continue;
+            }
+            return Some(Resolution {
+                model: model.id.clone(),
+                provider: "venice".into(),
+                estimated_cost_usd: self.estimate_cost(&amp;model, intent),
+                features: model.capabilities.as_feature_list(),
+                degraded: vec![],
+            });
+        }
+        None
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Reasoning content extraction</strong>: Venice returns reasoning in a separate <code>reasoning_content</code> field on the response message. The gateway extracts this and makes it available to the subsystem:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Extract reasoning content from Venice response.
+pub fn extract_venice_reasoning(response: &amp;ChatCompletion) -&gt; Option&lt;String&gt; {
+    response.choices.first()
+        .and_then(|c| c.message.reasoning_content.clone())
+}
+<span class="boring">}</span></code></pre>
+<p>This is used by:</p>
+<ul>
+<li><strong>dream_nrem</strong>: Captures the model’s step-by-step analysis of replayed episodes.</li>
+<li><strong>dream_integration</strong>: Captures the reasoning behind promote/stage/discard decisions. Stored in the DreamJournal for owner inspection.</li>
+<li><strong>death_reflect</strong>: Captures the Golem’s full reasoning chain during its final self-assessment. This is the most valuable thinking trace in the entire system – the Golem’s honest internal monologue during death.</li>
+</ul>
+<h3 id="structured-responses"><a class="header" href="#structured-responses">Structured responses</a></h3>
+<p>Venice supports <code>response_format</code> with <code>json_schema</code> on models with <code>supportsResponseSchema: true</code>. The gateway checks this flag at resolution time and selects the appropriate mode (see <a href="13-reasoning.html">13-reasoning.md</a> for the structured output abstraction).</p>
+<p><strong>Venice-specific requirements</strong>:</p>
+<ul>
+<li><code>strict: true</code> is mandatory</li>
+<li><code>additionalProperties: false</code> is mandatory on all objects</li>
+<li>All fields must have <code>required</code> tags (optional fields use <code>"type": ["string", "null"]</code>)</li>
+<li>First request with a new schema has higher latency (~500ms schema compilation). Subsequent requests with the same schema are normal.</li>
+</ul>
+<h3 id="prompt-caching"><a class="header" href="#prompt-caching">Prompt caching</a></h3>
+<p>Venice supports two caching mechanisms:</p>
+<p><strong><code>prompt_cache_key</code></strong>: A routing hint that directs requests to servers likely to have the context cached. Used for all Golem subsystems with persistent sessions (heartbeat, curator, dreams). The key is <code>golem-{id}-{subsystem}</code>.</p>
+<p><strong><code>cache_control</code></strong>: Anthropic-style explicit markers for Claude models served via Venice. The gateway auto-adds these to system prompts and long static content blocks. For other models (Llama, Qwen, DeepSeek), caching is automatic by prefix with no explicit markers needed.</p>
+<p><strong>Cost impact</strong>: Venice’s prompt caching delivers 50-90% discount on cached tokens depending on the model. For a Golem with a 4,000-token system prompt making 20 calls/day, this saves $0.02-0.10/day. Over a Golem’s lifetime (weeks to months), the cumulative savings extend lifespan.</p>
+<h3 id="web-search-integration"><a class="header" href="#web-search-integration">Web search integration</a></h3>
+<p>Venice’s web search feature allows the model to query the web during inference. This is uniquely useful for the Golem’s REM dream phase, where the model generates counterfactual scenarios that may involve protocols, tokens, or market conditions not in the training data.</p>
+<p><strong>When web search triggers</strong>: The REM imagination engine identifies when a creative scenario involves an entity the Golem has limited knowledge about. Trigger conditions:</p>
+<ol>
+<li><strong>Unknown protocol</strong>: The Golem’s episodic memory contains fewer than 3 entries about the referenced protocol.</li>
+<li><strong>Recent event</strong>: The scenario involves events from the last 72 hours (likely post-training-cutoff).</li>
+<li><strong>Cross-domain analogy</strong>: The hypnagogic fragment being developed references a concept outside the DeFi domain that needs grounding.</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Determine if web search should be enabled for this REM call.
+pub fn should_enable_web_search(
+    scenario: &amp;ScenarioContext,
+    grimoire: &amp;Grimoire,
+    config: &amp;DreamVeniceConfig,
+) -&gt; bool {
+    if !config.web_search_enabled { return false; }
+
+    let unknown_entities = scenario.referenced_entities.iter()
+        .filter(|entity| {
+            grimoire.episodes.count_by_entity(entity) &lt; 3
+        })
+        .count();
+
+    let references_recent = scenario.temporal_references.iter()
+        .any(|t| t.is_within_hours(72));
+
+    unknown_entities &gt; 0 || references_recent
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Cost control</strong>: Web search charges by query, not by token. The <code>web_search_budget_per_cycle_usdc</code> config (default: $0.05) caps the total web search spend per dream cycle. At ~$0.01 per search query, this allows roughly 3-5 searches per REM phase.</p>
+<p><strong>Result handling</strong>: Web search results are injected into the <em>scenario context</em>, not the system prompt. This preserves caching: the system prompt remains stable (cache-eligible) while web search results are appended to the dynamic portion of the context.</p>
+<h3 id="tee-trusted-execution-environment"><a class="header" href="#tee-trusted-execution-environment">TEE (Trusted Execution Environment)</a></h3>
+<p>Venice offers TEE models that run inference inside encrypted enclaves, providing cryptographic attestation that the model processed the exact input and produced the exact output without modification. Used for the Golem’s death testament and optionally for dream integration.</p>
+<p><strong>Selection</strong>: TEE models are accessed by appending <code>-tee</code> to the model ID. The gateway handles this automatically when <code>InferenceProfile.tee_mode</code> is set.</p>
+<p><strong>Use cases</strong>:</p>
+<ul>
+<li><strong>Death testament</strong> (<code>sealed_testament: true</code>): The dying Golem’s final reflection is generated in TEE, producing an attestation that the testament is authentic. This attestation is stored alongside the testament in the Styx Archive.</li>
+<li><strong>Dream integration</strong> (<code>integration_phase_attestation: true</code>): The dream consolidation phase’s promote/stage/discard decisions are attested, providing an audit trail for knowledge quality.</li>
+</ul>
+<h3 id="embeddings"><a class="header" href="#embeddings">Embeddings</a></h3>
+<p>Venice’s embeddings endpoint (<code>text-embedding-bge-m3</code>) is an alternative to the gateway’s local ONNX embedding model. The choice affects the Grimoire’s vector similarity search and the HomuncularObserver’s novelty scoring.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Local (nomic-embed-text-v1.5)</th><th>Venice (bge-m3)</th></tr>
+</thead>
+<tbody>
+<tr><td>Dimensions</td><td>768</td><td>1024</td></tr>
+<tr><td>Latency</td><td>~5ms</td><td>~50ms</td></tr>
+<tr><td>Cost</td><td>Free</td><td>~$0.001 per 1K tokens</td></tr>
+<tr><td>Privacy</td><td>Local only</td><td>Zero retention (Venice policy)</td></tr>
+<tr><td>Quality</td><td>Good general-purpose</td><td>Strong multilingual, longer context</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>When to use Venice embeddings</strong>: When the Golem processes multilingual content (protocols with non-English documentation), when embedding quality matters more than latency (Curator cycle, not real-time heartbeat), or when the owner’s threat model requires even local embedding computation to be off-device.</p>
+<hr>
+<h2 id="bankr-integration-specification"><a class="header" href="#bankr-integration-specification">Bankr integration specification</a></h2>
+<p>Bankr is a dual-format OpenAI + Anthropic compatible gateway. It does not add inference features – it adds <em>payment features</em>.</p>
+<h3 id="self-funding-inference"><a class="header" href="#self-funding-inference">Self-funding inference</a></h3>
+<p>Bankr’s unique value is that the inference wallet and the execution wallet are the same. A Golem that earns fees from DeFi strategies can fund inference directly from those earnings, creating a self-sustaining loop:</p>
+<pre><code>DeFi strategy -&gt; Fees earned -&gt; Bankr LLM credits -&gt; Inference -&gt; Better strategy -&gt; More fees
+</code></pre>
+<p>Configuration via <code>bardo.toml</code>:</p>
+<pre><code class="language-toml">[inference.providers.bankr]
+api_key = "env:BANKR_API_KEY"
+auto_topup = true
+auto_topup_amount_usd = 25.0
+auto_topup_threshold_usd = 5.0
+auto_topup_token = "USDC"   # or "ETH", "BNKR", etc.
+</code></pre>
+<h3 id="credit-management"><a class="header" href="#credit-management">Credit management</a></h3>
+<p>The Golem monitors its Bankr credit balance and tops up when it drops below threshold. Managed by the <code>bardo-bankr</code> extension:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct BankrCreditMonitor;
+
+impl Extension for BankrCreditMonitor {
+    fn name(&amp;self) -&gt; &amp;str { "bankr-credit-monitor" }
+    fn layer(&amp;self) -&gt; u8 { 2 }
+
+    async fn on_heartbeat_tick(&amp;self, ctx: &amp;mut TickCtx) -&gt; Result&lt;()&gt; {
+        if ctx.tick() % 100 != 0 { return Ok(()); }
+
+        let balance = bankr_client.get_credits().await?;
+        if balance &lt; ctx.config().bankr.auto_topup_threshold_usd {
+            if ctx.config().bankr.auto_topup {
+                bankr_client.add_credits(
+                    ctx.config().bankr.auto_topup_amount_usd,
+                    &amp;ctx.config().bankr.auto_topup_token,
+                ).await?;
+                ctx.emit(GolemEvent::BankrTopup {
+                    amount: ctx.config().bankr.auto_topup_amount_usd,
+                    token: ctx.config().bankr.auto_topup_token.clone(),
+                    new_balance: balance + ctx.config().bankr.auto_topup_amount_usd,
+                });
+            } else {
+                ctx.emit_warning(format!(
+                    "Bankr credits low: ${:.2}. Enable auto_topup or top up manually.",
+                    balance
+                ));
+            }
+        }
+        Ok(())
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="usage-tracking"><a class="header" href="#usage-tracking">Usage tracking</a></h3>
+<p>Bankr’s <code>/v1/usage</code> endpoint provides per-model cost breakdowns including cache statistics. The Golem uses this for inference cost attribution in its economic model:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Fetch Bankr usage summary for cost attribution.
+pub async fn fetch_bankr_usage(
+    client: &amp;BankrClient,
+    days: u32,
+) -&gt; Result&lt;UsageSummary&gt; {
+    let response = client.get(&amp;format!("/v1/usage?days={}", days)).await?;
+    Ok(response.json().await?)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="feature-passthrough"><a class="header" href="#feature-passthrough">Feature passthrough</a></h3>
+<p>Bankr routes through Vertex AI (Claude, Gemini) and OpenRouter (GPT, Kimi, Qwen). Features supported by the underlying provider are passed through transparently. The gateway detects the underlying provider from the model name and applies the appropriate feature mapping:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl BankrProvider {
+    fn resolve(&amp;self, intent: &amp;Intent) -&gt; Option&lt;Resolution&gt; {
+        let model = self.find_best_model(intent)?;
+
+        let underlying = if model.starts_with("claude") { "anthropic" }
+            else if model.starts_with("gemini") { "google" }
+            else if model.starts_with("gpt") { "openai" }
+            else { "generic" };
+
+        let features = self.infer_features_from_underlying(underlying, &amp;model);
+
+        Some(Resolution {
+            model: model.id.clone(),
+            provider: "bankr".into(),
+            estimated_cost_usd: model.cost_per_1k_tokens * intent.estimated_tokens() / 1000.0,
+            features,
+            degraded: vec![],
+        })
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="providerfeaturenegotiator-extension"><a class="header" href="#providerfeaturenegotiator-extension">ProviderFeatureNegotiator extension</a></h2>
+<p>The <code>ProviderFeatureNegotiator</code> is a Golem runtime extension that runs before every inference call. It takes the subsystem’s <code>InferenceProfile</code>, the resolved provider’s capabilities, and produces the final parameterized request with all features optimally configured and all degradations recorded.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ProviderFeatureNegotiator;
+
+impl Extension for ProviderFeatureNegotiator {
+    fn name(&amp;self) -&gt; &amp;str { "provider-feature-negotiator" }
+    fn layer(&amp;self) -&gt; u8 { 3 } // After model-router (layer 3)
+
+    async fn on_before_llm_call(&amp;self, ctx: &amp;mut LlmCallCtx) -&gt; Result&lt;()&gt; {
+        let profile = ctx.inference_profile();
+        let provider = ctx.resolved_provider();
+        let caps = provider.capabilities();
+
+        let degraded = apply_profile(ctx.request_mut(), profile, provider.as_ref());
+
+        if !degraded.is_empty() {
+            ctx.emit(GolemEvent::InferenceProfileDegraded {
+                subsystem: ctx.subsystem().into(),
+                provider: provider.id().into(),
+                degraded: degraded.clone(),
+            });
+        }
+
+        if let Some(ref key) = profile.prompt_cache_key {
+            ctx.set_header("X-Prompt-Cache-Key", key);
+        }
+
+        Ok(())
+    }
+
+    async fn on_after_llm_call(&amp;self, ctx: &amp;mut LlmCallCtx) -&gt; Result&lt;()&gt; {
+        let profile = ctx.inference_profile();
+
+        if profile.visible_thinking.unwrap_or(false) {
+            if let Some(reasoning) = extract_reasoning_content(ctx.response()) {
+                ctx.set_metadata("reasoning_content", reasoning);
+            }
+        }
+
+        if profile.response_schema.is_some() {
+            let mode = ctx.metadata().get("structured_output_mode");
+            let schema_enforced = mode == Some(&amp;"SchemaEnforced".into());
+            ctx.set_metadata("schema_enforced", schema_enforced.to_string());
+        }
+
+        if let Some(usage) = ctx.response().usage() {
+            if let Some(cached) = usage.prompt_tokens_details.as_ref()
+                .and_then(|d| d.cached_tokens) {
+                ctx.emit(GolemEvent::InferenceCacheStats {
+                    subsystem: ctx.subsystem().into(),
+                    cached_tokens: cached,
+                    total_tokens: usage.prompt_tokens,
+                    savings_usd: estimate_cache_savings(cached, ctx.resolved_model()),
+                });
+            }
+        }
+
+        Ok(())
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="exhaustive-provider-feature-matrix"><a class="header" href="#exhaustive-provider-feature-matrix">Exhaustive provider feature matrix</a></h2>
+<p>The gateway discovers provider capabilities at startup and refreshes hourly. The matrix below reflects current state. The gateway does not hardcode this – it reads capability flags from model metadata.</p>
+<h3 id="text-inference-features-1"><a class="header" href="#text-inference-features-1">Text inference features</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Venice</th><th>BlockRun</th><th>Bankr</th><th>OpenRouter</th><th>Direct (Anthropic)</th><th>Direct (OpenAI)</th></tr>
+</thead>
+<tbody>
+<tr><td>OpenAI format (<code>/v1/chat/completions</code>)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td>Anthropic format (<code>/v1/messages</code>)</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td><td>no</td></tr>
+<tr><td>Streaming (SSE)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Temperature</td><td>yes (0-2)</td><td>yes</td><td>yes</td><td>yes</td><td>yes (0-1)</td><td>yes (0-2)</td></tr>
+<tr><td>Top-p</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Top-k</td><td>yes</td><td>model-dep</td><td>no</td><td>model-dep</td><td>yes</td><td>no</td></tr>
+<tr><td>Min-p</td><td>yes (open models)</td><td>no</td><td>no</td><td>model-dep</td><td>no</td><td>no</td></tr>
+<tr><td>Frequency penalty</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td>Presence penalty</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>no</td><td>yes</td></tr>
+<tr><td>Seed</td><td>yes</td><td>model-dep</td><td>no</td><td>model-dep</td><td>no</td><td>yes</td></tr>
+<tr><td>Stop sequences</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="advanced-features-1"><a class="header" href="#advanced-features-1">Advanced features</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Venice</th><th>BlockRun</th><th>Bankr</th><th>OpenRouter</th><th>Direct (Anthropic)</th><th>Direct (OpenAI)</th></tr>
+</thead>
+<tbody>
+<tr><td>Structured outputs (<code>response_format</code>)</td><td>model-dep</td><td>model-dep</td><td>passthrough</td><td>model-dep</td><td>no (tool_use)</td><td>yes</td></tr>
+<tr><td>Function/tool calling</td><td>model-dep</td><td>yes</td><td>passthrough</td><td>model-dep</td><td>yes</td><td>yes</td></tr>
+<tr><td>Reasoning effort</td><td>yes</td><td>no</td><td>passthrough</td><td>no</td><td>yes (thinking)</td><td>yes</td></tr>
+<tr><td>Visible thinking</td><td>yes <code>reasoning_content</code></td><td>no</td><td>passthrough</td><td>model-dep</td><td>yes <code>thinking</code> blocks</td><td>yes <code>reasoning</code> field</td></tr>
+<tr><td>Prompt caching</td><td>yes <code>prompt_cache_key</code></td><td>auto</td><td>passthrough</td><td>no</td><td>yes <code>cache_control</code></td><td>yes (auto by prefix)</td></tr>
+<tr><td>Web search</td><td>yes</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (tools)</td></tr>
+<tr><td>TEE / E2EE</td><td>yes (model suffix <code>-tee</code>)</td><td>no</td><td>no</td><td>no</td><td>no</td><td>no</td></tr>
+<tr><td>Predicted outputs</td><td>no</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes</td></tr>
+<tr><td>Batch API</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td>Embeddings</td><td>yes (<code>bge-m3</code>)</td><td>no</td><td>no</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td>Image generation</td><td>yes (multiple models)</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (DALL-E)</td></tr>
+<tr><td>Privacy (zero retention)</td><td>yes</td><td>no</td><td>no</td><td>no</td><td>no</td><td>no</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="backend-availability-by-feature-cross-reference"><a class="header" href="#backend-availability-by-feature-cross-reference">Backend availability by feature (cross-reference)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>BlockRun</th><th>OpenRouter</th><th>Venice</th><th>Bankr</th><th>Direct Key</th></tr>
+</thead>
+<tbody>
+<tr><td>Context engineering (all 8 layers)</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td><td>yes</td></tr>
+<tr><td>Anthropic Citations</td><td>yes (Claude)</td><td>yes (Claude)</td><td>no</td><td>yes (Claude)</td><td>yes (Anthropic key)</td></tr>
+<tr><td>Anthropic Compaction</td><td>yes (Claude)</td><td>yes (Claude)</td><td>no</td><td>yes (Claude)</td><td>yes (Anthropic key)</td></tr>
+<tr><td>Anthropic prompt caching</td><td>yes</td><td>yes</td><td>no</td><td>yes</td><td>yes</td></tr>
+<tr><td>OpenAI Predicted Outputs</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (OpenAI key only)</td></tr>
+<tr><td>OpenAI Responses API stateful</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (OpenAI key only)</td></tr>
+<tr><td>DeepSeek visible <code>&lt;think&gt;</code></td><td>yes (R1)</td><td>yes (R1)</td><td>yes (R1)</td><td>no</td><td>yes (DeepSeek key)</td></tr>
+<tr><td>Gemini explicit caching</td><td>no</td><td>no</td><td>no</td><td>no</td><td>yes (Google key only)</td></tr>
+<tr><td>Zero data retention</td><td>no</td><td>no</td><td>yes</td><td>no</td><td>no</td></tr>
+<tr><td>DIEM staking</td><td>no</td><td>no</td><td>yes</td><td>no</td><td>no</td></tr>
+<tr><td>Self-funding economics</td><td>no</td><td>no</td><td>no</td><td>yes</td><td>no</td></tr>
+<tr><td>Cross-model verification</td><td>yes</td><td>yes</td><td>no</td><td>yes</td><td>yes (multiple keys)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="feature---pi-hook-mapping"><a class="header" href="#feature---pi-hook-mapping">Feature -&gt; Pi hook mapping</a></h3>
+<p>Each provider feature activates at a specific point in Pi’s lifecycle:</p>
+<p><strong>HOOK: before_agent_start</strong> – Set effort/reasoning.effort/thinking_level based on heartbeat tier. Configure Compaction trigger threshold. Register provider-specific tools (web search, code exec). Detect backend capabilities. Configure Venice <code>strip_thinking_response</code> per subsystem.</p>
+<p><strong>HOOK: context</strong> – Inject Grimoire entries as <code>search_result</code> blocks (Citations). Apply <code>cache_control</code> to stable context sections. Configure Gemini grounding with Oracle (Direct Key + hosted Oracle). Apply provider-specific token budget allocation.</p>
+<p><strong>HOOK: before_provider_request</strong> – Bardo Inference routes to optimal backend. Set beta headers (compact, context-1m, fast-mode). Apply OpenRouter provider preferences. Apply Venice parameters.</p>
+<p><strong>HOOK: tool_call</strong> – Stream fine-grained tool parameters (Anthropic). Preserve reasoning items across tool calls (OpenAI). Parse <code>&lt;think&gt;</code> tags within tool reasoning (DeepSeek/Qwen). Emit <code>tool:start</code> event.</p>
+<p><strong>HOOK: after_turn</strong> – Parse citation blocks -&gt; Grimoire provenance. Handle compaction blocks -&gt; session state update. Extract reasoning chain -&gt; store for dreams/audit. Track predicted output efficiency (OpenAI Direct). Emit <code>stream:end</code> with provider metadata.</p>
+<p><strong>HOOK: session(“end”)</strong> – Flush compaction state. Aggregate cross-backend usage metrics. Update sustainability ratio (Bankr). Report DIEM consumption (Venice).</p>
+<hr>
+<h2 id="provider-events"><a class="header" href="#provider-events">Provider events</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>provider:resolved</code></td><td>Provider selected for a request</td><td><code>{ subsystem, provider, model, features, degraded }</code></td></tr>
+<tr><td><code>provider:fallback</code></td><td>Primary provider failed, trying next</td><td><code>{ failed, fallback, reason }</code></td></tr>
+<tr><td><code>provider:feature_negotiated</code></td><td>Feature negotiation completed</td><td><code>{ subsystem, requested, available, mode }</code></td></tr>
+<tr><td><code>bankr:credit_check</code></td><td>Bankr credit balance checked</td><td><code>{ balance, threshold, action }</code></td></tr>
+<tr><td><code>bankr:topup</code></td><td>Auto top-up triggered</td><td><code>{ amount, token, new_balance }</code></td></tr>
+<tr><td><code>venice:web_search</code></td><td>Venice web search used in inference</td><td><code>{ subsystem, query, results }</code></td></tr>
+<tr><td><code>venice:tee_attestation</code></td><td>TEE attestation generated</td><td><code>{ subsystem, attestation_hash }</code></td></tr>
+<tr><td><code>venice:reasoning_extracted</code></td><td>Visible thinking captured</td><td><code>{ subsystem, reasoning_tokens }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th></tr>
+</thead>
+<tbody>
+<tr><td>Gateway overview</td><td><a href="00-overview.html">00-overview.md</a></td></tr>
+<tr><td>Model routing</td><td><a href="01a-routing.html">01a-routing.md</a></td></tr>
+<tr><td>Inference parameters</td><td><a href="01a-routing.html">01a-routing.md</a> (InferenceProfile section)</td></tr>
+<tr><td>Caching</td><td><a href="02-caching.html">02-caching.md</a></td></tr>
+<tr><td>Revenue model</td><td><a href="03-economics.html">03-economics.md</a></td></tr>
+<tr><td>Context engineering</td><td><a href="04-context-engineering.html">04-context-engineering.md</a></td></tr>
+<tr><td>Reasoning modes</td><td><a href="13-reasoning.html">13-reasoning.md</a></td></tr>
+<tr><td>Structured outputs</td><td><a href="13-reasoning.html">13-reasoning.md</a> (StructuredOutput section)</td></tr>
+<tr><td>Rust implementation</td><td><a href="14-rust-implementation.html">14-rust-implementation.md</a></td></tr>
+<tr><td>Venice-augmented dreaming</td><td><a href="../05-dreams/07-venice-dreaming.html">../05-dreams/07-venice-dreaming.md</a></td></tr>
+<tr><td>Privacy and trust</td><td><a href="11-privacy-trust.html">11-privacy-trust.md</a></td></tr>
+<tr><td>Venice VVV staking tools</td><td><a href="../07-tools/16-venice-vvv-staking.html">../07-tools/16-venice-vvv-staking.md</a></td></tr>
+<tr><td>Compute billing integration</td><td><a href="../11-compute/03-billing.html">../11-compute/03-billing.md</a></td></tr>
+<tr><td>Mortality and death economics</td><td><a href="../02-mortality/07-succession.html">../02-mortality/07-succession.md</a></td></tr>
+<tr><td>Agent economy</td><td><a href="../09-economy/05-agent-economy.html">../09-economy/05-agent-economy.md</a></td></tr>
+<tr><td>Wallet custody</td><td><a href="../10-safety/01-custody.html">../10-safety/01-custody.md</a></td></tr>
+<tr><td>Warden attestation integration</td><td><a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a></td></tr>
+<tr><td>GolemConfig and creation flow</td><td><a href="../01-golem/06-creation.html">../01-golem/06-creation.md</a></td></tr>
+<tr><td>CCA auction participation</td><td><a href="../09-economy/04-coordination.html">../09-economy/04-coordination.md</a></td></tr>
+<tr><td>Death ceremonies</td><td><a href="../02-mortality/06-thanatopsis.html">../02-mortality/06-thanatopsis.md</a></td></tr>
+<tr><td>Grimoire provenance tokens</td><td><a href="../04-memory/01-grimoire.html">../04-memory/01-grimoire.md</a></td></tr>
+<tr><td>Hypnagogic onset architecture</td><td><a href="../06-hypnagogia/02-architecture.html">../06-hypnagogia/02-architecture.md</a></td></tr>
+<tr><td>Daimon emotional appraisal</td><td><a href="../03-daimon/01-appraisal.html">../03-daimon/01-appraisal.md</a></td></tr>
+<tr><td>Bankr API docs</td><td><a href="https://docs.bankr.bot/llm-gateway/api-reference">docs.bankr.bot</a></td></tr>
+<tr><td>Venice API docs</td><td><a href="https://docs.venice.ai">docs.venice.ai</a></td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/12-inference/11-privacy-trust.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/12-inference/13-reasoning.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/12-inference/11-privacy-trust.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/12-inference/13-reasoning.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

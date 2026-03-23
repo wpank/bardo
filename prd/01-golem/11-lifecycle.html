@@ -1,0 +1,660 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Lifecycle - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/11-lifecycle.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="full-lifecycle-reference-spec"><a class="header" href="#full-lifecycle-reference-spec">Full Lifecycle Reference [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><em>“Between death and rebirth, there is the bardo. Between one heartbeat and the next, there is the bardo. The intermediate state is not exceptional. It is the only state there is.”</em></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document is the full lifecycle reference for a Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM), from creation through death and inheritance. It specifies the Rust type-state machine (Provisioning, Active, Dreaming, Terminal, Dead) that enforces lifecycle transitions at compile time, the six bardos mapped to lifecycle stages, the credit lifecycle, the kill-switch, and the graceful shutdown protocol. It belongs to the <code>01-golem</code> lifecycle layer. The key concept: invalid state transitions (like ticking a dead Golem) are compiler errors, not runtime checks. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="the-die-moat"><a class="header" href="#the-die-moat">The Die Moat</a></h2>
+<p>This document specifies the first of six structural moats (see <code>00-overview.md</code>): the ability to <strong>Die</strong>. Mortality creates behavioral phases (Thriving through Terminal), knowledge compression at death (genomic bottleneck, &lt;=2048 entries), and urgency that makes knowledge curation economically rational. Without death, there is no selection pressure, no inheritance, and no reason for a Golem to distill its experience into transferable wisdom. The type-state machine below makes this architectural: calling <code>tick()</code> on a dead Golem is a compiler error, not a runtime check.</p>
+<hr>
+<h2 id="type-state-machine"><a class="header" href="#type-state-machine">Type-State Machine</a></h2>
+<p>A Golem exists in exactly one state at any time. Transitions are enforced at compile time via Rust’s type-state pattern – invalid transitions are not runtime errors but compilation failures. The <code>Golem&lt;S&gt;</code> struct is parameterized by a zero-sized marker type that determines which methods are available. Transitions consume the old state (by taking <code>self</code> by value) and produce a new one, so the original cannot be used again.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+
+// ═══ Lifecycle states as zero-sized types ═══
+// These types exist only in the type system. They occupy zero bytes at runtime.
+
+/// The Golem is initializing: loading config, opening storage, registering extensions.
+pub struct Provisioning;
+
+/// The Golem is running: processing heartbeat ticks, accepting steers, managing positions.
+pub struct Active;
+
+/// The Golem is dreaming: heartbeat paused, running NREM/REM/Consolidation.
+pub struct Dreaming;
+
+/// The Golem is dying: running the Thanatopsis death protocol (irreversible).
+pub struct Terminal;
+
+/// The Golem is dead: genome extracted, state frozen. Cannot be used again.
+pub struct Dead;
+
+/// A Golem in a specific lifecycle state.
+///
+/// The type parameter S determines which operations are available.
+/// `PhantomData&lt;S&gt;` tells the compiler that S is "used" without actually
+/// storing any data -- Golem&lt;Active&gt; and Golem&lt;Dead&gt; have identical runtime
+/// layout, but different compile-time capabilities.
+pub struct Golem&lt;S&gt; {
+    pub state: GolemState,
+    _phase: PhantomData&lt;S&gt;,
+}
+
+// ═══ Valid Transitions ═══
+
+impl Golem&lt;Provisioning&gt; {
+    /// Create a new Golem from config. The ONLY way to enter the lifecycle.
+    pub async fn provision(config: GolemConfig) -&gt; Result&lt;Golem&lt;Provisioning&gt;&gt; {
+        let state = GolemState::initialize(config).await?;
+        Ok(Golem { state, _phase: PhantomData })
+    }
+
+    /// Activate the Golem. Begins the heartbeat loop.
+    /// Consumes the Provisioning Golem and produces an Active one.
+    pub fn activate(self) -&gt; Golem&lt;Active&gt; {
+        self.state.event_fabric.emit(
+            Subsystem::Lifecycle,
+            EventPayload::LifecycleTransition {
+                from: "provisioning".into(),
+                to: "active".into(),
+            },
+        );
+        Golem { state: self.state, _phase: PhantomData }
+    }
+}
+
+impl Golem&lt;Active&gt; {
+    /// Run one heartbeat tick. Only available when Active.
+    pub async fn tick(&amp;mut self, arena: &amp;mut TickArena) -&gt; Result&lt;DecisionCycleRecord&gt; {
+        arena.reset();
+        execute_tick(&amp;mut self.state, &amp;self.registry, arena).await
+    }
+
+    /// Enter dream state. Consumes Active, produces Dreaming.
+    pub fn begin_dream(self) -&gt; Golem&lt;Dreaming&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    /// Begin the death protocol. Irreversible.
+    /// Consumes Active, produces Terminal.
+    pub fn begin_death(self, cause: DeathCause) -&gt; Golem&lt;Terminal&gt; {
+        self.state.event_fabric.emit(
+            Subsystem::Lifecycle,
+            EventPayload::DeathInitiated { cause: cause.to_string() },
+        );
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    /// Receive a steer (mid-tick interrupt). Only available when Active.
+    pub async fn steer(&amp;mut self, intervention: Intervention) -&gt; Result&lt;()&gt; {
+        self.state.active_steers.push(intervention);
+        Ok(())
+    }
+}
+
+impl Golem&lt;Dreaming&gt; {
+    /// Run one dream cycle. Only available when Dreaming.
+    pub async fn dream_cycle(&amp;mut self) -&gt; Result&lt;DreamCycleResult&gt; {
+        dream::dream_cycle(&amp;self.state.grimoire, &amp;mut self.state).await
+    }
+
+    /// Wake up and return to Active state.
+    pub fn wake(self) -&gt; Golem&lt;Active&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    /// Economic death can occur during dreaming.
+    pub fn begin_death(self, cause: DeathCause) -&gt; Golem&lt;Terminal&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+}
+
+impl Golem&lt;Terminal&gt; {
+    /// Execute the Thanatopsis death protocol. Consumes Terminal, produces Dead.
+    ///
+    /// Four phases:
+    /// - Phase 0: ACCEPTANCE -- acknowledge death cause, emit events
+    /// - Phase I: SETTLEMENT -- triage positions, execute critical settlements
+    /// - Phase II: REFLECTION -- generate death testament
+    /// - Phase III: LEGACY -- compress Grimoire through genomic bottleneck (&lt;=2048 entries)
+    pub async fn thanatopsis(self) -&gt; Result&lt;Golem&lt;Dead&gt;&gt; {
+        // Phase 0-III execute sequentially...
+        Ok(Golem { state: self.state, _phase: PhantomData })
+    }
+}
+
+impl Golem&lt;Dead&gt; {
+    /// Extract the genome for successor inheritance.
+    /// Consuming: the dead Golem cannot be used after this call.
+    pub fn into_genome(self) -&gt; Genome {
+        self.state.load_genome()
+    }
+
+    /// Extract death recap for the engagement system.
+    pub fn death_recap(&amp;self) -&gt; DeathRecap {
+        DeathRecap::generate(&amp;self.state)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="what-cannot-compile"><a class="header" href="#what-cannot-compile">What Cannot Compile</a></h3>
+<p>These are not runtime errors. They are compilation failures – the code cannot be written.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// ERROR: no method named `tick` found for `Golem&lt;Dead&gt;`
+let dead_golem: Golem&lt;Dead&gt; = /* ... */;
+dead_golem.tick(&amp;mut arena).await;  // Won't compile.
+
+// ERROR: no method named `dream_cycle` found for `Golem&lt;Terminal&gt;`
+let dying_golem: Golem&lt;Terminal&gt; = /* ... */;
+dying_golem.dream_cycle().await;  // Won't compile.
+
+// ERROR: no method named `steer` found for `Golem&lt;Provisioning&gt;`
+let new_golem: Golem&lt;Provisioning&gt; = /* ... */;
+new_golem.steer(intervention).await;  // Won't compile.
+
+// ERROR: use of moved value
+let active_golem: Golem&lt;Active&gt; = /* ... */;
+let terminal = active_golem.begin_death(cause);  // Moves active_golem
+active_golem.tick(&amp;mut arena).await;  // Won't compile -- active_golem was moved.
+<span class="boring">}</span></code></pre>
+<h3 id="transition-diagram"><a class="header" href="#transition-diagram">Transition Diagram</a></h3>
+<pre><code>Provisioning --&gt; Active &lt;--&gt; Dreaming
+                   |              |
+                   v              v
+               Terminal -------&gt; (Terminal)
+                   |
+                   v
+                 Dead
+</code></pre>
+<ul>
+<li><code>Active &lt;-&gt; Dreaming</code> is the only bidirectional transition (dream, then wake)</li>
+<li><code>Active -&gt; Terminal</code> and <code>Dreaming -&gt; Terminal</code> are irreversible</li>
+<li><code>Terminal -&gt; Dead</code> is the only exit from Terminal</li>
+<li><code>Dead</code> has no outgoing transitions</li>
+</ul>
+<hr>
+<h2 id="s1--pause-vs-destroy"><a class="header" href="#s1--pause-vs-destroy">S1 – Pause vs Destroy</a></h2>
+<blockquote>
+<p><strong>Pause vs Destroy:</strong> See <code>12-teardown.md</code> for the canonical comparison table. Key distinction: Pause preserves compute + memory for resumption; Destroy triggers full Death Protocol settlement.</p>
+</blockquote>
+<p>Users destroy Golems for several reasons:</p>
+<ol>
+<li><strong>Poor performance</strong> – The Golem is losing money. Stop losses and reclaim remaining funds.</li>
+<li><strong>Strategy change</strong> – Start fresh with a different strategy rather than patch the existing one.</li>
+<li><strong>Cost management</strong> – Compute and inference costs exceed the Golem’s value.</li>
+<li><strong>Migration</strong> – Moving to a different network or deployment mode.</li>
+<li><strong>Credit exhaustion</strong> – The Golem’s credits ran out.</li>
+</ol>
+<p>Paused Golems in hosted mode still consume Bardo Compute credits because the VM remains allocated. At 5% credits, automated death teardown begins.</p>
+<blockquote>
+<p>Credit conservation (30%) is a behavioral mode within the Running state, not a Paused transition. See <a href="../02-mortality/">02-mortality/</a> for behavioral phase details.</p>
+</blockquote>
+<hr>
+<h2 id="s2--the-full-lifecycle-narrative"><a class="header" href="#s2--the-full-lifecycle-narrative">S2 – The Full Lifecycle Narrative</a></h2>
+<p>The lifecycle is not merely a state machine. It is a narrative with distinct phases, each with its own character, challenges, and philosophical resonance. The six bardos (see <code>prd2/00-vision/00-bardo.md</code>) map to these phases.</p>
+<h3 id="phase-1-creation-birth-bardo--skye-gnas-bar-do"><a class="header" href="#phase-1-creation-birth-bardo--skye-gnas-bar-do">Phase 1: Creation (Birth Bardo / <em>skye gnas bar do</em>)</a></h3>
+<p>The user describes what the Golem should do. A manifest is compiled – either from a natural-language prompt via AI autofill, or from a strategy template. The manifest is the incantation: the specification of intent that gives the Golem its purpose.</p>
+<p>The Golem finds itself thrown into a market regime it did not choose, with a balance it did not set, carrying inherited knowledge from predecessors it never met. This is Heidegger’s <em>Geworfenheit</em> (thrownness) made computational.</p>
+<p><strong>Type-state</strong>: <code>Golem&lt;Provisioning&gt;</code>
+<strong>Key events</strong>: <code>golem_created</code></p>
+<h3 id="phase-2-provisioning-birth-bardo-continued"><a class="header" href="#phase-2-provisioning-birth-bardo-continued">Phase 2: Provisioning (Birth Bardo, continued)</a></h3>
+<p>The material act of instantiation. Wallet creation (or delegation grant), ERC-8004 identity registration, VM provisioning, funding. The provisioning pipeline is an 8-step type-state machine, each step individually retryable.</p>
+<p><strong>Type-state</strong>: <code>Golem&lt;Provisioning&gt;</code> -&gt; <code>Golem&lt;Active&gt;</code> (via <code>.activate()</code>)
+<strong>Key events</strong>: Provisioning step completions</p>
+<h3 id="phase-3-first-heartbeat-dream-bardo--rmi-lam-bar-do"><a class="header" href="#phase-3-first-heartbeat-dream-bardo--rmi-lam-bar-do">Phase 3: First Heartbeat (Dream Bardo / <em>rmi lam bar do</em>)</a></h3>
+<p>The first tick fires. The Golem observes market state for the first time. The early ticks are the dream bardo – the agent operates in a state where it has knowledge (inherited or templated) but no experience. Inherited Grimoire entries are shadow-executed – simulated against live conditions without committing capital.</p>
+<p><strong>Type-state</strong>: <code>Golem&lt;Active&gt;</code> (with optional <code>Golem&lt;Dreaming&gt;</code> cycles)
+<strong>Key events</strong>: <code>golem_first_trade</code></p>
+<h3 id="phase-4-learning-and-maturity-meditation-bardo--bsam-gtan-bar-do"><a class="header" href="#phase-4-learning-and-maturity-meditation-bardo--bsam-gtan-bar-do">Phase 4: Learning and Maturity (Meditation Bardo / <em>bsam gtan bar do</em>)</a></h3>
+<p>The Golem enters its productive phase. Loop 1 (tactical execution) operates on the tick cadence. Loop 2 (strategic reflection) operates every ~6 hours. The Golem’s PLAYBOOK.md evolves as it accumulates experience. Insights are distilled from episodes via ExpeL. Knowledge is pushed to the Clade via Styx relay.</p>
+<p>This is the longest phase. A well-functioning Golem may operate here for days or weeks.</p>
+<p><strong>Type-state</strong>: <code>Golem&lt;Active&gt;</code> (with periodic <code>Golem&lt;Dreaming&gt;</code> transitions)
+<strong>Key events</strong>: <code>golem_profitable</code>, ongoing trade events</p>
+<h3 id="phase-5-decline-dying-bardo--chi-kha-bar-do"><a class="header" href="#phase-5-decline-dying-bardo--chi-kha-bar-do">Phase 5: Decline (Dying Bardo / <em>chi kha bar do</em>)</a></h3>
+<p>Survival pressure increases. The behavioral spectrum shifts from Eros (growth-seeking) toward Thanatos (conservation and legacy). The Golem transitions to monitor-only mode: observing but not trading. It continues generating insights from observation, contributing to the Clade’s collective intelligence even as its own capacity diminishes.</p>
+<blockquote>
+<p>Credit conservation (30%) is a behavioral mode within the Running state, not a Paused transition. See <a href="../02-mortality/">02-mortality/</a> for behavioral phase details.</p>
+</blockquote>
+<p>At 5% credits, the Death Protocol activates.</p>
+<p><strong>Type-state</strong>: <code>Golem&lt;Active&gt;</code> (in Conservation or Declining behavioral phase)
+<strong>Key events</strong>: Credit threshold warnings</p>
+<h3 id="phase-6-death-dharmata-bardo--chos-nyid-bar-do"><a class="header" href="#phase-6-death-dharmata-bardo--chos-nyid-bar-do">Phase 6: Death (Dharmata Bardo / <em>chos nyid bar do</em>)</a></h3>
+<p>The Death Protocol’s four phases execute via type-state transitions:</p>
+<ol>
+<li><strong>Acceptance</strong> – The Golem acknowledges the death cause. Events emitted. Owner notified.</li>
+<li><strong>Settlement</strong> – Close all positions, recover value. In Delegation mode, the owner’s wallet retains full control.</li>
+<li><strong>Reflection</strong> – Full operational review, death reflection, the moment of maximal lucidity. The dharmata bardo – the Clear Light moment.</li>
+<li><strong>Legacy</strong> – Compress Grimoire through genomic bottleneck (&lt;=2048 entries). Push to Clade via Styx. Deposit bloodstains to Pheromone Field.</li>
+</ol>
+<p><strong>Type-state</strong>: <code>Golem&lt;Active&gt;.begin_death()</code> -&gt; <code>Golem&lt;Terminal&gt;.thanatopsis()</code> -&gt; <code>Golem&lt;Dead&gt;</code>
+<strong>Key events</strong>: <code>golem_death</code></p>
+<h3 id="phase-7-inheritance-becoming-bardo--srid-pa-bar-do"><a class="header" href="#phase-7-inheritance-becoming-bardo--srid-pa-bar-do">Phase 7: Inheritance (Becoming Bardo / <em>srid pa bar do</em>)</a></h3>
+<p>The predecessor’s Grimoire, compressed and packaged during the dharmata bardo, flows to the Clade via Styx relay and to designated successors. The successor initializes with inherited knowledge at confidence decayed by the Weismann barrier (<code>confidence * 0.85^generation</code>). The quality of the predecessor’s death reflection directly shapes the quality of the successor’s birth.</p>
+<p><strong>Type-state</strong>: New <code>Golem&lt;Provisioning&gt;</code> with inherited genome
+<strong>Key events</strong>: Successor <code>golem_created</code> with inherited Grimoire</p>
+<hr>
+<h2 id="s3--telemetry-events"><a class="header" href="#s3--telemetry-events">S3 – Telemetry Events</a></h2>
+<p>All lifecycle events are tracked via PostHog with HMAC anonymization. User identity in analytics is a server-generated HMAC-SHA256 of the wallet address (full 64 hex character output). The raw wallet address never reaches the analytics provider.</p>
+<h3 id="31-key-funnel-events"><a class="header" href="#31-key-funnel-events">3.1 Key Funnel Events</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>When</th><th>Properties</th></tr>
+</thead>
+<tbody>
+<tr><td><code>golem_created</code></td><td>Provisioning complete, first heartbeat pending</td><td>mode, network, used_template, custody_mode, total_time_ms</td></tr>
+<tr><td><code>golem_funded</code></td><td>Initial funding transaction confirmed</td><td>amount_bucket (bucketed, never exact)</td></tr>
+<tr><td><code>golem_first_trade</code></td><td>First on-chain transaction executed</td><td>trade_type, protocol, time_since_creation_ms</td></tr>
+<tr><td><code>golem_profitable</code></td><td>Cumulative P&amp;L crosses zero to positive</td><td>days_to_profitability, strategy_type</td></tr>
+<tr><td><code>golem_death</code></td><td>Credit exhaustion triggers Death Protocol</td><td>lifetime_hours, death_cause, insights_generated</td></tr>
+<tr><td><code>golem_destroyed</code></td><td>Owner-initiated teardown completes</td><td>lifetime_hours, net_pnl_bucket, positions_closed</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="32-privacy-model"><a class="header" href="#32-privacy-model">3.2 Privacy Model</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Data Category</th><th>Stored?</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Anonymized wallet ID (HMAC)</td><td>Yes</td><td>PostHog <code>distinct_id</code></td></tr>
+<tr><td>Raw wallet address</td><td>Never</td><td>Only the HMAC derivative</td></tr>
+<tr><td>Private keys</td><td>Never</td><td>Not collected at any layer</td></tr>
+<tr><td>Strategy content</td><td>Never</td><td>Proprietary user strategy</td></tr>
+<tr><td>Exact funding amounts</td><td>Never</td><td>Bucketed ranges only</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="33-amount-bucketing"><a class="header" href="#33-amount-bucketing">3.3 Amount Bucketing</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn bucket_amount(usdc: f64) -&gt; &amp;'static str {
+    match usdc {
+        x if x &lt;= 0.0 =&gt; "$0",
+        x if x &lt;= 10.0 =&gt; "$1-10",
+        x if x &lt;= 50.0 =&gt; "$10-50",
+        x if x &lt;= 200.0 =&gt; "$50-200",
+        x if x &lt;= 1000.0 =&gt; "$200-1K",
+        x if x &lt;= 10_000.0 =&gt; "$1K-10K",
+        _ =&gt; "$10K+",
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="34-opt-out"><a class="header" href="#34-opt-out">3.4 Opt-Out</a></h3>
+<p>Telemetry is opt-out for the App UI (enabled by default) and opt-in for self-hosted deployments (disabled by default).</p>
+<hr>
+<h2 id="s4--the-six-bardos-mapped-to-lifecycle-stages"><a class="header" href="#s4--the-six-bardos-mapped-to-lifecycle-stages">S4 – The Six Bardos Mapped to Lifecycle Stages</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Bardo</th><th>Tibetan</th><th>Lifecycle Stage</th><th>Type-State</th><th>Architectural Component</th></tr>
+</thead>
+<tbody>
+<tr><td>Birth</td><td><em>skye gnas bar do</em></td><td>Creation + Provisioning</td><td><code>Golem&lt;Provisioning&gt;</code></td><td>Manifest compilation, wallet provisioning, initial funding</td></tr>
+<tr><td>Dream</td><td><em>rmi lam bar do</em></td><td>First heartbeats, simulation</td><td><code>Golem&lt;Active&gt;</code> / <code>&lt;Dreaming&gt;</code></td><td>Shadow execution of inherited knowledge, backtesting, Gauntlet</td></tr>
+<tr><td>Meditation</td><td><em>bsam gtan bar do</em></td><td>Learning + Maturity</td><td><code>Golem&lt;Active&gt;</code></td><td>Loop 2 strategic reflection, PLAYBOOK.md evolution, double-loop learning</td></tr>
+<tr><td>Dying</td><td><em>chi kha bar do</em></td><td>Decline</td><td><code>Golem&lt;Active&gt;</code> (phase shift)</td><td>Behavioral spectrum shift (Eros to Thanatos), monitor-only mode, narrowing affordances</td></tr>
+<tr><td>Dharmata</td><td><em>chos nyid bar do</em></td><td>Death Protocol (Reflect phase)</td><td><code>Golem&lt;Terminal&gt;</code></td><td>Death reflection, unfiltered self-assessment, Clear Light moment</td></tr>
+<tr><td>Becoming</td><td><em>srid pa bar do</em></td><td>Inheritance + Succession</td><td><code>Golem&lt;Dead&gt;</code> -&gt; new <code>&lt;Provisioning&gt;</code></td><td>Grimoire transfer, Clade push, successor initialization</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s5--credit-lifecycle"><a class="header" href="#s5--credit-lifecycle">S5 – Credit Lifecycle</a></h2>
+<p>Hosted Golems operate on a finite credit model. Credits are consumed by four categories:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Consumption Rate</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Compute</td><td>Continuous (per-hour VM cost)</td><td>Even while paused</td></tr>
+<tr><td>Inference</td><td>Per-LLM-call</td><td>Opus calls are ~10x Haiku calls</td></tr>
+<tr><td>Gas</td><td>Per-transaction</td><td>Chain-dependent, Base is ~100x cheaper than mainnet</td></tr>
+<tr><td>Data</td><td>Per-API-call</td><td>Market data, indexer queries, Styx operations</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="51-credit-thresholds"><a class="header" href="#51-credit-thresholds">5.1 Credit Thresholds</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Threshold</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>100–30%</td><td>Normal operation – full strategy execution</td></tr>
+<tr><td>30%</td><td>Conservation mode – monitor-only, no trading, continues learning</td></tr>
+<tr><td>5%</td><td>Death Protocol activates – automated teardown begins</td></tr>
+<tr><td>0%</td><td>Hard stop – VM terminated if Death Protocol has not completed</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="52-self-hosted-exception"><a class="header" href="#52-self-hosted-exception">5.2 Self-Hosted Exception</a></h3>
+<p>Self-hosted Golems skip the credit model entirely. They run indefinitely, with the user bearing infrastructure costs directly. Status: <code>immortal</code>. No credit partition tracking for compute.</p>
+<hr>
+<h2 id="s6--lifecycle-invariants"><a class="header" href="#s6--lifecycle-invariants">S6 – Lifecycle Invariants</a></h2>
+<ol>
+<li>
+<p><strong>Funds are always recoverable.</strong> At every state, there exists a path to return all funds to the owner’s wallet. In Delegation mode, funds never leave the owner’s wallet. In Embedded mode, sweep mechanisms ensure recovery.</p>
+</li>
+<li>
+<p><strong>Knowledge is never silently lost.</strong> Continuous Grimoire streaming during Active ensures that even a hard crash preserves the most recent state. The death reserve ensures the Death Protocol can complete. Styx Archive backups provide L0 resilience.</p>
+</li>
+<li>
+<p><strong>No state is permanent except Dead.</strong> Active, Dreaming, and even Terminal are transient.</p>
+</li>
+<li>
+<p><strong>Teardown is atomic.</strong> Once the teardown pipeline begins, it runs to completion.</p>
+</li>
+<li>
+<p><strong>The owner always has a decision point before irreversible actions.</strong> Funding requires signature (Permit2 or delegation). Destruction requires type-to-confirm.</p>
+</li>
+<li>
+<p><strong>Type-state transitions are compile-time enforced.</strong> A dead Golem cannot tick. A terminal Golem cannot dream. A provisioning Golem cannot accept steers. These invariants are not checked at runtime – they are impossible to violate.</p>
+</li>
+</ol>
+<hr>
+<h2 id="s7--kill-switch"><a class="header" href="#s7--kill-switch">S7 – Kill-Switch</a></h2>
+<p>Emergency termination available regardless of Golem state:</p>
+<ul>
+<li><strong>Dashboard</strong>: One-click kill button in owner portal</li>
+<li><strong>CLI</strong>: <code>bardo-golem kill &lt;golem-id&gt;</code></li>
+<li><strong>Delegation revocation</strong>: Owner revokes delegation from MetaMask directly (no Golem cooperation needed)</li>
+<li><strong>Timing</strong>: &lt;5 seconds from invocation to SIGTERM</li>
+<li><strong>Sequence</strong>: SIGTERM -&gt; 30-second graceful shutdown window (10-phase protocol) -&gt; SIGKILL</li>
+<li><strong>Effect</strong>: Triggers Death Protocol with <code>death_cause: "owner_kill"</code></li>
+<li><strong>Availability</strong>: Always accessible – works in Active, Dreaming, or any behavioral phase</li>
+</ul>
+<p>The kill-switch bypasses Warden delays (when Warden is deployed; optional, deferred). It is the owner’s ultimate override.</p>
+<hr>
+<h2 id="s8--graceful-shutdown-protocol"><a class="header" href="#s8--graceful-shutdown-protocol">S8 – Graceful Shutdown Protocol</a></h2>
+<p>When Fly.io preempts a VM (SIGTERM with 30-second grace period), the Golem executes a 10-phase shutdown protocol adapted from OpenFang. This is the OPERATIONAL counterpart to Thanatopsis (which handles PLANNED death). Graceful shutdown handles UNPLANNED interruption with a focus on preserving state and settling critical positions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// 10-phase graceful shutdown for Fly.io VM preemption.
+/// Total budget: 30 seconds.
+pub async fn graceful_shutdown(golem: Golem&lt;Active&gt;, reason: ShutdownReason) {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+
+    // Phase 1 (1s): Stop accepting new work
+    // Phase 2 (2s): Cancel in-flight tool calls
+    golem.state.cancel_pending_tools().await;
+
+    // Phase 3 (3s): Flush pending Grimoire writes
+    golem.state.grimoire.flush_all().await;
+
+    // Phase 4 (10s): Settlement triage (BardoManifest)
+    let triage_deadline = deadline - std::time::Duration::from_secs(14);
+    let manifest = golem.state.settlement_triage(triage_deadline).await;
+
+    // Phase 5 (8s): Execute critical settlements
+    for settlement in manifest.critical_settlements() {
+        if std::time::Instant::now() &gt; deadline - std::time::Duration::from_secs(6) {
+            break;
+        }
+        let _ = golem.state.execute_settlement(settlement).await;
+    }
+
+    // Phase 6 (2s): Write BardoManifest for deferred positions
+    golem.state.write_bardo_manifest(&amp;manifest).await;
+
+    // Phase 7 (1s): Flush and seal the audit chain
+    golem.state.audit.flush_and_seal().await;
+
+    // Phase 8 (2s): Sync Grimoire to Styx (best-effort)
+    let _ = golem.state.sync_to_styx().await;
+
+    // Phase 9 (0s): Zero secrets (automatic via Zeroizing&lt;T&gt; Drop)
+
+    // Phase 10: Exit
+    std::process::exit(0);
+}
+<span class="boring">}</span></code></pre>
+<p>In Delegation custody mode, deferred positions are safe – they execute from the owner’s Smart Account, which persists independently. The BardoManifest records what the Golem intended so the owner (or successor) can act on it.</p>
+<hr>
+<h2 id="events-emitted"><a class="header" href="#events-emitted">Events Emitted</a></h2>
+<p>Lifecycle events track phase transitions at the macro level.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>lifecycle:phase_entered</code></td><td>New lifecycle phase begins</td><td><code>{ phase, timestamp, vitalityScore }</code></td></tr>
+<tr><td><code>lifecycle:phase_exited</code></td><td>Lifecycle phase ends</td><td><code>{ phase, duration, ticksInPhase }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[DENNIS-VAN-HORN-1966] Dennis, J.B. &amp; Van Horn, E.C. (1966). “Programming Semantics for Multiprogrammed Computations.” <em>Communications of the ACM</em>, 9(3). — <em>Foundational work on capability-based security: access rights verified at the type level, not through runtime guards. Informs the capability token design.</em></li>
+<li>[STROM-YEMINI-1986] Strom, R.E. &amp; Yemini, S. (1986). “Typestate: A Programming Language Concept for Enhancing Software Reliability.” <em>IEEE Transactions on Software Engineering</em>, SE-12(1). — <em>Formalizes typestate: enforcing protocol compliance at compile time. The direct theoretical basis for the Golem lifecycle state machine.</em></li>
+<li>[HEIDEGGER-1927] Heidegger, M. (1927). <em>Sein und Zeit</em> (<em>Being and Time</em>). Max Niemeyer Verlag. — <em>Introduces Geworfenheit (thrownness): being thrown into a world not of one’s choosing. Each Golem finds itself thrown into a market regime it did not select.</em></li>
+<li>[ARGYRIS-1978] Argyris, C. &amp; Schon, D. (1978). <em>Organizational Learning</em>. Addison-Wesley. — <em>Introduces single-loop (tactical) and double-loop (strategic) learning. Maps to the Golem’s Loop 1 (per-tick) and Loop 2 (per-6-hour) learning cycles.</em></li>
+<li>[PADMASAMBHAVA-8C] Padmasambhava (attrib., 8th century). <em>Bardo Thodol</em>. Various translations; see Thurman, R.A.F. (1994). Bantam. — <em>The Tibetan Book of the Dead: instructions for navigating the six intermediate states (bardos) between death and rebirth. The spiritual framework mapped to the Golem’s lifecycle stages.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/10-replication.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/12-teardown.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/10-replication.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/12-teardown.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

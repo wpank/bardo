@@ -1,0 +1,902 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Restaking - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/07-tools/09-tools-restaking.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="bardo-tools--restaking-spec"><a class="header" href="#bardo-tools--restaking-spec">Bardo Tools – Restaking [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-tools</code> | <strong>Prerequisites</strong>: <a href="01-architecture.html">01-architecture.md</a> (ToolDef pattern, trust tiers, capability tokens, safety hooks, and profiles), <a href="08-tools-staking.html">08-tools-staking.md</a> (Lido and Rocket Pool liquid staking tools)</p>
+<p>EigenLayer restaking, liquid restaking tokens (ether.fi, Kelp), and points tracking. Category: <code>restaking</code>. Total: 16 tools.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies 16 restaking tools in <code>bardo-tools</code> for EigenLayer, liquid restaking tokens (ether.fi, Kelp, Puffer), and points tracking. You should be familiar with EigenLayer’s delegation/operator/AVS model and the liquid restaking token ecosystem. Bardo-specific terms are defined inline on first use; for a full glossary see <a href="../shared/glossary.html"><code>prd2/shared/glossary.md</code></a>.</p>
+</blockquote>
+<h2 id="eigenlayer-8-tools"><a class="header" href="#eigenlayer-8-tools">EigenLayer (8 tools)</a></h2>
+<p>EigenLayer allows LST holders to restake by depositing into strategies and delegating to operators who run Actively Validated Services (AVSs). Withdrawal has a 7-day delay. Slashing risk comes from operator misbehavior on specific AVSs.</p>
+<h3 id="eigenlayer_deposit_lst"><a class="header" href="#eigenlayer_deposit_lst"><code>eigenlayer_deposit_lst</code></a></h3>
+<p>Deposit a liquid staking token into an EigenLayer strategy.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenDepositParams {
+    /// LST address or symbol (stETH, rETH, cbETH, etc.).
+    pub token: String,
+    /// Amount to restake.
+    pub amount: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenDepositResult {
+    pub tx_hash: String,
+    pub shares_received: String,
+    pub strategy: String,
+    pub delegated_to: Option&lt;String&gt;,
+    pub slashing_risk: String,  // "none" | "low" | "medium"
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer3</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Approving LST", "Signing deposit", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Deposit LST into EigenLayer strategy for restaking. Adds slashing risk from operator AVS participation. Check operator slashing history before depositing. 7-day withdrawal delay applies.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Restake for additional yield + points. Choose operators with clean slashing history and diverse AVS participation.</li>
+<li><strong>cautious</strong>: Only restake if yield premium &gt; 2% over base staking. Verify operator reputation.</li>
+<li><strong>declining</strong>: Do not restake. Initiate EigenLayer withdrawals (7-day delay).</li>
+<li><strong>terminal</strong>: Do not restake. Queue all withdrawals immediately.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (approving LST) -&gt; <code>tool:update</code> (signing deposit) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (spending limit + operator slashing check), <code>tool_result</code> (shares + delegation logged)</p>
+<p><strong>Ground truth</strong>: Verify <code>shares_received</code> against strategy shares delta. Source: on-chain <code>stakerStrategyShares</code> read.</p>
+<h3 id="eigenlayer_delegate"><a class="header" href="#eigenlayer_delegate"><code>eigenlayer_delegate</code></a></h3>
+<p>Delegate restaked assets to an EigenLayer operator.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenDelegateParams {
+    /// Operator address.
+    pub operator: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenDelegateResult {
+    pub tx_hash: String,
+    pub operator: String,
+    pub delegated_shares: String,
+    pub avs_count: u32,
+    pub slashing_history: Vec&lt;SlashingEvent&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SlashingEvent {
+    pub date: String,
+    pub amount_slashed: String,
+    pub reason: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Validating operator", "Signing delegation", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Delegate restaked assets to an EigenLayer operator. Delegation determines which AVSs your capital validates and what slashing risk you carry. Call <code>eigenlayer_get_operators</code> first.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Delegate to operators with 0 slashing incidents, &gt; 100 delegators, and diverse AVS mix.</li>
+<li><strong>cautious</strong>: Only delegate to top-10 operators by delegated ETH. Avoid operators with slashing history.</li>
+<li><strong>declining</strong>: Undelegate from all operators.</li>
+<li><strong>terminal</strong>: Undelegate immediately.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (operator slashing check), <code>tool_result</code> (delegation logged)</p>
+<p><strong>Ground truth</strong>: Verify delegation via <code>delegatedTo(staker)</code>. Source: on-chain DelegationManager.</p>
+<h3 id="eigenlayer_undelegate"><a class="header" href="#eigenlayer_undelegate"><code>eigenlayer_undelegate</code></a></h3>
+<p>Undelegate from an operator. Initiates the withdrawal process with a 7-day delay.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenUndelegateParams {
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenUndelegateResult {
+    pub tx_hash: String,
+    pub withdrawal_root: String,
+    pub estimated_completion: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Signing undelegation", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Undelegate from operator. Initiates 7-day withdrawal. Assets remain at slashing risk during this period. Start undelegation early if you plan to exit.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Undelegate when changing operators or exiting EigenLayer.</li>
+<li><strong>cautious</strong>: Undelegate from operators with any new slashing events.</li>
+<li><strong>declining</strong>: Undelegate from all operators. Start the 7-day clock now.</li>
+<li><strong>terminal</strong>: Undelegate immediately if not already done. You need 7 days.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (withdrawal root + completion time logged)</p>
+<p><strong>Ground truth</strong>: Verify undelegation via <code>delegatedTo(staker) == address(0)</code>. Source: on-chain state read.</p>
+<h3 id="eigenlayer_queue_withdrawal"><a class="header" href="#eigenlayer_queue_withdrawal"><code>eigenlayer_queue_withdrawal</code></a></h3>
+<p>Queue a withdrawal from EigenLayer strategies.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenQueueWithdrawalParams {
+    /// Array of strategy addresses to withdraw from.
+    pub strategies: Vec&lt;String&gt;,
+    /// Corresponding shares amounts.
+    pub shares: Vec&lt;String&gt;,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenQueueWithdrawalResult {
+    pub tx_hash: String,
+    pub withdrawal_root: String,
+    pub queued_at: String,
+    pub completion_time: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Signing queue withdrawal", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Queue withdrawal from EigenLayer strategies. 7-day delay. Specify which strategies and shares to withdraw.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Queue withdrawals when rotating strategies. Complete promptly after delay.</li>
+<li><strong>cautious</strong>: Queue all non-essential EigenLayer positions for withdrawal.</li>
+<li><strong>declining</strong>: Queue everything. Complete as soon as delay expires.</li>
+<li><strong>terminal</strong>: Queue everything immediately. Set reminders for completion 7 days out.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (withdrawal root logged)</p>
+<p><strong>Ground truth</strong>: Verify withdrawal queued via <code>pendingWithdrawals</code>. Source: on-chain DelegationManager.</p>
+<h3 id="eigenlayer_complete_withdrawal"><a class="header" href="#eigenlayer_complete_withdrawal"><code>eigenlayer_complete_withdrawal</code></a></h3>
+<p>Complete a queued withdrawal after the 7-day delay.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenCompleteWithdrawalParams {
+    /// Withdrawal root from `eigenlayer_queue_withdrawal`.
+    pub withdrawal_root: String,
+    /// Receive underlying tokens rather than shares. Default: true.
+    #[serde(default = "default_receive_tokens")]
+    pub receive_as_tokens: bool,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+fn default_receive_tokens() -&gt; bool { true }
+
+#[derive(Debug, Serialize)]
+pub struct EigenCompleteWithdrawalResult {
+    pub tx_hash: String,
+    pub tokens_received: Vec&lt;TokenAmount&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TokenAmount {
+    pub token: String,
+    pub amount: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Verifying delay elapsed", "Signing completion", "Receiving tokens", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Complete a queued withdrawal after 7-day delay. Set receive_as_tokens=true to get underlying tokens (not shares).”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:update</code> (receiving tokens) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (delay elapsed check), <code>tool_result</code> (withdrawal logged)</p>
+<p><strong>Ground truth</strong>: Verify token balance increases match <code>tokens_received</code>. Source: on-chain balance diffs.</p>
+<h3 id="eigenlayer_get_operators"><a class="header" href="#eigenlayer_get_operators"><code>eigenlayer_get_operators</code></a></h3>
+<p>List EigenLayer operators with performance and risk metrics.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenGetOperatorsParams {
+    /// Chain ID.
+    pub chain: u64,
+    /// Minimum ETH delegated.
+    #[serde(default)]
+    pub min_delegated_eth: Option&lt;f64&gt;,
+    /// Filter by AVS participation.
+    #[serde(default)]
+    pub avs_filter: Option&lt;Vec&lt;String&gt;&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenOperator {
+    pub address: String,
+    pub name: String,
+    pub total_delegated_eth: f64,
+    pub delegator_count: u32,
+    pub avs_participation: Vec&lt;AvsParticipation&gt;,
+    pub slashing_history: Vec&lt;SlashingEvent&gt;,
+    pub commission_rate: f64,
+    pub reputation_score: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AvsParticipation {
+    pub avs: String,
+    pub avs_name: String,
+    pub slashing_risk: String,  // "low" | "medium" | "high"
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenOperatorsResult {
+    pub operators: Vec&lt;EigenOperator&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Fetching operator data"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “List operators with performance, slashing history, AVS participation, and commission rates. Use before delegating.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Research operators and AVSs before delegation. Monitor position on heartbeat.</li>
+<li><strong>cautious</strong>: Monitor position for any slashing events.</li>
+<li><strong>declining</strong>: Check position for pending withdrawals.</li>
+<li><strong>terminal</strong>: Final position check.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (slashing events trigger alert)</p>
+<h3 id="eigenlayer_get_position"><a class="header" href="#eigenlayer_get_position"><code>eigenlayer_get_position</code></a></h3>
+<p>Get an account’s EigenLayer restaking position.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenGetPositionParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EigenPosition {
+    pub strategies: Vec&lt;StrategyPosition&gt;,
+    pub delegated_to: Option&lt;String&gt;,
+    pub operator: Option&lt;EigenOperator&gt;,
+    pub pending_withdrawals: Vec&lt;PendingWithdrawal&gt;,
+    pub points_earned: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StrategyPosition {
+    pub token: String,
+    pub shares: String,
+    pub eth_value: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PendingWithdrawal {
+    pub withdrawal_root: String,
+    pub completion_time: String,
+    pub tokens: Vec&lt;TokenAmount&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching position"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Account’s EigenLayer position: strategies, delegation, pending withdrawals, points earned.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="eigenlayer_get_avs_list"><a class="header" href="#eigenlayer_get_avs_list"><code>eigenlayer_get_avs_list</code></a></h3>
+<p>List Actively Validated Services and their requirements.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct EigenGetAvsParams {
+    /// Chain ID.
+    pub chain: u64,
+    /// Filter by category (bridge, oracle, rollup, etc.).
+    #[serde(default)]
+    pub category: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AvsService {
+    pub address: String,
+    pub name: String,
+    pub category: String,
+    pub tvl: f64,
+    pub operator_count: u32,
+    pub slash_conditions: String,
+    pub restaker_rewards: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AvsListResult {
+    pub avs_services: Vec&lt;AvsService&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Fetching AVS data"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “List Actively Validated Services with requirements, TVL, slashing conditions, and restaker rewards.”</p>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<p><strong>Error codes</strong>: <code>OPERATOR_NOT_REGISTERED</code>, <code>STRATEGY_NOT_SUPPORTED</code>, <code>WITHDRAWAL_DELAY_PENDING</code>, <code>UNDELEGATION_REQUIRED</code></p>
+<hr>
+<h2 id="liquid-restaking-tokens-6-tools"><a class="header" href="#liquid-restaking-tokens-6-tools">Liquid restaking tokens (6 tools)</a></h2>
+<p>LRTs represent restaked ETH across multiple EigenLayer operators and AVSs. Each protocol has its own strategy for operator selection and point accumulation. The April 2024 Renzo ezETH depeg (peak -50% vs ETH) and withdrawal freeze demonstrated that LRT concentration and withdrawal mechanics are critical risk factors.</p>
+<p>This integration covers ether.fi (eETH/weETH) and Kelp (rsETH) – the two LRTs with the highest TVL and best withdrawal support.</p>
+<h3 id="lrt_deposit"><a class="header" href="#lrt_deposit"><code>lrt_deposit</code></a></h3>
+<p>Deposit ETH or LST to receive a liquid restaking token.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LrtDepositParams {
+    /// Amount to deposit.
+    pub amount: String,
+    /// Input token (ETH or LST address; default: ETH).
+    #[serde(default = "default_eth")]
+    pub input_token: String,
+    /// LRT protocol.
+    pub protocol: String,  // "etherfi" | "kelp"
+    /// Chain ID.
+    pub chain: u64,
+}
+
+fn default_eth() -&gt; String { "ETH".into() }
+
+#[derive(Debug, Serialize)]
+pub struct LrtDepositResult {
+    pub tx_hash: String,
+    pub lrt_received: String,
+    pub lrt_token: String,
+    pub exchange_rate: String,
+    pub current_apy: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer3</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Checking depeg risk", "Approving input token", "Signing deposit", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Deposit ETH or LST to receive an LRT (eETH, rsETH). Adds restaking exposure on top of base staking yield. LRT depeg risk is real – check <code>lrt_get_depeg_risk</code> first.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Deposit for combined staking + restaking + points yield. ALWAYS check depeg risk first. Avoid protocols with peg_deviation_7d &gt; 2%.</li>
+<li><strong>cautious</strong>: Only deposit into ether.fi (eETH) – it has the best instant redemption support. Maximum 10% of portfolio in LRTs.</li>
+<li><strong>declining</strong>: Do not deposit. Withdraw from LRT positions.</li>
+<li><strong>terminal</strong>: Never deposit. Initiate all LRT withdrawals.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (checking depeg) -&gt; <code>tool:update</code> (approving) -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (spending limit + depeg risk pre-check), <code>tool_result</code> (LRT received + exchange rate logged)</p>
+<p><strong>Ground truth</strong>: Verify LRT balance increase. Source: on-chain balance read.</p>
+<h3 id="lrt_withdraw"><a class="header" href="#lrt_withdraw"><code>lrt_withdraw</code></a></h3>
+<p>Withdraw from an LRT protocol. Instant where supported (ether.fi has instant via eETH liquidity pool); queued otherwise.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LrtWithdrawParams {
+    /// LRT amount.
+    pub amount: String,
+    /// LRT protocol.
+    pub protocol: String,  // "etherfi" | "kelp"
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtWithdrawResult {
+    pub tx_hash: String,
+    pub eth_received: Option&lt;String&gt;,     // Some if instant
+    pub request_id: Option&lt;String&gt;,       // Some if queued
+    pub estimated_completion: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Write</code> | <strong>risk_tier</strong>: <code>Layer2</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Checking withdrawal path", "Signing withdrawal", "Confirming"]</code>
+<strong>sprite_trigger</strong>: <code>Executing</code></p>
+<p><strong>promptSnippet</strong>: “Withdraw from LRT. Instant via ether.fi eETH pool if available. Other protocols may require queued withdrawal.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Use instant withdrawal when available. Queue for protocols without instant support.</li>
+<li><strong>cautious</strong>: Prefer instant withdrawal. If not available, queue early.</li>
+<li><strong>declining</strong>: Withdraw from all LRT positions. Use instant where possible.</li>
+<li><strong>terminal</strong>: Instant for everything possible. Queue the rest immediately.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:update</code> (checking path) -&gt; <code>tool:update</code> (signing) -&gt; <code>tool:update</code> (confirming) -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (balance check), <code>tool_result</code> (withdrawal receipt or queue position logged)</p>
+<p><strong>Ground truth</strong>: For instant: verify ETH balance increase. For queued: verify request ID exists. Source: on-chain reads.</p>
+<h3 id="lrt_get_apy"><a class="header" href="#lrt_get_apy"><code>lrt_get_apy</code></a></h3>
+<p>Get current APY breakdown for LRT protocols.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LrtGetApyParams {
+    /// Protocol filter. Default: "all".
+    #[serde(default = "default_all")]
+    pub protocol: String,  // "etherfi" | "kelp" | "all"
+    /// Chain ID.
+    pub chain: u64,
+}
+
+fn default_all() -&gt; String { "all".into() }
+
+#[derive(Debug, Serialize)]
+pub struct LrtApyBreakdown {
+    pub protocol: String,
+    pub lrt_symbol: String,
+    pub base_staking_apy: f64,
+    pub restaking_apy: f64,
+    pub protocol_rewards: f64,
+    pub total_apy: f64,
+    pub points_program: PointsProgram,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PointsProgram {
+    pub name: String,
+    pub accumulation_rate: f64,
+    pub estimated_usd_value: Option&lt;f64&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtApyResult {
+    pub apys: Vec&lt;LrtApyBreakdown&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching APY data"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “LRT APY breakdown: base staking + restaking + protocol rewards + points. Use to evaluate whether LRT exposure justifies the additional risk layer.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Compare across protocols. Factor in points value estimates (speculative).</li>
+<li><strong>cautious</strong>: Focus on base + restaking APY only. Ignore speculative points value.</li>
+<li><strong>declining</strong>: Check if current yield justifies maintaining the position.</li>
+<li><strong>terminal</strong>: Not needed.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="lrt_get_position"><a class="header" href="#lrt_get_position"><code>lrt_get_position</code></a></h3>
+<p>Get account’s LRT holdings and pending withdrawals across ether.fi and Kelp.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LrtGetPositionParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtPosition {
+    pub holdings: Vec&lt;LrtHolding&gt;,
+    pub pending_withdrawals: Vec&lt;LrtPendingWithdrawal&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtHolding {
+    pub protocol: String,
+    pub lrt_symbol: String,
+    pub balance: String,
+    pub balance_eth: String,
+    pub balance_usd: f64,
+    pub apy: f64,
+    pub points_earned: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtPendingWithdrawal {
+    pub protocol: String,
+    pub request_id: String,
+    pub amount: String,
+    pub status: String,
+    pub estimated_completion: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching holdings"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Account’s LRT holdings and pending withdrawals across all supported protocols. Portfolio overview for restaking exposure.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Review on heartbeat.</li>
+<li><strong>cautious</strong>: Review daily. Verify all positions are expected.</li>
+<li><strong>declining</strong>: Plan exit order.</li>
+<li><strong>terminal</strong>: Final inventory.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="lrt_get_depeg_risk"><a class="header" href="#lrt_get_depeg_risk"><code>lrt_get_depeg_risk</code></a></h3>
+<p>Assess depeg risk for an LRT.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct LrtDepegRiskParams {
+    /// LRT protocol.
+    pub protocol: String,  // "etherfi" | "kelp"
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtDepegRisk {
+    pub lrt_symbol: String,
+    pub current_premium_discount: f64,
+    pub max_deviation_7d: f64,
+    pub max_deviation_30d: f64,
+    pub withdrawal_queue_depth: u32,
+    pub instant_redemption_available: bool,
+    pub slashing_exposure: Vec&lt;SlashingExposure&gt;,
+    pub risk_level: String,      // "low" | "medium" | "high"
+    pub risk_factors: Vec&lt;String&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SlashingExposure {
+    pub avs: String,
+    pub exposure_pct: f64,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching peg data", "Analyzing risk"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Assess LRT depeg risk: current discount, max deviations (7d/30d), withdrawal queue, instant redemption, slashing exposure, and risk level. ALWAYS call before <code>lrt_deposit</code>. The Renzo ezETH -50% depeg is the reference case.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Check before every LRT deposit. Require risk level “low”. Flag any risk factors.</li>
+<li><strong>cautious</strong>: Check daily for all held LRTs. Exit at risk level “medium” or higher.</li>
+<li><strong>declining</strong>: Check for held LRTs. Exit any at “medium” or higher immediately.</li>
+<li><strong>terminal</strong>: Not needed. Exit all positions regardless.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code>
+<strong>Pi hooks</strong>: <code>tool_call</code> (rate-limit), <code>tool_result</code> (high risk triggers hard block on LRT deposits)</p>
+<p><strong>Error codes</strong>: <code>LRT_PROTOCOL_PAUSED</code>, <code>LRT_WITHDRAWAL_SUSPENDED</code>, <code>LRT_MINIMUM_DEPOSIT</code>, <code>LRT_DEPEG_WARNING</code></p>
+<hr>
+<h2 id="points-tracking-2-tools"><a class="header" href="#points-tracking-2-tools">Points tracking (2 tools)</a></h2>
+<p>EigenLayer points and LRT-specific points programs do not have official USD values – they represent claims on future airdrops. <code>estimated_usd_value</code> is derived from secondary market trading of point tokens and futures where available.</p>
+<h3 id="lrt_get_restaking_points"><a class="header" href="#lrt_get_restaking_points"><code>lrt_get_restaking_points</code></a></h3>
+<p>Get all restaking and LRT points accumulated by an account.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetRestakingPointsParams {
+    /// Account address.
+    pub account: String,
+    /// Chain ID.
+    pub chain: u64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct RestakingPoints {
+    pub account: String,
+    pub eigen_layer_points: f64,
+    pub lrt_points: Vec&lt;LrtPointsEntry&gt;,
+    pub total_estimated_usd_value: Option&lt;f64&gt;,
+}
+
+#[derive(Debug, Serialize)]
+pub struct LrtPointsEntry {
+    pub protocol: String,
+    pub program_name: String,
+    pub points: f64,
+    pub accumulation_rate: f64,
+    pub estimated_usd_value: Option&lt;f64&gt;,
+    pub source: String,  // "official" | "secondary-market" | "estimated"
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Fast</code>
+<strong>progress_steps</strong>: <code>["Fetching points data"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “All restaking and LRT points for an account: EigenLayer points, protocol-specific points, estimated USD values. Points have no official value – estimates are from secondary markets.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Track monthly. Points inform position sizing but should not drive decisions alone.</li>
+<li><strong>cautious</strong>: Track but do not factor into risk decisions. Points are speculative.</li>
+<li><strong>declining</strong>: Check for any claimable value. Otherwise ignore.</li>
+<li><strong>terminal</strong>: Note total points in death testament. May have future value for successor.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<h3 id="lrt_get_points_strategies"><a class="header" href="#lrt_get_points_strategies"><code>lrt_get_points_strategies</code></a></h3>
+<p>Compare protocols by points accumulation efficiency.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Deserialize)]
+pub struct GetPointsStrategiesParams {
+    /// ETH amount for comparison.
+    pub amount: String,
+    /// Chain ID.
+    pub chain: u64,
+    /// Days to project (default: 30).
+    #[serde(default = "default_duration")]
+    pub duration: u32,
+}
+
+fn default_duration() -&gt; u32 { 30 }
+
+#[derive(Debug, Serialize)]
+pub struct PointsProjection {
+    pub protocol: String,
+    pub strategy: String,
+    pub points_accumulated: Vec&lt;PointsAccumulation&gt;,
+    pub total_estimated_usd_value: Option&lt;f64&gt;,
+    pub staking_apy: f64,
+    pub total_estimated_return: Option&lt;f64&gt;,
+    pub risk: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PointsAccumulation {
+    pub program: String,
+    pub points: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PointsStrategiesResult {
+    pub projections: Vec&lt;PointsProjection&gt;,
+    pub recommendation: String,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>capability</strong>: <code>Read</code> | <strong>risk_tier</strong>: <code>Layer1</code> | <strong>tick_budget</strong>: <code>Medium</code>
+<strong>progress_steps</strong>: <code>["Computing projections"]</code>
+<strong>sprite_trigger</strong>: <code>Thinking</code></p>
+<p><strong>promptSnippet</strong>: “Compare protocols by points accumulation efficiency: projected points per ETH per day, estimated USD value, staking APY, and total return. Use for points-optimized positioning.”</p>
+<p><strong>promptGuidelines</strong>:</p>
+<ul>
+<li><strong>thriving</strong>: Use to optimize points accumulation alongside yield. Balance points vs exit flexibility.</li>
+<li><strong>cautious</strong>: Do not chase points at the expense of exit liquidity. Points are speculative.</li>
+<li><strong>declining</strong>: Not actionable.</li>
+<li><strong>terminal</strong>: Not needed.</li>
+</ul>
+<p><strong>Events</strong>: <code>tool:start</code> -&gt; <code>tool:end</code></p>
+<hr>
+<h2 id="custody-implications-restaking-write-tools"><a class="header" href="#custody-implications-restaking-write-tools">Custody implications (restaking write tools)</a></h2>
+<p>All restaking write tools share the same custody behavior:</p>
+<ul>
+<li><strong>Delegation</strong>: Session key signs via EigenLayer StrategyManager, DelegationManager, or LRT protocol contracts. CaveatEnforcer must whitelist canonical EigenLayer and LRT contract addresses. Deposit amounts bounded by session key spending limits.</li>
+<li><strong>Embedded</strong>: Privy server wallet signs. PolicyCage (the on-chain smart contract that enforces an owner’s safety constraints) validates protocol target, deposit amount, and operator delegation target.</li>
+<li><strong>Local Key</strong>: Local keypair signs. On-chain delegation bounds constrain allowed targets and amounts.</li>
+</ul>
+<p>Withdrawal tools (<code>eigenlayer_queue_withdrawal</code>, <code>eigenlayer_complete_withdrawal</code>, <code>lrt_withdraw</code>) are always permitted regardless of lifecycle phase. The 7-day EigenLayer withdrawal delay is enforced on-chain, not at the custody layer.</p>
+<hr>
+<h2 id="restaking-safety-invariants"><a class="header" href="#restaking-safety-invariants">Restaking safety invariants</a></h2>
+<p>All restaking tools enforce these invariants in the adapter layer:</p>
+<ul>
+<li><strong>Address allowlist</strong>: only canonical EigenLayer, ether.fi, and Kelp contract addresses.</li>
+<li><strong>Operator validation</strong>: <code>eigenlayer_delegate</code> checks operator slashing history before execution.</li>
+<li><strong>Depeg gate</strong>: <code>lrt_deposit</code> internally calls <code>lrt_get_depeg_risk</code> and blocks if risk_level is “high”.</li>
+<li><strong>Phase gating</strong>: <code>declining</code> and <code>terminal</code> block all deposit/delegate operations. Withdrawal operations are always allowed.</li>
+<li><strong>7-day withdrawal delay</strong>: All EigenLayer withdrawal tools surface the delay prominently in results and promptSnippets.</li>
+<li><strong>Preview-&gt;commit lifecycle</strong>: all write tools go through <code>preview_action</code> -&gt; <code>commit_action</code>.</li>
+</ul>
+<h3 id="error-reference"><a class="header" href="#error-reference">Error reference</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Error code</th><th>Category</th><th>Trigger</th></tr>
+</thead>
+<tbody>
+<tr><td><code>OPERATOR_NOT_REGISTERED</code></td><td><code>state</code></td><td>Operator address not registered in EigenLayer</td></tr>
+<tr><td><code>STRATEGY_NOT_SUPPORTED</code></td><td><code>state</code></td><td>LST not supported by any EigenLayer strategy</td></tr>
+<tr><td><code>WITHDRAWAL_DELAY_PENDING</code></td><td><code>state</code></td><td>Attempting to complete withdrawal before 7-day delay</td></tr>
+<tr><td><code>UNDELEGATION_REQUIRED</code></td><td><code>state</code></td><td>Must undelegate before queueing withdrawal</td></tr>
+<tr><td><code>LRT_PROTOCOL_PAUSED</code></td><td><code>state</code></td><td>LRT protocol has paused operations</td></tr>
+<tr><td><code>LRT_WITHDRAWAL_SUSPENDED</code></td><td><code>state</code></td><td>LRT withdrawals temporarily suspended</td></tr>
+<tr><td><code>LRT_MINIMUM_DEPOSIT</code></td><td><code>policy</code></td><td>Amount below minimum deposit threshold</td></tr>
+<tr><td><code>LRT_DEPEG_WARNING</code></td><td><code>safety</code></td><td>LRT peg deviation exceeds 2% threshold</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/07-tools/08-tools-staking.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/07-tools/10-tools-derivatives.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/07-tools/08-tools-staking.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/07-tools/10-tools-derivatives.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

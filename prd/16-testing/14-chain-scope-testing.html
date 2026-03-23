@@ -1,0 +1,907 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chain Scope Testing - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/16-testing/14-chain-scope-testing.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="chainscope-attention-model-testing-spec"><a class="header" href="#chainscope-attention-model-testing-spec">ChainScope Attention Model Testing [SPEC]</a></h1>
+<p><strong>Version:</strong> 1.0.0
+<strong>Last Updated:</strong> 2026-03-18
+<strong>Companion to:</strong> <code>14-chain/04-chain-scope.md</code></p>
+<blockquote>
+<p>Tests for ChainScope’s attention model: interest list convergence, position tracking latency, Binary Fuse filter false positive rates, Hebbian reinforcement dynamics, arousal modulation, and the cybernetic feedback loop between CorticalState and watched address scope.</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies tests for ChainScope, the attention model that determines what on-chain activity a Golem (mortal autonomous agent) watches. It belongs to Section 16 (Testing) and covers interest list convergence, Binary Fuse filter false positive rates, Hebbian reinforcement dynamics, arousal modulation from the Daimon (the affect engine implementing PAD emotional state), and the cybernetic feedback loop between CorticalState (32-signal atomic shared perception surface) and watched address scope. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="document-map"><a class="header" href="#document-map">Document Map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Topic</th></tr>
+</thead>
+<tbody>
+<tr><td>Overview</td><td>What ChainScope does and what testing covers</td></tr>
+<tr><td>Interest List Convergence</td><td>Does the list stabilize under steady conditions?</td></tr>
+<tr><td>Position Tracking Latency</td><td>Time from position change to scope update</td></tr>
+<tr><td>Binary Fuse Filter</td><td>False positive rate, rebuild correctness</td></tr>
+<tr><td>Hebbian Reinforcement</td><td>Address score strengthening dynamics</td></tr>
+<tr><td>Arousal Modulation</td><td>Affect-to-attention link correctness</td></tr>
+<tr><td>Decay Mechanics</td><td>Score decay, pruning, half-life modulation</td></tr>
+<tr><td>HyperLogLog Cardinality</td><td>Estimation accuracy for universe_size</td></tr>
+<tr><td>Gamma-Tick Rebuild</td><td>Full rebuild correctness under concurrent access</td></tr>
+<tr><td>Property Test Sketches</td><td>Rust property tests for key invariants</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>ChainScope answers “what should the golem watch right now?” It maintains three interrelated data structures:</p>
+<ol>
+<li><strong>Interest entries</strong> – scored address list, the source of truth. Rebuilt at every Gamma tick from CorticalState, strategy, positions, and Grimoire.</li>
+<li><strong>BinaryFuse8 filter</strong> – probabilistic membership test for block-level pre-screening in <code>bardo-witness</code>. Atomically swapped at each Gamma tick.</li>
+<li><strong>DashSet<address></address></strong> – precise lookup set for triage Stage 1. Rebuilt alongside the filter.</li>
+</ol>
+<p>The cybernetic loop: CorticalState (arousal, active positions) drives interest entries, which drive the filter and set, which determine what transactions reach triage, which update CorticalState. Testing must verify that this loop converges to stable behavior under steady conditions and adapts appropriately when conditions change.</p>
+<h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
+<ul>
+<li><code>14-chain/04-chain-scope.md</code> – ChainScope specification</li>
+<li><code>14-chain/02-triage.md</code> – triage pipeline that consumes ChainScope output</li>
+<li><code>16-testing/13-triage-evaluation.md</code> – triage evaluation (companion)</li>
+<li>Research: <code>01-chain-intelligence/04-chain-scope.md</code> – attention model design</li>
+</ul>
+<hr>
+<h2 id="1-interest-list-convergence-spec"><a class="header" href="#1-interest-list-convergence-spec">1. Interest List Convergence [SPEC]</a></h2>
+<h3 id="11-property-list-stabilizes-under-steady-conditions-spec"><a class="header" href="#11-property-list-stabilizes-under-steady-conditions-spec">1.1 Property: List stabilizes under steady conditions [SPEC]</a></h3>
+<p><strong>Statement:</strong> When the golem’s positions, strategy, and CorticalState remain constant (no new positions, no arousal changes, no new triage events), the interest list converges to a fixed set of addresses within 10 Gamma ticks. Convergence means: the set of addresses with score &gt; 0.05 does not change between consecutive rebuilds.</p>
+<p><strong>Test approach:</strong> Set up a golem with 3 active LP positions. Run 50 Gamma tick rebuilds with no external events. After tick 10, the address set should be identical across consecutive ticks.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn interest_list_converges_under_steady_state() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let cortical = mock_cortical_state(3 /* positions */, 0.5 /* arousal */);
+    let grimoire = mock_grimoire(&amp;[]);
+
+    let mut prev_addrs: Option&lt;Vec&lt;Address&gt;&gt; = None;
+    let mut stable_since: Option&lt;usize&gt; = None;
+
+    for tick in 0..50 {
+        scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+        let current: Vec&lt;Address&gt; = scope.interest_entries.read().unwrap()
+            .iter()
+            .filter(|e| e.score &gt; 0.05)
+            .map(|e| e.address)
+            .collect();
+
+        if let Some(ref prev) = prev_addrs {
+            if *prev == current {
+                if stable_since.is_none() {
+                    stable_since = Some(tick);
+                }
+            } else {
+                stable_since = None;
+            }
+        }
+        prev_addrs = Some(current);
+    }
+
+    let converged_at = stable_since.expect("list never converged");
+    assert!(
+        converged_at &lt;= 10,
+        "converged at tick {} (expected &lt;= 10)",
+        converged_at,
+    );
+}
+<span class="boring">}</span></code></pre>
+<h3 id="12-property-new-position-appears-within-1-gamma-tick-spec"><a class="header" href="#12-property-new-position-appears-within-1-gamma-tick-spec">1.2 Property: New position appears within 1 Gamma tick [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a new LP position is added to CorticalState, the corresponding contract address and pool address appear in <code>watched_addresses</code> after the next Gamma tick rebuild. Latency: exactly 1 Gamma tick (not 0, because the rebuild happens at tick boundaries).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn new_position_appears_within_one_tick() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let mut cortical = mock_cortical_state(0, 0.5);
+    let grimoire = mock_grimoire(&amp;[]);
+
+    // Initial rebuild: no positions.
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+    assert!(scope.watched_addresses.is_empty());
+
+    // Add a position.
+    let pool_addr = address!("0xpool...");
+    let position_addr = address!("0xposition...");
+    cortical.add_position(position_addr, Some(pool_addr));
+
+    // One rebuild.
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+    assert!(scope.watched_addresses.contains(&amp;position_addr));
+    assert!(scope.watched_addresses.contains(&amp;pool_addr));
+}
+<span class="boring">}</span></code></pre>
+<h3 id="13-property-position-tracking-within-2-gamma-ticks-spec"><a class="header" href="#13-property-position-tracking-within-2-gamma-ticks-spec">1.3 Property: Position tracking within 2 Gamma ticks [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a position changes (e.g., liquidity range adjusted, partial exit), the interest list reflects the updated position state within 2 Gamma ticks. This is the spec requirement from the task definition.</p>
+<p><strong>Test approach:</strong> Modify a position’s <code>relevant_topics()</code> between two rebuilds. Verify the filter includes the new topics after at most 2 rebuilds.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn position_change_reflected_within_2_ticks() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let mut cortical = mock_cortical_state(1, 0.5);
+    let grimoire = mock_grimoire(&amp;[]);
+
+    // Initial rebuild with original position.
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+    // Change the position's relevant topics (simulating a range adjustment).
+    let new_topic = B256::from([0xAB; 32]);
+    cortical.positions[0].add_topic(new_topic);
+
+    // First rebuild after change.
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+    // Check if the new topic is in the filter.
+    let topic_hash = xxh3_64(new_topic.as_slice());
+    let in_filter = scope.watch_filter.load().contains(&amp;topic_hash);
+
+    if !in_filter {
+        // Second rebuild (allowed: spec says within 2 ticks).
+        scope.rebuild(&amp;cortical, &amp;grimoire).await;
+        let in_filter_2 = scope.watch_filter.load().contains(&amp;topic_hash);
+        assert!(in_filter_2, "new topic not in filter after 2 Gamma ticks");
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="14-property-removed-position-decays-out-spec"><a class="header" href="#14-property-removed-position-decays-out-spec">1.4 Property: Removed position decays out [SPEC]</a></h3>
+<p><strong>Statement:</strong> When a position is closed, its contract address is no longer seeded with score 1.0. The address decays according to its InterestReason and eventually falls below the 0.05 prune threshold.</p>
+<p><strong>Test:</strong> Remove a position from CorticalState. Run rebuilds. The address should drop below 0.05 within a predictable number of ticks based on its decay half-life.</p>
+<hr>
+<h2 id="2-binary-fuse-filter-testing-spec"><a class="header" href="#2-binary-fuse-filter-testing-spec">2. Binary Fuse Filter Testing [SPEC]</a></h2>
+<h3 id="21-property-false-positive-rate-below-configured-threshold-spec"><a class="header" href="#21-property-false-positive-rate-below-configured-threshold-spec">2.1 Property: False positive rate below configured threshold [SPEC]</a></h3>
+<p><strong>Statement:</strong> The BinaryFuse8 filter’s false positive rate on random addresses not in the interest list is below 1/256 (approximately 0.39%), the theoretical bound for BinaryFuse8 (Lemire et al., 2022).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn binary_fuse_false_positive_rate(
+        // Generate a set of "in" addresses and a set of "out" addresses.
+        in_addrs in prop::collection::hash_set(
+            any::&lt;[u8; 20]&gt;().prop_map(Address::from),
+            100..1000
+        ),
+        out_addrs in prop::collection::hash_set(
+            any::&lt;[u8; 20]&gt;().prop_map(Address::from),
+            10000..20000
+        ),
+    ) {
+        // Build filter from "in" addresses.
+        let keys: Vec&lt;u64&gt; = in_addrs.iter()
+            .map(|a| xxh3_64(a.as_slice()))
+            .collect();
+        let filter = BinaryFuse8::try_from(&amp;keys).unwrap();
+
+        // All "in" addresses must be present (zero false negatives).
+        for addr in &amp;in_addrs {
+            let hash = xxh3_64(addr.as_slice());
+            prop_assert!(filter.contains(&amp;hash), "false negative");
+        }
+
+        // Measure false positive rate on "out" addresses.
+        let false_positives = out_addrs.iter()
+            .filter(|a| !in_addrs.contains(a))
+            .filter(|a| filter.contains(&amp;xxh3_64(a.as_slice())))
+            .count();
+        let total_out = out_addrs.len() - out_addrs.intersection(&amp;in_addrs).count();
+        let fp_rate = false_positives as f64 / total_out as f64;
+
+        // BinaryFuse8 theoretical FP rate: ~1/256 = 0.0039
+        // Allow 2x margin for statistical variation.
+        prop_assert!(
+            fp_rate &lt; 0.008,
+            "false positive rate {:.4} exceeds 2x theoretical bound",
+            fp_rate,
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="22-property-zero-false-negatives-spec"><a class="header" href="#22-property-zero-false-negatives-spec">2.2 Property: Zero false negatives [SPEC]</a></h3>
+<p><strong>Statement:</strong> Every address in the interest list must be present in the filter. False negative rate = 0%. This is a structural property of Binary Fuse filters (they are exact for members of the construction set).</p>
+<h3 id="23-property-filter-rebuild-is-atomic-spec"><a class="header" href="#23-property-filter-rebuild-is-atomic-spec">2.3 Property: Filter rebuild is atomic [SPEC]</a></h3>
+<p><strong>Statement:</strong> The <code>arc_swap::ArcSwap</code> ensures that in-flight reads on the old filter complete without interruption while the new filter is being constructed. No thread ever sees a partially constructed filter.</p>
+<p><strong>Test approach:</strong> Spawn 10 reader threads that continuously query the filter. Spawn 1 writer thread that rebuilds every 10ms. Run for 1 second. Readers should never panic or see inconsistent results.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn filter_atomic_swap_under_contention() {
+    let scope = Arc::new(ChainScope::new(ChainScopeConfig::default()));
+    let known_addr = address!("0xknown...");
+
+    // Initial build with known_addr.
+    let keys = vec![xxh3_64(known_addr.as_slice())];
+    let filter = BinaryFuse8::try_from(&amp;keys).unwrap();
+    scope.watch_filter.store(Arc::new(filter));
+
+    let barrier = Arc::new(std::sync::Barrier::new(11));
+    let stop = Arc::new(AtomicBool::new(false));
+
+    // 10 reader threads.
+    let readers: Vec&lt;_&gt; = (0..10).map(|_| {
+        let scope = scope.clone();
+        let barrier = barrier.clone();
+        let stop = stop.clone();
+        std::thread::spawn(move || {
+            barrier.wait();
+            let mut checks = 0u64;
+            while !stop.load(Ordering::Relaxed) {
+                let filter = scope.watch_filter.load();
+                // known_addr should always be present
+                // (rebuilds always include it).
+                let hash = xxh3_64(known_addr.as_slice());
+                assert!(filter.contains(&amp;hash));
+                checks += 1;
+            }
+            checks
+        })
+    }).collect();
+
+    // 1 writer thread.
+    let writer = {
+        let scope = scope.clone();
+        let barrier = barrier.clone();
+        let stop = stop.clone();
+        std::thread::spawn(move || {
+            barrier.wait();
+            let mut rebuilds = 0u64;
+            while !stop.load(Ordering::Relaxed) {
+                let keys = vec![xxh3_64(known_addr.as_slice())];
+                let filter = BinaryFuse8::try_from(&amp;keys).unwrap();
+                scope.watch_filter.store(Arc::new(filter));
+                rebuilds += 1;
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            rebuilds
+        })
+    };
+
+    barrier.wait();
+    std::thread::sleep(Duration::from_secs(1));
+    stop.store(true, Ordering::Relaxed);
+
+    let total_checks: u64 = readers.into_iter()
+        .map(|h| h.join().unwrap())
+        .sum();
+    let total_rebuilds = writer.join().unwrap();
+
+    // If we got here without panicking, atomicity held.
+    println!("{} checks across {} rebuilds", total_checks, total_rebuilds);
+    assert!(total_checks &gt; 0);
+    assert!(total_rebuilds &gt; 0);
+}
+<span class="boring">}</span></code></pre>
+<h3 id="24-filter-includes-event-topics-spec"><a class="header" href="#24-filter-includes-event-topics-spec">2.4 Filter includes event topics [SPEC]</a></h3>
+<p><strong>Statement:</strong> For interest entries with non-empty <code>event_topics</code>, the topics are hashed and included in the filter alongside the address hash. <code>bardo-witness</code> uses this to pre-screen entire blocks by both address and topic.</p>
+<p><strong>Test:</strong> Build a filter from entries with known topics. Verify topic hashes are contained.</p>
+<hr>
+<h2 id="3-hebbian-reinforcement-spec"><a class="header" href="#3-hebbian-reinforcement-spec">3. Hebbian Reinforcement [SPEC]</a></h2>
+<h3 id="31-property-reinforcement-increases-score-spec"><a class="header" href="#31-property-reinforcement-increases-score-spec">3.1 Property: Reinforcement increases score [SPEC]</a></h3>
+<p><strong>Statement:</strong> Calling <code>ChainScope::reinforce(addr, event_score)</code> where <code>event_score &gt; 0</code> increases the address’s score (capped at 1.0) and updates <code>last_active</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn reinforce_increases_score(
+        initial_score in 0.1f32..0.9,
+        event_score in 0.1f32..1.0,
+    ) {
+        let scope = ChainScope::new(ChainScopeConfig::default());
+
+        // Seed an entry with known score.
+        let addr = address!("0xtest...");
+        {
+            let mut entries = scope.interest_entries.write().unwrap();
+            entries.push(InterestEntry {
+                address: addr,
+                score: initial_score,
+                reason: InterestReason::HighCuriosity,
+                decay_half_life: Duration::from_secs(3 * 3600),
+                last_active: 0,
+                hit_count: 0,
+                ..Default::default()
+            });
+        }
+
+        scope.reinforce(addr, event_score);
+
+        let entries = scope.interest_entries.read().unwrap();
+        let entry = entries.iter().find(|e| e.address == addr).unwrap();
+
+        prop_assert!(entry.score &gt;= initial_score);
+        prop_assert!(entry.score &lt;= 1.0);
+        prop_assert!(entry.hit_count == 1);
+        prop_assert!(entry.last_active &gt; 0);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="32-property-frequently-co-occurring-addresses-strengthen-as-expected-spec"><a class="header" href="#32-property-frequently-co-occurring-addresses-strengthen-as-expected-spec">3.2 Property: Frequently co-occurring addresses strengthen as expected [SPEC]</a></h3>
+<p><strong>Statement:</strong> An address reinforced K times has a longer effective decay half-life than an address reinforced once. Specifically, <code>decay_half_life = base_hl * (1.0 + ln(hit_count))</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn frequent_reinforcement_extends_half_life() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let addr = address!("0xfrequent...");
+
+    // Seed entry.
+    {
+        let mut entries = scope.interest_entries.write().unwrap();
+        entries.push(InterestEntry {
+            address: addr,
+            score: 0.5,
+            reason: InterestReason::HighCuriosity,
+            decay_half_life: Duration::from_secs(3 * 3600),
+            hit_count: 0,
+            ..Default::default()
+        });
+    }
+
+    let base_hl = Duration::from_secs(3 * 3600);
+
+    // Reinforce 20 times.
+    for _ in 0..20 {
+        scope.reinforce(addr, 0.3);
+    }
+
+    let entries = scope.interest_entries.read().unwrap();
+    let entry = entries.iter().find(|e| e.address == addr).unwrap();
+
+    assert_eq!(entry.hit_count, 20);
+
+    let expected_hl = base_hl.mul_f32(1.0 + (20.0f32).ln());
+    let actual_hl = entry.decay_half_life;
+
+    // Allow 1% tolerance for floating point.
+    let ratio = actual_hl.as_secs_f64() / expected_hl.as_secs_f64();
+    assert!(
+        (0.99..=1.01).contains(&amp;ratio),
+        "half-life ratio {:.4} not within 1%",
+        ratio,
+    );
+}
+<span class="boring">}</span></code></pre>
+<h3 id="33-property-reinforcement-of-unknown-address-creates-a-discovered-entry-spec"><a class="header" href="#33-property-reinforcement-of-unknown-address-creates-a-discovered-entry-spec">3.3 Property: Reinforcement of unknown address creates a Discovered entry [SPEC]</a></h3>
+<p><strong>Statement:</strong> Calling <code>reinforce()</code> on an address not in the interest list creates a new entry with <code>InterestReason::HighCuriosity</code>, score capped at 0.5, and <code>hit_count = 1</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn reinforce_unknown_creates_entry() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let addr = address!("0xnew...");
+
+    // No entry exists.
+    assert!(scope.interest_entries.read().unwrap().is_empty());
+
+    scope.reinforce(addr, 0.8);
+
+    let entries = scope.interest_entries.read().unwrap();
+    let entry = entries.iter().find(|e| e.address == addr).unwrap();
+
+    assert!(matches!(entry.reason, InterestReason::HighCuriosity));
+    assert_eq!(entry.score, 0.5); // capped
+    assert_eq!(entry.hit_count, 1);
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="4-arousal-modulation-spec"><a class="header" href="#4-arousal-modulation-spec">4. Arousal Modulation [SPEC]</a></h2>
+<h3 id="41-property-high-arousal-slows-decay-spec"><a class="header" href="#41-property-high-arousal-slows-decay-spec">4.1 Property: High arousal slows decay [SPEC]</a></h3>
+<p><strong>Statement:</strong> <code>modulated_half_life(base, arousal=1.0) = base * 4.0</code>. At maximum arousal, addresses decay 4x slower, keeping more addresses in scope.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn arousal_modulates_half_life(
+        base_secs in 60u64..86400,
+        arousal in 0.0f32..1.0,
+    ) {
+        let base = Duration::from_secs(base_secs);
+        let modulated = modulated_half_life(base, arousal);
+
+        let expected_multiplier = 1.0 + arousal * 3.0;
+        let expected = base.mul_f32(expected_multiplier);
+
+        let ratio = modulated.as_secs_f64() / expected.as_secs_f64();
+        prop_assert!(
+            (0.99..=1.01).contains(&amp;ratio),
+            "modulated/expected ratio {:.4} not within 1%",
+            ratio,
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="42-property-zero-arousal-uses-base-half-life-spec"><a class="header" href="#42-property-zero-arousal-uses-base-half-life-spec">4.2 Property: Zero arousal uses base half-life [SPEC]</a></h3>
+<p><strong>Statement:</strong> <code>modulated_half_life(base, 0.0) = base * 1.0</code>. No arousal amplification at resting state.</p>
+<h3 id="43-behavioral-test-crisis-broadens-scope-spec"><a class="header" href="#43-behavioral-test-crisis-broadens-scope-spec">4.3 Behavioral test: Crisis broadens scope [SPEC]</a></h3>
+<p><strong>Test:</strong> Start with arousal = 0.2, 100 interest entries. Set arousal to 0.9 (crisis). Run 20 Gamma ticks. Count surviving entries at each tick.</p>
+<p><strong>Expected:</strong> The address count at arousal 0.9 is higher than at arousal 0.2 after 20 ticks, because slower decay retains more addresses.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn high_arousal_retains_more_addresses() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+
+    // Seed 100 HighCuriosity entries with short half-lives.
+    seed_curiosity_entries(&amp;scope, 100, Duration::from_secs(600));
+
+    // Low arousal run.
+    let cortical_low = mock_cortical_state(0, 0.2);
+    let grimoire = mock_grimoire(&amp;[]);
+    for _ in 0..20 {
+        scope.rebuild(&amp;cortical_low, &amp;grimoire).await;
+    }
+    let low_count = scope.interest_entries.read().unwrap()
+        .iter()
+        .filter(|e| e.score &gt; 0.05)
+        .count();
+
+    // Reset.
+    seed_curiosity_entries(&amp;scope, 100, Duration::from_secs(600));
+
+    // High arousal run.
+    let cortical_high = mock_cortical_state(0, 0.9);
+    for _ in 0..20 {
+        scope.rebuild(&amp;cortical_high, &amp;grimoire).await;
+    }
+    let high_count = scope.interest_entries.read().unwrap()
+        .iter()
+        .filter(|e| e.score &gt; 0.05)
+        .count();
+
+    assert!(
+        high_count &gt; low_count,
+        "high arousal should retain more: high={} low={}",
+        high_count, low_count,
+    );
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="5-decay-and-pruning-spec"><a class="header" href="#5-decay-and-pruning-spec">5. Decay and Pruning [SPEC]</a></h2>
+<h3 id="51-property-scores-below-005-are-pruned-spec"><a class="header" href="#51-property-scores-below-005-are-pruned-spec">5.1 Property: Scores below 0.05 are pruned [SPEC]</a></h3>
+<p><strong>Statement:</strong> After a Gamma tick rebuild, no entry in the interest list has <code>score &lt;= 0.05</code>. All such entries are removed.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn low_scores_pruned() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+
+    // Seed entries with very low scores.
+    {
+        let mut entries = scope.interest_entries.write().unwrap();
+        for i in 0..10 {
+            entries.push(InterestEntry {
+                address: Address::from_word(B256::from(U256::from(i))),
+                score: 0.01 * (i as f32 + 1.0), // 0.01 to 0.10
+                reason: InterestReason::Discovered,
+                last_active: unix_ms() - 100_000, // stale
+                decay_half_life: Duration::from_secs(1), // fast decay
+                ..Default::default()
+            });
+        }
+    }
+
+    let cortical = mock_cortical_state(0, 0.5);
+    let grimoire = mock_grimoire(&amp;[]);
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+    let entries = scope.interest_entries.read().unwrap();
+    for entry in entries.iter() {
+        assert!(entry.score &gt; 0.05, "entry with score {:.3} not pruned", entry.score);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="52-property-activeposition-entries-never-decay-spec"><a class="header" href="#52-property-activeposition-entries-never-decay-spec">5.2 Property: ActivePosition entries never decay [SPEC]</a></h3>
+<p><strong>Statement:</strong> Entries with <code>InterestReason::ActivePosition</code> have <code>decay_half_life = Duration::MAX</code> and score = 1.0 at every rebuild, as long as the position remains in CorticalState.</p>
+<h3 id="53-property-exponential-decay-formula-is-correct-spec"><a class="header" href="#53-property-exponential-decay-formula-is-correct-spec">5.3 Property: Exponential decay formula is correct [SPEC]</a></h3>
+<p><strong>Statement:</strong> <code>decayed_score = score * 0.5^(elapsed / half_life)</code>. After exactly one half-life, the score is halved.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn exponential_decay_correct(
+        initial_score in 0.1f32..1.0,
+        half_life_secs in 60u64..86400,
+    ) {
+        let half_life = Duration::from_secs(half_life_secs);
+        let elapsed = half_life; // exactly one half-life
+
+        let decayed = initial_score
+            * 0.5_f32.powf(elapsed.as_secs_f32() / half_life.as_secs_f32());
+
+        let expected = initial_score * 0.5;
+        let diff = (decayed - expected).abs();
+        prop_assert!(diff &lt; 1e-6, "decay error: {}", diff);
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="6-hyperloglog-cardinality-estimation-spec"><a class="header" href="#6-hyperloglog-cardinality-estimation-spec">6. HyperLogLog Cardinality Estimation [SPEC]</a></h2>
+<h3 id="61-property-estimate-within-08-error-spec"><a class="header" href="#61-property-estimate-within-08-error-spec">6.1 Property: Estimate within 0.8% error [SPEC]</a></h3>
+<p><strong>Statement:</strong> HyperLogLog with precision b=14 provides estimates with standard error ~0.8%. For N unique addresses, the estimated count satisfies <code>|estimate - N| / N &lt; 0.016</code> (2 standard errors) with probability &gt; 0.95.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn hyperloglog_accuracy(
+        n_unique in 1000usize..100_000,
+    ) {
+        let mut hll: HyperLogLog&lt;14&gt; = HyperLogLog::new();
+
+        // Insert n_unique distinct addresses.
+        for i in 0..n_unique {
+            let addr = Address::from_word(B256::from(U256::from(i)));
+            hll.insert(addr.as_slice());
+        }
+
+        let estimate = hll.count() as f64;
+        let error = (estimate - n_unique as f64).abs() / n_unique as f64;
+
+        // 2 standard errors at b=14: ~1.6%
+        prop_assert!(
+            error &lt; 0.016,
+            "HLL error {:.4} exceeds 1.6% for N={}",
+            error, n_unique,
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="62-property-duplicate-insertions-dont-inflate-count-spec"><a class="header" href="#62-property-duplicate-insertions-dont-inflate-count-spec">6.2 Property: Duplicate insertions don’t inflate count [SPEC]</a></h3>
+<p><strong>Statement:</strong> Inserting the same address K times produces the same estimate as inserting it once. HyperLogLog counts unique elements, not total insertions.</p>
+<h3 id="63-property-reset-clears-all-state-spec"><a class="header" href="#63-property-reset-clears-all-state-spec">6.3 Property: Reset clears all state [SPEC]</a></h3>
+<p><strong>Statement:</strong> After reset, <code>count()</code> returns 0. The sketch is equivalent to a newly constructed one.</p>
+<hr>
+<h2 id="7-max-watch-size-cap-spec"><a class="header" href="#7-max-watch-size-cap-spec">7. Max Watch Size Cap [SPEC]</a></h2>
+<h3 id="71-property-interest-list-never-exceeds-max_watch_size-spec"><a class="header" href="#71-property-interest-list-never-exceeds-max_watch_size-spec">7.1 Property: Interest list never exceeds max_watch_size [SPEC]</a></h3>
+<p><strong>Statement:</strong> After any rebuild, <code>interest_entries.len() &lt;= max_watch_size</code>. Entries are sorted by score descending and truncated.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>proptest! {
+    #[test]
+    fn interest_list_respects_cap(
+        n_positions in 0usize..5,
+        n_curiosity in 0usize..20000,
+        max_watch in 100usize..10000,
+    ) {
+        let mut config = ChainScopeConfig::default();
+        config.max_watch_size = max_watch;
+        let scope = ChainScope::new(config);
+
+        let cortical = mock_cortical_state(n_positions, 0.5);
+        seed_curiosity_entries(&amp;scope, n_curiosity, Duration::from_secs(3600));
+        let grimoire = mock_grimoire(&amp;[]);
+
+        scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+        let entries = scope.interest_entries.read().unwrap();
+        prop_assert!(
+            entries.len() &lt;= max_watch,
+            "entries {} &gt; cap {}",
+            entries.len(), max_watch,
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="72-property-truncation-preserves-highest-scoring-entries-spec"><a class="header" href="#72-property-truncation-preserves-highest-scoring-entries-spec">7.2 Property: Truncation preserves highest-scoring entries [SPEC]</a></h3>
+<p><strong>Statement:</strong> When truncation occurs, the retained entries are those with the highest scores. No entry with score S1 is retained while an entry with S2 &gt; S1 is discarded.</p>
+<h3 id="73-property-active-positions-are-never-truncated-spec"><a class="header" href="#73-property-active-positions-are-never-truncated-spec">7.3 Property: Active positions are never truncated [SPEC]</a></h3>
+<p><strong>Statement:</strong> Even when the interest list exceeds <code>max_watch_size</code>, entries with <code>InterestReason::ActivePosition</code> are always retained (they have score 1.0, the maximum).</p>
+<hr>
+<h2 id="8-corticalstate-integration-spec"><a class="header" href="#8-corticalstate-integration-spec">8. CorticalState Integration [SPEC]</a></h2>
+<h3 id="81-property-active_count-reflects-high-scoring-entries-spec"><a class="header" href="#81-property-active_count-reflects-high-scoring-entries-spec">8.1 Property: active_count reflects high-scoring entries [SPEC]</a></h3>
+<p><strong>Statement:</strong> After rebuild, <code>CorticalState.active_count</code> equals the number of interest entries with <code>score &gt; 0.5</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn active_count_matches_high_score_entries() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let cortical = mock_cortical_state(3, 0.5);
+    let grimoire = mock_grimoire(&amp;[]);
+
+    seed_curiosity_entries(&amp;scope, 50, Duration::from_secs(3600));
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+
+    let expected = scope.interest_entries.read().unwrap()
+        .iter()
+        .filter(|e| e.score &gt; 0.5)
+        .count() as u16;
+
+    let actual = cortical.active_count.load(Ordering::Relaxed);
+    assert_eq!(actual, expected);
+}
+<span class="boring">}</span></code></pre>
+<h3 id="82-property-golemeventchainscopeadjusted-emitted-on-rebuild-spec"><a class="header" href="#82-property-golemeventchainscopeadjusted-emitted-on-rebuild-spec">8.2 Property: GolemEvent::ChainScopeAdjusted emitted on rebuild [SPEC]</a></h3>
+<p><strong>Statement:</strong> Each rebuild emits a <code>ChainScopeAdjusted</code> event with the correct <code>interest_count</code> and <code>bloom_capacity</code>.</p>
+<hr>
+<h2 id="9-cybernetic-loop-integration-test-spec"><a class="header" href="#9-cybernetic-loop-integration-test-spec">9. Cybernetic Loop Integration Test [SPEC]</a></h2>
+<h3 id="91-full-loop-position---scope---triage---reinforce---scope-spec"><a class="header" href="#91-full-loop-position---scope---triage---reinforce---scope-spec">9.1 Full loop: position -&gt; scope -&gt; triage -&gt; reinforce -&gt; scope [SPEC]</a></h3>
+<p>End-to-end test of the feedback loop:</p>
+<ol>
+<li><strong>Setup:</strong> Golem has 1 LP position in a Uniswap v3 ETH/USDC pool.</li>
+<li><strong>Gamma tick 1:</strong> ChainScope seeds the pool and position addresses. Filter includes both.</li>
+<li><strong>Block arrives:</strong> Contains a swap on the ETH/USDC pool. <code>bardo-witness</code> passes it through the filter. Triage processes it.</li>
+<li><strong>Triage scores &gt; 0.5:</strong> The swap is relevant to the golem’s position. Triage calls <code>scope.reinforce()</code> on the counterparty address.</li>
+<li><strong>Gamma tick 2:</strong> Rebuild includes the reinforced counterparty address. Filter now includes it.</li>
+<li><strong>Next block:</strong> A transaction from the counterparty (different pool) passes the filter. Triage evaluates it.</li>
+</ol>
+<p><strong>Verification:</strong> The counterparty address entered scope via Hebbian reinforcement, not via position seeding. The feedback loop expanded the golem’s attention based on observed relevance.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[tokio::test]
+async fn cybernetic_loop_integration() {
+    let scope = ChainScope::new(ChainScopeConfig::default());
+    let mut cortical = mock_cortical_state(0, 0.5);
+    let grimoire = mock_grimoire(&amp;[]);
+
+    let pool = address!("0xpool...");
+    let position = address!("0xposition...");
+    let counterparty = address!("0xcounterparty...");
+
+    cortical.add_position(position, Some(pool));
+
+    // Tick 1: pool and position in scope.
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+    assert!(scope.watched_addresses.contains(&amp;pool));
+    assert!(!scope.watched_addresses.contains(&amp;counterparty));
+
+    // Triage finds a relevant swap, reinforces counterparty.
+    scope.reinforce(counterparty, 0.6);
+
+    // Tick 2: counterparty now in scope.
+    scope.rebuild(&amp;cortical, &amp;grimoire).await;
+    assert!(
+        scope.watched_addresses.contains(&amp;counterparty),
+        "counterparty should be in scope after reinforcement"
+    );
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="test-infrastructure-requirements"><a class="header" href="#test-infrastructure-requirements">Test Infrastructure Requirements</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td><code>mock_cortical_state(n_positions, arousal)</code></td><td>CorticalState with configurable positions and arousal</td></tr>
+<tr><td><code>mock_grimoire(watched_addrs)</code></td><td>GrimoireHandle that returns given watched addresses</td></tr>
+<tr><td><code>seed_curiosity_entries(scope, n, half_life)</code></td><td>Populate interest entries with HighCuriosity entries</td></tr>
+<tr><td><code>ChainScopeConfig::default()</code></td><td>Standard config with <code>max_watch_size = 10_000</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<ul>
+<li><code>14-chain/04-chain-scope.md</code> – ChainScope specification (interest entries, filter construction, arousal modulation)</li>
+<li><code>14-chain/02-triage.md</code> – four-stage triage pipeline that consumes ChainScope’s watched address set</li>
+<li><code>16-testing/13-triage-evaluation.md</code> – companion triage testing doc (precision/recall on labeled datasets, Bayesian surprise calibration)</li>
+<li><code>01-golem/18-cortical-state.md</code> – CorticalState specification (32-signal atomic shared perception surface that drives ChainScope rebuilds)</li>
+<li>Research: <code>01-chain-intelligence/04-chain-scope.md</code> – attention model design (Hebbian reinforcement, decay mechanics, cybernetic feedback loop)</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Feldman, H. &amp; Friston, K. (2010). Attention, Uncertainty, and Free-Energy. <em>Frontiers in Human Neuroscience</em>. — <em>Free-energy framework where attention minimizes surprise; the theoretical basis for ChainScope’s arousal-modulated scope widening under high uncertainty.</em></li>
+<li>Flajolet, P. et al. (2007). HyperLogLog: the analysis of a near-optimal cardinality estimation algorithm. <em>Discrete Mathematics and Theoretical Computer Science</em>. — <em>The probabilistic cardinality estimator used to track <code>universe_size</code> (total unique addresses seen) without storing them all.</em></li>
+<li>Lemire, D. et al. (2022). Binary Fuse Filters: Fast and Smaller Than Xor Filters. <em>Journal of Experimental Algorithmics</em>. — <em>The probabilistic membership filter used for block-level pre-screening in bardo-witness; tested for false positive rate bounds in Section 2.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/16-testing/13-triage-evaluation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/16-testing/15-tui-testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/16-testing/13-triage-evaluation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/16-testing/15-tui-testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

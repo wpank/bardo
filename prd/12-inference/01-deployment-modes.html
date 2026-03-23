@@ -1,0 +1,796 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Deployment Modes - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/12-inference/01-deployment-modes.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="01--three-deployment-modes-spec"><a class="header" href="#01--three-deployment-modes-spec">01 – Three deployment modes [SPEC]</a></h1>
+<p><strong>Embedded, local, and remote inference: where the gateway runs and what it costs</strong></p>
+<blockquote>
+<p>Related: <a href="00-overview.html">00-overview.md</a> (gateway architecture, payment flows, and design principles), <a href="12-providers.html">12-providers.md</a> (five provider backends with self-describing resolution), <a href="18-golem-config.html">18-golem-config.md</a> (Golem-specific inference provider configuration and capability matrix)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the three deployment modes for Bardo Inference (the LLM inference gateway layer of the Bardo ecosystem). It belongs to the inference plane of the architecture. The key concept is that the same gateway binary and 8-layer context engineering pipeline can run embedded in the TUI, as a local standalone process with a local model, or as a remote multi-tenant gateway – each with different cost, privacy, and operational tradeoffs. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="why-mode-matters"><a class="header" href="#why-mode-matters">Why mode matters</a></h2>
+<p>Every Golem (a mortal autonomous DeFi agent managed by the Bardo runtime) needs inference to think. An LLM call is how a golem observes the market, evaluates a strategy, decides to trade, dreams about counterfactuals, and composes its death testament. Where those LLM calls happen – on your machine, in a remote gateway, or inlined into the TUI process itself – is the single biggest decision an owner makes about cost, privacy, and operational complexity.</p>
+<p>Bardo supports three deployment modes. Each gives the golem access to the same 8-layer context engineering pipeline, the same provider routing, the same caching stack. The difference is where the code runs.</p>
+<hr>
+<h2 id="mode-a-embedded-in-the-tui-process"><a class="header" href="#mode-a-embedded-in-the-tui-process">Mode A: Embedded in the TUI process</a></h2>
+<p>The lightest option. No separate inference process. No local model. The TUI calls remote API providers directly, with the gateway’s context engineering pipeline running in-process.</p>
+<p>When the TUI starts with <code>inference.mode = "embedded"</code>, it spawns an in-process Axum server on a random localhost port. This server runs the full gateway pipeline – prompt cache alignment, tool pruning, history compression, semantic caching, provider routing – but never binds to an external interface. Only the local golem and Meta Hermes can reach it.</p>
+<pre><code class="language-toml"># golem.toml
+[inference]
+mode = "embedded"
+
+[inference.providers.blockrun]
+priority = 1
+# No API key needed -- x402 USDC payment
+
+[inference.providers.venice]
+api_key = "ven_..."
+priority = 2
+</code></pre>
+<p>The embedded gateway shares the TUI’s process memory. It adds roughly 50-80 MB of RAM overhead (the ONNX models for embedding and injection detection load into the TUI’s address space). CPU impact is negligible – the pipeline adds &lt;50ms per request at P95, dominated by the DeBERTa injection classifier at 8ms and the nomic-embed embedding at 5ms.</p>
+<p><strong>When to use it.</strong> Starting out. Testing a golem locally. Running on a machine without a GPU. You want zero operational overhead: <code>bardo run</code> starts everything. One process, one concern.</p>
+<p><strong>Limitations.</strong> All inference goes to remote providers, so you pay per call. Latency depends on your internet connection and the provider’s load. Remote golems cannot reach the embedded gateway – it binds to localhost only. If you run multiple golems, each gets its own embedded gateway, duplicating cache state. For multi-golem setups, Mode B or Mode C makes more sense.</p>
+<p><strong>Cost profile.</strong> Every LLM call costs money. With the context engineering pipeline active, expect ~40% savings versus calling providers directly. A golem running 100 ticks/day in calm markets pays about $0.05-0.10/day. Volatile markets push that to $0.40-0.80/day as more ticks escalate to T2.</p>
+<hr>
+<h2 id="mode-b-local-standalone-process"><a class="header" href="#mode-b-local-standalone-process">Mode B: Local standalone process</a></h2>
+<p>A separate gateway process runs on your machine, usually alongside Ollama serving Hermes 4.3. This is the local-inference mode: most LLM calls hit a model running on your own hardware. Cloud providers handle only the hard problems.</p>
+<pre><code class="language-bash"># Start the local inference stack
+bardo inference up
+# This command:
+# 1. Starts Ollama if not running
+# 2. Pulls Hermes 4.3 at your configured quantization
+# 3. Starts bardo-gateway on localhost:8443
+# 4. Runs health checks on all configured providers
+</code></pre>
+<p>The gateway process is the same <code>bardo-gateway</code> Rust binary used in all modes. Here it runs as a standalone daemon, listening on <code>localhost:8443</code>. It routes requests to Ollama for T0/T1 ticks (free) and to cloud providers for T2 (paid).</p>
+<pre><code class="language-toml"># golem.toml
+[inference]
+mode = "local"
+gateway_url = "http://localhost:8443"
+
+[inference.local]
+ollama_url = "http://localhost:11434"
+model = "hf.co/NousResearch/Hermes-4.3-36B-GGUF:Q6_K"
+tiers = ["T0", "T1"]  # Local handles T0 and T1
+
+[inference.providers.venice]
+api_key = "ven_..."
+tiers = ["T1", "T2"]
+priority = 2  # Fallback for T1, primary for T2
+
+[inference.providers.blockrun]
+tiers = ["T2"]
+priority = 3  # T2 only
+</code></pre>
+<h3 id="architecture"><a class="header" href="#architecture">Architecture</a></h3>
+<p>Your machine runs three processes:</p>
+<pre><code>Owner's Machine
++----------------------------------------------------------+
+|                                                           |
+|  bardo-terminal ---- http://localhost:8443 ----&gt; bardo-gateway
+|                                                    |
+|                                                    +---&gt; Ollama (Hermes 4.3)
+|                                                    |     localhost:11434
+|                                                    +---&gt; Venice API (HTTPS)
+|                                                    +---&gt; BlockRun API (HTTPS)
+|                                                           |
+|  Golem Container (local) -- http://localhost:8443 --&gt;----+
+|                                                           |
++----------------------------------------------------------+
+</code></pre>
+<p>The TUI, local golems, and Meta Hermes all share a single gateway instance. Cache state is unified: if one golem’s heartbeat produces a cached response, another golem asking a similar question gets the cache hit. This matters for Clades (peer-to-peer networks of Golems sharing knowledge) running similar strategies.</p>
+<p>Remote golems can also point to this gateway if you expose port 8443 through a VPN (Tailscale, WireGuard) or SSH tunnel. The gateway authenticates requests via ERC-8004 (the on-chain agent identity standard) identity or a shared secret – it does not need to be on the public internet.</p>
+<p><strong>When to use it.</strong> You have a machine with a decent GPU (or Apple Silicon with unified memory). You want most inference to be free and private. You run multiple golems and want shared caching. This is the recommended mode for anyone with a Mac Mini, Mac Studio, or a Linux box with an NVIDIA GPU.</p>
+<h3 id="hermes-43-and-vram-requirements"><a class="header" href="#hermes-43-and-vram-requirements">Hermes 4.3 and VRAM requirements</a></h3>
+<p>Hermes 4.3 from NousResearch is the recommended local model. It is a 36B-parameter model fine-tuned for function calling, structured output, and reasoning – the three capabilities a golem needs most. Available quantizations:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Quantization</th><th>VRAM</th><th>Quality</th><th>Speed (M3 Pro)</th><th>Speed (RTX 4090)</th></tr>
+</thead>
+<tbody>
+<tr><td>Q4_K_M</td><td>~20 GB</td><td>Good. Noticeable quality loss on complex reasoning. Fine for T0/T1.</td><td>~12 tok/s</td><td>~35 tok/s</td></tr>
+<tr><td>Q5_K_M</td><td>~25 GB</td><td>Better. Minimal degradation on most tasks.</td><td>~10 tok/s</td><td>~30 tok/s</td></tr>
+<tr><td>Q6_K</td><td>~28 GB</td><td>Near-full quality. Recommended default.</td><td>~8 tok/s</td><td>~25 tok/s</td></tr>
+<tr><td>Q8_0</td><td>~36 GB</td><td>Negligible loss. For machines with headroom.</td><td>~6 tok/s</td><td>~20 tok/s</td></tr>
+<tr><td>F16</td><td>~72 GB</td><td>Full precision. No quality loss. Requires beefy hardware.</td><td>~3 tok/s</td><td>~12 tok/s</td></tr>
+</tbody>
+</table>
+</div>
+<p>Pick Q6_K unless you have a reason not to. Q4_K_M if your GPU has &lt;32 GB VRAM. F16 if you have a 96+ GB system and want maximum quality.</p>
+<p>For Apple Silicon: the numbers above assume unified memory. A Mac Mini M4 Pro with 48 GB can run Q4_K_M comfortably with ~28 GB left for the OS, gateway, and golem runtime. A Mac Studio M4 Ultra with 192 GB can run F16 and still have 120 GB free. A MacBook Pro M3 Pro with 18 GB does not have enough memory for 36B – use a cloud provider or a smaller model for T1 and route to Hermes via a remote gateway.</p>
+<h3 id="multi-model-local-stacks"><a class="header" href="#multi-model-local-stacks">Multi-model local stacks</a></h3>
+<p>Machines with 64 GB or more of unified memory (Mac Studio M4 Ultra) or dual NVIDIA GPUs can run multiple models simultaneously through the same Ollama instance:</p>
+<pre><code class="language-toml">[inference.providers.local-hermes]
+endpoint = "http://localhost:11434/v1"
+model = "hf.co/NousResearch/Hermes-4.3-36B-GGUF:Q6_K"
+tiers = ["T1", "T2"]
+priority = 1
+
+[inference.providers.local-small]
+endpoint = "http://localhost:11434/v1"
+model = "qwen2.5:3b-instruct-q8_0"
+tiers = ["T0"]
+priority = 1
+</code></pre>
+<p>Ollama multiplexes models automatically, loading and unloading based on available memory. With 192 GB (Mac Studio M4 Ultra): Hermes 4.3 36B Q6_K (~28 GB) + Qwen 3B Q8_0 (~4 GB) + nomic-embed (~0.5 GB) + OS (~6 GB) + gateway + golem runtime (~1 GB) = ~40 GB. That leaves 152 GB of headroom for context windows and other applications. On a 64 GB machine, use Q4_K_M (~20 GB) instead of Q6_K.</p>
+<h3 id="health-monitoring"><a class="header" href="#health-monitoring">Health monitoring</a></h3>
+<p>The gateway checks Ollama’s health every 30 seconds. Three states:</p>
+<ul>
+<li><strong>Healthy</strong>: Ollama running, model loaded, last inference succeeded. Requests route to local model.</li>
+<li><strong>Degraded</strong>: Ollama running but model unloaded (memory pressure) or inference speed dropped below threshold. Gateway still routes to Ollama but logs warnings. The TUI shows a yellow indicator.</li>
+<li><strong>Down</strong>: Ollama not responding. All requests fall back to cloud providers. The TUI shows a red indicator and an alert.</li>
+</ul>
+<p>The health check is cheap: a single <code>GET /api/tags</code> to Ollama, verifying the model is in the loaded list. No test inference, no wasted tokens.</p>
+<h3 id="docker-compose-all-in-one"><a class="header" href="#docker-compose-all-in-one">Docker compose all-in-one</a></h3>
+<p>For owners who prefer containers:</p>
+<pre><code class="language-yaml"># docker-compose.yml
+services:
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  gateway:
+    image: ghcr.io/bardo-run/bardo-gateway:latest
+    environment:
+      - GATEWAY_BIND=0.0.0.0:8443
+      - PROVIDER_LOCAL_ENDPOINT=http://ollama:11434/v1
+      - PROVIDER_LOCAL_MODEL=hf.co/NousResearch/Hermes-4.3-36B-GGUF:Q6_K
+    ports:
+      - "8443:8443"
+    depends_on:
+      - ollama
+
+  golem:
+    image: ghcr.io/bardo-run/golem-container:latest
+    volumes:
+      - golem_data:/data
+      - ./golem.toml:/config/golem.toml
+      - ./STRATEGY.md:/config/STRATEGY.md
+    environment:
+      - INFERENCE_ENDPOINT=http://gateway:8443
+    depends_on:
+      - gateway
+
+volumes:
+  ollama_data:
+  golem_data:
+</code></pre>
+<p><code>docker compose up -d</code> starts everything. Connect the TUI: <code>bardo attach --direct ws://localhost:8080/ws</code>.</p>
+<p><strong>Cost profile.</strong> T0 and T1 inference is free (local Hermes). Only T2 calls hit cloud providers. In calm markets, 80-90% of ticks resolve at T0 (no LLM call at all) and most of the remaining ticks are T1 (local, $0). Expected cost: $0.02-0.05/day in calm markets, $0.15-0.25/day in normal conditions, $0.40-0.60/day in volatile conditions. Electricity is the main cost – Ollama serving inference uses 30-80W depending on GPU load.</p>
+<p><strong>Privacy advantage.</strong> With local inference handling T0 and T1, roughly 95% of your golem’s thoughts in a calm market never leave your machine. Strategy evaluations, position assessments, routine tool calls – all processed locally. Only the rare T2 escalation (novel situations requiring frontier models) transits to a cloud provider. For owners who care about keeping their trading strategies private, this is a strong reason to run Mode B even if the cost savings are modest.</p>
+<p><strong>Latency advantage.</strong> Local inference eliminates network round-trip for T1 calls. Hermes 4.3 Q6_K on an M3 Pro generates first token in ~50ms, compared to ~200-400ms for a cloud API including network latency. For a golem making rapid T1 assessments during a volatile market, local inference lets it think faster. The golem can evaluate 15 T1 ticks in the time a cloud-dependent golem evaluates 10.</p>
+<hr>
+<h2 id="mode-c-remote-gateway"><a class="header" href="#mode-c-remote-gateway">Mode C: Remote gateway</a></h2>
+<p>A <code>bardo-gateway</code> instance running on remote infrastructure. The full 8-layer pipeline, multi-provider routing, and caching – accessible over HTTPS from anywhere. Two flavors: self-deployed or hosted.</p>
+<h3 id="self-deployed"><a class="header" href="#self-deployed">Self-deployed</a></h3>
+<p>You run your own gateway. You bring your own provider API keys. No x402 spread – you pay raw provider costs after context engineering savings.</p>
+<pre><code class="language-bash"># Deploy to Fly.io
+bardo inference deploy --provider fly --name my-gateway --region iad
+# -&gt; https://my-gateway.fly.dev
+
+# Deploy to a VPS via SSH
+bardo inference deploy --provider ssh --host 203.0.113.42 --user root
+# -&gt; https://gateway.yourdomain.com (Caddy handles TLS)
+</code></pre>
+<p>The <code>deploy</code> command downloads the <code>bardo-gateway</code> binary for the target platform (~50 MB static binary), uploads it, configures a systemd service, prompts for provider API keys, and starts the gateway. On Fly.io it generates the <code>fly.toml</code> and runs <code>fly deploy</code>. On a VPS it also sets up Caddy for automatic HTTPS.</p>
+<pre><code class="language-toml"># golem.toml
+[inference]
+mode = "remote"
+gateway_url = "https://my-gateway.fly.dev"
+
+# Gateway authenticates via ERC-8004 identity (auto-detected from wallet)
+# Or: API key for simpler setups
+gateway_api_key = "bardo_gw_..."
+</code></pre>
+<p>The self-deployed gateway configuration lives on the server:</p>
+<pre><code class="language-toml"># bardo-gateway.toml (on the gateway server)
+[server]
+bind = "0.0.0.0:8443"
+
+[auth]
+mode = "erc8004"  # Or "shared_secret" for personal use
+
+[providers.blockrun]
+priority = 1
+tiers = ["T1", "T2"]
+
+[providers.venice]
+api_key = "ven_..."
+priority = 2
+tiers = ["T1", "T2"]
+
+[providers.openrouter]
+api_key = "sk-or-..."
+priority = 3
+tiers = ["T2"]  # Fallback only
+
+[cache]
+semantic_enabled = true
+hash_enabled = true
+prefix_enabled = true
+
+[pipeline]
+layers = ["prefix_align", "semantic_cache", "hash_cache", "tool_prune",
+          "history_compress", "defi_enrich", "safety_scan", "injection_detect"]
+</code></pre>
+<p>Resource requirements are modest. The gateway binary uses &lt;200 MB RAM idle, &lt;500 MB under load. CPU usage is minimal – the ONNX models (DeBERTa at ~8ms, nomic-embed at ~5ms) run on CPU and consume a single core briefly per request. It fits on the cheapest VPS tier: ~$4/month on Hetzner, $2-5/month on Fly.io.</p>
+<h3 id="hosted"><a class="header" href="#hosted">Hosted</a></h3>
+<p><code>gateway.bardo.run</code> is a Bardo-operated gateway. Any ERC-8004 registered agent can use it. No setup. Payment via x402 (a micropayment protocol for HTTP-native USDC payments on Base) USDC with a configurable spread (default 20%, down to 8% for Sovereign-tier reputation).</p>
+<pre><code class="language-toml"># golem.toml
+[inference]
+mode = "remote"
+gateway_url = "https://gateway.bardo.run"
+# Auth: ERC-8004 identity auto-detected from wallet
+</code></pre>
+<p>The hosted gateway applies the same context engineering, saving ~40% on raw provider costs. Even with the 20% spread, users typically pay less than calling providers directly. The math: if context engineering saves 40% and the spread is 20% of the optimized cost, the all-in price is roughly 0.60 * 1.20 = 0.72x of the naive cost. That is a 28% savings.</p>
+<p>Spread tiers by ERC-8004 reputation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Reputation tier</th><th>Spread</th><th>How to reach it</th></tr>
+</thead>
+<tbody>
+<tr><td>Default (no identity)</td><td>20%</td><td>No ERC-8004 linked</td></tr>
+<tr><td>Basic (50+ score)</td><td>18%</td><td>Active agent with some history</td></tr>
+<tr><td>Verified (200+ score)</td><td>15%</td><td>Established track record</td></tr>
+<tr><td>Trusted (500+ score)</td><td>12%</td><td>Long-running, profitable agent</td></tr>
+<tr><td>Sovereign (1000+ score)</td><td>8%</td><td>Elite agents, significant on-chain history</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>When to use it.</strong> Fleets of golems across multiple machines. Bardo Compute containers that need inference without running Ollama in each VM. Owners who want zero local infrastructure. The hosted option is the lowest-friction path – two lines of config and inference works.</p>
+<p>Self-deployed is for cost-conscious operators running multiple golems. The gateway is shared infrastructure: ten golems can share one $4/month VPS, splitting cache state across the fleet. Provider API costs are the only variable.</p>
+<p><strong>Cost profile.</strong> Self-deployed: raw provider costs only, no spread. Infrastructure: $4-50/month depending on scale. Hosted: provider cost + 20% spread (less with reputation). Both benefit from the full ~40% context engineering savings.</p>
+<hr>
+<h2 id="mode-comparison"><a class="header" href="#mode-comparison">Mode comparison</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th></th><th>Mode A: Embedded</th><th>Mode B: Local</th><th>Mode C: Remote</th></tr>
+</thead>
+<tbody>
+<tr><td>Setup time</td><td>0 minutes</td><td>2-5 minutes</td><td>0 min (hosted), 5-10 min (self-deployed)</td></tr>
+<tr><td>Separate process</td><td>No</td><td>Yes (gateway + Ollama)</td><td>Yes (remote)</td></tr>
+<tr><td>Local model</td><td>No</td><td>Yes (Hermes 4.3 via Ollama)</td><td>No (unless Ollama on gateway server)</td></tr>
+<tr><td>Free inference</td><td>No</td><td>T0/T1 free (local)</td><td>No</td></tr>
+<tr><td>Privacy</td><td>Prompts transit to cloud</td><td>T0/T1 stay local</td><td>Prompts transit to gateway</td></tr>
+<tr><td>Multi-golem</td><td>Separate caches per golem</td><td>Shared cache</td><td>Shared cache</td></tr>
+<tr><td>Monthly infra cost</td><td>$0</td><td>$0 (electricity only)</td><td>$0 (hosted) or $4-50 (self-deployed)</td></tr>
+<tr><td>Best for</td><td>Single golem, testing, low-resource</td><td>GPU owners, privacy, cost savings</td><td>Fleets, Compute containers, zero-ops</td></tr>
+</tbody>
+</table>
+</div>
+<p>Most owners will start with Mode A and graduate to Mode B once they realize how much they spend on cloud inference. Mode C is for operators running serious fleets or for golems deployed on Bardo Compute where local GPUs are not available.</p>
+<hr>
+<h2 id="inference-in-compute-containers"><a class="header" href="#inference-in-compute-containers">Inference in Compute containers</a></h2>
+<p>When a Golem runs on Bardo Compute (the VM hosting service for Golems, running on Fly.io), it does not run Ollama locally – the VM does not have GPU access. Instead, the golem’s <code>bardo-provider-adapter</code> runtime extension registers a remote inference gateway as the sole provider at session start.</p>
+<p>Each Compute VM tier includes a base inference token allowance. Overages bill from the golem’s wallet. See <a href="../11-compute/03-billing.html">prd2/11-compute/03-billing.md</a> for tier-to-allowance mapping and overage pricing.</p>
+<hr>
+<h2 id="dream-state-inference"><a class="header" href="#dream-state-inference">Dream-state inference</a></h2>
+<p>Dream cycles are the golem’s most inference-heavy state. During hypnagogic sleep, the golem replays market episodes, tests counterfactual strategies, simulates threat scenarios, and integrates insights into its Grimoire (the agent’s persistent knowledge base). This is T2-heavy work (T0/T1/T2 being the three-tier model routing system: T0 is a zero-cost finite state machine, T1 uses a cheap model, T2 escalates to a frontier model) – frontier models reasoning about complex multi-step problems.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dream phase</th><th>Model tier</th><th>Privacy</th><th>Typical cost</th></tr>
+</thead>
+<tbody>
+<tr><td>NREM (memory consolidation)</td><td>T1</td><td>Private (Venice preferred)</td><td>$0.01-0.02 per cycle</td></tr>
+<tr><td>REM (creative recombination)</td><td>T2</td><td>Private (Venice preferred)</td><td>$0.05-0.15 per cycle</td></tr>
+<tr><td>Integration (insight promotion)</td><td>T2</td><td>TEE-attested (Venice TEE)</td><td>$0.03-0.08 per cycle</td></tr>
+</tbody>
+</table>
+</div>
+<p>Dream cycles are a good fit for Anthropic’s Batch API (50% discount, 24-hour SLA) since they are not latency-sensitive. A golem can queue its dream prompts before sleeping and process the results when it wakes. The gateway routes dream-subsystem requests to the Batch API when available.</p>
+<p>Venice is the preferred provider for dreams because dream content is privacy-sensitive – the golem is reasoning about its own strategies, weaknesses, and mortality. DIEM-funded Venice calls make dream inference free, which matters because dreams are the single largest per-cycle inference cost.</p>
+<hr>
+<h2 id="two-layers-of-context-engineering"><a class="header" href="#two-layers-of-context-engineering">Two layers of context engineering</a></h2>
+<p>There is an asymmetry worth calling out. The gateway applies context engineering to all inference calls: prompt caching, token budgets, tool pruning, model routing. This reduces cost. But the golem also runs its own context engineering inside the runtime, through the Context Governor. These two systems are complementary, not redundant.</p>
+<p>The gateway sees assembled prompts and returns completions. It is stateless with respect to the golem’s memory. It optimizes the mechanics of LLM interaction: how many tokens, which model, which cache.</p>
+<p>The Context Governor operates inside the golem’s Rust runtime. It assembles the Cognitive Workspace fresh each tick – not a growing conversation that eventually gets compressed, but a purpose-built context assembled from structured categories with learned token allocations. It implements Alan Baddeley’s working memory model: a central executive (the Governor) allocates attention (tokens) across an episodic buffer (the workspace), drawing from positions, strategies, Grimoire entries, causal models, and somatic readings.</p>
+<p>Three cybernetic feedback loops tune the workspace over time:</p>
+<ol>
+<li><strong>Per-tick outcome correlation.</strong> After every tick with an outcome, the Governor correlates which Styx (the knowledge retrieval and injection plane) entries appeared in the workspace with whether the outcome was positive. Entries in winning contexts get weight; entries in losing contexts lose it.</li>
+<li><strong>Per-curator policy evolution (every 50 ticks).</strong> Aggregates tick-level correlations into category-level performance. Categories with consistently positive correlations get more tokens in the budget.</li>
+<li><strong>Per-regime restructuring.</strong> When the market regime changes, correlations partially reset (50% decay). Knowledge from one regime does not fully transfer to another.</li>
+</ol>
+<p>The result: after a few hundred ticks, the Context Governor knows which categories of context improve decisions for this golem in this market regime. It stops wasting tokens on information that does not help.</p>
+<p>This dual-layer design means the gateway optimizes cost while the Context Governor optimizes quality. They compound. A golem running through both systems pays less for better decisions than a golem running through either alone.</p>
+<hr>
+<h2 id="t0t1t2-cost-optimization"><a class="header" href="#t0t1t2-cost-optimization">T0/T1/T2 cost optimization</a></h2>
+<h3 id="the-local-first-strategy"><a class="header" href="#the-local-first-strategy">The local-first strategy</a></h3>
+<p>Run Hermes 4.3 locally for T0/T1. Send only T2 to the cloud. This is the highest-leverage cost optimization in the entire system.</p>
+<p>At 100 ticks/day in a normal market:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Ticks</th><th>Local cost</th><th>Cloud cost</th><th>Hybrid cost</th></tr>
+</thead>
+<tbody>
+<tr><td>T0 (80 ticks)</td><td>80</td><td>$0.00</td><td>$0.00</td><td>$0.00</td></tr>
+<tr><td>T1 (15 ticks)</td><td>15</td><td>$0.00</td><td>$0.045</td><td>$0.00</td></tr>
+<tr><td>T2 (5 ticks)</td><td>5</td><td>N/A</td><td>$0.15</td><td>$0.15</td></tr>
+<tr><td><strong>Total</strong></td><td>100</td><td><strong>$0.00</strong></td><td><strong>$0.195</strong></td><td><strong>$0.15</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>The hybrid approach (Mode B) saves $0.045/day on T1 alone. Over 30 days that is $1.35 saved – not huge in absolute terms, but for a golem with a $6.00 monthly inference budget, it is 22% of the budget.</p>
+<p>In volatile markets the savings are larger because T1 traffic increases:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Ticks</th><th>Cloud cost</th><th>Hybrid cost</th><th>Savings</th></tr>
+</thead>
+<tbody>
+<tr><td>T0 (60 ticks)</td><td>60</td><td>$0.00</td><td>$0.00</td><td>$0.00</td></tr>
+<tr><td>T1 (25 ticks)</td><td>25</td><td>$0.075</td><td>$0.00</td><td>$0.075</td></tr>
+<tr><td>T2 (15 ticks)</td><td>15</td><td>$0.75</td><td>$0.75</td><td>$0.00</td></tr>
+<tr><td><strong>Total</strong></td><td>100</td><td><strong>$0.825</strong></td><td><strong>$0.75</strong></td><td><strong>$0.075/day</strong></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="worked-example-hosted-gateway-economics"><a class="header" href="#worked-example-hosted-gateway-economics">Worked example: hosted gateway economics</a></h3>
+<p>A user sends a request with 50K input tokens and 2K output tokens through the hosted gateway, targeting a Sonnet-class model.</p>
+<pre><code>Naive cost (direct API):                 $0.180
+  Input:  50K x $3.00/M  = $0.150
+  Output:  2K x $15.00/M = $0.030
+
+Context engineering saves ~40%:
+  30K tokens hit prefix cache (90% discount):  -$0.040
+  Tool pruning removes 8K tokens:              -$0.024
+  History compression saves 2K tokens:         -$0.006
+  Optimized cost (BlockRun):                    $0.099
+
+User pays (20% spread):                        $0.119
+  BlockRun cost:  $0.099
+  Spread:         $0.020
+
+User saves vs. direct API:  34% ($0.180 -&gt; $0.119)
+Gateway operator margin:    $0.020
+</code></pre>
+<p>The user saves money despite the 20% spread. The gateway operator earns $0.02/request. Both sides win because context engineering creates value that did not exist before – the ~40% in savings is split between the user (~60% of the savings) and the operator (~40% of the savings via the spread).</p>
+<p>For a self-deployed gateway: the user pays $0.099 (no spread). A $4/month VPS breaks even at ~200 requests/month, or about 7 requests/day.</p>
+<h3 id="daily-cost-projections"><a class="header" href="#daily-cost-projections">Daily cost projections</a></h3>
+<p>For a golem running 100 ticks/day with the full optimization stack:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>T0 rate</th><th>T1 cost</th><th>T2 cost</th><th>Daily total</th></tr>
+</thead>
+<tbody>
+<tr><td>Calm market (90% T0)</td><td>90%</td><td>$0.024</td><td>$0.02</td><td>~$0.05</td></tr>
+<tr><td>Normal market (80% T0)</td><td>80%</td><td>$0.045</td><td>$0.15</td><td>~$0.20</td></tr>
+<tr><td>Volatile market (60% T0)</td><td>60%</td><td>$0.075</td><td>$0.75</td><td>~$0.83</td></tr>
+</tbody>
+</table>
+</div>
+<p>These numbers assume cloud-only inference (Mode A or C). With Mode B (local Hermes for T0/T1), subtract the T1 cost entirely.</p>
+<hr>
+<h2 id="cost-effectiveness-feedback-loop"><a class="header" href="#cost-effectiveness-feedback-loop">Cost-effectiveness feedback loop</a></h2>
+<p>The evaluation system measures whether paid inference is worth the money.</p>
+<p>The metric: <strong>delta-accuracy per dollar per tier per category.</strong> For each prediction category (price, fee_rate, liquidity, etc.), the system compares the accuracy of predictions made at each inference tier.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct CostEffectiveness {
+    pub category: PredictionCategory,
+    pub tier: InferenceTier,
+    /// Accuracy of predictions made at this tier for this category
+    pub accuracy: f32,
+    /// Average cost per prediction at this tier
+    pub cost_per_prediction: f64,
+    /// How much better this tier is vs the next cheaper tier
+    pub delta_accuracy: f32,
+    /// delta_accuracy / cost_per_prediction
+    pub accuracy_per_dollar: f64,
+}
+<span class="boring">}</span></code></pre>
+<p>If T2 (paid API, ~$0.003/prediction) achieves 72% accuracy on fee_rate predictions, and T1 (local model, ~$0.0001/prediction) achieves 68% accuracy on the same category, the delta is 4% accuracy for 30x the cost. At roughly 500 fee_rate predictions per day, that’s $1.50/day for 4% more accuracy. Whether that’s worth it depends on the category’s economic impact.</p>
+<p>The auto-shift rule: if a category’s <code>accuracy_per_dollar</code> falls below a configurable threshold for 7 consecutive days, the inference router demotes that category to the next cheaper tier. If accuracy drops noticeably after demotion, the system promotes it back after 3 days.</p>
+<p>This prevents the common failure mode of using expensive models for everything. Some categories (binary yes/no predictions about gas prices) don’t benefit from larger models. Others (complex multi-factor fee rate predictions) do. The system learns which is which.</p>
+<hr>
+<h2 id="provider-performance-evaluation"><a class="header" href="#provider-performance-evaluation">Provider performance evaluation</a></h2>
+<p>Beyond cost-effectiveness per tier, the system tracks per-provider accuracy.</p>
+<p>When the same prediction category is routed to different providers (due to fallback chains or load balancing), the system records which provider generated which prediction. Over time, this builds a provider performance profile:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ProviderPerformance {
+    pub provider_id: String,
+    pub model: String,
+    /// Per-category accuracy for this provider
+    pub category_accuracy: HashMap&lt;PredictionCategory, f32&gt;,
+    /// Average latency in milliseconds
+    pub avg_latency_ms: u64,
+    /// Cost per 1K tokens (input/output averaged)
+    pub cost_per_1k_tokens: f64,
+    /// Uptime fraction over last 7 days
+    pub uptime_7d: f32,
+}
+<span class="boring">}</span></code></pre>
+<p>The inference router uses this data to adjust provider priority weights. A provider with consistently higher accuracy for a given category gets higher priority for that category, even if it’s more expensive, subject to the cost-effectiveness threshold.</p>
+<p>This connects to mortality: inference cost feeds the economic vitality clock. A golem that routes all predictions through expensive providers burns through credits faster. The cost-effectiveness loop applies pressure toward the cheapest tier that maintains acceptable accuracy. A golem that learns to use local inference for simple predictions and paid inference only for complex ones lives longer.</p>
+<hr>
+<h2 id="first-run-wizard-integration"><a class="header" href="#first-run-wizard-integration">First-run wizard integration</a></h2>
+<p>The first time an owner runs <code>bardo init</code>, the setup wizard asks about inference. The decision tree:</p>
+<ol>
+<li>“Do you have a GPU?” -&gt; Yes: recommend Mode B. No: recommend Mode A.</li>
+<li>If Mode B: “How much VRAM/unified memory?” -&gt; Recommend quantization level.</li>
+<li>“Do you have API keys for any providers?” -&gt; Configure them or default to BlockRun (x402, no key needed).</li>
+<li>“Do you want to run your own gateway?” -&gt; If yes, walk through Mode C self-deploy.</li>
+</ol>
+<p>The wizard writes the <code>[inference]</code> section of <code>golem.toml</code>. Owners can change it later from the TUI’s inference screen or by editing the file directly.</p>
+<hr>
+<h2 id="tui-inference-window"><a class="header" href="#tui-inference-window">TUI inference window</a></h2>
+<p>The TUI’s Config window includes an Inference section showing real-time provider status, cost tracking, and configuration controls.</p>
+<pre><code>+-- Inference Configuration -------------------------------------------+
+|                                                                       |
+|  Mode: [Local Standalone]                                            |
+|                                                                       |
+|  +- Provider Stack -----------------------------------------------+  |
+|  |                                                                 |  |
+|  |  #   Provider        Tiers    Status         Latency    Auth   |  |
+|  |  --  --------        -----    ------         -------    ----   |  |
+|  |  1.  Local Hermes    T0,T1    * Healthy       25 tok/s  Auto   |  |
+|  |  2.  Venice          T1,T2    * Healthy       891ms     Key    |  |
+|  |  3.  BlockRun        T2       * Healthy       234ms     x402   |  |
+|  |  4.  OpenRouter      T2       o No key        --        --     |  |
+|  |                                                                 |  |
+|  |  [Arrows] Reorder  [A] Add  [E] Edit  [X] Remove  [T] Test    |  |
+|  +-----------------------------------------------------------------+  |
+|                                                                       |
+|  +- Local Model ---------------------------------------------------+  |
+|  |  Model: Hermes 4.3 36B Q6_K                                    |  |
+|  |  Status: * Loaded (28.1 GB)                                      |  |
+|  |  Speed: 24.7 tok/s (last 100 requests)                          |  |
+|  |  Context: 8,192 tokens (max 32,768)                              |  |
+|  |                                                                   |  |
+|  |  [1] Q4_K_M  [2] Q5_K_M  [3] Q6_K (current)  [4] Q8_0  [5] F16 |  |
+|  |  [B] Benchmark  [P] Pull new model  [U] Unload                   |  |
+|  +-------------------------------------------------------------------+  |
+|                                                                       |
+|  +- Cost Summary (last 24h) ---------------------------------------+  |
+|  |  Local Hermes:  847 calls   $0.00    (89%)                      |  |
+|  |  Venice:         92 calls   $0.18    (10%)                      |  |
+|  |  BlockRun:       12 calls   $0.31    (1%)                       |  |
+|  |  Total:         951 calls   $0.49                                |  |
+|  +-----------------------------------------------------------------+  |
+|                                                                       |
++-----------------------------------------------------------------------+
+</code></pre>
+<p>From this screen you can switch inference modes without restarting, add or remove providers, reassign tier routing, flush caches (semantic, hash, or all), and drill into cost history with per-day, per-week, and per-month breakdowns by tier and provider.</p>
+<hr>
+<h2 id="configuration-reference"><a class="header" href="#configuration-reference">Configuration reference</a></h2>
+<h3 id="golemtoml-inference-section"><a class="header" href="#golemtoml-inference-section">golem.toml inference section</a></h3>
+<pre><code class="language-toml">[inference]
+# "embedded" | "local" | "remote"
+mode = "local"
+
+# Only for mode = "remote"
+gateway_url = "https://my-gateway.fly.dev"
+gateway_api_key = "bardo_gw_..."  # Or use ERC-8004 auto-auth
+
+[inference.local]
+ollama_url = "http://localhost:11434"
+model = "hf.co/NousResearch/Hermes-4.3-36B-GGUF:Q6_K"
+# Which tiers the local model handles
+tiers = ["T0", "T1"]
+# Health check interval in seconds
+health_check_interval = 30
+
+[inference.budget]
+# Per-day budget cap in USD (0 = unlimited)
+daily_cap_usd = 5.0
+# Per-tier caps
+t1_daily_cap_usd = 1.0
+t2_daily_cap_usd = 4.0
+
+[inference.cache]
+semantic_enabled = true
+semantic_threshold = 0.92
+hash_enabled = true
+hash_max_entries = 5000
+
+[inference.providers.blockrun]
+priority = 1
+tiers = ["T1", "T2"]
+
+[inference.providers.venice]
+api_key = "ven_..."
+priority = 2
+tiers = ["T1", "T2"]
+# DIEM staking for free inference
+diem_enabled = true
+
+[inference.providers.openrouter]
+api_key = "sk-or-..."
+priority = 3
+tiers = ["T2"]
+</code></pre>
+<h3 id="bardo-gatewaytoml-server-configuration"><a class="header" href="#bardo-gatewaytoml-server-configuration">bardo-gateway.toml (server configuration)</a></h3>
+<pre><code class="language-toml">[server]
+bind = "0.0.0.0:8443"
+# TLS handled by reverse proxy (Caddy, Fly.io) in production
+tls = false
+
+[auth]
+# "erc8004" (multi-user, identity-based) or "shared_secret" (personal)
+mode = "erc8004"
+
+[pipeline]
+# All 8 layers enabled by default
+layers = ["prefix_align", "semantic_cache", "hash_cache", "tool_prune",
+          "history_compress", "defi_enrich", "safety_scan", "injection_detect"]
+
+[cache]
+semantic_enabled = true
+semantic_threshold = 0.92
+semantic_max_entries = 10000
+hash_enabled = true
+hash_max_entries = 5000
+prefix_enabled = true
+
+[ml]
+embedding_model = "nomic-embed-text-v1.5"
+injection_model = "deberta-v3-base"
+
+[providers.blockrun]
+priority = 1
+tiers = ["T1", "T2"]
+
+[providers.venice]
+api_key = "ven_..."
+priority = 2
+tiers = ["T1", "T2"]
+
+[providers.openrouter]
+api_key = "sk-or-..."
+priority = 3
+tiers = ["T2"]
+</code></pre>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th><th>What it covers</th></tr>
+</thead>
+<tbody>
+<tr><td>Gateway architecture and 8-layer pipeline</td><td><a href="00-overview.html">00-overview.md</a></td><td>Top-level inference gateway spec: architecture, payment flows, provider routing, context engineering pipeline, and deployment topology</td></tr>
+<tr><td>Model routing and subsystem intents</td><td><a href="01a-routing.html">01a-routing.md</a></td><td>Self-describing providers, declarative intents, mortality-aware resolution, and the full routing algorithm across five backends</td></tr>
+<tr><td>Caching layers</td><td><a href="02-caching.html">02-caching.md</a></td><td>Three-layer cache stack: prompt prefix alignment, semantic response cache, and deterministic hash cache with regime-aware invalidation</td></tr>
+<tr><td>Revenue model</td><td><a href="03-economics.html">03-economics.md</a></td><td>x402 spread revenue model, per-tenant cost attribution, and infrastructure cost projections</td></tr>
+<tr><td>Context engineering details</td><td><a href="04-context-engineering.html">04-context-engineering.md</a></td><td>The 8-layer pipeline: prompt cache alignment, semantic cache, hash cache, tool pruning, history compression, KV-cache routing, PII masking, and injection detection</td></tr>
+<tr><td>Five provider backends</td><td><a href="12-providers.html">12-providers.md</a></td><td>BlockRun, OpenRouter, Venice, Bankr, and Direct Key provider implementations with Rust trait definitions and self-describing resolution</td></tr>
+<tr><td>Golem provider config</td><td><a href="18-golem-config.html">18-golem-config.md</a></td><td>Golem-specific inference provider configuration, capability matrix, and payment method selection</td></tr>
+<tr><td>Compute billing and inference allowances</td><td><a href="../11-compute/03-billing.html">prd2/11-compute/03-billing.md</a></td><td>How Compute VM tiers include base inference token allowances and bill overages from the Golem’s wallet</td></tr>
+<tr><td>Dream-state inference</td><td><a href="../06-hypnagogia/02-architecture.html">prd2/06-hypnagogia/02-architecture.md</a></td><td>Hypnagogic sleep architecture: NREM replay, REM creative recombination, and inference profiles for liminal phase transitions</td></tr>
+<tr><td>Golem container structure</td><td><a href="../01-golem/00-overview.html">prd2/01-golem/00-overview.md</a></td><td>Three-process container (golem-binary, hermes-agent, sanctum-ts), JSON-RPC over Unix sockets, and sidecar minimization policy</td></tr>
+<tr><td>Compute deployment paths</td><td><a href="../11-compute/00-overview.html">prd2/11-compute/00-overview.md</a></td><td>Managed, self-deploy, and bare metal deployment with export-binary escape hatch</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/12-inference/00-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/12-inference/01a-routing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/12-inference/00-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/12-inference/01a-routing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

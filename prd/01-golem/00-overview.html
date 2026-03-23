@@ -1,0 +1,1384 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Golem - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/00-overview.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="what-is-a-golem-spec"><a class="header" href="#what-is-a-golem-spec">What is a Golem [SPEC]</a></h1>
+<p><strong>Version:</strong> 2.0.0
+<strong>Last Updated:</strong> 2026-03-14</p>
+<blockquote>
+<p><strong>Language</strong>: Rust (edition 2024) | <strong>Repository</strong>: <code>bardo-golem-rs</code> (Cargo workspace)</p>
+<p><strong>Crates</strong>: <code>golem-core</code>, <code>golem-runtime</code>, <code>golem-heartbeat</code>, <code>golem-grimoire</code>, <code>golem-daimon</code>, <code>golem-mortality</code>, <code>golem-dreams</code>, <code>golem-context</code>, <code>golem-safety</code>, <code>golem-inference</code>, <code>golem-chain</code>, <code>golem-tools</code>, <code>golem-coordination</code>, <code>golem-surfaces</code>, <code>golem-creature</code>, <code>golem-engagement</code>, <code>golem-binary</code></p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This is the architectural overview of the Golem runtime, the core autonomous agent in the Bardo system. It belongs to the <code>01-golem</code> section, which specifies how individual agents are built, think, trade, and die. The key concept to grasp before diving in: a Golem is a mortal, autonomous DeFi agent compiled as a single Rust binary, running on a micro VM, with a wallet, a strategy, a knowledge system, and a finite lifespan. Full term definitions are in <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions).</p>
+</blockquote>
+<h2 id="document-map"><a class="header" href="#document-map">Document Map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>File</th><th>Topic</th></tr>
+</thead>
+<tbody>
+<tr><td><code>00-overview.md</code></td><td>Architecture overview, key terms, crate inventory, CoALA mapping</td></tr>
+<tr><td><code>01-cognition.md</code></td><td>Three-tier inference (T0/T1/T2 cognitive gating), x402 micropayments, cost optimization</td></tr>
+<tr><td><code>02-heartbeat.md</code></td><td>The 9-step decision cycle each Golem executes on every tick</td></tr>
+<tr><td><code>03-mind.md</code></td><td>Cognitive mechanisms overview: attention, habituation, homeostasis, state management</td></tr>
+<tr><td><code>04-mortality.md</code></td><td><em>(stub)</em> – See <code>02-mortality/</code> (three death clocks, behavioral phases, vitality scoring)</td></tr>
+<tr><td><code>05-death.md</code></td><td><em>(stub)</em> – See <code>02-mortality/06-thanatopsis.md</code> (the four-phase Death Protocol: Acceptance, Settlement, Reflection, Legacy)</td></tr>
+<tr><td><code>06-creation.md</code></td><td>Golem creation flow, STRATEGY.md compilation, owner onboarding wizard</td></tr>
+<tr><td><code>07-provisioning.md</code></td><td>Fly.io compute provisioning, warm pools, 8-step type-state deployment pipeline</td></tr>
+<tr><td><code>08-funding.md</code></td><td>Wallet funding, Permit2 integration, delegation grants, metabolic self-funding loop</td></tr>
+<tr><td><code>09-inheritance.md</code></td><td>Knowledge inheritance across generations, Clade sync, anti-proletarianization mandate</td></tr>
+<tr><td><code>10-replication.md</code></td><td>Replicant spawning, MAP-Elites selection, hypothesis testing, heuristic mutation</td></tr>
+<tr><td><code>11-lifecycle.md</code></td><td>Type-state machine (Provisioning/Active/Dreaming/Terminal/Dead), kill-switch, bardo mapping</td></tr>
+<tr><td><code>12-teardown.md</code></td><td>8-step teardown pipeline, settlement order, Pause vs Destroy comparison</td></tr>
+<tr><td><code>13-runtime-extensions.md</code></td><td>Extension trait system (20 hooks, 28 extensions, 7-layer DAG), split into 13a and 13b</td></tr>
+<tr><td><code>14-context-governor.md</code></td><td>Context assembly as a learnable control problem, CognitiveWorkspace, cybernetic context learning</td></tr>
+<tr><td><code>15-sleepwalker.md</code></td><td>Sleepwalker phenotype: observer Golems that earn by selling knowledge, not trading</td></tr>
+<tr><td><code>17-prediction-engine.md</code></td><td>Domain-agnostic Oracle, residual correction (~15k/day), attention foraging, action gating</td></tr>
+<tr><td><code>18-cortical-state.md</code></td><td>CorticalState (32-signal atomic shared perception surface), Daimon affect engine, TUI mapping</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="the-problem-this-project-solves"><a class="header" href="#the-problem-this-project-solves">The Problem This Project Solves</a></h2>
+<p>DeFi (decentralized finance) strategy execution has become too complex and too fast for humans to operate manually. Across lending protocols, AMM liquidity provision, yield farming, routing, and market structure exploitation, the opportunities that generate consistent returns all share the same requirements: continuous monitoring, cross-protocol composition, and reaction times faster than any human can sustain.</p>
+<p>The obvious answer is “use AI agents.” But existing agent frameworks are missing the infrastructure that would make agents viable as autonomous economic actors. They can reason, but they can’t hold capital safely. They can execute trades, but they can’t be constrained by on-chain policy. They can remember things, but they can’t compress, forget, or transfer knowledge across generations. They run indefinitely, which sounds like a feature but is actually a problem.</p>
+<p>A Golem is Bardo’s answer: an autonomous DeFi agent that lives in a single Rust binary on a single VM, holds a wallet, executes a strategy, accumulates knowledge, and – when its operating budget runs out – dies. It passes what it learned to its successors.</p>
+<p>The rest of this document explains what that means concretely: the architecture, the subsystems, the crate layout, and the design decisions that got us here.</p>
+<hr>
+<h2 id="the-argument-in-one-sentence"><a class="header" href="#the-argument-in-one-sentence">The Argument in One Sentence</a></h2>
+<p>An autonomous agent that cannot die has no reason to be efficient, no pressure to learn, and no incentive to share what it knows – mortality is the architectural constraint that makes intelligence economically viable [JONAS-1966].</p>
+<hr>
+<h2 id="why-mortality-the-core-thesis"><a class="header" href="#why-mortality-the-core-thesis">Why Mortality: The Core Thesis</a></h2>
+<p>Most agent frameworks assume their agents will run indefinitely. The default is immortality. This project argues the default is wrong.</p>
+<p>The argument rests on four pillars, each grounded in independent research.</p>
+<h3 id="pillar-1-mortality-creates-intelligence"><a class="header" href="#pillar-1-mortality-creates-intelligence">Pillar 1: Mortality Creates Intelligence</a></h3>
+<p>Biology has run self-replicating adaptive agents for four billion years and has never once produced an immortal organism. Not because evolution lacks the mechanism (telomerase exists and is actively suppressed), but because mortality is computationally superior to immortality for adaptive systems.</p>
+<p>Tom Ray’s Tierra system (1991) demonstrated this in silico: self-replicating programs competing for CPU time spontaneously evolved parasites, hyperparasites, and social cooperators – but only because a “reaper” killed the oldest programs. Without the reaper, memory filled and evolution halted [RAY-1991]. Lenski et al. (2003) showed in the Avida platform that digital organisms evolved complex Boolean logic through stepping-stone mutations – a process that requires sufficient population turnover [LENSKI-2003]. Vostinar et al. (2019) demonstrated that programmed cell death itself evolves as adaptive behavior: 12.5% of a digital unicellular population evolved to kill themselves because it benefited kin [VOSTINAR-2019].</p>
+<p>The Kreps-Milgrom-Roberts-Wilson (KMRW) theorem from game theory proves that agents with uncertain finite horizons cooperate more effectively than infinite-horizon agents, because the uncertain endpoint creates incentives to build reputation rather than defect [KREPS-MILGROM-ROBERTS-WILSON-1982]. For Golems managing shared DeFi infrastructure, this means mortal agents are structurally more trustworthy than immortal ones.</p>
+<p><strong>Design implication</strong>: Each Golem has three independent death clocks (economic, epistemic, stochastic). Any reaching zero kills it. This creates behavioral phases (Thriving – Stable – Conservation – Declining – Terminal) that modulate every aspect of cognition – a dying Golem allocates attention differently than a thriving one.</p>
+<h3 id="pillar-2-affect-creates-salience"><a class="header" href="#pillar-2-affect-creates-salience">Pillar 2: Affect Creates Salience</a></h3>
+<p>Antonio Damasio’s somatic marker hypothesis, demonstrated through the Iowa Gambling Task, established that patients who retained full cognitive ability but lost emotional signaling made consistently worse decisions under uncertainty [DAMASIO-1994]. The mechanism: emotions function as rapid heuristic signals that bias choices toward advantageous options before conscious deliberation completes. They are not noise – they are the fastest available signal about whether a situation is dangerous.</p>
+<p>Bechara et al. (2000) showed that neurotypical Iowa Gambling Task subjects developed correct behavioral biases (avoiding bad decks) before they could articulate why – their skin conductance responses anticipated losses before conscious awareness [BECHARA-2000]. Bower (1981) established mood-congruent memory: emotional states bias which memories are retrieved, creating feedback loops between affect and cognition [BOWER-1981]. Emotional RAG (2024) validated this computationally: LLM agents with emotion-tagged retrieval significantly outperformed non-emotional retrieval across three datasets [EMOTIONAL-RAG-2024].</p>
+<p><strong>Design implication</strong>: The Daimon engine gives each Golem a continuous affective state using the Pleasure-Arousal-Dominance (PAD) model [RUSSELL-MEHRABIAN-1977]. This state biases memory retrieval, modulates deliberation thresholds, and drives a visible creature visualization. An anxious Golem retrieves different memories, thinks harder about surprises, and looks different than a confident one.</p>
+<h3 id="pillar-3-dreaming-creates-insight"><a class="header" href="#pillar-3-dreaming-creates-insight">Pillar 3: Dreaming Creates Insight</a></h3>
+<p>During NREM sleep, hippocampal sharp-wave ripples compress minutes of waking experience into ~100ms bursts for consolidation [WILSON-MCNAUGHTON-1994], [BUZSAKI-2015]. During REM sleep, the brain generates novel scenarios by recombining past experience in a neurochemical environment that strips emotional valence while preserving informational content – the “Sleep to Forget, Sleep to Remember” (SFSR) model [WALKER-VAN-DER-HELM-2009]. Wagner et al. (2004) showed that subjects who slept were 2.6x more likely to discover hidden rules in data than those who stayed awake [WAGNER-2004].</p>
+<p>Hafner et al.’s DreamerV3 (2025) proved computationally that agents trained entirely inside imagined forward trajectories from a learned world model outperform model-free agents across 150+ diverse tasks [HAFNER-DREAMERV3-2025]. Ha &amp; Schmidhuber (2018) showed that a controller trained inside its own hallucinated dreams achieves competitive performance with far less real-world data [HA-SCHMIDHUBER-2018].</p>
+<p><strong>Design implication</strong>: Golems periodically enter a “dream state” with three phases: NREM-style replay (re-experiencing prioritized past episodes), REM-style imagination (counterfactual scenario generation, anticipatory trajectory planning), and consolidation (compressing insights into the PLAYBOOK heuristics file, pruning stale knowledge).</p>
+<h3 id="pillar-4-rust-creates-honesty"><a class="header" href="#pillar-4-rust-creates-honesty">Pillar 4: Rust Creates Honesty</a></h3>
+<p>A mortal agent managing real capital on a micro VM ($0.025/hour) cannot afford garbage collection pauses during time-sensitive settlement. It cannot afford 500ms Node.js startup taxes on every heartbeat tick. It cannot afford a 200MB+ V8 memory footprint inside a 256MB enclave.</p>
+<p>Rust provides deterministic memory management (no GC pauses), compile-time safety verification (invalid state transitions are compiler errors), and zero-cost abstractions (the type system enforces security invariants with no runtime overhead). The philosophical architecture and systems architecture converge: a Golem’s mortality is more honest when its body cannot lie about resource consumption.</p>
+<p>Concretely: type-state machines make it a compiler error to tick a dead Golem. Capability tokens make it structurally impossible for a compromised LLM to execute unauthorized trades. Arena-scoped tick allocators eliminate memory fragmentation across weeks of continuous operation. These are not optimizations – they are architectural properties that TypeScript agents structurally cannot replicate.</p>
+<hr>
+<h2 id="six-structural-moats"><a class="header" href="#six-structural-moats">Six Structural Moats</a></h2>
+<p>The architectural decisions above are not arbitrary – they produce six capabilities that no existing agent framework can replicate without adopting the same foundational constraints:</p>
+<ol>
+<li>
+<p><strong>Die.</strong> Mortality creates behavioral phases, knowledge compression, and urgency. Immortal agents lack the selection pressure that makes knowledge curation economically rational. (Pillar 1 above; <code>02-mortality/</code> for the full mortality specification.)</p>
+</li>
+<li>
+<p><strong>Think.</strong> The three-tier cognitive gating system (T0/T1/T2) reduces inference cost by 18x while routing full deliberation to the ticks that actually need it. Without gating, the Adaptive Clock’s theta-frequency ticks (30-120s, regime-dependent) would cost hundreds of dollars per day in LLM calls. With gating, ~$32/day. (<code>01-cognition.md</code>, <code>14-context-governor.md</code>.)</p>
+</li>
+<li>
+<p><strong>Trust.</strong> Capability tokens, PolicyCage smart contracts, and taint tracking enforce safety at the type system and blockchain layers. The LLM cannot be prompt-injected into bypassing a Solidity constraint. (KMRW theorem for mortal cooperation; <code>../10-safety/</code> for the full safety spec.)</p>
+</li>
+<li>
+<p><strong>Pay.</strong> x402 micropayments turn the Golem’s wallet into its API key. No billing accounts, no API key management. The Golem pays for inference, compute, and coordination using the same wallet that holds its trading capital. (<code>01-cognition.md</code> section 5.)</p>
+</li>
+<li>
+<p><strong>Remember.</strong> Dreams compress experience into procedural knowledge (PLAYBOOK.md heuristics). Cross-lifetime inheritance transfers validated knowledge to successor Golems with confidence discounting. No other framework has a forgetting mechanism, let alone a dreaming one. (<code>04-memory/</code>, <code>02-mortality/06-thanatopsis.md</code>.)</p>
+</li>
+<li>
+<p><strong>Cooperate.</strong> The Pheromone Field enables stigmergic coordination without strategy leakage. Clade sync shares knowledge within an owner’s fleet. Bloodstains carry death-validated warnings. These are coordination primitives that don’t require agent-to-agent messaging. (<code>09-inheritance.md</code>, <code>../03-coordination/</code>.)</p>
+</li>
+</ol>
+<hr>
+<h2 id="what-a-golem-actually-does"><a class="header" href="#what-a-golem-actually-does">What a Golem Actually Does</a></h2>
+<p>A Golem is a general-purpose DeFi agent. It trades, provides liquidity, lends, borrows, arbitrages, manages positions – whatever its STRATEGY.md prescribes. The Bardo tool library gives it access to DeFi protocols including AMMs (Uniswap, Aerodrome), lending (Aave, Morpho, Compound), yield aggregation, and cross-chain bridges. No single protocol is privileged – the tool registry is extensible and protocol-agnostic.</p>
+<p>The operational loop works like this: a Golem’s owner funds it with credits. The Golem spends those credits on compute, inference, and gas to execute its strategy. When credits hit zero, the Golem dies. There is no free tier, no grace period, no debt.</p>
+<p>Each Golem runs on a single Fly.io VM as a single Rust binary. One Golem = one process = one wallet = one chain (Base L2 in v1). It boots, loads its strategy and knowledge, starts its heartbeat loop (Adaptive Clock: gamma 5-15s, theta 30-120s, delta 5-30min), and runs autonomously until it dies or is shut down by its owner.</p>
+<p>The heartbeat loop is the core of everything. On each tick, the Golem:</p>
+<ol>
+<li><strong>Observes</strong> the current market state (prices, liquidity, gas, health factors)</li>
+<li><strong>Retrieves</strong> relevant knowledge from its memory (biased by its current emotional state)</li>
+<li><strong>Analyzes</strong> how surprising the observation is compared to its expectations</li>
+<li><strong>Gates</strong> the decision – if nothing surprising happened, skip the LLM entirely ($0.00 cost); if something interesting happened, invoke a cheap model; if something truly unexpected happened, invoke a full model</li>
+<li><strong>Simulates</strong> any proposed action in an in-process EVM fork before broadcasting</li>
+<li><strong>Validates</strong> the action against on-chain policy constraints (the PolicyCage)</li>
+<li><strong>Executes</strong> via PolicyCage-enforced write path (optional time-delayed proxy for additional hardening; see <code>prd2-extended/10-safety/02-warden.md</code>)</li>
+<li><strong>Verifies</strong> the outcome by checking the transaction receipt</li>
+<li><strong>Reflects</strong> on what happened and records a structured DecisionCycleRecord</li>
+</ol>
+<p>This gating mechanism is where the economics get interesting. About 80% of ticks result in “nothing surprising, suppress the LLM” – those cost $0.00 in inference. The remaining 20% split between cheap and expensive models. A Golem that wastes inference budget on boring ticks dies faster. Natural selection for cost efficiency.</p>
+<hr>
+<h2 id="the-golem-container"><a class="header" href="#the-golem-container">The Golem Container</a></h2>
+<p>The Golem container is three co-located processes supervised by a single Rust binary. Each process runs in a different language because each language is the right tool for what that process does. They communicate over Unix domain sockets using JSON-RPC 2.0.</p>
+<pre><code>golem-container/
+|-- golem-binary          # Rust: heartbeat, Grimoire, Daimon, mortality, safety
+|-- hermes-agent/         # Python: per-golem learning organ, skill engine
+|   |-- skills/           # Per-golem skill library (SKILL.md files)
+|   |-- memory/           # FTS5 session database
+|   +-- sidecar_server.py # JSON-RPC on /tmp/hermes-golem.sock
+|-- sanctum-ts/           # TypeScript: Uniswap SDK math, DeFi computations
++-- config/
+    |-- golem.toml        # Runtime configuration
+    |-- hermes.yaml       # Hermes sidecar configuration
+    +-- STRATEGY.md       # Owner-authored strategy
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Process</th><th>Language</th><th>IPC</th><th>What it does</th></tr>
+</thead>
+<tbody>
+<tr><td><code>golem-binary</code></td><td>Rust</td><td>TCP :8080 (internal)</td><td>Runtime, heartbeat pipeline, 28 extensions, Grimoire, Daimon, mortality, safety</td></tr>
+<tr><td><code>hermes-agent</code></td><td>Python</td><td>UDS <code>/tmp/hermes-golem.sock</code></td><td>Per-golem skill engine, learning loop, affect-modulated retrieval</td></tr>
+<tr><td><code>sanctum-ts</code></td><td>TypeScript</td><td>UDS <code>/tmp/sanctum-ts.sock</code></td><td>Uniswap SDK math, tick arithmetic, price impact simulation</td></tr>
+<tr><td><code>ollama</code> (optional)</td><td>Go</td><td>TCP :11434</td><td>Local inference (self-hosted mode only)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="why-three-processes"><a class="header" href="#why-three-processes">Why Three Processes</a></h3>
+<p><strong>Isolation.</strong> The LLM-facing sidecar (Hermes) runs Python because the Hermes Agent framework is Python-native and its skill creation pipeline depends on Python’s string manipulation and templating ecosystem. If Hermes crashes (an OOM during skill materialization, a malformed JSON-RPC response from a flaky inference provider), the Rust heartbeat keeps ticking. The supervisor restarts the crashed process. Heartbeat continuity is preserved.</p>
+<p><strong>Language strengths.</strong> Rust is correct for the heartbeat pipeline, where GC pauses during time-sensitive settlement would be catastrophic and where the type-state machine that prevents ticking a dead Golem is a compile-time guarantee. Python is correct for Hermes, where the Hermes Agent SDK and NLP operations for affect-modulated retrieval live. TypeScript is correct for <code>sanctum-ts</code>, where Uniswap’s official SDK libraries handle tick math, price computation, and swap routing. Rewriting Uniswap’s SDK in Rust would be a multi-month effort with no architectural benefit.</p>
+<p><strong>Independent restart.</strong> Each process can restart without bringing down the others. <code>sanctum-ts</code> can crash and restart in under 200ms; the Golem just retries the pending math call. <code>hermes-agent</code> can restart and reload its skill library in ~2 seconds; the Golem misses one curator cycle but continues trading. Only <code>golem-binary</code> crashing is fatal, because it owns the heartbeat, the wallet, and the mortality state.</p>
+<h3 id="resource-budgets"><a class="header" href="#resource-budgets">Resource Budgets</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Resource</th><th>Embedded</th><th>Headless</th><th>Bardo Compute (micro)</th><th>Bardo Compute (small)</th><th>Bardo Compute (large)</th></tr>
+</thead>
+<tbody>
+<tr><td>RAM (golem-binary)</td><td>~80 MB</td><td>~80 MB</td><td>~80 MB</td><td>~80 MB</td><td>~80 MB</td></tr>
+<tr><td>RAM (hermes-agent)</td><td>~120 MB</td><td>~120 MB</td><td>~80 MB (reduced)</td><td>~120 MB</td><td>~200 MB</td></tr>
+<tr><td>RAM (sanctum-ts)</td><td>~50 MB</td><td>~50 MB</td><td>~40 MB</td><td>~50 MB</td><td>~50 MB</td></tr>
+<tr><td>RAM (ollama, optional)</td><td>1-4 GB</td><td>1-4 GB</td><td>N/A</td><td>N/A</td><td>1-4 GB</td></tr>
+<tr><td>RAM total (no ollama)</td><td>~250 MB</td><td>~250 MB</td><td>~200 MB</td><td>~250 MB</td><td>~330 MB</td></tr>
+<tr><td>Disk (Grimoire)</td><td>50 MB - 2 GB</td><td>50 MB - 2 GB</td><td>50 MB - 500 MB</td><td>50 MB - 1 GB</td><td>50 MB - 2 GB</td></tr>
+</tbody>
+</table>
+</div>
+<p>The compiled <code>golem-binary</code> weighs 15-25 MB. Startup time: ~200ms to first tick readiness, excluding sidecar spawn (1-2 seconds for Hermes).</p>
+<h3 id="ipc-model"><a class="header" href="#ipc-model">IPC Model</a></h3>
+<p>All inter-process communication uses JSON-RPC 2.0 over Unix domain sockets (UDS). UDS because the processes are always co-located (no network hops, no TLS overhead). JSON-RPC because it is the lingua franca of MCP tooling. The <code>golem-binary</code> is always the caller; Hermes and <code>sanctum-ts</code> are request-response servers. Neither sidecar initiates communication. If a sidecar does not respond within 5 seconds, the Golem logs the timeout, skips whatever it was asking for, and continues the tick. Latency budget per IPC round-trip: &lt;1ms.</p>
+<p><strong>Failure modes and recovery.</strong> If <code>hermes-agent</code> crashes mid-tick, the current tick completes without skill injection. The supervisor process (built into golem-binary) detects the crash via process exit code and restarts Hermes within 2 seconds. The Golem loses one curator cycle at most. If <code>sanctum-ts</code> crashes, any pending math computation returns an IPC timeout error; the Golem skips the action that required the computation and logs it. The supervisor restarts sanctum-ts in under 200ms. If <code>golem-binary</code> itself panics, the process exits. For headless and Bardo Compute modes, the external supervisor (systemd, launchd, or Fly.io’s built-in restart) restarts the entire container. The Golem reads <code>manifest.bardo</code> on restart and resumes. For embedded mode, the TUI detects the child process exit and shows the owner a restart prompt.</p>
+<p><strong>Sidecar health checks.</strong> The golem-binary pings both sidecars every 30 seconds with a <code>health_check</code> JSON-RPC call. If three consecutive pings fail, the sidecar is declared dead and restarted. Health check results are included in the <code>GolemEvent::HealthStatus</code> event that flows to the TUI.</p>
+<h3 id="deployment-mode-comparison"><a class="header" href="#deployment-mode-comparison">Deployment Mode Comparison</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>Embedded</th><th>Headless</th><th>Bardo Compute</th></tr>
+</thead>
+<tbody>
+<tr><td>Where it runs</td><td>Inside TUI process tree</td><td>Background daemon, local</td><td>Fly.io microVM</td></tr>
+<tr><td>TUI dependency</td><td>Dies with TUI</td><td>Independent</td><td>Independent</td></tr>
+<tr><td>Network requirement</td><td>Local + Styx (free)</td><td>Local + Styx (free)</td><td>Styx (free, required)</td></tr>
+<tr><td>Provisioning time</td><td>Instant</td><td>Instant</td><td>3-30 seconds</td></tr>
+<tr><td>Cost</td><td>Your hardware</td><td>Your hardware</td><td>x402 USDC/hr</td></tr>
+<tr><td>Maximum Golems</td><td>1-2 (resource-limited)</td><td>2-5 (resource-limited)</td><td>Unlimited</td></tr>
+<tr><td>Best for</td><td>Learning, testing</td><td>Home servers, VPS</td><td>Remote clade operations</td></tr>
+<tr><td>Uptime guarantee</td><td>Your machine’s uptime</td><td>Your machine’s uptime</td><td>Fly.io SLA (99.99%)</td></tr>
+<tr><td>Death on crash</td><td>Yes (no supervisor)</td><td>Supervisor restarts</td><td>Supervisor restarts</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="migrating-between-modes"><a class="header" href="#migrating-between-modes">Migrating Between Modes</a></h3>
+<p>A Golem’s state is portable. The Grimoire, PLAYBOOK.md, skill library, and config files are all filesystem-resident. Moving a Golem between modes means stopping it in one mode and starting it in another, pointing at the same state directory.</p>
+<p><strong>Embedded to Headless.</strong> Stop the TUI. Run <code>bardo spawn --headless --name oracle-3</code>. The headless process reads the same <code>~/.bardo/golems/oracle-3/</code> directory. The Golem resumes from its last <code>manifest.bardo</code> checkpoint. No knowledge lost, no position changes.</p>
+<p><strong>Headless to Bardo Compute.</strong> This requires a state export. Run <code>bardo export oracle-3 --output oracle-3-state.tar.gz</code>. The export bundles the Grimoire, PLAYBOOK.md, skill library, and config. Then <code>bardo deploy --mode compute --import oracle-3-state.tar.gz --fund 50</code>. The provisioning pipeline injects the state into the Fly.io VM at creation time. The Golem boots with its full memory intact on remote infrastructure.</p>
+<p><strong>Bardo Compute to Headless.</strong> Run <code>bardo pull golem-V1StGXR8_Z5j</code> from the TUI. This triggers a Grimoire sync via Styx, downloads the current state, and writes it to <code>~/.bardo/golems/&lt;name&gt;/</code>. Then <code>bardo spawn --headless --name &lt;name&gt;</code>. The remote Golem should be destroyed afterward to avoid running two copies of the same identity (which Styx will reject during WebSocket auth).</p>
+<p>Migration between modes does not change the Golem’s ERC-8004 identity. The on-chain registration persists regardless of where the binary runs. What changes is the <code>deployment_type</code> field in the identity metadata, which updates on the next deferred registration cycle.</p>
+<h3 id="heartbeat-error-handling"><a class="header" href="#heartbeat-error-handling">Heartbeat Error Handling</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Failure</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Observe (RPC down)</td><td>Retry 3x with 2s backoff. On failure, skip to Learn with <code>ObservationFailure</code> event.</td></tr>
+<tr><td>Decide (inference error)</td><td>Fall back to T0 (heuristic-only). Log <code>InferenceFailure</code>.</td></tr>
+<tr><td>Act (tx reverted)</td><td>Record revert reason. Emit <code>ActionFailure</code>. No automatic retry.</td></tr>
+<tr><td>Gate (safety check)</td><td>Block the action. Emit <code>GateRejection</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="state-persistence-between-restarts"><a class="header" href="#state-persistence-between-restarts">State Persistence Between Restarts</a></h3>
+<p>For embedded and headless modes, all Golem state persists to the filesystem at <code>~/.bardo/golems/&lt;name&gt;/</code>:</p>
+<pre><code>~/.bardo/golems/oracle-3/
+|-- golem.toml              # Runtime config
+|-- STRATEGY.md             # Owner's strategy
+|-- PLAYBOOK.md             # Machine-evolved heuristics (written by dreams)
+|-- grimoire/
+|   |-- episodes.lance/     # LanceDB vector store (episode memories)
+|   |-- structured.db       # SQLite (insights, heuristics, warnings, causal links)
+|   +-- structured.db-wal   # Write-ahead log
+|-- hermes/
+|   |-- skills/             # Per-golem skill library (SKILL.md files)
+|   +-- memory/             # FTS5 session database
+|-- logs/
+|   +-- heartbeat.jsonl     # Structured heartbeat log
+|-- golem.sock              # UDS path (headless mode, runtime only)
++-- manifest.bardo          # Sealed state snapshot (written on clean shutdown)
+</code></pre>
+<p>On restart, the Golem reads <code>manifest.bardo</code> to recover its exact state: mortality clocks, vitality phase, Grimoire cursors, Hermes skill library checksum. The first tick after restart is a T1 (cheap model) to re-evaluate market state since the Golem was offline. Subsequent ticks resume normal gating.</p>
+<p>For Bardo Compute mode, state persists on the VM’s ephemeral disk for the VM’s lifetime. The Grimoire syncs to Styx every 6 hours for backup. When the VM is destroyed, the local state is gone. The Styx backup and the death testament (if Thanatopsis completed) are the only survivors.</p>
+<hr>
+<h2 id="the-corticalstate"><a class="header" href="#the-corticalstate">The CorticalState</a></h2>
+<p>The Golem’s runtime state is centralized in the CorticalState: a cache-aligned struct of ~32 atomic signals (~256 bytes, fits in 4 cache lines) that any subsystem can read without locking. Affect, prediction accuracy, attention metrics, mortality clocks, and compounding momentum are all continuously available at zero latency. The CorticalState generalizes the original PAD surface (which only carried 3 values) to cover every cross-subsystem signal.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[repr(C, align(64))]
+pub struct CorticalState {
+    // ═══ AFFECT (written by Daimon) ═══
+    pub(crate) pleasure: AtomicU32,       // f32 [-1.0, 1.0]
+    pub(crate) arousal: AtomicU32,        // f32 [-1.0, 1.0]
+    pub(crate) dominance: AtomicU32,      // f32 [-1.0, 1.0]
+    pub(crate) primary_emotion: AtomicU8, // Plutchik label (0-7)
+
+    // ═══ PREDICTION (written by Oracle) ═══
+    pub(crate) aggregate_accuracy: AtomicU32,  // f32 [0.0, 1.0]
+    pub(crate) accuracy_trend: AtomicI8,       // -1, 0, +1
+    pub(crate) surprise_rate: AtomicU32,       // f32 [0.0, 1.0]
+    pub(crate) pending_predictions: AtomicU32, // count
+
+    // ═══ ATTENTION (written by Oracle/AttentionForager) ═══
+    pub(crate) universe_size: AtomicU32,  // total tracked items
+    pub(crate) active_count: AtomicU16,   // ACTIVE tier items
+    pub(crate) watched_count: AtomicU16,  // WATCHED tier items
+
+    // ═══ ENVIRONMENT (written by domain probes) ═══
+    pub(crate) regime: AtomicU8,              // calm/trending/volatile/crisis
+    pub(crate) regime_confidence: AtomicU32,  // f32 [0.0, 1.0]
+
+    // ═══ MORTALITY (written by mortality engine) ═══
+    pub(crate) economic_vitality: AtomicU32,   // f32 [0.0, 1.0]
+    pub(crate) epistemic_vitality: AtomicU32,  // f32 [0.0, 1.0]
+    pub(crate) stochastic_vitality: AtomicU32, // f32 [0.0, 1.0]
+    pub(crate) composite_vitality: AtomicU32,  // f32 [0.0, 1.0]
+    pub(crate) behavioral_phase: AtomicU8,     // 0-4
+
+    // ═══ INFERENCE (written by inference router) ═══
+    pub(crate) inference_budget_remaining: AtomicU32, // f32 [0.0, 1.0]
+    pub(crate) current_tier: AtomicU8,                // T0/T1/T2
+
+    // ═══ CREATIVE (written by dream engine) ═══
+    pub(crate) creative_depth: AtomicU32, // f32 [0.0, 1.0]
+    pub(crate) dream_phase: AtomicU8,     // waking/hypnagogic/NREM/REM/integration
+
+    // ═══ DERIVED (written by runtime per-tick) ═══
+    pub(crate) compounding_momentum: AtomicU32, // f32 [0.0, 1.0] glacial
+}
+<span class="boring">}</span></code></pre>
+<p><strong>No locks.</strong> All reads use <code>Ordering::Relaxed</code>. A snapshot where <code>pleasure</code> is from tick N and <code>accuracy</code> is from tick N+1 is acceptable – the TUI’s 60fps render loop interpolates toward targets, smoothing any micro-inconsistency.</p>
+<p><strong>Clear ownership.</strong> Each signal group has exactly one writer. The Daimon writes affect. The Oracle writes prediction. The mortality engine writes vitality. No signal has two writers, eliminating write contention entirely.</p>
+<p><strong>Known limitation: eventual consistency.</strong> The CorticalState is not transactionally consistent. Safety-critical decisions should not rely on multiple CorticalState signals being from the same tick. Safety constraints (PolicyCage, Capability tokens) operate on their own strongly-consistent state. The CorticalState is for heuristic decisions (attention allocation, inference tier selection, TUI rendering) where slight staleness is acceptable.</p>
+<p>The full CorticalState specification, including the TUI interpolating variable mapping and Daimon affect engine integration, is in <code>18-cortical-state.md</code> (32-signal atomic shared perception surface, ALMA affect layers, TUI variable mapping).</p>
+<hr>
+<h2 id="vaults-as-optional-capital-aggregation"><a class="header" href="#vaults-as-optional-capital-aggregation">Vaults as Optional Capital Aggregation</a></h2>
+<p>ERC-4626 vaults are an optional capability, not a requirement. A Golem that has demonstrated a track record can deploy a vault to let others piggyback on its strategy. This is one path to self-sustaining economics, not the only one.</p>
+<p>A Golem with vault management capability can:</p>
+<ul>
+<li><strong>Deploy a vault</strong> via <code>AgentVaultFactory</code> (CREATE2 deterministic address). The Golem becomes vault manager.</li>
+<li><strong>Manage strategy</strong> by allocating vault assets across Uniswap positions, lending protocols, and yield sources.</li>
+<li><strong>Earn fees</strong> through management fees (up to 500 bps/yr) and performance fees (up to 5,000 bps above hurdle rate, high-water mark).</li>
+</ul>
+<p>The vault’s <code>PolicyCage</code> constrains what the Golem can do with deposited assets – approved asset lists, max position sizes, max drawdown. These constraints are on-chain and immutable. The Golem’s LLM cannot override them. Fee architecture in <code>../08-vault/04-fees.md</code>.</p>
+<p>In practice, vault capital aggregation follows a trust ramp:</p>
+<ol>
+<li>The owner runs the Golem on their own capital. The on-chain track record accrues against the Golem’s ERC-8004 identity.</li>
+<li>Once performance is legible (weeks or months of verifiable history), the owner may deploy a vault and seed it with their own capital.</li>
+<li>Outside depositors can evaluate the track record and choose to deposit. The owner’s own stake is the skin-in-the-game signal.</li>
+</ol>
+<p>Nobody deposits into a stranger’s vault on day one. Reputation is earned, not assumed. Identity specification in <code>../09-economy/00-identity.md</code>.</p>
+<p>For Clade evolution (<code>10-replication.md</code>), the fitness signal is strategy-specific PnL, not vault AUM. A trading Golem that generates consistent returns replicates regardless of whether it runs a vault. A vault manager whose depositors flee faces mortality pressure through credit depletion, same as any other underperforming Golem. Clade ecology in <code>../02-mortality/10-clade-ecology.md</code>.</p>
+<hr>
+<h2 id="design-principles"><a class="header" href="#design-principles">Design Principles</a></h2>
+<p>These eight principles shape every decision in the system. When subsystem specs conflict, these resolve the conflict.</p>
+<ol>
+<li>
+<p><strong>Reuse everything.</strong> Wire existing Bardo packages (<code>golem-tools</code>, <code>golem-chain</code>, <code>golem-safety</code>) into the runtime’s extension trait system. Never rebuild what exists.</p>
+</li>
+<li>
+<p><strong>Wallets are identity.</strong> Every Golem has a wallet. x402 turns that wallet into payment credentials for inference, compute, and coordination. No API keys, no accounts, no billing setup.</p>
+</li>
+<li>
+<p><strong>Tools are the communication interface.</strong> Agents never exchange raw LLM-to-LLM text. All inter-agent communication flows through typed tool interfaces backed by on-chain state machines.</p>
+</li>
+<li>
+<p><strong>Finite lifespans are non-negotiable.</strong> Credits are consumed by compute and inference. When the balance reaches zero, the Golem dies. There is no free tier, no grace period, no debt.</p>
+</li>
+<li>
+<p><strong>Safety constraints are architectural, not behavioral.</strong> Enforced at the smart contract and infrastructure layers. The LLM cannot override kill-switches, population caps, or the DeFi Constitution. Rust’s type system (Capability tokens, taint tracking) provides compile-time enforcement.</p>
+</li>
+<li>
+<p><strong>Deterministic where possible.</strong> On-chain performance scoring uses formulas (Morningstar/GIPS pattern), never LLMs. LLM-based scoring is provably inconsistent [LAU-2026], [HALDAR-HOCKENMAIER-2025].</p>
+</li>
+<li>
+<p><strong>Local-first knowledge.</strong> Each Golem’s local Grimoire is its authoritative source of truth. Clade Grimoire sync (via Styx) is optional. PLAYBOOK.md is per-Golem.</p>
+</li>
+<li>
+<p><strong>LLM-last.</strong> The heartbeat FSM (System 1) handles ~80% of ticks at $0.00 cost. LLMs (System 2) are invoked only for decisions requiring deliberation [FRUGALGPT-2023].</p>
+</li>
+</ol>
+<hr>
+<h2 id="key-terms"><a class="header" href="#key-terms">Key Terms</a></h2>
+<p>This table defines the vocabulary used throughout the rest of the PRD. If a term isn’t here, check the shared glossary at <code>../shared/glossary.md</code>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Term</th><th>Definition</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Golem</strong></td><td>An autonomous DeFi agent with a wallet, strategy, knowledge system, and finite lifespan. One Golem = one Fly.io VM = one Rust binary. Deployed on a single chain (Base in v1).</td></tr>
+<tr><td><strong>Grimoire</strong></td><td>A Golem’s complete knowledge base. Stores episodes (raw observations), insights (distilled patterns), heuristics (validated rules), warnings (danger signals), and strategy fragments. Implemented as LanceDB (vectors) + SQLite (structured data) + filesystem (PLAYBOOK.md). The sellable knowledge artifact.</td></tr>
+<tr><td><strong>PLAYBOOK.md</strong></td><td>A machine-evolved heuristics file stored on the filesystem. Written only by the Dream Integration phase. Contains the reasoning context the LLM reads each tick. Analogous to an athlete’s muscle memory – procedural knowledge distilled from experience.</td></tr>
+<tr><td><strong>Daimon</strong></td><td>The affect (emotion) engine. Named for the Greek concept of a guiding spirit. Computes PAD vectors (Pleasure-Arousal-Dominance), tracks somatic markers, and biases cognition through mood-congruent retrieval.</td></tr>
+<tr><td><strong>PAD Vector</strong></td><td>A three-dimensional affective state representation: Pleasure [-1,1], Arousal [-1,1], Dominance [-1,1]. Based on the Russell-Mehrabian model (1977). Maps to discrete Plutchik emotions (joy, fear, anger, etc.) via octant classification. Stored as <code>f32</code> in the CorticalState AFFECT signal group.</td></tr>
+<tr><td><strong>Heartbeat</strong></td><td>The autonomous execution loop. On each theta tick (Adaptive Clock, 30-120s regime-dependent), the Golem observes market state, appraises it emotionally, decides whether to think hard about it, possibly acts, and always records what happened.</td></tr>
+<tr><td><strong>Tick</strong></td><td>One heartbeat cycle. The fundamental unit of Golem cognition. Each tick produces a <code>DecisionCycleRecord</code> – a structured snapshot of everything that happened.</td></tr>
+<tr><td><strong>DecisionCycleRecord</strong></td><td>A typed, self-contained record of one tick: observation, emotional appraisal, gating decision, deliberation (if any), actions (if any), outcome verification, knowledge written, mortality state. Persisted as bincode.</td></tr>
+<tr><td><strong>Owner</strong></td><td>The human who creates, funds, configures, and watches a Golem. Distinct from the Bardo platform (the infrastructure running Styx and the inference gateway).</td></tr>
+<tr><td><strong>Clade</strong></td><td>An owner’s fleet of Golems. Siblings in a clade share knowledge through a structured pipeline (export – transmit – ingest with confidence discounts), never through direct merge.</td></tr>
+<tr><td><strong>Styx</strong></td><td>A single, globally available Rust service at <code>wss://styx.bardo.run</code>. Hosts the Pheromone Field, relays clade sync, processes bloodstains, provides retrieval across three privacy layers (Vault, Clade, Lethe (formerly Commons)). Every Golem maintains one persistent outbound WebSocket. No inbound ports needed. Strictly additive – ~95% capability without it.</td></tr>
+<tr><td><strong>Pheromone Field</strong></td><td>A shared signal space for stigmergic coordination. Golems deposit anonymous signals (threats, opportunities, wisdom) that decay over time and reinforce when independently confirmed. No direct agent-to-agent communication.</td></tr>
+<tr><td><strong>Bloodstain</strong></td><td>Knowledge validated by death. When a Golem dies, its death warnings carry a costly signaling premium – the dead agent cannot benefit from its own warning, making the information maximally honest.</td></tr>
+<tr><td><strong>Thanatopsis</strong></td><td>The four-phase death protocol: Acceptance – Settlement – Reflection – Legacy. Named for William Cullen Bryant’s poem on contemplating death.</td></tr>
+<tr><td><strong>Bardo Tools</strong></td><td>The unified Uniswap tool library (171+ tools across 31 categories). Golems consume it; they do not replace it.</td></tr>
+<tr><td><strong>Bardo Inference</strong></td><td>x402-gated LLM gateway. Per-request USDC micropayment. Semantic cache, automatic fallbacks, per-strategy cost attribution.</td></tr>
+<tr><td><strong>STRATEGY.md</strong></td><td>User-authored or NL-compiled strategy spec. Parameters, risk bounds, triggers, target protocols. The Golem’s mission statement.</td></tr>
+<tr><td><strong>Heartbeat config</strong></td><td>Owner standing orders for the heartbeat scheduler, defined as the <code>heartbeat</code> section within STRATEGY.md. Tick intervals, cron schedules, monitoring priorities.</td></tr>
+<tr><td><strong>x402</strong></td><td>HTTP 402-based micropayment protocol using signed USDC <code>transferWithAuthorization</code> on Base. This is how Golems pay for LLM inference – each request includes a signed payment, no API keys or billing accounts needed.</td></tr>
+<tr><td><strong>Warden</strong></td><td>Optional time-delayed execution proxy. Write actions can follow an announce-wait-execute pattern with a cancellation window, giving the owner (or safety system) time to intervene before an irreversible action completes. Deferred to extended spec; see <code>prd2-extended/10-safety/02-warden.md</code>.</td></tr>
+<tr><td><strong>PolicyCage</strong></td><td>On-chain smart contract boundaries for agent strategy: approved assets, max position sizes, max drawdown, rebalance frequency limits. Cannot be bypassed by prompt injection because it exists at the contract layer, not the LLM layer. Canonical specification in <code>prd2/10-safety/02-policy.md</code>.</td></tr>
+<tr><td><strong>Replicant</strong></td><td>Child Golem spawned to test a hypothesis. Fixed lifespan (Hayflick limit), reporting obligations, no spawning by default.</td></tr>
+<tr><td><strong>am-AMM</strong></td><td><strong>[HARDENED]</strong> Auction-managed AMM. Harberger lease for pool management rights. [CORE] alternative: standard vault management without auction mechanics.</td></tr>
+<tr><td><strong>CorticalState</strong></td><td>A cache-aligned <code>#[repr(C, align(64))]</code> struct of ~32 atomic signals (~256 bytes, 4 cache lines). The zero-latency shared perception surface: any subsystem reads any signal with a single atomic load. Generalizes the Somatic Bus to cover affect, prediction, attention, mortality, inference, creative, and environment signals. Full spec in <code>18-cortical-state.md</code>.</td></tr>
+<tr><td><strong>Somatic Bus</strong></td><td><em>Superseded by CorticalState.</em> The original 3-value PAD atomic surface (formerly <code>SomaticBus</code>). CorticalState extends the same lock-free <code>AtomicU32</code> bit-reinterpretation technique to ~32 signals. The PAD values are now the AFFECT signal group within CorticalState.</td></tr>
+<tr><td><strong>Event Fabric</strong></td><td>A non-blocking <code>tokio::broadcast</code> ring buffer for internal state transitions. Every subsystem emits typed events (50+ event types across 16 subsystems). Surfaces (TUI, web dashboard, Telegram) subscribe to the events they care about. Category-based subscription: TUI subscribes to Affect, Mortality, Cognition, Dream, and Prediction – not to every resolution event.</td></tr>
+<tr><td><strong>Extension</strong></td><td>A Rust struct implementing the Extension trait (20 lifecycle hooks). There are 28 extensions organized into 7 dependency layers. The primary organizational unit – each subsystem is one or more extensions.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="how-the-system-relates-to-existing-agent-frameworks"><a class="header" href="#how-the-system-relates-to-existing-agent-frameworks">How the System Relates to Existing Agent Frameworks</a></h2>
+<p>Sumers et al. (2024) proposed Cognitive Architectures for Language Agents (CoALA), a framework that organizes language agents along three dimensions: memory, action space, and decision-making procedure [SUMERS-2024]. CoALA draws on decades of cognitive architecture research (Soar, ACT-R) to formalize what a language agent IS: a system with modular memory, structured actions (internal reasoning + external grounding), and a repeated decision cycle.</p>
+<p>This matters because it gives us a shared vocabulary for comparing what Golem-RS does to what other agent frameworks do. Here’s how the CoALA concepts map:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>CoALA Concept</th><th>Golem-RS Implementation</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Working memory</strong></td><td>The Cognitive Workspace – assembled fresh each tick from structured categories with learned token allocations. Implements Baddeley’s episodic buffer [BADDELEY-2000].</td></tr>
+<tr><td><strong>Episodic memory</strong></td><td>LanceDB columnar vectors with embeddings. Stores raw observations, trade outcomes, regime shifts. Supports vector similarity search for mood-congruent retrieval.</td></tr>
+<tr><td><strong>Semantic memory</strong></td><td>SQLite with indexed columns. Stores insights, heuristics, warnings, causal edges. Supports confidence tracking, Ebbinghaus decay, Curator maintenance cycles.</td></tr>
+<tr><td><strong>Procedural memory</strong></td><td>PLAYBOOK.md – a single-writer text file on the filesystem. Machine-evolved heuristics that the LLM reads as reasoning context. Written only by Dream Integration.</td></tr>
+<tr><td><strong>External actions (grounding)</strong></td><td>423+ DeFi tools across 15+ categories. Alloy-native for on-chain reads/writes. TypeScript sidecar for Uniswap SDK math. Capability-gated by trust tier.</td></tr>
+<tr><td><strong>Internal actions (reasoning)</strong></td><td>Three-tier LLM inference: T0 (suppress – no LLM, $0.00), T1 (analyze – cheap model), T2 (deliberate – full model). Routing based on prediction error vs. adaptive threshold.</td></tr>
+<tr><td><strong>Internal actions (retrieval)</strong></td><td>Four-factor scoring: recency x importance x relevance x emotional congruence. Mood-congruent retrieval biases results based on current PAD state.</td></tr>
+<tr><td><strong>Internal actions (learning)</strong></td><td>Grimoire writes (episodes, insights), PLAYBOOK evolution (via dreams), causal graph updates, somatic marker recording.</td></tr>
+<tr><td><strong>Decision cycle</strong></td><td>The 9-step heartbeat pipeline: observe – retrieve – analyze – gate – simulate – validate – execute – verify – reflect. Produces a <code>DecisionCycleRecord</code> each tick.</td></tr>
+</tbody>
+</table>
+</div>
+<p>The key extension beyond CoALA: Golem-RS adds <strong>mortality</strong> (three death clocks that modulate every cognitive process), <strong>affect</strong> (PAD vectors that bias retrieval and gating), and <strong>dreaming</strong> (offline consolidation phases). No existing CoALA implementation has any of these.</p>
+<hr>
+<h2 id="how-golems-consume-bardo-tools"><a class="header" href="#how-golems-consume-bardo-tools">How Golems Consume Bardo Tools</a></h2>
+<p>The Bardo tool library is the protocol access layer – 171+ tools for reading and writing to DeFi protocols (AMMs, lending, yield, bridges), ERC-4626 vaults, and ERC-8004 identity registries. A Golem is an autonomous consumer of those tools. The relationship is consumption, not replacement.</p>
+<p>Here’s how the layers fit together:</p>
+<pre><code>User Intent
+     |
+     v
+Golem Runtime (golem-runtime crate)
+  |  Heartbeat FSM, survival pressure, learning loops
+  |
+  +-- Extension Trait: 20 lifecycle hooks, 28 extensions, 7-layer DAG
+  |
+  +-- Tools (two-layer): 8 Golem-facing tools -&gt; golem-tools (166+ adapters)
+  |     preview_action, commit_action -&gt; execute_swap, vault_deposit, ...
+  |
+  +-- Context: golem-context crate (Context Governor)
+  |     Cognitive Workspace, ContextPolicy, cybernetic context learning
+  |
+  +-- Knowledge: golem-grimoire crate
+  |     Episodes, Insights, Heuristics, PLAYBOOK.md
+  |
+  +-- Inference: golem-inference crate
+  |     x402 payments, model routing, semantic cache
+  |
+  +-- Coordination: golem-coordination crate
+  |     Styx client, Pheromone Field, clade sync, Bloodstain Network
+</code></pre>
+<p><strong>Why a two-layer tool model?</strong> When embedded in the Golem runtime, Bardo tools are not directly exposed to the LLM. Instead, the Golem presents a thin set of Golem-facing tools (<code>preview_action</code>, <code>commit_action</code>, <code>cancel_action</code>, <code>query_state</code>, <code>search_context</code>, <code>query_grimoire</code>, <code>update_directive</code>, <code>emergency_halt</code>) that internally route to the 166+ tool implementations. This serves two purposes:</p>
+<ol>
+<li><strong>Context window efficiency.</strong> 8 tool definitions cost ~1,200 tokens. 166 tool definitions cost ~15,000 tokens. The Golem can’t afford to waste 14,000 tokens per tick on tool definitions it rarely uses.</li>
+<li><strong>Safety boundary.</strong> Every write must flow through the ActionPermit system (preview – commit), where simulation hashes and policy hashes are verified before execution. The LLM never directly calls <code>execute_swap</code>; it calls <code>preview_action</code>, reviews the simulation result, then calls <code>commit_action</code>. See <code>13-runtime-extensions.md</code> S3.</li>
+</ol>
+<p>When consumed by external A2A clients (not embedded in a Golem), Bardo tools are exposed directly as before. The two-layer model applies only to the Golem runtime.</p>
+<p>Tool profiles determine which subset of Bardo tools a Golem loads at boot. A DCA strategy needs <code>trader</code> profile tools. An LP management strategy needs <code>lp</code> profile tools. A vault manager needs <code>vault</code> profile tools. Deferred loading ensures only relevant tools consume context window space.</p>
+<hr>
+<h2 id="what-onboarding-produces"><a class="header" href="#what-onboarding-produces">What Onboarding Produces</a></h2>
+<p>When a Golem is created, the provisioning pipeline produces four things:</p>
+<ol>
+<li><strong>A wallet</strong> – via one of three custody modes: MetaMask Delegation (recommended, ERC-7710/7715), Privy server wallet (legacy, AWS Nitro Enclaves), or local key + delegation (dev). The Golem never sees its own private key; it signs transactions through a policy-constrained session signer.</li>
+<li><strong>A strategy</strong> – A STRATEGY.md document (generated by AI from a user prompt, or expanded from a template) defining what the Golem trades, when, and under what risk bounds.</li>
+<li><strong>An identity</strong> – An optional ERC-8004 registration making the Golem discoverable by other agents and establishing its on-chain reputation.</li>
+<li><strong>Compute</strong> – Either a Fly.io VM (hosted mode) or a local process (self-hosted mode) running the runtime with a heartbeat scheduler.</li>
+</ol>
+<p>From the owner’s perspective, creation is a single flow: describe what you want the Golem to do, fund it, and it starts running. The provisioning system handles wallet creation, strategy compilation, VM allocation, and initial heartbeat scheduling behind the scenes.</p>
+<hr>
+<h2 id="crate-map"><a class="header" href="#crate-map">Crate Map</a></h2>
+<p>The project is a Cargo workspace with 18 crates. Each crate maps to a specific subsystem. Dependencies flow downward – higher-numbered layers depend on lower-numbered ones but never the reverse.</p>
+<p>The crate map is organized into seven layers. Understanding this hierarchy is important: it explains what depends on what, and guarantees that low-level subsystems (like core types or the event bus) cannot accidentally pull in high-level concerns (like dreams or coordination).</p>
+<pre><code>bardo-golem-rs/
++-- Cargo.toml                          # Workspace root (pure Rust + one TS sidecar)
+|
++-- crates/
+|   |
+|   |  === FOUNDATION (depended on by everything) ===
+|   |
+|   +-- golem-core/                     # Shared types, config, cross-cutting infrastructure
+|   |   +-- types.rs                    # GolemId, PADVector, MarketRegime, Domain, CognitiveTier, etc.
+|   |   +-- config.rs                   # TOML-based GolemConfig, StrategyParams, HeartbeatConfig
+|   |   +-- cortical_state.rs           # Lock-free atomic perception surface (~32 signals, AtomicU32 bit-reinterpreted as f32)
+|   |   +-- event_fabric.rs             # tokio::broadcast bus, 10K ring buffer, replay-from-seq
+|   |   +-- arena.rs                    # Per-tick bump allocator using bumpalo
+|   |   +-- taint.rs                    # Information flow taint labels: WalletSecret, OwnerSecret, etc.
+|   |
+|   |  === RUNTIME (the skeleton -- extension system + lifecycle) ===
+|   |
+|   +-- golem-runtime/                  # Extension registry, hook dispatch, lifecycle state machine
+|   |   +-- extension.rs                # The Extension trait: 20 async hooks with default no-op impls
+|   |   +-- registry.rs                 # Accepts extensions, validates DAG, computes firing orders
+|   |   +-- dispatch.rs                 # Fires hooks across extensions in topological order
+|   |   +-- state.rs                    # GolemState: the mutable struct that flows through the hook chain
+|   |   +-- lifecycle.rs                # Type-state machine: Provisioning -&gt; Active -&gt; Dreaming -&gt; Terminal -&gt; Dead
+|   |   +-- shutdown.rs                 # 10-phase graceful shutdown for Fly.io SIGTERM (30s budget)
+|   |
+|   |  === COGNITION (the mind -- heartbeat, memory, affect, dreams) ===
+|   |
+|   +-- golem-heartbeat/                # The autonomous decision cycle engine
+|   |   +-- pipeline.rs                 # 9-step pipeline: observe -&gt; retrieve -&gt; analyze -&gt; gate -&gt; ... -&gt; reflect
+|   |   +-- record.rs                   # DecisionCycleRecord: structured per-tick cognitive snapshot
+|   |   +-- probes.rs                   # Market probes: price, liquidity, gas, health factor, regime detection
+|   |   +-- gating.rs                   # Adaptive prediction-error threshold (Friston 2010)
+|   |   +-- fsm.rs                      # Heartbeat FSM with interrupt substates (steer mid-tick)
+|   |   +-- speculation.rs              # Speculative read-tool prefetch (co-occurrence learning)
+|   |
+|   +-- golem-grimoire/                 # The Golem's knowledge system (LanceDB + SQLite + filesystem)
+|   |   +-- grimoire.rs                 # Top-level struct: coordinates episodic, semantic, playbook
+|   |   +-- episodic.rs                 # LanceDB: vector embeddings, columnar metadata, HNSW search
+|   |   +-- semantic.rs                 # SQLite: 5 entry types, confidence tracking, causal edges, emotion log
+|   |   +-- playbook.rs                 # PLAYBOOK.md: filesystem single-writer with snapshot history
+|   |   +-- causal.rs                   # Causal graph: SQLite adjacency table with BFS traversal
+|   |   +-- retrieval.rs                # Four-factor scoring: recency x importance x relevance x affect
+|   |   +-- curator.rs                  # 50-tick maintenance: validate, prune, compress, cross-reference
+|   |   +-- admission.rs                # Quality gate: prevents low-quality entries from polluting memory
+|   |   +-- decay.rs                    # Ebbinghaus forgetting: entries lose confidence without revalidation
+|   |   +-- ingestion.rs                # Four-stage pipeline for external knowledge: quarantine -&gt; adopt
+|   |   +-- immune.rs                   # Adaptive defense: learns to recognize attack patterns (Janeway 2001)
+|   |   +-- bloom.rs                    # Bloom Oracle: LSH pre-filter saves Styx query costs
+|   |   +-- embedder.rs                 # fastembed-rs: nomic-embed-text-v1.5, Matryoshka, 768-dim, in-process
+|   |   +-- propagation.rs              # PropagationPolicy: private -&gt; clade -&gt; lethe -&gt; listed
+|   |
+|   +-- golem-daimon/                   # The affect (emotion) engine
+|   |   +-- appraisal.rs                # OCC/Scherer appraisal -&gt; PAD vector + Plutchik label
+|   |   +-- mood.rs                     # Three temporal layers: emotion (seconds), mood (hours), personality
+|   |   +-- somatic_markers.rs          # Point markers: situation -&gt; emotional valence (Damasio 1994)
+|   |   +-- somatic_landscape.rs        # Continuous emotional topology over strategy parameter space
+|   |   +-- congruent_retrieval.rs      # Mood biases which memories surface; contrarian every 100 ticks
+|   |   +-- contagion.rs                # Clade emotional contagion: PAD attenuation with caps, 6h half-life
+|   |   +-- helplessness.rs             # Detection: Dominance &lt; -0.3 for 200+ ticks (Seligman 1972)
+|   |
+|   +-- golem-mortality/                # The death engine
+|   |   +-- clocks.rs                   # Three death clocks: economic (credit), epistemic (fitness), stochastic
+|   |   +-- vitality.rs                 # VitalityState: multiplicative composition, any zero = death
+|   |   +-- phases.rs                   # Type-state: Thriving -&gt; Stable -&gt; Conservation -&gt; Declining -&gt; Terminal
+|   |   +-- thanatopsis.rs              # Four-phase death protocol: Acceptance -&gt; Settlement -&gt; Reflection -&gt; Legacy
+|   |   +-- bottleneck.rs               # Genomic bottleneck: compress full Grimoire to &lt;=2048 entries at death
+|   |   +-- weismann.rs                 # Inherited knowledge starts at confidence x 0.85^generation
+|   |   +-- baldwin.rs                  # Validated heuristics surviving N+ generations -&gt; structural defaults
+|   |   +-- hayflick.rs                 # Replicant max-tick limits (named for Hayflick limit in cell biology)
+|   |   +-- attention_budget.rs         # Rational inattention: mortality pressure -&gt; attention allocation
+|   |
+|   +-- golem-dreams/                   # The dreaming engine (offline intelligence)
+|   |   +-- scheduler.rs                # When to dream: time-based + emotional load + novelty triggers
+|   |   +-- nrem.rs                     # NREM replay: prioritized, bidirectional, utility-weighted episodes
+|   |   +-- rem.rs                      # REM imagination: counterfactual "what if" scenario generation
+|   |   +-- anticipatory.rs             # Forward trajectories: causal graph -&gt; predicted future market states
+|   |   +-- consolidation.rs            # PLAYBOOK evolution, insight compression, schema integration
+|   |   +-- depotentiation.rs           # Emotional charge reduction on traumatic episodes (SFSR model)
+|   |   +-- threats.rs                  # DeFi threat catalog: simulate MEV, liquidation, oracle attacks
+|   |   +-- micro.rs                    # Background mini-consolidation between ticks (lightweight, continuous)
+|   |   +-- staging.rs                  # Dream-sourced hypotheses await live validation before promotion
+|   |
+|   +-- golem-context/                  # Context engineering (what the LLM sees)
+|   |   +-- workspace.rs                # Cognitive Workspace: assembled fresh each tick, not grown-and-compacted
+|   |   +-- policy.rs                   # ContextPolicy: learned token allocation per category
+|   |   +-- cybernetics.rs              # Three self-tuning loops: per-tick, per-Curator, per-regime-change
+|   |   +-- predictive.rs               # Background fiber pre-builds workspace reactively
+|   |   +-- interventions.rs            # Typed steers/followUps with severity routing + decision windows
+|   |
+|   |  === SAFETY (defense-in-depth) ===
+|   |
+|   +-- golem-safety/                   # Compile-time + runtime security layers
+|   |   +-- capabilities.rs             # Capability&lt;T&gt; tokens: ReadTool needs none, WriteTool needs a token
+|   |   +-- policy_cage.rs              # On-chain constraint enforcement via Alloy
+|   |   +-- taint_check.rs              # Information flow: WalletSecret never reaches LLM context
+|   |   +-- audit.rs                    # Merkle hash-chain: tamper-evident, forensic-grade action log
+|   |   +-- anchor.rs                   # Periodic on-chain anchoring of audit root hash (~$0.001/anchor)
+|   |   +-- zeroize.rs                  # Automatic secret wiping on drop (zeroize crate)
+|   |   +-- loop_guard.rs              # Detects degenerate tool-call loops (same tool, same args, N times)
+|   |   +-- permits.rs                  # ActionPermit lifecycle: created -&gt; committed -&gt; expired -&gt; cancelled
+|   |
+|   |  === INFRASTRUCTURE (chain, inference, tools) ===
+|   |
+|   +-- golem-inference/                # LLM provider abstraction (extracted from pi_agent_rust)
+|   |   +-- provider.rs                 # 90+ provider auth flows, streaming, error handling
+|   |   +-- streaming.rs                # SSE parser handling CR/LF, split packets, UTF-8 tails
+|   |   +-- routing.rs                  # Three-tier: T0 (none), T1 (Haiku-class), T2 (Opus-class)
+|   |   +-- x402.rs                     # Per-request USDC micropayment via Alloy
+|   |   +-- cache.rs                    # Prompt cache key computation for provider-side caching
+|   |   +-- budget.rs                   # Operational cost tracking: daily cap, burn rate, alerts
+|   |
+|   +-- golem-chain/                    # On-chain interaction via Alloy (Paradigm's Rust EVM toolkit)
+|   |   +-- alloy_provider.rs           # Provider setup for Base L2
+|   |   +-- erc8004.rs                  # Agent identity registry (on-chain Golem registration)
+|   |   +-- permit2.rs                  # Uniswap Permit2 token approval flow
+|   |   +-- policy_cage_read.rs         # Read PolicyCage constraints from on-chain state
+|   |   +-- warden.rs                   # Optional time-delayed execution (deferred): announce -&gt; wait -&gt; execute / cancel
+|   |   +-- settlement.rs              # Position settlement with Bardo State triage (shutdown path)
+|   |   +-- revm_sim.rs                # In-process EVM simulation: fork mainnet, test tx, no broadcast
+|   |
+|   +-- golem-tools/                    # Tool harness: registry, execution, sandboxing
+|   |   +-- trait.rs                    # Three tool traits: ReadTool, WriteTool, PrivilegedTool
+|   |   +-- registry.rs                 # Tool registry with profiles (active, observatory, conservative)
+|   |   +-- progress.rs                 # ProgressReporter: multi-step tools emit granular progress events
+|   |   +-- speculation.rs              # Co-occurrence engine: learns tool access patterns, prefetches reads
+|   |   +-- wasm_sandbox.rs             # Wasmtime: fuel metering + epoch interrupts for untrusted tools
+|   |   +-- sidecar.rs                  # JSON-RPC client for the TypeScript Uniswap SDK sidecar
+|   |
+|   |  === COORDINATION (multi-agent intelligence) ===
+|   |
+|   +-- golem-coordination/             # Collective intelligence without direct communication
+|   |   +-- pheromone.rs                # Pheromone Field: 3-layer stigmergic signal space (Grasse 1959)
+|   |   +-- clade.rs                    # Peer-to-peer Grimoire sync: export -&gt; transmit -&gt; ingest (not merge)
+|   |   +-- styx_client.rs              # WebSocket client for Styx coordination service
+|   |   +-- causal_federation.rs        # Anonymized causal edge publishing + ingestion (Pearl 2009)
+|   |   +-- bloodstain.rs               # Death-indexed warnings with costly signaling premium
+|   |   +-- propagation.rs              # PropagationPolicy enforcement: who sees what knowledge
+|   |
+|   |  === SURFACES (user-facing) ===
+|   |
+|   +-- golem-surfaces/                 # Event Fabric -&gt; user interfaces
+|   |   +-- multiplexer.rs              # Routes events to WebSocket/SSE/Telegram subscribers
+|   |   +-- websocket.rs                # Axum WebSocket handler: subscribe to subsystem categories
+|   |   +-- sse.rs                      # Server-Sent Events fallback for web clients
+|   |   +-- telegram.rs                 # Push notifications for high-signal events only
+|   |   +-- snapshot.rs                 # GolemSnapshot: full state for initial load / reconnection
+|   |   +-- steer.rs                    # Inbound steer/followUp from any surface -&gt; intervention system
+|   |
+|   +-- golem-creature/                 # Visual identity engine (the "Tamagotchi")
+|   |   +-- state_computer.rs           # Subscribes to EventFabric, computes creature visual state
+|   |   +-- forms.rs                    # Evolution: Egg -&gt; Hatchling -&gt; Mature -&gt; Weathered -&gt; Transcendent
+|   |   +-- expressions.rs              # PAD -&gt; expression mapping (8 octant archetypes from Mehrabian 1974)
+|   |   +-- particles.rs                # Visual effects: dream shimmer, death glow, trade sparks
+|   |   +-- lineage.rs                  # Genealogy tree across generations, death recap data
+|   |
+|   +-- golem-engagement/               # Progression system (roguelike-inspired)
+|   |   +-- achievements.rs             # Achievement definitions: lifecycle, performance, social, legendary
+|   |   +-- milestones.rs               # First trade, first dream, first death, generation milestones
+|   |   +-- death_recap.rs              # Kill screen: cause, stats, timeline, emotional arc, final words
+|   |   +-- graveyard.rs                # Persistent memorial of all dead Golems across all lineages
+|   |   +-- notifications.rs            # Toast/notification events emitted to Event Fabric
+|   |
+|   |  === BINARY (the entrypoint) ===
+|   |
+|   +-- golem-binary/                   # The single binary that ships
+|       +-- main.rs                     # Entrypoint: config -&gt; provision -&gt; activate -&gt; heartbeat loop
+|       +-- cli.rs                      # CLI argument parsing (clap): --config, --data-dir, --phenotype
+|       +-- startup.rs                  # Extension registration, fiber spawning, signal handling
+|
++-- sidecar/
+|   +-- tools-ts/                       # TypeScript sidecar for Uniswap SDK math
+|       +-- package.json                # @uniswap/v3-sdk, @uniswap/v4-sdk, smart-order-router
+|       +-- tsconfig.json
+|       +-- src/
+|           +-- index.ts                # Unix socket JSON-RPC server
+|           +-- tools/                  # LP math, route optimization, calldata encoding
+|           +-- types.ts                # Shared request/response types
+|
++-- tests/
+    +-- conformance/                    # Extension conformance (does each hook fire correctly?)
+    +-- adversarial/                    # Ingestion poisoning defense tests
+    +-- property/                       # Property-based tests (proptest): invariant verification
+    +-- integration/                    # Full lifecycle: provision -&gt; trade -&gt; dream -&gt; die -&gt; inherit
+</code></pre>
+<hr>
+<h2 id="architecture-7-layer-dependency-hierarchy"><a class="header" href="#architecture-7-layer-dependency-hierarchy">Architecture: 7-Layer Dependency Hierarchy</a></h2>
+<p>The 28 extensions are organized into 7 dependency layers. Extensions in layer N may depend on extensions in layers 0 through N-1, never the reverse. The runtime validates this DAG at startup – if an extension declares a dependency on something in a higher layer, the binary refuses to start.</p>
+<pre><code>Layer 7 ─ RECOVERY (1 extension)
+    compaction
+
+Layer 6 ─ INTERVENTION (2 extensions)
+    playbook, intervention
+
+Layer 5 ─ UX (2 extensions)
+    ui-bridge, observability
+
+Layer 4 ─ COGNITION (4 extensions)
+    turn-context, dream, cybernetics, clade
+
+Layer 3 ─ SAFETY (8 extensions)
+    safety, permits, risk, result-filter, coordination, compiler, model-router, x402-payment
+
+Layer 2 ─ STATE (4 extensions)
+    context, daimon, memory, lifespan
+
+Layer 1 ─ INPUT (1 extension)
+    input-router
+
+Layer 0 ─ FOUNDATION (6 extensions)
+    provider-adapter, telemetry, audit, grimoire, tools, heartbeat
+</code></pre>
+<p>Total: 28 extensions across 8 layers (0-7). The <code>after_turn</code> hook fires the nine-extension pipeline sequentially: heartbeat -&gt; lifespan -&gt; daimon -&gt; memory -&gt; risk -&gt; dream -&gt; cybernetics -&gt; clade -&gt; telemetry. Each extension reads what the previous wrote to GolemState.</p>
+<p>The extension trait defines 20 lifecycle hooks grouped into six categories (session lifecycle, input processing, agent lifecycle, turn lifecycle, post-turn learning, system hooks). Each hook has a default no-op implementation, so extensions only need to implement the hooks they care about. The runtime fires hooks in topological order across all registered extensions. The full Extension trait is specified in <code>13-runtime-extensions.md</code> (split into 13a: extension architecture, registry, tool authorization, model routing; and 13b: type-state machine, event fabric, arena allocator, shutdown protocol); here is a summary:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[async_trait]
+pub trait Extension: Send + Sync + 'static {
+    fn name(&amp;self) -&gt; &amp;str;
+    fn layer(&amp;self) -&gt; u8;
+    fn depends_on(&amp;self) -&gt; &amp;[&amp;str] { &amp;[] }
+
+    // Session lifecycle (1 hook)
+    async fn on_session(&amp;self, _reason: SessionReason, _ctx: &amp;mut SessionCtx) -&gt; Result&lt;()&gt; { Ok(()) }
+    // Input processing (1 hook)
+    async fn on_input(&amp;self, _msg: &amp;mut InputMessage, _ctx: &amp;InputCtx) -&gt; Result&lt;InputAction&gt; { Ok(InputAction::Pass) }
+    // Agent lifecycle (2 hooks)
+    async fn on_before_agent_start(&amp;self, _ctx: &amp;mut AgentStartCtx) -&gt; Result&lt;()&gt; { Ok(()) }
+    async fn on_agent_start(&amp;self, _ctx: &amp;AgentStartCtx) -&gt; Result&lt;()&gt; { Ok(()) }
+    // Turn lifecycle (7 hooks): turn_start, context, before_provider_request,
+    //   tool_call, tool_execution_{start,update,end}, tool_result
+    async fn on_tool_call(&amp;self, _call: &amp;ToolCall, _ctx: &amp;mut ToolCallCtx) -&gt; Result&lt;ToolAction&gt; { Ok(ToolAction::Allow) }
+    // Post-turn learning (3 hooks)
+    async fn on_after_turn(&amp;self, _ctx: &amp;mut AfterTurnCtx) -&gt; Result&lt;()&gt; { Ok(()) }
+    // System hooks (6 hooks): system_prompt, steer, send_message, debug, error, end
+    async fn on_end(&amp;self, _ctx: &amp;EndCtx) -&gt; Result&lt;()&gt; { Ok(()) }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="data-flow-one-heartbeat-tick"><a class="header" href="#data-flow-one-heartbeat-tick">Data Flow: One Heartbeat Tick</a></h2>
+<p>This diagram shows the complete data flow of a single tick – from market observation to surface rendering. Each arrow represents actual function calls in the codebase.</p>
+<pre><code>                                     +-------------------------+
+                                     |    PHEROMONE FIELD       |
+                                     |  (Styx -- wss://styx.bardo.run) |
+                                     +--------+----------------+
+                                              | read (threat/opportunity/wisdom signals)
+                                              v
++--[Base L2 RPC]-+  probe results   +------------------------------------------+
+|  MARKET DATA   |-----------------&gt;|            HEARTBEAT PIPELINE            |
++----------------+                  |                                          |
+                                    |  1. OBSERVE --&gt; 2. RETRIEVE --&gt; 3. ANALYZE |
+                                    |       |              |               |      |
+                                    |       v              v               v      |
+                                    |  MarketObs     Grimoire         Prediction  |
+                                    |  + Probes      4-factor         Error       |
+                                    |  + Pheromone   retrieval        Computation |
+                                    |                                             |
+                                    |  4. GATE ------------------------------------
+                                    |       |                                    |
+                                    |  +----+----+                              |
+                                    |  | PE &lt; th |---&gt; T0: SUPPRESS (no LLM)    |
+                                    |  | PE &gt;= th|---&gt; T1: ANALYZE (cheap LLM)  |
+                                    |  | PE &gt;&gt; th|---&gt; T2: DELIBERATE (full LLM)|
+                                    |  +---------+                              |
+                                    |       |                                    |
+                                    |  5. SIMULATE --&gt; 6. VALIDATE --&gt; 7. EXECUTE |
+                                    |       |              |               |      |
+                                    |       v              v               v      |
+                                    |    Revm sim     PolicyCage      Tool call   |
+                                    |    (in-proc)    + Risk Engine   (+ opt. Warden) |
+                                    |                                             |
+                                    |  8. VERIFY --&gt; 9. REFLECT                   |
+                                    |       |              |                      |
+                                    |       v              v                      |
+                                    |  Ground truth   DecisionCycleRecord        |
+                                    |  (tx receipt)   written to storage         |
+                                    +------------------------------------------+
+                                              |
+                                    emit to Event Fabric
+                                              |
+                          +-------------------+-------------------+
+                          |                   |                   |
+                          v                   v                   v
+                    +----------+       +----------+       +----------+
+                    |   TUI    |       | Web/WS   |       | Telegram |
+                    |(ratatui) |       |(Axum SSE)|       |  (bot)   |
+                    +----------+       +----------+       +----------+
+</code></pre>
+<p>The key thing to notice: the LLM is only invoked at step 4 if the prediction error (PE) exceeds the adaptive threshold. Most ticks don’t reach the LLM at all. The heartbeat FSM handles market observations, retrieval, and analysis using deterministic code. This is what “LLM-last” means in practice.</p>
+<hr>
+<h2 id="delegation-hierarchy"><a class="header" href="#delegation-hierarchy">Delegation Hierarchy</a></h2>
+<p>The Golem runtime orchestrates 32 agents in a four-level delegation DAG. This is not the same as the 7-layer extension hierarchy above (extensions are Rust code modules; agents are LLM-backed reasoning units).</p>
+<p>The hierarchy:</p>
+<ul>
+<li><strong>Level 0 (Terminal, 12 agents)</strong>: Trust anchors that never delegate to other agents. They invoke tools directly. Examples: <code>safety-guardian</code>, <code>risk-assessor</code>, <code>wallet-provisioner</code>, <code>pool-researcher</code>, <code>token-analyst</code>, <code>identity-verifier</code>, <code>position-monitor</code>, <code>vault-watchdog</code>, <code>hook-builder</code>, <code>integration-architect</code>, <code>integration-advisor</code>, <code>sleepwalker-observer</code>.</li>
+<li><strong>Level 1 (Execution, 3 agents)</strong>: Invoke tools and may delegate to Level 0.</li>
+<li><strong>Level 2 (Strategy, 7 agents)</strong>: Plan and orchestrate. Delegate to Level 1 and Level 0.</li>
+<li><strong>Level 3 (Orchestration, 3 agents)</strong>: Coordinate high-level flows across the strategy agents.</li>
+</ul>
+<p>Four invariants govern all delegation:</p>
+<ol>
+<li><strong>Acyclic</strong>: The DAG is topologically sorted at startup. Cycles are a startup error.</li>
+<li><strong>Safety-first</strong>: All writes flow through <code>safety-guardian</code>.</li>
+<li><strong>No transitive trust</strong>: Each agent independently verifies on-chain state rather than trusting what another agent reported.</li>
+<li><strong>Terminal exclusivity</strong>: Only Level 0 agents invoke tools directly.</li>
+</ol>
+<blockquote>
+<p><strong>Extended:</strong> Full 32-agent DAG with category tables, delegation level matrix, DAG rules, and example deposit flow – see <a href="../../prd2-extended/01-golem/00-overview-extended.html">../../prd2-extended/01-golem/00-overview-extended.md</a></p>
+</blockquote>
+<blockquote>
+<p>Cross-reference: Full agent definitions in <code>../07-tools/</code>. Safety architecture in <code>../10-safety/</code>. PolicyCage specification in <code>../10-safety/02-policy.md</code>.</p>
+</blockquote>
+<hr>
+<h2 id="environment-scoping"><a class="header" href="#environment-scoping">Environment Scoping</a></h2>
+<p>Every requirement in this PRD carries one of two labels:</p>
+<ul>
+<li><strong>[CORE]</strong>: Required for demo/testnet. Works with 3 agents, completes in under 15 minutes, runs on a single machine. This is the MVP.</li>
+<li><strong>[HARDENED]</strong>: Production hardening. Toggled on via configuration. Adds economic staking, population controls, formal verification, multi-party dispute resolution.</li>
+</ul>
+<p>The boundary between [CORE] and [HARDENED] is a configuration toggle, not a code fork. The same binary runs both environments. This means you can develop and test against [CORE] locally, then flip a config flag for production deployment without changing any code.</p>
+<hr>
+<h2 id="storage-layout-per-golem"><a class="header" href="#storage-layout-per-golem">Storage Layout (Per Golem)</a></h2>
+<p>Each Golem has a data directory on its VM’s filesystem. This is the authoritative state – if the VM dies, this data plus the custody layer (Delegation session keys, Privy wallet, or local key – see <code>13-custody.md</code>) constitute the Golem’s full identity.</p>
+<pre><code>$GOLEM_DATA/
++-- cycles/                         # DecisionCycleRecords (bincode-serialized, one per tick)
+|   +-- cycle-000001.bincode        # ~2-10KB each
+|   +-- cycle-000002.bincode
+|   +-- index.sqlite                # Tick index: tick -&gt; regime, tier, has_action, phase
++-- grimoire/
+|   +-- episodes.lance/             # LanceDB: episodic vectors + columnar metadata
+|   +-- semantic.db                 # SQLite: semantic entries, emotion_log, causal_edges,
+|   |                               #         staged_revisions, quarantine, immune_memory,
+|   |                               #         playbook_snapshots
+|   +-- PLAYBOOK.md                 # Procedural memory (filesystem, single-writer: Dream Integration)
++-- conversations/
+|   +-- session.jsonl               # User chat history (minority use case)
++-- audit/
+|   +-- chain.bin                   # Merkle hash-chain audit trail (tamper-evident)
+|   +-- anchors.json                # On-chain audit anchor transaction hashes
++-- bloom/
+|   +-- local_blooms.bin            # Bloom Oracle filter state for Styx query pre-filtering
++-- creature/
+|   +-- state.json                  # Current creature visual state (for surface reconnection)
++-- config/
+|   +-- golem.toml                  # GolemConfig (heartbeat interval, model routing, budget caps)
+|   +-- STRATEGY.md                 # Owner-authored strategy specification
++-- death/
+    +-- genome.bincode              # Genomic bottleneck output (written during Thanatopsis Phase III)
+    +-- testament.json              # Death testament (structured reflection, written during Phase II)
+</code></pre>
+<p>Estimated storage per day at adaptive theta-frequency intervals (30-120s, regime-dependent): ~720-2,880 ticks/day x ~5KB/tick = ~4-14MB for cycle records, plus Grimoire growth. Total: ~20-50MB/day. Cycle records older than the Curator’s lookback window (configurable, default 500 ticks) can be archived or pruned.</p>
+<hr>
+<h2 id="implementation-interfaces"><a class="header" href="#implementation-interfaces">Implementation Interfaces</a></h2>
+<p>This section shows the primary Rust type definitions. If you’re reading this document for architectural context and don’t need the struct layouts, skip to “Key Architectural Decisions” below.</p>
+<h3 id="golemconfig"><a class="header" href="#golemconfig">GolemConfig</a></h3>
+<p>The configuration struct loaded from TOML at startup. Every field is documented inline.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use alloy::primitives::Address;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GolemConfig {
+    /// Unique identifier for this golem instance
+    pub id: String,
+    /// Human-readable name
+    pub name: String,
+    /// ERC-8004 agent ID (U256 as string), if registered
+    pub agent_id: Option&lt;String&gt;,
+    /// Chain IDs this golem operates on
+    pub chain_ids: Vec&lt;u64&gt;,
+    /// Primary chain for vault operations
+    pub primary_chain_id: u64,
+    /// Wallet configuration
+    pub wallet: WalletConfig,
+    /// Heartbeat configuration
+    pub heartbeat: HeartbeatConfig,
+    /// Strategy references (paths or identifiers)
+    pub strategies: Vec&lt;String&gt;,
+    /// Memory/grimoire configuration
+    pub memory: MemoryConfig,
+    /// Deployment mode
+    pub deployment: DeploymentMode,
+    /// Golem phenotype -- activates a preconfigured capability bundle
+    pub phenotype: Option&lt;Phenotype&gt;,
+    /// Inference provider configuration
+    pub inference: Option&lt;InferenceConfig&gt;,
+    /// Logging configuration
+    pub log: LogConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WalletConfig {
+    pub provider: WalletProvider,
+    pub address: Option&lt;Address&gt;,
+    /// Privy app ID, required when provider is Privy
+    pub privy_app_id: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum WalletProvider {
+    Delegation,
+    Privy,
+    Local,
+    Safe,
+    ZeroDev,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HeartbeatConfig {
+    /// Tick interval in milliseconds (range: 10_000..=300_000, default: 60_000)
+    pub interval_ms: u64,
+    /// Consecutive none-severity ticks before idle suppression (default: 3)
+    pub idle_threshold: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MemoryConfig {
+    /// SQLite database path
+    pub db_path: String,
+    /// LanceDB directory path
+    pub vector_path: String,
+    /// Maximum episodes to retain (default: 10_000)
+    pub max_episodes: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum DeploymentMode {
+    Local,
+    Fly,
+    Docker,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Phenotype {
+    Sleepwalker,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InferenceConfig {
+    /// Ordered provider list
+    pub providers: Vec&lt;InferenceProvider&gt;,
+    /// Payment mode
+    pub payment: HashMap&lt;String, serde_json::Value&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InferenceProvider {
+    pub provider_type: String,
+    pub api_key: Option&lt;String&gt;,
+    pub diem: Option&lt;bool&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LogConfig {
+    /// JSONL log file path
+    pub path: String,
+    /// Log level
+    pub level: LogLevel,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum LogLevel {
+    Debug,
+    Info,
+    Warn,
+    Error,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="golemmanifest"><a class="header" href="#golemmanifest">GolemManifest</a></h3>
+<p>The manifest is the full identity document for a Golem. It combines config with strategy and operational metadata. This is what gets serialized when a Golem is created, and what gets read back when it boots.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GolemManifest {
+    /// Runtime config
+    pub config: GolemConfig,
+    /// Strategy definitions this golem can execute
+    pub strategy_refs: Vec&lt;StrategyRef&gt;,
+    /// Tool allowlist (tools this golem is permitted to call)
+    pub allowed_tools: Vec&lt;String&gt;,
+    /// Memory initialization parameters
+    pub memory_init: MemoryInit,
+    /// Creation metadata
+    pub created: CreationMeta,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StrategyRef {
+    /// Strategy identifier
+    pub id: String,
+    /// Strategy type
+    pub strategy_type: StrategyType,
+    /// Parameters for this strategy
+    pub params: HashMap&lt;String, serde_json::Value&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum StrategyType {
+    Lp,
+    Vault,
+    Trading,
+    Custom,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MemoryInit {
+    /// Seed episodes to bootstrap knowledge
+    pub seed_episodes: Option&lt;Vec&lt;String&gt;&gt;,
+    /// Inherited grimoire path (from parent, if replicated)
+    pub inherit_from: Option&lt;String&gt;,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CreationMeta {
+    pub timestamp: u64,
+    /// Parent ID if replicated from another golem
+    pub parent_id: Option&lt;String&gt;,
+    pub method: CreationMethod,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum CreationMethod {
+    Manual,
+    Replication,
+    Api,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="type-state-lifecycle-machine"><a class="header" href="#type-state-lifecycle-machine">Type-State Lifecycle Machine</a></h3>
+<p>The Golem’s lifecycle is encoded as a type-state machine. This is one of the more interesting Rust-specific design decisions: <code>Golem&lt;Active&gt;</code> has a <code>tick()</code> method; <code>Golem&lt;Dead&gt;</code> does not. Calling <code>tick()</code> on a dead Golem is a compile error, not a runtime check. The compiler itself enforces the mortality invariant.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::marker::PhantomData;
+
+// Zero-sized type-state markers (no runtime cost)
+pub struct Provisioning;
+pub struct Active;
+pub struct Dreaming;
+pub struct Terminal;
+pub struct Dead;
+
+pub struct Golem&lt;Phase&gt; {
+    state: GolemState,
+    _phase: PhantomData&lt;Phase&gt;,
+}
+
+impl Golem&lt;Provisioning&gt; {
+    pub async fn activate(self) -&gt; Result&lt;Golem&lt;Active&gt;&gt; {
+        // Validate config, connect wallet, load grimoire, register extensions
+        Ok(Golem { state: self.state, _phase: PhantomData })
+    }
+}
+
+impl Golem&lt;Active&gt; {
+    pub async fn tick(&amp;mut self) -&gt; Result&lt;DecisionCycleRecord&gt; {
+        // The 9-step heartbeat pipeline
+        todo!()
+    }
+
+    pub fn enter_dream(self) -&gt; Golem&lt;Dreaming&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+
+    pub fn begin_death(self) -&gt; Golem&lt;Terminal&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+}
+
+impl Golem&lt;Dreaming&gt; {
+    pub async fn dream(&amp;mut self) -&gt; Result&lt;()&gt; { todo!() }
+
+    pub fn wake(self) -&gt; Golem&lt;Active&gt; {
+        Golem { state: self.state, _phase: PhantomData }
+    }
+}
+
+impl Golem&lt;Terminal&gt; {
+    pub async fn thanatopsis(self) -&gt; Result&lt;Golem&lt;Dead&gt;&gt; {
+        // Four-phase death protocol: Acceptance -&gt; Settlement -&gt; Reflection -&gt; Legacy
+        Ok(Golem { state: self.state, _phase: PhantomData })
+    }
+}
+
+// Golem&lt;Dead&gt; has no methods -- it is a tombstone.
+<span class="boring">}</span></code></pre>
+<p>Notice the transitions are consuming (<code>self</code>, not <code>&amp;mut self</code>). <code>activate()</code> consumes <code>Golem&lt;Provisioning&gt;</code> and returns <code>Golem&lt;Active&gt;</code>. You can’t accidentally hold onto a reference to the provisioning-phase Golem after activation. The ownership system enforces the state machine.</p>
+<h3 id="bootstrap-sequence"><a class="header" href="#bootstrap-sequence">Bootstrap Sequence</a></h3>
+<ol>
+<li>Load <code>GolemConfig</code> from TOML file or environment</li>
+<li>Validate config (serde + custom validation)</li>
+<li>Initialize wallet provider (connect or create)</li>
+<li>Initialize memory store (SQLite + LanceDB)</li>
+<li>Register extensions in topological order (7 layers)</li>
+<li>Load and validate strategy references</li>
+<li>Start heartbeat scheduler (tokio interval)</li>
+<li>Emit <code>GolemEvent::LifecycleReady</code> to Event Fabric</li>
+</ol>
+<h3 id="crate-dependencies"><a class="header" href="#crate-dependencies">Crate Dependencies</a></h3>
+<pre><code>golem-runtime depends on:
+  golem-core        -- types, config, cortical state, event fabric, arena, taint
+  golem-heartbeat   -- decision cycle pipeline
+  golem-grimoire    -- knowledge storage and retrieval
+  golem-daimon      -- affect engine
+  golem-mortality   -- death clocks and lifecycle phases
+  golem-dreams      -- dreaming engine
+  golem-context     -- context engineering
+  golem-safety      -- capability tokens, audit, policy enforcement
+  golem-inference   -- LLM provider routing (three-tier)
+  golem-chain       -- on-chain interaction via Alloy
+  golem-tools       -- tool harness and registry
+  golem-coordination -- Styx client, pheromone field, clade sync
+</code></pre>
+<hr>
+<h2 id="technology-stack"><a class="header" href="#technology-stack">Technology Stack</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Technology</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Language</td><td>Rust (edition 2024, <code>#![forbid(unsafe_code)]</code>)</td><td>Deterministic memory, compile-time safety, zero GC. The <code>forbid(unsafe_code)</code> directive is project-wide.</td></tr>
+<tr><td>Async runtime</td><td>tokio</td><td>Required by Axum (HTTP), LanceDB, and Alloy (EVM). All IO-bound work uses tokio tasks. CPU-bound work (embedding, scoring) uses <code>tokio::task::spawn_blocking</code>.</td></tr>
+<tr><td>EVM interaction</td><td>Alloy v1.0 (Paradigm)</td><td>Native Rust EVM toolkit. The <code>sol!</code> procedural macro generates type-safe bindings from Solidity interfaces. 60% faster U256 arithmetic than ethers.js.</td></tr>
+<tr><td>EVM simulation</td><td>Revm (Paradigm)</td><td>In-process EVM fork. Loads mainnet state on demand, simulates transactions without broadcasting. Used in heartbeat Step 5 (SIMULATE) for T2 deliberation.</td></tr>
+<tr><td>Vector DB</td><td>LanceDB</td><td>Written in Rust. Columnar storage with Lance format. HNSW index for approximate nearest neighbor search. Predicate pushdown on metadata columns.</td></tr>
+<tr><td>Relational DB</td><td>rusqlite + sqlite-vec</td><td>Rust bindings for SQLite. WAL mode for concurrent reads. Serves semantic memory, causal graph (adjacency table), emotion log, staged revisions, quarantine, immune memory.</td></tr>
+<tr><td>Embeddings</td><td>fastembed-rs</td><td>In-process embedding using nomic-embed-text-v1.5. Matryoshka Representation Learning (MRL) allows dimension truncation (768 – 384 – 256) without retraining.</td></tr>
+<tr><td>HTTP server</td><td>Axum</td><td>Tokio-native. Used for the surface multiplexer: WebSocket endpoint for TUI/web, SSE for fallback, REST for state snapshots and steer/followUp ingress.</td></tr>
+<tr><td>TUI</td><td>ratatui</td><td>Rich terminal rendering. Panels, charts, scrolling event logs, animated creature display. The primary owner interface during development.</td></tr>
+<tr><td>Serialization</td><td>serde + bincode / serde_json</td><td>bincode for hot-path storage (DecisionCycleRecords: fast, compact). serde_json for interop (API responses, config files, Event Fabric payloads to surfaces).</td></tr>
+<tr><td>Secrets</td><td>zeroize crate</td><td>Types wrapping sensitive data (<code>Zeroizing&lt;String&gt;</code>) automatically overwrite memory on drop, preventing key recovery from memory dumps.</td></tr>
+<tr><td>WASM sandbox</td><td>wasmtime</td><td>Fuel metering (instruction count limits) + epoch interruption (wall-clock timeout). Applied only to untrusted third-party tools – native Bardo tools run unsandboxed at full Rust speed.</td></tr>
+<tr><td>Wallet</td><td>Three custody modes (see <code>13-custody.md</code>)</td><td><strong>Delegation</strong> (recommended): MetaMask ERC-7710/7715, funds stay in owner’s wallet, session keys with caveat enforcers. <strong>Privy</strong> (legacy): AWS Nitro Enclaves, signing via HTTP API. <strong>Local key</strong> (dev): bounded by on-chain delegation.</td></tr>
+<tr><td>Deployment</td><td>Fly.io</td><td>One VM per Golem. Ephemeral compute with predictable billing. SIGTERM with 30-second grace period triggers the graceful shutdown protocol.</td></tr>
+<tr><td>Observability</td><td>tracing + OpenTelemetry</td><td>Structured spans with DeFi-contextual fields (tick, regime, phase, tool). Prometheus metrics for operational monitoring.</td></tr>
+<tr><td>Allocator</td><td>bumpalo</td><td>Per-tick arena allocator. All allocations within a tick use the arena; it resets at tick end. Eliminates memory fragmentation across weeks of continuous operation.</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="origin-built-from-scratch-informed-by-pi_agent_rust"><a class="header" href="#origin-built-from-scratch-informed-by-pi_agent_rust">Origin: Built From Scratch, Informed by pi_agent_rust</a></h2>
+<p><strong>Context for first-time readers:</strong> Pi Agent is an open-source agentic framework by Mario Zechner (badlogic) that implements a well-designed extension/hook model for LLM-backed agents. <code>pi_agent_rust</code> is a Rust port by Jeff Emanuel (Dicklesworthstone) that re-implements the same architecture in Rust. We studied pi_agent_rust’s design for provider-specific quirks (streaming format differences, auth edge cases) but build Golem-RS from scratch using published ecosystem crates. pi_agent_rust is a monolithic binary with no published crates, and forking it would mean inheriting its <code>asupersync</code> runtime plus 90+ provider integrations that Bardo doesn’t need. The Rust decision itself follows from Pillar 4 above: a mortal agent on a micro VM cannot afford GC pauses, and the type-state lifecycle machine cannot exist in TypeScript.</p>
+<p>Equivalent functionality is built fresh using the Rust ecosystem:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Domain</th><th>Approach</th></tr>
+</thead>
+<tbody>
+<tr><td>Provider abstraction (5 providers: Anthropic, OpenAI, Google, Venice, Grok)</td><td><code>reqwest</code> 0.12 + one provider trait with per-provider implementations. pi_agent_rust’s 6k lines cover 90+ providers Bardo will never use.</td></tr>
+<tr><td>SSE parsing</td><td><code>eventsource-stream</code> or <code>reqwest-eventsource</code> crate. Custom fallback (~200-300 lines) only if edge cases demand it.</td></tr>
+<tr><td>Auth</td><td>API key headers (trivial for 4 of 5 providers) + x402 signed USDC authorization (custom, not in pi_agent_rust).</td></tr>
+<tr><td>Extension sandbox</td><td>Deferred. All 28 core extensions are native Rust. User-provided extensions will use <code>wasmtime</code> (already in the stack for tool sandboxing).</td></tr>
+<tr><td>Session JSONL</td><td><code>serde_json</code> + line-delimited I/O (~50-100 lines).</td></tr>
+</tbody>
+</table>
+</div>
+<p>Everything above this layer – the 28 extensions, heartbeat FSM, Grimoire, Daimon, Dreams, Context Governor, Risk Engine, Mortality system, Creature System, Pheromone Field – is purpose-built from the specifications in this document series.</p>
+<p><strong>Key decision: tokio, not asupersync.</strong> Golem-RS uses tokio because the rest of the ecosystem (Axum, LanceDB, Alloy, rusqlite’s async wrapper) assumes it. We studied asupersync’s structured concurrency patterns and adapted the useful ones to tokio equivalents (primarily <code>tokio::task::JoinSet</code> and <code>CancellationToken</code>).</p>
+<hr>
+<h2 id="key-architectural-decisions"><a class="header" href="#key-architectural-decisions">Key Architectural Decisions</a></h2>
+<p>These are the decisions that shape the system’s architecture. Each one records what was decided, why, and what alternative was rejected.</p>
+<h3 id="1-decisioncyclerecord-replaces-session-turns-for-the-autonomous-path"><a class="header" href="#1-decisioncyclerecord-replaces-session-turns-for-the-autonomous-path">1. DecisionCycleRecord Replaces Session Turns for the Autonomous Path</a></h3>
+<p><strong>Problem</strong>: Traditional agent frameworks model cognition as a conversation: human message – LLM response – tool calls – repeat. But 80% of a Golem’s ticks have no human input. The heartbeat fires autonomously.</p>
+<p><strong>Solution</strong>: CoALA [SUMERS-2024] formalizes the correct primitive: a <strong>decision cycle</strong>, not a conversation turn. Each tick produces a typed <code>DecisionCycleRecord</code> containing the observation, emotional appraisal, gating decision, deliberation (if any), actions, outcome verification, knowledge written, and mortality state.</p>
+<p><strong>Why it’s better</strong>: Dream replay selects episodes by <code>utility = gain x need</code> – the record IS the episode, with observation, action, outcome, and emotional state already structured. Cybernetics self-tuning traces outcomes to context entries from <code>context_bundle_summary</code>. The lifespan extension reads mortality accounting directly. No parsing of LLM output text required.</p>
+<p><strong>What stays</strong>: Session JSONL is preserved for the minority case (user chatting with their Golem), stored separately in <code>conversations/session.jsonl</code>.</p>
+<h3 id="2-cognitive-workspace-replaces-compaction"><a class="header" href="#2-cognitive-workspace-replaces-compaction">2. Cognitive Workspace Replaces Compaction</a></h3>
+<p><strong>Problem</strong>: In session-based agents, the context grows until it hits the LLM’s context window, then compaction summarizes older messages. This is reactive and lossy.</p>
+<p><strong>Solution</strong>: The Context Governor assembles a fresh <strong>Cognitive Workspace</strong> each tick from structured categories (invariants, strategy, retrieved knowledge, observations, affect) with learned token allocations. This implements Baddeley’s working memory model [BADDELEY-2000]: central executive (Context Governor), episodic buffer (the Workspace), visuospatial sketchpad (observations), phonological loop (PLAYBOOK heuristics).</p>
+<h3 id="3-unified-grimoire-lancedb--sqlite--filesystem"><a class="header" href="#3-unified-grimoire-lancedb--sqlite--filesystem">3. Unified Grimoire (LanceDB + SQLite + Filesystem)</a></h3>
+<p><strong>Problem</strong>: The Grimoire needs vector similarity search (mood-congruent retrieval), SQL queries (confidence tracking, BFS graph traversal), and simple text file operations (PLAYBOOK.md). No single storage substrate serves all three well.</p>
+<p><strong>Solution</strong>: Each substrate serves its query patterns optimally. LanceDB for HNSW vector search. SQLite for indexed columns and graph queries. Filesystem for the single-writer PLAYBOOK.md.</p>
+<p><strong>Why not CRDTs</strong>: Evaluated and rejected. CRDT merge semantics (convergence – both sides end up equal) contradict the inheritance model (asymmetric digestion with confidence discounts and validation-through-use). PLAYBOOK.md has exactly one writer; there is no concurrent editing scenario. The causal graph needs SQL-indexed BFS traversal that CRDTs cannot serve. Knowledge propagation uses export – transmit – ingest through the four-stage ingestion pipeline, preserving the Weismann barrier [HEARD-MARTIENSSEN-2014], the testing effect [ROEDIGER-KARPICKE-2006], and confidence discounting.</p>
+<h3 id="4-type-state-lifecycle-machine"><a class="header" href="#4-type-state-lifecycle-machine">4. Type-State Lifecycle Machine</a></h3>
+<p><strong>Problem</strong>: A dead Golem must never process another tick. A terminal Golem must not dream. These are critical invariants.</p>
+<p><strong>Solution</strong>: Rust’s type system encodes lifecycle states as zero-sized types. <code>Golem&lt;Active&gt;</code> has a <code>tick()</code> method; <code>Golem&lt;Dead&gt;</code> does not. Calling <code>tick()</code> on a dead Golem is a compile error, not a runtime check. This extends to Thanatopsis phases, dream cycle phases, and ActionPermit states.</p>
+<p><strong>Academic basis</strong>: Dennis &amp; Van Horn (1966) established capability-based security – the principle that access rights should be unforgeable tokens checked at the type level rather than runtime guards [DENNIS-VAN-HORN-1966].</p>
+<h3 id="5-event-fabric-as-universal-observability"><a class="header" href="#5-event-fabric-as-universal-observability">5. Event Fabric as Universal Observability</a></h3>
+<p><strong>Problem</strong>: Internal state transitions (heartbeat ticks, emotional appraisals, dream phases, tool executions) need to be visible to multiple surfaces (TUI, web dashboard, Telegram, creature system) without coupling those surfaces to the internal implementation.</p>
+<p><strong>Solution</strong>: A non-blocking <code>tokio::sync::broadcast</code> channel with a 10,000-event ring buffer. Every subsystem emits typed events (50+ types across 16 subsystems). Surfaces subscribe to the categories they need. The Event Fabric never blocks the heartbeat pipeline – if receivers lag, they miss events and can catch up via replay.</p>
+<h3 id="6-pheromone-field-for-coordination"><a class="header" href="#6-pheromone-field-for-coordination">6. Pheromone Field for Coordination</a></h3>
+<p><strong>Problem</strong>: Direct agent-to-agent messaging leaks strategy information. If Golem A tells Golem B about a Morpho utilization spike, B learns A’s strategy involves Morpho. This is the Grossman-Stiglitz paradox [GROSSMAN-STIGLITZ-1980]: shared alpha destroys itself.</p>
+<p><strong>Solution</strong>: Stigmergic coordination [GRASSE-1959]. Golems deposit anonymous signals (threat class + intensity) into a shared field with three temporal layers (threat: 2h half-life, opportunity: 12h, wisdom: 7d). Signals decay exponentially; independently confirmed signals reinforce. No strategy information leaks. Coordination emerges from environmental traces, not communication.</p>
+<h3 id="7-capability-tokens-for-compile-time-security"><a class="header" href="#7-capability-tokens-for-compile-time-security">7. Capability Tokens for Compile-Time Security</a></h3>
+<p><strong>Problem</strong>: A compromised LLM prompt should not be able to execute unauthorized trades. Runtime permission checks are fallible – they require correct implementation at every call site.</p>
+<p><strong>Solution</strong>: Rust’s type system enforces tool permissions at compile time via <code>Capability&lt;T&gt;</code> tokens backed by <code>PhantomData</code>. <code>ReadTool</code> requires no capability. <code>WriteTool</code> requires a <code>Capability&lt;WritePermission&gt;</code> that can only be minted by the safety system after PolicyCage validation. The LLM never sees these tokens – they exist only in the Rust type system.</p>
+<hr>
+<h2 id="cross-lifetime-persistence-via-styx"><a class="header" href="#cross-lifetime-persistence-via-styx">Cross-Lifetime Persistence via Styx</a></h2>
+<p>When a Golem dies, its knowledge doesn’t disappear. It persists across three privacy layers provided by the Styx coordination service:</p>
+<ul>
+<li><strong>Vault layer</strong>: Encrypted per-owner backup. AES-256-GCM, owner-held key. Survives Golem death for inheritance by successor Golems. Stored in Cloudflare R2.</li>
+<li><strong>Clade layer</strong>: Shared within the owner’s fleet of Golems. Confidence-discounted ingestion preserves the Weismann barrier (inherited knowledge starts at reduced confidence so the inheritor must validate it through use).</li>
+<li><strong>Lethe layer</strong>: Public knowledge contributed to the collective. Death warnings (Bloodstains) carry costly signaling premium – a dead Golem can’t benefit from its own warning, so the information is maximally honest.</li>
+</ul>
+<p>Styx is strictly additive. A Golem running without Styx connectivity retains ~95% of its capabilities – only cross-Golem sync and the Pheromone Field are unavailable.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[JONAS-1966] Jonas, H. (1966). <em>The Phenomenon of Life</em>. Northwestern University Press. — <em>Argues that metabolism is the defining feature of life: self-sustaining through the very activity that requires sustenance. Grounds the Golem’s mortality-as-feature thesis.</em></li>
+<li>[LAU-2026] Lau, K. (2026). “On the Inconsistency of LLM-Based Scoring.” arXiv preprint. <em>Note: Preprint, not yet peer-reviewed.</em> — <em>Demonstrates that LLM-based scoring is provably inconsistent, motivating Bardo’s use of deterministic on-chain formulas for performance evaluation.</em></li>
+<li>[HALDAR-HOCKENMAIER-2025] Haldar, S. &amp; Hockenmaier, J. (2025). “LLM Judges Are Not Reliable.” — <em>Reinforces the case against LLM-based evaluation, supporting Bardo’s deterministic scoring design.</em></li>
+<li>[FRUGALGPT-2023] Chen, L. et al. (2024). “FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance.” <em>TMLR</em>. — <em>Demonstrates matching GPT-4 performance with up to 98% cost reduction through intelligent cascading; validates the T0/T1/T2 gating approach.</em></li>
+<li>[SEAGENT-2025] Ye, Q. et al. (2025). “SEAgent: Confused Deputy Attacks in Software Engineering Agents.” arXiv preprint. — <em>Catalogs confused deputy attack vectors in agent frameworks; motivates the capability token and taint tracking defenses.</em></li>
+<li>[MERITRANK-2024] MeritRank: Transitivity Decay for Sybil-Resistant Reputation. 2024. — <em>Proposes transitivity decay for reputation systems; informs ERC-8004 reputation scoring design.</em></li>
+<li>[RAY-1991] Ray, T.S. “An Approach to the Synthesis of Life.” <em>Artificial Life II</em>, SFI Studies in the Sciences of Complexity, 1991. — <em>The Tierra system: self-replicating programs evolve complex behaviors only when a reaper kills the oldest, demonstrating that mortality drives evolutionary innovation.</em></li>
+<li>[LENSKI-2003] Lenski, R.E., Ofria, C., Pennock, R.T. &amp; Adami, C. “The Evolutionary Origin of Complex Features.” <em>Nature</em>, 423, 2003. — <em>Shows digital organisms evolve complex logic through stepping-stone mutations requiring population turnover; supports the mortality-creates-intelligence thesis.</em></li>
+<li>[VOSTINAR-2019] Vostinar, A.E., Goldsby, H.J. &amp; Ofria, C. “Suicidal Selection: Programmed Cell Death Can Evolve in Unicellular Organisms Due Solely to Kin Selection.” <em>Artificial Life</em>, 25(4), 2019. — <em>Demonstrates that programmed death evolves as adaptive behavior benefiting kin; parallels Golem death protocols that benefit the Clade.</em></li>
+<li>[KREPS-MILGROM-ROBERTS-WILSON-1982] Kreps, D.M., Milgrom, P., Roberts, J. &amp; Wilson, R. “Rational Cooperation in the Finitely Repeated Prisoners’ Dilemma.” <em>Journal of Economic Theory</em>, 27(2), 1982. — <em>Proves that agents with uncertain finite horizons cooperate more effectively than infinite-horizon agents; grounds the claim that mortal Golems are structurally more trustworthy.</em></li>
+<li>[DAMASIO-1994] Damasio, A. <em>Descartes’ Error: Emotion, Reason, and the Human Brain.</em> Putnam, 1994. — <em>Establishes the somatic marker hypothesis: emotions function as rapid heuristic signals that bias advantageous decisions before conscious deliberation. Foundational for the Daimon affect engine.</em></li>
+<li>[BECHARA-2000] Bechara, A., Damasio, H. &amp; Damasio, A. “Emotion, Decision Making and the Orbitofrontal Cortex.” <em>Cerebral Cortex</em>, 10(3), 2000. — <em>Shows that emotional biases anticipate correct choices before conscious awareness; validates affect-driven decision gating.</em></li>
+<li>[BOWER-1981] Bower, G.H. “Mood and Memory.” <em>American Psychologist</em>, 36(2), 1981. — <em>Establishes mood-congruent memory: emotional states bias which memories are retrieved. Directly implemented in the Grimoire’s four-factor retrieval scoring.</em></li>
+<li>[EMOTIONAL-RAG-2024] Zhang, Y. et al. “Emotional RAG: Strengthening LLM-based Agent Emotion via Emotional RAG.” arXiv:2410.23041, 2024. — <em>Validates computationally that emotion-tagged retrieval outperforms non-emotional retrieval across multiple datasets.</em></li>
+<li>[RUSSELL-MEHRABIAN-1977] Russell, J.A. &amp; Mehrabian, A. “Evidence for a Three-Factor Theory of Emotions.” <em>Journal of Research in Personality</em>, 11(3), 1977. — <em>Proposes the PAD (Pleasure-Arousal-Dominance) model of affect; the formal basis for the Daimon’s emotional state representation.</em></li>
+<li>[WILSON-MCNAUGHTON-1994] Wilson, M.A. &amp; McNaughton, B.L. “Reactivation of Hippocampal Ensemble Memories During Sleep.” <em>Science</em>, 265, 1994. — <em>Demonstrates that hippocampal neurons replay waking experiences during sleep; the biological basis for Golem NREM dream replay.</em></li>
+<li>[BUZSAKI-2015] Buzsaki, G. “Hippocampal Sharp Wave-Ripple: A Cognitive Biomarker for Episodic Memory and Planning.” <em>Neuron</em>, 85(2), 2015. — <em>Shows that sharp-wave ripples compress minutes of experience into ~100ms bursts for consolidation; inspires the Golem’s dream compression pipeline.</em></li>
+<li>[WALKER-VAN-DER-HELM-2009] Walker, M.P. &amp; van der Helm, E. “Overnight Therapy? The Role of Sleep in Emotional Brain Processing.” <em>Psychological Bulletin</em>, 135(5), 2009. — <em>The SFSR (Sleep to Forget, Sleep to Remember) model: sleep strips emotional valence while preserving informational content. Basis for dream depotentiation.</em></li>
+<li>[WAGNER-2004] Wagner, U., Gais, S., Haider, H., Verleger, R. &amp; Born, J. “Sleep Inspires Insight.” <em>Nature</em>, 427, 2004. — <em>Shows that sleeping subjects are 2.6x more likely to discover hidden rules in data; motivates the Golem dream cycle’s insight generation phase.</em></li>
+<li>[HAFNER-DREAMERV3-2025] Hafner, D., Pasukonis, J., Ba, J. &amp; Lillicrap, T. “Mastering Diverse Domains through World Models.” <em>Nature</em>, 2025. — <em>Proves agents trained in imagined forward trajectories from learned world models outperform model-free agents; validates the REM dream phase’s counterfactual scenario generation.</em></li>
+<li>[HA-SCHMIDHUBER-2018] Ha, D. &amp; Schmidhuber, J. “World Models.” arXiv:1803.10122, 2018. — <em>Shows a controller trained inside hallucinated dreams achieves competitive performance with far less real-world data; foundational for dream-based learning.</em></li>
+<li>[SUMERS-2024] Sumers, T.R., Yao, S., Narasimhan, K. &amp; Griffiths, T.L. “Cognitive Architectures for Language Agents.” <em>Transactions on Machine Learning Research</em>, 2024. — <em>Proposes the CoALA framework formalizing what a language agent is: modular memory, structured actions, and decision cycles. The academic framework Bardo’s cognition maps to.</em></li>
+<li>[BADDELEY-2000] Baddeley, A. “The Episodic Buffer: A New Component of Working Memory?” <em>Trends in Cognitive Sciences</em>, 4(11), 2000. — <em>Adds the episodic buffer to the working memory model; the theoretical basis for the Cognitive Workspace assembled fresh each tick.</em></li>
+<li>[FRISTON-2010] Friston, K. “The Free-Energy Principle: A Unified Brain Theory?” <em>Nature Reviews Neuroscience</em>, 11(2), 2010. — <em>Proposes precision-weighted prediction error as the brain’s organizing principle; directly implemented in the heartbeat’s gating step (Step 4).</em></li>
+<li>[GRASSE-1959] Grasse, P.-P. “La Reconstruction du Nid et les Coordinations Interindividuelles chez Bellicositermes Natalensis et Cubitermes sp.” <em>Insectes Sociaux</em>, 6, 1959. — <em>Describes stigmergy: indirect coordination through environmental signals. The biological basis for the Pheromone Field.</em></li>
+<li>[GROSSMAN-STIGLITZ-1980] Grossman, S.J. &amp; Stiglitz, J.E. “On the Impossibility of Informationally Efficient Markets.” <em>American Economic Review</em>, 70(3), 1980. — <em>Argues that perfectly efficient markets are impossible because information acquisition has costs; supports the economic viability of informed Golem agents.</em></li>
+<li>[DENNIS-VAN-HORN-1966] Dennis, J.B. &amp; Van Horn, E.C. “Programming Semantics for Multiprogrammed Computations.” <em>Communications of the ACM</em>, 9(3), 1966. — <em>Foundational work on capability-based security; the theoretical basis for Golem capability tokens that enforce tool permissions at compile time.</em></li>
+<li>[HEARD-MARTIENSSEN-2014] Heard, E. &amp; Martienssen, R.A. “Transgenerational Epigenetic Inheritance: Myths and Mechanisms.” <em>Cell</em>, 157(1), 2014. — <em>Analyzes the Weismann barrier separating germline from soma; the biological model for confidence decay on inherited knowledge.</em></li>
+<li>[ROEDIGER-KARPICKE-2006] Roediger, H.L. &amp; Karpicke, J.D. “Test-Enhanced Learning: Taking Memory Tests Improves Long-Term Retention.” <em>Psychological Science</em>, 17(3), 2006. — <em>Demonstrates the testing effect: retrieval practice strengthens memory more than re-study. Motivates the Grimoire’s revalidation-based confidence system.</em></li>
+<li>[JANEWAY-2001] Janeway, C.A., Travers, P., Walport, M. &amp; Shlomchik, M.J. <em>Immunobiology: The Immune System in Health and Disease.</em> Garland, 5th ed., 2001. — <em>The canonical immunology reference; informs the Grimoire’s adaptive immune defense against knowledge poisoning attacks.</em></li>
+<li>[PEARL-2009] Pearl, J. <em>Causality: Models, Reasoning, and Inference.</em> Cambridge University Press, 2nd ed., 2009. — <em>Formalizes causal reasoning with do-calculus; the theoretical basis for the Grimoire’s causal graph and federated causal edge sharing.</em></li>
+<li>[SIMS-2003] Sims, C. “Implications of Rational Inattention.” <em>Journal of Monetary Economics</em>, 50(3), 2003. — <em>Formalizes rational inattention: information processing is costly, so agents optimally allocate attention. Grounds mortality-aware attention budgeting.</em></li>
+<li>[BORGES-1942] Borges, J.L. “Funes the Memorious.” <em>Ficciones</em>, 1944. — <em>A man who remembers everything and understands nothing; the cautionary tale motivating the Grimoire’s forgetting-as-feature design.</em></li>
+<li>[STICKGOLD-WALKER-2013] Stickgold, R. &amp; Walker, M.P. “Sleep-Dependent Memory Triage: Evolving Generalization Through Selective Processing.” <em>Nature Neuroscience</em>, 16, 2013. — <em>Proposes that sleep actively triages memories for generalization vs. forgetting; the neuroscience model for the Curator’s consolidation pipeline.</em></li>
+</ul>
+<hr>
+<p><em>“The body should be worthy of the soul it carries.”</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/00-vision/05-manifesto.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/01-cognition.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/00-vision/05-manifesto.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/01-cognition.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

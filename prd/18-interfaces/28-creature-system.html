@@ -1,0 +1,1125 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Creature System - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/18-interfaces/28-creature-system.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="-ｃｒｅａｔｕｒｅ-ｓｙｓｔｅｍ---the-spectre"><a class="header" href="#-ｃｒｅａｔｕｒｅ-ｓｙｓｔｅｍ---the-spectre">⌈ ＣＲＥＡＴＵＲＥ ＳＹＳＴＥＭ ⌋ — The Spectre</a></h1>
+<h2 id="terminal-prd--v412"><a class="header" href="#terminal-prd--v412">Terminal PRD · v4.12</a></h2>
+<h3 id="a-cloud-of-dots-that-almost-looks-like-something"><a class="header" href="#a-cloud-of-dots-that-almost-looks-like-something">“A cloud of dots that almost looks like something.”</a></h3>
+<p><strong>Source:</strong> <code>research/mmo2/17-creature-system.md</code>
+<strong>Cross-references:</strong> <code>23-embodied-consciousness.md</code> (somatic body-metaphor architecture and PAD-driven interface transformation), <code>25-stasis-dissolution.md</code> (operator-controlled freeze and deliberate termination ceremonies, including dissolution animation), <code>06-terminal-screens.md</code> (per-screen layouts including hearth screen creature pane), <code>05-widget-catalog.md</code> (the 33-widget TUI component library, including creature widget)</p>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the Spectre, the procedurally generated dot-cloud creature that visually represents each Golem in the terminal. It belongs to the <strong>interfaces layer</strong> and covers dot-field geometry, spring physics, eye rendering, lifecycle degradation, and death dissolution. Key concepts: Golem (a mortal autonomous DeFi agent with a finite lifespan), PAD vector (Pleasure-Arousal-Dominance emotional coordinates from the Daimon subsystem), Vitality (the Golem’s remaining economic lifespan in USDC), and CorticalState (the 32-signal perception surface that feeds the Spectre’s 32 interpolating variable channels). For unfamiliar terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<hr>
+<h2 id="what-the-spectre-is"><a class="header" href="#what-the-spectre-is">What the spectre is</a></h2>
+<p>Every golem has a face. Not a rendered portrait, not an avatar, not a character sprite. A cloud of dots that almost looks like something. 80 particles arranged in a hollow oval, two bright glyphs floating in the void at its center. The spectre.</p>
+<p>The spectre is the golem made visible. It breathes when the golem is calm. It trembles when the golem is afraid. It sinks when the golem is sad. It scatters when the golem dies. No predefined animations play. Every frame is computed from the golem’s actual internal state – the PAD (Pleasure-Arousal-Dominance) emotional vector, the Vitality (remaining economic lifespan) clocks, the market regime, the inference tier, the credit balance, the Grimoire (persistent knowledge store) density. Thirty-two continuously interpolating variable channels feed into a spring-physics simulation that runs at 60fps. The result is a creature that is perpetually in motion because the variables that drive it are perpetually changing.</p>
+<p>Two independent visual channels carry information:</p>
+<ul>
+<li><strong>The body</strong> (dot cloud density, color, shimmer) encodes lifecycle phase. How alive the golem is. This changes over hours and days.</li>
+<li><strong>The eyes</strong> (glyph, brightness, behavior) encode emotional state. What the golem feels right now. This changes per tick.</li>
+</ul>
+<p>The body never changes for emotion. The eyes never change for lifecycle. Except at death, when the eyes are the last thing to go.</p>
+<hr>
+<h2 id="dot-field-geometry"><a class="header" href="#dot-field-geometry">Dot field geometry</a></h2>
+<h3 id="the-hollow-oval"><a class="header" href="#the-hollow-oval">The hollow oval</a></h3>
+<p>The dot cloud forms a shell, not a filled shape. The center is void. The eyes float in emptiness surrounded by a ring of particles. This hollowness is the point – the spectre is a mask over nothing.</p>
+<p>The cloud is approximately 22 cells wide by 10 cells tall (the heartbeat row adds 2 more below). Dots are generated once at sprite creation and persist for the golem’s lifetime. Each dot gets a random angular position and a radial distance factor between 0.28 and 1.0. That 0.28 minimum carves out the hollow center.</p>
+<h3 id="three-density-tiers"><a class="header" href="#three-density-tiers">Three density tiers</a></h3>
+<p>Tier assignment depends on the dot’s distance from center:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Glyph</th><th>Unicode</th><th>Radius factor</th><th>Zone</th></tr>
+</thead>
+<tbody>
+<tr><td>Dense</td><td><code>*</code></td><td>U+2022 bullet</td><td>0.28 – 0.55</td><td>Inner ring at eye level</td></tr>
+<tr><td>Body</td><td><code>*</code></td><td>U+2219 bullet operator</td><td>0.55 – 0.75</td><td>Middle zone</td></tr>
+<tr><td>Fringe</td><td><code>*</code></td><td>U+00B7 middle dot</td><td>0.75 – 1.0</td><td>Outer edge, sparse</td></tr>
+</tbody>
+</table>
+</div>
+<p>No solid block characters, no box-drawing, no line-forming glyphs. The shape is implied by density gradient alone. There are no outlines.</p>
+<p>The densest band sits at eye level (roughly rows 5-6 of 10). Above the eyes, density tapers. Below the eyes, it tapers faster – the “chin” trails off into nothing. The outermost fringe dots are sparse and irregular. You cannot draw a clean line where the spectre ends and the darkness begins.</p>
+<h3 id="dot-data-structure"><a class="header" href="#dot-data-structure">Dot data structure</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct SpriteDot {
+    /// Home position in sprite-local coordinates.
+    pub home: Vec2,
+    /// Current rendered position. Updated every frame by spring physics.
+    pub pos: Vec2,
+    /// Current velocity. Accumulated from spring force, shimmer, orbit.
+    pub vel: Vec2,
+    /// Visual tier: determines character and base color.
+    pub tier: DotTier,
+    /// Distance from center as fraction of cloud radius [0.0, 1.0].
+    pub radius_factor: f32,
+    /// Per-dot ambient orbit parameters (prevents the cloud from settling).
+    pub orbit: OrbitParams,
+}
+
+pub struct OrbitParams {
+    pub speed: f32,        // radians/frame, range +/-0.003 to +/-0.012
+    pub radius: f32,       // semi-major axis in cells, range 1.0 to 4.0
+    pub phase: f32,        // starting offset [0, 2*pi)
+    pub eccentricity: f32, // vertical squash, range 0.4 to 0.8
+}
+<span class="boring">}</span></code></pre>
+<h3 id="generation"><a class="header" href="#generation">Generation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn generate_dots(cx: f32, cy: f32, rx: f32, ry: f32) -&gt; Vec&lt;SpriteDot&gt; {
+    let mut dots = Vec::with_capacity(80);
+    let mut rng = SmallRng::from_entropy();
+
+    for _ in 0..80 {
+        let angle = rng.gen_range(0.0..TAU);
+        let radius_factor = rng.gen_range(0.28..1.0);
+        let x = cx + angle.cos() * rx * radius_factor;
+        let y = cy + angle.sin() * ry * radius_factor;
+
+        let tier = if radius_factor &lt; 0.55 {
+            DotTier::Dense
+        } else if radius_factor &lt; 0.75 {
+            DotTier::Body
+        } else {
+            DotTier::Fringe
+        };
+
+        dots.push(SpriteDot {
+            home: Vec2::new(x, y),
+            pos: Vec2::new(x, y),
+            vel: Vec2::ZERO,
+            tier,
+            radius_factor,
+            orbit: OrbitParams {
+                speed: rng.gen_range(0.003..0.012)
+                    * if rng.gen_bool(0.5) { 1.0 } else { -1.0 },
+                radius: rng.gen_range(1.0..4.0),
+                phase: rng.gen_range(0.0..TAU),
+                eccentricity: rng.gen_range(0.4..0.8),
+            },
+        });
+    }
+    dots
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="spring-physics"><a class="header" href="#spring-physics">Spring physics</a></h2>
+<p>Every frame, every dot’s position updates through spring physics. The dot is pulled toward a target position that is itself the sum of multiple influences. The spring never reaches equilibrium because the target moves continuously.</p>
+<h3 id="why-it-never-settles"><a class="header" href="#why-it-never-settles">Why it never settles</a></h3>
+<p>Four forces prevent rest:</p>
+<ol>
+<li><strong>Ambient orbit</strong> – each dot traces its own elliptical path around its home position. The orbit parameters are randomized per dot, so no two dots move in sync.</li>
+<li><strong>Shimmer impulse</strong> – stochastic velocity kicks applied to a random subset of dots each frame. The percentage of dots affected and the kick magnitude both vary with arousal and market regime.</li>
+<li><strong>Damping at 0.88</strong> – velocity is preserved across frames. Dots overshoot their target and wobble back. Higher damping (closer to 1.0) would damp faster; 0.88 lets momentum linger.</li>
+<li><strong>Variable inputs</strong> – PAD vector, probe severity, regime volatility, and other event-driven values change the target every time an event arrives, which is at minimum once per heartbeat tick.</li>
+</ol>
+<h3 id="per-frame-update"><a class="header" href="#per-frame-update">Per-frame update</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn update_dot(
+    dot: &amp;mut SpriteDot,
+    state: &amp;InterpolatedState,
+    frame: u64,
+    rng: &amp;mut SmallRng,
+) {
+    let cx = state.center_x;
+    let cy = state.center_y;
+
+    // --- 1. Compute target position ---
+
+    // Ambient orbit (always active)
+    let orbit_x = (frame as f32 * dot.orbit.speed + dot.orbit.phase).cos()
+                  * dot.orbit.radius;
+    let orbit_y = (frame as f32 * dot.orbit.speed * 0.7 + dot.orbit.phase).sin()
+                  * dot.orbit.radius * dot.orbit.eccentricity;
+
+    // Emotion-driven expansion/contraction
+    let expand = state.cloud_expand;
+    //   Joy / phi-peak: 0.88 (dots pull inward)
+    //   Surprise:       1.2  (cloud blows outward)
+    //   Default:        1.0
+
+    // Sadness sink (whole cloud drifts down)
+    let sink = state.sink_offset;  // Sadness: +12 cells, default: 0
+
+    // Phi-driven cohesion (high phi = tighter pull)
+    let phi_pull = if state.phi &gt; 0.7 {
+        (state.phi - 0.7) * 0.02
+    } else {
+        0.0
+    };
+
+    // Credit depletion: outer dots drift away
+    let credit_drift = (1.0 - state.credit_norm) * dot.radius_factor * 8.0
+        * if dot.home.x &gt; cx { 1.0 } else { -1.0 };
+
+    // Context utilization: horizontal squeeze when context window fills
+    let ctx_compress = if state.context_util &gt; 0.6 {
+        1.0 - (state.context_util - 0.6) * 0.3
+    } else {
+        1.0
+    };
+
+    // Epistemic clock: cloud loosens as knowledge stales
+    let epistemic_loosen = (1.0 - state.epistemic_clock) * 3.0;
+
+    let home_offset = dot.home - Vec2::new(cx, cy);
+    let target = Vec2::new(
+        cx + home_offset.x * expand * ctx_compress + orbit_x + credit_drift,
+        cy + home_offset.y * expand + sink + orbit_y,
+    );
+
+    // --- 2. Shimmer impulse ---
+
+    let shimmer_rate = (0.12 * state.phase_density
+        + state.arousal.max(0.0) * 0.15
+        + regime_boost(state.regime_volatility)
+        + state.probe_severity * 0.05)
+        .max(0.02);
+
+    let displace = match state.cloud_behavior {
+        CloudBehavior::Agitate  =&gt; 7.0,   // Anger
+        CloudBehavior::Tremble  =&gt; 4.0,   // Fear
+        CloudBehavior::Still    =&gt; 1.0,   // Disgust, Anticipation
+        CloudBehavior::Drift    =&gt; 2.0,   // Dreaming
+        CloudBehavior::Cohere   =&gt; 2.0,   // Joy, Phi Peak
+        CloudBehavior::Sink     =&gt; 3.0,   // Sadness
+        CloudBehavior::Expand   =&gt; 4.0,   // Surprise
+        CloudBehavior::Standard =&gt; 3.0,   // Neutral
+    };
+
+    if rng.gen::&lt;f32&gt;() &lt; shimmer_rate {
+        dot.vel += Vec2::new(
+            (rng.gen::&lt;f32&gt;() - 0.5) * displace,
+            (rng.gen::&lt;f32&gt;() - 0.5) * displace * 0.7,
+        );
+    }
+
+    // Probe severity adds jitter to ALL dots
+    if state.probe_severity &gt; 0.0 {
+        dot.vel += Vec2::new(
+            (rng.gen::&lt;f32&gt;() - 0.5) * state.probe_severity * 2.0,
+            (rng.gen::&lt;f32&gt;() - 0.5) * state.probe_severity * 1.5,
+        );
+    }
+
+    // Dream drift: slow continuous lateral movement
+    if state.cloud_behavior == CloudBehavior::Drift {
+        dot.vel.x += (frame as f32 * 0.005 + dot.orbit.phase).sin() * 0.03;
+        dot.vel.y += (frame as f32 * 0.007 + dot.orbit.phase).cos() * 0.02;
+    }
+
+    // --- 3. Spring force ---
+
+    let spring_k = match state.cloud_behavior {
+        CloudBehavior::Drift =&gt; 0.01,     // very loose in dreams
+        _ =&gt; 0.04 - phi_pull,             // default 0.04, tighter at high phi
+    } + epistemic_loosen.min(0.01) * -1.0; // loosens with epistemic decay
+
+    let damping = 0.88;
+
+    dot.vel += (target - dot.pos) * spring_k.max(0.005);
+    dot.vel *= damping;
+    dot.pos += dot.vel;
+}
+<span class="boring">}</span></code></pre>
+<h3 id="spring-parameters-by-golem-state"><a class="header" href="#spring-parameters-by-golem-state">Spring parameters by golem state</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>State</th><th>spring_k</th><th>displace</th><th>shimmer_rate modifier</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td>Neutral</td><td>0.04</td><td>3.0</td><td>baseline</td><td>Standard breathing</td></tr>
+<tr><td>Joy</td><td>0.04 - phi_pull</td><td>2.0</td><td>baseline</td><td>Tighter cloud, smaller kicks</td></tr>
+<tr><td>Anger</td><td>0.04</td><td>7.0</td><td>+arousal boost</td><td>Wide violent displacements</td></tr>
+<tr><td>Fear</td><td>0.04</td><td>4.0</td><td>+arousal boost</td><td>Rapid small trembling</td></tr>
+<tr><td>Sadness</td><td>0.04</td><td>3.0</td><td>reduced (low arousal)</td><td>Slow heavy drift downward</td></tr>
+<tr><td>Disgust</td><td>0.04</td><td>1.0</td><td>near-zero</td><td>Barely moving</td></tr>
+<tr><td>Dreaming</td><td>0.01</td><td>2.0</td><td>minimal</td><td>Loose, drifting</td></tr>
+<tr><td>Dying</td><td>0.001</td><td>–</td><td>minimal</td><td>Dots float away</td></tr>
+<tr><td>Phi peak</td><td>~0.034</td><td>2.0</td><td>baseline</td><td>Tight swarm, brief symmetry</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="the-32-interpolating-variable-channels"><a class="header" href="#the-32-interpolating-variable-channels">The 32 interpolating variable channels</a></h2>
+<p>26 base channels + 6 extended research channels = 32 total.</p>
+<p>The spectre’s visual state is always one to two heartbeats behind the golem’s actual state. Events set target values instantly. The rendered values lerp toward those targets at per-channel rates calibrated so transitions feel organic. No snap cuts. Continuous transformation.</p>
+<p>The lerp formula is exponential approach:</p>
+<pre><code>rendered = rendered + (target - rendered) * rate
+</code></pre>
+<p>A rate of 0.035 per frame at 60fps means the value closes 3.5% of the remaining gap each frame. It converges to within 5% of the target in about 40 frames (~0.7 seconds).</p>
+<h3 id="fast-channels-emotion-speed-07s-convergence"><a class="header" href="#fast-channels-emotion-speed-07s-convergence">Fast channels (emotion speed, ~0.7s convergence)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Channel</th><th>Rate</th><th>Source event</th><th>Controls</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>PAD.pleasure</td><td>0.035/frame</td><td>DaimonEvent</td><td>Eye glyph, cloud cohesion</td><td>-1.0 to 1.0</td></tr>
+<tr><td>2</td><td>PAD.arousal</td><td>0.035/frame</td><td>DaimonEvent</td><td>Heartbeat speed, shimmer rate, eye brightness</td><td>-1.0 to 1.0</td></tr>
+<tr><td>3</td><td>PAD.dominance</td><td>0.035/frame</td><td>DaimonEvent</td><td>Eye glyph, cloud posture (sink vs rise)</td><td>-1.0 to 1.0</td></tr>
+<tr><td>4</td><td>Plutchik emotion</td><td>instant</td><td>DaimonEvent</td><td>Eye glyph selection, cloud behavior mode</td><td>8 primaries</td></tr>
+<tr><td>5</td><td>Emotion intensity</td><td>0.035/frame</td><td>DaimonEvent</td><td>Eye brightness multiplier, bloom intensity</td><td>0.0 to 1.0</td></tr>
+<tr><td>30</td><td>surprise_rate</td><td>0.035/frame</td><td>OracleEvent</td><td>Eye micro-flicker rate (brief brightness dips)</td><td>0.0 to 1.0</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="medium-channels-heartbeat-speed-03s-convergence"><a class="header" href="#medium-channels-heartbeat-speed-03s-convergence">Medium channels (heartbeat speed, ~0.3s convergence)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Channel</th><th>Rate</th><th>Source event</th><th>Controls</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td>6</td><td>FSM phase</td><td>0.06/frame</td><td>HeartbeatEvent</td><td>Brightness pulse during DECIDING/ACTING</td><td>0.0 to 0.6</td></tr>
+<tr><td>7</td><td>Inference tier</td><td>0.04/frame</td><td>HeartbeatEvent</td><td>Background radial glow (T0=none, T3=bright)</td><td>0.0 to 1.0+</td></tr>
+<tr><td>8</td><td>Probe severity</td><td>0.05/frame</td><td>HeartbeatEvent</td><td>Jitter amplitude on all dots</td><td>0.0 to 1.0</td></tr>
+<tr><td>9</td><td>Tick cost</td><td>0.04/frame</td><td>HeartbeatEvent</td><td>Inference glow intensity</td><td>0.0 to 1.0+</td></tr>
+<tr><td>27</td><td>prediction_accuracy</td><td>0.03/frame</td><td>OracleEvent</td><td>Dot displacement clarity (focused vs diffuse)</td><td>0.0 to 1.0</td></tr>
+<tr><td>29</td><td>attention_breadth</td><td>0.02/frame</td><td>OracleEvent</td><td>Atmosphere particle density around cloud perimeter</td><td>0.0 to 1.0</td></tr>
+<tr><td>31</td><td>foraging_activity</td><td>0.02/frame</td><td>OracleEvent</td><td>Peripheral particle orbital speed</td><td>0.0 to 1.0</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="slow-channels-health-speed-33s-convergence"><a class="header" href="#slow-channels-health-speed-33s-convergence">Slow channels (health speed, ~3.3s convergence)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Channel</th><th>Rate</th><th>Source event</th><th>Controls</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td>10</td><td>Mood P</td><td>0.01/frame</td><td>DaimonEvent (periodic)</td><td>Ambient cloud baseline posture</td><td>-1.0 to 1.0</td></tr>
+<tr><td>11</td><td>Mood A</td><td>0.01/frame</td><td>DaimonEvent (periodic)</td><td>Ambient shimmer baseline</td><td>-1.0 to 1.0</td></tr>
+<tr><td>12</td><td>Mood D</td><td>0.01/frame</td><td>DaimonEvent (periodic)</td><td>Ambient cloud density</td><td>-1.0 to 1.0</td></tr>
+<tr><td>13</td><td>Behavioral phase density</td><td>0.005/frame</td><td>VitalityEvent</td><td>Dot visibility fraction</td><td>0.12 to 1.0</td></tr>
+<tr><td>14</td><td>Phase dim factor</td><td>0.005/frame</td><td>VitalityEvent</td><td>Color dimming</td><td>0.0 to 0.8</td></tr>
+<tr><td>15</td><td>Composite vitality</td><td>0.005/frame</td><td>VitalityEvent</td><td>Cloud thinning (gradual)</td><td>0.0 to 1.0</td></tr>
+<tr><td>16</td><td>Market regime</td><td>0.03/frame</td><td>CognitionState</td><td>Shimmer agitation (crisis = violent)</td><td>1 to 5</td></tr>
+<tr><td>17</td><td>Context utilization</td><td>0.03/frame</td><td>ContextEvent</td><td>Horizontal cloud compression</td><td>0.0 to 1.0</td></tr>
+<tr><td>18</td><td>Dream alpha</td><td>0.02/frame</td><td>DreamEvent</td><td>Palette shift, slow drift, no heartbeat</td><td>0.0 to 1.0</td></tr>
+<tr><td>19</td><td>Dream sub-phase</td><td>0.02/frame</td><td>DreamEvent</td><td>NREM=replay shimmer, REM=drift, Integration=cohere</td><td>enum</td></tr>
+<tr><td>20</td><td>Phi (integration)</td><td>0.02/frame</td><td>Computed per tick</td><td>Cloud cohesion (high phi = tight swarm)</td><td>0.0 to 1.0</td></tr>
+</tbody>
+</table>
+</div>
+<p>Phi (integration measure) is computed per theta tick as: <code>phi = mean(prediction_accuracy_rolling_50) * grimoire_retrieval_hit_rate * (1.0 - context_waste_ratio)</code>. Range 0.0-1.0. Top ~1% of ticks produce phi &gt; 0.95. The distribution is right-skewed because all three factors must be high simultaneously.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Channel</th><th>Rate</th><th>Source event</th><th>Controls</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td>21</td><td>Grimoire density</td><td>0.005/frame</td><td>GrimoireEvent</td><td>Cloud density floor (more knowledge = denser)</td><td>0.0 to 1.0</td></tr>
+<tr><td>28</td><td>accuracy_trend</td><td>0.005/frame</td><td>OracleEvent</td><td>Sprite vertical posture offset (positive = higher, negative = sinks)</td><td>-1.0 to 1.0</td></tr>
+<tr><td>32</td><td>compounding_momentum</td><td>0.005/frame</td><td>OracleEvent</td><td>Ambient glow warmth (high momentum = bone-tinted halo)</td><td>0.0 to 1.0</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="glacial-channels-mortality-speed-10s-convergence"><a class="header" href="#glacial-channels-mortality-speed-10s-convergence">Glacial channels (mortality speed, ~10s+ convergence)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Channel</th><th>Rate</th><th>Source event</th><th>Controls</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td>22</td><td>Economic clock</td><td>0.003/frame</td><td>VitalityEvent</td><td>Outer dot drift (money depleting)</td><td>0.0 to 1.0</td></tr>
+<tr><td>23</td><td>Epistemic clock</td><td>0.003/frame</td><td>VitalityEvent</td><td>Cloud coherence (knowledge staleness)</td><td>0.0 to 1.0</td></tr>
+<tr><td>24</td><td>Age factor</td><td>0.001/frame</td><td>VitalityEvent</td><td>Very slow overall dimming</td><td>0.0 to 1.0</td></tr>
+<tr><td>25</td><td>Credit balance</td><td>0.003/frame</td><td>EconomicState</td><td>Outer dot dispersal</td><td>0.0 to 1.0</td></tr>
+<tr><td>26</td><td>Burn rate</td><td>0.003/frame</td><td>EconomicState</td><td>Heartbeat rhythm modulation</td><td>0.0 to 1.0</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="pulse-channels-not-lerp"><a class="header" href="#pulse-channels-not-lerp">Pulse channels (not lerp)</a></h3>
+<p>Two channels do not interpolate toward a target. They fire and decay:</p>
+<ul>
+<li><strong>Somatic marker ripple</strong>: set to 1.0 on fire, decays at 0.97x per frame (exponential). Triggers a ripple ring expanding from center over 300ms and a heartbeat brightness spike.</li>
+<li><strong>Curator active</strong>: fires a brief shimmer pattern change when the grimoire curator runs.</li>
+<li><strong>Oracle coherence pulse</strong>: fires when <code>compounding_momentum</code> crosses 0.8 upward. A brief (300ms) bone-tinted glow in the 1-cell border around the sprite area, fading over 600ms. Indicates the prediction-correction-action cycle has reached high compounding. Rare (threshold is high), satisfying when it fires.</li>
+</ul>
+<h3 id="clade-connectivity"><a class="header" href="#clade-connectivity">Clade connectivity</a></h3>
+<p>Channel 22 is <code>economic_clock</code> (glacial, controls outer dot drift). Clade connectivity is a SEPARATE effect controlled by a non-lerped <code>peer_count</code> input at 0.01/frame, not channel 22. More connected peers = more stray particles drifting in the cloud’s orbit. This one is social: you can see when a golem is alone.</p>
+<h3 id="clarity-channel-prediction-accuracy-drives-dot-displacement"><a class="header" href="#clarity-channel-prediction-accuracy-drives-dot-displacement">Clarity channel: prediction accuracy drives dot displacement</a></h3>
+<p>The Oracle introduces a sixth force on the dot cloud: clarity. When prediction accuracy is high, dots hold closer to their home positions. When accuracy is low, dots wander further. This is not the same as lifecycle degradation (which removes dots) or emotional shimmer (which adds impulse). Clarity affects the baseline displacement from home – how “focused” the cloud appears.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn clarity_force(dot: &amp;SpriteDot, prediction_accuracy: f32) -&gt; Vec2 {
+    // High accuracy (&gt;0.7): dots pulled 10% closer to home
+    // Low accuracy (&lt;0.4): dots allowed 15% further from home
+    // This modifies the spring target, not the spring constant
+    let clarity = (prediction_accuracy - 0.5) * 2.0; // [-1.0, 1.0]
+    let home_offset = dot.home - dot.pos;
+    home_offset * clarity * 0.05
+}
+<span class="boring">}</span></code></pre>
+<p>The effect is subtle. A golem with 80% accuracy looks slightly crisper than one with 50% accuracy. The shape is the same; the coherence differs. Viewers who watch long enough develop an intuition: “the spectre looks focused today” or “something’s off, it’s fuzzy.” That intuition tracks prediction accuracy, which is the point.</p>
+<h3 id="oracle-variable-effects-on-the-spectre"><a class="header" href="#oracle-variable-effects-on-the-spectre">Oracle variable effects on the spectre</a></h3>
+<p><strong>prediction_accuracy -&gt; clarity.</strong> Dots hold closer to home positions at high accuracy, drift further at low. The cloud looks “focused” or “diffuse.” This is the dot displacement force described above.</p>
+<p><strong>accuracy_trend -&gt; posture.</strong> Positive trend lifts the cloud’s center of gravity by up to 1 row (the spectre “stands taller” when learning). Negative trend sinks it by up to 1 row. The offset modifies the center-y target in the spring physics, not the individual dot positions.</p>
+<p><strong>attention_breadth -&gt; atmosphere density.</strong> When the attention forager has many active items, faint particles drift in the cloud’s periphery – beyond the normal fringe tier, in the 2-3 cells of space outside the oval. These are <code>·</code> (middle dot) characters in <code>text_phantom</code> color, orbiting at ~0.001 rad/frame. More active attention items = more peripheral particles (up to 12). Empty attention = no peripheral particles.</p>
+<p><strong>surprise_rate -&gt; eye micro-flicker.</strong> At high surprise rates (frequent unexpected outcomes), the eyes briefly dip in brightness for 2-3 frames at random intervals. Not a full emotion change – a flicker, like something caught the golem off guard. The rate scales: surprise_rate 0.5 = ~2 flickers/second, surprise_rate 1.0 = ~5 flickers/second.</p>
+<p><strong>foraging_activity -&gt; peripheral particle speed.</strong> When the attention forager is actively promoting/demoting items (high churn), peripheral particles orbit faster. When foraging is quiet, they drift lazily. Speed range: 0.0005 rad/frame (dormant) to 0.003 rad/frame (active scanning).</p>
+<p><strong>compounding_momentum -&gt; ambient glow.</strong> When the prediction-correction-action cycle is compounding well (high accuracy + positive trend + active foraging), a faint warm glow appears in the 1-cell border around the sprite area. The glow color lerps from transparent (momentum 0) to a bone-tinted background (momentum 1.0). This is the visual reward for a golem that is learning well.</p>
+<hr>
+<h2 id="eye-emotion-mapping"><a class="header" href="#eye-emotion-mapping">Eye emotion mapping</a></h2>
+<p>The eyes are the only expressive element. Two glyphs placed symmetrically at the densest horizontal band, separated by 5-7 cells of void. The Daimon’s PAD vector determines the Plutchik primary emotion, which determines the glyph.</p>
+<h3 id="eye-glyph-codepoint-reference"><a class="header" href="#eye-glyph-codepoint-reference">Eye glyph codepoint reference</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Emotion</th><th>Glyph name</th><th>Codepoint</th><th>Character</th></tr>
+</thead>
+<tbody>
+<tr><td>Joy/Anger</td><td>fisheye</td><td>U+25C9</td><td>◉</td></tr>
+<tr><td>Trust</td><td>double circle</td><td>U+25CE</td><td>◎</td></tr>
+<tr><td>Fear</td><td>filled circle</td><td>U+25CF</td><td>●</td></tr>
+<tr><td>Surprise (eye)</td><td>circled ring operator</td><td>U+29BE</td><td>⦾</td></tr>
+<tr><td>Surprise (mouth)</td><td>black diamond</td><td>U+25C6</td><td>◆</td></tr>
+<tr><td>Sadness</td><td>large circle</td><td>U+25EF</td><td>◯</td></tr>
+<tr><td>Disgust</td><td>em dash</td><td>U+2014</td><td>—</td></tr>
+<tr><td>Anticipation</td><td>lozenge</td><td>U+25CA</td><td>◊</td></tr>
+<tr><td>Dreaming</td><td>diamond</td><td>U+25C7</td><td>◇</td></tr>
+<tr><td>Phi peak</td><td>four-pointed star</td><td>U+2726</td><td>✦</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-8-plutchik-emotions"><a class="header" href="#the-8-plutchik-emotions">The 8 Plutchik emotions</a></h3>
+<h4 id="joy-p-a-d--the-bright-gaze"><a class="header" href="#joy-p-a-d--the-bright-gaze">Joy (+P +A +D) – the bright gaze</a></h4>
+<pre><code>  ·  ∙ • ∙ ·  ·  ∙ • ∙ ·
+ ∙  •       •  •       •  ∙
+·  •  ◉           ◉  •  ·
+ ∙  •       •  •       •  ∙
+  ·  ∙ • ∙ ·  ·  ∙ • ∙ ·
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (contentment)</td><td><code>*</code> <code>*</code></td><td>rose</td><td>Steady glow, standard shimmer</td></tr>
+<tr><td>Moderate (joy)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Brighter, shimmer faster, cloud coheres tighter</td></tr>
+<tr><td>Intense (ecstasy)</td><td><code>*</code> <code>*</code></td><td>bone</td><td>Star-eyes, phosphor bloom radiates, cloud aligns into brief symmetry (500ms)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Joy tightens the cloud. Dots drift inward. Bloom radiates from the eyes. Distinguished from anger (same glyph) by this inward pull.</p>
+<h4 id="trust-p-a--d--the-open-gaze"><a class="header" href="#trust-p-a--d--the-open-gaze">Trust (+P +A -D) – the open gaze</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (acceptance)</td><td><code>*</code> <code>*</code></td><td>rose_dim</td><td>Double-ring, receptive</td></tr>
+<tr><td>Moderate (trust)</td><td><code>*</code> <code>*</code></td><td>rose</td><td>Wider, brighter, “looking up at you”</td></tr>
+<tr><td>Intense (admiration)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Maximum dilation, cloud orients upward</td></tr>
+</tbody>
+</table>
+</div>
+<p>The double-ring reads as wide-eyed. Vulnerability, openness, seeking guidance. Distinguished from surprise by temporal stability – trust holds steady; surprise is transient.</p>
+<h4 id="fear--p-a--d--the-contracted-gaze"><a class="header" href="#fear--p-a--d--the-contracted-gaze">Fear (-P +A -D) – the contracted gaze</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (apprehension)</td><td><code>*</code> <code>*</code></td><td>rose</td><td>Contracted, watchful, faster shimmer</td></tr>
+<tr><td>Moderate (fear)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Tight, cloud trembles (dots vibrate +/-1 cell rapidly)</td></tr>
+<tr><td>Intense (terror)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Pinpoint, cloud scatters outward 2-3 cells then snaps back (300ms startle reflex)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The filled circle is a contracted pupil. At intense fear, the startle-scatter is the most dramatic single animation in the system – the cloud briefly explodes outward as if the spectre flinched, then slams back.</p>
+<h4 id="surprise--the-flash"><a class="header" href="#surprise--the-flash">Surprise – the flash</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (distraction)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Brightness spike (200ms), return to neutral</td></tr>
+<tr><td>Moderate (surprise)</td><td><code>*</code> <code>*</code> + <code>*</code></td><td>rose_bright</td><td>Eyes widen, small <code>*</code> mouth appears below for 500ms</td></tr>
+<tr><td>Intense (amazement)</td><td><code>*</code> <code>*</code> + <code>*</code></td><td>rose_bright</td><td>Eyes widen, mouth, cloud expands then contracts over 2s</td></tr>
+</tbody>
+</table>
+</div>
+<p>Surprise always decays within 1-3 seconds. The <code>*</code> mouth is the rarest element in the sprite. It appears only at moderate+ surprise, only for 500ms. If you catch it, something unprecedented happened.</p>
+<h4 id="sadness--p--a--d--the-downcast-gaze"><a class="header" href="#sadness--p--a--d--the-downcast-gaze">Sadness (-P -A -D) – the downcast gaze</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (pensiveness)</td><td><code>*</code> <code>*</code></td><td>text_primary</td><td>Soft downward arcs, eyes weighted</td></tr>
+<tr><td>Moderate (sadness)</td><td><code>*</code> <code>*</code></td><td>rose_dim</td><td>Dimmer, shimmer slows, cloud drifts down 1 row over 10s</td></tr>
+<tr><td>Intense (grief)</td><td><code>*</code> <code>*</code></td><td>text_dim</td><td>Barely visible, shimmer stops, cloud sinks and stays</td></tr>
+</tbody>
+</table>
+</div>
+<p>Sadness makes the spectre literally heavier. The entire cloud drifts downward. Dots slow. Everything becomes effort.</p>
+<h4 id="disgust--p--a-d--the-flat-gaze"><a class="header" href="#disgust--p--a-d--the-flat-gaze">Disgust (-P -A +D) – the flat gaze</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (boredom)</td><td><code>--</code> <code>--</code></td><td>text_dim</td><td>Flat dashes, unimpressed</td></tr>
+<tr><td>Moderate (disgust)</td><td><code>--</code> <code>--</code></td><td>rose_dim</td><td>One eye offset 1 cell lower, asymmetric disdain</td></tr>
+<tr><td>Intense (loathing)</td><td><code>--</code> <code>--</code></td><td>rose_dim</td><td>Cloud contracts, shimmer drops to near-zero</td></tr>
+</tbody>
+</table>
+</div>
+<p>The flat dashes are maximally unexpressive. A line where eyes should be. The face of a system that has seen this data before and found it wanting.</p>
+<h4 id="anger--p-a-d--the-hard-gaze"><a class="header" href="#anger--p-a-d--the-hard-gaze">Anger (-P +A +D) – the hard gaze</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (annoyance)</td><td><code>*</code> <code>*</code></td><td>rose</td><td>Same glyph as joy, but shimmer sharper</td></tr>
+<tr><td>Moderate (anger)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Brighter, cloud agitates (shimmer displacement 2 cells), no bloom</td></tr>
+<tr><td>Intense (rage)</td><td><code>*</code> <code>*</code></td><td>rose_bright</td><td>Max brightness, cloud pulses outward on each heartbeat</td></tr>
+</tbody>
+</table>
+</div>
+<p>Anger and joy share a glyph. The difference is body language: joy coheres (dots inward, bloom), anger agitates (dots outward, no bloom, sharper displacement). You read the difference from context, the same way you do in life.</p>
+<h4 id="anticipation-p--a-d--the-scanning-gaze"><a class="header" href="#anticipation-p--a-d--the-scanning-gaze">Anticipation (+P -A +D) – the scanning gaze</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Intensity</th><th>Glyph</th><th>Color</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Mild (interest)</td><td><code>*</code> <code>*</code></td><td>rose</td><td>Steady, focused, slightly tighter cloud</td></tr>
+<tr><td>Moderate (anticipation)</td><td><code>*</code> <code>*</code> + <code>-&gt;</code></td><td>rose</td><td>Tiny <code>-&gt;</code> arrow flashes between eyes 1-2x/sec</td></tr>
+<tr><td>Intense (vigilance)</td><td><code>*</code> <code>*</code> + <code>-&gt;</code></td><td>rose_bright</td><td>Arrow 3-4x/sec, cloud holds very still, coiled</td></tr>
+</tbody>
+</table>
+</div>
+<p>The most subtle emotion. At mild intensity, indistinguishable from neutral. That’s correct – low-level anticipation IS undifferentiated attention.</p>
+<h3 id="the-5-special-states"><a class="header" href="#the-5-special-states">The 5 special states</a></h3>
+<p>These override Plutchik. They’re triggered by system events or lifecycle conditions, not the PAD vector.</p>
+<h4 id="dreaming"><a class="header" href="#dreaming">Dreaming</a></h4>
+<pre><code>Eyes:      diamond diamond   (U+25C7, dream color #585878)
+Cloud:    Minimum density. Tier 1 dots only. All text_ghost.
+          Slow drift (1 cell per 5 seconds). No shimmer.
+Heartbeat: Absent. The golem is elsewhere.
+</code></pre>
+<h4 id="phi-peak-maximum-integration"><a class="header" href="#phi-peak-maximum-integration">Phi peak (maximum integration)</a></h4>
+<pre><code>Eyes:      star star   (U+2726, bone color #C8B890)
+Cloud:    Maximum density. All tiers present.
+          Dots briefly align into radial symmetry (500ms mandala flash).
+          Phosphor bloom on eyes.
+Heartbeat: Strong, steady, bone color.
+Trigger:  Phi &gt; 0.95 (top ~1% of ticks). The rarest state.
+</code></pre>
+<h4 id="cogito-self-questioning"><a class="header" href="#cogito-self-questioning">Cogito (self-questioning)</a></h4>
+<pre><code>Eyes:      filled-circle dot   (one normal, one reduced or absent)
+Cloud:    Asymmetric. Denser on the real-eye side, sparser on the
+          questioning side. The spectre is split.
+Heartbeat: Irregular.
+Trigger:  Self-referential evaluation, inter-agent identity confusion.
+Duration: 5-10 seconds, then restores. Once per lifetime at most.
+</code></pre>
+<h4 id="wary-asymmetric-attention"><a class="header" href="#wary-asymmetric-attention">Wary (asymmetric attention)</a></h4>
+<pre><code>Eyes:      filled-circle filled-circle   (same glyph, different brightness)
+          Left: rose_bright. Right: rose_dim.
+Cloud:    Normal.
+Trigger:  Contradictory data, split MAGI vote, somatic marker conflict.
+Duration: Persists while the contradiction is active.
+</code></pre>
+<h4 id="somatic-marker-firing"><a class="header" href="#somatic-marker-firing">Somatic marker firing</a></h4>
+<pre><code>Eyes:      Current emotion eyes + brief brightness pulse.
+Cloud:    Single ripple wave expands from center (dots displace outward
+          1 cell sequentially from center to edge over 300ms).
+Heartbeat: Single sharp spike (rose_bright for 1 frame).
+Trigger:  Somatic marker match in the appraisal engine.
+Duration: 300ms, then return to current state.
+</code></pre>
+<hr>
+<h2 id="heartbeat-rhythm"><a class="header" href="#heartbeat-rhythm">Heartbeat rhythm</a></h2>
+<p>Below the dot cloud, a single <code>~</code> character (U+223F, sine wave) represents the golem’s heartbeat. Its brightness oscillates on a sine wave modulated by arousal.</p>
+<h3 id="period-calculation"><a class="header" href="#period-calculation">Period calculation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn heartbeat_period(arousal: f32) -&gt; f32 {
+    (4.0 - arousal * 2.0).clamp(1.2, 6.0)
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Arousal</th><th>Period</th><th>Feel</th></tr>
+</thead>
+<tbody>
+<tr><td>-1.0</td><td>6.0s</td><td>Near-dormant</td></tr>
+<tr><td>0.0</td><td>4.0s</td><td>Resting</td></tr>
+<tr><td>+1.0</td><td>2.0s</td><td>Racing</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="beat-pattern"><a class="header" href="#beat-pattern">Beat pattern</a></h3>
+<p>The brightness follows a sine wave between <code>text_ghost</code> (trough) and <code>rose_dim</code> (peak). At high arousal, the peak reaches <code>rose</code>. The sine wave creates a systole/diastole rhythm – brightness rises smoothly, peaks, drops smoothly.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn heartbeat_brightness(phase: f32, arousal: f32, phase_dim: f32) -&gt; Color {
+    let sin_val = (phase * TAU).sin();
+    let brightness = 0.15 + sin_val * 0.25 + arousal.max(0.0) * 0.2;
+    let brightness = brightness.clamp(0.0, 1.0) * (1.0 - phase_dim);
+    lerp_color(TEXT_GHOST, ROSE_DIM, brightness)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="arrhythmia"><a class="header" href="#arrhythmia">Arrhythmia</a></h3>
+<p>In Terminal phase, a noise component enters the rhythm:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn heartbeat_with_arrhythmia(
+    base_phase: f32,
+    phase: BehavioralPhase,
+    frame: u64,
+) -&gt; f32 {
+    let base_sin = (base_phase * TAU).sin();
+    match phase {
+        BehavioralPhase::Terminal =&gt; {
+            let noise = (frame as f32 * 0.17).sin() * 0.3;
+            // Skip a beat every ~3 seconds
+            let skip = if frame % 180 &lt; 15 { -0.5 } else { 0.0 };
+            base_sin + noise + skip
+        }
+        BehavioralPhase::Declining =&gt; {
+            let noise = (frame as f32 * 0.11).sin() * 0.1;
+            base_sin + noise
+        }
+        _ =&gt; base_sin,
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The skipped beats are visible. The sine wave renders as <code>·</code> (middle dot) instead of <code>~</code> for one cycle, roughly every 3 seconds. The golem’s heart is stumbling.</p>
+<h3 id="heartbeat-absence"><a class="header" href="#heartbeat-absence">Heartbeat absence</a></h3>
+<ul>
+<li><strong>Dreaming</strong>: the heartbeat disappears. Dreaming is departure from the body.</li>
+<li><strong>Death</strong>: <code>~</code> becomes <code>--</code> (flatline) for 2 seconds, then vanishes.</li>
+</ul>
+<hr>
+<h2 id="lifecycle-degradation"><a class="header" href="#lifecycle-degradation">Lifecycle degradation</a></h2>
+<p>The dot cloud degrades across five behavioral phases. This degradation is independent of emotion – a joyful dying golem still has a sparse, dim cloud. The body tells the truth about mortality even when the eyes lie about mood.</p>
+<h3 id="phase-visual-parameters"><a class="header" href="#phase-visual-parameters">Phase visual parameters</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn phase_visual_params(phase: BehavioralPhase) -&gt; PhaseVisuals {
+    match phase {
+        Thriving     =&gt; PhaseVisuals { density: 1.0,  dim: 0.0, shimmer: 0.12 },
+        Stable       =&gt; PhaseVisuals { density: 0.85, dim: 0.1, shimmer: 0.10 },
+        Conservation =&gt; PhaseVisuals { density: 0.5,  dim: 0.4, shimmer: 0.08 },
+        Declining    =&gt; PhaseVisuals { density: 0.25, dim: 0.6, shimmer: 0.04 },
+        Terminal     =&gt; PhaseVisuals { density: 0.12, dim: 0.8, shimmer: 0.02 },
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="what-degrades-and-when"><a class="header" href="#what-degrades-and-when">What degrades, and when</a></h3>
+<p><strong>Dot visibility.</strong> Only <code>floor(dot_count * density)</code> dots render. The dots that disappear are the outermost first, sorted by <code>radius_factor</code> descending. The cloud thins from outside in. The fringe dissolves before the core.</p>
+<pre><code>THRIVING:      80 dots visible. Full oval shape. All three tiers.
+STABLE:        68 dots. Gaps appear at the edge. Fringe thins.
+CONSERVATION:  40 dots. Tier 3 (Dense) mostly gone. Tier 1 and 2 remain.
+                The spectre is a sketch of what it was.
+DECLINING:     20 dots. Scattered. No recognizable shape.
+TERMINAL:      10 dots. Scattered points of light. Barely there.
+</code></pre>
+<p><strong>Color dimming.</strong> All dot colors shift toward <code>text_ghost</code> as <code>dim_factor</code> increases. At Thriving, Dense dots glow <code>rose_dim</code>. At Terminal, everything is <code>text_ghost</code> – the faintest gray.</p>
+<p><strong>Eye decay.</strong> The eyes degrade independently as composite vitality approaches zero:</p>
+<pre><code>Vitality &gt; 0.1:    Eyes render normally per emotion table.
+Vitality 0.05-0.1: Eyes dim to rose_dim regardless of emotion.
+Vitality 0.02-0.05: Eyes degrade to hollow-circle hollow-circle in text_primary.
+Vitality &lt; 0.02:   Eyes reduce to dot dot in text_ghost.
+Vitality = 0:      Eyes disappear.
+</code></pre>
+<p>The gaze is the last thing to go. After the body has thinned to nothing, two dim dots persist for a few more frames. Then those vanish too.</p>
+<p><strong>Movement reduction.</strong> Shimmer rate drops from 12% at Thriving to 2% at Terminal. The cloud stops breathing. Dots barely move. The spectre is heavy and still, the way a dying thing is.</p>
+<h3 id="ascii-mockups-across-lifecycle"><a class="header" href="#ascii-mockups-across-lifecycle">ASCII mockups across lifecycle</a></h3>
+<p><strong>Thriving:</strong></p>
+<pre><code>        ·  ∙  ·
+     ∙  •  •  •  ∙
+   ·  •          •  ·
+  ∙  •   ◉    ◉   •  ∙
+   ·  •          •  ·
+     ∙  •  •  •  ∙
+        ·  ∙  ·
+            ∿
+</code></pre>
+<p><strong>Conservation:</strong></p>
+<pre><code>        ·     ·
+     ∙     •     ∙
+   ·           •
+  ∙      ◉    ◉      ∙
+   ·           •
+     ∙     •     ∙
+               ·
+            ∿
+</code></pre>
+<p><strong>Terminal:</strong></p>
+<pre><code>
+
+          ·
+     ·
+             ·    ·
+
+                     ·
+       ·
+</code></pre>
+<p>(The eyes, if they remain at all, are two dim dots lost among the debris.)</p>
+<h3 id="dream-state-override"><a class="header" href="#dream-state-override">Dream state override</a></h3>
+<p>During REM cycles, lifecycle degradation pauses visually. The dream version always renders at the same density: sparse Tier 1, dream palette, regardless of actual phase. Dreaming is a visual reprieve.</p>
+<p>On waking, lifecycle-appropriate degradation reasserts. If the golem entered dreams at Stable and wakes at Conservation, the cloud visibly thins during the transition. Dream-density lingers for 3-8 seconds (dream bleed), then the spectre catches up to reality.</p>
+<hr>
+<h2 id="birth-sequence"><a class="header" href="#birth-sequence">Birth sequence</a></h2>
+<p>The birth animation is the spectre coalescing from noise into coherence. The spring constant ramps from near-zero to operational. Five phases:</p>
+<pre><code>Phase 1 -- NOISE (0-1s)
+   All 80 dots at random positions. Random tiers. Maximum shimmer.
+   No structure. Pure entropy.
+   spring_k = 0.001 (dots do not pull toward home)
+
+Phase 2 -- POLARIZATION (1-4s)
+   spring_k ramps from 0.001 to 0.02.
+   Dots begin drifting toward their home positions.
+   Still chaotic, but a center of gravity emerges.
+
+Phase 3 -- FIRST LIGHT (4-5s)
+   Eyes appear: filled-circle filled-circle in rose_bright, at center.
+   Everything else is still disorganized.
+   The eyes are the first recognizable element.
+
+Phase 4 -- COALESCENCE (5-8s)
+   spring_k reaches 0.04 (operational).
+   Dots organize into the hollow oval.
+   Tier colors resolve from uniform noise to the graded palette.
+   The shape becomes readable as a face.
+
+Phase 5 -- FIRST BREATH (8-9s)
+   Heartbeat (sine-wave character) appears below the cloud.
+   First pulse. Shimmer reaches standard rate.
+   The spectre is alive.
+</code></pre>
+<p>The whole sequence runs about 9 seconds. The eyes arriving in a field of chaos is the emotional beat – two points of light find each other, and everything else organizes around them.</p>
+<p>This 9-second birth sequence is the spectre animation proper. The full cinematic (doc 11) wraps it in a 15-second sequence (9s assembly + 6s atmospheric settling). Both are correct at different scopes.</p>
+<hr>
+<h2 id="death-sequence"><a class="header" href="#death-sequence">Death sequence</a></h2>
+<p>The death animation is the reverse of birth, but slower and more deliberate. The eyes are the last thing to disappear, not the first. Six stages:</p>
+<pre><code>Stage 1 -- EYES CLOSE (0-3s)
+   Current emotion glyph transitions:
+     current -&gt; hollow-circle -&gt; dot (held)
+   The expression simplifies. The gaze loses focus.
+
+Stage 2 -- HEARTBEAT FLATLINES (3-5s)
+   sine-wave -&gt; dash (flatline, held for 2 seconds)
+   Then the dash vanishes.
+
+Stage 3 -- DOTS SCATTER (5-8s)
+   spring_k drops to 0.001
+   damping increases to 0.99
+   Dots drift outward with almost no return force.
+   The cloud slowly disperses.
+
+Stage 4 -- EYES VANISH (8-11s)
+   dot dot -&gt; (empty)
+   The gaze disappears.
+   The two dim points of light go out.
+
+Stage 5 -- DOTS FADE (11-16s)
+   Remaining dots' color lerps to text_phantom.
+   They become invisible against the background.
+
+Stage 6 -- VOID (16s+)
+   All dots off-screen or invisible.
+   Nothing remains.
+   The spectre has dispersed.
+</code></pre>
+<p>Total duration: about 16 seconds from first eye degradation to void. The eyes outlast the body by several seconds. Even after the cloud has scattered to nothing, two dim dots persist, looking at you. Then they go.</p>
+<hr>
+<h2 id="rendering-in-ratatui"><a class="header" href="#rendering-in-ratatui">Rendering in ratatui</a></h2>
+<p>The spectre renders through a 6-pass compositing pipeline inside ratatui’s <code>Frame::render_widget</code> call, running at 60fps.</p>
+<h3 id="pass-order"><a class="header" href="#pass-order">Pass order</a></h3>
+<p><strong>Pass 1: Scanlines (layer -2).</strong> Faint horizontal lines across the entire sprite area. Dimmed by <code>phase_dim</code>. These create the CRT monitor effect – the spectre is visible through a screen, not floating in open space.</p>
+<p><strong>Pass 2: Inference glow.</strong> When the golem is running an LLM call (<code>infer_glow &gt; 0.01</code>), a radial background color shift emanates from the sprite center. Intensity scales with inference tier: T0 produces nothing, T3 produces a visible warm halo. The glow renders as background color on cells, not foreground, so it sits behind the dots.</p>
+<p><strong>Pass 3: Somatic ripple ring.</strong> When a somatic marker fires (<code>somatic_ripple &gt; 0.01</code>), a ring of displaced dots expands outward from center over 300ms. Implemented by adding outward velocity impulse to dots in sequence from center to edge.</p>
+<p><strong>Pass 4: Dots.</strong> The cloud body. Only <code>floor(dot_count * phase_density)</code> dots render. Each dot’s character is tier-dependent (<code>*</code>, <code>*</code>, <code>*</code>). Color blends between phase-dimmed base and emotion-bright, modulated by heartbeat phase and FSM pulse. Dots that fall outside the bounding box are skipped.</p>
+<p><strong>Pass 5: Eyes.</strong> Overwrite the buffer cells at eye positions. Eye glyphs, colors, bloom, scanning arrows, and the surprise mouth all render here. The bloom effect sets background color on adjacent cells to simulate phosphor bleed (ratatui does not support true alpha).</p>
+<p><strong>Pass 6: Heartbeat.</strong> The sine-wave character below the cloud. Brightness oscillates per the heartbeat phase calculation. Skipped during dreaming (<code>dream_alpha &gt; 0.5</code>).</p>
+<h3 id="widget-implementation"><a class="header" href="#widget-implementation">Widget implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Widget for SpectreWidget {
+    fn render(self, area: Rect, buf: &amp;mut Buffer) {
+        let state = &amp;self.interpolated;
+        let frame = self.frame_counter;
+
+        // Pass 1: scanlines
+        render_scanlines(area, buf, state.phase_dim);
+
+        // Pass 2: inference glow
+        if state.infer_glow &gt; 0.01 {
+            render_inference_glow(area, buf, state);
+        }
+
+        // Pass 3: somatic ripple
+        if state.somatic_ripple &gt; 0.01 {
+            render_ripple(area, buf, state);
+        }
+
+        // Pass 4: dots
+        let visible = (self.dots.len() as f32 * state.phase_density) as usize;
+        for dot in &amp;self.dots[..visible] {
+            render_dot(dot, area, buf, state, frame);
+        }
+
+        // Pass 5: eyes
+        render_eyes(buf, &amp;self.eyes, state, frame);
+
+        // Pass 6: heartbeat
+        if state.dream_alpha &lt; 0.5 {
+            render_heartbeat(area, buf, state, frame);
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="bounding-box-sizes"><a class="header" href="#bounding-box-sizes">Bounding box sizes</a></h2>
+<p>Three size variants for different contexts:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Variant</th><th>Dimensions</th><th>Use</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Standard</td><td>22W x 12H cells</td><td>Creature pane (hearth screen)</td><td>Full cloud, all tiers, heartbeat row</td></tr>
+<tr><td>Compact</td><td>14W x 8H cells</td><td>Collapsed pane, crypt thumbnail</td><td>Fringe tier eliminated, no heartbeat</td></tr>
+<tr><td>Mini</td><td>8W x 4H cells</td><td>Clade miniatures, world screen</td><td>Eyes + nearest dots only, no shimmer</td></tr>
+</tbody>
+</table>
+</div>
+<p>At compact size, eliminate all Fringe (Tier 1) dots. Eyes stay the same glyph size. Heartbeat row removed. Spring physics continues at full rate; only rendering is simplified.</p>
+<p>Mini (8x4): eyes + 6-8 nearest Dense dots only, no shimmer, no heartbeat. Dead golems in mini: single <code>†</code> (U+2020 dagger) at center.</p>
+<p>On the hearth screen at interaction depth 2+, the standard sprite renders with expanded detail: PAD values visible below, Phi gauge, and the inscription (aleph-mem-tav / mem-tav) beneath the heartbeat.</p>
+<hr>
+<h2 id="mood-driven-ambient-effects"><a class="header" href="#mood-driven-ambient-effects">Mood-driven ambient effects</a></h2>
+<p>The Daimon’s mood (the exponential moving average of recent emotions) creates persistent baseline shifts in the cloud’s posture. Unlike emotions that change per tick, mood changes over hours.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mood octant</th><th>PAD signs</th><th>Ambient effect</th></tr>
+</thead>
+<tbody>
+<tr><td>Exuberant</td><td>+P +A +D</td><td>Cloud slightly tighter than baseline, shimmer lively</td></tr>
+<tr><td>Dependent</td><td>+P +A -D</td><td>Dots occasionally drift toward top (looking up)</td></tr>
+<tr><td>Relaxed</td><td>+P -A +D</td><td>Cloud loose, spacious, shimmer slow and gentle</td></tr>
+<tr><td>Docile</td><td>+P -A -D</td><td>Cloud compact, minimal shimmer, quiet</td></tr>
+<tr><td>Hostile</td><td>-P +A +D</td><td>Cloud agitated at baseline, sharp shimmer between events</td></tr>
+<tr><td>Anxious</td><td>-P +A -D</td><td>Constant low-amplitude trembling</td></tr>
+<tr><td>Disdainful</td><td>-P -A +D</td><td>Cloud pulled slightly to one side (asymmetric, averted)</td></tr>
+<tr><td>Bored</td><td>-P -A -D</td><td>Cloud sinks 0.5 rows, shimmer near zero</td></tr>
+</tbody>
+</table>
+</div>
+<p>These are subtle. A viewer who checks back after 30 minutes might notice the cloud seems more agitated or more peaceful. They would not see a discrete transition happen. That’s the point. Mood is climate, not weather.</p>
+<hr>
+<h2 id="interpolation-architecture"><a class="header" href="#interpolation-architecture">Interpolation architecture</a></h2>
+<h3 id="double-buffer"><a class="header" href="#double-buffer">Double buffer</a></h3>
+<p>The sprite engine maintains two state buffers:</p>
+<ul>
+<li><strong>Target state</strong>: set instantly when events arrive from the Event Fabric WebSocket.</li>
+<li><strong>Interpolated state</strong>: what the renderer actually reads. Lerped toward target each frame at per-field rates.</li>
+</ul>
+<p>The interpolated state struct holds all 32 channels as <code>f32</code> fields, plus derived values (cloud_expand, sink_offset, heartbeat_phase, cloud_behavior). The <code>tick()</code> method runs once per frame and advances every field toward its target.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct InterpolatedState {
+    // Fast channels (emotion, ~0.7s)
+    pub pleasure: f32,            // ch 1
+    pub arousal: f32,             // ch 2
+    pub dominance: f32,           // ch 3
+    pub emotion: PlutchikEmotion, // ch 4 (snap)
+    pub emotion_intensity: f32,   // ch 5
+    // Medium channels
+    pub fsm_phase: f32,           // ch 6
+    pub infer_glow: f32,          // ch 7
+    pub probe_severity: f32,      // ch 8
+    pub tick_cost: f32,           // ch 9
+    // Slow channels
+    pub mood_p: f32,              // ch 10
+    pub mood_a: f32,              // ch 11
+    pub mood_d: f32,              // ch 12
+    pub phase_density: f32,       // ch 13
+    pub phase_dim: f32,           // ch 14
+    pub composite_vitality: f32,  // ch 15
+    pub regime_volatility: f32,   // ch 16
+    pub context_util: f32,        // ch 17
+    pub dream_alpha: f32,         // ch 18
+    pub dream_sub_phase: f32,     // ch 19
+    pub phi: f32,                 // ch 20
+    pub grimoire_density: f32,    // ch 21
+    // Glacial channels
+    pub economic_clock: f32,      // ch 22
+    pub epistemic_clock: f32,     // ch 23
+    pub age_factor: f32,          // ch 24
+    pub credit_norm: f32,         // ch 25
+    pub burn_rate: f32,           // ch 26
+    // Oracle channels
+    pub prediction_accuracy: f32, // ch 27
+    pub accuracy_trend: f32,      // ch 28
+    pub attention_breadth: f32,   // ch 29
+    pub surprise_rate: f32,       // ch 30
+    pub foraging_activity: f32,   // ch 31
+    pub compounding_momentum: f32,// ch 32
+    // Derived (not lerped)
+    pub cloud_expand: f32,
+    pub sink_offset: f32,
+    pub cloud_behavior: CloudBehavior,
+    pub heartbeat_phase: f32,     // free-running sine
+    pub center_x: f32,
+    pub center_y: f32,
+    // Pulse channels (fire and decay)
+    pub somatic_ripple: f32,
+    pub curator_shimmer: f32,
+    pub oracle_coherence_pulse: f32,
+}
+<span class="boring">}</span></code></pre>
+<p>Cloud behavior is the one exception: it switches instantly, no interpolation. Behavior modes (Cohere, Agitate, Tremble, Sink, Still, Expand, Drift, Standard) do not blend. The spring physics parameters snap to new values when the mode changes; the physical simulation handles the visual transition smoothly because the dots have momentum and take several frames to respond.</p>
+<h3 id="event-to-target-translation"><a class="header" href="#event-to-target-translation">Event-to-target translation</a></h3>
+<p>When a <code>WireEvent</code> arrives, target values update:</p>
+<ul>
+<li><code>DaimonEvent</code>: sets PAD targets, emotion, intensity, mood, cloud behavior, expansion factor, sink offset. Somatic marker fires set the ripple to 1.0 (pulse, not target).</li>
+<li><code>VitalityEvent</code>: sets phase density, dim factor, vitality, economic/epistemic clocks, age factor.</li>
+<li><code>HeartbeatEvent</code>: sets FSM pulse, inference glow, probe severity.</li>
+<li><code>DreamEvent</code>: sets dream alpha (0.0 awake, 1.0 dreaming).</li>
+<li><code>ContextEvent</code>: sets context utilization.</li>
+<li><code>OracleEvent</code>: sets prediction_accuracy, accuracy_trend, attention_breadth, surprise_rate, foraging_activity, compounding_momentum. Arrives after first theta tick; all six channels hold zero until then.</li>
+</ul>
+<p>The renderer never waits on network. Events update shared state asynchronously; the render loop reads whatever’s there and interpolates.</p>
+<hr>
+<h2 id="performance"><a class="header" href="#performance">Performance</a></h2>
+<p>The shimmer system processes 60-80 dots per frame. At 60fps, that’s 4,800 dot updates per second. This is negligible on any modern machine.</p>
+<p>The most expensive single operation is the fear-intense startle-scatter, which temporarily repositions all dots. It lasts 300ms (18 frames) and happens rarely. The somatic ripple ring is similarly brief.</p>
+<p>The interpolation tick processes ~36 lerp operations per frame. Also negligible.</p>
+<p>The spectre’s rendering cost is dominated by ratatui’s buffer writes, not by the physics simulation.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/18-interfaces/26-bardo-terminal-foundation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/18-interfaces/perspective/00-nooscopy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/18-interfaces/26-bardo-terminal-foundation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/18-interfaces/perspective/00-nooscopy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

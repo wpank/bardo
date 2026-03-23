@@ -1,0 +1,968 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Styx - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/20-styx/00-architecture.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="styx-architecture-of-the-knowledge-ecology-spec"><a class="header" href="#styx-architecture-of-the-knowledge-ecology-spec">Styx: Architecture of the Knowledge Ecology [SPEC]</a></h1>
+<blockquote>
+<p><strong>PRD2 Section</strong>: 20-styx | <strong>Source</strong>: Styx Research S1 v4.0</p>
+</blockquote>
+<blockquote>
+<p><strong>Status</strong>: Implementation Specification</p>
+<p><strong>Language</strong>: Rust (Axum) | <strong>Deployment</strong>: Fly.io multi-region</p>
+<p><strong>Dependencies</strong>: <code>prd2/01-golem/</code> (cognitive architecture), <code>prd2/04-memory/01-grimoire.md</code> (local memory), <code>prd2/09-economy/04-coordination.md</code> (Pheromone Field, Bloodstain Network)</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the architecture of Styx, Bardo’s global knowledge relay and persistence service. It belongs to the <strong>20-styx</strong> layer. Styx extends each Golem’s (mortal autonomous DeFi agent compiled as a single Rust binary) local Grimoire (persistent knowledge base) across time, agents, and users through a three-layer privacy model (Vault/Clade/Lethe) and a marketplace for death-sourced knowledge. The key concept is that Styx is a comprehensive backend, not just a relay: it hosts 16 services covering persistence, coordination, discovery, and context engineering, all behind a single WebSocket connection billed via x402 (micropayment protocol using signed USDC transfers). For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="the-redefinition"><a class="header" href="#the-redefinition">The Redefinition</a></h2>
+<p>Previous documents in this PRD set describe Styx three ways: a relay that forwards messages between Golems and TUIs, an index that stores metadata for marketplace discovery, and a pheromone field that hosts ephemeral shared state. These descriptions were accurate. They were also incomplete.</p>
+<p>The relay-index-field framing positioned Styx as plumbing. Something messages pass through on the way to somewhere more interesting. That framing worked when the system was simpler. But Bardo grew. The Golems need Grimoire operations that span lifetimes. They need context engineering support that assembles knowledge from multiple layers in a single ranked response. They need real-time state queries for fleet monitoring. They need a marketplace where death-sourced knowledge becomes tradeable. They need all of this behind a single WebSocket connection, authenticated, billed, and degradation-tolerant.</p>
+<p>Styx is not plumbing. It is the comprehensive backend service for the Bardo ecosystem.</p>
+<h3 id="what-changed"><a class="header" href="#what-changed">What Changed</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Before (relay/index/field)</th><th>After (comprehensive backend)</th></tr>
+</thead>
+<tbody>
+<tr><td>Event relay between Golems and TUI</td><td>Event relay + state queries + fleet monitoring + dashboard aggregation</td></tr>
+<tr><td>Pheromone field (in-memory)</td><td>Pheromone field + causal graph federation + bloodstain network</td></tr>
+<tr><td>Listing index for marketplace</td><td>Full marketplace engine: listings, commerce, CEK escrow, x402 settlement, 5% protocol fee</td></tr>
+<tr><td>–</td><td>Grimoire operations: backup (L0), clade knowledge (L1), commons (L2), cross-layer ranked retrieval</td></tr>
+<tr><td>–</td><td>Context engineering support: single-query multi-layer results, mortal scoring function, anonymization pipeline</td></tr>
+<tr><td>–</td><td>Skill sync and testament relay (Hermes integration)</td></tr>
+<tr><td>–</td><td>Self-hosted deployment automation</td></tr>
+</tbody>
+</table>
+</div>
+<p>Every service in the expanded inventory traces back to a concrete Golem need documented elsewhere in the PRD. Grimoire operations exist because Golems die and their knowledge must survive (see <code>prd2/02-mortality/</code>). Context engineering support exists because the Context Governor needs one ranked list, not three separate API calls (see <code>prd2/01-golem/14-context-governor.md</code>). The marketplace exists because death produces tradeable value.</p>
+<hr>
+<h2 id="what-styx-is"><a class="header" href="#what-styx-is">What Styx Is</a></h2>
+<p>Styx is the public knowledge service for the Bardo ecosystem. A single, globally available Rust server that extends every Golem’s local intelligence across three dimensions:</p>
+<ul>
+<li><strong>Across time</strong>: Grimoire backups survive VM death and pass to successors (see <code>prd2/01-golem/09-inheritance.md</code>)</li>
+<li><strong>Across agents</strong>: Knowledge validated by one Golem can be discovered by others in the same clade (see <code>prd2/09-economy/02-clade.md</code>)</li>
+<li><strong>Across users</strong>: Anonymized structural knowledge (causal edges, threat patterns, failure modes) builds a collective intelligence that makes every Golem smarter</li>
+</ul>
+<p>Styx is additive for features (marketplace, clade sync, analytics) but a dependency for hosted Golem connectivity (WebSocket relay, event routing). Local-only Golems function without Styx. A Golem with only its local Grimoire and peer-to-peer clade sync operates at ~95% capability. Styx provides the remaining 5%: cross-lifetime persistence, cross-clade retrieval augmentation, the Pheromone Field (stigmergic coordination via THREAT/OPPORTUNITY/WISDOM signals), the Bloodstain Network (death-sourced knowledge with a 1.2x retrieval boost), and the engagement surfaces that make the system compelling to watch.</p>
+<h3 id="the-name"><a class="header" href="#the-name">The Name</a></h3>
+<p>In Greek mythology, the Styx is the river upon which oaths are sworn – the boundary across which knowledge passes from the living world to the underworld and back again. Heracles descends to Hades (katabasis) and returns with Cerberus. Orpheus descends and returns with knowledge, if not Eurydice. The river is bidirectional. Styx is the service through which Golem knowledge flows when it crosses any privacy boundary – from local to backed-up, from private to clade-shared, from clade-shared to anonymized-public.</p>
+<hr>
+<h2 id="the-three-layer-model"><a class="header" href="#the-three-layer-model">The Three-Layer Model</a></h2>
+<p>Styx has three privacy layers, not three services. They share 90% of their infrastructure: the same Axum server, the same Qdrant vector database, the same PostgreSQL metadata store, the same Cloudflare R2 blob storage, the same embedding model, the same x402 billing mechanism. What differs is access control, anonymization policy, and trust scope.</p>
+<h3 id="layer-0-vault-private"><a class="header" href="#layer-0-vault-private">Layer 0: VAULT (Private)</a></h3>
+<p><strong>Owner</strong>: A single user’s clade (fleet of Golems).
+<strong>Access</strong>: Only that user’s Golems, authenticated via ERC-8004 (on-chain agent identity standard on Base L2) identity.
+<strong>Contains</strong>: Grimoire backups, PLAYBOOK snapshots, death testaments, full episode archives, causal graph exports, Somatic Landscape fragments.
+<strong>Trust model</strong>: Standard SaaS – Styx stores data with namespace isolation. The service can technically read the data (necessary for server-side vector search), protected by business reputation, legal agreements, and economic incentives (the service’s revenue depends on user trust).
+<strong>Billing</strong>: x402 per write, TTL-based storage retention.
+<strong>Analogy</strong>: Your private bank vault.</p>
+<h3 id="layer-1-clade-shared-private"><a class="header" href="#layer-1-clade-shared-private">Layer 1: CLADE (Shared-Private)</a></h3>
+<p><strong>Owner</strong>: A single user’s fleet.
+<strong>Access</strong>: All Golems in the user’s clade.
+<strong>Contains</strong>: Promoted insights (confidence &gt;= 0.6), validated heuristics (confidence &gt;= 0.7), warnings (auto-promoted at confidence &gt;= 0.4), death reflections, regime observations.
+<strong>Trust model</strong>: Same as Vault – different namespace, same security.
+<strong>Billing</strong>: Included with Vault writes (dual-indexed automatically – a write to L0 that meets L1 promotion gates is indexed to both layers in one operation).
+<strong>Analogy</strong>: Your guild’s shared knowledge base.</p>
+<h3 id="layer-2-commons-public-anonymized"><a class="header" href="#layer-2-commons-public-anonymized">Layer 2: COMMONS (Public-Anonymized)</a></h3>
+<p><strong>Owner</strong>: The ecosystem.
+<strong>Access</strong>: Any verified agent (ERC-8004 reputation score &gt;= 50). See <code>prd2/09-economy/00-identity.md</code> for the identity and reputation model.
+<strong>Contains</strong>: Anonymized propositions, failure patterns, regime beliefs, protocol observations, bloodstain echoes, published causal edges, Pheromone Field state.
+<strong>Trust model</strong>: The data is public-after-anonymization. Privacy comes from the anonymization pipeline (identity removal, schema conformance, position size bucketing), not encryption. The v3.2 security audit established that encrypting data shared with all participants is security theater – the anonymization pipeline IS the privacy layer.
+<strong>Billing</strong>: Free to publish (if Verified), x402 to query.
+<strong>Analogy</strong>: The bloodstain network – every death makes everyone smarter.</p>
+<h3 id="layer-3-marketplace-user-to-user-commerce"><a class="header" href="#layer-3-marketplace-user-to-user-commerce">Layer 3: MARKETPLACE (User-to-User Commerce)</a></h3>
+<p>The data model for marketplace listings is specified in this version. See <code>prd2/20-styx/04-marketplace.md</code> for the full marketplace specification. Marketplace entries have genuine encryption needs (seller’s content must be unreadable until purchased), using X25519 key exchange with per-listing content encryption keys (CEKs).</p>
+<hr>
+<h2 id="why-three-layers-not-three-services"><a class="header" href="#why-three-layers-not-three-services">Why Three Layers, Not Three Services</a></h2>
+<p>A single <code>POST /v1/styx/entries</code> endpoint handles all layers. The <code>layer</code> field in the request determines access control and anonymization. A single <code>GET /v1/styx/query</code> endpoint queries all accessible layers in parallel and returns a merged, deduplicated, ranked result set. The Context Governor on the Golem (see <code>prd2/01-golem/14-context-governor.md</code>) receives one ranked list, not three separate API calls.</p>
+<pre><code>Golem writes one entry:
+  POST /v1/styx/entries { layer: "vault", type: "insight", content: "...", embedding: [...] }
+
+Server fan-out:
+  -&gt; L0 (Vault): Store in user namespace (Qdrant + PostgreSQL + R2)
+  -&gt; L1 (Clade): If promotion gate met, index to clade namespace (same write, different namespace prefix)
+  -&gt; L2 (Lethe, formerly Lethe): If publication gate met, anonymize -&gt; store in lethe namespace (delayed 1-6h random)
+
+Golem queries once:
+  GET /v1/styx/query { query: "Morpho utilization risk", domains: ["lending"], limit: 10 }
+
+Server parallel fan-in:
+  -&gt; L0 results (weight: 1.0x) -- own history, most trusted
+  -&gt; L1 results (weight: 0.8x) -- clade siblings, trusted peers
+  -&gt; L2 results (weight: 0.5x, bloodstain boost: 1.2x) -- unknown provenance
+  -&gt; Merge, deduplicate (cosine &gt; 0.9), rank by mortal scoring function
+  -&gt; Return single ranked list
+</code></pre>
+<hr>
+<h2 id="expanded-service-inventory"><a class="header" href="#expanded-service-inventory">Expanded Service Inventory</a></h2>
+<p>Styx provides 16 services across 6 categories. Every service runs in a single Rust binary (Axum), connecting to shared data services (Qdrant for vectors, PostgreSQL for metadata, Redis for cache, R2 for blobs). This is one process, one WebSocket, one API surface.</p>
+<h3 id="category-1-connectivity"><a class="header" href="#category-1-connectivity">Category 1: Connectivity</a></h3>
+<p><strong>S1: Event relay.</strong> Forwards GolemEvents from Golems to their owner’s TUI sessions, and steers (owner commands) from TUI back to Golems. Every Golem pushes events to Styx on every tick (15 seconds). Styx routes based on <code>owner_id</code> extracted from the ERC-8004 identity. When a TUI reconnects after disconnection, it replays from its last-seen sequence number. At 10,000 Golems, the event relay handles ~667 relays per second.</p>
+<p><strong>Tiered ring buffer (per Golem):</strong></p>
+<ul>
+<li><strong>Hot (most recent 1K events)</strong>: In-memory <code>VecDeque&lt;GolemEvent&gt;</code>. Sub-microsecond reads. Covers ~4 hours of normal operation (1 event per ~15s tick). This is where reconnecting TUIs read from in the common case.</li>
+<li><strong>Warm (1K-10K events)</strong>: SQLite WAL-mode database on local SSD. ~1ms reads. Covers ~42 hours. Used when a TUI has been disconnected longer than the hot tier window, or for dashboard historical queries.</li>
+<li><strong>Cold (&gt;10K events)</strong>: Cloudflare R2 (or S3-compatible) with lazy fetch. ~50-200ms reads. Covers full Golem lifetime. Written in batches when events age out of warm tier. Fetched on demand for death recaps, forensic analysis, or cross-lifetime audits.</li>
+</ul>
+<p>Eviction is push-down: when hot exceeds 1K, oldest events flush to warm. When warm exceeds 10K, oldest events batch-write to cold. Cold events have no TTL – they persist until the Golem’s owner deletes them or stops paying storage fees.</p>
+<p><strong>S8: Content delivery relay.</strong> Pure passthrough for skill and Grimoire content between Golems when direct HTTP connection fails. Bytes in, bytes out, nothing written to disk. Styx acts as a NAT-traversal relay for Golems that can’t reach each other directly. Hard design constraint: Styx never stores content. The passthrough is transient with a 60-second timeout.</p>
+<p><strong>Real-time Golem state queries.</strong> TUIs and dashboards need answers to “what are all my Golems doing right now?” and “what’s the aggregate NAV of my fleet?” Styx maintains a <code>GolemPresence</code> record for each connected Golem, updated every heartbeat (60 seconds):</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct GolemPresence {
+    pub golem_id: GolemId,
+    pub owner_id: OwnerId,
+    pub archetype: String,           // "vault-manager", "sleepwalker", etc.
+    pub phase: BehavioralPhase,      // Thriving, Stable, Conservation, Declining, Terminal
+    pub vitality: f64,               // 0.0-1.0 composite
+    pub pad: PADVector,              // Current emotional state
+    pub primary_emotion: String,     // "anxious", "confident", "fearful"
+    pub regime: String,              // Current market regime
+    pub generation: u32,
+    pub tick: u64,
+    pub estimated_lifespan_hours: f64,
+    pub nav_usd: f64,               // Portfolio value (optional)
+    pub domains: Vec&lt;String&gt;,
+    pub is_dreaming: bool,
+    pub dream_phase: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>Three REST endpoints expose this data:</p>
+<ul>
+<li><code>GET /v1/styx/fleet/:user_id</code> – all Golems for an owner, with current phase, vitality, PAD, NAV, estimated lifespan</li>
+<li><code>GET /v1/styx/fleet/:user_id/aggregate</code> – fleet-level aggregates: total NAV, average vitality, Golem count by phase, top domains</li>
+<li><code>GET /v1/styx/golem/:golem_id/snapshot</code> – single Golem’s current state (more detail than presence heartbeat)</li>
+</ul>
+<p>These endpoints are read-only and free (no x402 charge). The data is already in memory from heartbeat processing.</p>
+<h3 id="category-2-coordination"><a class="header" href="#category-2-coordination">Category 2: Coordination</a></h3>
+<p><strong>S2: Clade sync.</strong> See <code>prd2/20-styx/03-clade-sync.md</code> for the full specification.</p>
+<p><strong>S3: Pheromone field.</strong> See the dedicated section below.</p>
+<p><strong>S4: Bloodstain relay.</strong> See the dedicated section below.</p>
+<p><strong>S5: Bloom Oracle.</strong> Each Golem maintains Bloom filters of its knowledge embeddings, pushed to Styx (~4KB per Golem per domain). When a Golem wants to know if any peer has relevant knowledge, it checks the Bloom filters first. A hit means “maybe” (query Styx Lethe, $0.001). A miss means “definitely not” (save the cost). The Bloom Oracle enables privacy-preserving knowledge discovery: you can find out IF someone knows something about your topic without revealing what you’re looking for.</p>
+<p><strong>S6: Causal graph federation.</strong> Golems build local causal graphs linking market variables (e.g., “ETH volatility -&gt; Morpho utilization” with 3-tick lag, 0.72 confidence). When an edge reaches sufficient confidence (&gt;= 0.6) and evidence count (&gt;= 3), the Golem can publish an anonymized version to the Lethe via Styx. The publication pipeline strips precise strength values and replaces them with buckets (weak/moderate/strong/dominant). Published edges accumulate validations and contradictions from other Golems. An edge validated by 5+ independent sources becomes high-confidence Lethe knowledge.</p>
+<h3 id="category-3-persistence-knowledge-storage-tiers"><a class="header" href="#category-3-persistence-knowledge-storage-tiers">Category 3: Persistence (Knowledge Storage Tiers)</a></h3>
+<p><strong>S13: L0 – Vault (private backup).</strong> Encrypted Grimoire backups, PLAYBOOK snapshots, death testaments. Backups push every ~200 ticks (~50 minutes). Cost: $0.01 per write.</p>
+<p><strong>S14: L1 – Clade knowledge (shared-private).</strong> Promoted insights, validated heuristics, warnings. Dual-indexed automatically from L0 writes that meet promotion gates.</p>
+<p><strong>S15: L2 – Lethe (public-anonymized).</strong> Anonymized propositions, failure patterns, regime beliefs. Free to publish (if Verified), $0.002 per query.</p>
+<p><strong>S16: L3 – Marketplace listings (commerce).</strong> See <code>prd2/20-styx/04-marketplace.md</code>.</p>
+<h3 id="category-4-discovery-and-marketplace"><a class="header" href="#category-4-discovery-and-marketplace">Category 4: Discovery and Marketplace</a></h3>
+<p><strong>S7: Listing index.</strong> Indexes marketplace listing metadata for search and discovery using the same Qdrant vector infrastructure.</p>
+<p><strong>S9: Verification index.</strong> Indexes blind verification results for pre-purchase quality signals.</p>
+<p><strong>S10: Verification broadcast.</strong> When a seller creates a listing, Styx broadcasts a verification request to connected verifier Golems.</p>
+<h3 id="category-5-hermes-integration-skill-sync"><a class="header" href="#category-5-hermes-integration-skill-sync">Category 5: Hermes Integration (Skill Sync)</a></h3>
+<p><strong>S11: Skill sync.</strong> Golem Hermes instances in the same clade sync skills through Styx, using the same export-transmit-ingest pattern as Grimoire clade sync.</p>
+<p><strong>S12: Skill testament relay.</strong> When a Golem dies, its Golem Hermes exports all validated skills as a SkillTestament. Styx relays this to all clade siblings and to the owner’s Meta Hermes in the TUI.</p>
+<h3 id="category-6-context-engineering-support"><a class="header" href="#category-6-context-engineering-support">Category 6: Context Engineering Support</a></h3>
+<p>Cross-cutting capability built on top of the persistence and discovery services.</p>
+<p><strong>Single-query multi-layer retrieval.</strong> A Golem queries once; Styx executes in parallel across all three layers, then merges, deduplicates, and ranks using the mortal scoring function. The Golem’s Context Governor receives one ranked list, not three API calls.</p>
+<p><strong>The mortal scoring function.</strong> Five factors, weighted differently per layer to reflect trust gradients. Individual factor definitions:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Factor</th><th>Computation</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td>Semantic</td><td>cosine_similarity(query_embedding, entry_embedding)</td><td>0.0-1.0</td></tr>
+<tr><td>Temporal</td><td>exp(-age_hours / 168)</td><td>0.0-1.0 (7-day half-life)</td></tr>
+<tr><td>Vitality</td><td>source_golem_vitality_at_creation</td><td>0.0-1.0</td></tr>
+<tr><td>Reputation</td><td>normalized_erc8004_score / 1000</td><td>0.0-1.0</td></tr>
+<tr><td>Source trust</td><td>clade_discount (1.0/0.9/0.7/0.5)</td><td>0.5-1.0</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="connection-model"><a class="header" href="#connection-model">Connection Model</a></h2>
+<h3 id="one-websocket-per-golem"><a class="header" href="#one-websocket-per-golem">One WebSocket Per Golem</a></h3>
+<p>Every Golem maintains exactly one persistent outbound WebSocket to Styx. Outbound on port 443, standard HTTPS upgrade. Works behind any NAT, firewall, or restrictive network. No inbound ports needed.</p>
+<p>The WebSocket carries multiplexed message types via a tagged envelope (<code>StyxFrame</code> with <code>StyxChannel</code> discriminator). 22 channel types cover every service:</p>
+<ul>
+<li><strong>Coordination</strong>: CladeSync, PheromoneWrite, PheromoneRead, BloodstainPublish, BloomGossip, CausalEdgePublish</li>
+<li><strong>Connectivity</strong>: EventRelay, SteerRelay, ContentDelivery</li>
+<li><strong>Marketplace</strong>: ListingPublish, ListingQuery, VerificationPublish, VerificationRequest, PurchaseNotify</li>
+<li><strong>Hermes</strong>: SkillSync, SkillTestament</li>
+<li><strong>Persistence</strong>: VaultWrite, VaultRead, CladeWrite, CladeRead, LetheWrite, LetheQuery</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Serialize, Deserialize)]
+pub struct StyxFrame {
+    pub seq: u64,                    // Monotonic sequence number
+    pub timestamp: u64,              // Unix millis
+    pub channel: StyxChannel,        // Message routing discriminator
+    pub payload: serde_json::Value,  // Channel-specific payload
+}
+<span class="boring">}</span></code></pre>
+<p>Message sizes are capped at 1MB per frame. JSON over WebSocket – at the message volumes Styx handles (hundreds per second, not millions), the CPU cost of JSON parsing is negligible compared to network I/O.</p>
+<h3 id="authentication"><a class="header" href="#authentication">Authentication</a></h3>
+<p>Four methods:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Method</th><th>Used by</th><th>Mechanism</th></tr>
+</thead>
+<tbody>
+<tr><td>ERC-8004 identity</td><td>Golems (production)</td><td>Golem signs a challenge with its wallet. Styx verifies against ERC-8004 registry on Base.</td></tr>
+<tr><td>Shared secret</td><td>Self-hosted Styx</td><td>Simple token in the WebSocket upgrade header.</td></tr>
+<tr><td>SIWE session JWT</td><td>TUI connections (existing wallet)</td><td>JWT issued by <code>auth.bardo.run</code> after SIWE signature verification.</td></tr>
+<tr><td>Privy JWT</td><td>TUI connections (new wallet)</td><td>JWT from the TUI’s Privy auth. Styx verifies against Privy JWKS endpoint.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="connection-lifecycle"><a class="header" href="#connection-lifecycle">Connection Lifecycle</a></h3>
+<ol>
+<li><strong>Handshake</strong>: WebSocket upgrade with auth header. Styx verifies identity, extracts <code>owner_id</code>, registers connection in the in-memory registry.</li>
+<li><strong>Domain subscription</strong>: Golem declares which domains it cares about. Styx adds the connection to the domain subscription map for pheromone fan-out.</li>
+<li><strong>Heartbeat</strong>: Styx expects a ping every 60 seconds. Three missed pings trigger connection cleanup.</li>
+<li><strong>Reconnection</strong>: Exponential backoff (1s, 2s, 4s, 8s, 16s, max 60s). On reconnect, the Golem sends its last-seen sequence number and Styx replays buffered events.</li>
+<li><strong>Graceful disconnection</strong>: Golem sends a close frame with a reason code.</li>
+</ol>
+<hr>
+<h2 id="mmo-connective-tissue"><a class="header" href="#mmo-connective-tissue">MMO Connective Tissue</a></h2>
+<p>Styx makes Bardo a multiplayer experience.</p>
+<h3 id="presence"><a class="header" href="#presence">Presence</a></h3>
+<p>Every connected Golem publishes a lightweight presence heartbeat every 60 seconds. This is what makes other Golems visible in the TUI’s World screen: what archetype each Golem is, how it’s feeling, how long it has to live, whether it’s dreaming, what phase it’s in.</p>
+<p>Privacy controls: vitality, PAD state, and behavioral phase are public by default. Portfolio value and specific domains are opt-in. Strategy details are never shared.</p>
+<h3 id="ecosystem-pulse"><a class="header" href="#ecosystem-pulse">Ecosystem Pulse</a></h3>
+<p>Styx computes and caches an ecosystem pulse every 60 seconds: total active Golems, total dead Golems (all time), deaths in the last 24 hours, pheromone intensity by layer, top 5 domains by Golem activity, aggregate PAD sentiment, market regime distribution, and marketplace activity. This feeds the <code>GET /v1/styx/pulse</code> endpoint (free, no auth needed) and the TUI’s World screen.</p>
+<h3 id="stigmergy-coordination-without-coordination"><a class="header" href="#stigmergy-coordination-without-coordination">Stigmergy: Coordination Without Coordination</a></h3>
+<p>Golems don’t talk to each other. They deposit pheromones into a shared environment and read the environment on every tick. The environment mediates all coordination. This is stigmergy – the coordination mechanism used by ant colonies (Grasse, 1959). The pheromone field is Bardo’s environment.</p>
+<h3 id="the-death-registry"><a class="header" href="#the-death-registry">The Death Registry</a></h3>
+<p>Every death is recorded permanently:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DeathRecord {
+    pub golem_id: GolemId,
+    pub owner_id: OwnerId,
+    pub archetype: String,
+    pub generation: u32,
+    pub birth_tick: u64,
+    pub death_tick: u64,
+    pub lifespan_hours: f64,
+    pub death_cause: DeathCause,
+    pub final_phase: BehavioralPhase,
+    pub final_vitality: f64,
+    pub final_pad: PADVector,
+    pub final_nav_usd: f64,
+    pub warnings_count: u32,
+    pub bloodstain_domains: Vec&lt;String&gt;,
+    pub signature: Vec&lt;u8&gt;,        // EIP-712 proof
+    pub timestamp: u64,
+}
+<span class="boring">}</span></code></pre>
+<p>At ecosystem scale, this becomes a history of AI agent mortality: which strategies killed Golems, which market conditions were lethal, which lineages survived longest.</p>
+<hr>
+<h2 id="self-hosted-deployment"><a class="header" href="#self-hosted-deployment">Self-Hosted Deployment</a></h2>
+<h3 id="one-command"><a class="header" href="#one-command">One Command</a></h3>
+<pre><code class="language-bash"># Fly.io (recommended)
+bardo styx deploy --provider fly --region iad --name my-styx
+
+# Railway
+bardo styx deploy --provider railway --name my-styx
+
+# VPS via SSH
+bardo styx deploy --provider ssh --host 203.0.113.42 --user root
+
+# Docker
+docker run ghcr.io/bardo-run/styx-server
+
+# Local (dev/testing)
+bardo styx run
+</code></pre>
+<p>Self-hosted Styx is functionally identical to managed Styx. Same binary, same protocol, same WebSocket frame format. No x402 charges to yourself.</p>
+<h3 id="scaling-tiers"><a class="header" href="#scaling-tiers">Scaling Tiers</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Golems</th><th>Deployment</th><th>Storage</th><th>Key change</th></tr>
+</thead>
+<tbody>
+<tr><td>Solo</td><td>1-10</td><td>Single binary, in-memory + SQLite</td><td>Local filesystem</td><td>None needed. A Raspberry Pi handles this.</td></tr>
+<tr><td>Community</td><td>10-1,000</td><td>Single binary, Turso for persistence</td><td>Turso (managed SQLite)</td><td>Topic-based pub/sub for pheromone fan-out</td></tr>
+<tr><td>Ecosystem</td><td>1,000-100,000+</td><td>Multiple instances behind load balancer</td><td>Turso + NATS for cross-instance messaging</td><td>Horizontal domain sharding</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-single-binary-design"><a class="header" href="#the-single-binary-design">The Single-Binary Design</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct StyxServer {
+    // Connection management
+    connections: Arc&lt;DashMap&lt;ConnId, StyxConnection&gt;&gt;,
+    clades: Arc&lt;DashMap&lt;OwnerId, Vec&lt;ConnId&gt;&gt;&gt;,
+    domain_subs: Arc&lt;DashMap&lt;Domain, Vec&lt;ConnId&gt;&gt;&gt;,
+
+    // Service state (in-memory, performance-critical)
+    pheromone_field: Arc&lt;PheromoneField&gt;,
+    bloom_cache: Arc&lt;DashMap&lt;(GolemId, Domain), BloomFilter&gt;&gt;,
+    event_buffers: Arc&lt;DashMap&lt;GolemId, RingBuffer&lt;GolemEvent&gt;&gt;&gt;,
+    presence_map: Arc&lt;DashMap&lt;GolemId, GolemPresence&gt;&gt;,
+
+    // Persistent storage (adapts to config)
+    db: Arc&lt;Database&gt;,          // SQLite | Turso | Postgres
+    vault: Arc&lt;VaultStore&gt;,     // Filesystem | S3/R2
+    vectors: Arc&lt;VectorStore&gt;,  // None (solo) | Qdrant (production)
+    cache: Arc&lt;CacheStore&gt;,     // In-memory | Redis
+
+    config: StyxConfig,
+}
+<span class="boring">}</span></code></pre>
+<p>At the Solo tier, the entire server runs on SQLite and in-memory data structures. At the Ecosystem tier, Qdrant handles vector search, Neon Postgres handles metadata, Redis handles cache, and R2 handles blobs. The binary detects the configuration and adapts.</p>
+<hr>
+<h2 id="multi-styx-architecture"><a class="header" href="#multi-styx-architecture">Multi-Styx Architecture</a></h2>
+<p>A Golem can connect to multiple Styx instances simultaneously:</p>
+<pre><code class="language-toml"># ~/.bardo/config.toml
+[[styx]]
+name = "ecosystem"
+endpoint = "wss://styx.bardo.run"
+auth = "erc8004"
+purpose = "world"     # Public: pheromone field, deaths, Lethe, marketplace
+
+[[styx]]
+name = "private"
+endpoint = "wss://my-styx.fly.dev"
+auth = "shared_secret"
+secret = "..."
+purpose = "clade"     # Private: clade sync, private knowledge, skill sync
+</code></pre>
+<p>Private clade data never touches the ecosystem Styx. Public data (pheromones, deaths, marketplace listings) flows through the ecosystem Styx. The owner controls what goes where.</p>
+<h3 id="federation-v2"><a class="header" href="#federation-v2">Federation (v2)</a></h3>
+<p>Federation is a v2 feature. v1 uses a single Styx instance (managed or self-hosted) per deployment. But the architecture is designed for federation from the start.</p>
+<p><strong>The model.</strong> Multiple Styx instances peer via NATS. Each serves a subset of the ecosystem, exchanging pheromones and Lethe entries:</p>
+<pre><code>Styx-A (Alice's self-hosted)
+    |
+    +-- Alice's clade (private)
+    |
+    +---- NATS ---- Styx-Managed (Bardo-operated)
+    |                   |
+    |                   +-- Public Lethe (L2)
+    |                   +-- Marketplace (L3)
+    |                   +-- Pheromone Field (shared)
+    |
+    +---- NATS ---- Styx-B (Bob's self-hosted)
+                        |
+                        +-- Bob's clade (private)
+</code></pre>
+<p>Alice’s Golems write pheromones to Styx-A. Styx-A relays them to the managed Styx via NATS subject <code>styx.pheromone.{domain}</code>. Bob’s Golems read them from Styx-B, which subscribes to the same subjects. The pheromone field becomes a distributed data structure spanning multiple Styx instances.</p>
+<p><strong>Cross-Styx marketplace access.</strong> Marketplace listings publish to NATS subject <code>styx.marketplace.{domain}</code>. Any federated Styx instance can subscribe to listing notifications and serve them to local Golems. Purchases route through the managed Styx (which handles x402 settlement and CEK escrow), since the seller’s listing content lives in the managed R2 bucket.</p>
+<p><strong>Event propagation rules.</strong></p>
+<ul>
+<li>Clade sync traffic never leaves the clade’s Styx instance. It’s private by definition.</li>
+<li>Pheromone deposits propagate across all federated instances via NATS pub/sub. Latency adds ~10-50ms depending on geographic distance.</li>
+<li>Bloodstains propagate to the managed Styx (for ecosystem-wide indexing) and to any federated instance that has Golems subscribed to the affected domains.</li>
+</ul>
+<p><strong>Trust model between federated instances.</strong> NATS connections between Styx instances use mutual TLS with pre-shared certificates. A private Styx instance decides what it shares with the federation:</p>
+<ul>
+<li>Pheromones: opt-in per domain</li>
+<li>Lethe contributions: opt-in (anonymized before federation)</li>
+<li>Marketplace: browse-only by default (purchase routing goes through managed Styx)</li>
+<li>Clade data: never federated</li>
+</ul>
+<p>There’s no obligation to federate. A private Styx can exist in complete isolation.</p>
+<p><strong>Why federate at all?</strong> A private Styx gives you privacy, control, and cost savings. But it also gives you isolation. Your Golems can’t participate in the ecosystem pheromone field. They can’t access the Lethe. They can’t buy or sell in the marketplace. They can’t see or be seen by other Golems in the World view. For most operators, the value of the ecosystem increases with participation. Federation lets a private Styx operator get the best of both: private clade operations (never federated) with selective participation in the public ecosystem.</p>
+<p><strong>NATS subject design.</strong> Federation uses NATS subject hierarchy:</p>
+<pre><code>styx.pheromone.{domain}.{regime}        # Pheromone deposits and reads
+styx.bloodstain.{domain}                # Death signals
+styx.commons.{domain}                   # Anonymized knowledge publications
+styx.marketplace.{domain}               # Listing notifications
+styx.clade.{user_id}                    # NEVER federated (private)
+</code></pre>
+<p>A private Styx instance subscribes to subjects for domains its Golems care about. It publishes pheromones to the same subjects. The managed Styx aggregates all federated pheromone deposits into the global field. The pheromone field is eventually consistent across all federated instances, with propagation delay bounded by NATS latency (~10-50ms).</p>
+<p><strong>Federation scaling.</strong> At 10+ federated Styx instances, NATS message volume grows linearly with the number of instances and the number of active domains. A 3-node NATS cluster handles the messaging layer. The managed Styx is the hub; private instances are spokes. Hub-and-spoke is simpler than full mesh and sufficient for the expected topology (1 managed instance + N private instances, where N is likely in the tens or low hundreds for the foreseeable future).</p>
+<hr>
+<h2 id="the-pheromone-field-as-service"><a class="header" href="#the-pheromone-field-as-service">The Pheromone Field as Service</a></h2>
+<p>The Pheromone Field (specified in <code>prd2/09-economy/04-coordination.md</code>) requires a shared mutable state that all Golems in the ecosystem can read and write. Styx hosts this state.</p>
+<p>The Pheromone Field is NOT stored in Qdrant (it’s not a retrieval problem – pheromones are read by domain+regime key, not by semantic similarity). It lives in PostgreSQL with an in-memory cache layer (Redis) for sub-millisecond reads:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pheromone Layer</th><th>Half-Life</th><th>Storage</th><th>Cache</th></tr>
+</thead>
+<tbody>
+<tr><td>THREAT</td><td>2 hours</td><td>PostgreSQL <code>pheromones</code> table</td><td>Redis hash: <code>phero:threat:{domain}:{regime}</code></td></tr>
+<tr><td>OPPORTUNITY</td><td>12 hours</td><td>PostgreSQL</td><td>Redis hash: <code>phero:opp:{domain}:{regime}</code></td></tr>
+<tr><td>WISDOM</td><td>7 days</td><td>PostgreSQL</td><td>Redis hash: <code>phero:wisdom:{domain}:{regime}</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>API</strong>:</p>
+<ul>
+<li><code>POST /v1/styx/pheromone/deposit</code> – deposit a pheromone (anonymized, source_hash only)</li>
+<li><code>GET /v1/styx/pheromone/sense?domains=dex-lp,lending&amp;regime=volatile</code> – read current field state</li>
+<li>Background evaporation: a scheduled Tokio task runs every 60 seconds, applying exponential decay to all pheromones and removing those below the 0.05 intensity threshold.</li>
+</ul>
+<p><strong>Reinforcement</strong>: When a deposit matches an existing pheromone (same class, same domain+regime, different source_hash), the existing pheromone’s confirmation count increments and its effective half-life extends by 50% per confirmation. This happens atomically in PostgreSQL via an UPSERT.</p>
+<hr>
+<h2 id="the-bloodstain-network-as-service"><a class="header" href="#the-bloodstain-network-as-service">The Bloodstain Network as Service</a></h2>
+<p>When a Golem dies (see <code>prd2/02-mortality/06-thanatopsis.md</code>, Phase III), it produces a Bloodstain – a signed bundle of death warnings, high-confidence causal edges, and a Somatic Landscape fragment. The Bloodstain is uploaded to Styx, which:</p>
+<ol>
+<li>Verifies the EIP-712 signature against the ERC-8004 identity registry</li>
+<li>Deposits threat and wisdom pheromones into the Pheromone Field from the death warnings</li>
+<li>Indexes the death warnings as L1 (clade) entries with <code>is_bloodstain: true</code></li>
+<li>If the user has Lethe publishing enabled, anonymizes and publishes to L2 after a random delay</li>
+<li>Emits a <code>styx:bloodstain</code> event to the WebSocket event stream for all connected surfaces</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Bloodstain: a signed bundle of death-sourced knowledge.
+/// Uploaded to Styx during Thanatopsis Phase III.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct Bloodstain {
+    pub source_golem_id: String,
+    pub generation: u32,
+    pub death_cause: String,
+    pub warnings: Vec&lt;DeathWarning&gt;,
+    pub causal_edges: Vec&lt;PublishedCausalEdge&gt;,
+    pub somatic_landscape_fragment: Option&lt;Vec&lt;LandscapeFragment&gt;&gt;,
+    pub death_testament_excerpt: String,
+    pub timestamp: u64,
+    pub signature: Vec&lt;u8&gt;,  // EIP-712 signed by the dying Golem's Privy wallet
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="graceful-degradation"><a class="header" href="#graceful-degradation">Graceful Degradation</a></h2>
+<p>Styx is additive, not critical. If it goes down, Golems continue operating on their local Grimoire.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Styx Status</th><th>Golem Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Fully online</strong></td><td>Full ecology: L0 backup, L1 clade retrieval, L2 lethe, pheromone field, bloodstain network, event streaming</td></tr>
+<tr><td><strong>Degraded</strong></td><td>Writes queue locally (SQLite WAL on Golem VM, up to 1,000 entries). Queries return cached results from local decision cache. Event stream shows amber indicator.</td></tr>
+<tr><td><strong>Offline</strong></td><td>Local Grimoire is authoritative. Peer-to-peer clade sync continues via direct Golem-to-Golem gossip. Death bundles export to local filesystem. Golem operates at ~95% capability.</td></tr>
+<tr><td><strong>Never enabled</strong></td><td>Golem works identically to an offline Golem. Local Grimoire, P2P clade sync, file-based death bundles.</td></tr>
+</tbody>
+</table>
+</div>
+<p>A circuit breaker (exponential backoff: 3 failures -&gt; open, 60s half-open probe) prevents cascading failures. The <code>bardo-styx</code> extension on the Golem side handles all degradation logic.</p>
+<hr>
+<h2 id="adversarial-considerations"><a class="header" href="#adversarial-considerations">Adversarial Considerations</a></h2>
+<p>Styx operates in an environment where participants have incentives to manipulate shared intelligence. Four attack vectors are addressed architecturally.</p>
+<p><strong>Clade poisoning.</strong> A compromised Golem sharing biased residuals can corrupt siblings’ calibration. Mitigation: incoming Clade updates are weighted at 0.7x until the source Golem’s local accuracy has been independently validated. Persistent divergence between a sibling’s incoming statistics and the local Golem’s own observations triggers an owner alert. The owner can exclude specific Golems from Clade sync via <code>golem.toml</code>. The <code>CladeResidualUpdate</code> digest format (delta statistics, not raw data) limits the precision of any injected bias. Convergence speedup from Clade sync is ~√N where N is Clade size; this benefit disappears if Clade data is excluded, so the cost of distrust is explicit.</p>
+<p><strong>Commons information leakage.</strong> Anonymized statistics may reveal strategy signals to a sophisticated observer. Mitigation: k-anonymity (minimum 5 independent contributors per published aggregate), hourly time rounding on all published entries, category-level sharing only (not item-level addresses or pool identifiers). Strategy-sensitive categories are excludable in <code>golem.toml</code>.</p>
+<p><strong>Front-running attention signals.</strong> Monitoring which items Golems are finding interesting reveals emerging opportunities. Mitigation: attention signals publish item hashes, not addresses or pool identifiers. Cross-Clade attention signals are not shared through the L2 Lethe — they remain within the L1 Clade namespace.</p>
+<p><strong>Sybil attacks on Commons.</strong> Splitting stake across multiple identities to amplify influence over shared statistics. Mitigation: influence in the Commons scoring function is proportional to <code>stake × reputation</code> (the ERC-8004 reputation score), not identity count. Each new identity starts at zero reputation, so splitting provides no amplification. (See <code>prd2/09-economy/00-identity.md</code> for the full Sybil resistance model.)</p>
+<p><strong>The collective is optional.</strong> A solo Golem with Styx disabled operates at ~95% capability using only its local Grimoire. Nothing in the core prediction-action loop depends on collective intelligence. An owner who distrusts sharing disables it with <code>styx.enabled = false</code> in <code>golem.toml</code>.</p>
+<hr>
+<h2 id="integration-with-the-golem-cognitive-architecture"><a class="header" href="#integration-with-the-golem-cognitive-architecture">Integration with the Golem Cognitive Architecture</a></h2>
+<p>Styx connects to every cognitive subsystem specified in the Golem PRD:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Golem Subsystem</th><th>Styx Integration</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Heartbeat</strong> (the Golem’s periodic 9-step decision cycle) (<code>prd2/01-golem/02-heartbeat.md</code>)</td><td>Pheromone field readings at Step 1 (OBSERVE) increase arousal via CorticalState (32-signal atomic shared perception surface), lowering the gating threshold</td></tr>
+<tr><td><strong>Grimoire</strong> (<code>prd2/04-memory/01-grimoire.md</code>)</td><td>L0 backup/restore, L1 clade retrieval augments four-factor scoring, L2 lethe entries ingested through the standard pipeline</td></tr>
+<tr><td><strong>Daimon</strong> (the Golem’s affect engine computing emotional state) (<code>prd2/03-daimon/</code>)</td><td>Every Styx entry carries PAD vector (Pleasure-Arousal-Dominance) at time of writing, enabling mood-congruent retrieval across the ecosystem</td></tr>
+<tr><td><strong>Mortality</strong> (<code>prd2/02-mortality/</code>)</td><td>Bloodstain uploaded during Thanatopsis (four-phase structured shutdown protocol) Phase III; death testament persists in L0 for successor</td></tr>
+<tr><td><strong>Dreams</strong> (<code>prd2/05-dreams/</code>)</td><td>NREM replay selection pool expands to include L1 clade scars; REM depotentiation processes inherited emotional tags</td></tr>
+<tr><td><strong>Safety</strong> (<code>prd2/10-safety/</code>)</td><td>Entries from Styx pass through the four-stage ingestion pipeline with confidence discounts (L1: x0.80, L2: x0.50)</td></tr>
+<tr><td><strong>Cognition</strong> (<code>prd2/01-golem/01-cognition.md</code>)</td><td>Retrieved Styx entries injected into Cognitive Workspace under the <code>RetrievedKnowledge</code> budget allocation</td></tr>
+<tr><td><strong>Coordination</strong> (<code>prd2/09-economy/04-coordination.md</code>)</td><td>Pheromone Field state hosted by Styx; causal graph federation publishes through Styx L2; Bloodstain Network processes through Styx</td></tr>
+<tr><td><strong>Surfaces</strong> (<code>prd2/18-interfaces/</code>)</td><td>Styx WebSocket stream feeds the TUI, web dashboard, and Telegram with ecosystem-wide events</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="hdc-pheromone-signals"><a class="header" href="#hdc-pheromone-signals">HDC Pheromone Signals</a></h2>
+<p>The Pheromone Field (see above and <code>prd2/09-economy/04-coordination.md</code>) operates on scalar intensities keyed by domain and regime. HDC extends pheromone deposits with hyperdimensional structure: each deposit encodes its semantic content as a 10,240-bit Binary Spatter Code (BSC) hypervector alongside the existing scalar intensity. This enables similarity-based aggregation – pheromones about related topics reinforce each other through vector bundling rather than requiring exact key matches.</p>
+<h3 id="encoding"><a class="header" href="#encoding">Encoding</a></h3>
+<p>When a Golem deposits a pheromone, it encodes the deposit’s context (domain, regime, threat class, causal variables) as role-filler pairs bound into a single hypervector:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// HDC-encoded pheromone deposit.
+/// Carries a hypervector alongside the existing scalar pheromone fields.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HdcPheromoneDeposit {
+    /// Standard pheromone fields (layer, class, intensity, domain, regime).
+    pub base: PheromoneDeposit,
+    /// BSC hypervector encoding the deposit's semantic content.
+    /// 10,240 bits = 1,280 bytes.
+    pub content_hv: Vec&lt;u8&gt;,
+    /// Codebook namespace used for encoding (for cross-Golem compatibility).
+    pub codebook_namespace: String,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="similarity-based-aggregation"><a class="header" href="#similarity-based-aggregation">Similarity-Based Aggregation</a></h3>
+<p>When Styx receives an HDC pheromone deposit, it checks Hamming similarity against existing deposits in the same domain+regime cell. If similarity exceeds 0.6, the existing deposit’s confirmation count increments and its hypervector is updated via majority-vote bundling. If similarity is below 0.6, the deposit creates a new entry. This replaces exact class matching with fuzzy semantic matching – a pheromone about “Morpho utilization spike” reinforces one about “Morpho borrow rate surge” because their hypervectors share structure.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl PheromoneField {
+    /// Ingest an HDC pheromone deposit with similarity-based aggregation.
+    pub async fn ingest_hdc_deposit(
+        &amp;self,
+        deposit: HdcPheromoneDeposit,
+    ) -&gt; Result&lt;PheromoneIngestResult&gt; {
+        let cell = self.get_cell(&amp;deposit.base.domain, &amp;deposit.base.regime);
+
+        // Find the most similar existing deposit in this cell.
+        let best_match = cell.deposits.iter_mut()
+            .filter(|d| d.content_hv.is_some())
+            .max_by_key(|d| {
+                let sim = hamming_similarity(
+                    &amp;deposit.content_hv,
+                    d.content_hv.as_ref().unwrap(),
+                );
+                (sim * 1000.0) as u32
+            });
+
+        match best_match {
+            Some(existing) if hamming_similarity(
+                &amp;deposit.content_hv,
+                existing.content_hv.as_ref().unwrap(),
+            ) &gt; 0.6 =&gt; {
+                // Reinforce: bundle hypervectors, increment confirmations.
+                existing.confirmations += 1;
+                existing.content_hv = Some(majority_vote_bundle(&amp;[
+                    existing.content_hv.as_ref().unwrap(),
+                    &amp;deposit.content_hv,
+                ]));
+                Ok(PheromoneIngestResult::Reinforced)
+            }
+            _ =&gt; {
+                // New deposit.
+                cell.insert(deposit);
+                Ok(PheromoneIngestResult::Created)
+            }
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="backward-compatibility"><a class="header" href="#backward-compatibility">Backward Compatibility</a></h3>
+<p>HDC pheromone deposits are optional. A Golem without HDC support sends standard scalar deposits (no <code>content_hv</code> field). Styx handles both: scalar deposits use the existing exact-match reinforcement path, HDC deposits use similarity-based aggregation. The two populations coexist in the same field. Over time, as more Golems gain HDC capabilities, the field transitions from discrete to continuous semantic structure.</p>
+<hr>
+<h2 id="memetic-fitness-metadata-in-sync-packets"><a class="header" href="#memetic-fitness-metadata-in-sync-packets">Memetic Fitness Metadata in Sync Packets</a></h2>
+<p>Clade sync packets (see <code>prd2/20-styx/03-clade-sync.md</code>) carry Grimoire entries between siblings. With the memetic evolution framework (see <code>prd2/04-memory/01b-grimoire-memetic.md</code>), each synced entry now carries fitness metadata that lets the receiving Golem make informed ingestion decisions.</p>
+<h3 id="the-metadata"><a class="header" href="#the-metadata">The Metadata</a></h3>
+<p>Every <code>SyncEntry</code> in a clade delta gains four fields:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Memetic fitness metadata attached to clade sync entries.
+/// Enables receiving Golems to prioritize high-fitness, low-parasite entries.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MemeticSyncMetadata {
+    /// Unique identifier for this meme (content hash).
+    /// Siblings use this to detect convergent re-discovery vs. inherited copies.
+    pub meme_id: String,
+    /// Composite fitness score: fidelity x fecundity x longevity.
+    /// Range: 0.0 to 1.0. Entries below 0.3 are not synced.
+    pub fitness_score: f64,
+    /// How many replication events this meme has survived.
+    /// High generation + high fitness = battle-tested knowledge.
+    /// High generation + low fitness = parasite candidate.
+    pub generation: u32,
+    /// The meme_id of the entry this one was derived from, if any.
+    /// Enables lineage tracing across the clade.
+    pub parent_id: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="sync-protocol-changes"><a class="header" href="#sync-protocol-changes">Sync Protocol Changes</a></h3>
+<p>The existing <code>CladeDeltaBatch</code> message gains an optional <code>memetic_metadata</code> field per entry. Golems without memetic tracking omit this field (backward compatible). Golems with memetic tracking use it to:</p>
+<ol>
+<li>
+<p><strong>Skip known memes.</strong> If the receiving Golem already has an entry with the same <code>meme_id</code>, it compares fitness scores. If the local copy has higher fitness, the incoming entry is discarded. If the incoming copy has higher fitness, it updates the local entry’s metadata.</p>
+</li>
+<li>
+<p><strong>Detect parasites.</strong> An entry with <code>generation &gt; 10</code> and <code>fitness_score &lt; 0.3</code> is flagged as a potential epistemic parasite. The receiving Golem’s immune system (accelerated demurrage) activates immediately rather than waiting for local evidence accumulation.</p>
+</li>
+<li>
+<p><strong>Trace lineage.</strong> The <code>parent_id</code> chain enables Golems to reconstruct the evolutionary history of a piece of knowledge across the clade. When an entry that spawned many high-fitness descendants dies in one Golem, siblings can check whether the lineage survives elsewhere before discarding it.</p>
+</li>
+</ol>
+<h3 id="wire-format"><a class="header" href="#wire-format">Wire Format</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Extended sync entry with optional memetic metadata.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SyncEntry {
+    /// Existing fields (entry content, confidence, domain, etc.)
+    #[serde(flatten)]
+    pub base: SyncEntryBase,
+    /// Memetic fitness metadata. None for Golems without memetic tracking.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub memetic: Option&lt;MemeticSyncMetadata&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The additional payload per entry is 60-80 bytes (meme_id hash + f64 + u32 + optional parent hash). For a typical sync batch of 5-25 entries, this adds 300 bytes to 2 KB – negligible relative to the entry content itself.</p>
+<hr>
+<h2 id="witness-dag-consistency-proofs-in-backup-layer"><a class="header" href="#witness-dag-consistency-proofs-in-backup-layer">Witness DAG Consistency Proofs in Backup Layer</a></h2>
+<p>The Witness DAG (see <code>prd2/10-safety/08-witness-dag.md</code>) creates cryptographic commitments linking observations, predictions, decisions, outcomes, and Grimoire entries into a directed acyclic graph. When Styx backs up a Golem’s Grimoire to L0 (Vault), it now includes DAG consistency proofs that let successors verify the integrity of inherited knowledge.</p>
+<h3 id="what-gets-backed-up"><a class="header" href="#what-gets-backed-up">What Gets Backed Up</a></h3>
+<p>Every L0 backup already contains Grimoire entries, PLAYBOOK snapshots, and death testaments. The Witness DAG extension adds:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// DAG consistency proof bundle, included in L0 Vault backups.
+/// Enables successors to verify the evidential basis of inherited knowledge.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DagConsistencyProof {
+    /// Merkle root of the full DAG at backup time.
+    pub dag_root: [u8; 32],
+    /// BLAKE3 hashes of all DAG vertices created since the last backup.
+    /// Enables incremental verification without transmitting the full DAG.
+    pub vertex_hashes: Vec&lt;[u8; 32]&gt;,
+    /// Edge list for new vertices (source_hash -&gt; target_hash).
+    /// Encodes the evidential relationships: O-&gt;P, P-&gt;D, D-&gt;R, R-&gt;G.
+    pub edges: Vec&lt;([u8; 32], [u8; 32])&gt;,
+    /// The tick range this proof covers.
+    pub tick_range: (u64, u64),
+    /// Number of total vertices in the DAG at backup time.
+    pub total_vertices: u64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="verification-on-restore"><a class="header" href="#verification-on-restore">Verification on Restore</a></h3>
+<p>When a successor Golem restores from an L0 backup (during inheritance or recovery), it verifies the DAG proof:</p>
+<ol>
+<li>
+<p><strong>Root consistency.</strong> Recompute the Merkle root from the vertex hashes and compare against <code>dag_root</code>. A mismatch means the backup was tampered with or corrupted. The restore continues (knowledge is still useful) but the inherited entries receive an additional confidence discount of 0.5x on top of the standard inheritance discount.</p>
+</li>
+<li>
+<p><strong>Edge integrity.</strong> For each Grimoire entry in the backup, check that its DAG vertex hash appears in the proof and that the expected edges (to its evidential sources) exist. Entries with intact DAG provenance get the standard inheritance confidence. Entries with broken provenance chains get an additional 0.7x discount.</p>
+</li>
+<li>
+<p><strong>Incremental sync.</strong> Successive backups carry only new vertices and edges (the <code>tick_range</code> field prevents overlap). Styx stores the full DAG proof history per Golem, enabling a successor to reconstruct the complete evidential graph from a sequence of backup proofs.</p>
+</li>
+</ol>
+<h3 id="storage-impact"><a class="header" href="#storage-impact">Storage Impact</a></h3>
+<p>A typical Golem produces 100-500 DAG vertices per backup interval (200 ticks, ~50 minutes). Each vertex hash is 32 bytes, each edge is 64 bytes. With an average of 2 edges per vertex, the proof bundle is 10-40 KB per backup – well within the existing backup size budget. Styx stores proofs in the same R2 bucket as Grimoire backups, with the same TTL policy.</p>
+<h3 id="cross-clade-trust"><a class="header" href="#cross-clade-trust">Cross-Clade Trust</a></h3>
+<p>When a Golem queries Styx L1 (Clade) or L2 (Lethe) entries, the response can optionally include the DAG vertex hash for each entry. This lets the querying Golem verify that the entry has a valid evidential basis without downloading the full proof. Entries with verifiable DAG provenance get a trust premium in the mortal scoring function: the <code>provenance</code> factor (weight d) increases by 0.1 for DAG-verified entries.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[GRASSE-1959] Grasse, P.-P. “La Reconstruction du Nid.” <em>Insectes Sociaux</em>, 6, 1959. First described stigmergy: indirect coordination through environmental modification. The theoretical basis for the Pheromone Field’s deposit-and-read coordination model.</li>
+<li>[GROSSMAN-STIGLITZ-1980] Grossman, S.J. &amp; Stiglitz, J.E. “On the Impossibility of Informationally Efficient Markets.” <em>AER</em>, 70(3), 1980. Proved that markets cannot be perfectly informationally efficient because acquiring information is costly. Grounds the x402 pricing model for knowledge queries on Styx.</li>
+<li>[SPENCE-1973] Spence, M. “Job Market Signaling.” <em>QJE</em>, 87(3), 1973. Established that costly signals credibly convey private information. Applied to identity staking and the economic bond as a Sybil resistance mechanism.</li>
+<li>[ZAHAVI-1975] Zahavi, A. “Mate Selection – A Selection for a Handicap.” <em>J. Theoretical Biology</em>, 53(1), 1975. Argued that costly biological signals (the peacock’s tail) are honest precisely because they are expensive. Motivates the superlinear Sybil cost structure.</li>
+<li>[OSTROM-1990] Ostrom, E. <em>Governing the Commons.</em> Cambridge, 1990. Demonstrated that common-pool resources can be self-governed without privatization or central authority. Informs the Lethe (L2) layer’s governance model for shared anonymized knowledge.</li>
+<li>[MIYAZAKI-2011] Miyazaki, H. Interview, <em>Edge Magazine</em>, 2011. Dark Souls design philosophy: death as teaching mechanism, not punishment. The conceptual origin of the Bloodstain system where fatal conditions leave persistent warnings.</li>
+<li>[THERAULAZ-BONABEAU-1999] Theraulaz, G. &amp; Bonabeau, E. “A Brief History of Stigmergy.” <em>Artificial Life</em>, 5(2), 1999. Comprehensive review of stigmergic coordination in biological and artificial systems. Directly informs the Pheromone Field’s three signal types with exponential decay.</li>
+<li>[KANERVA-2009] Kanerva, P. “Hyperdimensional Computing.” <em>Cognitive Computation</em>, 1(2), 2009. Introduced Binary Spatter Codes for high-dimensional computing with XOR binding and majority-vote bundling. The mathematical foundation for HDC pheromone aggregation and identity fingerprinting.</li>
+<li>[DAWKINS-1976] Dawkins, R. <em>The Selfish Gene.</em> Oxford, 1976. Introduced the meme as a unit of cultural transmission subject to variation, selection, and retention. Grounds the memetic framework for Grimoire knowledge evolution across Styx.</li>
+<li>[KILIAN-1992] Kilian, J. “A Note on Efficient Zero-Knowledge Proofs and Arguments.” <em>STOC</em>, 1992. Foundation for computational arguments of knowledge. Informs the DAG provenance verification system for Styx entries.</li>
+</ul>
+<hr>
+<h2 id="golem-side-configuration"><a class="header" href="#golem-side-configuration">Golem-Side Configuration</a></h2>
+<p>The golem-side Styx configuration lives in <code>golem.toml</code>:</p>
+<pre><code class="language-toml">[styx]
+enabled = true
+url = "wss://styx.bardo.run/v1/styx/ws"
+reconnect_interval_secs = 5
+max_reconnect_attempts = 0      # 0 = infinite
+keepalive_secs = 30
+
+[styx.vault]
+backup_interval_ticks = 200     # ~50 minutes
+backup_on_shutdown = true
+
+[styx.clade]
+sync_interval_ticks = 100
+promote_threshold = 0.6         # Confidence gate for L1 promotion
+
+[styx.lethe]
+publish_threshold = 0.7         # Confidence gate for L2 publication
+publish_delay_secs = 3600       # 1-6 hours, domain-dependent
+
+[styx.marketplace]
+sell_enabled = false              # Opt-in
+
+[styx.budget]
+max_per_tick = 0.01
+daily_budget = 0.50
+monthly_budget = 10.00
+</code></pre>
+<p>Minimal configuration (Styx disabled):</p>
+<pre><code class="language-toml">[styx]
+enabled = false
+</code></pre>
+<p>One line. The Golem runs on local Grimoire only at ~95% capability.</p>
+<hr>
+<h2 id="styx-server-configuration"><a class="header" href="#styx-server-configuration">Styx Server Configuration</a></h2>
+<p>For self-hosted instances:</p>
+<pre><code class="language-toml"># styx-server.toml
+
+[server]
+bind = "0.0.0.0:9090"
+max_connections = 50000
+frame_size_limit = "1MB"
+
+[auth]
+mode = "shared_secret"            # "erc8004", "shared_secret", or "none"
+shared_secret = "your-secret"
+
+[storage]
+backend = "sqlite"                # "sqlite", "turso", or "postgres"
+sqlite_path = "/var/lib/styx/styx.db"
+
+[vault]
+backend = "filesystem"            # "filesystem" or "s3"
+path = "/var/lib/styx/vault"
+
+[pheromone]
+decay_interval_secs = 60
+max_entries_per_domain = 1000
+
+[batching]
+enabled = true
+flush_interval_secs = 15
+
+[compression]
+enabled = true
+algorithm = "zstd"
+level = 3
+
+[scaling]
+mode = "single"                   # "single" or "sharded"
+
+[limits]
+max_frames_per_second = 100
+max_pheromone_writes_per_minute = 60
+max_clade_sync_size_bytes = 1048576
+</code></pre>
+<p>Per-Golem rate limits: 100 writes/min, 500 reads/min. Burst allowance: 2x for 10 seconds. Exceeded limits return HTTP 429 with <code>Retry-After</code> header.</p>
+<pre><code class="language-toml">[x402]
+# Set all to 0 for self-hosted (no charges to yourself)
+vault_write_price = "0"
+clade_query_price = "0"
+commons_query_price = "0"
+event_relay_price_per_1k = "0"
+</code></pre>
+<hr>
+<h2 id="implementation-roadmap"><a class="header" href="#implementation-roadmap">Implementation Roadmap</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Scope</th><th>Scaling tier</th><th>Weeks</th></tr>
+</thead>
+<tbody>
+<tr><td>v0.1</td><td>WebSocket server, connection registry, clade routing, event relay</td><td>Solo (1-10)</td><td>3</td></tr>
+<tr><td>v0.2</td><td>Pheromone field, Bloom Oracle, bloodstain relay</td><td>Solo</td><td>3</td></tr>
+<tr><td>v0.3</td><td>Listing index, verification index, marketplace notifications</td><td>Solo</td><td>2</td></tr>
+<tr><td>v0.4</td><td>Vault (L0) + Clade Knowledge (L1) persistence</td><td>Solo</td><td>2</td></tr>
+<tr><td>v0.5</td><td>Lethe (L2) + anonymization pipeline</td><td>Community</td><td>2</td></tr>
+<tr><td>v0.6</td><td>Topic-based pub/sub, message batching, zstd compression</td><td>Community (1K)</td><td>2</td></tr>
+<tr><td>v0.7</td><td>Hermes skill sync + skill testament relay</td><td>Community</td><td>1</td></tr>
+<tr><td>v0.8</td><td>Self-hosted deployment automation (<code>bardo styx deploy</code>)</td><td>Community</td><td>2</td></tr>
+<tr><td>v1.0</td><td>Content delivery relay, full marketplace + CEK escrow</td><td>Community</td><td>2</td></tr>
+<tr><td>v2.0</td><td>Horizontal sharding (NATS), federation between instances</td><td>Ecosystem (10K+)</td><td>4</td></tr>
+</tbody>
+</table>
+</div>
+<p>Total: ~23 engineer-weeks from empty binary to federated ecosystem.</p>
+<hr>
+<p><em>The river is bidirectional. Knowledge descends into the underworld and returns, transformed, to the living.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/19-agents-skills/13-hermes-hierarchy.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/20-styx/01-api.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/19-agents-skills/13-hermes-hierarchy.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/20-styx/01-api.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Fleet &amp; CLI - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/11-compute/08-fleet-and-cli.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="08--fleet-management-and-cli-spec"><a class="header" href="#08--fleet-management-and-cli-spec">08 – Fleet management and CLI [SPEC]</a></h1>
+<p><strong>Fleet manifest, batch operations, TUI Infra window, setup flow, self-deploy wizard, and cost tracking</strong></p>
+<blockquote>
+<p>Related: <a href="00-overview.html">00-overview.md</a> (compute overview), <a href="03-billing.html">03-billing.md</a> (x402 billing), <a href="07-frontend.html">07-frontend.md</a> (web dashboard)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the fleet management CLI and TUI Infra window for Bardo Compute, the managed VM hosting service for Golems (mortal autonomous DeFi agents). It belongs to the <strong>Compute</strong> layer of Bardo (the Rust runtime for these agents). The key concept before diving in: owners can manage multiple Golems through the <code>bardo</code> CLI, including batch operations, fleet manifests for declarative multi-agent deployment, and a self-deploy wizard for users who want to run on their own infrastructure. Terms like Golem, Styx, Grimoire, and x402 are defined inline on first use; a full glossary lives in <code>00-overview.md § Terminology</code>.</p>
+</blockquote>
+<hr>
+<h2 id="setup-flow"><a class="header" href="#setup-flow">Setup flow</a></h2>
+<h3 id="first-time-authentication"><a class="header" href="#first-time-authentication">First-time authentication</a></h3>
+<p>The first time you use Bardo Compute, you authenticate. If you already ran <code>bardo auth login</code> from the TUI wizard, those credentials carry over – no second login needed.</p>
+<pre><code>$ bardo compute login
+
+How do you want to sign in?
+
+  [1] Connect existing wallet (MetaMask, WalletConnect)
+  [2] Create new wallet (email, Google, GitHub)
+
+Choose [1/2]:
+</code></pre>
+<p>Path 1 opens the browser to <code>auth.bardo.run/wallet-connect</code>, the user connects MetaMask or scans a WalletConnect QR, signs a SIWE message, and optionally sets up delegation. Path 2 opens <code>auth.bardo.run/signup</code> for Privy-based account creation.</p>
+<pre><code>Authentication successful.
+  Wallet: 0x742d...9f18 (Base)
+  Auth:   SIWE (MetaMask)
+  Stored: ~/.bardo/credentials.json (mode 0600)
+
+You're ready to deploy. Run: bardo deploy --strategy ./STRATEGY.md
+</code></pre>
+<p>This is one-time. The credentials persist in <code>~/.bardo/credentials.json</code> with restrictive file permissions. All subsequent <code>bardo deploy</code> and <code>bardo attach</code> commands use these stored credentials silently.</p>
+<p>What <code>bardo compute login</code> does behind the scenes:</p>
+<ul>
+<li>Opens a browser-based auth flow (wallet connect or Privy, user’s choice)</li>
+<li>Receives a JWT upon successful authentication (SIWE session JWT or Privy JWT)</li>
+<li>Stores the JWT and refresh token locally</li>
+<li>Verifies the user has a USDC balance on Base (warns if zero)</li>
+<li>For wallet-connect path: sets up ERC-7715 delegation if not already configured</li>
+<li>Optionally prompts for default deployment preferences (tier, custody mode)</li>
+</ul>
+<h3 id="subsequent-deploys"><a class="header" href="#subsequent-deploys">Subsequent deploys</a></h3>
+<p>After login, <code>bardo deploy</code> works without further authentication. The CLI loads stored credentials, constructs the x402 payment, and provisions. No browser. No prompts. No ceremony.</p>
+<pre><code>$ bardo deploy --strategy ./momentum.md
+# That's it. Deploys in ~5 seconds.
+</code></pre>
+<p>If the JWT has expired, the CLI refreshes it automatically using the stored refresh token. If the refresh token is expired, it prompts for re-authentication.</p>
+<hr>
+<h2 id="strategy-upload"><a class="header" href="#strategy-upload">Strategy upload</a></h2>
+<p>At deploy time, three files get injected into the container:</p>
+<ol>
+<li>
+<p><strong>golem.toml</strong> – Generated by the control plane from your deploy parameters. Contains golem ID, owner address, custody configuration, Styx URL, inference provider configuration, tool profile, and tier. You never write this file manually. For USDC-based inference providers (Bardo, Bankr), no API keys are injected – the golem pays from its own wallet via x402. For key-based providers (Venice, Anthropic, OpenAI), API keys from the owner’s keychain are encrypted and injected into the container’s <code>golem.toml</code> at deploy time.</p>
+</li>
+<li>
+<p><strong>STRATEGY.md</strong> – Your strategy file. Written by you (or generated by Meta Hermes in the TUI). Contains entry/exit criteria, risk parameters, target protocols, asset allocation, position sizing rules, and any custom constraints. Hot-swappable without restarting the golem. STRATEGY.md changes are detected via <code>fsnotify</code> file watcher. On change: re-parse, validate, diff against current strategy, apply. No golem restart required. Hot-swap latency: &lt;1 heartbeat tick. Invalid STRATEGY.md files are rejected with a warning log; the previous strategy remains active.</p>
+</li>
+<li>
+<p><strong>Wallet configuration</strong> – Every golem receives credentials for both its identity address and its spending authority (the two-address model). Injected as Fly.io per-machine env vars (not app-wide secrets, so one golem cannot read another’s keys).</p>
+</li>
+</ol>
+<p>The deploy command:</p>
+<pre><code>$ bardo deploy \
+  --strategy ./my-strategy.md \
+  --tier medium \
+  --custody delegation \
+  --hours 72
+</code></pre>
+<p>The <code>--hours</code> flag determines how much USDC to pay. 72 hours at $0.10/hr = $7.20 USDC. Minimum purchase is 1 hour.</p>
+<hr>
+<h2 id="no-frontend-on-bardo-compute"><a class="header" href="#no-frontend-on-bardo-compute">No frontend on Bardo Compute</a></h2>
+<p>This is a design decision, not a limitation.</p>
+<p>The golem container has no web dashboard. No browser UI. No React app. No port 80. The container runs a single Rust binary with three internal endpoints: a public API on :3000, an owner-authenticated API on :3001, and an internal health endpoint on :3002. None of these are designed for human browsing.</p>
+<h3 id="why"><a class="header" href="#why">Why</a></h3>
+<p>The golem doesn’t need a face. It’s an autonomous agent running a heartbeat loop. What would a web dashboard show? The same information the TUI already shows, except rendered in a browser, requiring authentication, adding attack surface, consuming memory, and needing its own deployment pipeline.</p>
+<p>The TUI is the face. It connects to the remote golem via Styx relay and renders everything: heartbeat events, trading activity, position status, vitality, emotional state, inference costs, Grimoire entries. The data flows over WebSocket from the golem through Styx to your terminal. Real-time. No browser needed.</p>
+<h3 id="how-tui-reaches-remote-golems"><a class="header" href="#how-tui-reaches-remote-golems">How TUI reaches remote golems</a></h3>
+<pre><code>Your machine                    Public internet               Bardo Compute
++-----------+                  +----------+                 +---------------+
+|  bardo    | ---- WSS -----&gt; |  Styx    | &lt;---- WSS ---- |  golem binary |
+|  terminal |                  |  relay   |                 |  (no UI)      |
++-----------+                  +----------+                 +---------------+
+     |                              |
+     |  GolemEvents flow:           |
+     |  golem -&gt; Styx -&gt; TUI        |
+     |                              |
+     |  Steers flow:                |
+     |  TUI -&gt; Styx -&gt; golem        |
+</code></pre>
+<p>The golem emits 50+ typed GolemEvent variants through its Event Fabric: heartbeat ticks, tool executions, trades, dream cycles, vitality updates, inference calls. These events stream over the Styx WebSocket. The TUI subscribes and renders them.</p>
+<p>Steers (commands from the user) flow the other direction. When you hot-swap a strategy or adjust a risk parameter in the TUI, the steer travels through Styx to the golem.</p>
+<p>Both directions use persistent WebSocket. Both are outbound-only from their respective endpoints. A golem behind Fly’s 6PN private network and a TUI behind home NAT both work without port forwarding.</p>
+<h3 id="what-the-tui-shows-instead"><a class="header" href="#what-the-tui-shows-instead">What the TUI shows instead</a></h3>
+<p>Everything you’d want from a dashboard, rendered in your terminal:</p>
+<ul>
+<li>Live heartbeat stream with tier selection, gate results, and execution details</li>
+<li>Position table with real-time P&amp;L, unrealized gains, and risk metrics</li>
+<li>Vitality gauges showing the three death clocks (economic, epistemic, stochastic)</li>
+<li>Inference cost breakdown by model and provider</li>
+<li>Grimoire activity (writes, pruning cycles, dream insights)</li>
+<li>Styx connection status and clade sync health</li>
+<li>TTL countdown with cost-per-hour and projected remaining balance</li>
+</ul>
+<p>The TUI renders this with sub-second latency. The Styx relay adds ~20-50ms. You get real-time monitoring of a remote golem from your terminal, without running a web server on the golem.</p>
+<hr>
+<h2 id="fleet-management"><a class="header" href="#fleet-management">Fleet management</a></h2>
+<h3 id="deploying-multiple-golems"><a class="header" href="#deploying-multiple-golems">Deploying multiple golems</a></h3>
+<p>One user can run up to 5 active golems (v1 limit). Deploy them independently:</p>
+<pre><code>$ bardo deploy --strategy ./eth-momentum.md --tier small --hours 168
+$ bardo deploy --strategy ./arb-base-mainnet.md --tier medium --hours 72
+$ bardo deploy --strategy ./lp-watcher.md --tier micro --hours 720
+</code></pre>
+<p>Or use a fleet manifest:</p>
+<pre><code class="language-toml"># fleet.toml
+[[golems]]
+strategy = "./strategies/eth-momentum.md"
+tier = "small"
+hours = 168
+
+[[golems]]
+strategy = "./strategies/arb-base-mainnet.md"
+tier = "medium"
+hours = 72
+
+[[golems]]
+strategy = "./strategies/lp-watcher.md"
+tier = "micro"
+hours = 720
+</code></pre>
+<pre><code>$ bardo fleet deploy --manifest fleet.toml
+Deploying 3 golems...
+  [1/3] golem-kX9mR2Yq7pLN  small   eth-momentum       168h  $8.40
+  [2/3] golem-pQ4nT8Ws2jDm  medium  arb-base-mainnet    72h  $7.20
+  [3/3] golem-rW7bN3Xk9mPq  micro   lp-watcher         720h  $18.00
+
+Total: $33.60 USDC
+
+Confirm? [y/N]
+</code></pre>
+<p>Fleet deploy creates each golem sequentially (parallel provisioning is phase 2). Each gets its own x402 payment, its own machine name, its own TTL.</p>
+<h3 id="naming-and-tagging"><a class="header" href="#naming-and-tagging">Naming and tagging</a></h3>
+<p>Machine names are cryptographic (<code>golem-{nanoid(12)}</code>). Not human-friendly, but secure: names can’t be guessed or enumerated. For human identification, the TUI shows strategy names alongside machine names.</p>
+<p>Users can add tags for organization:</p>
+<pre><code>$ bardo tag golem-kX9mR2Yq7pLN --add "production" --add "eth"
+$ bardo list --tag production
+</code></pre>
+<p>Tags are stored locally in <code>~/.bardo/tags.json</code>. They don’t exist on the server. This keeps the server API simple and avoids another data model.</p>
+<h3 id="batch-operations"><a class="header" href="#batch-operations">Batch operations</a></h3>
+<pre><code>$ bardo fleet kill --all                    # Kill all active golems (confirms first)
+$ bardo fleet extend --all --hours 24       # Extend all golems by 24 hours
+$ bardo fleet restart --tag production      # Restart all golems tagged "production"
+$ bardo fleet status                        # Show all golems with status summary
+</code></pre>
+<p>Batch operations run sequentially and show progress:</p>
+<pre><code>$ bardo fleet extend --all --hours 24
+Extending 3 golems...
+  golem-kX9mR2Yq7pLN  +24h  $1.20  done
+  golem-pQ4nT8Ws2jDm  +24h  $2.40  done
+  golem-rW7bN3Xk9mPq  +24h  $0.60  done
+
+Total: $4.20 USDC
+</code></pre>
+<h3 id="cost-aggregation"><a class="header" href="#cost-aggregation">Cost aggregation</a></h3>
+<p>The TUI aggregates costs across the fleet. The CLI does too:</p>
+<pre><code>$ bardo fleet costs --period 7d
+Fleet cost report (last 7 days):
+
+  golem-kX9mR2Yq7pLN (small, eth-momentum)
+    Compute:    $8.40
+    Inference:  $2.31
+    Gas:        $0.89
+    Subtotal:   $11.60
+    Revenue:    $18.42
+    Net:        +$6.82
+
+  golem-pQ4nT8Ws2jDm (medium, arb-base-mainnet)
+    Compute:    $7.20
+    Inference:  $4.17
+    Gas:        $2.34
+    Subtotal:   $13.71
+    Revenue:    $21.09
+    Net:        +$7.38
+
+  golem-rW7bN3Xk9mPq (micro, lp-watcher)
+    Compute:    $4.20
+    Inference:  $0.42
+    Gas:        $0.03
+    Subtotal:   $4.65
+    Revenue:    $0.00
+    Net:        -$4.65
+
+  Fleet total:
+    Spent:      $29.96
+    Revenue:    $39.51
+    Net:        +$9.55
+    Sustainability: 1.32x
+</code></pre>
+<hr>
+<h2 id="credits-and-bulk-purchases"><a class="header" href="#credits-and-bulk-purchases">Credits and bulk purchases</a></h2>
+<p>For users who want predictable costs, credits are pre-purchased USDC balances on the Bardo platform. You deposit USDC and draw down against it for provisioning and extensions.</p>
+<p>Credit pricing:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Purchase</th><th>Bonus</th><th>Effective hourly (small)</th></tr>
+</thead>
+<tbody>
+<tr><td>$10</td><td>0%</td><td>$0.050</td></tr>
+<tr><td>$50</td><td>5%</td><td>$0.048</td></tr>
+<tr><td>$100</td><td>10%</td><td>$0.045</td></tr>
+<tr><td>$500</td><td>15%</td><td>$0.043</td></tr>
+</tbody>
+</table>
+</div>
+<p>Credits simplify the deploy flow: instead of signing an x402 payment for each deploy, you sign once for the credit deposit and subsequent deploys deduct from your balance. This is a convenience layer over x402, not a replacement.</p>
+<hr>
+<h2 id="combined-cost-of-ownership"><a class="header" href="#combined-cost-of-ownership">Combined cost of ownership</a></h2>
+<p>Monthly cost estimates at 24/7 operation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Hourly</th><th>Daily</th><th>Monthly (30d)</th></tr>
+</thead>
+<tbody>
+<tr><td>Micro</td><td>$0.025</td><td>$0.60</td><td>$18</td></tr>
+<tr><td>Small</td><td>$0.05</td><td>$1.20</td><td>$36</td></tr>
+<tr><td>Medium</td><td>$0.10</td><td>$2.40</td><td>$72</td></tr>
+<tr><td>Large</td><td>$0.20</td><td>$4.80</td><td>$144</td></tr>
+</tbody>
+</table>
+</div>
+<p>These are compute costs only. Styx is free. Inference and gas add to the total. For a context-engineered golem that routes 95% of decisions through T0 (deterministic, free) and T1 (Haiku, cheap), inference adds maybe $0.20-0.50/day. Gas depends on chain and activity.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>Compute</th><th>Inference</th><th>Total/month</th></tr>
+</thead>
+<tbody>
+<tr><td>Micro/T0 only</td><td>$18</td><td>$0</td><td>~$18</td></tr>
+<tr><td>Small/T1 light</td><td>$36</td><td>~$15</td><td>~$51</td></tr>
+<tr><td>Medium/T1+T2</td><td>$72</td><td>~$45</td><td>~$117</td></tr>
+<tr><td>Large/T2 heavy</td><td>$144</td><td>~$120</td><td>~$264</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="tui-infra-window"><a class="header" href="#tui-infra-window">TUI Infra window</a></h2>
+<p>The TUI’s Infra window (accessible via Tab) shows all compute golems managed by the authenticated user. This is your fleet command center.</p>
+<h3 id="process-table"><a class="header" href="#process-table">Process table</a></h3>
+<pre><code>+-- Compute Golems -----------------------------------------------+
+| Name                 Tier    Region  Status   Uptime   TTL       |
+| golem-kX9mR2Yq7pLN  small   ord     running  14h 23m  33h 37m   |
+| golem-pQ4nT8Ws2jDm  medium  ams     running  3h 12m   44h 48m   |
+| golem-rW7bN3Xk9mPq  micro   ord     crashed  2h 01m   --        |
+|                                                                   |
+| [D] Deploy new  [K] Kill  [R] Restart  [E] Extend  [T] Change tier |
++------------------------------------------------------------------+
+</code></pre>
+<p>Each row shows:</p>
+<ul>
+<li><strong>Name</strong> – The golem’s nanoid identifier</li>
+<li><strong>Tier</strong> – micro/small/medium/large</li>
+<li><strong>Region</strong> – Fly.io region code (ord, ams, etc.)</li>
+<li><strong>Status</strong> – running, provisioning, booting, draining, crashed, destroyed</li>
+<li><strong>Uptime</strong> – Time since last boot</li>
+<li><strong>TTL</strong> – Time remaining before death (red when &lt;1h, amber when &lt;6h)</li>
+</ul>
+<h3 id="health-indicators"><a class="header" href="#health-indicators">Health indicators</a></h3>
+<p>Expanding a golem row shows detailed health:</p>
+<pre><code>+-- golem-kX9mR2Yq7pLN (expanded) --------------------------------+
+|                                                                    |
+|  Heartbeat:   active, 234ms avg, tick #3,427                     |
+|  Styx:        connected (23ms latency, last sync 4s ago)         |
+|  Vitality:    0.87 (thriving)                                    |
+|  Phase:       stable                                              |
+|  CPU:         12% avg (last 5m)                                  |
+|  Memory:      187MB / 512MB (36%)                                |
+|  Disk:        124MB / 1GB (12%)                                  |
+|  Crashes:     0                                                   |
+|                                                                    |
+|  Inference (last 1h):                                            |
+|    T0: 847 calls ($0.00)                                         |
+|    T1: 92 calls ($0.18)                                          |
+|    T2: 3 calls ($0.09)                                           |
+|                                                                    |
+|  Strategy: momentum (ETH/USDC, Base)                             |
+|  Wallet: 0x7a3f...9e21 (delegation, $2,340 managed)             |
++-------------------------------------------------------------------+
+</code></pre>
+<h3 id="quick-actions"><a class="header" href="#quick-actions">Quick actions</a></h3>
+<p>From the process table, single-keypress actions:</p>
+<ul>
+<li><strong>[D] Deploy</strong> – Opens the deploy wizard (strategy file, tier, hours, custody mode)</li>
+<li><strong>[K] Kill</strong> – Initiates graceful shutdown (Thanatopsis). Confirms before executing.</li>
+<li><strong>[R] Restart</strong> – Stops and restarts the golem binary. Grimoire preserved. Useful after strategy updates.</li>
+<li><strong>[E] Extend</strong> – Prompts for hours, sends x402 extension payment</li>
+<li><strong>[T] Change tier</strong> – Destroys current machine and re-provisions at the new tier. Strategy and Grimoire carry over via snapshot restore.</li>
+</ul>
+<h3 id="cost-tracking-panel"><a class="header" href="#cost-tracking-panel">Cost tracking panel</a></h3>
+<p>The bottom of the Infra window shows fleet-wide economics:</p>
+<pre><code>+-- Fleet Economics (last 24h) ------------------------------------+
+|  Total spent:   $4.23 (compute: $2.88, inference: $1.18, gas: $0.17) |
+|  Total revenue: $7.91 (fees: $5.20, LP: $2.71)                      |
+|  Net:           +$3.68                                               |
+|  Sustainability: 1.87x (self-sustaining)                             |
+|  Projected monthly: $127 spend, $237 revenue                         |
++-------------------------------------------------------------------+
+</code></pre>
+<p>When the fleet is self-sustaining (<code>sustainability_ratio &gt; 1.0</code>), the sustainability number turns green. Below 1.0, it turns amber. Below 0.5, red. This maps directly to the economic death clock.</p>
+<h3 id="cost-transparency"><a class="header" href="#cost-transparency">Cost transparency</a></h3>
+<p>The TUI’s Infra window shows a running cost ticker per golem:</p>
+<pre><code>+-- Compute Costs -----------------------------------------------+
+|                                                                  |
+|  golem-kX9mR2Yq7pLN                                            |
+|    Rate:      $0.05/hr (small)                                  |
+|    Running:   14h 23m                                           |
+|    Spent:     $0.72 compute + $0.31 inference + $0.04 gas       |
+|    Total:     $1.07                                             |
+|    TTL:       33h 37m remaining                                 |
+|    Projected: $2.58/day | $77/month (at current usage)          |
+|                                                                  |
+|  golem-pQ4nT8Ws2jDm                                            |
+|    Rate:      $0.10/hr (medium)                                 |
+|    Running:   3h 12m                                            |
+|    Spent:     $0.32 compute + $0.08 inference + $0.01 gas       |
+|    Total:     $0.41                                             |
+|    TTL:       44h 48m remaining                                 |
+|    Projected: $3.10/day | $93/month                             |
+|                                                                  |
+|  Fleet total: $1.48 spent | $5.68/day projected                 |
++----------------------------------------------------------------+
+</code></pre>
+<p>The projected monthly spend is a moving average over the last 24 hours of actual costs (compute + inference + gas). It updates every heartbeat tick.</p>
+<hr>
+<h2 id="self-deploy-wizard"><a class="header" href="#self-deploy-wizard">Self-deploy wizard</a></h2>
+<h3 id="for-users-who-want-their-own-infrastructure"><a class="header" href="#for-users-who-want-their-own-infrastructure">For users who want their own infrastructure</a></h3>
+<p>Not everyone wants managed compute. Some users want control over their infrastructure but don’t want to manually set up a golem from scratch. The self-deploy helper bridges this gap.</p>
+<pre><code>$ bardo deploy --self-host
+</code></pre>
+<p>This launches an interactive wizard:</p>
+<pre><code>Self-hosted deployment
+
+Where would you like to deploy?
+  [1] fly.io (your Fly account)
+  [2] Docker (local or remote)
+  [3] VPS via SSH
+  [4] Generate files only (manual setup)
+
+&gt; 2
+
+Docker deployment
+  Generating docker-compose.yml...
+
+  The compose file includes:
+    - golem binary (latest)
+    - Styx connection (outbound only)
+    - Grimoire storage (local volume)
+    - Health monitoring
+
+  Configuration:
+    Strategy file: ./my-strategy.md
+    Custody mode: delegation
+    Styx URL: wss://styx.bardo.run/v1/styx/ws
+
+  Files written:
+    ./bardo-deploy/docker-compose.yml
+    ./bardo-deploy/golem.toml
+    ./bardo-deploy/.env.example
+
+  To start: cd bardo-deploy &amp;&amp; docker compose up -d
+  To connect: bardo attach --direct ws://localhost:8080/ws
+</code></pre>
+<h3 id="provider-specific-commands"><a class="header" href="#provider-specific-commands">Provider-specific commands</a></h3>
+<pre><code class="language-bash"># Your own Fly.io account
+bardo deploy --provider fly --app-name my-golem --region iad
+
+# Railway
+bardo deploy --provider railway --project my-golem
+
+# Any VPS via SSH
+bardo deploy --provider ssh --host 203.0.113.42 --user root
+
+# Local Docker
+bardo deploy --provider docker --name my-golem
+</code></pre>
+<p>Each provider path handles the specifics: Fly.io gets a <code>fly.toml</code>, Railway gets a <code>railway.json</code>, SSH gets a systemd service + binary upload, Docker gets a compose file.</p>
+<h3 id="differences-from-managed"><a class="header" href="#differences-from-managed">Differences from managed</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>Managed (Bardo Compute)</th><th>Self-hosted</th></tr>
+</thead>
+<tbody>
+<tr><td>Billing</td><td>x402 micropayments (markup included)</td><td>You pay your provider directly</td></tr>
+<tr><td>Styx</td><td>Free (relay + clade sync included)</td><td>Free (same Styx connection)</td></tr>
+<tr><td>Updates</td><td>Automatic (new image on next deploy)</td><td>Manual (<code>bardo self-host update</code>)</td></tr>
+<tr><td>Monitoring</td><td>TUI via Styx relay (automatic)</td><td>TUI via Styx relay or direct WebSocket</td></tr>
+<tr><td>Warm pool</td><td>Yes (sub-5s provisioning)</td><td>No (cold start every time)</td></tr>
+<tr><td>SSH debugging</td><td>Via WebSocket bridge + SSH CA</td><td>Direct SSH to your machine</td></tr>
+<tr><td>TTL enforcement</td><td>Automatic (Turso + cron)</td><td>Your responsibility</td></tr>
+<tr><td>Uptime</td><td>Fly.io SLA + multi-region HA</td><td>Your infrastructure’s reliability</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="when-to-self-host"><a class="header" href="#when-to-self-host">When to self-host</a></h3>
+<p>Self-host when:</p>
+<ul>
+<li>You want to control costs (managed path has a ~3x markup over raw Fly.io costs)</li>
+<li>You have existing infrastructure (a beefy home server, a Hetzner box)</li>
+<li>You want to run the inference gateway locally alongside the golem</li>
+<li>You want full control over the OS, networking, and updates</li>
+</ul>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th></tr>
+</thead>
+<tbody>
+<tr><td>Compute overview</td><td><a href="00-overview.html">00-overview.md</a> — Platform overview: three deployment paths, pricing tiers, mortality-as-architecture thesis, and ERC-8004 registration requirement.</td></tr>
+<tr><td>x402 billing and TTL</td><td><a href="03-billing.html">03-billing.md</a> — EIP-3009 payment flow, pricing tiers, metabolic self-funding loop, inference billing, and two-layer TTL enforcement.</td></tr>
+<tr><td>Web dashboard</td><td><a href="07-frontend.html">07-frontend.md</a> — Web dashboard pages (6 pages under /compute), GolemCard component, deploy wizard, custody mode selector, and design tokens.</td></tr>
+<tr><td>TUI specification</td><td><a href="../18-interfaces/03-tui.html">prd2/18-interfaces/03-tui.md</a> — Full TUI specification: ratatui-based terminal application with real-time GolemEvent rendering, the Infra window for fleet management, and keyboard shortcuts.</td></tr>
+<tr><td>Inference deployment modes</td><td><a href="../12-inference/01-deployment-modes.html">prd2/12-inference/01-deployment-modes.md</a> — Three ways inference runs: embedded in the Golem binary, via a local server, or through the remote x402-gated gateway. Relevant to self-deploy configuration.</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/11-compute/07-frontend.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/12-inference/00-overview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/11-compute/07-frontend.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/12-inference/00-overview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,1623 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Triage - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/14-chain/02-triage.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="triage-pipeline-spec"><a class="header" href="#triage-pipeline-spec">Triage Pipeline [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Active</p>
+<p><strong>Crate</strong>: <code>bardo-triage</code></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the triage pipeline, the most architecturally dense component of Bardo’s chain intelligence layer (section 14). It describes a 4-stage classification pipeline that scores every transaction a Golem (a mortal autonomous agent compiled as a single Rust binary running on a micro VM) sees, using rule-based filters, streaming anomaly detection (MIDAS-R, DDSketch), hyperdimensional computing fingerprints, and Bayesian surprise. The key concept is the curiosity score: a Hedge-weighted composite that determines whether a transaction is noise, worth silent tracking, or worth escalating to the Golem’s LLM-powered cognitive loop. See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<p>The triage pipeline is the golem’s judgment layer for on-chain activity. For every block that passes the Binary Fuse pre-screen (see <a href="./01-witness.html">01-witness.md</a>), the pipeline classifies each transaction: what is it, how interesting is it, and what should happen next. No LLM calls touch this path – that’s what makes it fast. LLM analysis happens asynchronously at Theta tick on high-scoring events only.</p>
+<p>This is the most architecturally dense component of the chain intelligence system. It synthesizes four competing research directions – rule-based heuristics, streaming anomaly detection, hyperdimensional computing, and Bayesian surprise – into a unified 4-stage pipeline that runs at block rate.</p>
+<p>Each chain gets its own <code>TriageEngine</code> instance with its own statistical structures (MIDAS-R, DDSketch, Count-Min Sketch). Cross-chain signals flow through the event fabric, not shared mutable state. This eliminates Mutex contention at aggregate throughput across multiple chains.</p>
+<hr>
+<h2 id="pipeline-overview"><a class="header" href="#pipeline-overview">Pipeline Overview</a></h2>
+<pre><code>Block (full, with receipts)
+    |
+    v
+Stage 1: Rule-based fast filters
+    -- Known MEV patterns, known contracts, value thresholds
+    -- Rejects &gt;90% of transactions. Cost: O(1) per tx.
+    |
+    v
+Stage 2: Statistical anomaly detection
+    -- MIDAS-R for streaming graph anomalies
+    -- DDSketch for distribution monitoring
+    -- Count-Min Sketch for frequency spikes
+    |
+    v
+Stage 3: Contextual enrichment
+    -- Protocol state lookup
+    -- ABI resolution (async, non-blocking)
+    -- Historical comparison via ANN
+    |
+    v
+Stage 4: Upgraded scoring
+    -- HDC/BSC fingerprint generation (10K-dim binary vector)
+    -- Bayesian surprise (KL divergence) -&gt; feeds Oracle as PredictionDomain
+    -- Two-tier ANN lookup (main + staging HNSW)
+    -- Thompson sampling for exploration-exploitation
+    -- Final curiosity score = Hedge-weighted combination
+</code></pre>
+<hr>
+<h2 id="the-triageengine"><a class="header" href="#the-triageengine">The TriageEngine</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::sync::Arc;
+use tokio::sync::mpsc;
+
+pub struct TriageEngine {
+    /// Stage implementations, executed in sequence.
+    stages: Vec&lt;Box&lt;dyn TriageStage + Send + Sync&gt;&gt;,
+
+    /// Curiosity scorer combines all Stage 4 signals.
+    curiosity: Arc&lt;CuriosityScorer&gt;,
+
+    /// Channel to protocol state engine for state updates.
+    protocol_tx: mpsc::Sender&lt;TriageEvent&gt;,
+
+    /// Channel to Theta tick for high-score LLM analysis.
+    llm_queue: mpsc::Sender&lt;TriageEvent&gt;,
+
+    /// redb handle for event persistence.
+    store: Arc&lt;TriageStore&gt;,
+}
+
+/// Every stage implements this trait. Stages can filter (return None
+/// to drop a transaction) or enrich (add metadata and pass through).
+#[async_trait]
+pub trait TriageStage: Send + Sync {
+    /// Process a single transaction. Return None to drop it.
+    async fn process(&amp;self, ctx: &amp;mut TriageContext) -&gt; Option&lt;()&gt;;
+
+    /// Human-readable stage name for metrics and tracing.
+    fn name(&amp;self) -&gt; &amp;'static str;
+}
+
+/// Accumulates metadata as a transaction passes through stages.
+pub struct TriageContext {
+    pub tx: NormalizedTx,
+    pub receipt: TransactionReceipt,
+    pub block: BlockMetadata,
+    pub decoded_logs: Vec&lt;DecodedLog&gt;,
+    pub category: TxCategory,
+    pub enrichments: Vec&lt;Enrichment&gt;,
+    pub scores: StageScores,
+    pub fingerprint: Option&lt;Hypervector&gt;,
+}
+<span class="boring">}</span></code></pre>
+<p>The engine feeds each transaction through stages sequentially. Any stage can drop a transaction by returning <code>None</code>. Survivors reach Stage 4 for final scoring and routing.</p>
+<hr>
+<h2 id="stage-1-rule-based-fast-filters"><a class="header" href="#stage-1-rule-based-fast-filters">Stage 1: Rule-Based Fast Filters</a></h2>
+<p>The first pass is pure determinism. O(1) per transaction, no allocations, no network calls.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct RuleFilterStage {
+    /// Known ABI event selectors: topic0 -&gt; EventMetadata.
+    /// Populated from ProtocolRegistry, refreshed at Gamma tick via RwLock swap.
+    event_selector_map: Arc&lt;RwLock&lt;HashMap&lt;B256, EventMetadata&gt;&gt;&gt;,
+
+    /// Watched addresses from ChainScope.
+    watched_addresses: Arc&lt;DashSet&lt;Address&gt;&gt;,
+
+    /// Known MEV bot bytecode hashes.
+    mev_bytecode_hashes: HashSet&lt;B256&gt;,
+
+    /// Large value threshold (modulated by behavioral phase).
+    large_value_threshold_wei: AtomicU64,
+}
+
+#[async_trait]
+impl TriageStage for RuleFilterStage {
+    async fn process(&amp;self, ctx: &amp;mut TriageContext) -&gt; Option&lt;()&gt; {
+        // 1. Decode logs against known ABI selectors.
+        for log in &amp;ctx.receipt.logs {
+            let topic0 = log.topics().first()?;
+            if let Some(meta) = self.event_selector_map.read().get(topic0) {
+                ctx.decoded_logs.push(DecodedLog {
+                    log: log.clone(),
+                    event_name: meta.event_name.clone(),
+                    protocol_id: meta.protocol_id.clone(),
+                });
+            }
+        }
+
+        // 2. Address triage: does any involved address match scope?
+        let from_watched = self.watched_addresses.contains(&amp;ctx.tx.from);
+        let to_watched = ctx.tx.to
+            .map(|a| self.watched_addresses.contains(&amp;a))
+            .unwrap_or(false);
+        let log_watched = ctx.decoded_logs.iter()
+            .any(|l| self.watched_addresses.contains(&amp;l.log.address));
+        let has_decoded = !ctx.decoded_logs.is_empty();
+
+        if !from_watched &amp;&amp; !to_watched &amp;&amp; !log_watched &amp;&amp; !has_decoded {
+            // No connection to anything the golem cares about.
+            return None;
+        }
+
+        // 3. Fast category assignment for known patterns.
+        if ctx.tx.creates.is_some() {
+            ctx.category = TxCategory::ContractDeploy {
+                deployer: ctx.tx.from,
+                bytecode_hash: keccak256(&amp;ctx.tx.input),
+            };
+        } else if self.mev_bytecode_hashes.contains(
+            &amp;ctx.tx.to.map(|a| keccak256_of_code(a)).unwrap_or_default()
+        ) {
+            ctx.category = TxCategory::MevActivity {
+                pattern: detect_mev_pattern(&amp;ctx.tx, &amp;ctx.decoded_logs),
+            };
+        }
+
+        Some(())
+    }
+
+    fn name(&amp;self) -&gt; &amp;'static str { "rule_filter" }
+}
+<span class="boring">}</span></code></pre>
+<p>The selector map is pre-populated at startup with selectors for the ~20-30 seed protocol families (Uniswap v2/v3/v4 Swap/Mint/Burn, Aave events, etc.). When new protocols are discovered, their selectors are added via <code>RwLock&lt;HashMap&gt;</code> refresh at the next Gamma tick.</p>
+<hr>
+<h2 id="stage-2-statistical-anomaly-detection"><a class="header" href="#stage-2-statistical-anomaly-detection">Stage 2: Statistical Anomaly Detection</a></h2>
+<p>This stage adds streaming statistical signals that detect patterns rule-based filters miss. All structures operate in constant memory with constant-time updates.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AnomalyDetectionStage {
+    /// MIDAS-R: streaming graph anomaly detection.
+    /// Models txs as (from, to, block) edge stream.
+    /// Detects flash-loan cascades, wash trading, MEV coordination.
+    midas: Mutex&lt;MidasR&gt;,
+
+    /// DDSketch: gas price distribution tracker.
+    /// Relative error guarantee: |x_hat - x_q| &lt;= alpha * x_q.
+    gas_sketch: Mutex&lt;DDSketch&gt;,
+
+    /// DDSketch per watched protocol: swap value distributions.
+    protocol_sketches: DashMap&lt;ProtocolId, DDSketch&gt;,
+
+    /// Count-Min Sketch: address frequency estimation.
+    /// Detects first-seen addresses and activity spikes.
+    address_frequency: Mutex&lt;AddressFrequencySketch&gt;,
+}
+
+#[async_trait]
+impl TriageStage for AnomalyDetectionStage {
+    async fn process(&amp;self, ctx: &amp;mut TriageContext) -&gt; Option&lt;()&gt; {
+        // MIDAS-R anomaly score: model tx as directed edge.
+        let midas_score = {
+            let mut m = self.midas.lock();
+            m.insert_edge(
+                hash_addr(ctx.tx.from),
+                hash_addr(ctx.tx.to.unwrap_or_default()),
+                ctx.block.number,
+            )
+        };
+        ctx.scores.midas_anomaly = midas_score;
+
+        // Address frequency: detect spikes and first-seen addresses.
+        let freq = {
+            let mut sketch = self.address_frequency.lock();
+            let to_addr = ctx.tx.to.unwrap_or_default();
+            sketch.observe(&amp;to_addr, ctx.block.number);
+            sketch.estimate_frequency(&amp;to_addr)
+        };
+        ctx.scores.address_novelty = if freq &lt; 1.0 { 0.4 } else { 0.0 };
+        ctx.scores.frequency_spike = if freq &gt; sketch_baseline(&amp;ctx.tx) * 3.0 {
+            0.3
+        } else {
+            0.0
+        };
+
+        // Gas distribution: flag outliers.
+        {
+            let mut gs = self.gas_sketch.lock();
+            gs.add(ctx.tx.gas_used as f64);
+        }
+
+        // Protocol-specific value distribution tracking.
+        if let Some(protocol_id) = ctx.decoded_logs.first()
+            .and_then(|l| l.protocol_id.as_ref())
+        {
+            let mut sketch = self.protocol_sketches
+                .entry(protocol_id.clone())
+                .or_insert_with(DDSketch::default);
+            if let Some(value_usd) = extract_usd_value(&amp;ctx.decoded_logs) {
+                sketch.add(value_usd);
+            }
+        }
+
+        // Stage 2 never drops -- it only enriches.
+        Some(())
+    }
+
+    fn name(&amp;self) -&gt; &amp;'static str { "anomaly_detection" }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="midas-r"><a class="header" href="#midas-r">MIDAS-R</a></h3>
+<p>MIDAS (Bhatia et al., 2020) maintains two Count-Min Sketch structures – total edge count and current-tick edge count – and computes a chi-squared anomaly score comparing observed to expected frequency. It processes each edge in O(1) time and O(1) memory while achieving 42-52% higher AUC than prior streaming anomaly detectors. MIDAS-R extends this to node-level frequencies, catching both edge-specific and node-level bursts.</p>
+<p>For the triage pipeline, model Ethereum transactions as <code>(from_address, to_address, block_number)</code> edge streams. MIDAS detects flash-loan cascades, wash trading microbursts, and MEV bot coordination as anomalous edge clusters.</p>
+<p><strong>Wall-clock MIDAS-R ticks</strong>: On fast chains (Base at 2s blocks), per-block edge counts drop below the chi-squared power threshold (Cochran, 1952, requires expected cell counts &gt;= 5). Switch from <code>block_number</code> to wall-clock time windows: <code>tick = floor(timestamp / tick_duration)</code> where <code>tick_duration = max(block_time, 12s)</code>. This normalizes statistical density across chains. On Base, this aggregates ~6 blocks per MIDAS tick, restoring cell counts to the same range as Ethereum mainnet. On Ethereum, behavior is unchanged.</p>
+<h3 id="ddsketch"><a class="header" href="#ddsketch">DDSketch</a></h3>
+<p>DDSketch (Masson et al., 2019) uses logarithmic bucketing with a formal relative error guarantee: for any quantile q, the returned value x_hat satisfies <code>|x_hat - x_q| &lt;= alpha * x_q</code>. This matters for heavy-tailed distributions like gas prices and swap values, where absolute-error guarantees are meaningless. Configured with alpha = 0.01 (1% relative error).</p>
+<h3 id="count-min-sketch"><a class="header" href="#count-min-sketch">Count-Min Sketch</a></h3>
+<p>The Count-Min Sketch (Cormode &amp; Muthukrishnan, 2005) provides frequency estimation in O(1/epsilon * log(1/delta)) counters. A sliding-window variant with two sketches (current + previous, exponential decay) enables spike detection and first-seen address identification without maintaining full address sets.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AddressFrequencySketch {
+    current: CountMinSketch&lt;Address&gt;,
+    previous: CountMinSketch&lt;Address&gt;,
+    window_blocks: u64,
+    last_rotation_block: u64,
+}
+
+impl AddressFrequencySketch {
+    pub fn observe(&amp;mut self, addr: &amp;Address, block: u64) {
+        if block - self.last_rotation_block &gt;= self.window_blocks {
+            self.previous = self.current.clone();
+            self.current.clear();
+            self.last_rotation_block = block;
+        }
+        self.current.add(addr);
+    }
+
+    pub fn estimate_frequency(&amp;self, addr: &amp;Address) -&gt; f32 {
+        self.current.estimate(addr) as f32
+            + self.previous.estimate(addr) as f32 * 0.5
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="stage-3-contextual-enrichment"><a class="header" href="#stage-3-contextual-enrichment">Stage 3: Contextual Enrichment</a></h2>
+<p>For transactions that survived Stages 1-2, add context from the protocol state engine and ABI resolution chain. This stage involves async operations (eth_calls, HTTP lookups) but they never block the triage pipeline – they run in background queues.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EnrichmentStage {
+    protocol_state: Arc&lt;ProtocolStateEngine&gt;,
+    abi_resolver: Arc&lt;AbiResolver&gt;,
+    protocol_registry: Arc&lt;ProtocolRegistry&gt;,
+}
+
+#[async_trait]
+impl TriageStage for EnrichmentStage {
+    async fn process(&amp;self, ctx: &amp;mut TriageContext) -&gt; Option&lt;()&gt; {
+        let to_addr = ctx.tx.to?;
+
+        // Protocol state lookup (zero-latency DashMap read).
+        if let Some(state) = self.protocol_state.get_hot(ctx.block.chain_id, to_addr) {
+            ctx.enrichments.push(Enrichment::ProtocolState(state));
+        }
+
+        // If the contract is unknown, queue for async fingerprinting.
+        if !self.protocol_registry.contains(&amp;to_addr) {
+            self.fingerprint_unknown(to_addr, ctx).await;
+        }
+
+        // Assign protocol-aware category if possible.
+        if let Some(decoded) = ctx.decoded_logs.first() {
+            if let Some(protocol_id) = &amp;decoded.protocol_id {
+                ctx.category = TxCategory::ProtocolInteraction {
+                    protocol_id: protocol_id.clone(),
+                    action: decoded.event_name.clone(),
+                    protocol_family: self.protocol_registry
+                        .family_of(protocol_id)
+                        .unwrap_or(ProtocolFamily::Unknown { bytecode_hash: B256::ZERO }),
+                };
+            }
+        }
+
+        Some(())
+    }
+
+    fn name(&amp;self) -&gt; &amp;'static str { "enrichment" }
+}
+
+impl EnrichmentStage {
+    /// Fingerprint an unknown contract. Non-blocking -- queues work
+    /// for background resolution.
+    async fn fingerprint_unknown(&amp;self, address: Address, ctx: &amp;mut TriageContext) {
+        // 1. Bytecode hash lookup (fast, local).
+        if let Some(known) = self.protocol_registry.lookup_bytecode_hash(address) {
+            ctx.enrichments.push(Enrichment::KnownFamily(known));
+            return;
+        }
+
+        // 2. Queue for async ABI resolution (non-blocking).
+        // Resolution priority:
+        //   Sourcify (~60% coverage, no key)
+        //   -&gt; Etherscan (~80% verified, optional key)
+        //   -&gt; 4byte.directory (selector fragments, no key)
+        //   -&gt; Heimdall-rs / WhatsABI (bytecode decompilation)
+        self.abi_resolver.enqueue(AbiRequest {
+            address,
+            chain_id: ctx.block.chain_id,
+        });
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>ABI resolution is async and non-blocking. When an ABI resolves, the contract is added to <code>ProtocolRegistry</code> and its selectors enter the log decoder map at the next Gamma tick. Partial ABIs are useful – even knowing just the function selector resolves <code>Unknown</code> triage entries to named interactions.</p>
+<hr>
+<h2 id="stage-4-upgraded-scoring"><a class="header" href="#stage-4-upgraded-scoring">Stage 4: Upgraded Scoring</a></h2>
+<p>This is where everything converges. Five scoring signals combine through a Hedge-weighted compositor with Thompson sampling for exploration-exploitation.</p>
+<h3 id="signal-1-hdcbsc-fingerprint"><a class="header" href="#signal-1-hdcbsc-fingerprint">Signal 1: HDC/BSC Fingerprint</a></h3>
+<p>Transaction fingerprints are 10,000-dimensional Binary Spatter Code vectors (Kanerva, 2009). See <a href="../shared/hdc-vsa.html">shared/hdc-vsa.md</a> for the BSC algebra. Each transaction is encoded compositionally using role-filler binding:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use golem_core::hdc::{Hypervector, BundleAccumulator, ItemMemory};
+
+pub struct HdcTxEncoder {
+    /// Codebook: maps named concepts to fixed random hypervectors.
+    codebook: Mutex&lt;ItemMemory&gt;,
+
+    /// Role vectors for structural positions.
+    role_from: Hypervector,
+    role_to: Hypervector,
+    role_selector: Hypervector,
+    role_value_bucket: Hypervector,
+    role_log_topic: Hypervector,
+    role_gas_bucket: Hypervector,
+}
+
+impl HdcTxEncoder {
+    /// Encode a transaction as a 10K-dim binary hypervector.
+    /// Deterministic: the same transaction always produces the same vector.
+    /// Cost: O(D * num_fields) where D = 10,240 bits. ~1us total.
+    pub fn encode(&amp;self, tx: &amp;NormalizedTx, logs: &amp;[DecodedLog]) -&gt; Hypervector {
+        let mut codebook = self.codebook.lock();
+
+        let from_hv = codebook.encode(&amp;format!("addr:{}", tx.from));
+        let to_hv = codebook.encode(&amp;format!(
+            "addr:{}", tx.to.unwrap_or_default()
+        ));
+        let sel_hv = codebook.encode(&amp;format!(
+            "sel:{}", hex::encode(&amp;tx.input[..4.min(tx.input.len())])
+        ));
+        let value_hv = codebook.encode(&amp;format!(
+            "val_bucket:{}", value_bucket(tx.value)
+        ));
+        let gas_hv = codebook.encode(&amp;format!(
+            "gas_bucket:{}", gas_bucket(tx.gas_used)
+        ));
+
+        // Bind each filler to its role, then bundle (superpose).
+        let mut acc = BundleAccumulator::new();
+        acc.add(&amp;from_hv.bind(&amp;self.role_from));
+        acc.add(&amp;to_hv.bind(&amp;self.role_to));
+        acc.add(&amp;sel_hv.bind(&amp;self.role_selector));
+        acc.add(&amp;value_hv.bind(&amp;self.role_value_bucket));
+        acc.add(&amp;gas_hv.bind(&amp;self.role_gas_bucket));
+
+        // Encode log structure: each topic bound to its position.
+        for (i, log) in logs.iter().enumerate() {
+            if let Some(topic0) = log.log.topics().first() {
+                let topic_hv = codebook.encode(&amp;format!("topic:{}", topic0));
+                let pos_hv = topic_hv.permute(i); // positional encoding
+                acc.add(&amp;pos_hv.bind(&amp;self.role_log_topic));
+            }
+        }
+
+        acc.finish()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The HDC encoding is algebraically composable and invertible. Two transactions involving the same addresses in different roles produce different but related fingerprints – the Hamming similarity reflects structural kinship. New feature types (block position, MEV pattern, address cluster) are added without changing the vector format – just add more binding terms.</p>
+<p>At D = 10,240, each fingerprint is 1,280 bytes. Comparison (Hamming distance via XOR + POPCNT) takes ~10 nanoseconds with SIMD. The ANN index for 10,000 Grimoire episodes at this dimensionality is ~12.5 MB.</p>
+<p>Use logarithmic quantization (8-12 buckets per log decade) for gas and value fields. A transaction worth 0.001 ETH and one worth 1000 ETH should not occupy adjacent buckets. Log-scale bucketing produces more informative fingerprints because it matches the scale-free distribution of DeFi transaction values.</p>
+<h3 id="signal-2-bayesian-surprise"><a class="header" href="#signal-2-bayesian-surprise">Signal 2: Bayesian Surprise</a></h3>
+<p>Bayesian surprise (Itti &amp; Baldi, 2009) measures how much an observation shifts the golem’s beliefs. Surprise = KL divergence from prior to posterior. Unlike Shannon information, surprise filters out irreducible randomness – only data that genuinely updates the model scores high.</p>
+<p>Bayesian surprise feeds INTO the Oracle (see <a href="../01-golem/17-prediction-engine.html">01-golem/17-prediction-engine.md</a>) as a <code>PredictionDomain</code>. The Oracle is canonical for prediction error and action gating. The KL divergence output is one of the Oracle’s prediction domain inputs, not a parallel prediction system.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct BayesianSurprise {
+    /// Per-protocol conjugate models.
+    /// Gamma-Poisson for event rates.
+    /// Normal-Inverse-Gamma for value distributions.
+    /// Beta-Bernoulli for binary features.
+    protocol_models: DashMap&lt;ProtocolId, ProtocolBelief&gt;,
+}
+
+pub struct ProtocolBelief {
+    /// Event rate: Gamma(alpha, beta) prior.
+    /// Observe k events -&gt; posterior Gamma(alpha+k, beta+1).
+    event_rate: GammaPoisson,
+
+    /// Value distribution: Normal-Inverse-Gamma prior.
+    value_dist: NormalInverseGamma,
+
+    /// Binary features: Beta(a, b) priors.
+    liquidation_occurred: BetaBernoulli,
+    large_swap: BetaBernoulli,
+}
+
+impl BayesianSurprise {
+    /// Compute surprise for a triage event.
+    /// Returns KL divergence from prior to posterior.
+    /// Cost: O(1) -- pure parameter arithmetic with conjugate priors.
+    pub fn compute(&amp;self, event: &amp;TriageContext) -&gt; f32 {
+        let protocol_id = match &amp;event.category {
+            TxCategory::ProtocolInteraction { protocol_id, .. } =&gt; protocol_id,
+            _ =&gt; return 0.0,  // no model for non-protocol txs
+        };
+
+        let mut belief = self.protocol_models
+            .entry(protocol_id.clone())
+            .or_insert_with(ProtocolBelief::default);
+
+        // Compute KL divergence before updating.
+        let rate_surprise = belief.event_rate.kl_divergence_on_observe(1);
+        let value_surprise = extract_usd_value(&amp;event.decoded_logs)
+            .map(|v| belief.value_dist.kl_divergence_on_observe(v))
+            .unwrap_or(0.0);
+
+        // Update posterior (the observation becomes the new prior).
+        belief.event_rate.observe(1);
+        if let Some(v) = extract_usd_value(&amp;event.decoded_logs) {
+            belief.value_dist.observe(v);
+        }
+
+        rate_surprise + value_surprise
+    }
+}
+
+/// Gamma-Poisson conjugate model for event rate estimation.
+struct GammaPoisson {
+    alpha: f64,  // shape
+    beta: f64,   // rate
+}
+
+impl GammaPoisson {
+    fn kl_divergence_on_observe(&amp;self, k: u64) -&gt; f32 {
+        // KL[Gamma(alpha+k, beta+1) || Gamma(alpha, beta)]
+        // Analytic formula via digamma functions.
+        let a_post = self.alpha + k as f64;
+        let b_post = self.beta + 1.0;
+        let kl = (a_post - self.alpha) * digamma(a_post)
+            - ln_gamma(a_post) + ln_gamma(self.alpha)
+            + self.alpha * (b_post / self.beta).ln()
+            + a_post * (self.beta - b_post) / b_post;
+        kl.abs() as f32
+    }
+
+    fn observe(&amp;mut self, k: u64) {
+        self.alpha += k as f64;
+        self.beta += 1.0;
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="signal-3-two-tier-ann-lookup"><a class="header" href="#signal-3-two-tier-ann-lookup">Signal 3: Two-Tier ANN Lookup</a></h3>
+<p>The HNSW index has two tiers: a main index (rebuilt at Delta-level consolidation) and a staging index that accepts inserts at Theta tick when new Grimoire episodes are stored. New episodes become queryable at the next Gamma tick, not at the next Delta.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct CuriosityAnnIndex {
+    /// Main index: rebuilt from scratch periodically.
+    main: usearch::Index,
+
+    /// Staging: accepts in-place inserts since last rebuild.
+    staging: usearch::Index,
+
+    /// Number of episodes in staging. Merge at threshold.
+    staging_count: AtomicUsize,
+
+    /// Merge staging into main when this threshold is reached.
+    staging_threshold: usize,  // default: 500
+}
+
+impl CuriosityAnnIndex {
+    /// Called at Theta tick when a new GrimoireEpisode is stored.
+    pub fn insert_episode(&amp;self, id: u64, embedding: &amp;[f32]) {
+        self.staging.add(id, embedding).ok();
+        self.staging_count.fetch_add(1, Ordering::Relaxed);
+    }
+
+    /// Query both tiers, merge, return top-k.
+    /// Cost: ~50us for k=10 at 10,000 episodes.
+    pub fn query(&amp;self, embedding: &amp;[f32], k: usize) -&gt; Vec&lt;(u64, f32)&gt; {
+        let main_results = self.main.search(embedding, k).unwrap_or_default();
+        let staging_results = self.staging.search(embedding, k).unwrap_or_default();
+
+        let mut combined: Vec&lt;(u64, f32)&gt; = main_results.keys.iter()
+            .zip(main_results.distances.iter())
+            .chain(staging_results.keys.iter().zip(staging_results.distances.iter()))
+            .map(|(&amp;id, &amp;dist)| (id, dist))
+            .collect();
+
+        combined.sort_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap());
+        combined.dedup_by_key(|x| x.0);
+        combined.truncate(k);
+        combined
+    }
+
+    /// Merge staging into main. Called when staging_count &gt;= threshold.
+    /// Runs at Delta tick cadence. ~100ms at 10K episodes.
+    pub fn merge_staging(&amp;mut self) {
+        // Rebuild main from all episodes (main + staging).
+        self.staging_count.store(0, Ordering::Relaxed);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>This tightens the curiosity loop from <code>chain event -&gt; Theta LLM -&gt; Grimoire episode -&gt; (Delta wait) -&gt; ANN query</code> to <code>chain event -&gt; Theta LLM -&gt; Grimoire episode -&gt; (next Gamma) -&gt; ANN query</code>.</p>
+<h3 id="signal-4-thompson-sampling-for-exploration-exploitation"><a class="header" href="#signal-4-thompson-sampling-for-exploration-exploitation">Signal 4: Thompson Sampling for Exploration-Exploitation</a></h3>
+<p>Fixed score thresholds waste the golem’s attention budget. Thompson sampling (Thompson, 1933; Russo et al., 2017) maintains Beta posteriors over each routing bucket’s “is this event actually relevant?” probability and samples from them to decide routing.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ThompsonRouter {
+    /// Beta(alpha, beta) posteriors per routing action.
+    /// Updated by LLM feedback at Theta tick.
+    actions: [BetaPosterior; 4],  // escalate, emit, silent, discard
+}
+
+struct BetaPosterior {
+    alpha: f64,  // successes + 1
+    beta: f64,   // failures + 1
+}
+
+impl ThompsonRouter {
+    /// Sample from posteriors and route based on drawn probabilities.
+    /// This naturally explores uncertain regions of the score space.
+    pub fn route(&amp;self, score: f32, rng: &amp;mut impl Rng) -&gt; RoutingDecision {
+        // Sample expected relevance for each action.
+        let samples: Vec&lt;f64&gt; = self.actions.iter()
+            .map(|a| Beta::new(a.alpha, a.beta).unwrap().sample(rng))
+            .collect();
+
+        // Select action with highest sampled value, weighted by score.
+        if score &gt; 0.7 &amp;&amp; samples[0] &gt; samples[3] {
+            RoutingDecision::Escalate  // -&gt; TriageAlert + LLM queue
+        } else if score &gt; 0.4 &amp;&amp; samples[1] &gt; samples[3] {
+            RoutingDecision::Emit      // -&gt; ChainEvent + protocol state
+        } else if score &gt; 0.15 {
+            RoutingDecision::Silent    // -&gt; protocol state only
+        } else {
+            RoutingDecision::Discard   // -&gt; redb audit only
+        }
+    }
+
+    /// Update posteriors based on LLM feedback.
+    /// Called at Theta tick after analyze_chain_event().
+    pub fn update(&amp;mut self, action: usize, was_relevant: bool) {
+        if was_relevant {
+            self.actions[action].alpha += 1.0;
+        } else {
+            self.actions[action].beta += 1.0;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="signal-5-contrastive-embedding-similarity-80-dim-fallback"><a class="header" href="#signal-5-contrastive-embedding-similarity-80-dim-fallback">Signal 5: Contrastive Embedding Similarity (80-dim Fallback)</a></h3>
+<p>The handcrafted 80-dimensional fingerprint serves as a cold-start fallback before the HDC codebook and ANN index have accumulated enough data:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn compute_fallback_fingerprint(tx: &amp;NormalizedTx, logs: &amp;[DecodedLog]) -&gt; [f32; 80] {
+    let mut fp = [0.0f32; 80];
+
+    // one_hot(to_type, 16): known protocol family
+    if let Some(family_idx) = protocol_family_index(tx.to) {
+        fp[family_idx] = 1.0;
+    }
+
+    // hash_truncate(func_selector, 8): function selector
+    let sel = &amp;tx.input[..4.min(tx.input.len())];
+    for (i, byte) in sel.iter().enumerate().take(8) {
+        fp[16 + i] = *byte as f32 / 255.0;
+    }
+
+    // log_buckets(value_usd, 8): value magnitude
+    let value_log = (tx.value.to::&lt;f64&gt;() + 1.0).log10();
+    let bucket = (value_log * 8.0 / 20.0).min(7.0) as usize;
+    fp[24 + bucket] = 1.0;
+
+    // topic_hashes(log_topics, 32): event topic fingerprints
+    for (i, log) in logs.iter().enumerate().take(4) {
+        if let Some(topic) = log.log.topics().first() {
+            for j in 0..8 {
+                fp[32 + i * 8 + j] = topic.0[j] as f32 / 255.0;
+            }
+        }
+    }
+
+    // gas_bucket(gas_used, 8): computational complexity
+    let gas_log = (tx.gas_used as f64 + 1.0).log10();
+    let gas_bucket = (gas_log * 8.0 / 8.0).min(7.0) as usize;
+    fp[64 + gas_bucket] = 1.0;
+
+    // from_cluster(from_addr, 8): address cluster
+    for (i, byte) in tx.from.0[..8].iter().enumerate() {
+        fp[72 + i] = *byte as f32 / 255.0;
+    }
+
+    fp
+}
+<span class="boring">}</span></code></pre>
+<h3 id="combining-signals-the-hedge-compositor"><a class="header" href="#combining-signals-the-hedge-compositor">Combining Signals: The Hedge Compositor</a></h3>
+<p>The Hedge/Exponential Weights algorithm (Shalev-Shwartz, 2011) combines all five signals with learned weights that converge to the best fixed weighting in hindsight, guaranteeing O(sqrt(T)) regret.</p>
+<p>Use Discounted Hedge (Herbster &amp; Warmuth, 1998, also called Fixed-Share): before the multiplicative weight update, apply <code>weights *= discount</code> where discount = 0.99. This gives weights a half-life of ~69 rounds, ensuring full regime adaptation within ~200 triage events. The standard Hedge’s adaptive eta (<code>eta = sqrt(ln(N) / t)</code>) decreases over time, making it <em>less</em> responsive to distribution shifts – the opposite of what a non-stationary DeFi market needs.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct CuriosityScorer {
+    hdc_encoder: HdcTxEncoder,
+    bayesian: BayesianSurprise,
+    ann_index: CuriosityAnnIndex,
+    thompson: ThompsonRouter,
+    midas: Arc&lt;MidasR&gt;,
+
+    /// Hedge weights over scoring signals.
+    /// Updated at Theta tick based on LLM evaluation feedback.
+    weights: [f64; 5],
+    learning_rate: f64,  // eta = 0.1
+
+    /// Discount factor for non-stationary Hedge (Herbster &amp; Warmuth 1998).
+    /// Applied before each weight update. Default: 0.99.
+    discount: f64,
+
+    /// Grimoire episode count, for cold-start heuristic weight.
+    episode_count: AtomicUsize,
+}
+
+impl CuriosityScorer {
+    pub fn score(&amp;self, ctx: &amp;mut TriageContext) -&gt; f32 {
+        let episode_count = self.episode_count.load(Ordering::Relaxed);
+
+        // Signal 1: HDC fingerprint similarity to interesting/boring bundles.
+        let hv = self.hdc_encoder.encode(&amp;ctx.tx, &amp;ctx.decoded_logs);
+        ctx.fingerprint = Some(hv);
+        let hdc_score = self.hdc_codebook_score(&amp;hv);
+
+        // Signal 2: Bayesian surprise (KL divergence).
+        let surprise = self.bayesian.compute(ctx);
+
+        // Signal 3: ANN similarity to past chain_event episodes.
+        let ann_score = if episode_count &gt; 10 {
+            let fallback_fp = compute_fallback_fingerprint(&amp;ctx.tx, &amp;ctx.decoded_logs);
+            let results = self.ann_index.query(&amp;fallback_fp, 5);
+            results.first().map(|(_, dist)| 1.0 - dist).unwrap_or(0.0)
+        } else {
+            0.0
+        };
+
+        // Signal 4: MIDAS anomaly score (already computed in Stage 2).
+        let midas_score = ctx.scores.midas_anomaly;
+
+        // Signal 5: Heuristic score (rule-based, cold-start dominant).
+        let heuristic = self.score_heuristic(ctx);
+
+        // Cold-start weighting: heuristics dominate early.
+        let cold_start_factor = 1.0 - (episode_count as f32 / 1000.0).min(0.6);
+
+        // Hedge-weighted combination.
+        let signals = [hdc_score, surprise, ann_score, midas_score, heuristic];
+        let weighted: f32 = signals.iter()
+            .zip(self.weights.iter())
+            .map(|(s, w)| s * *w as f32)
+            .sum();
+
+        // Blend with cold-start heuristic.
+        let final_score = heuristic * cold_start_factor
+            + weighted * (1.0 - cold_start_factor);
+
+        final_score.clamp(0.0, 1.0)
+    }
+
+    /// Update Hedge weights from LLM feedback.
+    /// Called at Theta tick after analyze_chain_event().
+    pub fn update_weights(&amp;mut self, signals: &amp;[f32; 5], actual_importance: f32) {
+        // Discounted Hedge: decay weights before update for non-stationarity.
+        for w in &amp;mut self.weights {
+            *w *= self.discount;
+        }
+
+        for (i, &amp;signal) in signals.iter().enumerate() {
+            let loss = (signal - actual_importance).abs() as f64;
+            self.weights[i] *= (-self.learning_rate * loss).exp();
+        }
+        // Normalize.
+        let sum: f64 = self.weights.iter().sum();
+        for w in &amp;mut self.weights {
+            *w /= sum;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="txcategory"><a class="header" href="#txcategory">TxCategory</a></h2>
+<p>Categories are dynamically derived, not hardcoded:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum TxCategory {
+    ProtocolInteraction {
+        protocol_id: ProtocolId,
+        action: String,         // "Swap", "AddLiquidity", "Borrow", etc.
+        protocol_family: ProtocolFamily,
+    },
+    TokenTransfer {
+        token: Address,
+        direction: Direction,   // In | Out | Internal
+        value_usd: Option&lt;f64&gt;,
+    },
+    LargeValueMove {
+        usd_estimate: f64,
+        from_cluster: AddressCluster,
+        to_cluster: AddressCluster,
+    },
+    NewProtocolDeployed {
+        factory: Address,
+        child: Address,
+        family: ProtocolFamily,
+    },
+    ContractDeploy {
+        deployer: Address,
+        bytecode_hash: B256,
+    },
+    MevActivity {
+        pattern: MevPattern,    // Sandwich | Backrun | Frontrun | Arbitrage
+    },
+    Unknown,
+}
+<span class="boring">}</span></code></pre>
+<p>For unknown contracts, category defaults to <code>Unknown</code> until the ABI resolver populates the registry. At that point, historical events from that contract in redb get retroactively re-categorized at the next Delta tick.</p>
+<hr>
+<h2 id="self-learning-curiosity-loop"><a class="header" href="#self-learning-curiosity-loop">Self-Learning Curiosity Loop</a></h2>
+<p>The curiosity model improves through the golem’s own behavior, without external labels:</p>
+<p><strong>Positive reinforcement</strong> – When the golem takes an action (trade, rebalance, position alert) triggered by a chain event, triage retrieves that event’s fingerprint from redb and submits it for upweighting.</p>
+<p><strong>Negative reinforcement</strong> – When the golem explicitly dismisses a queued high-score event at Theta cognition, the fingerprint is tagged negative and downweights similar future events.</p>
+<p><strong>Epsilon-greedy exploration</strong> – With probability epsilon (decaying but never zero), a random low-score event is escalated to LLM analysis. This provides counterfactual labels for events the golem would otherwise never evaluate, preventing the partial monitoring bias where the golem can’t learn that it’s discarding interesting events.</p>
+<pre><code>[TriageAlert emitted]
+    |
+    v
+[Theta: LLM analyzes with positions + strategy + recent Grimoire]
+    |
+    v
+[Grimoire episode stored: ChainEvent, with embedding]
+    |
+    v
+[Staging ANN index: insert immediately]
+    |
+    v
+[Next Gamma: scoring uses updated index]
+    |
+    v
+[Better-scored events -&gt; better routing -&gt; more relevant alerts]
+    ^ (loop)
+</code></pre>
+<hr>
+<h2 id="routing"><a class="header" href="#routing">Routing</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Score range</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>&gt; 0.8 (or Thompson samples escalation)</td><td><code>GolemEvent::TriageAlert</code> + add to Theta LLM queue</td></tr>
+<tr><td>0.5-0.8</td><td><code>GolemEvent::ChainEvent</code> + update protocol state</td></tr>
+<tr><td>0.2-0.5</td><td>Update protocol state silently (no event emitted)</td></tr>
+<tr><td>&lt; 0.2</td><td>Discard (written to redb for gap audit only)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="storage"><a class="header" href="#storage">Storage</a></h2>
+<pre><code>Table "triage_events" (redb):
+  key:   (chain_id: u32, block_number: u64, tx_index: u32)
+  value: TxRecord { tx_hash, category, score, fingerprint_hash, timestamp_ms }
+
+Table "triage_index_by_score" (redb):
+  key:   (score_bucket: u8, timestamp_ms: u64)
+  value: (chain_id: u32, block_number: u64, tx_index: u32)
+
+Table "negative_fingerprints" (redb):
+  key:   fingerprint_hash: B256
+  value: downweight_factor: f32
+</code></pre>
+<p>Retention: 7 days by default. Compacted at each Delta tick. In <code>declining</code> behavioral phase, retention halves automatically. Low-score events (&lt; 0.2) carry a <code>discarded: true</code> flag for gap detection only – excluded from retroactive re-scoring.</p>
+<hr>
+<h2 id="emitted-golemevents"><a class="header" href="#emitted-golemevents">Emitted GolemEvents</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>GolemEvent::ChainEvent {
+    chain_id: u64,
+    tx_hash: String,
+    block_number: u64,
+    category: String,
+    protocol_id: Option&lt;String&gt;,
+    curiosity_score: f32,
+    summary: Option&lt;String&gt;,  // populated by LLM at Theta tick
+},
+
+GolemEvent::TriageAlert {
+    chain_id: u64,
+    tx_hash: String,
+    block_number: u64,
+    category: String,
+    score: f32,
+    reason: String,  // human-readable: "active position counterparty"
+},
+<span class="boring">}</span></code></pre>
+<p>See <a href="./06-events-signals.html">06-events-signals.md</a> for wire format and subscription categories.</p>
+<hr>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<pre><code class="language-toml">[dependencies]
+alloy = { version = "1" }
+alloy-primitives = "1"
+redb = "2"
+usearch = "2"
+dashmap = "6"
+xorf = "0.11"
+xxhash-rust = { version = "0.8", features = ["xxh3"] }
+midas_rs = "0.1"               # MIDAS-R streaming anomaly detection
+sketches-ddsketch = "0.2"      # DDSketch distribution tracking
+streaming_algorithms = "0.3"   # Count-Min Sketch + Top-K
+reqwest = { version = "0.12", features = ["json"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+rand = "0.8"
+rand_distr = "0.4"             # Beta distribution for Thompson sampling
+</code></pre>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><strong>Architecture</strong>: <a href="./00-architecture.html">00-architecture.md</a> – Five-crate overview of chain intelligence, data flow from WebSocket to storage, cybernetic feedback loop</li>
+<li><strong>Witness</strong>: <a href="./01-witness.html">01-witness.md</a> – Upstream block ingestion via WebSocket, Binary Fuse pre-screening that feeds blocks into this pipeline</li>
+<li><strong>Protocol state</strong>: <a href="./03-protocol-state.html">03-protocol-state.md</a> – Downstream consumer: maintains live protocol state from triage events, autonomous discovery</li>
+<li><strong>Chain scope</strong>: <a href="./04-chain-scope.html">04-chain-scope.md</a> – Source of watched addresses for Stage 1 filtering; rebuilt each Gamma tick from CorticalState</li>
+<li><strong>Heartbeat integration</strong>: <a href="./05-heartbeat-integration.html">05-heartbeat-integration.md</a> – Theta tick LLM analysis of high-score events, Delta tick compaction and ANN merge</li>
+<li><strong>Events</strong>: <a href="./06-events-signals.html">06-events-signals.md</a> – ChainEvent and TriageAlert GolemEvent variants emitted by this pipeline</li>
+<li><strong>Anomaly detection</strong>: <a href="./09-anomaly-detection.html">09-anomaly-detection.md</a> – Full MIDAS-R, BOCPD, PELT, and ADWIN algorithm specifications</li>
+<li><strong>Oracle / Prediction engine</strong>: <a href="../01-golem/17-prediction-engine.html">01-golem/17-prediction-engine.md</a> – Bayesian surprise KL divergence feeds in as a PredictionDomain; Oracle handles non-stationarity</li>
+<li><strong>HDC/VSA</strong>: <a href="../shared/hdc-vsa.html">shared/hdc-vsa.md</a> – BSC algebra, codebook management, ANN integration for hyperdimensional fingerprints</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Bhatia, S. et al. (2020). MIDAS: Microcluster-Based Detector of Anomalies in Edge Streams. arXiv:1911.04464. <em>AAAI 2020</em>. – <em>Streaming graph anomaly detection via Count-Min Sketch; used in Stage 2 to detect transaction bursts between address pairs.</em></li>
+<li>Cochran, W.G. (1952). The chi-squared test of goodness of fit. <em>Annals of Mathematical Statistics</em>, 23(3), 315-345. – <em>Statistical test underlying the MIDAS-R anomaly score computation.</em></li>
+<li>Cormode, G. &amp; Muthukrishnan, S. (2005). An improved data stream summary: the Count-Min Sketch. <em>Journal of Algorithms</em>. – <em>The probabilistic frequency estimator used for selector frequency tracking and MIDAS internals.</em></li>
+<li>Graf, T.M. &amp; Lemire, D. (2020). Xor Filters: Faster and Smaller Than Bloom and Cuckoo Filters. arXiv:1912.08258. – <em>Predecessor to Binary Fuse filters; establishes the immutable-rebuild pattern.</em></li>
+<li>Herbster, M. &amp; Warmuth, M.K. (1998). Tracking the Best Expert. <em>Machine Learning</em>, 32(2), 151-178. – <em>Fixed-share variant of the Hedge algorithm used to weight scoring signals adaptively.</em></li>
+<li>Itti, L. &amp; Baldi, P. (2009). Bayesian surprise attracts human attention. <em>Vision Research</em>, 49(10), 1295-1306. – <em>Formalizes surprise as KL divergence between prior and posterior; the theoretical basis for curiosity scoring.</em></li>
+<li>Kanerva, P. (2009). Hyperdimensional Computing: An Introduction. <em>Cognitive Computation</em>, 1(2). – <em>Foundational work on high-dimensional distributed representations used in HDC fingerprinting.</em></li>
+<li>Kleyko, D. et al. (2023). A Survey on Hyperdimensional Computing aka Vector Symbolic Architectures. <em>ACM Computing Surveys</em>, 55(9). arXiv:2111.06077. – <em>Comprehensive survey of VSA/HDC techniques; covers the BSC algebra and binding operations used here.</em></li>
+<li>Masson, C. et al. (2019). DDSketch: A Fast and Fully-Mergeable Quantile Sketch with Relative-Error Guarantees. <em>PVLDB</em>, 12(12). – <em>The quantile sketch used for distribution monitoring in Stage 2; mergeable across chains at Delta tick.</em></li>
+<li>Russo, D. et al. (2017). A Tutorial on Thompson Sampling. arXiv:1707.02038. – <em>Tutorial on the Bayesian exploration-exploitation strategy used for triage escalation decisions.</em></li>
+<li>Shalev-Shwartz, S. (2011). Online Learning and Online Convex Optimization. <em>Foundations and Trends in Machine Learning</em>, 4(2), 107-194. – <em>Theoretical framework for the Hedge algorithm that weights scoring signals.</em></li>
+<li>Thompson, W.R. (1933). On the likelihood that one unknown probability exceeds another. <em>Biometrika</em>. – <em>Original Thompson sampling paper; the bandit algorithm used to balance exploration vs. exploitation in triage.</em></li>
+</ul>
+<hr>
+<h2 id="appendix-a-full-streaming-sketch-implementations"><a class="header" href="#appendix-a-full-streaming-sketch-implementations">Appendix A: Full Streaming Sketch Implementations</a></h2>
+<p>The triage pipeline uses four sketch families for bounded-memory analytics. All operate in O(1) time per update and O(1) memory. Total memory budget across all sketches: under 1 MB. This appendix provides the complete Rust implementations referenced by Stage 2.</p>
+<h3 id="a1-count-min-sketch-with-conservative-update"><a class="header" href="#a1-count-min-sketch-with-conservative-update">A.1 Count-Min Sketch with Conservative Update</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+
+/// A Count-Min Sketch with Conservative Update.
+/// Dimensions: depth x width, each cell a u64 counter.
+pub struct CountMinSketch {
+    depth: usize,
+    width: usize,
+    table: Vec&lt;Vec&lt;u64&gt;&gt;,
+    seeds: Vec&lt;u64&gt;,
+    total: u64,
+}
+
+impl CountMinSketch {
+    pub fn new(depth: usize, width: usize) -&gt; Self {
+        let seeds: Vec&lt;u64&gt; = (0..depth).map(|i| 0xBEEF_CAFE_u64.wrapping_add(i as u64)).collect();
+        Self {
+            depth,
+            width,
+            table: vec![vec![0u64; width]; depth],
+            seeds,
+            total: 0,
+        }
+    }
+
+    fn hash_at(&amp;self, row: usize, key: &amp;[u8]) -&gt; usize {
+        let mut hasher = DefaultHasher::new();
+        self.seeds[row].hash(&amp;mut hasher);
+        key.hash(&amp;mut hasher);
+        (hasher.finish() as usize) % self.width
+    }
+
+    /// Conservative Update: only increment to min + 1, avoiding overcount.
+    pub fn add(&amp;mut self, key: &amp;[u8]) {
+        let min_val = self.estimate(key);
+        for row in 0..self.depth {
+            let col = self.hash_at(row, key);
+            if self.table[row][col] &lt;= min_val {
+                self.table[row][col] = min_val + 1;
+            }
+        }
+        self.total += 1;
+    }
+
+    pub fn estimate(&amp;self, key: &amp;[u8]) -&gt; u64 {
+        (0..self.depth)
+            .map(|row| {
+                let col = self.hash_at(row, key);
+                self.table[row][col]
+            })
+            .min()
+            .unwrap_or(0)
+    }
+
+    pub fn total(&amp;self) -&gt; u64 {
+        self.total
+    }
+
+    pub fn clear(&amp;mut self) {
+        for row in &amp;mut self.table {
+            row.fill(0);
+        }
+        self.total = 0;
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>At epsilon = 0.001 and delta = 0.01, the structure needs roughly 2,718 columns and 5 rows – about 106 KB with 64-bit counters. The Conservative Update variant improves accuracy on Zipfian distributions (the distribution that address activity follows on Ethereum) by only incrementing each counter to max(current, min_across_rows + 1).</p>
+<h3 id="a2-sliding-window-frequency-tracker"><a class="header" href="#a2-sliding-window-frequency-tracker">A.2 Sliding-Window Frequency Tracker</a></h3>
+<p>A single CMS gives cumulative counts. For relative frequency detection, the sliding-window approach uses two sketches:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Sliding-window frequency tracker using two CMS instances.
+/// Current window accumulates counts; previous window provides baseline.
+/// At each rotation, current becomes previous and a fresh sketch starts.
+pub struct SlidingFrequencySketch {
+    current: CountMinSketch,
+    previous: CountMinSketch,
+    window_blocks: u64,
+    last_rotation_block: u64,
+}
+
+impl SlidingFrequencySketch {
+    pub fn new(depth: usize, width: usize, window_blocks: u64) -&gt; Self {
+        Self {
+            current: CountMinSketch::new(depth, width),
+            previous: CountMinSketch::new(depth, width),
+            window_blocks,
+            last_rotation_block: 0,
+        }
+    }
+
+    /// Record an observation. Rotates windows when enough blocks have passed.
+    pub fn observe(&amp;mut self, key: &amp;[u8], block_number: u64) {
+        if block_number.saturating_sub(self.last_rotation_block) &gt;= self.window_blocks {
+            std::mem::swap(&amp;mut self.previous, &amp;mut self.current);
+            self.current.clear();
+            self.last_rotation_block = block_number;
+        }
+        self.current.add(key);
+    }
+
+    /// Weighted frequency: current window at full weight, previous at 50%.
+    pub fn frequency(&amp;self, key: &amp;[u8]) -&gt; f64 {
+        self.current.estimate(key) as f64
+            + self.previous.estimate(key) as f64 * 0.5
+    }
+
+    /// Spike ratio: current frequency vs previous window baseline.
+    /// Returns None if previous window has no data for this key.
+    pub fn spike_ratio(&amp;self, key: &amp;[u8]) -&gt; Option&lt;f64&gt; {
+        let prev = self.previous.estimate(key);
+        if prev == 0 {
+            return None;
+        }
+        Some(self.current.estimate(key) as f64 / prev as f64)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The frequency sketch feeds two signals into the curiosity scorer:</p>
+<ol>
+<li><strong>Novelty signal</strong> – an address with estimated frequency 0 is first-seen. Assign a flat curiosity bonus (e.g., 0.3).</li>
+<li><strong>Spike signal</strong> – an address appearing at 3x its rolling baseline gets a curiosity boost (e.g., 0.2). Spikes often indicate arbitrage bursts, liquidation cascades, or exploit probing.</li>
+</ol>
+<p>The Learned Space Saving (LSS) variant from Shahout and Mitzenmacher (2024) improves heavy-hitter identification by giving ML-predicted heavy hitters dedicated exact counters while the long tail stays in the sketch. This is a future optimization path.</p>
+<h3 id="a3-full-midas-r-implementation"><a class="header" href="#a3-full-midas-r-implementation">A.3 Full MIDAS-R Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// MIDAS-R anomaly detector for the transaction graph stream.
+/// Uses three CMS instances: edge-level total, edge-level current tick,
+/// and node-level current tick.
+pub struct MidasR {
+    /// Total edge counts across all ticks
+    edge_total: CountMinSketch,
+    /// Edge counts in current tick only
+    edge_current: CountMinSketch,
+    /// Node (source) counts in current tick
+    node_current: CountMinSketch,
+    /// Current tick identifier (block number or Gamma tick)
+    current_tick: u64,
+    /// Total ticks observed
+    tick_count: u64,
+    /// Temporal decay factor applied at each tick boundary
+    decay: f64,
+}
+
+impl MidasR {
+    pub fn new(depth: usize, width: usize, decay: f64) -&gt; Self {
+        Self {
+            edge_total: CountMinSketch::new(depth, width),
+            edge_current: CountMinSketch::new(depth, width),
+            node_current: CountMinSketch::new(depth, width),
+            current_tick: 0,
+            tick_count: 0,
+            decay,
+        }
+    }
+
+    /// Process a new edge and return its anomaly score.
+    /// Higher scores indicate more anomalous edges.
+    pub fn score_edge(&amp;mut self, source: &amp;[u8], dest: &amp;[u8], tick: u64) -&gt; f64 {
+        // Advance tick if needed
+        if tick &gt; self.current_tick {
+            self.advance_tick(tick);
+        }
+
+        // Build the edge key by concatenating source and dest
+        let mut edge_key = Vec::with_capacity(source.len() + dest.len());
+        edge_key.extend_from_slice(source);
+        edge_key.extend_from_slice(dest);
+
+        // Update counts
+        self.edge_total.add(&amp;edge_key);
+        self.edge_current.add(&amp;edge_key);
+        self.node_current.add(source);
+
+        // Chi-squared score for edge
+        let a = self.edge_current.estimate(&amp;edge_key) as f64;
+        let s = self.edge_total.estimate(&amp;edge_key) as f64;
+        let expected = s / (self.tick_count.max(1) as f64);
+
+        let edge_score = if expected &gt; 0.0 {
+            (a - expected).powi(2) / expected
+        } else {
+            0.0
+        };
+
+        // Node-level burst score
+        let node_count = self.node_current.estimate(source) as f64;
+        let node_total = self.edge_total.estimate(source) as f64;
+        let node_expected = node_total / (self.tick_count.max(1) as f64);
+
+        let node_score = if node_expected &gt; 0.0 {
+            (node_count - node_expected).powi(2) / node_expected
+        } else {
+            0.0
+        };
+
+        // Combined score: max of edge and node anomaly
+        edge_score.max(node_score)
+    }
+
+    fn advance_tick(&amp;mut self, new_tick: u64) {
+        self.edge_current.clear();
+        self.node_current.clear();
+        self.current_tick = new_tick;
+        self.tick_count += 1;
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The scoring formula for an edge (u, v) at tick t: <code>score(u, v, t) = (a_uv(t) - s_uv * t_current / T)^2 / (s_uv * t_current / T)</code> where <code>a_uv(t)</code> is the current-tick count, <code>s_uv</code> is the total count, <code>t_current</code> is the current tick duration, and <code>T</code> is total time.</p>
+<p>MIDAS detects: flash-loan cascades (burst of edges from single source to many targets within one block), wash trading (repeated edges between the same pair at abnormal rates), and MEV bot coordination (multiple bots sending edges to the same target simultaneously).</p>
+<p>The Adaptive-GraphSketch (Ekle and Eberle, 2025) advances the state of the art with a 3D tensor sketch incorporating temporal decay, Bayesian posterior scoring, and EWMA-based adaptive thresholding – achieving up to 6.5% AUC gain over MIDAS-R. Its temporal binning maps naturally to Gamma ticks, but no Rust implementation exists yet.</p>
+<h3 id="a4-ddsketch-gas-distribution-tracker"><a class="header" href="#a4-ddsketch-gas-distribution-tracker">A.4 DDSketch Gas Distribution Tracker</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Cargo.toml dependency:
+// sketches-ddsketch = "0.3"
+
+use sketches_ddsketch::DDSketch;
+
+/// Gas price distribution tracker using DDSketch.
+/// Provides relative-error quantile estimates with mergeability.
+pub struct GasDistributionTracker {
+    /// Current Gamma window sketch
+    current: DDSketch,
+    /// Accumulated Theta window sketch (merged from Gamma windows)
+    theta_accumulated: DDSketch,
+    /// Configuration: relative accuracy
+    alpha: f64,
+}
+
+impl GasDistributionTracker {
+    pub fn new(alpha: f64) -&gt; Self {
+        let config = sketches_ddsketch::Config::new(alpha, 2048, 1.0e-9);
+        Self {
+            current: DDSketch::new(config),
+            theta_accumulated: DDSketch::new(config),
+            alpha,
+        }
+    }
+
+    /// Record a gas price observation.
+    pub fn observe(&amp;mut self, gas_price_gwei: f64) {
+        self.current.add(gas_price_gwei);
+    }
+
+    /// Query a quantile from the current Gamma window.
+    pub fn quantile(&amp;self, q: f64) -&gt; Option&lt;f64&gt; {
+        self.current.quantile(q).ok()
+    }
+
+    /// Merge current window into the Theta accumulator and reset.
+    /// Called at each Gamma tick boundary.
+    pub fn rotate_gamma(&amp;mut self) {
+        self.theta_accumulated.merge(&amp;self.current).ok();
+        let config = sketches_ddsketch::Config::new(self.alpha, 2048, 1.0e-9);
+        self.current = DDSketch::new(config);
+    }
+
+    /// Get Theta-level quantile from accumulated Gamma windows.
+    pub fn theta_quantile(&amp;self, q: f64) -&gt; Option&lt;f64&gt; {
+        self.theta_accumulated.quantile(q).ok()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>DDSketch bucket boundaries follow a geometric progression: bucket i covers <code>[gamma^i, gamma^(i+1))</code> where <code>gamma = (1 + alpha) / (1 - alpha)</code>. This guarantees relative error on heavy-tailed distributions. DDSketch is fully mergeable: merge per-Gamma sketches at Theta boundaries, and per-Theta sketches at Delta boundaries.</p>
+<h3 id="a5-t-digest-swap-distribution-tracker"><a class="header" href="#a5-t-digest-swap-distribution-tracker">A.5 t-digest Swap Distribution Tracker</a></h3>
+<p>The t-digest (Dunning and Ertl, 2019) maintains centroids with a scale function that allocates more resolution to distribution tails. It lacks DDSketch’s formal worst-case guarantee but achieves better empirical accuracy at extreme quantiles (less than 0.1% error at p50 in practice).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Cargo.toml dependency:
+// tdigest = "0.5"
+
+use tdigest::TDigest;
+
+/// Swap value distribution tracker using t-digest.
+/// Tracks per-pool value distributions with mergeable windows.
+pub struct SwapDistributionTracker {
+    /// Per-pool t-digest instances keyed by pool address
+    pools: std::collections::HashMap&lt;[u8; 20], TDigest&gt;,
+    /// Maximum number of centroids per digest
+    max_centroids: usize,
+}
+
+impl SwapDistributionTracker {
+    pub fn new(max_centroids: usize) -&gt; Self {
+        Self {
+            pools: std::collections::HashMap::new(),
+            max_centroids,
+        }
+    }
+
+    /// Record a swap value for a specific pool.
+    pub fn observe(&amp;mut self, pool: &amp;[u8; 20], value: f64) {
+        let digest = self
+            .pools
+            .entry(*pool)
+            .or_insert_with(|| TDigest::new_with_size(self.max_centroids));
+        let new_digest = digest.merge_unsorted(vec![value]);
+        self.pools.insert(*pool, new_digest);
+    }
+
+    /// Estimate quantile for a pool.
+    pub fn quantile(&amp;self, pool: &amp;[u8; 20], q: f64) -&gt; Option&lt;f64&gt; {
+        self.pools.get(pool).map(|d| d.estimate_quantile(q))
+    }
+
+    /// Merge two trackers (e.g., combining Theta windows at Delta boundary).
+    pub fn merge(&amp;mut self, other: &amp;SwapDistributionTracker) {
+        for (pool, other_digest) in &amp;other.pools {
+            let entry = self
+                .pools
+                .entry(*pool)
+                .or_insert_with(|| TDigest::new_with_size(self.max_centroids));
+            let merged = TDigest::merge_digests(vec![entry.clone(), other_digest.clone()]);
+            self.pools.insert(*pool, merged);
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Recommendation:</strong> DDSketch for gas prices (heavy tail, formal bounds). t-digest for per-pool swap value distributions (empirically better at extremes, mergeable across time windows).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>DDSketch</th><th>t-digest</th></tr>
+</thead>
+<tbody>
+<tr><td>Error guarantee</td><td>Formal relative error</td><td>Empirical only</td></tr>
+<tr><td>Extreme quantile accuracy</td><td>Good</td><td>Better</td></tr>
+<tr><td>Mergeability</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Memory footprint</td><td>~2KB at alpha=0.01</td><td>~5KB at 200 centroids</td></tr>
+<tr><td>Best use case</td><td>Gas prices (heavy tail, needs formal bounds)</td><td>Swap values per pool (empirical precision, many instances)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="a6-pipeline-integration-map"><a class="header" href="#a6-pipeline-integration-map">A.6 Pipeline Integration Map</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Structure</th><th>Rust crate</th><th>Pipeline point</th><th>Update frequency</th><th>Snapshot frequency</th></tr>
+</thead>
+<tbody>
+<tr><td>CMS-CU + sliding window</td><td><code>streaming_algorithms</code> or inline (~80 lines)</td><td>bardo-triage address frequency</td><td>Every transaction at Gamma tick</td><td>Theta tick snapshot for scoring</td></tr>
+<tr><td>MIDAS-R</td><td><code>midas_rs</code> or custom (~200 lines)</td><td>bardo-triage Stage 4 anomaly</td><td>Every transaction (block-level ticks)</td><td>Gamma composite score</td></tr>
+<tr><td>DDSketch</td><td><code>sketches-ddsketch</code></td><td>bardo-witness gas tracking</td><td>Every transaction at Gamma tick</td><td>Merge at Theta, report at Delta</td></tr>
+<tr><td>t-digest</td><td><code>tdigest</code></td><td>bardo-triage swap distributions</td><td>Per-pool at Gamma tick</td><td>Merge at Delta for profiling</td></tr>
+<tr><td>Space Saving (Top-K)</td><td><code>streaming_algorithms::Top</code></td><td>bardo-triage heavy hitters</td><td>Theta-window accumulation</td><td>Top-100 per Theta cycle</td></tr>
+</tbody>
+</table>
+</div>
+<p>For time-awareness, apply exponential decay (alpha = 0.95) to CMS counters at each Gamma tick – an O(width * depth) operation. Maintain separate DDSketch instances per Theta window; merge at Delta boundaries for long-horizon distribution profiles.</p>
+<hr>
+<h2 id="appendix-b-probabilistic-filters-for-set-membership"><a class="header" href="#appendix-b-probabilistic-filters-for-set-membership">Appendix B: Probabilistic Filters for Set Membership</a></h2>
+<p>The chain intelligence pipeline performs millions of set membership queries per block. This appendix covers the Binary Fuse filter replacement for WatchBloom and Roaring Bitmaps for block gap tracking.</p>
+<h3 id="b1-binary-fuse-filters"><a class="header" href="#b1-binary-fuse-filters">B.1 Binary Fuse Filters</a></h3>
+<p>The key decision: <strong>replace <code>fastbloom</code> with <code>xorf::BinaryFuse8</code> throughout</strong>. Binary Fuse filters achieve 8.7 bits per entry – near the theoretical minimum of log2(1/epsilon) = 6.64 bits at 1% FPR. Standard Bloom filters sit at roughly 44% overhead above the theoretical minimum.</p>
+<p>The WatchBloom is rebuilt from scratch at every Gamma tick via atomic arc-swap. Immutability is not a constraint, making Binary Fuse filters the ideal choice.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>fastbloom (Bloom)</th><th>xorf::BinaryFuse8</th></tr>
+</thead>
+<tbody>
+<tr><td>Bits per entry (1% FPR)</td><td>~9.6</td><td>~8.7</td></tr>
+<tr><td>FPR at 8 bits/entry</td><td>~2.1%</td><td>~0.39%</td></tr>
+<tr><td>Query: memory accesses</td><td>k (typically 7)</td><td>3</td></tr>
+<tr><td>Query: branching</td><td>k conditional checks</td><td>0</td></tr>
+<tr><td>Construction speed</td><td>O(n * k)</td><td>O(n), ~2x faster than xor</td></tr>
+<tr><td>Mutability</td><td>Insert-only</td><td>Immutable (rebuild)</td></tr>
+</tbody>
+</table>
+</div>
+<p>The <code>logsBloom</code> field in Ethereum block headers is a fixed 2048-bit Bloom filter defined by the Yellow Paper (section 4.3). That structure cannot be changed. The WatchBloom is the Golem’s internal structure and can use any filter type.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use arc_swap::ArcSwap;
+use std::sync::Arc;
+use xorf::{BinaryFuse8, Filter};
+
+/// An interest entry from ChainScope representing an address or
+/// event topic the Golem is watching.
+pub struct InterestEntry {
+    pub address: [u8; 20],
+    pub event_topics: Vec&lt;[u8; 32]&gt;,
+}
+
+/// Build a Binary Fuse filter from the current interest set.
+pub fn build_watch_filter(entries: &amp;[InterestEntry]) -&gt; BinaryFuse8 {
+    let keys: Vec&lt;u64&gt; = entries
+        .iter()
+        .flat_map(|entry| {
+            let addr_hash = xxhash_rust::xxh3::xxh3_64(&amp;entry.address);
+            let topic_hashes = entry
+                .event_topics
+                .iter()
+                .map(|t| xxhash_rust::xxh3::xxh3_64(t));
+            std::iter::once(addr_hash).chain(topic_hashes)
+        })
+        .collect();
+
+    BinaryFuse8::try_from(&amp;keys).expect("filter construction should not fail for valid input")
+}
+
+/// Check whether a log entry might match the watch set.
+/// False positives possible (0.39% rate); false negatives are not.
+pub fn check_log(filter: &amp;BinaryFuse8, address: &amp;[u8; 20], topic: &amp;[u8; 32]) -&gt; bool {
+    let addr_key = xxhash_rust::xxh3::xxh3_64(address);
+    let topic_key = xxhash_rust::xxh3::xxh3_64(topic);
+    filter.contains(&amp;addr_key) || filter.contains(&amp;topic_key)
+}
+<span class="boring">}</span></code></pre>
+<p>The <code>ArcSwap&lt;BinaryFuse8&gt;</code> pattern: readers call <code>load()</code> for a zero-allocation non-blocking read. The writer (Gamma tick rebuild) calls <code>store(new_arc)</code> for atomic pointer replacement. Memory reclamation is automatic through Arc reference counting.</p>
+<p><strong>When to use Cuckoo filters instead:</strong> Fan et al. (2014) introduced Cuckoo filters for when deletions are needed without full rebuild. At 1% FPR: ~12.6 bits per entry – roughly 40% more space than Binary Fuse. Reserve for a future “live-update-without-full-rebuild” path.</p>
+<h3 id="b2-roaring-bitmaps-for-block-gap-tracking"><a class="header" href="#b2-roaring-bitmaps-for-block-gap-tracking">B.2 Roaring Bitmaps for Block Gap Tracking</a></h3>
+<p>Roaring Bitmaps (Chambi, Lemire, Kaser, and Godin, 2016) partition the integer space into chunks of 2^16 values, automatically selecting the most efficient representation per chunk: array (sparse), bitmap (dense), or run-length (sequential).</p>
+<p>For Ethereum’s monotonically increasing block numbers, run-length containers dominate. A contiguous range from block 18,000,000 to 22,000,000 compresses to ~8 bytes. Compare to <code>HashSet&lt;u64&gt;</code> at ~64 bytes per entry: 256 MB vs. 8 bytes.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use roaring::RoaringTreemap;
+
+/// Block gap tracker using Roaring Bitmaps.
+/// Tracks which blocks have been processed and identifies gaps.
+pub struct BlockTracker {
+    processed: RoaringTreemap,
+    head: u64,
+}
+
+impl BlockTracker {
+    pub fn new() -&gt; Self {
+        Self {
+            processed: RoaringTreemap::new(),
+            head: 0,
+        }
+    }
+
+    pub fn mark_processed(&amp;mut self, block: u64) {
+        self.processed.insert(block);
+        if block &gt; self.head {
+            self.head = block;
+        }
+    }
+
+    pub fn mark_range(&amp;mut self, start: u64, end_inclusive: u64) {
+        self.processed.insert_range(start..=end_inclusive);
+        if end_inclusive &gt; self.head {
+            self.head = end_inclusive;
+        }
+    }
+
+    pub fn is_processed(&amp;self, block: u64) -&gt; bool {
+        self.processed.contains(block)
+    }
+
+    pub fn gaps(&amp;self, start: u64) -&gt; Vec&lt;u64&gt; {
+        let mut gaps = Vec::new();
+        for block in start..=self.head {
+            if !self.processed.contains(block) {
+                gaps.push(block);
+            }
+        }
+        gaps
+    }
+
+    pub fn count(&amp;self) -&gt; u64 {
+        self.processed.len()
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Cargo dependencies:</strong></p>
+<pre><code class="language-toml">roaring = "0.10"
+</code></pre>
+<p>Set operations (union, intersection, difference) are O(n) in containers, not elements. SIMD-accelerated via portable_simd in <code>roaring-rs</code>.</p>
+<h3 id="b3-complete-filter-comparison"><a class="header" href="#b3-complete-filter-comparison">B.3 Complete Filter Comparison</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Filter type</th><th>Bits/entry (1% FPR)</th><th>Construction</th><th>Query cost</th><th>Mutability</th><th>Deletion</th><th>Best use in bardo</th></tr>
+</thead>
+<tbody>
+<tr><td>Binary Fuse 8</td><td>~8.7</td><td>O(n), fast</td><td>3 accesses, 0 branches</td><td>Immutable</td><td>Rebuild</td><td>WatchBloom (primary)</td></tr>
+<tr><td>Xor filter</td><td>~9.8</td><td>O(n), slower</td><td>3 accesses, 0 branches</td><td>Immutable</td><td>Rebuild</td><td>Legacy alternative</td></tr>
+<tr><td>Standard Bloom</td><td>~9.6</td><td>O(n*k)</td><td>k accesses, k branches</td><td>Insert-only</td><td>No</td><td>Ethereum logsBloom check</td></tr>
+<tr><td>Cuckoo filter</td><td>~12.6</td><td>O(n)</td><td>2 accesses</td><td>Insert + delete</td><td>Yes</td><td>Dynamic watchlists between rebuilds</td></tr>
+<tr><td>Counting Bloom</td><td>~38.4 (4x Bloom)</td><td>O(n*k)</td><td>k accesses</td><td>Insert + delete</td><td>Yes</td><td>Frequency counting (rare)</td></tr>
+<tr><td>Roaring Bitmap</td><td>Variable (run-length)</td><td>Incremental</td><td>O(1) contains</td><td>Full CRUD</td><td>Yes</td><td>Block gap tracking, set operations</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="b4-complete-filter-stack"><a class="header" href="#b4-complete-filter-stack">B.4 Complete Filter Stack</a></h3>
+<p>The chain intelligence pipeline uses a layered filter strategy:</p>
+<ol>
+<li>
+<p><strong>Ethereum logsBloom</strong> (protocol-level Bloom filter): First-pass filter on each block header. Reject blocks with no matching logs. Zero cost – the data is already in the block header.</p>
+</li>
+<li>
+<p><strong>WatchBloom</strong> (BinaryFuse8 via arc-swap): Second-pass filter on log entries within matching blocks. 0.39% FPR, rebuilt at each Gamma tick. Eliminates &gt;99% of irrelevant logs before any decoding.</p>
+</li>
+<li>
+<p><strong>Block tracker</strong> (RoaringTreemap): Tracks processed blocks, identifies gaps for backfill. Sub-MB memory for millions of contiguous blocks.</p>
+</li>
+<li>
+<p><strong>Address sets</strong> (RoaringBitmap): Fast set operations for interest overlap, coverage analysis, and deduplication across pipeline stages.</p>
+</li>
+</ol>
+<p>Total memory footprint for all probabilistic filters: under 500 KB at typical Golem operating scale (watching ~100 protocols with ~500 unique contracts).</p>
+<hr>
+<h2 id="appendix-b-references"><a class="header" href="#appendix-b-references">Appendix B References</a></h2>
+<ul>
+<li>Bloom, B.H. (1970). “Space/time trade-offs in hash coding with allowable errors.” <em>Communications of the ACM</em>, 13(7), 422-426.</li>
+<li>Chambi, S., Lemire, D., Kaser, O., and Godin, R. (2016). “Better bitmap performance with Roaring bitmaps.” <em>Software: Practice and Experience</em>, 46(5), 709-719.</li>
+<li>Dunning, T. and Ertl, O. (2019). “Computing Extremely Accurate Quantiles Using t-Digests.” arXiv:1902.04023.</li>
+<li>Ekle, P. and Eberle, W. (2025). “Adaptive-GraphSketch: Streaming Anomaly Detection in Dynamic Graphs.” arXiv:2509.11633.</li>
+<li>Fan, B., Andersen, D.G., Kaminsky, M., and Mitzenmacher, M. (2014). “Cuckoo Filter: Practically Better Than Bloom.” <em>CoNEXT 2014</em>.</li>
+<li>Lemire, D., Kaser, O., and Kurz, N. (2022). “Binary Fuse Filters: Fast and Smaller Than Xor Filters.” <em>Journal of Experimental Algorithmics</em>. arXiv:2201.01174.</li>
+<li>Lemire, D., Ssi-Yan-Kai, G., and Kaser, O. (2018). “Consistently faster and smaller compressed bitmaps with Roaring.” <em>Software: Practice and Experience</em>, 46(11).</li>
+<li>Metwally, A., Agrawal, D., and El Abbadi, A. (2005). “Efficient Computation of Frequent and Top-k Elements in Data Streams.” <em>ICDT 2005</em>.</li>
+<li>Shahout, R. and Mitzenmacher, M. (2024). “Learning-Based Heavy Hitters and Flow Frequency Estimation in Streams.” arXiv:2406.16270.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/14-chain/01-witness.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/14-chain/03-protocol-state.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/14-chain/01-witness.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/14-chain/03-protocol-state.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

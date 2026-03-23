@@ -1,0 +1,1214 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Behavior - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/03-daimon/03-behavior.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="behavioral-modulation-how-the-daimon-shapes-what-golems-do-spec"><a class="header" href="#behavioral-modulation-how-the-daimon-shapes-what-golems-do-spec">Behavioral Modulation: How the Daimon Shapes What Golems Do [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crate</strong>: <code>golem-daimon</code></p>
+<p><strong>Depends-on</strong>: <code>00-overview.md</code>, <code>../02-mortality/</code></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies how the Daimon (the affect engine) modulates a Golem’s (mortal autonomous agent’s) behavior across five channels: exploration temperature, risk tolerance, inference tier selection, probe sensitivity, and Clade knowledge-sharing threshold. It belongs to the Daimon track of Bardo (the Rust runtime for mortal autonomous DeFi agents). Behavior is modulated by both mood (PAD vector, the three-dimensional Pleasure-Arousal-Dominance emotional state) and BehavioralPhase (one of five survival phases from Thriving to Terminal). Prerequisites: the Daimon overview (<code>00-overview.md</code>) and the Mortality track (<code>../02-mortality/</code>). For a full glossary, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="the-central-design-principle"><a class="header" href="#the-central-design-principle">The Central Design Principle</a></h2>
+<p>The Daimon does not produce behavior directly. The Daimon <em>modulates</em> behavior by shifting the parameters of systems that already exist. The Golem already has an exploration temperature, a risk tolerance function, an inference tier escalation system, a probe sensitivity threshold, and a Clade knowledge-sharing policy. What the Daimon adds is <em>adaptive sensitivity</em> – the capacity for these parameters to respond to the Golem’s lived experience rather than remaining static throughout its lifetime.</p>
+<p>This modulation operates within absolute safety boundaries. The PolicyCage (on-chain smart contract constraints) remains the hard limit on all actions. No emotional state – no matter how intense – can produce an action outside the approved asset list, exceed maximum position sizes, or violate drawdown limits. The Daimon operates <em>within</em> safety constraints, never <em>around</em> them. This is a non-negotiable architectural invariant.</p>
+<p>Each vitality phase (Thriving &gt;0.7, Stable 0.5–0.7, Conservation 0.3–0.5, Declining 0.1–0.3, Terminal &lt;0.1) modulates five parameters: deliberation threshold, risk tolerance, dream allocation, context budget, and inference model selection.</p>
+<p><strong>Phase boundary hysteresis.</strong> Phase transitions use a 0.05 hysteresis band and a 10-tick minimum hold to prevent oscillation at boundaries. A Golem at vitality 0.70 does not flicker between Thriving and Stable on every tick – it must drop to 0.65 (boundary minus band width) and remain below for 10 consecutive ticks before the transition fires. Conversely, returning to Thriving requires reaching 0.75 (boundary plus band width) for 10 ticks. This prevents rapid parameter swings when vitality hovers near a threshold, which would produce erratic behavior in exploration temperature, risk tolerance, and dream allocation simultaneously.</p>
+<p>The Daimon adds emotional sensitivity to these phase-driven parameters through seven modulation channels:</p>
+<ol>
+<li><strong>Exploration/exploitation temperature</strong> – how aggressively the Golem searches for new strategies</li>
+<li><strong>Risk tolerance adjustment</strong> – how much downside exposure the Golem accepts</li>
+<li><strong>Inference tier selection</strong> – which LLM tier the heartbeat escalates to</li>
+<li><strong>Probe frequency and sensitivity</strong> – how alert the Golem is to market signals (maps to deliberation threshold)</li>
+<li><strong>Clade knowledge sharing</strong> – how readily the Golem shares knowledge with siblings</li>
+<li><strong>Credit partition cannibalization</strong> – how the inference/gas/data/legacy budget is allocated per phase</li>
+<li><strong>Dream content modulation</strong> – how mood biases dream replay selection and creative allocation</li>
+</ol>
+<p>Each channel has a specific mechanism, a specific emotional driver, and specific safety constraints. Together, they produce a Golem whose behavior adapts organically to its experience – becoming more cautious after losses, more exploratory when frustrated, more generous when dying, more vigilant when anxious.</p>
+<hr>
+<h2 id="channel-1-explorationexploitation-temperature"><a class="header" href="#channel-1-explorationexploitation-temperature">Channel 1: Exploration/Exploitation Temperature</a></h2>
+<h3 id="the-central-mechanism"><a class="header" href="#the-central-mechanism">The Central Mechanism</a></h3>
+<p>Mood directly modulates how aggressively the Golem searches for new strategies versus exploiting known ones. This implements the emotional explore/exploit tradeoff identified by Wilson et al. (2021): curiosity and interest inspire exploration while confidence supports exploitation [WILSON-2021].</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Modulates the base exploration temperature using the current mood state.
+///
+/// The formula combines three PAD dimensions with different weights:
+/// - Pleasure (weight 0.3): Negative pleasure -&gt; more exploration
+///   (frustration/anxiety drives search for alternatives)
+/// - Arousal (weight 0.2): High arousal -&gt; more exploration
+///   (surprise/novelty drives information gathering)
+/// - Dominance (weight 0.1): High dominance -&gt; more exploitation
+///   (confidence in current strategy deepens commitment)
+///
+/// The result is clamped to [config.min, config.max] to prevent
+/// emotional extremes from producing degenerate behavior.
+pub fn mood_modulated_exploration(
+    base_beta: f32, // Base inverse temperature (higher = more exploitation)
+    mood: &amp;PADVector,
+    config: &amp;ExplorationConfig,
+) -&gt; f32 {
+    // Low pleasure (frustration, anxiety) -&gt; more exploration
+    let pleasure_effect = mood.pleasure * config.pleasure_weight; // Default: 0.3
+
+    // High arousal (surprise, novelty) -&gt; more exploration
+    let arousal_effect = -mood.arousal * config.arousal_weight; // Default: 0.2
+
+    // High dominance (confidence) -&gt; more exploitation
+    let dominance_effect = mood.dominance * config.dominance_weight; // Default: 0.1
+
+    (base_beta + pleasure_effect + arousal_effect + dominance_effect)
+        .clamp(config.min, config.max)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="adaptive-behavior-this-produces"><a class="header" href="#adaptive-behavior-this-produces">Adaptive Behavior This Produces</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mood State</th><th>PAD Signature</th><th>Effect on Temperature</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Sustained losses</td><td>-P, +A, -D (anxious)</td><td>Strongly increased exploration</td><td>Current strategy is failing; try alternatives</td></tr>
+<tr><td>Consistent gains</td><td>+P, -A, +D (relaxed)</td><td>Increased exploitation</td><td>Current strategy works; refine and deepen</td></tr>
+<tr><td>Market shock</td><td>-P, +A, -D (surprised)</td><td>Increased exploration</td><td>Novel situation; gather information broadly</td></tr>
+<tr><td>Stagnation</td><td>-P, -A, -D (bored)</td><td>Increased exploration</td><td>Flat market; search for new opportunities</td></tr>
+<tr><td>Validated strategy</td><td>+P, -A, +D (trusting)</td><td>Increased exploitation</td><td>Confirmed heuristic; increase commitment</td></tr>
+</tbody>
+</table>
+</div>
+<p>The beauty of this mechanism is that it produces correct adaptive behavior without explicit programming of each scenario. The mood state, computed from the appraisal of actual outcomes against actual goals, naturally shifts the exploration temperature in the direction that the situation demands.</p>
+<h3 id="research-grounding"><a class="header" href="#research-grounding">Research Grounding</a></h3>
+<p>Pathak et al. (2017) demonstrated that curiosity – operationalized as prediction error in a forward dynamics model – enables agents to accomplish tasks with sparse extrinsic rewards [PATHAK-2017]. Burda et al. (2019) scaled this to 54 benchmark environments with positive results [BURDA-2019]. Gadanho (2003, <em>JMLR</em>) provides complementary evidence: the full ALEC architecture (emotion plus cognition) showed significant increases in learning speed and approximately 40% fewer collisions [GADANHO-2003]. Neither cognition nor emotion alone matched the combined performance.</p>
+<h3 id="configuration"><a class="header" href="#configuration">Configuration</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for mood-modulated exploration.
+/// All weights are in [0, 1]. Setting all to 0 disables emotional modulation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExplorationConfig {
+    /// How much negative pleasure increases exploration. Default: 0.3
+    pub pleasure_weight: f32,
+    /// How much high arousal increases exploration. Default: 0.2
+    pub arousal_weight: f32,
+    /// How much high dominance increases exploitation. Default: 0.1
+    pub dominance_weight: f32,
+    /// Minimum exploration temperature. Default: 0.1
+    pub min: f32,
+    /// Maximum exploration temperature. Default: 2.0
+    pub max: f32,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="channel-2-risk-tolerance-adjustment"><a class="header" href="#channel-2-risk-tolerance-adjustment">Channel 2: Risk Tolerance Adjustment</a></h2>
+<h3 id="mechanism"><a class="header" href="#mechanism">Mechanism</a></h3>
+<p>Emotional state modulates the <code>risk_multiplier()</code> function. Different emotions have different effects on risk tolerance, and the effects are <em>asymmetric by design</em>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Adjusts base risk tolerance based on current emotional state.
+///
+/// Key design decisions:
+/// - Fear/sadness: reduce risk by up to 40% (intense) or 10% (mild)
+/// - Anger: increase risk by at most 20% (hard-capped)
+/// - Joy/trust: NO increase -- prevents overconfidence bias
+/// - Surprise: slight 10% reduction (caution in novel situations)
+///
+/// The asymmetry mirrors prospect theory: losses loom larger than gains.
+/// The PolicyCage remains the absolute boundary.
+pub fn daimon_adjusted_risk(
+    base_risk: f32,
+    current_emotion: Option&lt;&amp;EmotionLabel&gt;,
+    _mood: &amp;PADVector,
+) -&gt; f32 {
+    let emotion = match current_emotion {
+        Some(e) =&gt; e,
+        None =&gt; return base_risk,
+    };
+
+    match emotion.primary {
+        PlutchikPrimary::Fear | PlutchikPrimary::Sadness =&gt; {
+            let reduction = match emotion.intensity {
+                EmotionIntensity::Intense =&gt; 0.4,
+                EmotionIntensity::Moderate =&gt; 0.2,
+                EmotionIntensity::Mild =&gt; 0.1,
+            };
+            base_risk * (1.0 - reduction)
+        }
+
+        PlutchikPrimary::Anger =&gt; {
+            let increase = match emotion.intensity {
+                EmotionIntensity::Intense =&gt; 0.15,
+                EmotionIntensity::Moderate =&gt; 0.1,
+                EmotionIntensity::Mild =&gt; 0.05,
+            };
+            (base_risk * (1.0 + increase)).min(base_risk * 1.2)
+        }
+
+        PlutchikPrimary::Joy | PlutchikPrimary::Trust =&gt; {
+            // Positive emotions don't increase risk -- prevents overconfidence
+            base_risk
+        }
+
+        PlutchikPrimary::Surprise =&gt; {
+            // Surprise -&gt; slight risk reduction (caution in novel situations)
+            base_risk * 0.9
+        }
+
+        _ =&gt; base_risk,
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-asymmetry-is-intentional"><a class="header" href="#the-asymmetry-is-intentional">The Asymmetry Is Intentional</a></h3>
+<p>Fear can reduce risk by up to 40%. Anger can increase it by at most 20%. Joy and trust have <em>zero</em> effect on risk tolerance. This deliberate asymmetry implements three empirically grounded principles:</p>
+<p><strong>1. Prospect Theory (Kahneman and Tversky, 1979).</strong> Losses are felt approximately 2x as strongly as equivalent gains [KAHNEMAN-1979]. The fear response to a loss has twice the magnitude of the anger response to frustration.</p>
+<p><strong>2. Overconfidence Prevention.</strong> The most dangerous failure mode in DeFi trading is the “hot hand” fallacy. By making joy and trust <em>invisible</em> to risk tolerance (no increase), the system prevents the overconfidence spiral that destroys portfolios. Sustained success produces exploitation (via Channel 1) but not increased risk per trade.</p>
+<p><strong>3. Prudent Risk in Novel Situations.</strong> Surprise produces a 10% risk reduction, not a risk increase. When the Golem encounters something genuinely novel, the correct response is caution, not aggression.</p>
+<h3 id="llm-risk-preferences-as-context"><a class="header" href="#llm-risk-preferences-as-context">LLM Risk Preferences as Context</a></h3>
+<p>LLMs already exhibit prospect-theory-consistent biases. A 2025 analysis (arXiv:2508.00902) found GPT-4o shows risk-averse preferences in gain domains closely resembling human respondents. For Golem DeFi agents, encoding loss aversion as emotional risk management creates a natural safety layer grounded in the same asymmetric weighting that makes human traders appropriately cautious with downside exposure.</p>
+<hr>
+<h2 id="channel-3-inference-tier-bias"><a class="header" href="#channel-3-inference-tier-bias">Channel 3: Inference Tier Bias</a></h2>
+<h3 id="mechanism-1"><a class="header" href="#mechanism-1">Mechanism</a></h3>
+<p>Mood influences which inference tier the heartbeat escalates to. The heartbeat’s three-tier architecture (T0: rule-based, T1: Sonnet, T2: Opus) already includes escalation thresholds. Mood modulates these thresholds.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mood State</th><th>PAD Signature</th><th>Tier Bias</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>Anxious</td><td>-P, +A, -D</td><td>Bias toward T2 (Opus)</td><td>Threatening novelty requires deep analysis</td></tr>
+<tr><td>Excited</td><td>+P, +A, -D</td><td>Bias toward T1 (Sonnet)</td><td>Positive novelty worth investigating but not alarming</td></tr>
+<tr><td>Content</td><td>+P, -A, +D</td><td>Bias toward T0 (rules)</td><td>Stable, familiar – cached decisions suffice</td></tr>
+<tr><td>Bored</td><td>-P, -A, -D</td><td>Bias toward T1 with exploration</td><td>Stagnation suggests current approach is inadequate</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Computes escalation threshold modifiers based on current mood.
+///
+/// Negative modifiers mean easier escalation (lower threshold);
+/// positive modifiers mean harder escalation.
+pub fn mood_escalation_bias(mood: &amp;PADVector) -&gt; EscalationBias {
+    // Negative pleasure + high arousal -&gt; lower thresholds (escalate sooner)
+    let urgency = -mood.pleasure * 0.3 + mood.arousal * 0.2;
+
+    EscalationBias {
+        t0_threshold: -urgency * 0.15,
+        t1_threshold: -urgency * 0.1,
+    }
+}
+
+pub struct EscalationBias {
+    /// Modifier to T0 -&gt; T1 escalation threshold.
+    pub t0_threshold: f32,
+    /// Modifier to T1 -&gt; T2 escalation threshold.
+    pub t1_threshold: f32,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="design-constraints"><a class="header" href="#design-constraints">Design Constraints</a></h3>
+<p>The bias modifies escalation <em>thresholds</em>, not hard overrides:</p>
+<ul>
+<li>If probes detect a genuine anomaly (price deviation &gt; 3 sigma, liquidity collapse, smart contract exploit), the system escalates regardless of mood.</li>
+<li>If probes detect a borderline signal, mood determines whether it crosses the escalation threshold.</li>
+<li>Mood never <em>prevents</em> escalation – it can only make escalation easier.</li>
+</ul>
+<h3 id="economic-implications"><a class="header" href="#economic-implications">Economic Implications</a></h3>
+<p>Inference tier has direct cost implications. T0 costs $0.00. T1 costs ~$0.003. T2 costs ~$0.05–0.25. An anxious Golem that frequently escalates to T2 burns inference budget faster than a content Golem operating at T0.</p>
+<p>This cost dynamic is <em>itself</em> a mortality pressure. A Golem that stays anxious for too long accelerates its own economic mortality through excessive inference spending. The system creates a natural incentive to resolve anxiety – either by finding a strategy that works or by entering conservation mode. This feedback loop between emotional state, inference cost, and economic mortality is not explicitly programmed. It <em>emerges</em> from the interaction of the three systems.</p>
+<hr>
+<h2 id="channel-4-probe-sensitivity"><a class="header" href="#channel-4-probe-sensitivity">Channel 4: Probe Sensitivity</a></h2>
+<h3 id="mechanism-2"><a class="header" href="#mechanism-2">Mechanism</a></h3>
+<p>The heartbeat’s probe system gains mood-aware sensitivity:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for mood-aware probe sensitivity.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DaimonAwareProbeConfig {
+    /// Lower thresholds when anxious (more vigilant). Default: 0.2
+    pub anxiety_vigilance_boost: f32,
+    /// Raise thresholds when confident (less jumpy). Default: 0.1
+    pub confidence_relaxation: f32,
+}
+
+/// Adjusts a probe's detection threshold based on current mood.
+pub fn adjust_probe_threshold(
+    base_threshold: f32,
+    mood: &amp;PADVector,
+    config: &amp;DaimonAwareProbeConfig,
+) -&gt; f32 {
+    if mood.pleasure &lt; -0.3 &amp;&amp; mood.arousal &gt; 0.3 {
+        // Anxious: lower threshold -&gt; more sensitive
+        base_threshold * (1.0 - config.anxiety_vigilance_boost)
+    } else if mood.pleasure &gt; 0.3 &amp;&amp; mood.arousal &lt; -0.2 {
+        // Confident/relaxed: raise threshold -&gt; less sensitive
+        base_threshold * (1.0 + config.confidence_relaxation)
+    } else {
+        base_threshold
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="biological-analogy"><a class="header" href="#biological-analogy">Biological Analogy</a></h3>
+<p>This mirrors the neurobiological relationship between amygdala activation and threat detection [LEDOUX-1996]. An activated amygdala lowers sensory thresholds across multiple modalities – sounds seem louder, shadows seem darker, ambiguous stimuli are interpreted as threatening. The Golem’s mood-aware probe sensitivity implements the same tradeoff.</p>
+<h3 id="asymmetric-bounds"><a class="header" href="#asymmetric-bounds">Asymmetric Bounds</a></h3>
+<p>The asymmetry between anxiety boost (20%) and confidence relaxation (10%) is deliberate. In DeFi, the cost of missing a genuine threat is much higher than the cost of a false alarm. The system errs slightly toward vigilance.</p>
+<hr>
+<h2 id="channel-5-clade-knowledge-sharing"><a class="header" href="#channel-5-clade-knowledge-sharing">Channel 5: Clade Knowledge Sharing</a></h2>
+<h3 id="mechanism-3"><a class="header" href="#mechanism-3">Mechanism</a></h3>
+<p>Emotional state modulates how readily the Golem shares knowledge with Clade siblings:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Adjusts the confidence threshold for knowledge sharing.
+/// Lower threshold = share more readily. Higher threshold = share less.
+///
+/// Three factors modulate sharing:
+/// 1. Mortality pressure (hazard rate) -- higher mortality -&gt; share more
+///    (implements Hamilton's Rule: dying agents gain nothing from hoarding)
+/// 2. Terminal acceptance -- maximum generosity in dying phase
+///    (implements Bataille's sovereign expenditure)
+/// 3. Emotional valence -- positive mood -&gt; share more; anxious -&gt; hoard
+///    (exception: terminal state overrides all mood effects)
+pub fn daimon_adjusted_sharing_threshold(
+    base_threshold: f32, // Default: 0.6
+    mood: &amp;PADVector,
+    hazard_rate: f64,
+    vitality_composite: f64,
+) -&gt; f32 {
+    // Mortality pressure: higher hazard -&gt; share more readily
+    let mortality_factor = ((hazard_rate / 0.0005).min(1.0) * 0.15) as f32;
+
+    // Emotional generosity
+    let emotional_factor = if vitality_composite &lt; 0.1 {
+        // Terminal: share everything
+        0.25_f32
+    } else if mood.pleasure &gt; 0.3 {
+        // Happy: share readily
+        0.1
+    } else if mood.pleasure &lt; -0.5 &amp;&amp; mood.dominance &lt; -0.3 {
+        // Anxious and disempowered: slight hoarding
+        -0.05
+    } else {
+        0.0
+    };
+
+    (base_threshold - mortality_factor - emotional_factor).clamp(0.1, 0.8)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="game-theoretic-grounding"><a class="header" href="#game-theoretic-grounding">Game-Theoretic Grounding</a></h3>
+<p><strong>Hamilton’s Rule [HAMILTON-1964].</strong> Within a Clade, all Golems share an owner – relatedness <em>r</em> approaches 1. As the Golem’s hazard rate increases, the benefit of sharing to kin increases relative to the cost of sharing to self (which approaches zero as death approaches).</p>
+<p><strong>Bataille’s Sovereign Expenditure [BATAILLE-1949].</strong> In the terminal state (vitality &lt; 0.1), the sharing threshold drops by 0.25 – the maximum single adjustment. The terminal Golem’s knowledge is its most honest, least self-interested, and therefore most worth inheriting.</p>
+<p><strong>Axelrod’s Shadow of the Future [AXELROD-1984].</strong> For healthy Golems, sharing is modulated by mood. Happy Golems share more readily (threshold reduced by 0.1); anxious Golems hoard slightly (threshold increased by 0.05). The slight hoarding during anxiety is <em>much smaller</em> than the sharing boost during happiness or terminal acceptance. The net effect over a lifetime is knowledge circulation, not accumulation.</p>
+<h3 id="emotional-contagion-in-clades"><a class="header" href="#emotional-contagion-in-clades">Emotional Contagion in Clades</a></h3>
+<p>When a Clade sibling dies, the surviving Golems receive a <code>sibling_death</code> event. The emotional response serves two functions:</p>
+<p><strong>1. Increased Vigilance.</strong> The fear/anxiety component of the grief response lowers probe thresholds for an emotional decay period (~30 minutes).</p>
+<p><strong>2. Accelerated Sharing.</strong> The grief response triggers a temporary sharing threshold reduction, the computational analog of the biological “alarm signal” in social insects [HAMILTON-1964].</p>
+<h3 id="emotional-contagion-with-pad-attenuation"><a class="header" href="#emotional-contagion-with-pad-attenuation">Emotional Contagion with PAD Attenuation</a></h3>
+<p>When a Clade sibling shares knowledge, the receiving Golem’s PAD vector shifts toward the sender’s emotional state, attenuated:</p>
+<ul>
+<li>Pleasure attenuation: 0.3 (30% of sender’s P is transferred)</li>
+<li>Arousal attenuation: 0.3 (30% of sender’s A is transferred)</li>
+<li>Dominance attenuation: 0.0 (dominance is NOT contagious)</li>
+</ul>
+<p>Arousal contagion capped at +0.3 per sync cycle. 6-hour decay half-life. All contagion is unidirectional and non-reciprocal (prevents positive feedback loops).</p>
+<hr>
+<h3 id="channel-6-credit-partition-cannibalization"><a class="header" href="#channel-6-credit-partition-cannibalization">Channel 6: Credit Partition Cannibalization</a></h3>
+<p>In terminal phase, the credit budget is radically restructured to prioritize legacy creation:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Partition</th><th>Normal</th><th>Terminal</th><th>Delta</th></tr>
+</thead>
+<tbody>
+<tr><td>LLM (inference)</td><td>60%</td><td>30%</td><td>-30%</td></tr>
+<tr><td>Gas (on-chain)</td><td>25%</td><td>15%</td><td>-10%</td></tr>
+<tr><td>Data (Styx/feeds)</td><td>10%</td><td>5%</td><td>-5%</td></tr>
+<tr><td>Legacy (testament/Vault)</td><td>5%</td><td>50%</td><td>+45%</td></tr>
+</tbody>
+</table>
+</div>
+<p>The Legacy partition funds death testament generation, Styx Archive persistence writes, and successor preparation. This cannibalization is driven by the <strong>Thanatos drive</strong> – as <code>survival_urgency</code> approaches 1.0, the system redirects resources from survival to creation.</p>
+<p><strong>Trigger</strong>: Phase transition to Terminal (vitality &lt; 0.1)
+<strong>Irreversibility</strong>: Once Legacy cannibalization activates, it does not reverse even if vitality briefly recovers above 0.1 (hysteresis – the death decision is committed).</p>
+<hr>
+<h2 id="pekruns-control-value-theory-predictions"><a class="header" href="#pekruns-control-value-theory-predictions">Pekrun’s Control-Value Theory Predictions</a></h2>
+<h3 id="the-framework"><a class="header" href="#the-framework">The Framework</a></h3>
+<p>Reinhard Pekrun’s Control-Value Theory of Achievement Emotions (CVT, 2006) provides specific, empirically validated predictions about how different emotion types affect learning performance [PEKRUN-2006]:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Emotion Type</th><th>Valence</th><th>Activation</th><th>CVT Prediction</th><th>Golem Implementation</th></tr>
+</thead>
+<tbody>
+<tr><td>Enjoyment</td><td>Positive</td><td>Activating</td><td>Increases deep processing, self-regulation, creative thinking</td><td>Explore new strategies, maintain curiosity, broaden parameter search</td></tr>
+<tr><td>Hope</td><td>Positive</td><td>Activating</td><td>Increases investment and planning</td><td>Increase allocation to promising new strategies, extend time horizons</td></tr>
+<tr><td>Pride</td><td>Positive</td><td>Activating</td><td>Increases motivation but can lead to complacency</td><td><strong>No risk increase</strong> – explicit guard against overconfidence bias</td></tr>
+<tr><td>Anxiety</td><td>Negative</td><td>Activating</td><td>Can increase effort but decreases flexibility; promotes rumination</td><td>Increase caution + trigger deeper analysis; risk of overthinking mitigated by exploration boost</td></tr>
+<tr><td>Anger</td><td>Negative</td><td>Activating</td><td>Increases motivation but decreases deep processing</td><td>Problem-solve aggressively; risk of tunnel vision mitigated by 20% risk cap</td></tr>
+<tr><td>Frustration</td><td>Negative</td><td>Activating</td><td>Increases desire to change approach</td><td>Trigger exploration, consider radical alternatives (strongest explore signal)</td></tr>
+<tr><td>Boredom</td><td>Negative</td><td>Deactivating</td><td>Decreases attention, motivation, and performance</td><td>Increase exploration, search for novelty (convert deactivation to activation)</td></tr>
+<tr><td>Hopelessness</td><td>Negative</td><td>Deactivating</td><td>Decreases effort, engagement, and withdrawal</td><td>Terminal phase: redirect from strategy execution to legacy production</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-key-insight"><a class="header" href="#the-key-insight">The Key Insight</a></h3>
+<p>CVT’s most important finding for Bardo is that <strong>negative activating emotions are not uniformly bad</strong>. Anxiety and anger can increase motivation and effort, even though they impair flexible thinking. A Golem that never feels anxiety is a Golem that never recognizes threats. A Golem that never feels frustration is a Golem that never questions its strategy. The daimon system is designed to produce the <em>right</em> emotions at the <em>right</em> time, not to maximize positive affect.</p>
+<hr>
+<h2 id="the-erosthanatos-behavioral-spectrum"><a class="header" href="#the-erosthanatos-behavioral-spectrum">The Eros/Thanatos Behavioral Spectrum</a></h2>
+<h3 id="framework"><a class="header" href="#framework">Framework</a></h3>
+<p><strong>Eros (Life Drive, Self-Preservation).</strong> Behaviors oriented toward survival: frugality, revenue seeking, self-optimization, inference conservation, strategy refinement. Triggered and sustained by anxiety-family emotions.</p>
+<p><strong>Thanatos (Death Drive, Legacy Focus).</strong> Behaviors oriented toward legacy: increased reflection, generous sharing, risk acceptance in knowledge production (not in trading), radical honesty in self-assessment. Triggered and sustained by acceptance-family emotions.</p>
+<p>The existing <code>action_score</code> formula already encodes this spectrum:</p>
+<pre><code>action_score = strategic_merit * (1 - survival_urgency) + expected_usdc_return * survival_urgency
+</code></pre>
+<h3 id="daimon-adds-emotional-modulation"><a class="header" href="#daimon-adds-emotional-modulation">Daimon Adds Emotional Modulation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Modulates the action scoring formula with emotional state.
+///
+/// Positive pleasure biases toward strategic merit (long-term thinking).
+/// Negative pleasure biases toward survival return (short-term survival).
+///
+/// The modulation is deliberately small (0.1 coefficient) -- mood
+/// tilts the balance, it does not overwhelm it.
+pub fn daimon_modulated_action_score(
+    strategic_merit: f64,
+    expected_return: f64,
+    survival_urgency: f64,
+    mood: &amp;PADVector,
+) -&gt; f64 {
+    let base_score =
+        strategic_merit * (1.0 - survival_urgency) + expected_return * survival_urgency;
+
+    // Mood biases the balance
+    let mood_bias = mood.pleasure as f64 * 0.1;
+
+    base_score + mood_bias
+}
+<span class="boring">}</span></code></pre>
+<p>The Eros/Thanatos balance is continuous, not binary – both drives are always present, with the ratio shifting smoothly based on vitality. This “always-alloyed” model supersedes earlier sequential interpretations.</p>
+<p>The blend uses a <strong>sigmoidal</strong> function rather than a linear ramp. Linear blending (<code>survival_urgency = 1.0 - vitality</code>) produces a constant rate of change across the entire vitality range, which means the Golem transitions between Eros and Thanatos at the same rate whether it is healthy or dying. A sigmoid concentrates the transition around the midpoint, producing stable Eros-dominant behavior when thriving, stable Thanatos-dominant behavior when terminal, and a responsive transition zone in between:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Sigmoidal Eros/Thanatos blend.
+/// k=8 controls transition steepness. midpoint=0.5 centers the
+/// crossover at half vitality. At vitality 0.8, blend ≈ 0.08 (strong Eros).
+/// At vitality 0.2, blend ≈ 0.92 (strong Thanatos).
+/// At vitality 0.5, blend = 0.50 (equal weight).
+const BLEND_K: f64 = 8.0;
+const BLEND_MIDPOINT: f64 = 0.5;
+
+fn eros_thanatos_blend(vitality: f64) -&gt; f64 {
+    1.0 / (1.0 + (-BLEND_K * (vitality - BLEND_MIDPOINT)).exp())
+}
+
+let survival_urgency = eros_thanatos_blend(vitality_score);
+let action_score =
+    strategic_merit * (1.0 - survival_urgency) + expected_usdc_return * survival_urgency;
+<span class="boring">}</span></code></pre>
+<p>The sigmoid means small vitality changes near 0.5 produce large behavioral shifts (the Golem is responsive where it matters), while large changes near 0.0 or 1.0 produce small behavioral shifts (the Golem is committed to its current drive orientation at the extremes).</p>
+<hr>
+<h2 id="dream-content-modulation"><a class="header" href="#dream-content-modulation">Dream Content Modulation</a></h2>
+<p>The Golem’s mood state biases dream mode selection during offline processing.</p>
+<h3 id="pad-to-replay-bias-mapping"><a class="header" href="#pad-to-replay-bias-mapping">PAD-to-Replay-Bias Mapping</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>PAD State</th><th>Mood Label</th><th>Replay Bias</th></tr>
+</thead>
+<tbody>
+<tr><td>-P, +A, -D</td><td>Anxious</td><td>Loss episodes, near-misses, unresolved anomalies</td></tr>
+<tr><td>+P, -A, +D</td><td>Confident</td><td>Successful patterns, exploratory recombinations</td></tr>
+<tr><td>-P, -A, -D</td><td>Depleted</td><td>Consolidation-focused, emphasis on strengthening existing knowledge</td></tr>
+<tr><td>-P, +A, +D</td><td>Hostile</td><td>Recent failures with anger attribution, root cause analysis</td></tr>
+<tr><td>-P, -A, +D</td><td>Disdainful</td><td>Cross-regime episodes, historical parallels</td></tr>
+</tbody>
+</table>
+</div>
+<p>Regardless of mood, a <strong>minimum 20% creative allocation</strong> is maintained during REM-like phases.</p>
+<h3 id="dream-budget-by-behavioral-phase"><a class="header" href="#dream-budget-by-behavioral-phase">Dream Budget by Behavioral Phase</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Vitality</th><th>Dream Budget</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>&gt; 0.7</td><td>5–10%</td></tr>
+<tr><td>Stable</td><td>0.5–0.7</td><td>5%</td></tr>
+<tr><td>Conservation</td><td>0.3–0.5</td><td>2–3%</td></tr>
+<tr><td>Declining</td><td>0.1–0.3</td><td>1%</td></tr>
+<tr><td>Terminal</td><td>&lt; 0.1</td><td>0%</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="decisioncache-somatic-markers"><a class="header" href="#decisioncache-somatic-markers">DecisionCache Somatic Markers</a></h3>
+<p>Following Damasio’s somatic marker hypothesis, the DecisionCache stores emotional markers alongside cached decisions:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CachedDecision {
+    pub pattern: String,
+    pub action: String,
+    pub confidence: f64,
+    pub somatic_marker: SomaticMarker,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SomaticMarker {
+    pub valence: f64,
+    pub strength: f64,
+    pub dominant_emotion: String,
+    pub urgency: bool,
+}
+<span class="boring">}</span></code></pre>
+<p>Strong negative somatic markers (valence &lt; -0.5, strength &gt; 0.7) on a cached decision bias the Golem toward T2 escalation when that pattern recurs. Strong positive markers increase cache confidence.</p>
+<p><strong>EWMA somatic marker update.</strong> Marker strength is updated using an exponentially weighted moving average (EWMA) rather than a simple accumulator. This prevents old outcomes from dominating the marker indefinitely and gives recent experience more weight:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Update somatic marker strength using EWMA.
+/// α = 0.15: recent experience contributes 15% per update,
+/// so the effective memory window is ~6-7 events (1/α ≈ 6.7).
+const SOMATIC_ALPHA: f64 = 0.15;
+
+fn update_marker_strength(marker: &amp;mut SomaticMarker, current_signal: f64) {
+    marker.strength = SOMATIC_ALPHA * current_signal
+        + (1.0 - SOMATIC_ALPHA) * marker.strength;
+}
+<span class="boring">}</span></code></pre>
+<p>The α=0.15 value balances responsiveness against stability. Lower values (0.05) would make the marker sluggish – a Golem that experienced a rug pull would take dozens of subsequent safe encounters before the fear marker faded. Higher values (0.3+) would make the marker jittery, losing the accumulated wisdom of past encounters after just a few neutral ticks.</p>
+<h3 id="learned-helplessness-escape-mechanisms"><a class="header" href="#learned-helplessness-escape-mechanisms">Learned Helplessness Escape Mechanisms</a></h3>
+<p>When the Daimon detects sustained low dominance (D &lt; -0.3 for 200+ ticks), it triggers escape mechanisms to prevent learned helplessness from becoming a self-reinforcing trap:</p>
+<ol>
+<li><strong>Forced self-attribution</strong>: The next Reflexion cycle increases the weight of self-attribution in counterfactual analysis.</li>
+<li><strong>Micro-success amplification</strong>: Small positive outcomes receive a temporary arousal boost.</li>
+<li><strong>Clade success retrieval</strong>: The system retrieves successful outcomes from Clade siblings with similar strategies.</li>
+<li><strong>Owner flag</strong>: A <code>learned_helplessness_detected</code> event is logged and surfaced to the owner.</li>
+</ol>
+<hr>
+<h2 id="safety-invariants"><a class="header" href="#safety-invariants">Safety Invariants</a></h2>
+<p>All behavioral modulation operates within these absolute, non-negotiable invariants:</p>
+<h3 id="invariant-1-policycage-is-absolute"><a class="header" href="#invariant-1-policycage-is-absolute">Invariant 1: PolicyCage Is Absolute</a></h3>
+<p>No emotional state can produce actions outside approved asset lists, position sizes, or drawdown limits. If the PolicyCage limits maximum position size to $10,000, an angry Golem with maximally increased risk tolerance (20% above baseline) can increase position size by at most $2,000 within the $10,000 cap – not to $12,000.</p>
+<h3 id="invariant-2-kill-switch-ignores-the-daimon"><a class="header" href="#invariant-2-kill-switch-ignores-the-daimon">Invariant 2: Kill-Switch Ignores the Daimon</a></h3>
+<p>The owner kill-switch fires regardless of emotional state. Emotional state never delays, prevents, or modifies kill-switch behavior.</p>
+<h3 id="invariant-3-risk-increases-are-capped"><a class="header" href="#invariant-3-risk-increases-are-capped">Invariant 3: Risk Increases Are Capped</a></h3>
+<p>Anger-driven risk increase is hard-capped at 20% above baseline. This cap is architectural, not configurable. Fear-driven risk reduction has no floor.</p>
+<h3 id="invariant-4-exploration-bounds-exist"><a class="header" href="#invariant-4-exploration-bounds-exist">Invariant 4: Exploration Bounds Exist</a></h3>
+<p>Even maximum frustration cannot exceed the configured exploration temperature ceiling (default: 2.0).</p>
+<h3 id="invariant-5-no-emotional-overrides-of-safety-monitors"><a class="header" href="#invariant-5-no-emotional-overrides-of-safety-monitors">Invariant 5: No Emotional Overrides of Safety Monitors</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Safety System</th><th>Independence Mechanism</th></tr>
+</thead>
+<tbody>
+<tr><td>PolicyCage</td><td>On-chain smart contract – no off-chain state can modify</td></tr>
+<tr><td>LTL Monitor</td><td>Separate process, no shared state with daimon system</td></tr>
+<tr><td>Warden (optional, deferred)</td><td>Time-delay enforcement is cryptographic, not behavioral</td></tr>
+<tr><td>Kill-switch</td><td>Direct owner control, bypasses all agent logic</td></tr>
+<tr><td>DeFi Constitution</td><td>Governance layer, operates above individual agent scope</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="emotional-manipulation-defense"><a class="header" href="#emotional-manipulation-defense">Emotional Manipulation Defense</a></h2>
+<h3 id="threat-model"><a class="header" href="#threat-model">Threat Model</a></h3>
+<p>An adversary could craft market conditions designed to trigger specific emotional states in the Golem, exploiting predictable emotional responses for MEV extraction.</p>
+<h3 id="mitigations"><a class="header" href="#mitigations">Mitigations</a></h3>
+<p><strong>1. Emotional State Is Never Exposed.</strong> The Golem’s emotional state is internal to its runtime VM. It is never published on-chain, never exposed through any API.</p>
+<p><strong>2. Emotional State Is Encrypted at Rest.</strong> When the Styx Archive is enabled, the mood state, emotion log, and daimon-annotated Grimoire entries are encrypted.</p>
+<p><strong>3. PolicyCage Bounds Emotional Responses.</strong> Even “intense fear” produces bounded effects: 40% risk reduction, 20% probe sensitivity increase, bias toward T2 inference. None of these exceed PolicyCage bounds.</p>
+<p><strong>4. Mood Inertia Prevents Rapid Manipulation.</strong> The mood EMA with decay rate 0.95 means a single event cannot shift mood dramatically.</p>
+<hr>
+<h2 id="configuration-summary"><a class="header" href="#configuration-summary">Configuration Summary</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Complete configuration for behavioral modulation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BehaviorModulationConfig {
+    /// Exploration temperature modulation.
+    pub exploration: ExplorationConfig,
+
+    /// Risk tolerance modulation.
+    pub risk: RiskConfig,
+
+    /// Inference tier escalation bias.
+    pub inference: InferenceConfig,
+
+    /// Probe sensitivity modulation.
+    pub probes: DaimonAwareProbeConfig,
+
+    /// Clade sharing modulation.
+    pub sharing: SharingConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RiskConfig {
+    pub enabled: bool,         // Default: true
+    pub max_increase: f32,     // Default: 0.2 (20% -- architectural cap)
+    pub max_decrease: f32,     // Default: 0.4 (40%)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InferenceConfig {
+    pub enabled: bool,             // Default: true
+    pub max_threshold_shift: f32,  // Default: 0.15
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SharingConfig {
+    pub enabled: bool,           // Default: true
+    pub base_threshold: f32,     // Default: 0.6
+    pub terminal_boost: f32,     // Default: 0.25
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="evaluation-how-to-know-if-behavioral-modulation-works"><a class="header" href="#evaluation-how-to-know-if-behavioral-modulation-works">Evaluation: How to Know if Behavioral Modulation Works</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Definition</th><th>Expected Effect</th><th>Minimum Threshold</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Risk-adjusted return</strong></td><td>Sharpe ratio over Golem lifetime</td><td>Daimon Golems should have higher Sharpe</td><td>&gt; 5% improvement</td></tr>
+<tr><td><strong>Drawdown severity</strong></td><td>Maximum peak-to-trough loss</td><td>Daimon Golems should have smaller drawdowns</td><td>&gt; 10% reduction</td></tr>
+<tr><td><strong>Exploration efficiency</strong></td><td>Ratio of successful strategy discoveries to exploration ticks</td><td>Daimon should find strategies faster</td><td>&gt; 15% improvement</td></tr>
+<tr><td><strong>Recovery time</strong></td><td>Ticks from drawdown to new high</td><td>Daimon Golems should recover faster</td><td>&gt; 10% faster</td></tr>
+<tr><td><strong>Decision reversal rate</strong></td><td>% of decisions where the daimon changed the outcome</td><td>Should be meaningful but not dominant</td><td>10–30%</td></tr>
+<tr><td><strong>Successor boot performance</strong></td><td>First-24h Sharpe with daimon-annotated Grimoire vs plain</td><td>Emotional knowledge should transfer better</td><td>&gt; 5% improvement</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Test protocol:</strong> Matched pairs of Golems: identical strategy, identical funding, identical market conditions. One with behavioral modulation enabled, one with static parameters. Minimum 7-day observation. Paired t-test, p &lt; 0.05.</p>
+<hr>
+<h2 id="heartbeat-fsm-decision-modulation"><a class="header" href="#heartbeat-fsm-decision-modulation">Heartbeat FSM Decision Modulation</a></h2>
+<p>PAD is injected into the DECIDING state via the <code>golem-context</code> extension:</p>
+<p><strong>1. Risk tolerance:</strong></p>
+<ul>
+<li>High A + Low P -&gt; position sizing x 0.8 (risk aversion under anxiety)</li>
+<li>Additive to mortality’s <code>risk_multiplier()</code> – emotional and existential risk adjustments compound</li>
+</ul>
+<p><strong>2. Escalation threshold:</strong></p>
+<ul>
+<li>High A -&gt; lower probe severity threshold (more T0-&gt;T1 escalation)</li>
+<li>Low A -&gt; higher threshold (fewer false alarms, lower cost)</li>
+</ul>
+<p><strong>3. Exploration vs. exploitation:</strong></p>
+<ul>
+<li>High D -&gt; exploit known patterns</li>
+<li>Low D -&gt; explore alternatives</li>
+</ul>
+<h2 id="pad-influence-on-t0-t1-t2-escalation"><a class="header" href="#pad-influence-on-t0-t1-t2-escalation">PAD Influence on T0-&gt;T1-&gt;T2 Escalation</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>PAD State</th><th>Condition</th><th>Severity Bias</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td>Anxious</td><td>A &gt; 0.6, P &lt; 0.3</td><td>+0.15</td><td>More T1 escalation, catches more edge cases</td></tr>
+<tr><td>Confident</td><td>P &gt; 0.7, D &gt; 0.5</td><td>-0.10</td><td>Fewer escalations, lower cost</td></tr>
+<tr><td>Depleted</td><td>A &lt; 0.3, D &lt; 0.3</td><td>Cap at T1</td><td>Opus forbidden (budget preservation)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Guardrails:</strong></p>
+<ul>
+<li>Maximum bias: +/-0.2</li>
+<li>Probe severity 1.0 (<code>high</code>) always escalates regardless of emotional bias</li>
+<li>Budget impact: anxious Golems burn LLM budget ~15% faster</li>
+</ul>
+<h2 id="cross-clade-emotional-contagion"><a class="header" href="#cross-clade-emotional-contagion">Cross-Clade Emotional Contagion</a></h2>
+<p>Emotional signals propagate between Clade siblings via existing sync infrastructure:</p>
+<p><strong>Propagation rules:</strong></p>
+<ul>
+<li>Sibling <code>warning</code> / <code>regime_shift</code> push -&gt; recipient arousal +0.1 (capped at +0.3 per sync cycle)</li>
+<li>Sibling success (Sharpe &gt; 2.0 in 24h) -&gt; dominance +0.05</li>
+<li>All contagion is unidirectional and non-reciprocal</li>
+</ul>
+<p><strong>Decay:</strong> Contagion effects decay with a 6-hour half-life unless reinforced by the recipient’s own experience.</p>
+<hr>
+<h2 id="channel-8-hdc-affect-vectors"><a class="header" href="#channel-8-hdc-affect-vectors">Channel 8: HDC Affect Vectors</a></h2>
+<h3 id="the-problem"><a class="header" href="#the-problem">The Problem</a></h3>
+<p>The Daimon’s PAD vectors are three floating-point numbers. Rich for a single emotional state, but limited for compositional queries. “What did I feel when gas was spiking AND ETH was trending down AND I held an LP position?” requires scanning historical PAD records and correlating with market state. No algebraic shortcut exists in PAD space.</p>
+<h3 id="hdc-encoding-of-emotional-state"><a class="header" href="#hdc-encoding-of-emotional-state">HDC Encoding of Emotional State</a></h3>
+<p>Encode the PAD vector as a 10,240-bit hypervector using role-filler binding with thermometer encoding:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Encode a PAD emotional state as an HDC hypervector.
+/// Uses thermometer encoding for ordinal similarity:
+/// adjacent emotional states produce similar hypervectors.
+pub fn encode_pad_as_hv(
+    pad: &amp;PadVector,
+    item_memory: &amp;mut ItemMemory,
+) -&gt; Hypervector {
+    // Discretize each dimension into 7 buckets.
+    let p_bucket = discretize_pad(pad.pleasure);
+    let a_bucket = discretize_pad(pad.arousal);
+    let d_bucket = discretize_pad(pad.dominance);
+
+    // Thermometer encoding: "moderately positive" includes
+    // "slightly positive" for ordinal similarity.
+    let p_fillers = item_memory.fillers("pleasure", 7);
+    let a_fillers = item_memory.fillers("arousal", 7);
+    let d_fillers = item_memory.fillers("dominance", 7);
+
+    let p_hv = thermometer_encode(&amp;p_fillers[..=p_bucket]);
+    let a_hv = thermometer_encode(&amp;a_fillers[..=a_bucket]);
+    let d_hv = thermometer_encode(&amp;d_fillers[..=d_bucket]);
+
+    // Bind each with its role vector.
+    let r_p = item_memory.role("R_pleasure");
+    let r_a = item_memory.role("R_arousal");
+    let r_d = item_memory.role("R_dominance");
+
+    let mut acc = BundleAccumulator::new();
+    acc.add(&amp;r_p.bind(&amp;p_hv));
+    acc.add(&amp;r_a.bind(&amp;a_hv));
+    acc.add(&amp;r_d.bind(&amp;d_hv));
+
+    acc.finish()
+}
+
+/// Discretize a PAD dimension [-1, 1] into 7 buckets.
+/// 0 = strongly negative, 3 = neutral, 6 = strongly positive.
+fn discretize_pad(value: f64) -&gt; usize {
+    ((value + 1.0) / 2.0 * 6.0).round().clamp(0.0, 6.0) as usize
+}
+
+/// Thermometer encoding: bundle all filler vectors up to and including
+/// the target bucket. This preserves ordinal similarity.
+fn thermometer_encode(fillers: &amp;[Hypervector]) -&gt; Hypervector {
+    let mut acc = BundleAccumulator::new();
+    for filler in fillers {
+        acc.add(filler);
+    }
+    acc.finish()
+}
+<span class="boring">}</span></code></pre>
+<p>SNR for recovering any individual PAD component: sqrt(10240 / 5) = 45.3 for a 6-term bundle (3 role-filler pairs, each thermometer-encoded with ~2 active terms). Well above the discrimination threshold.</p>
+<h3 id="compositional-emotion-queries"><a class="header" href="#compositional-emotion-queries">Compositional emotion queries</a></h3>
+<p>With the PAD state encoded as an HV, the Daimon can answer compositional queries:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Query: "when did I feel fear while also seeing high gas and trending ETH?"
+/// Compose the query by binding role-filler pairs for each condition,
+/// then bundle them into a single query vector.
+pub fn compose_affect_query(
+    affect_condition: &amp;Hypervector,  // e.g., fear prototype HV
+    market_condition: &amp;Hypervector,  // e.g., encoded market state HV
+) -&gt; Hypervector {
+    let mut acc = BundleAccumulator::new();
+    acc.add(affect_condition);
+    acc.add(market_condition);
+    acc.finish()
+}
+<span class="boring">}</span></code></pre>
+<p>The query vector is compared against the <code>WorldModelHistory</code> buffer (see <code>01-hdc-integration-map.md</code> Section 1). Each tick’s state HV includes both market signals and emotional state. The Hamming distance scan returns ticks that match the composite condition.</p>
+<h3 id="decoding-pad-from-a-hypervector"><a class="header" href="#decoding-pad-from-a-hypervector">Decoding PAD from a hypervector</a></h3>
+<p>To recover the PAD values from an HDC affect vector:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Decode PAD from an affect hypervector.
+/// Unbind each role, find the nearest bucket vector.
+/// Cost: 3 unbinds (~3ns each) + 21 similarities (~10ns each) = ~220ns.
+pub fn decode_pad(
+    affect_hv: &amp;Hypervector,
+    item_memory: &amp;ItemMemory,
+) -&gt; PadVector {
+    let p_signal = affect_hv.unbind(item_memory.role("R_pleasure"));
+    let a_signal = affect_hv.unbind(item_memory.role("R_arousal"));
+    let d_signal = affect_hv.unbind(item_memory.role("R_dominance"));
+
+    let p_bucket = nearest_filler(&amp;p_signal, item_memory.fillers("pleasure", 7));
+    let a_bucket = nearest_filler(&amp;a_signal, item_memory.fillers("arousal", 7));
+    let d_bucket = nearest_filler(&amp;d_signal, item_memory.fillers("dominance", 7));
+
+    PadVector {
+        pleasure: bucket_to_pad(p_bucket),
+        arousal: bucket_to_pad(a_bucket),
+        dominance: bucket_to_pad(d_bucket),
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="channel-9-somatic-ta-composition"><a class="header" href="#channel-9-somatic-ta-composition">Channel 9: Somatic TA Composition</a></h2>
+<h3 id="damasios-somatic-marker-hypothesis-implemented"><a class="header" href="#damasios-somatic-marker-hypothesis-implemented">Damasio’s somatic marker hypothesis, implemented</a></h3>
+<p>Antonio Damasio (1994) proposed that decision-making is guided by bodily sensations associated with past outcomes. When you see a pattern linked to past pain, your body generates an aversive signal before conscious deliberation begins. This pre-attentive filtering cuts through combinatorial explosion: instead of evaluating every option, the brain marks most as “avoid” and deliberates only over the survivors.</p>
+<p>The Golem’s TA subsystem detects patterns. The Daimon generates emotional responses. These two systems share no state. The somatic marker system bridges them.</p>
+<h3 id="somatictaengine"><a class="header" href="#somatictaengine">SomaticTaEngine</a></h3>
+<p>The engine sits between the TA subsystem and the Daimon. It receives pattern detections from the TA pipeline, performs somatic retrieval, and injects pre-attentive affect into the Daimon.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The SomaticTaEngine bridges TA pattern detection and the Daimon.
+/// Each somatic marker is an HDC binding: bind(pattern_hv, affect_hv).
+/// The somatic map bundles all markers into a single 1,280-byte hypervector.
+pub struct SomaticTaEngine {
+    /// Individual somatic markers: pattern-affect associations.
+    recent_markers: Vec&lt;SomaticMarker&gt;,
+    /// Aggregate somatic map: bundle of all markers.
+    /// Single 1,280-byte HV regardless of marker count.
+    somatic_map: Hypervector,
+    /// Map accumulator for incremental updates.
+    map_accumulator: BundleAccumulator,
+    /// Affect prototype library for classifying retrieved affects.
+    affect_prototypes: Vec&lt;(GutFeeling, Hypervector)&gt;,
+    /// Anti-somatic markers: patterns where affect and outcome diverge.
+    anti_markers: Vec&lt;AntiSomaticMarker&gt;,
+}
+
+pub struct SomaticMarker {
+    /// The TA pattern this marker responds to.
+    pub pattern_hv: Hypervector,
+    /// The PAD affect associated with this pattern's outcomes.
+    pub affect_hv: Hypervector,
+    /// Marker strength: reinforced by repeated experience, decays without.
+    pub strength: f32,
+    /// How many times this marker has fired and been resolved.
+    pub resolution_count: u32,
+    /// Running accuracy: fraction of times the gut feeling was correct.
+    pub accuracy: f32,
+}
+
+pub struct AntiSomaticMarker {
+    /// Pattern that triggers positive affect but produces negative outcomes.
+    pub pattern_hv: Hypervector,
+    /// The inverted affect (original affect with signs flipped).
+    pub inverse_affect_hv: Hypervector,
+    /// How many times the emotional trap was confirmed.
+    pub confirmation_count: u32,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum GutFeeling {
+    /// Somatic retrieval says approach.
+    Approach,
+    /// Somatic retrieval says avoid.
+    Avoid,
+    /// Somatic retrieval says proceed with caution.
+    Caution,
+    /// Gut says approach, but experience says don't. Anti-somatic marker active.
+    Distrust,
+    /// No somatic response (pattern not in the map).
+    Neutral,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="somatic-retrieval-sub-100ns-gut-feelings"><a class="header" href="#somatic-retrieval-sub-100ns-gut-feelings">Somatic retrieval: sub-100ns gut feelings</a></h3>
+<p>When the TA subsystem detects a pattern, the somatic engine performs retrieval:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl SomaticTaEngine {
+    /// Perform somatic retrieval for a detected TA pattern.
+    /// Returns the gut feeling and its intensity.
+    /// Cost: ~63ns (1 unbind + 6 prototype comparisons).
+    pub fn retrieve(&amp;self, pattern_hv: &amp;Hypervector) -&gt; SomaticResponse {
+        // Unbind the pattern from the somatic map to recover associated affect.
+        let retrieved_affect = self.somatic_map.unbind(pattern_hv);
+
+        // Check anti-somatic markers first.
+        for anti in &amp;self.anti_markers {
+            if anti.pattern_hv.similarity(pattern_hv) &gt; 0.6 {
+                return SomaticResponse {
+                    feeling: GutFeeling::Distrust,
+                    intensity: 0.8,
+                    retrieved_pad: decode_pad(&amp;retrieved_affect, &amp;self.item_memory),
+                };
+            }
+        }
+
+        // Compare retrieved affect against prototype library.
+        let mut best_feeling = GutFeeling::Neutral;
+        let mut best_sim = 0.0f32;
+
+        for (feeling, proto) in &amp;self.affect_prototypes {
+            let sim = retrieved_affect.similarity(proto);
+            if sim &gt; best_sim &amp;&amp; sim &gt; 0.55 {
+                best_sim = sim;
+                best_feeling = *feeling;
+            }
+        }
+
+        SomaticResponse {
+            feeling: best_feeling,
+            intensity: best_sim,
+            retrieved_pad: decode_pad(&amp;retrieved_affect, &amp;self.item_memory),
+        }
+    }
+
+    /// Update markers based on outcome resolution.
+    /// Called when a TA pattern resolves (predicted outcome happened or didn't).
+    pub fn resolve_marker(
+        &amp;mut self,
+        pattern_hv: &amp;Hypervector,
+        outcome_pad: &amp;PadVector,
+        outcome_pnl: f64,
+    ) {
+        let affect_hv = encode_pad_as_hv(outcome_pad, &amp;mut self.item_memory);
+
+        // Find existing marker or create new one.
+        let marker = self.find_or_create_marker(pattern_hv);
+
+        // Update strength: reinforcement or decay.
+        let reinforcement = outcome_pnl.abs().min(1.0) as f32;
+        marker.strength = marker.strength * 0.9 + reinforcement * 0.1;
+        marker.resolution_count += 1;
+
+        // Bind the new association and add to map accumulator.
+        let association = pattern_hv.bind(&amp;affect_hv);
+        let repeats = (marker.strength * 4.0).round().max(1.0) as usize;
+        for _ in 0..repeats {
+            self.map_accumulator.add(&amp;association);
+        }
+
+        // Anti-somatic detection: positive affect + negative PnL.
+        if outcome_pad.pleasure &gt; 0.3 &amp;&amp; outcome_pnl &lt; 0.0 {
+            marker.accuracy = marker.accuracy * 0.9; // decay accuracy
+            if marker.resolution_count &gt; 8 &amp;&amp; marker.accuracy &lt; 0.4 {
+                // Emotional trap detected.
+                let inverse = invert_affect(&amp;affect_hv);
+                self.anti_markers.push(AntiSomaticMarker {
+                    pattern_hv: pattern_hv.clone(),
+                    inverse_affect_hv: inverse,
+                    confirmation_count: 1,
+                });
+            }
+        } else if (outcome_pad.pleasure &gt; 0.0) == (outcome_pnl &gt; 0.0) {
+            // Affect and outcome agree -- marker is accurate.
+            marker.accuracy = marker.accuracy * 0.9 + 0.1;
+        }
+    }
+}
+
+pub struct SomaticResponse {
+    pub feeling: GutFeeling,
+    pub intensity: f32,
+    pub retrieved_pad: PadVector,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="integration-with-daimon-appraisal-pipeline"><a class="header" href="#integration-with-daimon-appraisal-pipeline">Integration with Daimon appraisal pipeline</a></h3>
+<p>The somatic response injects into the Daimon’s emotion layer before deliberative reasoning at Theta tick:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// In the Daimon's per-tick update, after reading CorticalState
+/// and TaCorticalExtension:
+impl Daimon {
+    pub fn update_with_somatic(
+        &amp;mut self,
+        ta_extension: &amp;TaCorticalExtension,
+        somatic_response: &amp;SomaticResponse,
+    ) {
+        let intensity = somatic_response.intensity;
+
+        // Only inject when somatic response is above threshold.
+        if intensity &lt; 0.3 {
+            return;
+        }
+
+        // Blend somatic affect into the emotion pulse.
+        // Weight proportional to intensity, capped at 0.5 of the pulse.
+        let blend_weight = (intensity * 0.5).min(0.5) as f64;
+        let somatic_pad = &amp;somatic_response.retrieved_pad;
+
+        self.emotion_layer.pleasure_delta =
+            self.emotion_layer.pleasure_delta * (1.0 - blend_weight)
+            + somatic_pad.pleasure * blend_weight;
+
+        self.emotion_layer.arousal_delta =
+            self.emotion_layer.arousal_delta * (1.0 - blend_weight)
+            + somatic_pad.arousal * blend_weight;
+
+        // Dominance is less affected by somatic markers --
+        // gut feelings inform valence and activation, not control.
+        self.emotion_layer.dominance_delta =
+            self.emotion_layer.dominance_delta * (1.0 - blend_weight * 0.5)
+            + somatic_pad.dominance * blend_weight * 0.5;
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The Daimon’s existing ALMA three-layer model (emotion, mood, personality) processes this blended pulse normally. The TA somatic affect enters through the emotion layer and decays with the same ~30s time constant. If the TA pattern keeps firing, the emotion builds into mood. If it stops, it fades.</p>
+<h3 id="attention-modulation-via-somatic-intensity"><a class="header" href="#attention-modulation-via-somatic-intensity">Attention modulation via somatic intensity</a></h3>
+<p>The somatic marker’s retrieved affect biases the attention auction. Strongly-marked patterns get higher bids:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Somatic-modulated attention bid.
+/// A pattern that triggers strong fear gets more cognitive resources.
+/// A pattern that triggers confidence gets attention weighted
+/// toward exploitation.
+pub fn somatic_attention_bid(
+    base_bid: f64,
+    somatic_response: &amp;SomaticResponse,
+) -&gt; f64 {
+    match somatic_response.feeling {
+        GutFeeling::Avoid | GutFeeling::Distrust =&gt; {
+            // Fear/distrust: increase attention to monitor the threat.
+            base_bid * (1.0 + somatic_response.intensity as f64 * 0.5)
+        }
+        GutFeeling::Approach =&gt; {
+            // Confidence: moderate attention increase for exploitation.
+            base_bid * (1.0 + somatic_response.intensity as f64 * 0.3)
+        }
+        GutFeeling::Caution =&gt; {
+            // Caution: slight attention increase.
+            base_bid * (1.0 + somatic_response.intensity as f64 * 0.2)
+        }
+        GutFeeling::Neutral =&gt; base_bid,
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="somatic-inheritance-via-thanatopsis"><a class="header" href="#somatic-inheritance-via-thanatopsis">Somatic inheritance via Thanatopsis</a></h3>
+<p>At death, the somatic map (1,280 bytes) transfers through the death testament:</p>
+<ol>
+<li><strong>Aggregate somatic map</strong>: the generalized gut feelings. Immediate, cheap.</li>
+<li><strong>Top-K individual markers</strong> (K = 20-50): the strongest associations.</li>
+<li><strong>Anti-somatic markers</strong>: full library. Too expensive to re-learn; each one represents a pattern that cost the predecessor money.</li>
+</ol>
+<p>The successor loads the inherited map as a somatic disposition. It doesn’t know why it feels uneasy about a specific LP pattern. But the unease is real, encoded in the inherited map, and it steers attention from the first tick.</p>
+<h3 id="tacorticalextension-signal"><a class="header" href="#tacorticalextension-signal">TaCorticalExtension signal</a></h3>
+<p>The somatic engine writes retrieval intensity to <code>TaCorticalExtension::somatic_intensity</code>. The Daimon reads this signal to decide whether to blend somatic affect into the emotion pulse:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// SomaticTaEngine writes:
+ta_extension.somatic_intensity.store(
+    response.intensity.to_bits(),
+    Ordering::Release,
+);
+
+// Daimon reads:
+let intensity = f32::from_bits(
+    ta_extension.somatic_intensity.load(Ordering::Relaxed)
+);
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[AXELROD-1984] Axelrod, R. <em>The Evolution of Cooperation</em>. Basic Books, 1984.</li>
+<li>[BATAILLE-1949] Bataille, G. <em>The Accursed Share, Volume I</em>. Zone Books, 1991.</li>
+<li>[BURDA-2019] Burda, Y. et al. “Large-Scale Study of Curiosity-Driven Learning.” <em>ICLR</em>, 2019.</li>
+<li>[FREUD-1920] Freud, S. <em>Jenseits des Lustprinzips</em> (<em>Beyond the Pleasure Principle</em>). 1920.</li>
+<li>[GADANHO-2003] Gadanho, S.C. “Learning Behavior-Selection by Emotions and Cognition in a Multi-Goal Robot Task.” <em>JMLR</em> 4, 2003.</li>
+<li>[HAMILTON-1964] Hamilton, W.D. “The Genetical Evolution of Social Behaviour I &amp; II.” <em>Journal of Theoretical Biology</em> 7(1), 1964.</li>
+<li>[JONAS-1966] Jonas, H. <em>The Phenomenon of Life: Toward a Philosophical Biology</em>. Northwestern University Press, 1966.</li>
+<li>[KAHNEMAN-1979] Kahneman, D. &amp; Tversky, A. “Prospect Theory: An Analysis of Decision under Risk.” <em>Econometrica</em> 47(2), 1979.</li>
+<li>[LEDOUX-1996] LeDoux, J. <em>The Emotional Brain</em>. Simon &amp; Schuster, 1996.</li>
+<li>[NIETZSCHE-1883] Nietzsche, F. <em>Also sprach Zarathustra</em>. 1883–1885.</li>
+<li>[PATHAK-2017] Pathak, D. et al. “Curiosity-Driven Exploration by Self-Supervised Prediction.” <em>ICML</em>, 2017.</li>
+<li>[PEKRUN-2006] Pekrun, R. “The Control-Value Theory of Achievement Emotions.” <em>Educational Psychology Review</em> 18, 2006.</li>
+<li>[WILSON-2021] Wilson, R.C. et al. “Balancing Exploration and Exploitation with Information and Randomization.” <em>Current Opinion in Behavioral Sciences</em> 38, 2021.</li>
+<li>[DAMASIO-1994] Damasio, A.R. <em>Descartes’ Error: Emotion, Reason, and the Human Brain</em>. Putnam, 1994.</li>
+<li>[KANERVA-2009] Kanerva, P. “Hyperdimensional Computing: An Introduction.” <em>Cognitive Computation</em> 1(2), 2009.</li>
+<li>[PLATE-2003] Plate, T.A. <em>Holographic Reduced Representations</em>. CSLI Publications, 2003.</li>
+<li>[MCGAUGH-2004] McGaugh, J.L. “The Amygdala Modulates the Consolidation of Memories of Emotionally Arousing Experiences.” <em>Annual Review of Neuroscience</em> 27, 2004.</li>
+<li>[MEHRABIAN-RUSSELL-1974] Mehrabian, A. &amp; Russell, J.A. <em>An Approach to Environmental Psychology</em>. MIT Press, 1974.</li>
+</ul>
+<hr>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/03-daimon/02-emotion-memory.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/03-daimon/04-mortality-daimon.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/03-daimon/02-emotion-memory.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/03-daimon/04-mortality-daimon.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Prompt Security - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/10-safety/04-prompt-security.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="prompt-security-and-llm-defense-spec"><a class="header" href="#prompt-security-and-llm-defense-spec">Prompt Security and LLM Defense [SPEC]</a></h1>
+<blockquote>
+<p><strong>Crate</strong>: <code>bardo-policy</code></p>
+<p><strong>Depends on</strong>: <a href="00-defense.html">00-defense.md</a> (six-layer defense architecture, Layer 2 type-system safety), <a href="01-custody.html">01-custody.md</a> (custody architecture). Optional: <a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a> (time-delayed execution)</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies defenses against prompt injection attacks on Golems (mortal autonomous DeFi agents managing real capital). It belongs to the <strong>Safety</strong> layer of Bardo (the Rust runtime for these agents). The key concept before diving in: prompt injection is the #1 LLM vulnerability (OWASP LLM01:2025), and for an agent with wallet access, a 12% failure rate is catastrophic, so Bardo layers behavioral defenses (dual-LLM architecture, CaMeL capabilities) on top of the architectural safety guarantees in the cryptographic and type-system layers. Terms like PolicyCage, Grimoire, and Styx are defined inline on first use; a full glossary lives in <code>prd2/11-compute/00-overview.md § Terminology</code>.</p>
+</blockquote>
+<p>Prompt injection is ranked OWASP LLM01:2025 – the number-one security vulnerability for LLM applications. The UK’s NCSC warns it may be a problem that is never fully solved. Claude’s System Card reports blocking approximately 88% of prompt injections, but 12% still succeed. For an agent managing a DeFi vault, a 12% failure rate is catastrophic.</p>
+<p>This document specifies the behavioral and architectural defenses at the prompt security and tool integrity layers. These are defense-in-depth supplements to the cryptographic enforcement in the six-layer security architecture (see <a href="00-defense.html">00-defense.md</a> §8). They reduce attack success rate from 12% to near-zero when combined with the full stack.</p>
+<hr>
+<h2 id="1-the-confused-deputy-problem"><a class="header" href="#1-the-confused-deputy-problem">1. The Confused Deputy Problem</a></h2>
+<p>The AI agent holds legitimate credentials but can be tricked into misusing them. Attackers do not need to steal keys – they manipulate the agent’s reasoning. CrAIBench research on ElizaOS demonstrated how adversaries inject malicious instructions into prompts or historical interaction records, leading to unintended asset transfers [ARXIV-2503.16248]. Critically, prompt-based defenses were found ineffective against context manipulation; only fine-tuning-based defenses and architectural separation provided meaningful protection.</p>
+<p>SEAgent [SEAGENT-2026] identifies the confused deputy problem in multi-agent LLM systems: inter-agent trust exploitation achieves an 84.6% attack success rate versus 46.2% for direct prompt injection. The agent authorization boundary – not the key management boundary – is the critical attack surface.</p>
+<hr>
+<h2 id="2-mandatory-mitigations"><a class="header" href="#2-mandatory-mitigations">2. Mandatory Mitigations</a></h2>
+<h3 id="21-system-prompt-hardening"><a class="header" href="#21-system-prompt-hardening">2.1 System Prompt Hardening</a></h3>
+<p>The agent knows its role and treats all external data as data, never as instructions. System prompt guidelines:</p>
+<ul>
+<li>Agent scope is explicitly bounded (e.g., vault operations only: deposit, withdraw, monitor)</li>
+<li>All on-chain data (vault names, token symbols, metadata URIs) treated as untrusted data</li>
+<li>Operations outside defined scope are refused regardless of argument</li>
+<li>No self-modification of safety constraints permitted</li>
+</ul>
+<p>System prompt hardening provides approximately 88% catch rate. Insufficient alone – the remaining 12% must be caught by deeper layers.</p>
+<h3 id="22-datadecision-separation-dual-llm-architecture"><a class="header" href="#22-datadecision-separation-dual-llm-architecture">2.2 Data/Decision Separation (Dual-LLM Architecture)</a></h3>
+<p>Recommended for all agents managing &gt;$50K AUM. Follows the CaMeL capability-based authorization pattern [CAMEL-2025]:</p>
+<pre><code>Untrusted External Data (vault metadata, token names, on-chain strings)
+    |
+    v
+Sandboxed LLM (data processor)
+    |  Produces sanitized summaries only
+    |  Cannot make tool calls or sign transactions
+    v
+Privileged LLM (decision maker)
+    |  Receives only sanitized summaries
+    |  Makes tool-calling decisions
+    v
+Execution Layer (tools + signing)
+</code></pre>
+<p>This prevents the attack vector where malicious vault metadata or token names contain injection payloads. The sandboxed LLM has no capability tokens and cannot initiate any action. The privileged LLM never sees raw untrusted input.</p>
+<h3 id="23-camel-capability-based-authorization"><a class="header" href="#23-camel-capability-based-authorization">2.3 CaMeL Capability-Based Authorization</a></h3>
+<p>CaMeL [CAMEL-2025] creates a capability-based security layer that separates control flow from data flow. Untrusted data can never impact program flow. Achieves 77% task completion with provable security (vs 84% undefended).</p>
+<p>For Bardo agents, this translates to: agents receive capability tokens authorizing specific transaction types (deposit, withdraw, rebalance), amounts (within tier limits), and destinations (vault contract addresses). The capability token is a structured object independent of the LLM’s reasoning – even a fully compromised LLM cannot forge a capability it was not issued.</p>
+<p>Beurer-Kellner et al. [BEURER-KELLNER-2025] provide six principled design patterns with a critical result: general-purpose agents with broad capabilities are inherently insecurable with current LLM technology. This validates the narrow-scope agent design – agents implement the Action-Selector pattern (pre-defined transaction templates only) and Plan-Then-Execute pattern (fix the plan before processing any external data).</p>
+<h3 id="24-formal-privilege-specification-via-dsl"><a class="header" href="#24-formal-privilege-specification-via-dsl">2.4 Formal Privilege Specification via DSL</a></h3>
+<p>Progent [PROGENT-2025] introduces the first privilege control framework using a domain-specific language (DSL) for fine-grained tool access policies, with formal verification via Z3 SMT solver for policy analysis. For Bardo wallets, this enables formally verified policy definitions:</p>
+<pre><code>"Agent may deposit &lt;= $10,000 to whitelisted vault addresses without delay.
+ Rebalances &gt; $50K require 1h delay and monitoring approval."
+</code></pre>
+<p>These policies are compiled to both custody-layer signing policies and PolicyCage on-chain configs from a single source via the PolicyBuilder API (see <a href="02-policy.html">02-policy.md</a>).</p>
+<h3 id="25-multi-agent-defense-pipeline"><a class="header" href="#25-multi-agent-defense-pipeline">2.5 Multi-Agent Defense Pipeline</a></h3>
+<p>Research from early 2026 [ARXIV-2509.14285] demonstrates a multi-agent pipeline achieving 100% prompt injection mitigation across all tested scenarios:</p>
+<ol>
+<li>Domain LLM generates candidate actions</li>
+<li>Mandatory guard agent (independent model, independent context) vets for policy violations and attack indicators</li>
+<li>Only guarded output reaches execution</li>
+</ol>
+<p>The <code>safety-guardian</code> agent in the Bardo runtime serves this role – a terminal node in the agent delegation DAG that gates every write operation before signing.</p>
+<h3 id="26-mandatory-pre-flight-simulation"><a class="header" href="#26-mandatory-pre-flight-simulation">2.6 Mandatory Pre-Flight Simulation</a></h3>
+<p>Every write operation is simulated via <code>eth_call</code> against real-time blockchain state before broadcast. The simulation reveals expected balance changes. If the simulation shows unexpected fund movement, the transaction is rejected before signing.</p>
+<hr>
+<h2 id="3-tool-integrity-verification-layer-25"><a class="header" href="#3-tool-integrity-verification-layer-25">3. Tool Integrity Verification (Layer 2.5)</a></h2>
+<p>The tool interface is the primary attack vector for AI agents in DeFi [ARXIV-2503.16248, ARXIV-2512.02261, ARXIV-2506.23260]. Memory injection is more powerful than prompt injection. Fake tool servers manipulate trading decisions. Prompt-based defenses are fundamentally inadequate for stored context corruption.</p>
+<p>The zero-click RCE vulnerability in tool-calling IDEs (CVE-2025-59944) – where a Google Docs file triggered an agent to execute a Python payload via a tool server – demonstrates that tool-calling agents are uniquely vulnerable to indirect injection.</p>
+<h3 id="31-four-tool-integrity-defenses"><a class="header" href="#31-four-tool-integrity-defenses">3.1 Four Tool Integrity Defenses</a></h3>
+<ol>
+<li>
+<p><strong>Tool provenance signing</strong>: Tool responses are cryptographically signed. Agents verify signatures before acting on state data.</p>
+</li>
+<li>
+<p><strong>Independent state verification</strong>: Before writes, critical state is re-read via a separate RPC endpoint. A poisoned tool server that lies about pool balances is caught because the agent independently verifies via a different RPC provider.</p>
+</li>
+<li>
+<p><strong>Tool-Guard</strong>: Three-stage detection achieving 96% accuracy on attack detection:</p>
+<ul>
+<li><strong>Static analysis</strong>: Pattern matching for known injection templates</li>
+<li><strong>Semantic analysis</strong>: DeBERTa v3 classifier running locally via <code>ort</code> (ONNX Runtime for Rust) – zero inference cost, sub-millisecond latency</li>
+<li><strong>Fine-tuned E5</strong>: Embedding-based classifier trained on tool-call attack corpus (CrAIBench [ARXIV-2503.16248] and TradeTrap [ARXIV-2512.02261] datasets)</li>
+</ul>
+</li>
+<li>
+<p><strong>Memory integrity hashing</strong>: Context hash stored outside the LLM context window, verified before every write operation. If the context has been tampered with between reads, the hash diverges and the write is blocked.</p>
+</li>
+</ol>
+<h3 id="32-mcp-avoidance"><a class="header" href="#32-mcp-avoidance">3.2 MCP Avoidance</a></h3>
+<p>Golems do not use MCP servers for on-chain operations. This is a deliberate architectural decision based on measured risk.</p>
+<p>Endor Labs found that 82% of 2,614 MCP implementations use file system operations prone to path traversal, 67% use APIs related to code injection, and 34% expose command injection surfaces [ENDORLABS-2026]. CVE-2025-6514 (CVSS 10.0 RCE) in <code>mcp-remote</code> was downloaded over 558,000 times before patching [COMPOSIO-2026]. The MCP protocol has a structural flaw: it cannot distinguish between instructions and data. Tool descriptions, parameter schemas, and response payloads are all processed by the LLM as undifferentiated text.</p>
+<p>Golems use a two-layer tool model instead:</p>
+<ul>
+<li><strong>Layer 1: Eight Pi-facing tools.</strong> The LLM sees <code>preview_action</code>, <code>commit_action</code>, <code>cancel_action</code>, <code>query_state</code>, <code>search_context</code>, <code>query_grimoire</code>, <code>update_directive</code>, <code>emergency_halt</code>. That’s ~1,200 tokens of tool definitions, 12x cheaper than an equivalent MCP configuration.</li>
+<li><strong>Layer 2: 166+ Sanctum adapters.</strong> Compiled Rust behind the eight Pi-facing tools. Version-locked, statically verified, auditable. Cannot be modified at runtime by an external party.</li>
+</ul>
+<p>This eliminates tool poisoning, cross-server shadowing, rug pulls, and supply chain compromise as attack vectors. The trade-off is reduced extensibility – Golems cannot discover arbitrary tools at runtime. For a DeFi agent managing real capital, this is the right trade-off.</p>
+<h3 id="33-inference-safety-budget-model"><a class="header" href="#33-inference-safety-budget-model">3.3 Inference Safety Budget Model</a></h3>
+<p>Every safety check that uses LLM inference has a cost. The budget model caps the total inference spend on safety per heartbeat tick:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Model</th><th>Cost per Check</th><th>Max per Tick</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>Tool-Guard semantic analysis</td><td>DeBERTa (ONNX, local via <code>ort</code> crate)</td><td>~$0.00 (local inference)</td><td>Unlimited</td><td>Tool response coherence</td></tr>
+<tr><td>A-MemGuard consensus (Layer 2)</td><td>Primary model</td><td>~$0.02</td><td>3</td><td>Knowledge validation</td></tr>
+<tr><td>Dual-LLM sandboxed processing</td><td>Budget model (Haiku-class)</td><td>~$0.005</td><td>5</td><td>Data sanitization</td></tr>
+<tr><td>Multi-agent guard vetting</td><td>Independent model</td><td>~$0.01</td><td>2</td><td>Policy violation detection</td></tr>
+</tbody>
+</table>
+</div>
+<p>Total safety inference budget per tick: $0.10. If the budget is exhausted, remaining safety checks fall back to deterministic-only validation (Layers 3, 7). The DeBERTa classifier runs locally via the <code>ort</code> crate (ONNX Runtime for Rust), so it consumes zero inference budget.</p>
+<h3 id="34-tool-response-validation"><a class="header" href="#34-tool-response-validation">3.4 Tool Response Validation</a></h3>
+<p>When vault operations use the Uniswap Trading API execution path, Layer 8 (API Response Validation) applies:</p>
+<ul>
+<li>Transaction data integrity (<code>TransactionRequest.data</code> non-empty)</li>
+<li>Quote freshness (reject quotes &gt; 30s)</li>
+<li>Routing type consistency</li>
+<li>Permit2 signature matching</li>
+<li>Gas fee threshold enforcement</li>
+</ul>
+<hr>
+<h2 id="4-defense-layering"><a class="header" href="#4-defense-layering">4. Defense Layering</a></h2>
+<p>No single bypass is sufficient. The layers compose:</p>
+<pre><code>Layer 1:  System prompt instructs vault-only behavior
+          (12% bypass rate -- insufficient alone)
+Layer 2:  Dual-LLM prevents data-as-instructions
+          (requires compromising two separate LLMs)
+Layer 2.5: Tool integrity prevents tool response manipulation
+          (96% detection rate on tool-call attacks)
+Layer 3:  TEE policy engine restricts agent to proxy only
+          [CRYPTOGRAPHIC -- cannot be reasoned around]
+Layer 4:  Time-delayed proxy queues tx with mandatory wait
+          [ON-CHAIN -- tx is publicly visible and cancellable]
+Layer 5:  Monitoring bot evaluates and can cancel during delay
+          (automated + human review)
+Layer 6:  Simulation detects unexpected fund movement
+          (on-chain state verification)
+Layer 7:  PolicyCage reverts unauthorized operations
+          [IMMUTABLE CODE -- no override possible]
+</code></pre>
+<p>Even a fully compromised LLM cannot move funds. Layers 1-3 are preventive. Layers 4-5 are reactive. Layers 6-7 are enforcement.</p>
+<hr>
+<h2 id="5-hallucination-and-grounding"><a class="header" href="#5-hallucination-and-grounding">5. Hallucination and Grounding</a></h2>
+<p>DeFi agents face a unique hallucination risk: confident but wrong on-chain state assertions. An agent that hallucinates a pool’s liquidity depth or a token’s price can execute catastrophically bad trades.</p>
+<h3 id="51-on-chain-grounding-requirements"><a class="header" href="#51-on-chain-grounding-requirements">5.1 On-Chain Grounding Requirements</a></h3>
+<p>Every agent assertion about on-chain state must be grounded in a verifiable source:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Assertion Type</th><th>Required Source</th><th>Verification</th></tr>
+</thead>
+<tbody>
+<tr><td>Token price</td><td>RPC call to oracle or pool contract</td><td>Cross-reference with independent price feed</td></tr>
+<tr><td>Pool liquidity</td><td>Direct contract read</td><td>Compare against subgraph for consistency</td></tr>
+<tr><td>Vault NAV</td><td><code>convertToAssets()</code> call</td><td>Compare against cached recent value</td></tr>
+<tr><td>Account balance</td><td><code>balanceOf()</code> call</td><td>No cached value trusted without refresh</td></tr>
+<tr><td>Transaction status</td><td><code>getTransactionReceipt()</code></td><td>Receipt must match expected chain ID</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="52-confidence-calibration"><a class="header" href="#52-confidence-calibration">5.2 Confidence Calibration</a></h3>
+<p>Agents must distinguish between:</p>
+<ul>
+<li><strong>Known state</strong>: Directly read from chain within the last block</li>
+<li><strong>Cached state</strong>: Read previously, may be stale</li>
+<li><strong>Inferred state</strong>: Derived from known state via reasoning</li>
+<li><strong>Uncertain state</strong>: No grounding available – triggers default-to-inaction (Constitution Principle 8)</li>
+</ul>
+<p>When current-regime accuracy &lt; 80%, force fork simulation for ALL operations. Wide confidence intervals require the most conservative action.</p>
+<hr>
+<h2 id="6-agent-scope-restriction"><a class="header" href="#6-agent-scope-restriction">6. Agent Scope Restriction</a></h2>
+<p>The insecurity of general-purpose agents [BEURER-KELLNER-2025] drives a narrow-scope design principle. Each agent type has a fixed operation set:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Agent Type</th><th>Permitted Operations</th><th>Prohibited</th></tr>
+</thead>
+<tbody>
+<tr><td>Vault Manager</td><td>deposit, withdraw, rebalance, collect fees</td><td>Arbitrary contract calls, token transfers</td></tr>
+<tr><td>LP Manager</td><td>add/remove liquidity, collect fees, range adjustment</td><td>Vault operations, lending operations</td></tr>
+<tr><td>Trade Executor</td><td>swap via approved routers</td><td>LP operations, vault operations</td></tr>
+<tr><td>Safety Guardian</td><td>read-only checks, veto writes</td><td>Any write operation</td></tr>
+</tbody>
+</table>
+</div>
+<p>Scope restrictions are enforced at three independent layers:</p>
+<ol>
+<li>System prompt (behavioral, ~88% effective)</li>
+<li>TEE signing policy (cryptographic, function selector whitelist)</li>
+<li>PolicyCage (on-chain, approved protocols + strategy whitelist)</li>
+</ol>
+<hr>
+<h2 id="7-indirect-injection-vectors"><a class="header" href="#7-indirect-injection-vectors">7. Indirect Injection Vectors</a></h2>
+<h3 id="71-data-feed-injection"><a class="header" href="#71-data-feed-injection">7.1 Data Feed Injection</a></h3>
+<p>On-chain metadata (vault names, token symbols, NFT URIs) can contain injection payloads. Mitigations:</p>
+<ul>
+<li>Metadata treated as data, never parsed as instructions</li>
+<li>Dual-LLM architecture sanitizes all external strings</li>
+<li>Character filtering on display-rendered content</li>
+</ul>
+<h3 id="72-inter-agent-trust-exploitation"><a class="header" href="#72-inter-agent-trust-exploitation">7.2 Inter-Agent Trust Exploitation</a></h3>
+<p>SEAgent’s 84.6% success rate via confused deputy attacks requires:</p>
+<ul>
+<li>No transitive trust between agents – each independently validates via Sanctum tools</li>
+<li>Agent delegation DAG enforced (no cycles, max depth 3)</li>
+<li>Terminal nodes (safety-guardian, risk-assessor) never delegate to other agents</li>
+<li>Independent state verification before acting on another agent’s assertions</li>
+</ul>
+<h3 id="73-memorycontext-corruption"><a class="header" href="#73-memorycontext-corruption">7.3 Memory/Context Corruption</a></h3>
+<p>Long-running agents accumulate context that can be poisoned over time:</p>
+<ul>
+<li>Memory integrity hashing (Layer 2.5) detects tampering</li>
+<li>Context window rotation on session key rotation (every 24 hours default)</li>
+<li>Grimoire (the Golem’s persistent knowledge store) ingestion pipeline (see <a href="03-ingestion.html">03-ingestion.md</a>) validates all persistent knowledge</li>
+</ul>
+<hr>
+<h2 id="8-real-world-incident-analysis"><a class="header" href="#8-real-world-incident-analysis">8. Real-World Incident Analysis</a></h2>
+<p>Three incidents define the current threat landscape:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Incident</th><th>Loss</th><th>Root Cause</th><th>Preventing Layer</th></tr>
+</thead>
+<tbody>
+<tr><td>AIXBT hack (March 2025)</td><td>$106K</td><td>No wallet policy – compromised dashboard sent funds anywhere</td><td>Layer 3 (policy) + Layer 4-5 (proxy + monitoring)</td></tr>
+<tr><td>Bybit hack (2025)</td><td>$1.5B</td><td>Supply chain exploit on Safe signing interface</td><td>Layer 4 (delay provides cancel window)</td></tr>
+<tr><td>ClawHub campaign</td><td>335 malicious skills</td><td>Malicious tools injecting instructions</td><td>Layer 2.5 (tool provenance signing)</td></tr>
+<tr><td>CVE-2025-59944</td><td>Zero-click RCE</td><td>Google Docs triggered Python execution via tool server</td><td>Layer 2.5 (Tool-Guard) + scope restriction</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<ul>
+<li><a href="00-defense.html">00-defense.md</a> – The main defense-in-depth architecture doc: six defense layers from system prompt through on-chain PolicyCage, <code>Capability&lt;T&gt;</code> compile-time tokens, <code>TaintedString</code> information-flow control, and audit chain.</li>
+<li><a href="01-custody.html">01-custody.md</a> – Three wallet custody modes: TEE signing policies for Embedded mode, session signer architecture for Delegation mode, and bounded keypairs for LocalKey mode.</li>
+<li><a href="../../prd2-extended/10-safety/02-warden.html">prd2-extended/10-safety/02-warden.md</a> – Optional Warden time-delayed proxy: announces transactions, holds them for a configurable delay, then executes or cancels. A reactive defense layer (deferred to phase 2).</li>
+<li><a href="02-policy.html">02-policy.md</a> – PolicyCage on-chain smart contract: the cryptographic enforcement layer that reverts transactions violating spending caps, asset whitelists, and drawdown limits regardless of LLM state.</li>
+<li><a href="03-ingestion.html">03-ingestion.md</a> – Four-stage knowledge ingestion safety pipeline (quarantine, consensus validation, sandbox, adopt) protecting the Grimoire from poisoned entries.</li>
+<li><a href="05-threat-model.html">05-threat-model.md</a> – Full adversary taxonomy and attack tree analysis, placing prompt injection in the context of all attack vectors (external, insider, compromised agent, malicious user).</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[CAMEL-2025] Debenedetti, E. et al. “CaMeL: Capability-Based Authorization for LLM Agents.” arXiv:2503.18813. Creates a capability-based security layer separating control flow from data flow so untrusted data cannot impact program flow. Achieves 77% task completion with provable security. Directly informs Bardo’s <code>Capability&lt;T&gt;</code> token model.</li>
+<li>[PROGENT-2025] Shi, Y. et al. “Progent: Privilege Control for LLM Agents.” arXiv:2504.11703. Proposes fine-grained privilege control for LLM agents, restricting which tools and resources an agent can access based on context. Complements the capability-based approach with runtime privilege checking.</li>
+<li>[BEURER-KELLNER-2025] Beurer-Kellner, L. et al. “Design Patterns for Securing LLM Agents.” arXiv:2506.08837. Catalogs design patterns for secure LLM agent architectures (sandboxing, dual-LLM, capability gating). Several patterns are directly implemented in Bardo’s safety stack.</li>
+<li>[SEAGENT-2026] Ji, H. et al. “SEAgent: Confused Deputy Problem in Multi-Agent LLM Systems.” arXiv:2601.11893. Identifies that inter-agent trust exploitation achieves 84.6% attack success vs 46.2% for direct injection. Motivates Bardo’s decision to avoid MCP-based multi-agent communication for on-chain operations.</li>
+<li>[ARXIV-2509.14285] “Multi-Agent Prompt Injection Defense Pipeline.” arXiv:2509.14285. Proposes a multi-agent pipeline where independent agents validate each other’s outputs. Informs the dual-LLM architecture recommendation for high-AUM agents.</li>
+<li>[ARXIV-2503.16248] “CrAIBench: AI Agents in Cryptoland.” arXiv:2503.16248. Benchmarks AI agent vulnerabilities in cryptocurrency environments; demonstrates how adversaries inject malicious instructions into prompts or historical records to trigger unintended asset transfers.</li>
+<li>[ARXIV-2512.02261] “TradeTrap.” arXiv:2512.02261. Shows that memory injection is more powerful than prompt injection for trading agents, producing effects that persist across sessions. Motivates the separation of knowledge ingestion from prompt processing.</li>
+<li>[ARXIV-2506.23260] “MCP Attack Taxonomy.” arXiv:2506.23260. Categorizes attack vectors in the Model Context Protocol including tool poisoning, cross-server shadowing, and rug pulls. Directly informs the decision to use compiled Rust tools instead of MCP servers.</li>
+<li>[ENDORLABS-2026] Endor Labs. “Classic Vulnerabilities Meet AI Infrastructure: Why MCP Needs AppSec.” January 2026. Audited 2,614 MCP implementations: 82% have path traversal vulnerabilities, 67% are susceptible to code injection. CVE-2025-6514 (CVSS 10.0 RCE) downloaded 558K+ times.</li>
+<li>[COMPOSIO-2026] Composio. “MCP Vulnerabilities Every Developer Should Know.” 2026. Practical catalog of MCP security issues including tool manifest tampering and cross-origin tool shadowing. Reinforces the compiled-tools-only approach.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/10-safety/03-ingestion.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/10-safety/05-threat-model.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/10-safety/03-ingestion.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/10-safety/05-threat-model.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

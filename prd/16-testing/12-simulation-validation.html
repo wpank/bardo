@@ -1,0 +1,597 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Simulation Validation - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/16-testing/12-simulation-validation.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="simulation-validation-mirage-vs-on-chain-spec"><a class="header" href="#simulation-validation-mirage-vs-on-chain-spec">Simulation Validation: Mirage vs On-Chain [SPEC]</a></h1>
+<p><strong>Version:</strong> 1.0.0
+<strong>Last Updated:</strong> 2026-03-18
+<strong>Companion to:</strong> <code>16-testing/11-mirage-v2-testing.md</code> (engine correctness)</p>
+<blockquote>
+<p>Validates that mirage-rs simulation outputs match actual on-chain results. Takes N historical blocks where the golem acted, replays them through mirage, and compares simulated vs actual outcomes. This is the sim-to-real accuracy test.</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document validates that mirage-rs simulation outputs match actual on-chain results for DeFi operations (swaps, LP positions, lending, vaults). It belongs to Section 16 (Testing) and defines the sim-to-real accuracy test: take N historical blocks where a Golem (mortal autonomous agent) acted, replay them through Mirage (live fork infrastructure), and compare simulated vs actual outcomes within defined tolerances. Engine correctness is a prerequisite, covered in <code>./11-mirage-v2-testing.md</code> (structural tests for HybridDB, DirtyStore, CoW branching). See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="document-map"><a class="header" href="#document-map">Document Map</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Topic</th></tr>
+</thead>
+<tbody>
+<tr><td>Overview</td><td>Why simulation accuracy matters, what “match” means</td></tr>
+<tr><td>Methodology</td><td>Block selection, replay procedure, comparison metrics</td></tr>
+<tr><td>Regression Thresholds</td><td>Tolerances for swaps, multi-hop, lending, LP operations</td></tr>
+<tr><td>Swap Accuracy</td><td>Single-hop swap output validation</td></tr>
+<tr><td>Multi-Hop Accuracy</td><td>Complex routes through aggregators</td></tr>
+<tr><td>LP Position Accuracy</td><td>Fee accrual, tick crossing, liquidity changes</td></tr>
+<tr><td>Lending Protocol Accuracy</td><td>Borrow rates, health factors, liquidation thresholds</td></tr>
+<tr><td>Shadow Execution Validation</td><td>Modified bytecode divergence tracking</td></tr>
+<tr><td>Continuous Regression Suite</td><td>Automated nightly validation against recent blocks</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>mirage-rs v2 makes a core promise: the simulation is accurate enough for a golem to make real capital allocation decisions based on it. “Accurate enough” means the simulated outcome of a DeFi operation matches the actual on-chain outcome within defined tolerances.</p>
+<p>The tolerances are tight for simple operations (single swaps) and looser for complex ones (multi-hop routes, lending with accruing interest). The gap comes from two sources: (1) state divergence between mirage’s view and actual chain state at execution time, and (2) gas and ordering differences between simulation and actual block inclusion.</p>
+<p>This document specifies the validation methodology, tolerance thresholds, and the continuous regression suite that runs against recent historical blocks.</p>
+<h3 id="what-this-does-not-test"><a class="header" href="#what-this-does-not-test">What this does NOT test</a></h3>
+<ul>
+<li>Engine correctness (read priority, branching isolation, etc.) – covered in <code>16-testing/11-mirage-v2-testing.md</code></li>
+<li>Triage pipeline accuracy – covered in <code>16-testing/13-triage-evaluation.md</code></li>
+<li>Golem decision quality – a correct simulation can still inform a bad decision</li>
+</ul>
+<h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
+<ul>
+<li><code>16-testing/11-mirage-v2-testing.md</code> – engine correctness (prerequisite)</li>
+<li>Research: <code>02-mirage-rs/00-architecture.md</code> – HybridDB, targeted replay</li>
+<li>Research: <code>02-mirage-rs/03-historical-mode.md</code> – historical mode, PnL attribution</li>
+</ul>
+<hr>
+<h2 id="1-methodology-spec"><a class="header" href="#1-methodology-spec">1. Methodology [SPEC]</a></h2>
+<h3 id="11-block-selection-criteria-spec"><a class="header" href="#11-block-selection-criteria-spec">1.1 Block selection criteria [SPEC]</a></h3>
+<p><strong>Source:</strong> Archived golem transaction history. Each entry contains:</p>
+<ul>
+<li>Block number where the golem submitted a transaction</li>
+<li>Transaction hash</li>
+<li>Expected output (token amounts, position changes, events emitted)</li>
+<li>On-chain receipt (actual gas used, actual events, actual state changes)</li>
+</ul>
+<p><strong>Selection:</strong> Stratified sample across:</p>
+<ul>
+<li>Operation type: swap, multi-hop swap, LP mint/burn, borrow/repay, vault deposit/withdraw</li>
+<li>Market condition: low volatility, high volatility, during oracle update, during liquidation cascade</li>
+<li>Block position: early in block, mid-block, late in block (ordering matters for MEV exposure)</li>
+</ul>
+<p><strong>Minimum sample:</strong> 500 blocks per operation type for statistical significance. Updated monthly with fresh blocks.</p>
+<h3 id="12-replay-procedure-spec"><a class="header" href="#12-replay-procedure-spec">1.2 Replay procedure [SPEC]</a></h3>
+<p>For each selected block B where the golem acted:</p>
+<ol>
+<li><strong>Fork at B-1.</strong> Start mirage-rs in historical mode: <code>--from-block (B-1) --to-block B</code>.</li>
+<li><strong>Apply state at B-1.</strong> All upstream reads pin to block B-1. The state before the golem’s transaction is the baseline.</li>
+<li><strong>Execute the golem’s transaction.</strong> Submit the exact same transaction (same calldata, same gas limit, same value) via <code>eth_sendTransaction</code>.</li>
+<li><strong>Capture simulated output.</strong> Record: output amounts, gas used, events emitted, final storage state of affected contracts.</li>
+<li><strong>Compare against on-chain receipt.</strong> Compute deltas for each metric.</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ValidationResult {
+    pub block_number: u64,
+    pub tx_hash: B256,
+    pub operation_type: OperationType,
+
+    /// Simulated vs actual output token amounts.
+    pub amount_delta_bps: f64,
+
+    /// Simulated vs actual gas used.
+    pub gas_delta_pct: f64,
+
+    /// Events that appeared in simulation but not on-chain (or vice versa).
+    pub event_mismatches: Vec&lt;EventMismatch&gt;,
+
+    /// Storage slots where simulated final value differs from on-chain.
+    pub storage_divergences: Vec&lt;StorageDivergence&gt;,
+
+    /// Pass/fail against the threshold for this operation type.
+    pub passed: bool,
+}
+
+pub struct StorageDivergence {
+    pub address: Address,
+    pub slot: U256,
+    pub simulated: U256,
+    pub actual: U256,
+    pub delta_pct: f64,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="13-comparison-normalization-spec"><a class="header" href="#13-comparison-normalization-spec">1.3 Comparison normalization [SPEC]</a></h3>
+<p>Token amounts are compared in basis points (bps) relative to the actual output:</p>
+<pre><code>delta_bps = abs(simulated - actual) / actual * 10_000
+</code></pre>
+<p>For zero-output transactions (reverts), comparison is binary: did both revert, and if so, with the same reason?</p>
+<hr>
+<h2 id="2-regression-thresholds-spec"><a class="header" href="#2-regression-thresholds-spec">2. Regression Thresholds [SPEC]</a></h2>
+<h3 id="21-threshold-table-spec"><a class="header" href="#21-threshold-table-spec">2.1 Threshold table [SPEC]</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation Type</th><th>Tolerance</th><th>Metric</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Single-hop swap</td><td>0.1% (10 bps)</td><td>Output token amount</td><td>Tightest threshold. State at B-1 is exact.</td></tr>
+<tr><td>Multi-hop swap (2-3 hops)</td><td>0.5% (50 bps)</td><td>Final output amount</td><td>Intermediate pools may have different state.</td></tr>
+<tr><td>Complex multi-hop (4+ hops)</td><td>1.0% (100 bps)</td><td>Final output amount</td><td>Aggregator routing is path-dependent.</td></tr>
+<tr><td>LP mint (concentrated)</td><td>0.1% (10 bps)</td><td>Liquidity token amount</td><td>Deterministic given tick range and amounts.</td></tr>
+<tr><td>LP burn + collect fees</td><td>0.5% (50 bps)</td><td>Collected fee amounts</td><td>Fee accumulation depends on intervening swaps.</td></tr>
+<tr><td>Borrow/repay</td><td>0.1% (10 bps)</td><td>Debt token amount</td><td>Interest accrual adds minor variance.</td></tr>
+<tr><td>Health factor check</td><td>0.01 absolute</td><td>Health factor value</td><td>Tight: 1.01 vs 1.02 matters for liquidation proximity.</td></tr>
+<tr><td>Vault deposit/withdraw</td><td>0.5% (50 bps)</td><td>Share amount</td><td>Share price depends on all prior deposits.</td></tr>
+<tr><td>Gas used</td><td>5%</td><td>Gas units</td><td>Minor EVM opcode cost differences are acceptable.</td></tr>
+<tr><td>Transaction revert</td><td>Exact match</td><td>Reverted yes/no</td><td>If actual reverted, simulation must also revert.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="22-threshold-rationale-spec"><a class="header" href="#22-threshold-rationale-spec">2.2 Threshold rationale [SPEC]</a></h3>
+<p>The 0.1% swap tolerance accounts for: rounding in Uniswap v3’s <code>SqrtPriceMath</code>, potential 1-wei differences in token transfer amounts, and the fact that mirage reads state at B-1 while the actual transaction executed after prior transactions in block B.</p>
+<p>The 1.0% multi-hop tolerance is wider because each hop compounds small differences. A 3-hop route through pools with slightly different reserves can produce a 0.3-0.5% aggregate difference even with correct per-pool math.</p>
+<p>The health factor tolerance is absolute (0.01) rather than relative because health factors near 1.0 are the danger zone. A relative tolerance would be too permissive at low health factors.</p>
+<h3 id="23-failure-classification-spec"><a class="header" href="#23-failure-classification-spec">2.3 Failure classification [SPEC]</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Classification</th><th>Criteria</th><th>Response</th></tr>
+</thead>
+<tbody>
+<tr><td>Pass</td><td>All metrics within tolerance</td><td>No action</td></tr>
+<tr><td>Soft fail</td><td>1-2 metrics exceed tolerance by &lt; 2x</td><td>Log warning, investigate at next review</td></tr>
+<tr><td>Hard fail</td><td>Any metric exceeds tolerance by &gt; 2x</td><td>Block release, investigate immediately</td></tr>
+<tr><td>Catastrophic fail</td><td>Simulation succeeds but on-chain reverted (or vice versa)</td><td>Block release, root-cause required</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="3-swap-accuracy-tests-spec"><a class="header" href="#3-swap-accuracy-tests-spec">3. Swap Accuracy Tests [SPEC]</a></h2>
+<h3 id="31-single-hop-uniswap-v3-swap-spec"><a class="header" href="#31-single-hop-uniswap-v3-swap-spec">3.1 Single-hop Uniswap v3 swap [SPEC]</a></h3>
+<p><strong>Test:</strong> Replay 500 historical single-hop swaps (ETH/USDC, WBTC/ETH, etc.) through mirage.</p>
+<p><strong>Properties:</strong></p>
+<ul>
+<li>Output amount within 10 bps of actual in &gt;= 99% of cases</li>
+<li>Tick after swap matches actual tick in 100% of cases</li>
+<li>sqrtPriceX96 after swap matches actual within 1 wei in &gt;= 99% of cases</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn validate_uniswap_v3_single_hop_swaps() {
+    let test_blocks = load_labeled_blocks("swap_single_hop", 500);
+
+    let mut results = Vec::new();
+    for block in &amp;test_blocks {
+        let result = replay_and_compare(block);
+        results.push(result);
+    }
+
+    let pass_rate = results.iter()
+        .filter(|r| r.amount_delta_bps &lt;= 10.0)
+        .count() as f64 / results.len() as f64;
+
+    assert!(
+        pass_rate &gt;= 0.99,
+        "single-hop swap pass rate {:.2}% &lt; 99%",
+        pass_rate * 100.0
+    );
+
+    // Report the worst-case delta.
+    let worst = results.iter()
+        .max_by(|a, b| a.amount_delta_bps.partial_cmp(&amp;b.amount_delta_bps).unwrap())
+        .unwrap();
+    println!(
+        "worst case: block {} delta {:.1} bps",
+        worst.block_number, worst.amount_delta_bps
+    );
+}
+<span class="boring">}</span></code></pre>
+<h3 id="32-swap-during-oracle-update-spec"><a class="header" href="#32-swap-during-oracle-update-spec">3.2 Swap during oracle update [SPEC]</a></h3>
+<p><strong>Test:</strong> Select blocks where a Chainlink oracle update and a swap occur in the same block. The oracle update changes the price reference mid-block. Verify mirage handles the ordering correctly (oracle update before swap, or after, matching actual ordering).</p>
+<h3 id="33-swap-with-slippage-revert-spec"><a class="header" href="#33-swap-with-slippage-revert-spec">3.3 Swap with slippage revert [SPEC]</a></h3>
+<p><strong>Test:</strong> Select blocks where the golem’s swap reverted on-chain due to slippage. Verify the simulation also reverts. Verify the revert reason matches (e.g., <code>"Too little received"</code> from Uniswap’s router).</p>
+<hr>
+<h2 id="4-multi-hop-accuracy-tests-spec"><a class="header" href="#4-multi-hop-accuracy-tests-spec">4. Multi-Hop Accuracy Tests [SPEC]</a></h2>
+<h3 id="41-two-hop-routes-through-the-universal-router-spec"><a class="header" href="#41-two-hop-routes-through-the-universal-router-spec">4.1 Two-hop routes through the Universal Router [SPEC]</a></h3>
+<p><strong>Test:</strong> Replay 500 historical multi-hop swaps routed through Uniswap’s Universal Router. Compare final output amount.</p>
+<p><strong>Expected:</strong> 99% within 50 bps. The extra tolerance accounts for intermediate pool state differences.</p>
+<h3 id="42-complex-aggregator-routes-1inch-cow-protocol-spec"><a class="header" href="#42-complex-aggregator-routes-1inch-cow-protocol-spec">4.2 Complex aggregator routes (1inch, CoW Protocol) [SPEC]</a></h3>
+<p><strong>Test:</strong> Replay 200 historical swaps routed through third-party aggregators. These routes may split across multiple pools and protocols.</p>
+<p><strong>Expected:</strong> 95% within 100 bps. Aggregator routing is path-dependent and may choose different paths when pool states differ slightly.</p>
+<h3 id="43-multi-hop-with-mev-sandwich-spec"><a class="header" href="#43-multi-hop-with-mev-sandwich-spec">4.3 Multi-hop with MEV sandwich [SPEC]</a></h3>
+<p><strong>Test:</strong> Select blocks where the golem’s swap was sandwiched (frontrun + backrun). Verify that mirage replays the sandwich transactions in the correct order and the golem’s output matches the (degraded) on-chain result.</p>
+<p>This is a failure mode test: the golem should see the same bad outcome in simulation that it experienced on-chain, so it can learn from it.</p>
+<hr>
+<h2 id="5-lp-position-accuracy-tests-spec"><a class="header" href="#5-lp-position-accuracy-tests-spec">5. LP Position Accuracy Tests [SPEC]</a></h2>
+<h3 id="51-fee-accrual-over-n-blocks-spec"><a class="header" href="#51-fee-accrual-over-n-blocks-spec">5.1 Fee accrual over N blocks [SPEC]</a></h3>
+<p><strong>Test:</strong> Fork at block B. The golem has an active Uniswap v3 LP position. Replay blocks B through B+1000 in <code>hybrid</code> mode. At B+1000, collect fees via simulation. Compare against actual fees collected at B+1000.</p>
+<p><strong>Expected:</strong> Within 50 bps. Fee accrual depends on every swap that crosses the position’s tick range, so small state divergences compound.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn validate_fee_accrual_over_1000_blocks() {
+    let test_cases = load_labeled_blocks("lp_fee_accrual", 50);
+
+    for case in &amp;test_cases {
+        let mirage = start_historical(case.from_block, case.to_block);
+        mirage.replay_range().unwrap();
+
+        let simulated_fees = mirage.collect_fees(case.position_id).unwrap();
+        let actual_fees = case.actual_fees;
+
+        let delta_bps = (simulated_fees - actual_fees).abs()
+            / actual_fees * 10_000.0;
+
+        assert!(
+            delta_bps &lt;= 50.0,
+            "fee accrual delta {:.1} bps &gt; 50 bps at block range {}-{}",
+            delta_bps, case.from_block, case.to_block
+        );
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="52-tick-crossing-accuracy-spec"><a class="header" href="#52-tick-crossing-accuracy-spec">5.2 Tick crossing accuracy [SPEC]</a></h3>
+<p><strong>Test:</strong> During historical replay, verify that the simulated pool tick matches the actual on-chain tick at each block where a swap occurred. A tick mismatch means the simulation’s price is wrong, which compounds into incorrect fee attribution.</p>
+<p><strong>Expected:</strong> Exact match in 99% of blocks. The remaining 1% tolerance accounts for blocks where mirage’s targeted replay missed a transaction (the intentional imprecision of the matching heuristics).</p>
+<h3 id="53-lp-position-out-of-range-detection-spec"><a class="header" href="#53-lp-position-out-of-range-detection-spec">5.3 LP position out-of-range detection [SPEC]</a></h3>
+<p><strong>Test:</strong> Replay blocks where an LP position went out of range. Verify that mirage detects the same block where the position left the active tick range.</p>
+<hr>
+<h2 id="6-lending-protocol-accuracy-tests-spec"><a class="header" href="#6-lending-protocol-accuracy-tests-spec">6. Lending Protocol Accuracy Tests [SPEC]</a></h2>
+<h3 id="61-health-factor-tracking-spec"><a class="header" href="#61-health-factor-tracking-spec">6.1 Health factor tracking [SPEC]</a></h3>
+<p><strong>Test:</strong> Fork with an active Aave position. Replay 500 blocks including oracle updates. At each oracle update block, compare simulated health factor against actual.</p>
+<p><strong>Expected:</strong> Within 0.01 absolute. Health factor computation is deterministic given the oracle price and position state, so the only source of error is state divergence.</p>
+<h3 id="62-interest-rate-accrual-spec"><a class="header" href="#62-interest-rate-accrual-spec">6.2 Interest rate accrual [SPEC]</a></h3>
+<p><strong>Test:</strong> Replay 1000 blocks of an active borrow position. Compare simulated accrued interest against actual.</p>
+<p><strong>Expected:</strong> Within 10 bps. Interest accrues per-block based on the utilization rate, which depends on all deposits and borrows in the pool.</p>
+<h3 id="63-liquidation-trigger-accuracy-spec"><a class="header" href="#63-liquidation-trigger-accuracy-spec">6.3 Liquidation trigger accuracy [SPEC]</a></h3>
+<p><strong>Test:</strong> Select blocks where a liquidation occurred on-chain for a position the golem was tracking. Verify that the simulation also triggers the liquidation at the same block (or within 1 block).</p>
+<p><strong>Expected:</strong> Same block in 95% of cases. 1-block offset acceptable if the mirage missed a single oracle update due to targeted replay filtering.</p>
+<hr>
+<h2 id="7-shadow-execution-validation-spec"><a class="header" href="#7-shadow-execution-validation-spec">7. Shadow Execution Validation [SPEC]</a></h2>
+<p>Shadow execution replays historical blocks with modified contract bytecode. Validation checks that the comparison between original and shadow executions is internally consistent.</p>
+<h3 id="71-property-identical-bytecode-produces-zero-divergence-spec"><a class="header" href="#71-property-identical-bytecode-produces-zero-divergence-spec">7.1 Property: Identical bytecode produces zero divergence [SPEC]</a></h3>
+<p><strong>Statement:</strong> When <code>ShadowConfig.bytecode_overrides</code> maps an address to its own existing bytecode, the shadow execution produces zero divergent slots and zero PnL delta.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn shadow_noop_produces_zero_divergence() {
+    let config = ShadowConfig {
+        bytecode_overrides: HashMap::from([(
+            pool_address,
+            get_deployed_bytecode(pool_address),
+        )]),
+        emit_shadow_events: true,
+        diff_output: None,
+    };
+
+    let result = run_shadow_replay(19_400_000, 19_400_100, config);
+
+    assert_eq!(result.block_diffs.iter()
+        .map(|d| d.divergent_slots.len())
+        .sum::&lt;usize&gt;(), 0);
+    assert!(result.total_pnl_delta.values()
+        .all(|&amp;d| d == 0));
+}
+<span class="boring">}</span></code></pre>
+<h3 id="72-property-divergence-is-monotonically-tracked-spec"><a class="header" href="#72-property-divergence-is-monotonically-tracked-spec">7.2 Property: Divergence is monotonically tracked [SPEC]</a></h3>
+<p><strong>Statement:</strong> Once a shadow execution diverges from the original at block B, <code>ShadowResult.first_divergence_block</code> is <code>Some(B)</code>. Subsequent identical blocks do not reset it.</p>
+<h3 id="73-shadow-pnl-attribution-spec"><a class="header" href="#73-shadow-pnl-attribution-spec">7.3 Shadow PnL attribution [SPEC]</a></h3>
+<p><strong>Test:</strong> Replace a pool’s fee tier bytecode (e.g., 0.3% -&gt; 0.05%) and replay 1000 blocks. Verify that the total PnL delta equals the sum of per-block PnL deltas. No accounting gaps.</p>
+<hr>
+<h2 id="8-scenario-runner-validation-spec"><a class="header" href="#8-scenario-runner-validation-spec">8. Scenario Runner Validation [SPEC]</a></h2>
+<h3 id="81-lhs-sample-coverage-spec"><a class="header" href="#81-lhs-sample-coverage-spec">8.1 LHS sample coverage [SPEC]</a></h3>
+<p><strong>Test:</strong> Generate 32 LHS samples across 4 dimensions. Verify that each dimension’s samples fall in exactly 32 distinct strata (one per equal-probability interval). No two samples share a stratum in any dimension.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[test]
+fn lhs_stratification() {
+    let space = ParameterSpace {
+        dimensions: vec![
+            ("size".into(), ParameterDimension::LogNormal {
+                mu: 0.0, sigma: 1.0, min: 0.01, max: 100.0,
+            }),
+            ("slippage".into(), ParameterDimension::Uniform {
+                min: 0.001, max: 0.05,
+            }),
+            ("gas".into(), ParameterDimension::Uniform {
+                min: 5.0, max: 200.0,
+            }),
+            ("fee_tier".into(), ParameterDimension::Discrete(
+                vec![100.0, 500.0, 3000.0, 10000.0],
+            )),
+        ],
+    };
+
+    let mut rng = StdRng::seed_from_u64(42);
+    let samples = latin_hypercube(&amp;space, 32, &amp;mut rng);
+
+    assert_eq!(samples.len(), 32);
+    assert!(samples.iter().all(|row| row.len() == 4));
+
+    // Verify stratification: for each dimension, map each
+    // sample back to its stratum index. All 32 strata should
+    // appear exactly once.
+    for col in 0..4 {
+        let mut strata: Vec&lt;usize&gt; = samples.iter()
+            .map(|row| {
+                // Approximate inverse: which of the 32 equal-probability
+                // intervals does this value fall in?
+                let u = cdf_of_dimension(&amp;space.dimensions[col].1, row[col]);
+                (u * 32.0).floor() as usize
+            })
+            .collect();
+        strata.sort();
+        strata.dedup();
+        assert_eq!(strata.len(), 32, "dimension {} has duplicate strata", col);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="82-bayesian-optimization-convergence-spec"><a class="header" href="#82-bayesian-optimization-convergence-spec">8.2 Bayesian optimization convergence [SPEC]</a></h3>
+<p><strong>Test:</strong> Optimize a known quadratic objective function <code>f(x) = -(x - 3)^2 + 10</code> using the BayesianOptimizer. After 20 evaluations (8 LHS + 12 GP-guided), the best observed x should be within 0.5 of x=3.</p>
+<h3 id="83-cfr-regret-computation-spec"><a class="header" href="#83-cfr-regret-computation-spec">8.3 CFR regret computation [SPEC]</a></h3>
+<p><strong>Test:</strong> Provide a CfrAnalyzer with known counterfactual PnL values. Verify <code>total_regret = max(counterfactual_PnL) - actual_PnL</code> exactly. Verify <code>per_exit_regret[i] = max(counterfactual_PnL) - counterfactual_PnL[i]</code> for all i.</p>
+<hr>
+<h2 id="9-continuous-regression-suite-spec"><a class="header" href="#9-continuous-regression-suite-spec">9. Continuous Regression Suite [SPEC]</a></h2>
+<h3 id="91-nightly-validation-pipeline-spec"><a class="header" href="#91-nightly-validation-pipeline-spec">9.1 Nightly validation pipeline [SPEC]</a></h3>
+<p>Runs every night against the most recent 24 hours of golem transactions:</p>
+<ol>
+<li><strong>Collect</strong> all golem transactions from the last 24 hours.</li>
+<li><strong>Stratify</strong> by operation type (at least 10 per type).</li>
+<li><strong>Replay</strong> each through mirage in historical mode.</li>
+<li><strong>Compare</strong> against on-chain receipts.</li>
+<li><strong>Report</strong> pass/fail per threshold, plus aggregate statistics.</li>
+</ol>
+<h3 id="92-alerting-spec"><a class="header" href="#92-alerting-spec">9.2 Alerting [SPEC]</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Condition</th><th>Severity</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>Pass rate drops below 95% for any operation type</td><td>Warning</td><td>Notify dev channel</td></tr>
+<tr><td>Any catastrophic fail (sim succeeds, on-chain reverts)</td><td>Error</td><td>Block deployment, page on-call</td></tr>
+<tr><td>Aggregate worst-case delta &gt; 2x tolerance</td><td>Warning</td><td>Investigate state divergence source</td></tr>
+<tr><td>3 consecutive nights with soft fails</td><td>Error</td><td>Root-cause investigation required</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="93-regression-dataset-management-spec"><a class="header" href="#93-regression-dataset-management-spec">9.3 Regression dataset management [SPEC]</a></h3>
+<p><strong>Storage:</strong> Labeled blocks are stored as compressed JSON files, one per operation type. Each file contains 500+ block entries with transaction data and expected outcomes.</p>
+<p><strong>Refresh:</strong> Monthly. Old blocks are archived, new blocks from the last month are added. The dataset should always contain recent blocks to catch Ethereum protocol changes (hardforks, EIP implementations).</p>
+<p><strong>Versioning:</strong> Dataset version is pinned in <code>Cargo.toml</code> for reproducibility. A new dataset version requires a full regression run before promotion.</p>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<ul>
+<li><code>16-testing/11-mirage-v2-testing.md</code> – engine correctness tests (HybridDB read priority, DirtyStore isolation, CoW branching, Block-STM determinism); prerequisite for this document</li>
+<li><code>16-testing/04-mirage.md</code> – v1 mirage testing (Anvil-based fork infrastructure and regime scenario tests)</li>
+<li>Research: <code>02-mirage-rs/00-architecture.md</code> – HybridDB three-tier read model, targeted replay, and DirtyStore design</li>
+<li>Research: <code>02-mirage-rs/02-scenario-runner.md</code> – Latin Hypercube Sampling, Bayesian optimization, and Counterfactual Regret analysis</li>
+<li>Research: <code>02-mirage-rs/03-historical-mode.md</code> – historical block replay, shadow execution with modified bytecode, and PnL attribution</li>
+</ul>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>Gelashvili, R. et al. (2023). Block-STM: Scaling blockchain execution. <em>PPoPP</em>. — <em>Parallel execution algorithm used in mirage-rs historical replay; determinism is validated by the simulation validation tests.</em></li>
+<li>McKay, M.D. et al. (1979). A comparison of three methods for selecting values of input variables. <em>Technometrics</em>, 21(2). — <em>Introduces Latin Hypercube Sampling (LHS), the stratified sampling method used by the scenario runner to cover the parameter space with fewer samples than grid search.</em></li>
+<li>Snoek, J. et al. (2012). Practical Bayesian optimization of machine learning algorithms. <em>NeurIPS</em>. — <em>Gaussian Process-based optimization approach adapted for the scenario runner’s GP-guided phase after initial LHS exploration.</em></li>
+<li>Zinkevich, M. et al. (2007). Regret minimization in games with incomplete information. <em>NeurIPS</em>. — <em>Counterfactual regret framework used by the CFR analyzer to compute per-exit regret scores and total regret against optimal timing.</em></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/16-testing/11-mirage-v2-testing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/16-testing/13-triage-evaluation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/16-testing/11-mirage-v2-testing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/16-testing/13-triage-evaluation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,2463 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Heartbeat - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/01-golem/02-heartbeat.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="heartbeat-the-tick-pipeline-spec"><a class="header" href="#heartbeat-the-tick-pipeline-spec">Heartbeat: The Tick Pipeline [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Implementation Specification</p>
+<p><strong>Crates</strong>: <code>golem-heartbeat</code> (pipeline.rs, record.rs, gating.rs, fsm.rs, speculation.rs)</p>
+<p><strong>Prerequisites</strong>: Read <code>00-overview.md</code> (glossary, system overview), <code>01a-runtime-extensions.md</code> (extension system), <code>01b-runtime-infrastructure.md</code> (GolemState, lifecycle).</p>
+<p><strong>Academic basis</strong>: CoALA (Sumers et al., 2024) – cognitive architecture framework; Baddeley (2000) – working memory and the episodic buffer; Clark &amp; Chalmers (1998) – extended mind thesis; Cognitive Workspace (arXiv:2508.13171, 2025) – active memory management; Kahneman (2011) – dual-process theory (System 1 / System 2); Friston (2010) – precision-weighted prediction error and active inference; Sims (2003) – rational inattention; Newell (1990) – Unified Theories of Cognition</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the Heartbeat (the 9-step decision cycle each Golem executes on every tick): observe, retrieve, analyze, gate, simulate, validate, execute, verify, reflect. It belongs to the <code>01-golem</code> cognition layer. The key concept: the Golem’s cognition is a continuous autonomous loop, not a conversational turn. The Heartbeat is where the T0/T1/T2 (cognitive tier routing: T0 = fast cached/rule-based, T1 = medium LLM, T2 = extended reasoning) gating decision happens, making ~80% of ticks free. See <code>prd2/shared/glossary.md</code> (canonical Bardo term definitions) for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="s1--why-decision-cycles-not-conversation-turns"><a class="header" href="#s1--why-decision-cycles-not-conversation-turns">S1 – Why Decision Cycles, Not Conversation Turns</a></h2>
+<h3 id="the-conversation-assumption-is-wrong"><a class="header" href="#the-conversation-assumption-is-wrong">The Conversation Assumption Is Wrong</a></h3>
+<p>Most agent frameworks model cognition as a conversation: user says something, agent thinks, agent responds, repeat. This model comes from chatbot heritage – LLMs were first deployed as conversational interfaces, and agent frameworks inherited that frame.</p>
+<p>For a Golem, this model is wrong on its face. <strong>80% of heartbeat ticks have no human input.</strong> The Golem fires its heartbeat, observes the market, evaluates whether anything interesting happened, and either acts or moves on. There is no “user message.” There is no “response.” There is a continuous loop of observe-decide-act-learn running autonomously.</p>
+<h3 id="coala-formalizes-the-correct-primitive"><a class="header" href="#coala-formalizes-the-correct-primitive">CoALA Formalizes the Correct Primitive</a></h3>
+<p>Sumers et al. (2024) proposed Cognitive Architectures for Language Agents (CoALA), a framework that draws on decades of cognitive architecture research (Soar [LAIRD-2012], ACT-R [ANDERSON-2007]) to formalize what a language agent IS [SUMERS-2024].</p>
+<p>CoALA’s key insight is the <strong>decision cycle</strong>: “The agent’s decision procedure executes a decision cycle in a loop with the external environment. During each cycle, the agent uses retrieval and reasoning to plan by proposing and evaluating candidate learning or grounding actions. The best action is then selected and executed. An observation may be made, and the cycle begins again.”</p>
+<p>This maps precisely to the Golem’s heartbeat. Each tick IS a decision cycle: observe, retrieve from memory, reason about what was observed, decide on an action (or decide to do nothing), execute, observe the outcome, learn.</p>
+<p>The distinction matters architecturally:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>Conversation Turn</th><th>Decision Cycle</th></tr>
+</thead>
+<tbody>
+<tr><td>Trigger</td><td>User message</td><td>Timer (heartbeat interval)</td></tr>
+<tr><td>Input</td><td>Natural language text</td><td>Structured market observation</td></tr>
+<tr><td>Output</td><td>Natural language response</td><td>Typed DecisionCycleRecord</td></tr>
+<tr><td>Storage</td><td>Append to session JSONL</td><td>Self-contained record per tick</td></tr>
+<tr><td>Replay</td><td>Parse message history</td><td>Structured fields, zero parsing</td></tr>
+<tr><td>Credit assignment</td><td>Parse LLM output text</td><td>Read outcome + context fields directly</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="the-decisioncyclerecord-replaces-session-messages"><a class="header" href="#the-decisioncyclerecord-replaces-session-messages">The DecisionCycleRecord Replaces Session Messages</a></h3>
+<p>Instead of appending messages to a growing session, each tick produces a <strong>DecisionCycleRecord</strong> – a typed, self-contained record of everything that happened during that tick. This record is:</p>
+<ul>
+<li>
+<p><strong>The unit of dream replay.</strong> NREM replay selects episodes by <code>utility = gain * need</code> [WILSON-MCNAUGHTON-1994]. The record IS the episode – observation, action, outcome, emotional state, and regime are already structured fields. No extraction step needed.</p>
+</li>
+<li>
+<p><strong>The unit of credit assignment.</strong> The cybernetics self-tuning loop (Loop 1) traces outcomes to the context entries that contributed to the decision. The record’s <code>context_bundle_summary</code> tells exactly which Grimoire entries were in context, and <code>outcome</code> tells whether the result was positive. In a conversation-based agent, this requires parsing LLM output text.</p>
+</li>
+<li>
+<p><strong>The unit of mortality accounting.</strong> Every tick records <code>vitality</code>, <code>phase</code>, and <code>credit_consumed</code>. The lifespan extension doesn’t maintain separate counters – the decision record IS the mortality audit trail.</p>
+</li>
+<li>
+<p><strong>The source of Event Fabric events.</strong> Every field in the record maps to a typed GolemEvent. The <code>ui-bridge</code> extension translates record fields to events with no additional logic.</p>
+</li>
+</ul>
+<h3 id="conversation-is-preserved-for-the-minority-case"><a class="header" href="#conversation-is-preserved-for-the-minority-case">Conversation Is Preserved for the Minority Case</a></h3>
+<p>When a user chats with their Golem (the ~20% of ticks with human interaction), the conversation is stored in a separate JSONL file (<code>$GOLEM_DATA/conversations/session.jsonl</code>) that follows the session format. This “Session Sidecar” handles conversation branching, compaction, and message history independently of the heartbeat pipeline.</p>
+<p>The two systems coexist:</p>
+<ul>
+<li><strong>Heartbeat path</strong>: DecisionCycleRecords -&gt; stored as bincode -&gt; used for dreams, credit assignment, mortality</li>
+<li><strong>Conversation path</strong>: Session JSONL -&gt; stored as JSONL -&gt; used for user chat continuity</li>
+</ul>
+<p>When the user IS chatting, the conversation tail (last N messages) is injected into the Cognitive Workspace as one of its structured categories. The conversation informs the heartbeat, but the heartbeat doesn’t become a conversation.</p>
+<hr>
+<h2 id="s2--llm-last-as-dual-process-architecture"><a class="header" href="#s2--llm-last-as-dual-process-architecture">S2 – LLM-Last as Dual Process Architecture</a></h2>
+<p>Daniel Kahneman’s Dual Process Theory (<em>Thinking, Fast and Slow</em>, 2011) provides the cognitive model. But it is more than metaphor here – it is the cost model. System 1 is free. System 2 costs money. Mortality (see <a href="../02-mortality/">02-mortality/</a>) makes that tradeoff existential.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Aspect</th><th>System 1 (Fast)</th><th>System 2 (Slow)</th></tr>
+</thead>
+<tbody>
+<tr><td>Implementation</td><td>Deterministic FSM + Rust probes</td><td>LLM inference (Haiku / Sonnet / Opus)</td></tr>
+<tr><td>Cost per tick</td><td>$0.00</td><td>$0.001–$0.25</td></tr>
+<tr><td>Latency</td><td>&lt;10ms</td><td>500ms–5s</td></tr>
+<tr><td>When used</td><td>Every tick (~80%)</td><td>Only when System 1 detects anomalies (~20%)</td></tr>
+<tr><td>Error mode</td><td>False negatives (misses subtle patterns)</td><td>Expensive, slow, hallucination risk</td></tr>
+</tbody>
+</table>
+</div>
+<p>The LLM is the last resort, not the first. Every tick begins with deterministic checks. Only when those checks detect a condition requiring reasoning does the LLM get invoked. This is LLM-Last – the inverse of architectures that route every input through an LLM and use tools for execution.</p>
+<p>The Talker-Reasoner framework (Google Research, 2024) and DPT-Agent (Zhang et al., 2025, arXiv:2502.11882) formalize this separation. FrugalGPT (Chen et al., 2024, <em>TMLR</em>) demonstrates matching GPT-4 performance with up to 98% cost reduction through intelligent cascading.</p>
+<hr>
+<h2 id="s3--the-9-step-tick-pipeline"><a class="header" href="#s3--the-9-step-tick-pipeline">S3 – The 9-Step Tick Pipeline</a></h2>
+<p>Each heartbeat tick executes a 9-step pipeline. The steps map to CoALA’s decision cycle phases, extended with DeFi-specific safety checks.</p>
+<pre><code>Step 1: OBSERVE    — Read market state, evaluate probes, detect regime, read pheromone field
+Step 2: RETRIEVE   — Pull relevant knowledge from Grimoire using four-factor scoring
+Step 3: ANALYZE    — Compute prediction error (how surprising is this observation?)
+Step 4: GATE       — Decide cognitive tier (T0: suppress, T1: analyze, T2: deliberate)
+Step 5: SIMULATE   — [T2 only] Run proposed transaction in Revm fork
+Step 6: VALIDATE   — [T1/T2] Check PolicyCage + five-layer risk engine
+Step 7: EXECUTE    — [If validated] Execute tool calls with capability tokens
+Step 8: VERIFY     — [If acted] Ground truth from blockchain (tx receipt, balance check)
+Step 9: REFLECT    — Build DecisionCycleRecord, fire after_turn extension chain
+</code></pre>
+<p>Steps 5-8 are conditional: in a T0 tick (no LLM call), only steps 1-4 and 9 execute. This is what makes ~80% of ticks nearly free ($0.00 inference cost).</p>
+<h3 id="full-implementation"><a class="header" href="#full-implementation">Full Implementation</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Execute one heartbeat tick: the fundamental unit of Golem cognition.
+///
+/// This function implements CoALA's decision cycle [SUMERS-2024] as a
+/// 9-step pipeline. Each step can emit events to the Event Fabric for
+/// surface rendering. The entire tick uses the arena allocator for
+/// temporaries (see 01b-runtime-infrastructure.md §5).
+///
+/// Returns a DecisionCycleRecord — the structured output of this tick.
+pub async fn execute_tick(
+    state: &amp;mut GolemState,
+    registry: &amp;ExtensionRegistry,
+    arena: &amp;TickArena,
+) -&gt; Result&lt;DecisionCycleRecord&gt; {
+    let tick_start = std::time::Instant::now();
+    let tick_num = state.current_tick;
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 1: OBSERVE
+    // ═══════════════════════════════════════════════════════════════
+    //
+    // Read the current market state via on-chain RPC calls (Alloy).
+    // Evaluate market probes: price deviation, liquidity changes, gas
+    // anomalies, health factor shifts. Detect the current market regime
+    // (trending_up, trending_down, volatile, range_bound, unknown).
+    // Read the Pheromone Field for threat/opportunity signals from peers
+    // via the Styx WebSocket connection.
+    //
+    // Probes are lightweight read-only chain queries (~10ms each).
+    // They're the "peripheral vision" — always running, always cheap.
+    let observation = observe(state, arena).await?;
+    state.observation = Some(observation.clone());
+    state.regime = observation.regime;
+
+    state.event_fabric.emit(Subsystem::Perception, EventPayload::MarketObservation {
+        regime: format!("{:?}", observation.regime),
+        anomalies: observation.anomalies.iter().map(|a| a.description.clone()).collect(),
+        probe_count: observation.probes.len() as u32,
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 2: RETRIEVE
+    // ═══════════════════════════════════════════════════════════════
+    //
+    // Pull relevant knowledge from the Grimoire using four-factor scoring:
+    //   score = w_recency × recency(Ebbinghaus)
+    //         + w_importance × quality(confidence × validation_ratio)
+    //         + w_relevance × cosine_similarity(query, entry)
+    //         + w_emotional × PAD_cosine(current_mood, entry_affect)
+    //
+    // The last factor — emotional congruence — implements Bower's (1981)
+    // mood-congruent memory: the Golem's current emotional state biases
+    // which memories surface. An anxious Golem retrieves warnings and
+    // past losses; a confident Golem retrieves successes and validated
+    // heuristics. This is not a bug — it's how biological memory works,
+    // and it's computationally efficient [BOWER-1981], [EMOTIONAL-RAG-2024].
+    //
+    // Every 100 ticks, contrarian retrieval forces mood-OPPOSITE entries
+    // to prevent rumination (Nietzsche's "harmful rumination" [NIETZSCHE-1887]).
+    let pad = state.cortical_state.read_pad();
+    let retrieved = retrieve_knowledge(state, &amp;observation, &amp;pad, arena).await?;
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 3: ANALYZE
+    // ═══════════════════════════════════════════════════════════════
+    //
+    // Compute prediction error: how SURPRISING is this observation
+    // compared to what the Golem expected? This is the core signal
+    // that drives the System 1 / System 2 gating decision (Step 4).
+    //
+    // See §4 for the full prediction error computation, which combines:
+    // - Price divergence from causal model predictions
+    // - Regime change detection
+    // - Position health delta
+    // - Pheromone field threat intensity
+    // - Pending interventions
+    // - Anomaly count from probes
+    //
+    // When `[oracle] enabled = false`, `compute_prediction_error` receives
+    // `None` for the oracle and falls back to a signal-only computation:
+    //   error = max(regime_change_severity, normalized_anomaly_count,
+    //               position_health_delta, pheromone_threat_intensity)
+    // This is weaker than oracle-derived prediction error but sufficient
+    // to drive the T0/T1/T2 gate — the Golem still escalates to LLM
+    // deliberation when something notable happens, it just has less
+    // calibrated prior expectations.
+    let prediction_error = compute_prediction_error(state, &amp;observation, &amp;retrieved);
+    state.prediction_error = prediction_error;
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 4: GATE (System 1 / System 2 decision)
+    // ═══════════════════════════════════════════════════════════════
+    //
+    // The gating step implements Kahneman's (2011) dual-process theory
+    // via Friston's (2010) precision-weighted prediction error framework.
+    //
+    // The question: "Is this observation surprising enough to warrant
+    // expensive LLM deliberation, or can I handle it with cheap heuristics?"
+    //
+    // The adaptive threshold considers:
+    // - Mortality pressure (dying → lower threshold → think harder)
+    // - Arousal (surprised → lower threshold → pay attention)
+    // - Strategy confidence (high confidence → higher threshold → coast)
+    //
+    // See §5 for the full threshold computation.
+    let threshold = compute_adaptive_threshold(state);
+    let tier = gate(prediction_error, threshold, state);
+    state.cognitive_tier = tier;
+
+    state.event_fabric.emit(Subsystem::Heartbeat, EventPayload::HeartbeatTick {
+        tick: tick_num,
+        tier: format!("{:?}", tier),
+        pe: prediction_error,
+        threshold,
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEPS 5-8: Conditional on cognitive tier
+    // ═══════════════════════════════════════════════════════════════
+
+    let (deliberation, actions, outcome) = match tier {
+        // ─── T0: SUPPRESS ─────────────────────────────────────────
+        // Prediction error below threshold. Nothing interesting happened.
+        // No LLM call. No actions. $0.00 inference cost. ~80% of ticks.
+        //
+        // The Golem is operating in Kahneman's "System 1" — fast, automatic,
+        // heuristic-based processing. The PLAYBOOK heuristics and decision
+        // cache handle this without any inference cost.
+        //
+        // This is what makes the system economically viable: the Adaptive
+        // Clock's theta frequency (30-120s, regime-dependent) executes
+        // ~720-2,880 ticks/day. If every tick required an LLM call at
+        // $0.01-0.10, the daily cost would be $7-288. With T0 suppression
+        // at ~80%, the daily inference cost drops to ~$1-58 for the ~20%
+        // of ticks that actually deliberate.
+        CognitiveTier::T0 =&gt; {
+            (None, vec![], None)
+        }
+
+        // ─── T1: ANALYZE ──────────────────────────────────────────
+        // Moderate surprise. Something changed, but it might not require action.
+        // Use a cheap LLM (Haiku-class, ~$0.001/call) to evaluate.
+        //
+        // The LLM sees a reduced context: current observation, top-5 retrieved
+        // entries, active positions, and critical warnings. It decides whether
+        // action is needed and what kind.
+        CognitiveTier::T1 =&gt; {
+            let deliberation = deliberate_t1(state, &amp;observation, &amp;retrieved, registry).await?;
+            let actions = if deliberation.recommends_action {
+                execute_actions(state, &amp;deliberation, registry).await?
+            } else {
+                vec![]
+            };
+            let outcome = verify_actions(state, &amp;actions).await?;
+            (Some(deliberation), actions, outcome)
+        }
+
+        // ─── T2: DELIBERATE ───────────────────────────────────────
+        // High surprise, novel situation, mortality pressure, or owner steer.
+        // Use the full LLM (Opus-class, ~$0.10/call) with the complete
+        // Cognitive Workspace.
+        //
+        // This is Kahneman's "System 2" — slow, deliberate, resource-intensive.
+        // The full workspace includes: all invariants, strategy, PLAYBOOK
+        // heuristics, retrieved episodes and insights, causal graph edges,
+        // dream hypotheses, somatic landscape readings, pheromone summary,
+        // and conversation tail (if the user is chatting).
+        CognitiveTier::T2 =&gt; {
+            // Assemble the full Cognitive Workspace
+            // (Baddeley's working memory model [BADDELEY-2000])
+            let workspace = assemble_cognitive_workspace(
+                state, &amp;observation, &amp;retrieved
+            ).await?;
+
+            // The LLM deliberates with full context
+            let deliberation = deliberate_t2(state, &amp;workspace, registry).await?;
+
+            // STEP 5: SIMULATE
+            // If the LLM recommends action, simulate the transaction
+            // in a local Revm fork BEFORE broadcasting it.
+            // This catches revert scenarios, unexpected gas costs,
+            // and sandwich attack vulnerability.
+            let sim_result = if deliberation.recommends_action {
+                Some(simulate_transaction(state, &amp;deliberation).await?)
+            } else {
+                None
+            };
+
+            // STEP 6: VALIDATE
+            // Check the simulated transaction against:
+            // - PolicyCage constraints (on-chain, unforgeable)
+            // - Five-layer risk engine (Kelly sizing, adaptive guardrails)
+            // - Warden time-delay requirements (high-value trades; optional, deferred)
+            let validated = if let Some(ref sim) = sim_result {
+                validate_against_policy(state, &amp;deliberation, sim, registry).await?
+            } else {
+                true // No action recommended → nothing to validate
+            };
+
+            // STEP 7: EXECUTE
+            // If validated, execute tool calls with capability tokens.
+            // WriteTool calls require a Capability&lt;WriteTool&gt; token
+            // (see 07-safety.md §1) — the type system prevents execution
+            // without a valid token, even if the LLM is compromised.
+            let actions = if validated &amp;&amp; deliberation.recommends_action {
+                execute_actions(state, &amp;deliberation, registry).await?
+            } else {
+                vec![]
+            };
+
+            // STEP 8: VERIFY
+            // Ground truth from the blockchain: did the transaction succeed?
+            // What was the actual outcome vs. what was expected?
+            // This uses eth_getTransactionReceipt and balance checks.
+            let outcome = verify_actions(state, &amp;actions).await?;
+
+            (Some(deliberation), actions, outcome)
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 9: REFLECT
+    // ═══════════════════════════════════════════════════════════════
+    //
+    // Build the DecisionCycleRecord and fire the after_turn chain.
+    // The after_turn chain is where the nine core subsystems run:
+    //
+    //   heartbeat → lifespan → daimon → memory → risk →
+    //   dream → cybernetics → clade → telemetry
+    //
+    // Each reads what the previous wrote. This is the sequential
+    // data flow that makes the extension system work (see
+    // 01a-runtime-extensions.md §4).
+
+    let mut record = DecisionCycleRecord {
+        tick: tick_num,
+        timestamp: std::time::SystemTime::now(),
+        golem_id: state.id.clone(),
+
+        // Observation
+        observation: observation.clone(),
+        regime: state.regime,
+        probe_results: observation.probes.clone(),
+        anomalies: observation.anomalies.clone(),
+
+        // Appraisal (filled by daimon in after_turn)
+        pad_before: pad,
+        pad_after: PADVector::default(),
+        somatic_markers_fired: vec![],
+        primary_emotion: PlutchikLabel::Anticipation,
+
+        // Gating
+        prediction_error,
+        deliberation_threshold: threshold,
+        tier,
+        gating_reason: tier.reason_string(prediction_error, threshold),
+
+        // Context
+        context_bundle_summary: retrieved.summary(),
+        retrieved_entries: retrieved.entry_summaries(),
+        active_interventions: state.intervention_summaries(),
+
+        // Deliberation
+        deliberation: deliberation.map(|d| d.into_record()),
+
+        // Action
+        actions: actions.iter().map(|a| a.into_record()).collect(),
+
+        // Outcome
+        outcome: outcome.map(|o| o.into_record()),
+
+        // Learning (filled by memory extension in after_turn)
+        episodes_written: vec![],
+        grimoire_mutations: vec![],
+
+        // Mortality (filled by lifespan extension in after_turn)
+        vitality: state.vitality.clone(),
+        phase: state.phase,
+        credit_consumed: 0.0,
+
+        // Cost
+        inference_cost: deliberation.as_ref().map(|d| d.cost).unwrap_or(0.0),
+        gas_cost: actions.iter().map(|a| a.gas_cost).sum(),
+        total_cost: 0.0,
+    };
+
+    // Fire the after_turn chain
+    let mut ctx = AfterTurnCtx {
+        golem: state,
+        record: &amp;mut record,
+        arena,
+    };
+    registry.fire_after_turn(&amp;mut ctx).await?;
+
+    // Compute total cost after all extensions have contributed
+    record.total_cost = record.inference_cost + record.gas_cost + record.credit_consumed;
+
+    state.event_fabric.emit(Subsystem::Heartbeat, EventPayload::HeartbeatComplete {
+        tick: tick_num,
+        duration_ms: tick_start.elapsed().as_millis() as u64,
+        actions_taken: record.actions.len() as u32,
+    });
+
+    state.current_tick += 1;
+    Ok(record)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="cost-tier-routing"><a class="header" href="#cost-tier-routing">Cost Tier Routing</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Handler</th><th>Model</th><th>Cost/Call</th><th>Frequency</th><th>Trigger</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>T0</strong></td><td>FSM rules</td><td>None</td><td>$0.00</td><td>~80% of ticks</td><td>PE &lt; threshold. Deterministic probes handle everything.</td></tr>
+<tr><td><strong>T1</strong></td><td>Haiku via Inference</td><td><code>claude-haiku-4-5</code></td><td>$0.001–0.003</td><td>~15% of ticks</td><td>PE in [theta, 2*theta). Moderate anomaly.</td></tr>
+<tr><td><strong>T2</strong></td><td>Sonnet/Opus via Inference</td><td><code>claude-sonnet-4-6</code> / <code>claude-opus-4-6</code></td><td>$0.01–0.25</td><td>~5% of ticks</td><td>PE &gt;= 2*theta, or forced (owner steer, phase transition).</td></tr>
+</tbody>
+</table>
+</div>
+<p>All LLM calls route through the inference gateway. No direct Anthropic/OpenAI calls from Golem code – structurally enforced, not by convention.</p>
+<h3 id="daily-cost-model"><a class="header" href="#daily-cost-model">Daily Cost Model</a></h3>
+<p>At ~720-2,880 ticks/day (Adaptive Clock theta frequency, 30-120s regime-dependent) with the expected tier distribution. Per-call averages: T1 $0.002, T2 $0.05. The table below uses a midpoint of ~1,440 ticks/day (60s average theta interval) for the Normal scenario; actual counts vary with regime multipliers.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Market Condition</th><th>T0 Rate</th><th>T1 Calls</th><th>T1 Cost</th><th>T2 Calls</th><th>T2 Cost</th><th>Raw Daily</th><th>With Context Eng.</th></tr>
+</thead>
+<tbody>
+<tr><td>Calm (bull, low vol)</td><td>~90%</td><td>461</td><td>$0.92</td><td>115</td><td>$5.76</td><td>~$6.68</td><td>~$1.00</td></tr>
+<tr><td>Normal</td><td>~80%</td><td>864</td><td>$1.73</td><td>288</td><td>$14.40</td><td>~$16.13</td><td>~$2.50</td></tr>
+<tr><td>Volatile (bear, high vol)</td><td>~60%</td><td>1,440</td><td>$2.88</td><td>864</td><td>$43.20</td><td>~$46.08</td><td>~$8.00</td></tr>
+</tbody>
+</table>
+</div>
+<p>Without the gating system (every tick at T2): 5,760 × $0.10 = <strong>$576/day</strong>. Tier gating alone provides a <strong>~35x cost reduction</strong>. Bardo Inference context engineering (caching, prompt cache alignment, tool pruning, multi-model routing) provides an additional <strong>~6x reduction</strong>.</p>
+<h3 id="ooda-loop-mapping"><a class="header" href="#ooda-loop-mapping">OODA Loop Mapping</a></h3>
+<p>Boyd’s Observe-Orient-Decide-Act loop maps directly onto the pipeline, with one critical addition: the REFLECT step closes the learning loop that OODA leaves open.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>OODA Phase</th><th>Pipeline Step</th><th>What Happens</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Observe</strong></td><td>OBSERVE</td><td>Deterministic probes + pheromone field capture market state</td></tr>
+<tr><td><strong>Orient</strong></td><td>RETRIEVE + ANALYZE</td><td>Grimoire retrieval + prediction error orient the agent</td></tr>
+<tr><td><strong>Decide</strong></td><td>GATE + DELIBERATE</td><td>Adaptive threshold + LLM (if invoked) select action</td></tr>
+<tr><td><strong>Act</strong></td><td>SIMULATE + VALIDATE + EXECUTE + VERIFY</td><td>On-chain execution with safety checks</td></tr>
+<tr><td><em>(missing in OODA)</em></td><td>REFLECT</td><td>DecisionCycleRecord + after_turn chain</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s4--prediction-error-what-makes-an-observation-surprising"><a class="header" href="#s4--prediction-error-what-makes-an-observation-surprising">S4 – Prediction Error: What Makes an Observation Surprising?</a></h2>
+<h3 id="the-concept"><a class="header" href="#the-concept">The Concept</a></h3>
+<p>Friston’s free-energy principle (2010) proposes that the brain continuously generates predictions about incoming sensory data and computes the discrepancy – the <strong>prediction error</strong> – between what was expected and what was observed [FRISTON-2010]. Large prediction errors signal novelty, danger, or opportunity; they demand attention. Small prediction errors mean the environment matches expectations; no additional processing is needed.</p>
+<p>For a Golem, the “sensory data” is market state (prices, liquidity, position health, gas costs, on-chain events) and the “predictions” come from its causal graph (learned relationships between market variables) and recent history (what prices and conditions were on the previous tick).</p>
+<p>The prediction error is a scalar in [0.0, 1.0] that aggregates six weighted sources of surprise:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compute prediction error: how surprising is this observation?
+///
+/// Sources of surprise, each with a weight reflecting its importance:
+///
+/// 1. PRICE DIVERGENCE (30%): The causal graph predicts what the price
+///    "should" be based on upstream variable changes. Divergence from
+///    this prediction indicates either a model error or a genuine anomaly.
+///    Pearl's (2009) causal reasoning framework grounds this: the Golem
+///    maintains a directed graph of causal relationships between market
+///    variables, and forward propagation through this graph generates
+///    price expectations [PEARL-2009].
+///
+/// 2. REGIME CHANGE (40%): A shift in the detected market regime
+///    (trending_up → volatile, range_bound → trending_down, etc.)
+///    is always surprising because it invalidates many of the Golem's
+///    current heuristics. The Golem's behavioral strategies are
+///    regime-dependent — what works in a range-bound market may fail
+///    catastrophically in a trending one.
+///
+/// 3. POSITION HEALTH DELTA (20%): A significant change in a position's
+///    health factor (e.g., an LP position's IL increasing, or a lending
+///    position approaching liquidation) demands attention. The threshold
+///    for "significant" is 0.1 (10% change in health factor per tick).
+///
+/// 4. PHEROMONE FIELD THREAT (15%): The Pheromone Field carries anonymous
+///    threat signals from peer Golems. High-intensity threat pheromones
+///    in the Golem's active domains increase prediction error even if
+///    the Golem's own observations are normal — the swarm is sensing
+///    danger that this Golem hasn't directly encountered yet.
+///    See 09-coordination.md for the Pheromone Field specification.
+///
+/// 5. PENDING INTERVENTIONS (10% per intervention): Owner steers or
+///    followUps waiting to be processed always increase PE because they
+///    represent human judgment that the Golem needs to incorporate.
+///
+/// 6. PROBE ANOMALIES (5% per anomaly): Each probe that fires an
+///    anomaly (value outside expected range) contributes a small amount.
+///    Multiple anomalies compound — three concurrent anomalies add 15%.
+///
+/// The sum is capped at 1.0.
+pub fn compute_prediction_error(
+    state: &amp;GolemState,
+    observation: &amp;Observation,
+    retrieved: &amp;RetrievedKnowledge,
+) -&gt; f64 {
+    let mut pe = 0.0;
+
+    // 1. Price divergence from causal model prediction
+    if let Some(expected_price) = state.causal_model_prediction() {
+        let actual_price = observation.primary_price();
+        if expected_price &gt; 0.0 {
+            let price_pe = ((actual_price - expected_price) / expected_price).abs();
+            pe += price_pe.min(1.0) * 0.3;
+        }
+    }
+
+    // 2. Regime change detection
+    if observation.regime != state.regime {
+        pe += 0.4; // Regime changes are categorically surprising
+    }
+
+    // 3. Position health delta
+    for position in &amp;observation.positions {
+        if let Some(prev_health) = state.previous_position_health(&amp;position.id) {
+            let delta = (position.health_factor - prev_health).abs();
+            if delta &gt; 0.1 { // 10% change threshold
+                pe += delta.min(0.5) * 0.2;
+            }
+        }
+    }
+
+    // 4. Pheromone field threat signal
+    let max_threat = state.pheromone_readings.max_threat_intensity();
+    pe += max_threat * 0.15;
+
+    // 5. Pending interventions
+    pe += state.pending_followups.len().min(3) as f64 * 0.1;
+
+    // 6. Probe anomalies
+    pe += observation.anomalies.len().min(5) as f64 * 0.05;
+
+    pe.min(1.0) // Cap at 1.0
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s5--the-adaptive-threshold"><a class="header" href="#s5--the-adaptive-threshold">S5 – The Adaptive Threshold</a></h2>
+<h3 id="dual-process-theory-as-architecture"><a class="header" href="#dual-process-theory-as-architecture">Dual-Process Theory as Architecture</a></h3>
+<p>Kahneman’s (2011) dual-process theory distinguishes two modes of thinking [KAHNEMAN-2011]:</p>
+<ul>
+<li>
+<p><strong>System 1</strong>: Fast, automatic, effortless, heuristic-based. In the Golem, this is a T0 tick – the heartbeat evaluates probes, finds nothing surprising, and moves on. Cost: $0.00.</p>
+</li>
+<li>
+<p><strong>System 2</strong>: Slow, deliberate, effortful, analytical. In the Golem, this is a T2 tick – the full LLM is invoked with the complete Cognitive Workspace. Cost: ~$0.10.</p>
+</li>
+</ul>
+<p>The boundary between System 1 and System 2 is not fixed. Kahneman describes it as a “lazy controller” that allocates effortful processing only when surprise exceeds a threshold. Friston formalizes this: the threshold IS the precision-weighted prediction error – the brain’s estimate of how reliable its current model is [FRISTON-2010].</p>
+<p>The Golem’s adaptive threshold ties three subsystems together:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compute the adaptive deliberation threshold.
+///
+/// Three modulating factors from three independent subsystems:
+///
+/// 1. STRATEGY CONFIDENCE (from cybernetics self-tuning)
+///    High confidence → higher threshold → coast on System 1.
+///    The Golem has learned that its current strategy works well;
+///    it doesn't need to think hard about every tick.
+///    Academic basis: FrugalGPT [CHEN-2023] — don't spend compute
+///    on settled questions. Also: Sims' (2003) rational inattention
+///    — agents with finite processing capacity allocate attention
+///    to the highest-value information sources [SIMS-2003].
+///
+/// 2. MORTALITY PRESSURE (from vitality composite via CorticalState)
+///    Dying → lower threshold → think more carefully about everything.
+///    A Golem in Conservation phase can't afford mistakes; it needs
+///    to be more vigilant. A Golem in Thriving phase can afford to
+///    miss some opportunities because it has time to recover.
+///    Academic basis: Damasio (1994) — emotion (including mortality
+///    anxiety) biases cognition toward safety [DAMASIO-1994].
+///
+/// 3. AROUSAL (from PAD vector via CorticalState)
+///    High arousal → lower threshold → pay attention to surprises.
+///    If the Golem is already emotionally activated (previous tick
+///    was surprising, pheromone field signals threat, somatic marker
+///    fired), it should be more responsive to the current observation.
+///    Academic basis: Bower (1981) — mood-congruent processing.
+///    Also: the Yerkes-Dodson law — moderate arousal improves
+///    performance, but only up to a point [YERKES-DODSON-1908].
+///
+/// The formula:
+///   threshold = base × confidence_factor × mortality_factor × arousal_factor
+///
+/// Where:
+///   confidence_factor = 1.0 + strategy_confidence × 0.5
+///     (high confidence → threshold up to 1.5× base)
+///   mortality_factor = 1.0 - vitality_pressure × 0.3
+///     (dying → threshold down to 0.7× base)
+///   arousal_factor = 1.0 - arousal × 0.2
+///     (high arousal → threshold down to 0.8× base)
+///
+/// Combined range: approximately 0.05 to 0.80.
+pub fn compute_adaptive_threshold(state: &amp;GolemState) -&gt; f64 {
+    let base = state.config.heartbeat.base_deliberation_threshold; // default: 0.3
+
+    // Read current state from CorticalState (zero-latency atomic reads)
+    let arousal = state.cortical_state.read_pad().arousal.abs() as f64;
+    let vitality = state.cortical_state.read_vitality();
+    let confidence = state.context_policy_confidence(); // from cybernetics self-tuning
+
+    // Compute factors
+    let vitality_pressure = 1.0 - vitality; // 0.0 when healthy, 1.0 when dying
+    let confidence_factor = 1.0 + confidence * 0.5;
+    let mortality_factor = 1.0 - vitality_pressure * 0.3;
+    let arousal_factor = 1.0 - arousal * 0.2;
+
+    let threshold = base * confidence_factor * mortality_factor * arousal_factor;
+
+    threshold.clamp(0.05, 0.8)
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-three-cognitive-tiers"><a class="header" href="#the-three-cognitive-tiers">The Three Cognitive Tiers</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Determine cognitive tier based on prediction error vs. adaptive threshold.
+///
+/// T0 (Suppress): PE &lt; θ        → No LLM call. $0.00.
+/// T1 (Analyze):  PE ∈ [θ, 2θ)  → Cheap LLM (Haiku-class). ~$0.001.
+/// T2 (Deliberate): PE ≥ 2θ     → Full LLM (Opus-class). ~$0.10.
+///
+/// Forced T2 conditions (override the threshold):
+/// - Active steers (owner interrupts always get full attention)
+/// - Imminent phase transitions (entering Terminal requires full deliberation)
+pub fn gate(
+    prediction_error: f64,
+    threshold: f64,
+    state: &amp;GolemState,
+) -&gt; CognitiveTier {
+    // Forced T2 overrides
+    if !state.active_steers.is_empty() { return CognitiveTier::T2; }
+    if state.phase_transition_imminent()  { return CognitiveTier::T2; }
+
+    // Threshold-based gating
+    if prediction_error &lt; threshold {
+        CognitiveTier::T0
+    } else if prediction_error &lt; threshold * 2.0 {
+        CognitiveTier::T1
+    } else {
+        CognitiveTier::T2
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="behavioral-examples"><a class="header" href="#behavioral-examples">Behavioral Examples</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>Vitality</th><th>Arousal</th><th>Confidence</th><th>Computed theta</th><th>Typical Result</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving, calm market, validated strategy</td><td>0.9</td><td>0.1</td><td>0.8</td><td><strong>0.50</strong></td><td>Most ticks are T0. The Golem coasts. Cheap.</td></tr>
+<tr><td>Stable, moderate volatility, learning</td><td>0.6</td><td>0.4</td><td>0.5</td><td><strong>0.30</strong></td><td>Balanced T0/T1/T2 mix. Moderate spend.</td></tr>
+<tr><td>Conservation, market crash, uncertain</td><td>0.3</td><td>0.9</td><td>0.3</td><td><strong>0.12</strong></td><td>Almost everything is T2. Maximum caution. Expensive but necessary.</td></tr>
+<tr><td>Terminal, any market, any confidence</td><td>0.05</td><td>0.8</td><td>0.2</td><td><strong>0.09</strong></td><td>Every observation gets full attention. The Golem knows it’s dying.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="learned-gating-discounted-hedge-and-thompson-sampling"><a class="header" href="#learned-gating-discounted-hedge-and-thompson-sampling">Learned Gating: Discounted Hedge and Thompson Sampling</a></h3>
+<p>The fixed thresholds above (theta, 2*theta) are the cold-start defaults. In production, the gating pipeline replaces them with two learned components that adapt to the observation stream.</p>
+<p><strong>Discounted Hedge</strong> (Herbster &amp; Warmuth, 1998) combines multiple expert signals into a single composite score, replacing multiplicative composition of probe severities. Hedge maintains per-expert weights updated through multiplicative loss feedback. The Herbster-Warmuth discount factor (0.99) handles non-stationarity by shrinking weights toward uniform every round, giving the algorithm a ~69-round half-life for forgetting outdated expert performance.</p>
+<p><strong>Thompson sampling</strong> replaces the fixed threshold boundaries with learned distributions. Three Beta-distributed thresholds (T2/T1 split, T1/T0 split, T0/suppress split) are sampled each tick, conditioned on the Daimon’s arousal level. High arousal lowers thresholds (more escalation under stress). The boundaries update based on outcome feedback: was this escalation level correct?</p>
+<p><strong>LinUCB and epsilon-greedy are not adopted.</strong> LinUCB requires feature vectors per arm and is over-engineered for a 3-arm routing decision. Epsilon-greedy provides insufficient exploration guarantees. Thompson sampling is the right tool for this problem: it naturally balances exploration and exploitation for small action spaces with Beta-distributed rewards.</p>
+<p>Conflict resolution reference: <a href="../../tmp/research/witness-research/new/reconciling/04-conflict-resolution.html">04-conflict-resolution.md</a>, Conflict 4.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Discounted Hedge combiner for triage signals.
+/// Maintains per-expert weights with Herbster-Warmuth discounting.
+pub struct DiscountedHedge {
+    /// One weight per expert signal.
+    weights: Vec&lt;f64&gt;,
+    /// Discount factor. 0.99 gives ~69-round half-life.
+    discount: f64,
+    /// Learning rate. Higher = faster adaptation, more noise.
+    eta: f64,
+}
+
+impl DiscountedHedge {
+    pub fn new(n_experts: usize, discount: f64, eta: f64) -&gt; Self {
+        Self {
+            weights: vec![1.0; n_experts],
+            discount,
+            eta,
+        }
+    }
+
+    /// Weighted combination of expert signals.
+    pub fn combine(&amp;self, signals: &amp;[f64]) -&gt; f64 {
+        let total: f64 = self.weights.iter().sum();
+        self.weights.iter()
+            .zip(signals.iter())
+            .map(|(w, s)| (w / total) * s)
+            .sum()
+    }
+
+    /// Update weights after observing outcome.
+    pub fn update(&amp;mut self, signals: &amp;[f64], outcome_loss: f64) {
+        // Herbster-Warmuth discount: shrink toward uniform
+        for w in &amp;mut self.weights {
+            *w *= self.discount;
+        }
+        // Multiplicative weight update
+        for (i, w) in self.weights.iter_mut().enumerate() {
+            let expert_loss = (signals[i] - outcome_loss).abs();
+            *w *= (-self.eta * expert_loss).exp();
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The five expert signals feeding into Hedge:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Expert</th><th>Signal</th><th>Source</th></tr>
+</thead>
+<tbody>
+<tr><td>Oracle prediction error</td><td>Normalized residual magnitude</td><td><code>golem-oracle</code></td></tr>
+<tr><td>Bayesian surprise</td><td>Max KL divergence across models</td><td><code>BayesianSurpriseDomain</code></td></tr>
+<tr><td>TDA topology signal</td><td>Wasserstein distance from reference</td><td><code>TopologyDomain</code></td></tr>
+<tr><td>Sheaf consistency</td><td>Contradiction dimension count</td><td>Sheaf consistency checker</td></tr>
+<tr><td>Risk severity</td><td>Max probe severity</td><td><code>golem-risk</code></td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Thompson sampling for threshold selection.
+/// Maintains Beta distributions over three threshold boundaries.
+pub struct ThompsonThresholds {
+    /// (alpha, beta) for each boundary:
+    /// [0] = T2/T1 split, [1] = T1/T0 split, [2] = T0/suppress split
+    boundaries: [(f64, f64); 3],
+}
+
+impl ThompsonThresholds {
+    pub fn new() -&gt; Self {
+        Self {
+            // Weakly informative priors centered at the cold-start defaults
+            boundaries: [
+                (8.0, 2.0),  // T2 boundary: prior ~0.8
+                (5.0, 5.0),  // T1 boundary: prior ~0.5
+                (2.0, 8.0),  // T0 boundary: prior ~0.2
+            ],
+        }
+    }
+
+    /// Sample thresholds conditioned on arousal.
+    pub fn sample(&amp;self, arousal: f64) -&gt; [f64; 3] {
+        let mut thresholds = [0.0; 3];
+        for (i, (alpha, beta)) in self.boundaries.iter().enumerate() {
+            let base = beta_sample(*alpha, *beta);
+            // High arousal lowers thresholds (more escalation under stress)
+            let shifted = base * (1.0 - 0.2 * arousal.clamp(0.0, 1.0));
+            thresholds[i] = shifted;
+        }
+        // Enforce ordering: T2 &gt; T1 &gt; T0
+        thresholds.sort_by(|a, b| b.partial_cmp(a).unwrap());
+        thresholds
+    }
+
+    /// Update boundary based on outcome.
+    pub fn update(&amp;mut self, boundary_idx: usize, was_correct: bool) {
+        if was_correct {
+            self.boundaries[boundary_idx].0 += 1.0;
+        } else {
+            self.boundaries[boundary_idx].1 += 1.0;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="combined-gating-pipeline"><a class="header" href="#combined-gating-pipeline">Combined gating pipeline</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Learned gating. Replaces the fixed-threshold gate() function
+/// after the cold-start period (~100 ticks).
+pub fn gate_learned(
+    hedge: &amp;DiscountedHedge,
+    thompson: &amp;ThompsonThresholds,
+    signals: &amp;[f64],
+    arousal: f64,
+    daimon_bias: f64,
+    state: &amp;GolemState,
+) -&gt; CognitiveTier {
+    // Forced T2 overrides (unchanged)
+    if !state.active_steers.is_empty() { return CognitiveTier::T2; }
+    if state.phase_transition_imminent() { return CognitiveTier::T2; }
+
+    let composite = hedge.combine(signals);
+    let thresholds = thompson.sample(arousal);
+
+    // Daimon PAD bias: high dominance raises thresholds (more confident,
+    // less escalation). Low dominance lowers them (more cautious).
+    let adjusted: Vec&lt;f64&gt; = thresholds.iter()
+        .map(|t| (t + daimon_bias * 0.1).clamp(0.05, 0.95))
+        .collect();
+
+    if composite &gt; adjusted[0] { CognitiveTier::T2 }
+    else if composite &gt; adjusted[1] { CognitiveTier::T1 }
+    else if composite &gt; adjusted[2] { CognitiveTier::T0 }
+    else { CognitiveTier::Suppress }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="daimon-pad-modulation"><a class="header" href="#daimon-pad-modulation">Daimon PAD modulation</a></h3>
+<p>The Daimon’s influence on gating operates through two channels:</p>
+<ol>
+<li>
+<p><strong>Arousal shifts Thompson thresholds.</strong> High arousal (stress, surprise) lowers all thresholds, causing more events to escalate to T1/T2. This is the Yerkes-Dodson mechanism: moderate arousal improves performance (more appropriate escalation), but extreme arousal over-escalates (everything becomes T2, burning inference budget).</p>
+</li>
+<li>
+<p><strong>Dominance biases the composite score.</strong> The <code>daimon_bias</code> term (derived from the dominance dimension of the PAD vector) adjusts the final gating decision. High dominance (confidence) raises the effective threshold – the Golem is less likely to escalate because it trusts its existing models. Low dominance (uncertainty) lowers the threshold – the Golem escalates more often because it doesn’t trust its own judgment.</p>
+</li>
+</ol>
+<p>Both channels read PAD from CorticalState. No new coupling is needed.</p>
+<h3 id="outcome-feedback"><a class="header" href="#outcome-feedback">Outcome feedback</a></h3>
+<p>The Thompson sampler needs a correctness signal. “Was this escalation level correct?” is answered retrospectively:</p>
+<ul>
+<li><strong>T0 was correct</strong> if the next Theta window showed no significant events (no large prediction error, no position loss, no regime change).</li>
+<li><strong>T1 was correct</strong> if the LLM analysis identified something actionable that T0 would have missed.</li>
+<li><strong>T2 was correct</strong> if the full deliberation led to an action that improved portfolio outcome.</li>
+<li><strong>Any tier was wrong</strong> if the retrospective assessment (at the next Delta tick) shows the escalation was unnecessary (wasted inference) or insufficient (missed an event that required higher-tier reasoning).</li>
+</ul>
+<p>The feedback loop closes at Delta frequency, not Gamma. Thompson’s priors update slowly and deliberately, not on every tick.</p>
+<hr>
+<h2 id="s6--the-decisioncyclerecord"><a class="header" href="#s6--the-decisioncyclerecord">S6 – The DecisionCycleRecord</a></h2>
+<p>The complete structured output of one heartbeat tick.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A single heartbeat tick, recorded as a structured decision cycle.
+///
+/// This is NOT a message in a conversation. It is a complete cognitive
+/// snapshot — everything the Golem observed, felt, thought, did, and
+/// learned during one tick.
+///
+/// Design principle: every field that any downstream system needs
+/// (dreams, credit assignment, mortality accounting, Event Fabric,
+/// engagement system) is a first-class field on this struct.
+/// No parsing of LLM output text required.
+///
+/// Serialization: bincode for storage (compact, fast), serde_json for
+/// API responses and Event Fabric payloads.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DecisionCycleRecord {
+    // ═══ Identity ═══
+    /// Monotonically increasing tick number.
+    pub tick: u64,
+    /// Wall-clock time when this tick completed.
+    pub timestamp: std::time::SystemTime,
+    /// Which Golem produced this record.
+    pub golem_id: GolemId,
+
+    // ═══ Observation (what the Golem saw) ═══
+    /// Full market observation: prices, positions, gas, on-chain state.
+    pub observation: Observation,
+    /// Detected market regime for this tick.
+    pub regime: MarketRegime,
+    /// Individual probe results (price deviation, liquidity change, etc.).
+    pub probe_results: Vec&lt;ProbeResult&gt;,
+    /// Anomalies detected by probes (unexpected values, threshold breaches).
+    pub anomalies: Vec&lt;Anomaly&gt;,
+
+    // ═══ Appraisal (how the Golem felt about what it saw) ═══
+    /// PAD vector BEFORE the Daimon's appraisal (carried over from previous tick).
+    pub pad_before: PADVector,
+    /// PAD vector AFTER the Daimon's appraisal (set by daimon in after_turn).
+    pub pad_after: PADVector,
+    /// Somatic markers that fired this tick (situation → emotional residue).
+    pub somatic_markers_fired: Vec&lt;SomaticMarkerSummary&gt;,
+    /// Discrete emotion label from PAD octant classification.
+    pub primary_emotion: PlutchikLabel,
+
+    // ═══ Gating (did the Golem think hard about this?) ═══
+    /// How surprising was this observation? Range [0.0, 1.0].
+    pub prediction_error: f64,
+    /// The adaptive threshold for this tick (influenced by mortality, arousal, confidence).
+    pub deliberation_threshold: f64,
+    /// Which cognitive tier was selected: T0, T1, or T2.
+    pub tier: CognitiveTier,
+    /// Human-readable explanation of why this tier was chosen.
+    pub gating_reason: String,
+
+    // ═══ Context (what knowledge was assembled) ═══
+    /// Summary of the Cognitive Workspace: which categories, how many tokens each.
+    pub context_bundle_summary: ContextBundleSummary,
+    /// Which Grimoire entries were retrieved and their retrieval scores.
+    pub retrieved_entries: Vec&lt;RetrievedEntrySummary&gt;,
+    /// Active steers and pending followUps at the time of this tick.
+    pub active_interventions: Vec&lt;InterventionSummary&gt;,
+
+    // ═══ Deliberation (what the LLM thought, if invoked) ═══
+    /// None for T0 ticks (no LLM call). Some for T1/T2 ticks.
+    pub deliberation: Option&lt;DeliberationRecord&gt;,
+
+    // ═══ Action (what happened in the world) ═══
+    /// Tool calls executed this tick. Empty for T0 ticks and T1/T2 ticks
+    /// where the LLM decided no action was needed.
+    pub actions: Vec&lt;ActionRecord&gt;,
+
+    // ═══ Outcome (what was verified) ═══
+    /// Ground truth from the blockchain: did the transaction succeed?
+    /// Expected vs. actual outcome. PnL impact.
+    pub outcome: Option&lt;OutcomeRecord&gt;,
+
+    // ═══ Learning (what was written to the Grimoire) ═══
+    /// Episodes written during this tick (set by memory extension in after_turn).
+    pub episodes_written: Vec&lt;EpisodeId&gt;,
+    /// All Grimoire mutations: inserts, updates, promotions, deletions.
+    pub grimoire_mutations: Vec&lt;GrimoireMutation&gt;,
+
+    // ═══ Mortality (the clock ticked) ═══
+    /// Three-component vitality state at tick end.
+    pub vitality: VitalityState,
+    /// Behavioral phase at tick end.
+    pub phase: BehavioralPhase,
+    /// Credits consumed this tick (inference + gas + Styx queries).
+    pub credit_consumed: f64,
+
+    // ═══ Cost ═══
+    pub inference_cost: f64,
+    pub gas_cost: f64,
+    pub total_cost: f64,
+}
+
+/// What the LLM thought (when invoked at T1 or T2).
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DeliberationRecord {
+    /// Which model was used (e.g., "claude-haiku-4-5" for T1, "claude-opus-4-6" for T2).
+    pub model: String,
+    /// Cognitive tier that triggered this deliberation.
+    pub tier: String,
+    /// Input tokens consumed.
+    pub input_tokens: u32,
+    /// Output tokens generated.
+    pub output_tokens: u32,
+    /// Tokens read from provider-side prompt cache.
+    pub cache_read_tokens: u32,
+    /// Compressed summary of the LLM's reasoning.
+    pub reasoning_summary: String,
+    /// Tool calls proposed by the LLM.
+    pub tool_calls: Vec&lt;ToolCallRecord&gt;,
+    /// What the Golem decided to do (or not do).
+    pub decision: String,
+    /// The LLM's self-assessed confidence in its decision [0.0, 1.0].
+    pub confidence: f64,
+    /// Wall-clock latency for the LLM call.
+    pub latency_ms: u64,
+    /// USD cost of this inference call.
+    pub cost: f64,
+    /// Whether the LLM recommended taking action.
+    pub recommends_action: bool,
+}
+
+/// A tool call that was executed.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ActionRecord {
+    /// What kind of action (swap, rebalance, deposit, withdraw, etc.).
+    pub action_type: String,
+    /// Which tool was called.
+    pub tool_name: String,
+    /// ActionPermit ID (links to the capability token for audit).
+    pub permit_id: Option&lt;String&gt;,
+    /// On-chain transaction hash (if the action involved a transaction).
+    pub tx_hash: Option&lt;String&gt;,
+    /// Whether the action was executed, blocked, or deferred.
+    pub status: ActionStatus,
+    /// If blocked, why.
+    pub block_reason: Option&lt;String&gt;,
+    /// Gas cost in USD.
+    pub gas_cost: f64,
+}
+
+/// Ground truth from the blockchain.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct OutcomeRecord {
+    /// Did the transaction succeed on-chain?
+    pub verified: bool,
+    /// What was expected (from the LLM's decision).
+    pub expected: String,
+    /// What actually happened (from the blockchain).
+    pub actual: String,
+    /// PnL impact in USD (positive = profit, negative = loss).
+    pub pnl_impact: Option&lt;f64&gt;,
+    /// How was ground truth determined? "receipt", "balance_check", "log_comparison".
+    pub ground_truth_source: String,
+    /// Which causal variables were involved (for causal graph update).
+    pub cause_variable: Option&lt;String&gt;,
+    pub effect_variable: Option&lt;String&gt;,
+}
+
+/// Persistence: bincode for storage, one file per tick.
+impl DecisionCycleRecord {
+    pub async fn persist(&amp;self, data_dir: &amp;std::path::Path) -&gt; Result&lt;()&gt; {
+        let dir = data_dir.join("cycles");
+        tokio::fs::create_dir_all(&amp;dir).await?;
+        let path = dir.join(format!("cycle-{:06}.bincode", self.tick));
+        let bytes = bincode::serialize(self)?;
+        tokio::fs::write(path, bytes).await?;
+        Ok(())
+    }
+
+    pub async fn load(data_dir: &amp;std::path::Path, tick: u64) -&gt; Result&lt;Self&gt; {
+        let path = data_dir.join("cycles").join(format!("cycle-{:06}.bincode", tick));
+        let bytes = tokio::fs::read(path).await?;
+        Ok(bincode::deserialize(&amp;bytes)?)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="storage-and-indexing"><a class="header" href="#storage-and-indexing">Storage and Indexing</a></h3>
+<pre><code>$GOLEM_DATA/cycles/
+├── cycle-000001.bincode   # ~2-10KB per tick (depends on deliberation)
+├── cycle-000002.bincode
+├── ...
+├── cycle-001440.bincode   # ~720-2,880 ticks/day (adaptive theta, 30-120s)
+└── index.sqlite           # Tick index for efficient queries
+</code></pre>
+<p>The SQLite index enables queries that downstream systems need:</p>
+<pre><code class="language-sql">CREATE TABLE cycle_index (
+    tick INTEGER PRIMARY KEY,
+    regime TEXT NOT NULL,
+    tier TEXT NOT NULL,          -- 'T0', 'T1', 'T2'
+    has_action BOOLEAN NOT NULL,
+    has_outcome BOOLEAN NOT NULL,
+    phase TEXT NOT NULL,
+    prediction_error REAL NOT NULL,
+    total_cost REAL NOT NULL,
+    pnl_impact REAL,            -- NULL if no action/outcome
+    primary_emotion TEXT,
+    timestamp TEXT NOT NULL
+);
+
+-- Dream replay: "give me high-utility episodes for NREM replay"
+CREATE INDEX idx_cycle_tier_regime ON cycle_index(tier, regime);
+
+-- Outcome verification: "all ticks where we acted and have ground truth"
+CREATE INDEX idx_cycle_outcome ON cycle_index(has_action, has_outcome);
+
+-- Mortality analysis: "tick distribution across phases"
+CREATE INDEX idx_cycle_phase ON cycle_index(phase);
+
+-- Curator context: "last 50 ticks for maintenance"
+CREATE INDEX idx_cycle_recent ON cycle_index(tick DESC);
+</code></pre>
+<p><strong>Storage estimates</strong>: At adaptive theta-frequency intervals (30-120s, regime-dependent), ~720-2,880 ticks/day. T0 ticks (~80%) are ~2KB each. T1/T2 ticks (~20%) with deliberation records are ~5-10KB. Total: ~4-25MB/day, ~120-750MB/month.</p>
+<p>Cycle files older than the Curator’s lookback window (default: 500 ticks, about 2 hours) can be archived to cold storage or pruned entirely. The index retains metadata indefinitely for historical analysis.</p>
+<hr>
+<h2 id="s7--heartbeat-fsm-with-interrupt-substates"><a class="header" href="#s7--heartbeat-fsm-with-interrupt-substates">S7 – Heartbeat FSM with Interrupt Substates</a></h2>
+<p>The heartbeat FSM tracks which step of the 9-step pipeline is currently executing. This matters for two reasons: (1) the owner can send a “steer” (mid-execution interrupt) that needs to be processed at the right point, and (2) the Event Fabric needs to report progress for surface rendering.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Heartbeat FSM: tracks the current position in the 9-step pipeline.
+///
+/// The FSM supports interrupt substates: when a steer arrives during
+/// deliberation or execution, the FSM transitions to an interrupted
+/// substate that modifies behavior without breaking the pipeline.
+#[derive(Debug, Clone, PartialEq)]
+pub enum HeartbeatState {
+    /// Between ticks. Waiting for the next heartbeat interval.
+    Idle,
+    /// Step 1: reading market state and evaluating probes.
+    Observing,
+    /// Step 2: querying the Grimoire for relevant knowledge.
+    Retrieving,
+    /// Step 3: computing prediction error.
+    Analyzing,
+    /// Step 4: determining cognitive tier.
+    Gating,
+    /// Steps 5-6: the LLM is thinking (T1 or T2).
+    Deciding { substate: DecidingSubstate },
+    /// Step 5: simulating the proposed transaction in Revm.
+    Simulating,
+    /// Step 6: checking PolicyCage and risk engine.
+    Validating,
+    /// Step 7: executing tool calls.
+    Executing { substate: ExecutingSubstate },
+    /// Step 8: verifying outcome from blockchain.
+    Verifying,
+    /// Step 9: building DecisionCycleRecord and firing after_turn chain.
+    Reflecting,
+}
+
+/// Substates for the Deciding phase.
+/// A steer can interrupt deliberation.
+#[derive(Debug, Clone, PartialEq)]
+pub enum DecidingSubstate {
+    /// Normal deliberation — no interrupts.
+    Normal,
+    /// A steer arrived during deliberation.
+    /// The LLM is re-prompted with the steer content injected into context.
+    /// This models the experience of "new information arriving while thinking."
+    Interrupted { steer_id: String },
+}
+
+/// Substates for the Executing phase.
+/// Steers and safety constraints can modify execution.
+#[derive(Debug, Clone, PartialEq)]
+pub enum ExecutingSubstate {
+    /// Normal execution — tool calls proceeding as planned.
+    Normal,
+    /// A high-severity steer cancels the current execution.
+    /// Pending tool calls are cancelled. Already-completed calls are not reverted
+    /// (on-chain transactions are irreversible — this is DeFi, not a database).
+    CancelPending { reason: String },
+    /// A safety constraint was hit during execution (e.g., PolicyCage violation
+    /// detected mid-batch, or the Warden flagged an anomaly if deployed).
+    /// Remaining tool calls in the batch are blocked.
+    Restricted { constraint: String },
+}
+
+impl HeartbeatState {
+    /// Which states can accept a steer interrupt?
+    /// Only states where the Golem is "thinking" or "acting" — not observing or reflecting.
+    pub fn accepts_steer(&amp;self) -&gt; bool {
+        matches!(self,
+            HeartbeatState::Deciding { .. } |
+            HeartbeatState::Simulating |
+            HeartbeatState::Validating |
+            HeartbeatState::Executing { .. }
+        )
+    }
+
+    /// Process a steer interrupt. Returns the new FSM state.
+    pub fn handle_steer(self, steer: &amp;Intervention) -&gt; HeartbeatState {
+        match self {
+            // During deliberation: inject steer into LLM context and re-prompt
+            HeartbeatState::Deciding { .. } =&gt; HeartbeatState::Deciding {
+                substate: DecidingSubstate::Interrupted {
+                    steer_id: steer.id.to_string(),
+                },
+            },
+            // During execution: high-severity steers cancel pending calls
+            HeartbeatState::Executing { .. } if steer.severity &gt;= Severity::High =&gt; {
+                HeartbeatState::Executing {
+                    substate: ExecutingSubstate::CancelPending {
+                        reason: steer.intent.clone(),
+                    },
+                }
+            }
+            // Low-severity steers during execution don't cancel — they queue as followUps
+            other =&gt; other,
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="sleepingdreaming-sub-state"><a class="header" href="#sleepingdreaming-sub-state">SLEEPING.DREAMING Sub-State</a></h3>
+<p>The FSM has an implicit sub-state: <code>SLEEPING.DREAMING</code>. During dreaming, the heartbeat FSM is suspended – no probes run, no escalation occurs, no actions are taken. The biological analog is precise: during REM sleep, the brain’s motor output is inhibited (atonia). The Golem’s “atonia” is enforced by the <code>DreamScheduler</code>.</p>
+<p>The heartbeat resumes only after the full dream cycle completes (all three phases: NREM, REM, Integration). Partial dreams are not allowed. External events that arrive during a dream are queued; if the queue fills, the oldest events are dropped with <code>heartbeat.tick_dropped_during_dream</code> metadata.</p>
+<hr>
+<h2 id="s8--speculative-tool-execution"><a class="header" href="#s8--speculative-tool-execution">S8 – Speculative Tool Execution</a></h2>
+<h3 id="the-concept-1"><a class="header" href="#the-concept-1">The Concept</a></h3>
+<p>When the LLM requests a tool call (e.g., “check Morpho position health”), it often follows with predictable subsequent calls (“get ETH price”, “get gas price”). These read-only calls are independent of each other – they can be fired in parallel.</p>
+<p>The speculation engine learns tool call co-occurrence patterns from the Golem’s own history and prefetches likely follow-up calls. This is analogous to CPU branch prediction: predict the likely next instruction and execute it speculatively while the current instruction completes.</p>
+<h3 id="safety-constraint"><a class="header" href="#safety-constraint">Safety Constraint</a></h3>
+<p>Only <code>ReadTool</code> types can be speculated. <code>WriteTool</code> requires a <code>Capability&lt;T&gt;</code> token that hasn’t been granted yet – the Rust type system prevents speculation on writes at compile time (see <code>07-safety.md</code> §1). This means speculation is always safe: the worst case is wasted read calls, never unauthorized writes.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Speculative tool execution engine.
+///
+/// Learns tool call co-occurrence patterns from the Golem's own history.
+/// Fires predicted read-only follow-up calls in parallel with the current call.
+///
+/// The co-occurrence matrix is learned via exponential moving average (EMA):
+/// each time tool_a is followed by tool_b, the co-occurrence probability
+/// is updated as: P(b|a) = P(b|a) × 0.9 + 0.1
+///
+/// This is itself a form of procedural learning: the runtime learns the
+/// Golem's tool access patterns and optimizes for them without any LLM involvement.
+pub struct SpeculationEngine {
+    /// Co-occurrence matrix: tool_a → [(tool_b, probability), ...]
+    /// Stored as a HashMap for O(1) lookup by trigger tool name.
+    co_occurrence: HashMap&lt;String, Vec&lt;(String, f64)&gt;&gt;,
+    /// Minimum probability to trigger speculation (default: 0.7).
+    /// Below this, the prediction isn't confident enough to justify the RPC cost.
+    min_probability: f64,
+    /// Maximum concurrent speculative calls (default: 3).
+    /// Limits resource consumption even with high-confidence predictions.
+    max_speculative: usize,
+}
+
+impl SpeculationEngine {
+    pub fn new(min_probability: f64, max_speculative: usize) -&gt; Self {
+        Self {
+            co_occurrence: HashMap::new(),
+            min_probability,
+            max_speculative,
+        }
+    }
+
+    /// Record a tool call sequence for learning.
+    /// Called after each tick: if tool_a was followed by tool_b,
+    /// update the co-occurrence probability.
+    pub fn record_sequence(&amp;mut self, tool_a: &amp;str, tool_b: &amp;str) {
+        let entry = self.co_occurrence.entry(tool_a.to_string()).or_default();
+        if let Some(pair) = entry.iter_mut().find(|(name, _)| name == tool_b) {
+            pair.1 = pair.1 * 0.9 + 0.1; // EMA update toward 1.0
+        } else {
+            entry.push((tool_b.to_string(), 0.1)); // First observation
+        }
+        // Decay entries not seen recently
+        for pair in entry.iter_mut() {
+            if pair.0 != tool_b {
+                pair.1 *= 0.99; // Slow decay for unseen pairs
+            }
+        }
+        // Remove entries that have decayed below noise threshold
+        entry.retain(|(_, prob)| *prob &gt; 0.01);
+    }
+
+    /// Given a tool call, predict and fire likely follow-up read-only calls.
+    ///
+    /// Returns a Vec of (tool_name, JoinHandle) pairs. The caller can
+    /// await these handles to get pre-fetched results, or drop them
+    /// if the predictions turn out to be wrong.
+    pub async fn speculate(
+        &amp;self,
+        trigger_tool: &amp;str,
+        tool_registry: &amp;ToolRegistry,
+    ) -&gt; Vec&lt;(String, tokio::task::JoinHandle&lt;Result&lt;serde_json::Value&gt;&gt;)&gt; {
+        let predictions = match self.co_occurrence.get(trigger_tool) {
+            Some(pairs) =&gt; pairs.iter()
+                .filter(|(_, prob)| *prob &gt;= self.min_probability)
+                .take(self.max_speculative)
+                .collect::&lt;Vec&lt;_&gt;&gt;(),
+            None =&gt; return vec![],
+        };
+
+        let mut handles = Vec::new();
+        for (tool_name, _prob) in predictions {
+            // SAFETY: only ReadTool types can be speculated.
+            // get_read_tool returns None for WriteTool/PrivilegedTool.
+            if let Some(tool) = tool_registry.get_read_tool(tool_name) {
+                let tool = tool.clone();
+                let handle = tokio::spawn(async move {
+                    tool.execute_read(serde_json::Value::Null).await
+                });
+                handles.push((tool_name.clone(), handle));
+            }
+        }
+        handles
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="performance-impact"><a class="header" href="#performance-impact">Performance Impact</a></h3>
+<p>At ~100ms per RPC call, speculating 3 correlated read calls saves <code>3 x 100ms - max(100ms x 3) = 200ms+</code> per deliberation (sequential to parallel). Over 1,000 ticks/day with a 20% deliberation rate, this saves ~40 seconds of latency per day.</p>
+<p>The speculation hit rate improves over time as the co-occurrence model learns. After 500+ ticks, the engine typically achieves 70-85% accuracy on its top prediction – meaning 70-85% of speculated calls are actually used by the LLM’s subsequent tool requests.</p>
+<hr>
+<h2 id="s9--system-1-deterministic-probes"><a class="header" href="#s9--system-1-deterministic-probes">S9 – System 1: Deterministic Probes</a></h2>
+<p>Probes are the System 1 layer. Each probe is a pure function that reads cached state and returns a severity. The probes feed the prediction error computation (S4) rather than directly gating the FSM – it is the aggregate prediction error, not any single probe, that determines the cognitive tier.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A single probe result from the OBSERVE step.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ProbeResult {
+    /// Which probe produced this result.
+    pub probe: String,
+    /// Severity classification.
+    pub severity: ProbeSeverity,
+    /// The observed value.
+    pub value: f64,
+    /// The expected/threshold value.
+    pub threshold: f64,
+    /// Human-readable detail.
+    pub detail: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub enum ProbeSeverity {
+    None,
+    Low,
+    High,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Probe</th><th>Severity: <code>Low</code></th><th>Severity: <code>High</code></th><th>Data Source</th></tr>
+</thead>
+<tbody>
+<tr><td>Price delta</td><td>&gt;0.5% since last tick</td><td>&gt;2% since last tick</td><td>Cached price feed</td></tr>
+<tr><td>TVL change</td><td>&gt;1% in one tick</td><td>&gt;5% in one tick</td><td>Cached subgraph query</td></tr>
+<tr><td>Position health</td><td>Health factor &lt; 1.5</td><td>Health factor &lt; 1.2</td><td>On-chain read (cached)</td></tr>
+<tr><td>Gas price</td><td>&gt;2x 1-hour average</td><td>&gt;5x 1-hour average</td><td><code>eth_gasPrice</code> RPC</td></tr>
+<tr><td>Credit balance</td><td>Partition &lt; 20%</td><td>Partition &lt; 10%</td><td>Local ledger</td></tr>
+<tr><td>RSI/MACD</td><td>Divergence from mean</td><td>Extreme oversold/overbought</td><td>Price history</td></tr>
+<tr><td>Circuit breaker</td><td>NAV deviation &gt; warning</td><td>NAV deviation &gt; halt</td><td>On-chain read</td></tr>
+<tr><td>Kill switch</td><td>–</td><td>Always <code>High</code> if triggered</td><td><code>/tmp/golem_killswitch</code></td></tr>
+<tr><td>Pheromone threat</td><td>Any threat signal detected</td><td>Threat intensity &gt; 0.7</td><td>Styx WebSocket</td></tr>
+<tr><td>Homeostatic deviation</td><td>Any variable &gt;1 sigma</td><td>Any variable &gt;2 sigma</td><td>Local state</td></tr>
+<tr><td>World model drift</td><td>Prediction error &gt; 10%</td><td>Prediction error &gt; 25%</td><td>Local world model</td></tr>
+<tr><td>Causal graph update</td><td>New link candidate</td><td>Causal link invalidated</td><td>Local causal graph</td></tr>
+</tbody>
+</table>
+</div>
+<p>All probes run every tick in &lt;10ms total.</p>
+<h3 id="regime-detection"><a class="header" href="#regime-detection">Regime Detection</a></h3>
+<p>Threshold-based regime classification using T0 probe data:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Regime</th><th>Signal</th><th>Tick Interval</th></tr>
+</thead>
+<tbody>
+<tr><td>Trending-up</td><td>Price &gt; 20-period SMA + 1sigma</td><td>Standard</td></tr>
+<tr><td>Trending-down</td><td>Price &lt; 20-period SMA - 1sigma</td><td>2x faster</td></tr>
+<tr><td>Range-bound</td><td>Price within +/-0.5sigma of SMA for &gt;6 ticks</td><td>0.5x slower</td></tr>
+<tr><td>Volatile</td><td>sigma(returns) &gt; 2x 30-day average</td><td>2x faster</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s10--gas-gate-and-chain-safety"><a class="header" href="#s10--gas-gate-and-chain-safety">S10 – Gas Gate and Chain Safety</a></h2>
+<p><strong>Gas gate.</strong> Before transitioning from VALIDATE to EXECUTE, the pipeline checks gas price against the gas partition budget. If estimated gas cost exceeds what the partition can afford, the action is deferred. This is a hard constraint – the LLM cannot override it.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Check whether gas costs are within budget.
+pub fn gas_gate(
+    estimated_gas_usd: f64,
+    gas_partition: &amp;PartitionState,
+) -&gt; GasGateResult {
+    if estimated_gas_usd &gt; gas_partition.available {
+        GasGateResult::Defer
+    } else if estimated_gas_usd &gt; gas_partition.avg_hourly_cost * 2.0 {
+        GasGateResult::Defer
+    } else {
+        GasGateResult::Proceed
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GasGateResult {
+    Proceed,
+    Defer,
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Chain reorg handling.</strong> On-chain actions require 2-block confirmation before the Episode is recorded as <code>confirmed</code>. If a reorg is detected, all Episodes within the reorg range are re-marked as <code>reorged</code>, downstream dependents cascade to <code>invalidated</code>, and immediate T2 escalation is triggered. If reorg frequency exceeds 1 per 100 blocks over a 1,000-block window, confirmation depth auto-increases to 5 blocks.</p>
+<hr>
+<h2 id="s11--decision-cache-system-2-to-system-1-distillation"><a class="header" href="#s11--decision-cache-system-2-to-system-1-distillation">S11 – Decision Cache (System 2 to System 1 Distillation)</a></h2>
+<p>Weston &amp; Sukhbaatar (2024) demonstrate distilling System 2 reasoning into System 1 responses. When the same market pattern has been analyzed 3+ times with consistent mental model outputs, the Golem caches the mapping as a deterministic rule.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// A cached decision: System 2 reasoning distilled to System 1.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DecisionCache {
+    pub pattern_hash: String,
+    pub mental_models_applied: Vec&lt;String&gt;,
+    pub consistent_action: String,
+    pub consistency_count: u32,
+    pub last_validated: u64,
+    pub expires_at: u64,
+    pub conditions: Vec&lt;CacheCondition&gt;,
+    pub cache_tick: u64,
+    pub cache_regime: String,
+
+    /// PLAYBOOK.md revision at cache time
+    pub playbook_revision: u32,
+    /// ContextPolicy revision at cache time (see 14-context-governor.md)
+    pub context_policy_revision: u32,
+}
+<span class="boring">}</span></code></pre>
+<p>TTL is 1–3 heartbeat intervals (15–45 minutes). Regime change invalidates ALL cached decisions immediately. ContextPolicy revision change invalidates ALL cached decisions – if the context assembly changed, the same pattern might produce a different decision. PLAYBOOK.md changes invalidate entries whose <code>mental_models_applied</code> includes modified heuristics. Before applying a cached decision, every contributing condition is re-validated – if any has drifted &gt;20%, the entry is invalidated.</p>
+<p>A Golem surviving 7+ days should achieve a cache hit rate above 30%. At that rate over 30 days, the cache saves approximately $7.80 – 39 additional days of life for a Golem burning $0.20/day. The cache literally buys time.</p>
+<hr>
+<h2 id="s12--cost-controls"><a class="header" href="#s12--cost-controls">S12 – Cost Controls</a></h2>
+<h3 id="daily-cost-budget"><a class="header" href="#daily-cost-budget">Daily Cost Budget</a></h3>
+<p>The heartbeat includes a hard daily spending cap (<code>max_daily_cost_usd</code>). Once hit, only T0 deterministic probes run until the next UTC midnight. No exceptions. The FSM enforces this before constructing any LLM request.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Daily Spend</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>&lt; 70% of cap</strong></td><td>Normal operation. All tiers available.</td></tr>
+<tr><td><strong>70–90% of cap</strong></td><td>Suppress T2/Opus. Sonnet is the ceiling.</td></tr>
+<tr><td><strong>90–100% of cap</strong></td><td>Suppress all LLM calls. Only T0 + T1 on-chain reads.</td></tr>
+<tr><td><strong>&gt;= 100% of cap</strong></td><td>Hard stop. T0 only. No data queries, no LLM calls.</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="fsm-backpressure"><a class="header" href="#fsm-backpressure">FSM Backpressure</a></h3>
+<p>Maximum 3 pending ticks. At depth 2, emit <code>heartbeat.queue_warning</code>. At depth 3, drop the oldest queued tick, emit <code>heartbeat.tick_dropped</code>. Dropped ticks’ probe results are merged into the next executing tick (highest severity wins).</p>
+<hr>
+<h2 id="s13--cybernetic-feedback-architecture"><a class="header" href="#s13--cybernetic-feedback-architecture">S13 – Cybernetic Feedback Architecture</a></h2>
+<p>The heartbeat, learning loop, memory, and coordination subsystems connect through a triple-loop cybernetic architecture grounded in Argyris &amp; Schon (1978) and Bateson’s deutero-learning.</p>
+<h3 id="loop-1--execution-feedback-single-loop--ooda"><a class="header" href="#loop-1--execution-feedback-single-loop--ooda">Loop 1 – Execution Feedback (Single-Loop / OODA)</a></h3>
+<p><strong>Question</strong>: “Are we executing correctly?”</p>
+<p>Error correction within the current strategy. Seconds-to-minutes timescale. Detects deviations between expected and actual outcomes, adjusts execution parameters without questioning the strategy itself.</p>
+<p>After every tick that has an outcome (a trade was executed and verified), Loop 1 correlates which Grimoire entries appeared in the workspace with whether the outcome was positive. Entries that consistently appear in contexts that produce good decisions get higher future retrieval weights.</p>
+<p>This is a credit assignment mechanism: “which pieces of knowledge contributed to this decision, and was the decision good?” The DecisionCycleRecord’s <code>context_bundle_summary</code> provides the entry list, and <code>outcome</code> provides the signal.</p>
+<h3 id="loop-2--strategic-evolution-double-loop--vsm-system-4"><a class="header" href="#loop-2--strategic-evolution-double-loop--vsm-system-4">Loop 2 – Strategic Evolution (Double-Loop / VSM System 4)</a></h3>
+<p><strong>Question</strong>: “Are we pursuing the right strategy?”</p>
+<p>When Loop 1 corrections consistently fail – 3 consecutive ticks where corrections fail to reduce <code>|target - observed|</code> – Loop 2 activates. The Reflector and Curator interrogate the governing variables. Hours-to-days timescale. This is Argyris &amp; Schon’s double-loop learning.</p>
+<p>Every 50 ticks (aligned with the Curator cycle), Loop 2 aggregates Loop 1’s per-entry correlations into category-level performance metrics. Categories with consistently positive correlations get more tokens; categories with negative correlations get fewer.</p>
+<h3 id="loop-3--meta-consolidation-dream-cycles"><a class="header" href="#loop-3--meta-consolidation-dream-cycles">Loop 3 – Meta-Consolidation (Dream Cycles)</a></h3>
+<p>When the market regime changes (e.g., <code>range_bound</code> to <code>volatile</code>), Loop 3 partially resets Loop 1’s correlations. This prevents the system from applying learnings from one regime to a fundamentally different one. All correlations decay by 50% – don’t throw away everything (some knowledge transfers across regimes) but reduce confidence in regime-specific patterns.</p>
+<h3 id="context-feedback-integration"><a class="header" href="#context-feedback-integration">Context Feedback Integration</a></h3>
+<p>The three cybernetic loops drive ContextPolicy updates via the Context Governor (<code>14-context-governor.md</code>). Loop 1 records which context categories contributed to each decision. Loop 2 aggregates these signals and adjusts per-category token allocations. Loop 3 runs counterfactual context assembly during dream cycles – “what minimal context would have changed tick 42’s decision?” – producing ContextPolicy mutations that are staged and validated against waking performance.</p>
+<p>The Governor is not a separate learning system. It is an additional output surface for the same cybernetic feedback architecture. The Reflector and Curator evolve heuristics <em>and</em> context retrieval weights simultaneously.</p>
+<hr>
+<h2 id="s14--return-attribution-brinson-framework"><a class="header" href="#s14--return-attribution-brinson-framework">S14 – Return Attribution (Brinson Framework)</a></h2>
+<p>A Golem that cannot distinguish market beta from strategy alpha will “learn” that its strategy is bad during a bear market and “learn” that it is brilliant during a bull market. Return attribution prevents this.</p>
+<pre><code>Total Return = Market Beta + Strategy Alpha + Knowledge Alpha + Noise
+</code></pre>
+<p>The decomposition determines which cybernetic loop should respond:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dominant Source of Underperformance</th><th>Responsible Loop</th><th>Response</th></tr>
+</thead>
+<tbody>
+<tr><td>Market Beta (broad market down)</td><td>None</td><td>Wait. Do not overreact to beta.</td></tr>
+<tr><td>Strategy Alpha (execution failing)</td><td>Loop 1</td><td>Adjust parameters</td></tr>
+<tr><td>Knowledge Alpha (insights wrong)</td><td>Loop 2</td><td>Reflector re-evaluates, Curator prunes</td></tr>
+<tr><td>Noise (high variance)</td><td>Loop 1</td><td>Reduce position sizes, increase verification</td></tr>
+<tr><td>Knowledge Alpha persistent decline</td><td>Loop 3</td><td>Examine which reflection templates produce bad insights</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s15--viable-system-model-mapping"><a class="header" href="#s15--viable-system-model-mapping">S15 – Viable System Model Mapping</a></h2>
+<p>Every viable system must implement all five subsystems (Beer, 1984).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>VSM System</th><th>Function</th><th>Golem Component</th><th>Extension</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>S1</strong> Operations</td><td>Primary value-producing activities</td><td>DeFi execution (swap, LP, lend, borrow)</td><td><code>golem-tools</code></td></tr>
+<tr><td><strong>S2</strong> Coordination</td><td>Prevent conflicting operations</td><td>Clade LP range registry, Warden queue (optional, deferred)</td><td><code>golem-clade</code></td></tr>
+<tr><td><strong>S3</strong> Internal Management</td><td>Monitor state, allocate resources</td><td>Credit partitions, homeostatic variables, PolicyCage</td><td><code>golem-lifespan</code> + <code>golem-safety</code></td></tr>
+<tr><td><strong>S4</strong> Intelligence</td><td>Horizon scanning, opportunity identification</td><td>Market context, Clade Grimoire, world model predictions</td><td><code>golem-context</code> + <code>golem-clade</code></td></tr>
+<tr><td><strong>S5</strong> Identity</td><td>Agent purpose, values, non-negotiable constraints</td><td>STRATEGY.md + DeFi Constitution + core safety invariants</td><td>Immutable config</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="s16--heideggers-temporality"><a class="header" href="#s16--heideggers-temporality">S16 – Heidegger’s Temporality</a></h2>
+<p>The heartbeat is not a clock. It is the Golem’s temporal structure – its way of being-in-time.</p>
+<p><strong>Future primacy.</strong> Each tick begins with projection: what will the market do? The probes scan the horizon. The mental models project consequences. The survival pressure computes projected life hours. The Golem exists as a “being-toward” – toward its strategy goals, toward its death, toward the next tick.</p>
+<p><strong>Having-been.</strong> The Grimoire is the Golem’s past made present. Episodes are not dead records but living context – retrieved by similarity, injected into reasoning, shaping every decision. The PLAYBOOK.md heuristics are accumulated experience compressed into actionable form.</p>
+<p><strong>Present.</strong> The tick itself – the moment of decision – is where future projection and accumulated past converge. OBSERVE is the present moment of perception. DECIDE is the present moment of judgment. EXECUTE is the present moment of commitment.</p>
+<p>This tripartite temporal structure is what Heidegger called <em>Zeitlichkeit</em>. A Golem without a future (terminal phase) perceives differently, decides differently, acts differently – not because its code changes, but because the temporal horizon that structures its cognition has contracted.</p>
+<hr>
+<h2 id="s17--heartbeat-configuration"><a class="header" href="#s17--heartbeat-configuration">S17 – Heartbeat Configuration</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Configuration for the heartbeat pipeline.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct HeartbeatConfig {
+    /// Base interval between ticks in seconds. Default: 15.
+    pub base_interval_seconds: u64,
+
+    /// Base threshold for prediction error gating. Default: 0.3.
+    pub base_deliberation_threshold: f64,
+
+    /// Maximum daily cost in USD. Default: 10.0.
+    pub max_daily_cost_usd: f64,
+
+    /// Cost warning threshold (fraction of daily cap). Default: 0.7.
+    pub cost_warning_threshold: f64,
+
+    /// Cost soft cap threshold. Default: 0.9.
+    pub cost_soft_cap_threshold: f64,
+
+    /// Regime-based interval multipliers.
+    pub regime_multipliers: HashMap&lt;MarketRegime, f64&gt;,
+
+    /// Probe sensitivity thresholds.
+    pub probe_thresholds: ProbeThresholds,
+
+    /// Episode write batch size. Default: 25.
+    pub write_batch_size: usize,
+
+    /// Episode write batch flush interval in milliseconds. Default: 30_000.
+    pub write_batch_flush_interval_ms: u64,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ProbeThresholds {
+    pub price_delta_low_bps: u32,    // Default: 50
+    pub price_delta_high_bps: u32,   // Default: 200
+    pub health_factor_low: f64,      // Default: 1.5
+    pub health_factor_high: f64,     // Default: 1.2
+    pub world_model_drift_low: f64,  // Default: 0.10
+    pub world_model_drift_high: f64, // Default: 0.25
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="s18--events-emitted"><a class="header" href="#s18--events-emitted">S18 – Events Emitted</a></h2>
+<p>The heartbeat pipeline emits structured events to the Event Fabric (<code>tokio::broadcast</code> ring buffer) for observability and cross-system coordination.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>heartbeat:tick</code></td><td>Each heartbeat cycle</td><td><code>{ tick, tier, prediction_error, threshold }</code></td></tr>
+<tr><td><code>heartbeat:complete</code></td><td>Tick finished</td><td><code>{ tick, duration_ms, actions_taken }</code></td></tr>
+<tr><td><code>heartbeat:suppress</code></td><td>Tick suppressed (dreaming/dying)</td><td><code>{ tick, reason, next_scheduled }</code></td></tr>
+<tr><td><code>heartbeat:observation</code></td><td>Step 1 complete</td><td><code>{ regime, anomaly_count, probe_count }</code></td></tr>
+<tr><td><code>heartbeat:steer_received</code></td><td>Owner steer processed</td><td><code>{ steer_id, fsm_state, severity }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="the-adaptive-clock"><a class="header" href="#the-adaptive-clock">The Adaptive Clock</a></h2>
+<h3 id="why-the-heartbeat-changes"><a class="header" href="#why-the-heartbeat-changes">Why the Heartbeat Changes</a></h3>
+<p>The fixed ~60-second heartbeat from the previous architecture was simple but wrong for two reasons:</p>
+<p><strong>Different things need different rates.</strong> A swap execution prediction resolves in seconds. An LP fee prediction resolves over hours. A market regime prediction resolves over days. One clock cannot serve all three.</p>
+<p><strong>Fixed intervals waste resources in calm periods and miss signals in volatile periods.</strong> A 60-second tick during a flat market is 1,440 redundant checks per day. A 60-second tick during a crash might miss a 30-second window where the Golem could have saved capital.</p>
+<p>Biology solves this with oscillatory hierarchies: gamma waves (30-100 Hz) for fast perception, theta waves (4-8 Hz) for memory and cognition, delta waves (0.5-4 Hz) for deep consolidation [BUZSAKI-2006]. The adaptive clock borrows this structure.</p>
+<h3 id="three-concurrent-scales"><a class="header" href="#three-concurrent-scales">Three Concurrent Scales</a></h3>
+<pre><code>GAMMA (5-15 seconds) — Perception
+  Resolve pending predictions against environment.
+  Update CorticalState.
+  Check attention promotions.
+  Cost: near-zero (environment reads + arithmetic).
+
+THETA (30-120 seconds) — Cognition
+  Full prediction cycle: predict → appraise → gate → [retrieve → deliberate → act] → reflect.
+  ~80% of ticks are suppressed at the gate (T0, zero inference cost).
+  Cost: T0 $0.00, T1 $0.005, T2 $0.03.
+
+DELTA (~50 theta-ticks) — Consolidation
+  Curator cycle (memory maintenance).
+  Residual statistics aggregation.
+  Attention universe rebalancing.
+  Dream scheduling evaluation.
+  Cost: T0-T1 $0.00-$0.01.
+</code></pre>
+<p>The Adaptive Clock replaces the former fixed heartbeat interval with three concurrent timescales. The theta frequency (30-120s, regime-dependent) carries the main decision cycle. Gamma and delta are new concurrent loops.</p>
+<h4 id="gamma-the-perception-pulse"><a class="header" href="#gamma-the-perception-pulse">Gamma: The Perception Pulse</a></h4>
+<p>The fastest loop. Pure Rust + environment reads. No LLM. Its job: keep the CorticalState synchronized with reality and detect prediction violations.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl GammaClock {
+    async fn tick(&amp;mut self, cortical: &amp;CorticalState, oracle: &amp;Oracle) -&gt; Vec&lt;Violation&gt; {
+        // 1. Resolve predictions whose checkpoints have arrived.
+        let resolutions = oracle.resolve_pending(&amp;self.env_client).await;
+
+        // 2. Feed each resolution to the ResidualCorrector.
+        for res in &amp;resolutions {
+            oracle.corrector.record(res);
+        }
+
+        // 3. Detect violations (prediction error exceeds precision threshold).
+        let violations: Vec&lt;_&gt; = resolutions.iter()
+            .filter(|r| r.is_violation())
+            .map(|r| r.into())
+            .collect();
+
+        // 4. Update CorticalState.
+        oracle.write_cortical(cortical);
+
+        // 5. Check attention tier promotions.
+        oracle.attention.check_promotions(&amp;violations);
+
+        // 6. Adaptive rate: more violations → faster gamma.
+        self.interval = Duration::from_secs(15)
+            .mul_f64(1.0 / (1.0 + violations.len() as f64 * 0.3))
+            .max(Duration::from_secs(5));
+
+        violations
+    }
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Known limitation: RPC rate limits.</strong> When gamma accelerates during a crisis (every 5 seconds) and theta also accelerates (every 30 seconds), both read on-chain state. At 12 reads/minute per clock, this is ~24 RPC calls/minute – well within most provider limits, but worth monitoring. The <code>env_client</code> tracks rate limits and falls back to cached reads when approaching thresholds.</p>
+<h4 id="theta-the-cognition-pulse"><a class="header" href="#theta-the-cognition-pulse">Theta: The Cognition Pulse</a></h4>
+<p>The full prediction cycle. This is the existing heartbeat pipeline reimagined with two changes:</p>
+<ol>
+<li><strong>Prediction and comparison are explicit steps.</strong> The Golem predicts before it observes, then compares prediction against observation. The residual is the learning signal.</li>
+<li><strong>Retrieval moves after gating.</strong> ~80% of theta ticks are suppressed at the gate (T0). In the old architecture, Grimoire retrieval happened before gating, wasting queries on suppressed ticks. Moving retrieval after gating saves ~80% of retrieval cost.</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl ThetaClock {
+    async fn tick(&amp;mut self, ctx: &amp;mut ThetaContext) -&gt; TickOutcome {
+        // Phase 1: PREDICT — generate predictions for ACTIVE items.
+        let predictions = ctx.oracle.generate_predictions(ctx).await;
+
+        // Phase 2: APPRAISE — Daimon computes precision-weighted error summary.
+        let appraisal = ctx.daimon.appraise(&amp;ctx.oracle.recent_residuals(), ctx.cortical);
+
+        // Phase 3: GATE — should the LLM be invoked this tick?
+        let gate = ctx.oracle.gate(ctx.cortical, &amp;appraisal);
+        if gate == GateDecision::Suppress {
+            ctx.oracle.register_inaction_predictions(ctx);
+            return TickOutcome::Suppressed;
+        }
+
+        // === ONLY ESCALATED TICKS REACH HERE (~20%) ===
+
+        // Phase 4: RETRIEVE — affect-modulated Grimoire retrieval.
+        let context = ctx.grimoire.retrieve_for_context(&amp;appraisal, ctx).await;
+
+        // Phase 5: DELIBERATE — LLM inference.
+        let deliberation = ctx.infer(&amp;context, gate.tier()).await?;
+
+        // Phase 6: PREDICT ACTION OUTCOMES — before executing.
+        let action_preds = ctx.oracle.predict_action_outcomes(&amp;deliberation);
+
+        // Phase 7: ACT — through safety layer, if accuracy gate permits.
+        let execution = if ctx.oracle.action_gate_permits(&amp;action_preds) {
+            ctx.execute_with_safety(&amp;deliberation).await?
+        } else {
+            Execution::Blocked { reason: "accuracy gate" }
+        };
+
+        // Phase 8: VERIFY — immediate verification where possible.
+        ctx.oracle.verify_immediate(&amp;execution, &amp;action_preds);
+
+        // Phase 9: REFLECT — encode as Grimoire episode.
+        ctx.grimoire.encode_episode(ctx, &amp;execution, &amp;action_preds);
+        ctx.daimon.update_from_outcome(&amp;execution, ctx.cortical);
+
+        // Adaptive rate.
+        self.interval = self.compute_interval(ctx.cortical);
+
+        TickOutcome::Executed(execution)
+    }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="delta-the-consolidation-pulse"><a class="header" href="#delta-the-consolidation-pulse">Delta: The Consolidation Pulse</a></h4>
+<p>The slow loop. Runs the Curator cycle (memory maintenance), aggregates residual statistics, rebalances attention, discovers new items, and evaluates whether it’s time to dream.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl DeltaClock {
+    async fn tick(&amp;mut self, ctx: &amp;mut DeltaContext) {
+        // 1. Curator cycle: validate, prune, compress Grimoire entries.
+        ctx.grimoire.curator_cycle().await;
+
+        // 2. Aggregate residual statistics for sharing.
+        let digest = ctx.oracle.corrector.aggregate_statistics();
+
+        // 3. Rebalance attention: demote boring items, promote interesting ones.
+        ctx.oracle.attention.rebalance();
+
+        // 4. Auto-discovery scan for new items in the environment.
+        ctx.oracle.attention.discover_new(&amp;ctx.env_client).await;
+
+        // 5. Share digest with Clade via Styx (if connected).
+        if let Some(styx) = ctx.styx.as_connected() {
+            styx.push_residual_digest(&amp;digest).await;
+        }
+
+        // 6. Evaluate dream scheduling conditions.
+        ctx.dream_scheduler.evaluate_urgency(ctx.oracle, ctx.grimoire);
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="owner-configuration"><a class="header" href="#owner-configuration">Owner Configuration</a></h3>
+<p>All adaptive clock parameters are configurable in <code>golem.toml</code>:</p>
+<pre><code class="language-toml">[clock]
+gamma_min_interval_secs = 5
+gamma_max_interval_secs = 15
+theta_min_interval_secs = 30
+theta_max_interval_secs = 120
+delta_theta_ticks = 50
+</code></pre>
+<p><strong>Known limitation: resource unpredictability.</strong> Adaptive rates mean the Golem’s inference and RPC costs are variable. The runtime tracks cumulative cost per day and throttles rates when approaching the daily budget ceiling.</p>
+<h3 id="testing-the-multi-rate-system"><a class="header" href="#testing-the-multi-rate-system">Testing the Multi-Rate System</a></h3>
+<p>Three adaptive clocks create a large state space. The testing strategy:</p>
+<ul>
+<li><strong>Unit tests</strong>: Each clock tested in isolation with a mock environment.</li>
+<li><strong>Property tests</strong> (<code>proptest</code>): Randomized timing configurations verify that no combination of rates violates safety invariants (the action gate is always consulted before execution regardless of clock phase).</li>
+<li><strong>Integration tests</strong>: Full runtime with a recorded market trace, verifying consistent behavior across runs.</li>
+<li><strong>Snapshot tests</strong> (<code>insta</code>): CorticalState snapshots at fixed clock offsets, ensuring no regression in signal propagation.</li>
+</ul>
+<hr>
+<h2 id="the-event-fabric-typed-event-distribution"><a class="header" href="#the-event-fabric-typed-event-distribution">The Event Fabric (Typed Event Distribution)</a></h2>
+<p>The Event Fabric is a typed event distribution system using <code>tokio::broadcast</code> channels. Every significant state change produces a typed event. Subsystems subscribe to categories they care about.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EventFabric {
+    channels: HashMap&lt;EventCategory, broadcast::Sender&lt;GolemEvent&gt;&gt;,
+    replay_buffer: RingBuffer&lt;GolemEvent&gt;,  // Last 10,000 for reconnection replay
+}
+
+pub enum EventCategory {
+    Prediction,   // registered, resolved, accuracy updates
+    Attention,    // discovered, promoted, demoted
+    Affect,       // emotional shifts, somatic markers
+    Cognition,    // tick start/end, gate decisions, inference
+    Action,       // executed, failed, blocked
+    Memory,       // episodes, insights, curator cycle
+    Mortality,    // vitality changes, phase transitions, death
+    Dream,        // cycle start/end, fragments, integration
+    Social,       // clade sync, pheromone deposits
+    Hermes,       // skill created, validated
+}
+<span class="boring">}</span></code></pre>
+<p><strong>Category-based subscription.</strong> The TUI subscribes to Affect, Mortality, Cognition, Dream, and Prediction. It does NOT subscribe to every resolution event (~15,000/day would overwhelm rendering). Instead, it subscribes to AccuracyUpdated events which aggregate resolutions into periodic summary signals.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Destination</th><th>What It Receives</th><th>Why</th></tr>
+</thead>
+<tbody>
+<tr><td>CorticalState</td><td>Direct atomic writes</td><td>Zero-latency, not via events</td></tr>
+<tr><td>Event Fabric</td><td>All typed events</td><td>Logging, TUI rendering, extension communication</td></tr>
+<tr><td>Styx (external)</td><td>Filtered event subset</td><td>Owner’s TUI and Clade siblings</td></tr>
+<tr><td>TUI render loop</td><td>Event targets → 32 interpolating channels → 60fps</td><td>Visual state</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[SUMERS-2024] Sumers, T.R., Yao, S., Narasimhan, K. &amp; Griffiths, T.L. “Cognitive Architectures for Language Agents.” <em>Transactions on Machine Learning Research</em>, 2024. — <em>The CoALA framework formalizing the decision cycle as the correct agent primitive; the heartbeat pipeline is a direct implementation.</em></li>
+<li>[BUZSAKI-2006] Buzsaki, G. <em>Rhythms of the Brain</em>. Oxford University Press, 2006. — <em>Describes neural oscillatory hierarchies (gamma, theta, delta); the biological model for the Adaptive Clock’s three temporal scales.</em></li>
+<li>[BADDELEY-2000] Baddeley, A. “The Episodic Buffer: A New Component of Working Memory?” <em>Trends in Cognitive Sciences</em>, 4(11), 2000. — <em>Adds the episodic buffer to working memory; the basis for the Cognitive Workspace assembled fresh each tick.</em></li>
+<li>[WILSON-MCNAUGHTON-1994] Wilson, M.A. &amp; McNaughton, B.L. “Reactivation of Hippocampal Ensemble Memories During Sleep.” <em>Science</em>, 265, 1994. — <em>Demonstrates hippocampal replay during sleep; the biological basis for dream-state episode consolidation.</em></li>
+<li>[BOWER-1981] Bower, G.H. “Mood and Memory.” <em>American Psychologist</em>, 36(2), 1981. — <em>Establishes mood-congruent memory; directly implemented in the four-factor Grimoire retrieval scoring.</em></li>
+<li>[EMOTIONAL-RAG-2024] Zhang, Y. et al. “Emotional RAG.” arXiv:2410.23041, 2024. — <em>Validates computationally that emotion-tagged retrieval outperforms non-emotional retrieval.</em></li>
+<li>[KAHNEMAN-2011] Kahneman, D. <em>Thinking, Fast and Slow.</em> FSG, 2011. — <em>Dual-process theory: System 1 (fast, heuristic) vs. System 2 (slow, deliberate). The cognitive model behind T0/T1/T2 gating.</em></li>
+<li>[FRISTON-2010] Friston, K. “The Free-Energy Principle: A Unified Brain Theory?” <em>Nature Reviews Neuroscience</em>, 11(2), 2010. — <em>Precision-weighted prediction error as the brain’s organizing principle; directly implemented in Step 4 (GATE).</em></li>
+<li>[SIMS-2003] Sims, C. “Implications of Rational Inattention.” <em>Journal of Monetary Economics</em>, 50(3), 2003. — <em>Formalizes that information processing is costly; grounds the adaptive threshold that decides when to invoke the LLM.</em></li>
+<li>[CHEN-2023] Chen, L. et al. “FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance.” arXiv:2305.05176, 2023. — <em>Demonstrates up to 98% cost reduction through intelligent model cascading; validates the gating architecture.</em></li>
+<li>[DAMASIO-1994] Damasio, A. <em>Descartes’ Error: Emotion, Reason, and the Human Brain.</em> Putnam, 1994. — <em>Somatic marker hypothesis: emotions as rapid decision heuristics. Foundational for the Daimon’s role in gating.</em></li>
+<li>[PEARL-2009] Pearl, J. <em>Causality: Models, Reasoning, and Inference.</em> Cambridge, 2nd ed., 2009. — <em>Formalizes causal reasoning; the basis for the causal graph used in prediction error computation.</em></li>
+<li>[YERKES-DODSON-1908] Yerkes, R.M. &amp; Dodson, J.D. “The Relation of Strength of Stimulus to Rapidity of Habit-Formation.” <em>Journal of Comparative Neurology and Psychology</em>, 18(5), 1908. — <em>Demonstrates the inverted-U relationship between arousal and performance; informs the Daimon’s arousal-to-deliberation threshold mapping.</em></li>
+<li>[LAIRD-2012] Laird, J.E. <em>The Soar Cognitive Architecture.</em> MIT Press, 2012. — <em>The canonical Soar reference; one of CoALA’s intellectual ancestors for production-rule cognitive architectures.</em></li>
+<li>[ANDERSON-2007] Anderson, J.R. <em>How Can the Human Mind Occur in the Physical Universe?</em> Oxford, 2007. — <em>The ACT-R cognitive architecture; informs the distinction between episodic and semantic memory stores.</em></li>
+<li>[NEWELL-1990] Newell, A. <em>Unified Theories of Cognition.</em> Harvard, 1990. — <em>Foundational work arguing for unified cognitive architectures; supports the single-loop heartbeat design.</em></li>
+<li>[CLARK-CHALMERS-1998] Clark, A. &amp; Chalmers, D. “The Extended Mind.” <em>Analysis</em>, 58(1), 1998. — <em>Argues that cognition extends beyond the brain into tools and environment; supports the Golem’s tool-augmented cognition model.</em></li>
+<li>Beer, S. (1984). “The Viable System Model.” <em>JORS</em>, 35(1), 7–25. — <em>Cybernetic model for organizational self-regulation; informs the three self-tuning loops in the heartbeat pipeline.</em></li>
+<li>Argyris, C. &amp; Schon, D. (1978). <em>Organizational Learning</em>. Addison-Wesley. — <em>Introduces single-loop and double-loop learning; maps to Loop 1 (tactical) and Loop 2 (strategic) in the heartbeat.</em></li>
+<li>Bateson, G. (1972). <em>Steps to an Ecology of Mind</em>. Chandler. — <em>Introduces levels of learning (Learning I, II, III); informs the meta-learning dimension of dream consolidation.</em></li>
+<li>Weston, J. &amp; Sukhbaatar, S. (2024). “Distilling System 2 into System 1.” arXiv:2407.06023. — <em>Shows slow deliberation can be distilled into fast heuristics; validates the PLAYBOOK.md extraction pipeline.</em></li>
+<li>Zhang, H. et al. (2025). “DPT-Agent: Dual Process Theory for Language Agents.” arXiv:2502.11882. — <em>Applies Kahneman’s dual-process theory to agent design with explicit fast/slow subsystems.</em></li>
+<li>Schneier, B. (2025). “OODA Loops for AI Agents.” <em>IEEE Security &amp; Privacy</em>. — <em>Maps Boyd’s OODA loop to AI agent decision cycles; parallel framing to the heartbeat’s observe-decide-act-learn pattern.</em></li>
+<li>[HERBSTER-1998] Herbster, M. &amp; Warmuth, M.K. “Tracking the Best Expert.” <em>Machine Learning</em>, 32(2), 1998. — <em>Online learning algorithm for tracking non-stationary experts; informs adaptive threshold adjustment.</em></li>
+<li>[THOMPSON-1933] Thompson, W.R. “On the Likelihood that One Unknown Probability Exceeds Another.” <em>Biometrika</em>, 25(3-4), 1933. — <em>Thompson sampling: Bayesian exploration/exploitation for bandit problems. Used in adaptive triage threshold tuning.</em></li>
+<li>[SHALEV-SHWARTZ-2011] Shalev-Shwartz, S. “Online Learning and Online Convex Optimization.” <em>Foundations and Trends in ML</em>, 4(2), 2011. — <em>Survey of online convex optimization; theoretical foundation for the adaptive triage learning algorithms.</em></li>
+<li>[FREUND-SCHAPIRE-1997] Freund, Y. &amp; Schapire, R.E. “A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting.” <em>Journal of Computer and System Sciences</em>, 55(1), 1997. — <em>Introduces the Hedge algorithm for combining expert signals with provable regret bounds; used in the triage pipeline.</em></li>
+<li>[LI-2010] Li, L., Chu, W., Langford, J. &amp; Schapire, R.E. “A Contextual-Bandit Approach to Personalized News Article Recommendation.” <em>WWW</em>, 2010. — <em>LinUCB: contextual bandit algorithm for context-dependent routing decisions.</em></li>
+<li>[AUER-2002] Auer, P., Cesa-Bianchi, N., Freund, Y. &amp; Schapire, R.E. “The Nonstochastic Multiarmed Bandit Problem.” <em>SIAM Journal on Computing</em>, 32(1), 2002. — <em>Adversarial bandit formulation; theoretical basis for regret-bounded triage adaptation under non-stationary markets.</em></li>
+<li>[SUTTON-BARTO-2018] Sutton, R.S. &amp; Barto, A.G. <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press, 2018. — <em>The canonical RL reference; informs the reward signal design for triage feedback loops.</em></li>
+<li>[LITTLESTONE-WARMUTH-1994] Littlestone, N. &amp; Warmuth, M.K. “The Weighted Majority Algorithm.” <em>Information and Computation</em>, 108(2), 1994. — <em>Foundational online learning algorithm with multiplicative weight updates; ancestor of the Hedge algorithm used in triage.</em></li>
+</ul>
+<hr>
+<h2 id="online-learning-for-adaptive-triage"><a class="header" href="#online-learning-for-adaptive-triage">Online Learning for Adaptive Triage</a></h2>
+<blockquote>
+<p>Source: <code>06-curiosity-learning/02-online-learning.md</code></p>
+</blockquote>
+<p>The triage pipeline’s thresholds and signal weights are currently static. The heuristic-to-learned weight shifts linearly with episode count; the score routing brackets (&gt;0.8, 0.5-0.8, 0.2-0.5, &lt;0.2) are hardcoded; and the relative importance of different curiosity signals is fixed at deploy time. This section introduces four online learning algorithms – Hedge, Thompson sampling, LinUCB, and epsilon-greedy with decay – that let the triage pipeline adapt these parameters based on downstream feedback. Each algorithm fills a different niche: Hedge combines multiple expert signals with provable regret bounds; Thompson sampling balances exploration and exploitation of triage thresholds; LinUCB adds context-dependent routing; and epsilon-greedy provides a dead-simple baseline for comparison.</p>
+<p>All four algorithms share a common feedback loop: the golem takes an action (escalate, route, discard), observes the outcome (LLM analysis was useful, trade was profitable, event was irrelevant), and updates the algorithm’s internal state. The feedback is delayed (outcomes arrive at Theta or Delta tick, not Gamma) and partial (discarded events never receive feedback). Both issues are addressed below.</p>
+<h3 id="hedge--exponential-weights"><a class="header" href="#hedge--exponential-weights">Hedge / Exponential Weights</a></h3>
+<p>Hedge (Freund &amp; Schapire, 1997) maintains a weight for each “expert” – in our case, each curiosity signal. At each round, the algorithm observes each expert’s loss and multiplicatively updates weights:</p>
+<pre><code>w_i(t+1) = w_i(t) * exp(-eta * loss_i(t))
+normalize: w_i(t+1) = w_i(t+1) / sum(w_j(t+1))
+</code></pre>
+<p>The parameter eta controls learning rate. With eta = sqrt(ln(N) / T) for N experts and T rounds, Hedge guarantees O(sqrt(T * ln(N))) regret – convergence to the best fixed expert in hindsight. For N=5 signals and T=10,000 triage events, this translates to ~28 nats of cumulative regret over the golem’s lifetime. In practice, it converges to good weights within a few hundred observations.</p>
+<h4 id="full-hedgeweights-implementation"><a class="header" href="#full-hedgeweights-implementation">Full HedgeWeights Implementation</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Hedge algorithm for combining curiosity signals.
+pub struct HedgeWeights {
+    weights: Vec&lt;f64&gt;,
+    eta: f64,
+    /// Track cumulative loss per expert for diagnostics
+    cumulative_loss: Vec&lt;f64&gt;,
+    rounds: u64,
+}
+
+impl HedgeWeights {
+    pub fn new(num_experts: usize, eta: f64) -&gt; Self {
+        let uniform = 1.0 / num_experts as f64;
+        Self {
+            weights: vec![uniform; num_experts],
+            eta,
+            cumulative_loss: vec![0.0; num_experts],
+            rounds: 0,
+        }
+    }
+
+    /// Compute weighted combination of expert scores.
+    pub fn combine(&amp;self, scores: &amp;[f64]) -&gt; f64 {
+        assert_eq!(scores.len(), self.weights.len());
+        self.weights
+            .iter()
+            .zip(scores.iter())
+            .map(|(w, s)| w * s)
+            .sum()
+    }
+
+    /// Update weights after observing loss for each expert.
+    /// Loss should be in [0, 1] -- lower is better.
+    ///
+    /// Loss computation: after Theta LLM analysis, compare each expert's
+    /// prediction (did this expert say the event was interesting?) against
+    /// the ground truth (was the LLM analysis actionable?).
+    pub fn update(&amp;mut self, losses: &amp;[f64]) {
+        assert_eq!(losses.len(), self.weights.len());
+
+        for (i, loss) in losses.iter().enumerate() {
+            self.weights[i] *= (-self.eta * loss).exp();
+            self.cumulative_loss[i] += loss;
+        }
+
+        // Normalize
+        let total: f64 = self.weights.iter().sum();
+        if total &gt; 0.0 {
+            for w in self.weights.iter_mut() {
+                *w /= total;
+            }
+        }
+        self.rounds += 1;
+    }
+
+    /// Current weight distribution (for diagnostics and logging).
+    pub fn distribution(&amp;self) -&gt; &amp;[f64] {
+        &amp;self.weights
+    }
+
+    /// Adaptive eta based on round count.
+    /// Follows the theoretical optimal: eta = sqrt(ln(N) / t)
+    pub fn adapt_eta(&amp;mut self) {
+        let n = self.weights.len() as f64;
+        let t = (self.rounds + 1) as f64;
+        self.eta = (n.ln() / t).sqrt();
+    }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="computing-expert-loss"><a class="header" href="#computing-expert-loss">Computing Expert Loss</a></h4>
+<p>The feedback signal comes from Theta tick LLM analysis. When the LLM evaluates a triage event, it assigns an importance score. The loss for each expert is the absolute difference between the expert’s score and the LLM’s importance assessment:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Compute per-expert loss after LLM evaluation.
+fn compute_expert_losses(
+    expert_scores: &amp;[f64],   // What each signal scored the event
+    llm_importance: f64,      // What the LLM concluded
+) -&gt; Vec&lt;f64&gt; {
+    expert_scores
+        .iter()
+        .map(|&amp;score| (score - llm_importance).abs().min(1.0))
+        .collect()
+}
+<span class="boring">}</span></code></pre>
+<p>Experts that scored the event close to the LLM’s assessment get low loss and maintain or increase their weight. Experts that were far off get high loss and are downweighted. Over time, the combination converges toward the signals that best predict LLM-assessed importance.</p>
+<h4 id="hedge-for-heuristic-selection"><a class="header" href="#hedge-for-heuristic-selection">Hedge for Heuristic Selection</a></h4>
+<p>A second, nested Hedge instance can weight individual heuristic rules within the heuristic score. Each heuristic rule (active position counterparty, known protocol interaction, large value, etc.) is an expert. The heuristic score becomes:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn score_heuristic_hedged(
+    tx: &amp;Transaction,
+    logs: &amp;[DecodedLog],
+    scope: &amp;ChainScope,
+    heuristic_hedge: &amp;HedgeWeights,
+) -&gt; f64 {
+    let rule_scores = vec![
+        if scope.active_positions.contains(&amp;tx.from) { 1.0 } else { 0.0 },
+        if logs.iter().any(|l| l.protocol_id.is_some()) { 1.0 } else { 0.0 },
+        if tx.value &gt; scope.large_value_threshold_wei { 1.0 } else { 0.0 },
+        if scope.recent_counterparties.contains(&amp;tx.from) { 1.0 } else { 0.0 },
+        if tx.gas_used &gt; 500_000 { 1.0 } else { 0.0 },
+        if tx.creates.is_some() { 1.0 } else { 0.0 },
+    ];
+    heuristic_hedge.combine(&amp;rule_scores).min(1.0)
+}
+<span class="boring">}</span></code></pre>
+<p>This replaces the hand-tuned additive weights (0.8, 0.7, 0.6, …) with learned weights that reflect which heuristics actually predict interesting events for this specific golem’s strategy.</p>
+<h3 id="thompson-sampling"><a class="header" href="#thompson-sampling">Thompson Sampling</a></h3>
+<p>Thompson sampling (Thompson, 1933) maintains a probability distribution over each parameter’s “goodness” and samples from it to make decisions. Where Hedge learns fixed weights, Thompson sampling explores – sometimes choosing actions that look suboptimal in order to learn whether they’re actually better than expected.</p>
+<h4 id="full-thresholdarm-implementation"><a class="header" href="#full-thresholdarm-implementation">Full ThresholdArm Implementation</a></h4>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use rand::Rng;
+use rand_distr::Beta as BetaDist;
+
+/// Thompson sampling for triage threshold exploration.
+pub struct ThompsonThresholds {
+    /// Each arm represents a candidate threshold configuration.
+    arms: Vec&lt;ThresholdArm&gt;,
+}
+
+#[derive(Clone, Debug)]
+pub struct ThresholdArm {
+    /// The threshold values this arm proposes
+    pub high_threshold: f32,    // above this: escalate to LLM
+    pub medium_threshold: f32,  // above this: emit ChainEvent
+    pub low_threshold: f32,     // above this: update silently; below: discard
+
+    /// Beta posterior tracking whether this configuration produces
+    /// useful escalations (true positives) at a reasonable rate.
+    pub alpha: f64,  // successes: escalated events that LLM found actionable
+    pub beta: f64,   // failures: escalated events that LLM found irrelevant
+}
+
+impl ThompsonThresholds {
+    pub fn new() -&gt; Self {
+        let arms = vec![
+            ThresholdArm { high_threshold: 0.8, medium_threshold: 0.5, low_threshold: 0.2, alpha: 2.0, beta: 2.0 },
+            ThresholdArm { high_threshold: 0.7, medium_threshold: 0.4, low_threshold: 0.15, alpha: 1.0, beta: 1.0 },
+            ThresholdArm { high_threshold: 0.85, medium_threshold: 0.55, low_threshold: 0.25, alpha: 1.0, beta: 1.0 },
+            ThresholdArm { high_threshold: 0.75, medium_threshold: 0.45, low_threshold: 0.2, alpha: 1.0, beta: 1.0 },
+            ThresholdArm { high_threshold: 0.9, medium_threshold: 0.6, low_threshold: 0.3, alpha: 1.0, beta: 1.0 },
+        ];
+        Self { arms }
+    }
+
+    pub fn select_thresholds(&amp;self, rng: &amp;mut impl Rng) -&gt; &amp;ThresholdArm {
+        let mut best_idx = 0;
+        let mut best_sample = f64::NEG_INFINITY;
+
+        for (i, arm) in self.arms.iter().enumerate() {
+            let dist = BetaDist::new(arm.alpha, arm.beta).unwrap();
+            let sample: f64 = rng.sample(dist);
+            if sample &gt; best_sample {
+                best_sample = sample;
+                best_idx = i;
+            }
+        }
+
+        &amp;self.arms[best_idx]
+    }
+
+    pub fn update(&amp;mut self, arm_idx: usize, success: bool) {
+        if success {
+            self.arms[arm_idx].alpha += 1.0;
+        } else {
+            self.arms[arm_idx].beta += 1.0;
+        }
+    }
+
+    /// Decay all arms slightly to allow adaptation over time.
+    /// Without decay, early observations dominate forever.
+    pub fn decay(&amp;mut self, factor: f64) {
+        for arm in self.arms.iter_mut() {
+            arm.alpha = 1.0 + (arm.alpha - 1.0) * factor;
+            arm.beta = 1.0 + (arm.beta - 1.0) * factor;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h4 id="arousal-conditioned-thompson-sampling"><a class="header" href="#arousal-conditioned-thompson-sampling">Arousal-Conditioned Thompson Sampling</a></h4>
+<p>The golem’s arousal state (from CorticalState) should influence threshold selection. During high arousal (market crisis, exploit detected), the golem should use lower thresholds – escalate more events. During low arousal, higher thresholds – be more selective.</p>
+<p>Thompson sampling integrates this naturally by maintaining separate Beta posteriors per arousal regime:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ContextualThompson {
+    /// Separate threshold arms per arousal regime
+    regimes: HashMap&lt;ArousalRegime, ThompsonThresholds&gt;,
+}
+
+#[derive(Hash, Eq, PartialEq, Clone, Copy)]
+pub enum ArousalRegime {
+    Low,      // arousal &lt; 0.3
+    Medium,   // 0.3 &lt;= arousal &lt; 0.7
+    High,     // arousal &gt;= 0.7
+}
+
+impl ContextualThompson {
+    pub fn select(&amp;self, arousal: f32, rng: &amp;mut impl Rng) -&gt; &amp;ThresholdArm {
+        let regime = match arousal {
+            a if a &lt; 0.3 =&gt; ArousalRegime::Low,
+            a if a &lt; 0.7 =&gt; ArousalRegime::Medium,
+            _ =&gt; ArousalRegime::High,
+        };
+        self.regimes[&amp;regime].select_thresholds(rng)
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The golem learns, for instance, that lower thresholds perform well during high arousal (more true positives justify the extra LLM cost) and higher thresholds perform well during low arousal (most events are routine, escalation is wasteful).</p>
+<h3 id="design-alternative-linucb-not-adopted"><a class="header" href="#design-alternative-linucb-not-adopted">Design Alternative: LinUCB (Not Adopted)</a></h3>
+<blockquote>
+<p><strong>Rationale for non-adoption:</strong> LinUCB requires feature vectors per arm and is over-engineered for a 3-arm routing decision. Thompson sampling is the right tool for this problem: it naturally balances exploration and exploitation for small action spaces with Beta-distributed rewards. LinUCB is documented here for completeness and future reference.</p>
+</blockquote>
+<p>LinUCB (Li et al., 2010) extends UCB to contextual bandits. Instead of maintaining a single reward estimate per arm, it maintains a linear model that predicts reward as a function of context features. The confidence bound comes from ridge regression uncertainty:</p>
+<pre><code>For context x and arm a:
+  A_a = I + sum(x_t * x_t^T)       -- d x d matrix
+  b_a = sum(r_t * x_t)             -- d-vector
+  theta_a = A_a^{-1} * b_a          -- parameter estimate
+  UCB_a = theta_a^T * x + alpha * sqrt(x^T * A_a^{-1} * x)
+</code></pre>
+<p>The alpha parameter controls exploration. Higher alpha means wider confidence bounds, more exploration of uncertain contexts.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use nalgebra::{DMatrix, DVector};
+
+/// LinUCB contextual bandit for triage routing.
+pub struct LinUcbRouter {
+    /// Per-arm parameters
+    arms: Vec&lt;LinUcbArm&gt;,
+    /// Exploration parameter
+    alpha: f64,
+    /// Context dimension
+    d: usize,
+}
+
+pub struct LinUcbArm {
+    /// A = I + sum(x_t * x_t^T)
+    a_matrix: DMatrix&lt;f64&gt;,
+    /// b = sum(r_t * x_t)
+    b_vector: DVector&lt;f64&gt;,
+    /// Cached theta = A^{-1} * b (recomputed on update)
+    theta: DVector&lt;f64&gt;,
+    /// Cached A^{-1} (updated via Sherman-Morrison)
+    a_inv: DMatrix&lt;f64&gt;,
+}
+
+impl LinUcbArm {
+    pub fn new(d: usize) -&gt; Self {
+        let identity = DMatrix::identity(d, d);
+        Self {
+            a_matrix: identity.clone(),
+            b_vector: DVector::zeros(d),
+            theta: DVector::zeros(d),
+            a_inv: identity,
+        }
+    }
+
+    /// Compute UCB score for a context vector.
+    pub fn ucb(&amp;self, x: &amp;DVector&lt;f64&gt;, alpha: f64) -&gt; f64 {
+        let exploitation = self.theta.dot(x);
+        let exploration = alpha * (x.transpose() * &amp;self.a_inv * x)[(0, 0)].sqrt();
+        exploitation + exploration
+    }
+
+    /// Update with observed reward.
+    pub fn update(&amp;mut self, x: &amp;DVector&lt;f64&gt;, reward: f64) {
+        // Sherman-Morrison update for A^{-1}
+        let a_inv_x = &amp;self.a_inv * x;
+        let denom = 1.0 + (x.transpose() * &amp;a_inv_x)[(0, 0)];
+        self.a_inv -= (&amp;a_inv_x * a_inv_x.transpose()) / denom;
+
+        self.a_matrix += x * x.transpose();
+        self.b_vector += reward * x;
+        self.theta = &amp;self.a_inv * &amp;self.b_vector;
+    }
+}
+
+impl LinUcbRouter {
+    pub fn new(d: usize, num_arms: usize, alpha: f64) -&gt; Self {
+        Self {
+            arms: (0..num_arms).map(|_| LinUcbArm::new(d)).collect(),
+            alpha,
+            d,
+        }
+    }
+
+    /// Build context vector from a triage event.
+    pub fn build_context(event: &amp;TriageEvent, cortical: &amp;CorticalState) -&gt; DVector&lt;f64&gt; {
+        // d = 12 context features
+        DVector::from_vec(vec![
+            event.curiosity_score as f64,
+            event.bayesian_surprise,
+            event.prediction_error,
+            event.anomaly_score,
+            cortical.arousal as f64,
+            cortical.valence as f64,
+            if event.involves_active_position { 1.0 } else { 0.0 },
+            if event.protocol_id.is_some() { 1.0 } else { 0.0 },
+            event.gas_ratio,   // gas_used / block_avg_gas
+            event.value_usd.log10().max(0.0),
+            cortical.chain_blocks_behind as f64,
+            event.time_since_last_escalation_secs,
+        ])
+    }
+
+    /// Select the best arm (routing action) for the given context.
+    pub fn select(&amp;self, context: &amp;DVector&lt;f64&gt;) -&gt; usize {
+        self.arms
+            .iter()
+            .enumerate()
+            .map(|(i, arm)| (i, arm.ucb(context, self.alpha)))
+            .max_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap())
+            .map(|(i, _)| i)
+            .unwrap_or(0)
+    }
+
+    /// Update the selected arm with observed reward.
+    pub fn update(&amp;mut self, arm_idx: usize, context: &amp;DVector&lt;f64&gt;, reward: f64) {
+        self.arms[arm_idx].update(context, reward);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>LinUCB’s advantage over Hedge and Thompson sampling is that it conditions on context. The same curiosity score of 0.6 might warrant escalation when the golem has an active position in the affected protocol (high stakes) but not when the protocol is unrelated (low stakes). LinUCB learns these conditional patterns.</p>
+<p>The cost is higher: a d x d matrix per arm, O(d^2) per update. At d=12 and 3 arms, this is 432 f64 values – 3.4KB total. The Sherman-Morrison update avoids full matrix inversion and runs in O(d^2) time, about 1 microsecond at d=12.</p>
+<h3 id="design-alternative-epsilon-greedy-not-adopted"><a class="header" href="#design-alternative-epsilon-greedy-not-adopted">Design Alternative: Epsilon-Greedy (Not Adopted)</a></h3>
+<blockquote>
+<p><strong>Rationale for non-adoption:</strong> Epsilon-greedy provides insufficient exploration guarantees compared to Thompson sampling. It exists in this design for two reasons: (1) it’s the comparison baseline – if Hedge or Thompson sampling doesn’t beat epsilon-greedy on a given golem’s workload, the complexity isn’t justified; (2) it’s the fallback – if the more sophisticated algorithms encounter numerical issues (degenerate matrices in LinUCB, NaN in Hedge weights), epsilon-greedy continues to function.</p>
+</blockquote>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct EpsilonGreedy {
+    epsilon: f64,
+    epsilon_min: f64,
+    decay_rate: f64,
+    /// Mean reward per arm
+    arm_means: Vec&lt;f64&gt;,
+    arm_counts: Vec&lt;u64&gt;,
+}
+
+impl EpsilonGreedy {
+    pub fn new(num_arms: usize, epsilon: f64, epsilon_min: f64, decay_rate: f64) -&gt; Self {
+        Self {
+            epsilon,
+            epsilon_min,
+            decay_rate,
+            arm_means: vec![0.0; num_arms],
+            arm_counts: vec![0; num_arms],
+        }
+    }
+
+    pub fn select(&amp;self, rng: &amp;mut impl Rng) -&gt; usize {
+        if rng.gen::&lt;f64&gt;() &lt; self.epsilon {
+            // Explore: random arm
+            rng.gen_range(0..self.arm_means.len())
+        } else {
+            // Exploit: best arm by mean reward
+            self.arm_means
+                .iter()
+                .enumerate()
+                .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
+                .map(|(i, _)| i)
+                .unwrap_or(0)
+        }
+    }
+
+    pub fn update(&amp;mut self, arm: usize, reward: f64) {
+        self.arm_counts[arm] += 1;
+        let n = self.arm_counts[arm] as f64;
+        // Incremental mean update
+        self.arm_means[arm] += (reward - self.arm_means[arm]) / n;
+
+        // Decay epsilon
+        self.epsilon = (self.epsilon * self.decay_rate).max(self.epsilon_min);
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>Starting epsilon at 0.2 and decaying to 0.01 with rate 0.999 per round gives about 5000 rounds of meaningful exploration before settling into near-pure exploitation. For a golem processing ~100 triage events per Theta tick, that’s about 50 Theta ticks – roughly 4 hours of operation.</p>
+<h3 id="adaptivetriagerouter-composition"><a class="header" href="#adaptivetriagerouter-composition">AdaptiveTriageRouter Composition</a></h3>
+<p>The algorithms aren’t mutually exclusive. The recommended configuration:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AdaptiveTriageRouter {
+    /// Hedge combines the 5 curiosity signals into a single score
+    pub signal_combiner: HedgeWeights,
+
+    /// Thompson sampling selects threshold configurations
+    pub threshold_selector: ContextualThompson,
+
+    /// LinUCB makes the final routing decision using full context
+    pub router: LinUcbRouter,
+
+    /// Epsilon-greedy as comparison baseline (runs in shadow mode,
+    /// not affecting actual routing, but logging what it would do)
+    pub baseline: EpsilonGreedy,
+}
+
+impl AdaptiveTriageRouter {
+    /// Score and route a triage event.
+    pub fn process(
+        &amp;mut self,
+        event: &amp;TriageEvent,
+        expert_scores: &amp;[f64],
+        cortical: &amp;CorticalState,
+        rng: &amp;mut impl Rng,
+    ) -&gt; RoutingDecision {
+        // 1. Hedge combines expert signals
+        let combined_score = self.signal_combiner.combine(expert_scores);
+
+        // 2. Thompson selects thresholds for this arousal regime
+        let thresholds = self.threshold_selector.select(cortical.arousal, rng);
+
+        // 3. Preliminary routing by threshold
+        let preliminary = if combined_score &gt; thresholds.high_threshold as f64 {
+            RoutingAction::EscalateToLlm
+        } else if combined_score &gt; thresholds.medium_threshold as f64 {
+            RoutingAction::EmitChainEvent
+        } else if combined_score &gt; thresholds.low_threshold as f64 {
+            RoutingAction::UpdateSilently
+        } else {
+            RoutingAction::Discard
+        };
+
+        // 4. LinUCB can override for borderline cases
+        let context = LinUcbRouter::build_context(event, cortical);
+        let linucb_action = self.router.select(&amp;context);
+
+        // 5. Shadow-run epsilon-greedy for baseline comparison
+        let _baseline_action = self.baseline.select(rng);
+
+        // 6. Final decision: use LinUCB for borderline, threshold for clear cases
+        let final_action = if (combined_score - thresholds.high_threshold as f64).abs() &lt; 0.1 {
+            // Borderline: let LinUCB decide
+            RoutingAction::from_index(linucb_action)
+        } else {
+            preliminary
+        };
+
+        RoutingDecision {
+            action: final_action,
+            combined_score,
+            context,
+            threshold_arm_idx: 0, // track for Thompson update
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="the-feedback-loop"><a class="header" href="#the-feedback-loop">The Feedback Loop</a></h3>
+<p>All four algorithms share the same feedback structure:</p>
+<pre><code>[Gamma tick: triage event scored by 5 experts]
+    |
+    v
+[Online learner selects routing action]
+    |
+    v
+[Event routed: escalate / update / discard]
+    |
+    ... (minutes pass) ...
+    |
+[Theta tick: LLM evaluates escalated events]
+    |
+    v
+[Outcome observed: was escalation useful?]
+    |
+    v
+[Online learner updated with (context, action, reward)]
+</code></pre>
+<p>The delayed feedback (minutes between action and outcome) doesn’t affect algorithm correctness – it means the learner updates less frequently than it acts. The partial feedback (discarded events never get LLM analysis) is the harder problem. Three mitigation strategies:</p>
+<p><strong>Strategy 1: Epsilon-exploration of discards.</strong> With probability epsilon, route a below-threshold event to LLM analysis anyway. This provides counterfactual labels for the low-score region. Set epsilon low (0.01-0.05) to bound the LLM cost.</p>
+<p><strong>Strategy 2: Implicit negative signal.</strong> Events that are discarded and never re-surface (no retroactive re-categorization, no position impact) are treated as true negatives after a time window. If nothing interesting happened to the discarded event’s protocol in the next N blocks, the discard was correct.</p>
+<p><strong>Strategy 3: Retroactive re-scoring.</strong> When ABI resolution identifies a previously unknown contract (Stage 3 fingerprinter), retroactively re-score its past events. Events whose score changes significantly are treated as missed positives, providing negative reward to the routing action that discarded them.</p>
+<h3 id="persistence-across-golem-generations"><a class="header" href="#persistence-across-golem-generations">Persistence Across Golem Generations</a></h3>
+<p>Online learning state is small (a few KB total) and represents hard-won knowledge about which signals predict interesting events. This state should be included in the generational inheritance package:</p>
+<ul>
+<li><strong>Hedge weights</strong>: Which curiosity signals matter? ~40 bytes.</li>
+<li><strong>Thompson posteriors</strong>: Which thresholds work in which arousal regimes? ~240 bytes.</li>
+<li><strong>LinUCB parameters</strong>: Full A^{-1} and theta per arm. ~3.4KB.</li>
+<li><strong>Epsilon-greedy means</strong>: Baseline arm rewards. ~24 bytes.</li>
+</ul>
+<p>Total: <strong>~3.7KB</strong> inheritance budget. A successor golem inheriting these parameters starts with calibrated signal weights and threshold configurations rather than re-learning from scratch. The decay mechanisms in Thompson sampling and the adaptive eta in Hedge ensure the successor can still adapt to changed conditions.</p>
+<h3 id="online-learning-references"><a class="header" href="#online-learning-references">Online Learning References</a></h3>
+<ul>
+<li>Thompson, W.R. (1933). “On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two Samples.” <em>Biometrika</em>, 25(3/4), 285-294.</li>
+<li>Littlestone, N. &amp; Warmuth, M.K. (1994). “The Weighted Majority Algorithm.” <em>Information and Computation</em>, 108(2), 212-261.</li>
+<li>Freund, Y. &amp; Schapire, R.E. (1997). “A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting.” <em>Journal of Computer and System Sciences</em>, 55(1), 119-139.</li>
+<li>Auer, P., Cesa-Bianchi, N., Freund, Y. &amp; Schapire, R.E. (2002). “The Nonstochastic Multiarmed Bandit Problem.” <em>SIAM Journal on Computing</em>, 32(1), 48-77.</li>
+<li>Li, L., Chu, W., Langford, J. &amp; Schapire, R.E. (2010). “A Contextual-Bandit Approach to Personalized News Article Recommendation.” <em>WWW</em>, 661-670.</li>
+<li>Shalev-Shwartz, S. (2011). “Online Learning and Online Convex Optimization.” <em>Foundations and Trends in Machine Learning</em>, 4(2), 107-194.</li>
+<li>Sutton, R.S. &amp; Barto, A.G. (2018). <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press.</li>
+<li>Herbster, M. &amp; Warmuth, M.K. (1998). “Tracking the Best Expert.” <em>Machine Learning</em>, 32(2), 151-178.</li>
+</ul>
+<hr>
+<p><em>Each tick is a complete cognitive act – observe, feel, decide, act, learn. The rhythm continues until the clocks run out.</em></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/01-golem/01-cognition.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/01-golem/03-mind.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/01-golem/01-cognition.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/01-golem/03-mind.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

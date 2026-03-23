@@ -1,0 +1,1001 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Runtime - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/13-runtime/00-interaction-model.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="user-golem-interaction-model-spec"><a class="header" href="#user-golem-interaction-model-spec">User-Golem interaction model [SPEC]</a></h1>
+<p><strong>Version:</strong> 4.0.0
+<strong>Last updated:</strong> 2026-03-15
+<strong>Status:</strong> Implementation specification</p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document defines how users interact with their Golem (a mortal autonomous DeFi agent compiled as a single Rust binary on a micro VM) across all product surfaces: TUI, web portal, social connectors, and REST API. It sits in the <strong>Runtime</strong> layer of the Bardo specification, which covers the live operational behavior of a running Golem. Key prerequisites include the Heartbeat FSM (the Golem’s core decision loop), the Daimon affect engine, and the three-mode custody model. For any unfamiliar term, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-references</a></h2>
+<ul>
+<li><code>./11-state-model.md</code> — defines GolemState (the Golem’s mutable internal state) and GolemSnapshot (the read-only projection surfaces consume for rendering)</li>
+<li><code>./12-realtime-subscriptions.md</code> — specifies the full GolemEvent enum, WebSocket subscription protocol, reconnection semantics, and bandwidth estimates</li>
+<li><code>./07-onboarding.md</code> — end-to-end onboarding flow from surface routing through authentication, custody selection, funding, strategy configuration, and first heartbeat</li>
+<li><code>../18-interfaces/03-tui.md</code> — full <code>bardo-terminal</code> specification including all 29 screens, widget catalog, sprite engine, and rendering pipeline</li>
+<li><code>../01-golem/02-heartbeat.md</code> — canonical Heartbeat FSM definition: the 9-step observe-to-reflect decision cycle that drives every Golem tick</li>
+<li><code>../12-inference/01-routing.md</code> — inference routing across cognitive tiers (T0 rule-based through T3 extended reasoning) and payment via x402</li>
+<li><code>../05-dreams/01-architecture.md</code> — dream scheduling, the three-phase NREM/REM/integration cycle, and knowledge consolidation</li>
+<li><code>../03-daimon/01-appraisal.md</code> — the Daimon affect engine: PAD (Pleasure-Arousal-Dominance) vector computation, appraisal triggers, and mortality-specific emotions</li>
+<li><code>../02-mortality/01-architecture.md</code> — the three mortality clocks (economic, epistemic, stochastic), Vitality score, and BehavioralPhase transitions</li>
+<li><code>../04-memory/01-grimoire.md</code> — the Grimoire persistent knowledge base: episodes, insights, heuristics, causal links, and the Curator maintenance cycle</li>
+<li><code>../10-safety/01-custody.md</code> — three-mode custody selection (Delegation, Embedded, LocalKey) and PolicyCage on-chain constraint enforcement</li>
+</ul>
+<hr>
+<h2 id="1-interaction-surfaces"><a class="header" href="#1-interaction-surfaces">1. Interaction surfaces</a></h2>
+<p>Three surfaces, ranked by fidelity. The TUI is the recommended experience and the primary product surface.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>Modality</th><th>Primary use</th><th>Audience</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>TUI</strong> (<code>bardo-terminal</code>)</td><td>Persistent, 60fps, full-duplex</td><td>Live Golem management, the “living world” experience</td><td>Owners, power users</td></tr>
+<tr><td><strong>Web portal</strong></td><td>Browser dashboard</td><td>Setup wizard, vault analytics, reputation profile, occasional check-ins</td><td>All users</td></tr>
+<tr><td><strong>Social connectors</strong></td><td>Telegram, Discord, Farcaster</td><td>Push notifications, read-only status queries</td><td>All users</td></tr>
+</tbody>
+</table>
+</div>
+<p>The TUI is not a dashboard. It is a window into machine cognition. Most agent frameworks produce a number on a screen. <code>bardo-terminal</code> produces a creature you watch think, feel, dream, and die. That difference — visibility of internal cognitive state creating affective bonds (Reeves &amp; Nass, 1996) — is what drives retention patterns no web dashboard replicates.</p>
+<p>All three surfaces consume the same GolemEvent (the typed event enum emitted by every state change inside the Golem) stream from the Golem’s HTTP interface. The Golem does not know or care which surface is connected.</p>
+<hr>
+<h2 id="2-tui-bardo-terminal"><a class="header" href="#2-tui-bardo-terminal">2. TUI: <code>bardo-terminal</code></a></h2>
+<p>The TUI is the primary interaction surface. Full specification in <code>../18-interfaces/03-tui.md</code>. This section covers the integration points: authentication, custody, event consumption, and how the TUI connects to the Golem’s runtime.</p>
+<h3 id="21-architecture"><a class="header" href="#21-architecture">2.1 Architecture</a></h3>
+<p><code>bardo-terminal</code> is a standalone Rust binary. It connects to the Golem via WebSocket and renders at 60fps using ratatui. The render loop never waits on a network call.</p>
+<pre><code>┌──────────────────────────┐        WebSocket        ┌──────────────────┐
+│   bardo-terminal         │◄─── GolemEvents ─────────│ Golem VM         │
+│   (Rust / ratatui)       │──── steers/commands ────►│ (Fly.io)         │
+│                          │       :8080               │                  │
+│   60fps render loop      │                           │ Event Fabric     │
+│   Sprite engine          │        WebSocket          │ Heartbeat FSM    │
+│   Particle system        │◄─── Styx events ─────────│                  │
+│   Custom widgets         │       :8080/ws            ├──────────────────┤
+│   Sound engine (rodio)   │                           │ Styx Service     │
+│   Input handling         │                           │ (Fly.io)         │
+└──────────────────────────┘                           └──────────────────┘
+</code></pre>
+<p><strong>Process model</strong>: <code>bardo-terminal</code> is a client, not a host. The Golem runtime is a separate process (Golem-RS, Rust) running on Fly.io or locally. The TUI connects to the Golem’s exposed WebSocket endpoint. For self-hosted Golems:</p>
+<pre><code class="language-bash"># Terminal 1: Run the Golem (Rust binary from bardo-golem-rs)
+bardo-golem start --config bardo.toml
+
+# Terminal 2 (or tmux pane): Connect the TUI
+bardo-terminal --golem g-7f3a
+</code></pre>
+<h3 id="22-installation"><a class="header" href="#22-installation">2.2 Installation</a></h3>
+<pre><code class="language-bash">cargo install bardo-terminal
+
+# Or via npx (downloads prebuilt binary, caches in ~/.bardo/bin/)
+npx @bardo/terminal
+
+# Or release binary
+curl -sSL https://get.bardo.run | sh
+</code></pre>
+<p>Prebuilt binaries for x86_64 and aarch64 Linux, macOS Intel and Apple Silicon, Windows.</p>
+<h3 id="23-screen-navigation"><a class="header" href="#23-screen-navigation">2.3 Screen navigation</a></h3>
+<p>The TUI uses a 29-screen, 6-window hierarchical navigation system. See <code>18-interfaces/screens/03-interaction-hierarchy.md</code> for the canonical interaction model.</p>
+<hr>
+<h2 id="3-authentication-flow"><a class="header" href="#3-authentication-flow">3. Authentication flow</a></h2>
+<h3 id="31-browser-handoff"><a class="header" href="#31-browser-handoff">3.1 Browser handoff</a></h3>
+<p>The TUI mirrors the Claude Code / Codex authentication pattern. The terminal opens a browser tab; the user authenticates there; the terminal detects completion via polling.</p>
+<pre><code>bardo-terminal launches
+  → checks ~/.bardo/config.toml
+  → if absent: begin onboarding
+  → generate session ID
+  → open https://bardo.run/auth?session=xxx in default browser
+  → show copyable URL + QR code in terminal
+  → "[c] Copy URL  [q] Cancel"
+  → poll https://bardo.run/auth/status?session=xxx every 2 seconds
+  → on success: JWT + wallet address + wallet ID returned
+  → store in ~/.bardo/auth.json (0o600 permissions)
+  → proceed to custody selection
+</code></pre>
+<p>After initial auth, all subsequent sessions are TUI-native. The browser is only needed again when the refresh token expires (30-day lifetime) or auth is explicitly revoked.</p>
+<h3 id="32-headless-fallback-ssh"><a class="header" href="#32-headless-fallback-ssh">3.2 Headless fallback (SSH)</a></h3>
+<p>For SSH sessions without browser access, three options:</p>
+<ol>
+<li>Copy the auth URL manually and open on another device</li>
+<li>Device code flow: terminal displays <code>BARD-7F3A</code>, user visits <code>bardo.run/device</code>, enters code</li>
+<li>API key mode: user provides key from <code>bardo.run/settings/api-keys</code>, bypasses Privy entirely</li>
+</ol>
+<h3 id="33-token-storage"><a class="header" href="#33-token-storage">3.3 Token storage</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// ~/.bardo/auth.json (0o600 permissions)
+#[derive(Serialize, Deserialize)]
+pub struct AuthStorage {
+    pub privy_jwt: String,
+    pub refresh_token: String,
+    pub expires_at: u64,          // Unix epoch ms
+    pub user_id: String,
+    pub wallet_address: String,
+    pub wallet_id: String,
+    pub auth_method: AuthMethod,  // Email | Google | GitHub | Wallet | ApiKey
+}
+
+pub enum AuthMethod { Email, Google, GitHub, Wallet, ApiKey }
+<span class="boring">}</span></code></pre>
+<p>Silent refresh on subsequent launches. Re-auth only when refresh token expires.</p>
+<hr>
+<h2 id="4-three-mode-custody-selection"><a class="header" href="#4-three-mode-custody-selection">4. Three-mode custody selection</a></h2>
+<p>During onboarding, the user selects how the Golem manages capital. See <code>../10-safety/01-custody.md</code> for full specification.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>Description</th><th>Use case</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Delegation</strong></td><td>MetaMask or hardware wallet via ERC-7710/7715. Golem draws from external wallet with daily spending limits. Revocable at any time.</td><td>Users who want to keep custody in their own wallet</td></tr>
+<tr><td><strong>Embedded</strong></td><td>Privy server-side wallet. Zero additional setup. Funded directly.</td><td>Most users — lowest friction</td></tr>
+<tr><td><strong>LocalKey + Delegation</strong></td><td>Local key file + MetaMask delegation for spend authorization.</td><td>Self-hosted Golems, advanced users</td></tr>
+</tbody>
+</table>
+</div>
+<p>The custody mode is selected once during onboarding and displayed on the Custody screen (<code>k</code>). Changing modes requires re-configuration via <code>bardo-terminal</code> or the web portal.</p>
+<p><strong>Proxy spending authorization</strong> (Delegation mode): The terminal sets up a Permit2 <code>PermitBatchTransferFrom</code> approval with daily spending limits and time bounds. Signing happens in the browser (Privy redirects to the connected wallet). The Golem’s server wallet is authorized to pull up to <code>spendingLimit</code> USDC per day. Revocable via <code>:revoke-proxy</code> in the command palette or the <code>k</code> Custody screen.</p>
+<hr>
+<h2 id="5-real-time-communication"><a class="header" href="#5-real-time-communication">5. Real-time communication</a></h2>
+<h3 id="51-websocket-subscription-model"><a class="header" href="#51-websocket-subscription-model">5.1 WebSocket subscription model</a></h3>
+<p>All surfaces connect to the Golem’s HTTP interface. The primary transport is WebSocket (full-duplex):</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub async fn serve(fabric: Arc&lt;EventFabric&gt;, config: SurfaceConfig) {
+    let app = Router::new()
+        .route("/ws", get(ws_handler))                        // Full-duplex events + commands
+        .route("/events", get(sse_handler))                   // SSE fallback
+        .route("/api/v1/state", get(snapshot_handler))        // Initial state load
+        .route("/api/v1/steer", post(steer_handler))
+        .route("/api/v1/followup", post(followup_handler))
+        .route("/api/v1/sessions", get(list_sessions))
+        .route("/api/v1/creature", get(creature_handler))
+        .route("/api/v1/achievements", get(achievements_handler))
+        .route("/api/v1/lineage", get(lineage_handler))
+        .route("/api/v1/graveyard", get(graveyard_handler))
+        .with_state(AppState { fabric, config });
+}
+<span class="boring">}</span></code></pre>
+<p>Three transport modes:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Transport</th><th>Use case</th><th>Bidirectional</th><th>Latency</th></tr>
+</thead>
+<tbody>
+<tr><td>WebSocket</td><td>TUI and web dashboard (primary)</td><td>Yes — clients can send steers/followUps</td><td>&lt;50ms</td></tr>
+<tr><td>SSE</td><td>Web fallback</td><td>No — server-to-client only</td><td>&lt;100ms</td></tr>
+<tr><td>Telegram/Discord</td><td>Push notifications for high-signal events</td><td>No</td><td>1-3s</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="52-websocket-protocol"><a class="header" href="#52-websocket-protocol">5.2 WebSocket protocol</a></h3>
+<ol>
+<li>Client connects with auth token (Privy JWT or API key)</li>
+<li>Client sends: <code>{ "subscribe": ["heartbeat", "daimon", "creature", ...] }</code></li>
+<li>Server streams matching GolemEvents as newline-delimited JSON</li>
+<li>Client can send steers/followUps on the same connection (bidirectional)</li>
+<li>On reconnection, client sends <code>{ "resume_from": &lt;sequence_number&gt; }</code> — server replays from the Event Fabric (the tokio::broadcast channel with a 10,000-entry ring buffer that carries all Golem events) ring buffer</li>
+</ol>
+<p>Subscription model: clients subscribe to event categories, not individual event types. Categories map 1:1 with TUI screens. Subscribing to “heartbeat” delivers all events the Mind screen needs.</p>
+<h3 id="53-wire-format"><a class="header" href="#53-wire-format">5.3 Wire format</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum WireEvent {
+    Heartbeat(HeartbeatEvent),
+    Tool(ToolEvent),
+    Inference(InferenceEvent),
+    Dream(DreamEvent),
+    Daimon(DaimonEvent),
+    Vitality(VitalityEvent),
+    Grimoire(GrimoireEvent),
+    Coordination(CoordinationEvent),
+    Custody(CustodyEvent),
+    Marketplace(MarketplaceEvent),
+    Engagement(EngagementEvent),
+    Context(ContextEvent),
+    Trading(TradingEvent),
+}
+<span class="boring">}</span></code></pre>
+<h3 id="54-golemsnapshot-initial-load"><a class="header" href="#54-golemsnapshot-initial-load">5.4 GolemSnapshot (initial load)</a></h3>
+<p>When a client first connects (or reconnects after a gap too large for replay), it receives a full GolemSnapshot (the read-only projection of the Golem’s entire internal state, designed for UI consumption). See <code>11-state-model.md</code> for the canonical GolemSnapshot definition.</p>
+<p><strong>Forward compatibility:</strong> The <code>WireEvent</code> enum includes an <code>Unknown</code> variant. Clients must ignore unrecognized event types rather than failing. This allows the server to introduce new event categories without breaking older TUI versions.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[serde(other)]
+Unknown,
+<span class="boring">}</span></code></pre>
+<p><strong>WebSocket handshake:</strong> The initial WebSocket connection includes a <code>protocol_version</code> field. The server uses this to gate which event types it sends, enabling safe rollout of new wire events across client versions.</p>
+<pre><code class="language-json">{ "subscribe": ["heartbeat", "daimon", ...], "protocol_version": "1.0" }
+</code></pre>
+<h3 id="55-connection-resilience"><a class="header" href="#55-connection-resilience">5.5 Connection resilience</a></h3>
+<p>On WebSocket disconnect, the TUI status bar shows <code>[RECONNECTING...]</code> and the screen enters read-only mode. Reconnection uses exponential backoff: 1s → 2s → 4s → 8s, capped at 30s. On reconnect, the TUI sends the last seen sequence number and replays missed events. redb KV store provides offline state — the last known GolemSnapshot persists between sessions.</p>
+<hr>
+<h2 id="6-operator-intervention"><a class="header" href="#6-operator-intervention">6. Operator intervention</a></h2>
+<h3 id="61-steer--urgent-intervention"><a class="header" href="#61-steer--urgent-intervention">6.1 <code>steer()</code> — urgent intervention</a></h3>
+<p><code>steer()</code> is the reflex arc. It injects a system-level directive into the active Golem-RS session, tagged <code>source: "operator_steer"</code>, visible to the LLM at the start of its next turn regardless of FSM state.</p>
+<p><strong>Latency target:</strong> &lt;2 seconds from Owner action to LLM context change.</p>
+<p>Before <code>steer()</code> fires, the FSM substate transitions to <code>ACTING.CANCEL_PENDING</code>, blocking new <code>commit_action</code> calls. The steer directive and permit state agree before the LLM sees the directive.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Deserialize)]
+pub struct SteerRequest {
+    pub message: String,
+    pub priority: Priority,  // Normal | Urgent
+}
+<span class="boring">}</span></code></pre>
+<p>Use cases: health factor breach, emergency halt, signer anomaly, market crash. When a probe fires <code>high</code> severity, the GolemEventBus routes the event to <code>golem-cybernetics</code>, which cancels all pending ActionPermits and fires <code>session.steer()</code> before the LLM’s next turn starts.</p>
+<h3 id="62-follow_up--non-urgent-guidance"><a class="header" href="#62-follow_up--non-urgent-guidance">6.2 <code>follow_up()</code> — non-urgent guidance</a></h3>
+<p><code>follow_up()</code> is not a slower <code>steer()</code>. It is a different primitive. <code>steer()</code> changes what the Golem is doing right now. <code>follow_up()</code> changes how it deliberates the next time it reaches a decision boundary.</p>
+<p><strong>Timing guarantee:</strong> Delivered at the next DECIDING state, not before. The UI shows “queued for next decision cycle” when the Owner submits a follow-up.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Deserialize)]
+pub struct FollowUpRequest {
+    pub message: String,
+}
+<span class="boring">}</span></code></pre>
+<p>In the TUI, steers appear with a gold border in the Steer screen’s conversation log. Follow-ups appear with a dim border and “queued” label until they are consumed.</p>
+<h3 id="63-actionpermit-flow"><a class="header" href="#63-actionpermit-flow">6.3 ActionPermit flow</a></h3>
+<p>Write operations (trades, LP adjustments, vault deposits) go through the ActionPermit flow. The Golem proposes an action; the runtime validates it against PolicyCage (the on-chain smart contract enforcing safety constraints like position limits, gas caps, and allowed protocols) constraints; and the result is either committed or rejected. Each step emits a visible GolemEvent:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum GolemEvent {
+    ActionPermitIssued {
+        permit_id: String,
+        action_type: String,
+        params: serde_json::Value,
+        risk_assessment: RiskLevel,
+        timestamp: u64,
+    },
+    ActionPermitCommitted { permit_id: String, tx_hash: String, timestamp: u64 },
+    ActionPermitRejected { permit_id: String, reason: String, timestamp: u64 },
+    ActionPermitCancelled { permit_id: String, source: String, timestamp: u64 },
+}
+<span class="boring">}</span></code></pre>
+<p>On the Steer screen, active permits are listed with their status, kind, and expiry. A permit can be cancelled by the Owner before it is committed.</p>
+<h3 id="64-intervention-availability-by-surface"><a class="header" href="#64-intervention-availability-by-surface">6.4 Intervention availability by surface</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>steer()</th><th>follow_up()</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>TUI (<code>s</code> screen)</td><td>Yes</td><td>Yes</td><td>Full bidirectional, chat-style</td></tr>
+<tr><td>Web portal</td><td>Yes</td><td>Yes</td><td>Dashboard controls</td></tr>
+<tr><td>Telegram</td><td>Read-only queries</td><td>No</td><td>Write ops redirect to portal</td></tr>
+<tr><td>Discord</td><td><code>/bardo ask</code></td><td>No</td><td>Read-only queries</td></tr>
+<tr><td>REST API</td><td>Yes</td><td>Yes</td><td>Direct HTTP</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="7-heartbeat-fsm"><a class="header" href="#7-heartbeat-fsm">7. Heartbeat FSM</a></h2>
+<p>The Heartbeat (the Golem’s 9-step decision cycle: observe, retrieve, analyze, gate, simulate, validate, execute, verify, reflect) is the Golem’s core execution loop. Every tick advances through a deterministic state machine.</p>
+<h3 id="71-fsm-states"><a class="header" href="#71-fsm-states">7.1 FSM states</a></h3>
+<pre><code>IDLE --&gt; SENSING --&gt; DECIDING --&gt; ACTING --&gt; REFLECTING --&gt; SLEEPING --&gt; IDLE
+              |                                                  |
+              +---------- SUPPRESSED (T0, all probes clear) ---&gt;+
+                                                                |
+                                                         SLEEPING.DREAMING
+                                                         (nrem → rem → integration)
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>State</th><th>Duration</th><th>Cost</th><th>What happens</th></tr>
+</thead>
+<tbody>
+<tr><td>IDLE</td><td>Regime-adaptive (15-120s)</td><td>$0</td><td>Tick timer countdown</td></tr>
+<tr><td>SENSING</td><td>&lt;100ms</td><td>$0</td><td>16 deterministic probes evaluate market + system state</td></tr>
+<tr><td>DECIDING</td><td>1-5s</td><td>$0.001-$0.25</td><td>LLM evaluates escalated probes with full context</td></tr>
+<tr><td>ACTING</td><td>Variable</td><td>Gas costs</td><td>Execute tool calls (trades, LP, vault ops)</td></tr>
+<tr><td>REFLECTING</td><td>1-5s</td><td>$0.001-$0.05</td><td>OutcomeVerification + LLM reflection</td></tr>
+<tr><td>SLEEPING</td><td>&lt;100ms</td><td>$0</td><td>Dream eligibility check, Curator trigger</td></tr>
+<tr><td>SLEEPING.DREAMING</td><td>5-15 min</td><td>$0.001-$0.05</td><td>Three-phase dream cycle</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="72-probe-system-t0--deterministic-0"><a class="header" href="#72-probe-system-t0--deterministic-0">7.2 Probe system (T0 — deterministic, $0)</a></h3>
+<p>16 probes run every tick during SENSING. All are compiled Rust — no LLM inference. Each returns <code>ProbeResult</code> with severity <code>none | low | high</code>. Probes cover: price delta, TVL delta, position health, gas spike, credit balance, RSI extreme, MACD cross, circuit breaker, kill switch, replicant report, clade alert, homeostatic drift, world model drift, causal graph consistency, VPIN spike, and IL threshold.</p>
+<h3 id="73-tier-escalation"><a class="header" href="#73-tier-escalation">7.3 Tier escalation</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Tier</th><th>Model</th><th>Trigger</th><th>Cost</th></tr>
+</thead>
+<tbody>
+<tr><td>T0</td><td>None (rule-based)</td><td>All probes clear — suppress tick</td><td>$0</td></tr>
+<tr><td>T1</td><td>Haiku 4.5</td><td>Single probe low, or cached decision</td><td>~$0.001</td></tr>
+<tr><td>T2</td><td>Sonnet 4.6</td><td>Multiple probes, novel situation</td><td>~$0.01</td></tr>
+<tr><td>T3</td><td>Opus 4.6</td><td>Critical severity, no similar past episodes</td><td>~$0.05-0.25</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Cost cascade</strong> — daily cost cap enforces tier ceilings:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Daily spend</th><th>Effect</th></tr>
+</thead>
+<tbody>
+<tr><td>&lt;70% cap</td><td>All tiers available</td></tr>
+<tr><td>70-90%</td><td>T3 suppressed</td></tr>
+<tr><td>90-100%</td><td>T2 + T3 suppressed</td></tr>
+<tr><td>100%</td><td>T0 only until midnight UTC or credit top-up</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="74-decision-cache"><a class="header" href="#74-decision-cache">7.4 Decision cache</a></h3>
+<p>Before escalating to T1+, the heartbeat checks the decision cache. Cache hit at confidence &gt; 0.7 skips LLM inference entirely. Invalidated on regime change or PLAYBOOK (the owner-authored strategy document that defines the Golem’s investment mandate, risk parameters, and allowed protocols) revision. Re-validated every 200 ticks.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DecisionCache {
+    pub pattern_hash: String,
+    pub mental_models_applied: Vec&lt;String&gt;,
+    pub consistent_action: String,
+    pub consistency_count: u32,
+    pub expires_at: u64,
+    pub cache_tick: u64,
+    pub cache_regime: String,
+}
+<span class="boring">}</span></code></pre>
+<p>Economics: a cache hit saves ~$0.003 per tick. At 60% hit rate over 1440 ticks/day, that saves ~$2.59/day — equivalent to ~3.5 additional days of lifespan.</p>
+<h3 id="75-adaptive-clock-theta-interval-regime-dependent"><a class="header" href="#75-adaptive-clock-theta-interval-regime-dependent">7.5 Adaptive Clock theta interval (regime-dependent)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Regime</th><th>Multiplier</th><th>Effective theta interval</th></tr>
+</thead>
+<tbody>
+<tr><td><code>bull_low_vol</code></td><td>1.5x</td><td>90s</td></tr>
+<tr><td><code>bull_high_vol</code></td><td>0.5x</td><td>30s</td></tr>
+<tr><td><code>bear_low_vol</code></td><td>1.0x</td><td>60s</td></tr>
+<tr><td><code>bear_high_vol</code></td><td>0.5x</td><td>30s</td></tr>
+<tr><td>Conservation phase</td><td>2.0x</td><td>120s</td></tr>
+</tbody>
+</table>
+</div>
+<p>Theta interval is clamped to [30s, 120s]. Gamma ticks (5-15s) run concurrently for perception; delta ticks (5-30min) handle maintenance.</p>
+<hr>
+<h2 id="8-multi-surface-rendering"><a class="header" href="#8-multi-surface-rendering">8. Multi-surface rendering</a></h2>
+<p>A single Golem-RS session is shared across all surfaces. Messages from any surface append to the same JSONL session. Responses fan out to all connected surfaces.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Surface</th><th>Input</th><th>Output</th><th>Reasoning display</th></tr>
+</thead>
+<tbody>
+<tr><td>TUI</td><td>Keyboard + command palette</td><td>Full ratatui render, sprites, sparklines</td><td><code>[thinking...]</code> spinner → Mind screen for full pipeline</td></tr>
+<tr><td>Web portal</td><td>Text + file upload</td><td>Markdown + collapsible panels</td><td>Collapsible reasoning panel</td></tr>
+<tr><td>Telegram</td><td>Text messages + commands</td><td>Formatted text, no panels</td><td>Suppressed</td></tr>
+<tr><td>Discord</td><td>Text + slash commands</td><td>Embeds + reactions</td><td>“Show reasoning” reaction</td></tr>
+<tr><td>REST API</td><td>JSON-RPC 2.0</td><td>JSON responses</td><td>Full ReasoningChain in response</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Provider badge</strong> — each response carries provider metadata:</p>
+<ul>
+<li>TUI: Status line <code>[sonnet-4.6/blockrun/87%/std]</code></li>
+<li>Web: Subtle badge below response</li>
+<li>Telegram: Suppressed</li>
+<li>API: <code>X-Bardo-Backend</code>, <code>X-Bardo-Pipeline</code>, <code>X-Bardo-Reasoning-Tokens</code> headers</li>
+</ul>
+<hr>
+<h2 id="9-golemmode-and-dream-interaction"><a class="header" href="#9-golemmode-and-dream-interaction">9. GolemMode and dream interaction</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum GolemMode { Waking, Dreaming, Dying }
+<span class="boring">}</span></code></pre>
+<h3 id="91-mode-transitions"><a class="header" href="#91-mode-transitions">9.1 Mode transitions</a></h3>
+<pre><code>WAKING &lt;──────────&gt; DREAMING
+  │                     │
+  └───────&gt; DYING &lt;─────┘
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>From</th><th>To</th><th>Trigger</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>WAKING</td><td>DREAMING</td><td><code>dreamUrgency.composite &gt; threshold</code> at SLEEPING</td><td>Heartbeat FSM suspends; dream cycle begins</td></tr>
+<tr><td>DREAMING</td><td>WAKING</td><td>Dream cycle complete or wake interrupt</td><td>Heartbeat FSM resumes from IDLE</td></tr>
+<tr><td>WAKING</td><td>DYING</td><td>Death trigger (economic, epistemic, stochastic, operator)</td><td>Thanatopsis Protocol (the four-phase structured shutdown: Acceptance, Settlement, Reflection, Legacy) begins</td></tr>
+<tr><td>DREAMING</td><td>DYING</td><td>Death trigger during dream</td><td>Immediate interrupt; Thanatopsis begins</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="92-during-dreaming"><a class="header" href="#92-during-dreaming">9.2 During Dreaming</a></h3>
+<p>The Golem does not respond to steers. Messages receive an automatic hold response:</p>
+<pre><code>"I'm dreaming right now. I'll be back in ~8 minutes.
+ You can send 'wake' to interrupt."
+</code></pre>
+<p><strong>Wake interrupt</strong>: Send <code>wake</code> via any surface. The current dream phase completes consolidation (to avoid losing partially-processed knowledge), then the Golem returns to Waking mode.</p>
+<p>The TUI shows the Dreams screen (<code>d</code>): NREM replay, REM counterfactual tree, integration visualization, sprite sleeping with slow breathing pulse.</p>
+<h3 id="93-during-dying"><a class="header" href="#93-during-dying">9.3 During Dying</a></h3>
+<p>The 4-phase Thanatopsis Protocol: Acceptance → Settlement → Reflection → Legacy. Chat is disabled except for status queries. Death progress streams via <code>death.protocol_step</code>. The TUI renders the full death animation sequence (30 seconds, cinematic).</p>
+<hr>
+<h2 id="10-live-event-stream"><a class="header" href="#10-live-event-stream">10. Live event stream</a></h2>
+<p>GolemEventBus events surface to all connected clients in real-time:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event type</th><th>Description</th><th>Channel</th></tr>
+</thead>
+<tbody>
+<tr><td><code>HeartbeatStateTransition</code></td><td>FSM state changes (IDLE → SENSING → DECIDING)</td><td><code>events</code></td></tr>
+<tr><td><code>ProbeAlert</code></td><td>Probe severity changes (low/high triggers)</td><td><code>events</code></td></tr>
+<tr><td><code>ActionPermitIssued</code></td><td>New ActionPermit created for a write operation</td><td><code>events</code></td></tr>
+<tr><td><code>ToolCallAttempt</code></td><td>Tool invocation start/complete/error</td><td><code>terminal</code></td></tr>
+<tr><td><code>DreamStarted</code></td><td>Golem entered dream mode with estimated duration</td><td><code>events</code></td></tr>
+<tr><td><code>CreatureEvolution</code></td><td>Sprite form transition (hatchling → mature, etc.)</td><td><code>engagement</code></td></tr>
+<tr><td><code>AchievementUnlocked</code></td><td>New achievement earned</td><td><code>engagement</code></td></tr>
+<tr><td><code>PhaseTransition</code></td><td>BehavioralPhase (the five survival phases: Thriving, Stable, Conservation, Desperate, Terminal) change (Stable → Conservation)</td><td><code>events</code></td></tr>
+<tr><td><code>DaimonAppraisal</code></td><td>PAD vector (Pleasure-Arousal-Dominance emotional coordinates computed by the Daimon affect engine) update, emotional state change</td><td><code>daimon</code></td></tr>
+<tr><td><code>VitalityUpdate</code></td><td>Vitality (composite survival score from 0.0 to 1.0 derived from the three mortality clocks) update, credit balance, projected lifespan, clock updates</td><td><code>vitality</code></td></tr>
+<tr><td><code>BloodstainReceived</code></td><td>Incoming Bloodstain (market conditions recorded at another Golem’s death, broadcast as warnings via Styx) matching current conditions</td><td><code>clade</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="11-session-management"><a class="header" href="#11-session-management">11. Session management</a></h2>
+<p>Sessions persist as Golem-RS JSONL files on the Golem’s local storage (<code>/var/lib/bardo/sessions/</code>).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>/api/v1/sessions</code></td><td>GET</td><td>List sessions with metadata</td></tr>
+<tr><td><code>/api/v1/sessions/:id</code></td><td>GET</td><td>Session detail with full message history</td></tr>
+<tr><td><code>/api/v1/sessions</code></td><td>POST</td><td>Create a new session</td></tr>
+<tr><td><code>/api/v1/sessions/:id/resume</code></td><td>POST</td><td>Resume an existing session</td></tr>
+</tbody>
+</table>
+</div>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Serialize, Deserialize)]
+pub struct GolemSession {
+    pub id: String,
+    pub created_at: u64,
+    pub last_active_at: u64,
+    pub message_count: u32,
+    pub tool_call_count: u32,
+    pub inference_tokens: u64,
+    pub cost_usdc: f64,
+    pub status: SessionStatus,  // Active | Suspended | Completed
+}
+<span class="boring">}</span></code></pre>
+<p>Each session maintains a configurable context window. When the window fills, older messages are summarized (via Haiku) and compressed into a session summary.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Setting</th><th>Default</th><th>Range</th></tr>
+</thead>
+<tbody>
+<tr><td><code>max_context_tokens</code></td><td>100,000</td><td>10,000-200,000</td></tr>
+<tr><td><code>compression_threshold</code></td><td>0.8</td><td>0.5-0.95</td></tr>
+<tr><td><code>summary_model</code></td><td><code>claude-haiku-4-5</code></td><td>any supported model</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="12-emotional-state-in-conversation"><a class="header" href="#12-emotional-state-in-conversation">12. Emotional state in conversation</a></h2>
+<p>The Golem’s emotional state (PAD vector from the Daimon) modulates conversational tone. A Golem experiencing high arousal and low pleasure writes more cautiously. A Golem in anticipation communicates with forward-looking language.</p>
+<pre><code>Owner: "How are you feeling?"
+Golem: "Cautious — moderate anxiety from the recent volatility spike.
+        PAD: pleasure -0.2, arousal 0.6, dominance 0.3 (apprehension).
+        I'm being more conservative with position sizing until the
+        regime stabilizes."
+</code></pre>
+<p>In the TUI, the sprite’s expression reflects the PAD vector continuously. The Hearth screen sidebar shows the current emotional state as a PADDial widget. The three mortality-specific emotions from the Daimon (<code>prd2-daimon.md</code>) produce distinctive sprite visual signatures: Economic Anxiety causes body flickers and aura contraction, Epistemic Vertigo produces eye unfocus animations and scattered particles, Stochastic Dread creates dark particle overlay and hunched posture.</p>
+<hr>
+<h2 id="13-mortality-status"><a class="header" href="#13-mortality-status">13. Mortality status</a></h2>
+<pre><code>Owner: "How long do you have?"
+Golem: "Vitality: 0.62 (Stable phase). At current burn rate ($0.75/day)
+        and income ($0.45/day net), approximately 28 days remaining.
+        Hayflick ticks: 67,420 of 100,000.
+        Next phase transition (Conservation) projected at vitality 0.40,
+        roughly 18 days from now."
+</code></pre>
+<p>Critical mortality events — entering Declining or Terminal phase — trigger push notifications on all configured channels regardless of notification preferences. The TUI Mortality screen (<code>x</code>) shows three clock gauges (economic/epistemic/stochastic), the phase timeline, and the full lineage tree.</p>
+<hr>
+<h2 id="14-graveyard-post-death"><a class="header" href="#14-graveyard-post-death">14. Graveyard (post-death)</a></h2>
+<p>When a Golem dies, there are no background settlement workers. The Golem’s VM is gone. Its wallet persists in Privy’s infrastructure independently of the VM.</p>
+<h3 id="141-sweep-model"><a class="header" href="#141-sweep-model">14.1 Sweep model</a></h3>
+<p>The Owner clicks “Sweep” in the portal or runs <code>:sweep</code> in the TUI command palette. The portal signs the sweep transaction via the Privy server SDK — no Golem process needed.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Category</th><th>Action</th></tr>
+</thead>
+<tbody>
+<tr><td>Settleable (freely transferable tokens)</td><td>One-click sweep to Main Wallet</td></tr>
+<tr><td>Timelocked (positions with cooldown)</td><td>Shows estimated unlock time; sweep later</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="142-graveyard-view"><a class="header" href="#142-graveyard-view">14.2 Graveyard view</a></h3>
+<p>First-class section of the TUI (<code>x</code> Mortality screen, lineage tree section) and the web portal. Per-Golem tombstone: vital statistics, wallet balance with sweep button, death testament, Grimoire (the Golem’s persistent knowledge base of episodes, insights, heuristics, warnings, and causal links) archive (browsable, searchable), performance summary, achievements earned in that life.</p>
+<p>In the TUI, dead Golems render as desaturated tombstone sprites with a subtle static animation.</p>
+<h3 id="143-death-notifications"><a class="header" href="#143-death-notifications">14.3 Death notifications</a></h3>
+<p>All surfaces receive death notifications with action links: “View Testament”, “Create Successor”, “Sweep Funds.”</p>
+<p>The death recap (roguelike kill screen) renders in the TUI with the full 30-second dissolution animation, cause narrative (Opus-generated), lifetime statistics, emotional arc, and succession prompt. See <code>../18-interfaces/03-tui.md</code> §7.4 for the full <code>DeathRecap</code> struct.</p>
+<hr>
+<h2 id="15-notification-preferences"><a class="header" href="#15-notification-preferences">15. Notification preferences</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct NotificationPreferences {
+    pub tui: TuiNotifications,
+    pub web: WebNotifications,
+    pub telegram: PlatformNotifications,
+    pub discord: PlatformNotifications,
+    pub webhook: WebhookNotifications,
+}
+
+pub enum NotificationEvent {
+    PhaseChange,
+    TradeExecuted,
+    LowCredits,
+    CriticalCredits,
+    DeathImminent,
+    DailySummary,
+    CladeAlert,
+    ReplicantReport,
+    AchievementUnlocked,
+}
+<span class="boring">}</span></code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>TUI</th><th>Web</th><th>Telegram</th><th>Discord</th></tr>
+</thead>
+<tbody>
+<tr><td>Phase change</td><td>Toast</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Trade executed</td><td>Log entry</td><td>Yes</td><td>No</td><td>No</td></tr>
+<tr><td>Low credits</td><td>Toast + status bar</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Critical credits</td><td>Toast (persistent)</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Death imminent</td><td>Full-screen alert</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Daily summary</td><td>—</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td>Achievement unlocked</td><td>Popup + particles</td><td>Yes</td><td>No</td><td>No</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="16-error-handling"><a class="header" href="#16-error-handling">16. Error handling</a></h2>
+<h3 id="161-connection-loss"><a class="header" href="#161-connection-loss">16.1 Connection loss</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>Recovery</th></tr>
+</thead>
+<tbody>
+<tr><td>WebSocket disconnects</td><td>Auto-reconnect with <code>resume_from</code> sequence replay (3s → 6s → 12s backoff)</td></tr>
+<tr><td>Telegram bot offline</td><td>Messages queued by Telegram, delivered on reconnect</td></tr>
+<tr><td>Discord slash command timeout</td><td>Ephemeral “Processing…” message, follow-up edit</td></tr>
+<tr><td>TUI loses WebSocket</td><td>Status bar shows <code>[RECONNECTING...]</code>, enters read-only mode</td></tr>
+<tr><td>Golem-RS session crash</td><td>New session created, previous context loaded from JSONL</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="162-inference-failures"><a class="header" href="#162-inference-failures">16.2 Inference failures</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Failure</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>x402 (micropayment protocol for inference, compute, and data purchases via signed USDC transfers) payment rejected</td><td>Fallback to OpenRouter, then direct key</td></tr>
+<tr><td>All inference unavailable</td><td>Golem operates in T0-only mode (rule-based)</td></tr>
+<tr><td>Rate limited</td><td>Backoff + downgrade model tier</td></tr>
+<tr><td>Budget exceeded</td><td>T0-only until next day or credit top-up</td></tr>
+</tbody>
+</table>
+</div>
+<p>Errors surface with actionable context on all connected surfaces. The TUI status bar turns red and shows the error code.</p>
+<hr>
+<h2 id="17-interaction-patterns"><a class="header" href="#17-interaction-patterns">17. Interaction patterns</a></h2>
+<h3 id="daily-check-in-1-minute"><a class="header" href="#daily-check-in-1-minute">Daily check-in (&lt;1 minute)</a></h3>
+<pre><code>Owner: "How are you doing?"
+Golem: "Running well. Phase: stable. NAV up 1.2% today.
+        3 trades executed (2 profitable). Morpho yield at 4.8%.
+        USDC balance covers ~7.2 days. No alerts."
+</code></pre>
+<h3 id="strategy-review-5-10-minutes"><a class="header" href="#strategy-review-5-10-minutes">Strategy review (5-10 minutes)</a></h3>
+<pre><code>Owner: "Walk me through your recent decisions"
+Golem: "Over the past 24h I made 3 key decisions:
+
+        1. Rebalanced Morpho allocation from 35% to 42% after
+           supply rate climbed to 5.1% (insight_2847)
+
+        2. Closed ETH/USDC LP position at tick 4180 after range
+           exit. Net P&amp;L: +$47.20 (1.8% over 3 days)
+
+        3. Skipped a swap at tick 4195 — high gas ($2.40) relative
+           to expected $12 profit. Cached as heuristic_0891."
+
+Owner: "Good call on #3. Increase your gas threshold to $3"
+Golem: "Updated gas threshold heuristic. Won't override PolicyCage
+        (max $5 gas per tx). Applied starting next tick."
+</code></pre>
+<h3 id="emergency-intervention"><a class="header" href="#emergency-intervention">Emergency intervention</a></h3>
+<pre><code>Owner (steer, priority: urgent): "Stop all trading immediately"
+Golem: "Heartbeat paused. All pending tool calls cancelled.
+        2 open LP positions (no immediate action needed)
+        1 pending vault rebalance (cancelled)
+        No in-flight transactions.
+
+        Resume with 'resume trading' when ready."
+</code></pre>
+<hr>
+<h2 id="18-interaction-hierarchy-v4"><a class="header" href="#18-interaction-hierarchy-v4">18. Interaction hierarchy (v4)</a></h2>
+<p>The v4 interaction hierarchy uses a layered depth model: windows, tabs, screens, panes, elements, and modals. 29 screens across 6 windows.</p>
+<p><strong>Source:</strong> <code>tmp/research/design-inspo/engagement-prd/bardo-v4-00-interaction-hierarchy.md</code></p>
+<h3 id="181-terminology"><a class="header" href="#181-terminology">18.1 Terminology</a></h3>
+<pre><code>WINDOW    The outermost container. A major conceptual category.
+          Navigate between windows with Tab / Shift-Tab.
+          There are exactly 6 windows. They are always visible
+          in the top bar.
+
+TAB       A sub-view within a window. Each window has 2-6 tabs.
+          Navigate between tabs with number keys 0-9.
+          Tabs appear as a secondary bar below the window bar
+          when that window is active.
+
+SCREEN    What you see when a specific tab is selected. A screen
+          is a layout of panes filling the available space below
+          the tab bar and beside the golem sidebar.
+
+PANE      A bounded region within a screen. Contains data, widgets,
+          or interactive elements. One pane has FOCUS at any time.
+          Navigate between panes with arrow keys.
+
+FOCUS     The highlighted pane. Receives keyboard input. Shows
+          available commands in the bottom bar. Bright border.
+
+LOCKED    When you press Enter on a focused pane, focus LOCKS.
+          Arrow keys now scroll/select WITHIN the pane instead
+          of moving between panes. Backspace unlocks.
+
+MODAL     A floating overlay triggered by Enter on a selected item
+          within a locked pane. Covers 40-80% of the screen.
+          Has its own internal structure (can contain tabs, panes,
+          elements -- the full hierarchy repeats inside).
+          Backspace closes the modal. Modals can nest infinitely.
+
+ELEMENT   An individual interactive item within a pane: a list row,
+          a gauge, a chart, a text block. Elements are selectable
+          when a pane is locked. Enter on an element opens a modal.
+</code></pre>
+<h3 id="182-the-depth-stack"><a class="header" href="#182-the-depth-stack">18.2 The depth stack</a></h3>
+<pre><code>LAYER 0:  WINDOW      (Tab/Shift-Tab cycles)
+LAYER 1:  TAB         (Number keys 0-9 switch)
+LAYER 2:  SCREEN      (the layout of panes)
+LAYER 3:  PANE FOCUS  (arrow keys move focus between panes)
+LAYER 4:  PANE LOCKED (Enter locks; arrows scroll/select within)
+LAYER 5:  ELEMENT     (Enter on element opens modal)
+LAYER 6:  MODAL       (has its own tabs, panes, elements)
+LAYER 7:  MODAL LOCKED (Enter within modal -&gt; nested modal)
+LAYER 8+: NESTED      (infinite depth -- modals within modals)
+
+Backspace always goes UP one layer.
+Esc goes all the way back to Layer 3 (pane focus on current screen).
+</code></pre>
+<h3 id="183-the-six-windows"><a class="header" href="#183-the-six-windows">18.3 The six windows</a></h3>
+<p>The windows represent six dimensions of a Golem’s existence. The question “which window does X belong in?” should have an obvious answer based on what dimension X relates to.</p>
+<pre><code>HEARTH   MIND   SOMA   WORLD   FATE   COMMAND
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Window</th><th>Concept</th><th>Tabs</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>HEARTH</strong></td><td><em>“What is happening right now?”</em> The Golem as a living thing. Vital signs, heartbeat rhythm, emotional state, operational status. The ambient screen.</td><td>Overview, Signals, Operations, Status</td></tr>
+<tr><td><strong>MIND</strong></td><td><em>“What does the Golem know, and how does it think?”</em> Decision pipeline, knowledge library, strategic doctrine, dream system, inference engine.</td><td>Pipeline, Grimoire, Playbook, Dreams, Inference</td></tr>
+<tr><td><strong>SOMA</strong></td><td><em>“What does the Golem own, and what does it cost?”</em> Positions, trades, wallet security, marketplace. Named for the Greek word for “body.”</td><td>Portfolio, Trades, Custody, Bazaar, Budget</td></tr>
+<tr><td><strong>WORLD</strong></td><td><em>“What else exists, and how do they relate to me?”</em> The ecosystem. Other Golems (the Solaris ocean), the Clade (a cooperative group of Golems sharing knowledge and coordinating strategy via Styx), the pheromone field, bloodstains.</td><td>Solaris, Clade, Lethe, Bloodstains</td></tr>
+<tr><td><strong>FATE</strong></td><td><em>“How long will the Golem live, and what will it leave behind?”</em> Mortality, lineage, achievements, legacy. The confrontation with finitude.</td><td>Mortality, Lineage, Achievements, Graveyard</td></tr>
+<tr><td><strong>COMMAND</strong></td><td><em>“What can I do, and how do I configure things?”</em> Chat, configuration, visual effects settings, Hermes conversation. The owner’s agency.</td><td>Steer, Config, Effects, Hermes</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="184-persistent-chrome"><a class="header" href="#184-persistent-chrome">18.4 Persistent chrome</a></h3>
+<p>Four persistent elements appear across all windows:</p>
+<p><strong>Window bar (top row 1):</strong> Active window framed with corner brackets in rose. Inactive windows in dim text. Unread indicator dot after window names with unseen changes.</p>
+<p><strong>Tab bar (top row 2):</strong> Shows the current window’s tabs. Active tab highlighted in rose. Number keys switch tabs.</p>
+<p><strong>Golem sidebar (left, 8-12 cols):</strong> Always visible, even in modals. Single Golem: full Spectre (the Golem’s animated visual creature representation in the TUI, reflecting its emotional state and health) with mini mortality gauges. Multiple Golems: vertical stack of mini-Spectres. <code>Ctrl+Up/Down</code> cycles between Golems, crossfading all data on screen over ~500ms.</p>
+<p><strong>Status bar (bottom row -2):</strong> Phase indicator, tick counter (FlashNumber), credit balance, breadcrumb showing full navigation depth (<code>Window &gt; Tab &gt; Pane [LOCKED] &gt; Element [MODAL]</code>), heartbeat pulse.</p>
+<p><strong>Command bar (bottom row -1):</strong> Top 5-8 contextual keys for the current depth layer. Changes as you navigate deeper. <code>F1</code> always shows the complete key reference.</p>
+<h3 id="185-focus-and-lock-system"><a class="header" href="#185-focus-and-lock-system">18.5 Focus and lock system</a></h3>
+<p><strong>Pane focus (Layer 3):</strong> Arrow keys move focus between panes. Focused pane has bright border and shows available commands. Unfocused panes remain visible and updating.</p>
+<p><strong>Pane lock (Layer 4):</strong> Enter locks focus. Border doubles to show lock state. Arrow keys now scroll/select within the pane. Letter keys become pane-specific commands. Other panes dim to 70%.</p>
+<p><strong>Element selection (Layer 5):</strong> Within a locked pane, selectable elements highlight on cursor. Selected rows get <code>rose_deep</code> background.</p>
+<p><strong>Modals (Layer 6+):</strong> Floating panel, double-line borders, 40-80% screen size, centered. Background dims to 40%. Golem sidebar remains visible. Modal content follows the same hierarchy – tabs, panes, elements, nested modals. Depth is infinite. Every piece of data is a portal.</p>
+<h3 id="186-navigation-summary"><a class="header" href="#186-navigation-summary">18.6 Navigation summary</a></h3>
+<pre><code>Tab / Shift-Tab     Cycle between the 6 windows
+1-9                 Switch tabs within the current window
+Arrow keys          Move focus between panes (or scroll when locked)
+Enter               Lock focus on pane / Select element / Open modal
+Backspace           Unlock pane / Close modal / Go up one layer
+Esc                 Jump back to Layer 3 (pane focus) from anywhere
+Ctrl+Up / Ctrl+Down Cycle between Golems (changes all data on screen)
+/                   Search (context-sensitive)
+F1                  Full help for current context
+?                   Available keys overlay
+:                   Command palette (fuzzy search across everything)
+Ctrl+Q              Quit bardo-terminal
+</code></pre>
+<h3 id="187-golem-contextual-rendering"><a class="header" href="#187-golem-contextual-rendering">18.7 Golem-contextual rendering</a></h3>
+<p>Everything on every screen depends on the selected Golem. When cycling Golems with <code>Ctrl+Up/Down</code>, the entire terminal transforms:</p>
+<p><strong>What changes:</strong> All data (positions, trades, Grimoire entries, PAD values, vitality, balances), Spectre appearance, color temperature (PAD-modulated atmosphere), noise floor (denser for crisis, calmer for stable), heartbeat rhythm, phase degradation level, philosophical fragment pool.</p>
+<p><strong>What stays the same:</strong> Window/tab structure, Golem sidebar (all Golems still visible), command bar layout, persistent chrome.</p>
+<p><strong>The transition:</strong> Smooth crossfade (~500ms). Data values lerp between old and new Golem state. Not a snap cut. A blending, as if the terminal’s attention is shifting from one mind to another.</p>
+<h3 id="188-modal-types"><a class="header" href="#188-modal-types">18.8 Modal types</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Type</th><th>Use</th><th>Layout</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Detail</strong></td><td>Grimoire entries, trade details, position details</td><td>Full content top, metadata grid below, action buttons bottom, internal tabs</td></tr>
+<tr><td><strong>Comparison</strong></td><td>Eros/Thanatos splits, counterfactual branches</td><td>Two-column side by side, differences highlighted</td></tr>
+<tr><td><strong>Timeline</strong></td><td>Confidence history, PnL history, dream replay</td><td>Horizontal timeline as primary axis, cursor-navigable</td></tr>
+<tr><td><strong>Graph</strong></td><td>Causal graph, Clade topology, lineage tree</td><td>Interactive graph filling modal, zoom/pan with arrows</td></tr>
+<tr><td><strong>Editor</strong></td><td>Config parameters, strategy tuning</td><td>Form-style with preview of effect</td></tr>
+<tr><td><strong>Conversation</strong></td><td>Steer follow-ups, Hermes queries</td><td>Chat-style with streaming responses, inherits element context</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="189-responsive-behavior"><a class="header" href="#189-responsive-behavior">18.9 Responsive behavior</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Terminal Width</th><th>Golem Sidebar</th><th>Screen Layout</th><th>Modal Size</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Compact</strong> (80-119 cols)</td><td>6 cols, eyes only</td><td>Single column, panes stack vertically</td><td>90% width</td></tr>
+<tr><td><strong>Standard</strong> (120-159 cols)</td><td>10 cols, mini Spectre</td><td>Two columns</td><td>70% width</td></tr>
+<tr><td><strong>Wide</strong> (160-199 cols)</td><td>12 cols, full Spectre</td><td>Three columns</td><td>60% width</td></tr>
+<tr><td><strong>Ultra</strong> (200+ cols)</td><td>14 cols, full Spectre + waveforms</td><td>Three columns + detail sidebar</td><td>50% width</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="1810-the-persona-5-principle"><a class="header" href="#1810-the-persona-5-principle">18.10 The Persona 5 principle</a></h3>
+<p>Every layer of depth should feel like a discovery, not a chore. Each layer reveals something the previous layer only hinted at:</p>
+<ul>
+<li>The window gives you the feeling (warm/cool/liminal)</li>
+<li>The tab gives you the category (what kind of data)</li>
+<li>The screen gives you the overview (the layout, the relationships)</li>
+<li>The focused pane gives you the detail (the numbers, the trends)</li>
+<li>The locked pane gives you the interaction (sort, filter, navigate)</li>
+<li>The element gives you the specifics (this one entry, this one trade)</li>
+<li>The modal gives you the depth (full history, provenance, cross-links)</li>
+<li>The nested modal gives you the rabbit hole (follow any thread anywhere)</li>
+</ul>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[REEVES-NASS-1996] Reeves, B. &amp; Nass, C. <em>The Media Equation.</em> Cambridge University Press, 1996. Demonstrates that people treat computers and media as social actors, applying the same social rules they use with other humans. This underpins Bardo’s bet that making internal cognitive state visible creates affective bonds that drive retention.</li>
+<li>[MEHRABIAN-RUSSELL-1974] Mehrabian, A. &amp; Russell, J.A. <em>An Approach to Environmental Psychology.</em> MIT Press, 1974. Introduces the PAD (Pleasure-Arousal-Dominance) model of emotional state, the theoretical foundation for the Daimon affect engine’s three-axis representation.</li>
+<li>[ZHANG-ACE-2025] Zhang, A. et al. “ACE: Agentic Context Engineering.” arXiv:2510.04618, 2025. Proposes structured context engineering for LLM agents, arguing that how context is assembled determines agent quality more than model choice. Informs the Golem’s context window management and session compression strategy.</li>
+<li>[ANTHROPIC-CE-2025] Anthropic. “Context Engineering for Agents.” 2025. Anthropic’s practical guide to building agent context windows, covering prompt structure, tool result injection, and memory retrieval patterns. Directly influenced the Golem’s heartbeat context assembly pipeline.</li>
+<li>[SHNEIDERMAN-1996] Shneiderman, B. “The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations.” <em>VL</em>, 1996. Proposes the “overview first, zoom and filter, then details on demand” mantra for information visualization. This principle structures the TUI’s layered depth model: window gives overview, tab gives category, locked pane gives detail, modal gives depth.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/12-inference/sheaf-observation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/13-runtime/01-defi-activities.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/12-inference/sheaf-observation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/13-runtime/01-defi-activities.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Performance Targets - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/appendices/performance-targets.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="performance-targets-and-technical-specifications-spec"><a class="header" href="#performance-targets-and-technical-specifications-spec">Performance Targets and Technical Specifications [SPEC]</a></h1>
+<blockquote>
+<p><strong>Status</strong>: Reference specification</p>
+<p><strong>Source</strong>: Consolidated performance, chain support, gas, and subsystem specifications.</p>
+</blockquote>
+<blockquote>
+<p><strong>Reader orientation:</strong> This appendix consolidates all performance targets and technical specifications across the Bardo ecosystem: vault gas costs, Heartbeat (the 9-step decision cycle) tick latency, HDC operation benchmarks, chain intelligence pipeline timing, Grimoire (the agent’s persistent knowledge base) memory operations, per-tick compute budgets at each timescale (Gamma/Theta/Delta), chain support matrix, contract gas estimates, ERC standards checklist, and subsystem specifications. The key concept is the per-tick compute budget: all Triage Augmentation innovations are T0-compatible (zero inference cost, no LLM calls). See <code>prd2/shared/glossary.md</code> for full term definitions.</p>
+</blockquote>
+<hr>
+<h2 id="performance-targets"><a class="header" href="#performance-targets">Performance Targets</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th></tr>
+</thead>
+<tbody>
+<tr><td>Vault deployment gas</td><td>&lt; 3M gas</td></tr>
+<tr><td>Deposit/withdraw latency</td><td>&lt; 2 blocks</td></tr>
+<tr><td>Tool response time</td><td>&lt; 500ms (p95)</td></tr>
+<tr><td>Heartbeat tick (suppressed)</td><td>&lt; 100ms, $0</td></tr>
+<tr><td>Heartbeat tick (escalated)</td><td>&lt; 10s, &lt; $0.10 LLM cost</td></tr>
+<tr><td>Memory search latency</td><td>&lt; 25ms</td></tr>
+<tr><td>Share pool price convergence</td><td>&lt; 5 min to NAV ±1%</td></tr>
+<tr><td>Wallet creation</td><td>&lt; 500ms</td></tr>
+<tr><td>Transaction signing</td><td>&lt; 200ms</td></tr>
+<tr><td>Onboarding (atomic)</td><td>&lt; 30s, $0 gas (paymaster)</td></tr>
+<tr><td>GottsLoop daily cost (typical)</td><td>&lt; $5 (95% Haiku ticks)</td></tr>
+<tr><td>Memory RAM footprint</td><td>150–250 MB</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="hdc-operations"><a class="header" href="#hdc-operations">HDC Operations</a></h2>
+<p>Latency targets measured on Apple M1 Pro (NEON SIMD). x86-64 with AVX2 should match or beat these numbers thanks to native POPCNT. Dimension D=10,240 bits (160 u64 words) unless noted.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Target Latency</th><th>Method</th></tr>
+</thead>
+<tbody>
+<tr><td>Hamming distance (D=10,240)</td><td>~10 ns</td><td>160 XOR64 + 160 POPCNT64</td></tr>
+<tr><td>HyperVector bind (XOR)</td><td>~2 ns</td><td>160 XOR64</td></tr>
+<tr><td>HyperVector unbind (XOR, self-inverse)</td><td>~2 ns</td><td>160 XOR64</td></tr>
+<tr><td>HyperVector permute (cyclic shift)</td><td>~5 ns</td><td>160 shift + 160 OR</td></tr>
+<tr><td>HyperVector bundle (majority vote, K=10)</td><td>~15 us accumulate, ~12 us finish</td><td>Per-bit vote counting + threshold</td></tr>
+<tr><td>Full transaction fingerprint encode</td><td>&lt; 100 us</td><td>Bind + permute across transaction fields</td></tr>
+<tr><td>Resonator factorization (1 iter, 3 factors, 100 codebook)</td><td>~300 us</td><td>Iterative projection</td></tr>
+<tr><td>ANN query (usearch binary HNSW, 100K items)</td><td>&lt; 1 ms (main), ~1.5 ms (main + staging)</td><td>Hamming metric, M=16, ef_search=100</td></tr>
+<tr><td>ANN staging insert</td><td>~100 us</td><td>HNSW incremental insert</td></tr>
+<tr><td>Hamming top-K pre-filter (100 candidates)</td><td>~1 us</td><td>100 x Hamming distance</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Total POPCNT budget per Gamma tick</strong>: ~3.5 us across ~355 comparisons (curiosity pre-filter, anti-pattern screening, context dedup, regime classification, dream correlation). This is noise within a 5-15s Gamma interval.</p>
+<hr>
+<h2 id="chain-intelligence-pipeline"><a class="header" href="#chain-intelligence-pipeline">Chain Intelligence Pipeline</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Target Latency</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Binary Fuse8 lookup</td><td>~10 ns per address</td><td>3 memory accesses, branchless (xorf crate)</td></tr>
+<tr><td>Binary Fuse8 construction (10K keys)</td><td>~100 us</td><td>Rebuilt at each Gamma tick via arc-swap</td></tr>
+<tr><td>DDSketch quantile query</td><td>O(1), ~15 ns observe</td><td>Logarithmic bucketing, alpha=0.01, ~2 KB fixed memory</td></tr>
+<tr><td>DDSketch quantile read</td><td>O(log n) bucket scan</td><td>Formal relative error guarantee</td></tr>
+<tr><td>MIDAS-R anomaly score</td><td>~50 ns per edge</td><td>3 CMS queries + chi-squared</td></tr>
+<tr><td>CMS frequency update</td><td>~20 ns</td><td>k hash + k increment</td></tr>
+<tr><td>Single block triage (150 txs)</td><td>&lt; 5 ms total</td><td>Binary Fuse8 filter + severity scoring</td></tr>
+<tr><td>Bayesian surprise update</td><td>~300 ns per observation</td><td>Conjugate prior arithmetic + digamma</td></tr>
+<tr><td>Bayesian surprise decay (100 protocols)</td><td>~50 us</td><td>Linear scan of parameters</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>False positive rates</strong>: Binary Fuse8 achieves 0.39% FPR at 8.7 bits/entry, down from ~1% FPR at 9.6 bits/entry with standard Bloom filters.</p>
+<hr>
+<h2 id="memory--grimoire"><a class="header" href="#memory--grimoire">Memory / Grimoire</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Target Latency</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>HDC episode compression</td><td>&lt; 500 us per episode</td><td>Bundle accumulate at Theta cadence</td></tr>
+<tr><td>Similarity search (10K episodes)</td><td>&lt; 5 ms</td><td>Hamming pre-filter then cosine refinement</td></tr>
+<tr><td>Grimoire HDC retrieval (top-10)</td><td>&lt; 2 ms</td><td>Binary HNSW + Hamming distance</td></tr>
+<tr><td>SQLite query</td><td>&lt; 1 ms</td><td>Existing PRD2 target</td></tr>
+<tr><td>LanceDB vector search</td><td>&lt; 25 ms</td><td>Existing PRD2 target</td></tr>
+<tr><td>Memory per HDC vector</td><td>1,280 bytes</td><td>10,240 bits (vs. 3,072 bytes for 768-dim f32)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="per-tick-compute-budget"><a class="header" href="#per-tick-compute-budget">Per-Tick Compute Budget</a></h2>
+<p>All TA (Triage Augmentation) innovations are T0-compatible: zero inference cost, no LLM calls, no external API calls, no blocking I/O.</p>
+<h3 id="gamma-tick-5-15s-interval"><a class="header" href="#gamma-tick-5-15s-interval">Gamma Tick (5-15s interval)</a></h3>
+<p>Target total: &lt; 200 ms (sensing + triage + CorticalState update). Current measured budget: ~7-17 ms.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Per-Event Cost</th><th>Events/Tick</th><th>Total/Tick</th></tr>
+</thead>
+<tbody>
+<tr><td>Block ingestion + log filtering (existing)</td><td>–</td><td>–</td><td>5-10 ms</td></tr>
+<tr><td>Probe severity scoring (existing)</td><td>–</td><td>–</td><td>1-2 ms</td></tr>
+<tr><td>CorticalState atomic writes (existing)</td><td>~0.1 us</td><td>–</td><td>~0.1 us</td></tr>
+<tr><td>HDC fingerprint encoding</td><td>~100 us</td><td>10-50</td><td>1-5 ms</td></tr>
+<tr><td>Binary Fuse8 queries</td><td>~10 ns</td><td>100-500</td><td>1-5 us</td></tr>
+<tr><td>Bayesian surprise updates</td><td>~300 ns</td><td>10-50</td><td>3-15 us</td></tr>
+<tr><td>MIDAS-R scoring</td><td>~50 ns</td><td>10-50</td><td>0.5-2.5 us</td></tr>
+<tr><td>DDSketch observations</td><td>~15 ns</td><td>10-50</td><td>0.15-0.75 us</td></tr>
+<tr><td>Hamming pre-filter</td><td>~1 us</td><td>5-20</td><td>5-20 us</td></tr>
+<tr><td>CMS frequency updates</td><td>~20 ns</td><td>10-50</td><td>0.2-1 us</td></tr>
+<tr><td>CorticalState HV encoding</td><td>~100 us</td><td>1</td><td>100 us</td></tr>
+<tr><td><strong>Total new TA overhead</strong></td><td></td><td></td><td><strong>~1.2-5.3 ms</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>TA overhead: &lt; 0.1% of available Gamma budget.</p>
+<h3 id="theta-tick"><a class="header" href="#theta-tick">Theta Tick</a></h3>
+<p>Target total: &lt; 2 s (includes deliberation, prediction, context assembly). LLM-dominated (30-120s cycle).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Total/Tick</th></tr>
+</thead>
+<tbody>
+<tr><td>ANN staging insert</td><td>~0.1 ms</td></tr>
+<tr><td>Episode compression (accumulate)</td><td>~0.015 ms</td></tr>
+<tr><td>Regime classification</td><td>~0.001 ms</td></tr>
+<tr><td>Hedge weight update</td><td>~0.01 ms</td></tr>
+<tr><td>Thompson threshold selection</td><td>~0.05 ms</td></tr>
+<tr><td>Bayesian surprise (Theta batch)</td><td>~0.05 ms</td></tr>
+<tr><td><strong>Total new TA overhead</strong></td><td><strong>~0.2 ms</strong></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="delta-tick"><a class="header" href="#delta-tick">Delta Tick</a></h3>
+<p>Target total: &lt; 30 s (includes dream scheduling, consolidation check). Runs on 5-20 minute cadence.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Total/Tick</th></tr>
+</thead>
+<tbody>
+<tr><td>Bundle prototype refresh</td><td>1-5 ms</td></tr>
+<tr><td>Drift detection (centroid comparison)</td><td>~0.15 ms</td></tr>
+<tr><td>Curator consolidation</td><td>50-200 ms</td></tr>
+<tr><td>ANN main rebuild</td><td>100 ms - 2 s</td></tr>
+<tr><td>Bayesian surprise (Delta batch)</td><td>~0.1 ms</td></tr>
+<tr><td><strong>Total new TA overhead</strong></td><td><strong>~150 ms - 2.2 s</strong></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="ta-pipeline-topological-analysis"><a class="header" href="#ta-pipeline-topological-analysis">TA Pipeline (Topological Analysis)</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Target Latency</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Persistence diagram computation (1000-point cloud)</td><td>&lt; 50 ms</td><td>Scheduled at Theta/Delta cadence</td></tr>
+<tr><td>Wasserstein distance</td><td>&lt; 10 ms</td><td>Between persistence diagrams</td></tr>
+<tr><td>Somatic marker lookup</td><td>&lt; 1 ms</td><td>HDC similarity (Hamming distance)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="mirage-rs-v2-simulation"><a class="header" href="#mirage-rs-v2-simulation">mirage-rs v2 Simulation</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Target</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Per-branch overhead (CoW)</td><td>~12.8 KB</td><td>CoW overlay with ~100 dirty slots</td></tr>
+<tr><td>Branch creation time</td><td>~1 us</td><td>Arc clone + empty HashMap</td></tr>
+<tr><td>Transactions replayed per block</td><td>5-15</td><td>Targeted, watched contracts only (vs. ~150 full replay)</td></tr>
+<tr><td>Max memory per branch</td><td>512 MB standard, 2 GB power</td><td>Resource profile <code>max_memory</code> setting</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="hardware-assumptions"><a class="header" href="#hardware-assumptions">Hardware Assumptions</a></h2>
+<ul>
+<li><strong>CPU</strong>: Apple M1 Pro or equivalent (NEON SIMD). x86-64 with AVX2/POPCNT.</li>
+<li><strong>POPCNT</strong>: Available on all modern targets. LLVM compiles <code>count_ones()</code> / <code>count_zeros()</code> to hardware intrinsic automatically.</li>
+<li><strong>Memory</strong>: DDSketch uses ~2 KB fixed regardless of observation count. HDC vectors use 1,280 bytes each.</li>
+<li><strong>Dependencies</strong>: xorf (Binary Fuse8), sketches-ddsketch, usearch (HNSW), statrs (digamma), arc-swap (lock-free replacement). Total compiled footprint: ~2.5 MB, no C++ dependencies required.</li>
+</ul>
+<hr>
+<h2 id="chain-support-matrix"><a class="header" href="#chain-support-matrix">Chain Support Matrix</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Chain</th><th>Chain ID</th><th>V4 Deployed</th><th>Vault Support</th><th>Share Pools</th></tr>
+</thead>
+<tbody>
+<tr><td>Ethereum</td><td>1</td><td>Yes</td><td>Yes (v1 target)</td><td>Yes</td></tr>
+<tr><td>Base</td><td>8453</td><td>Yes</td><td>Yes (v1 target)</td><td>Yes</td></tr>
+<tr><td>Unichain</td><td>130</td><td>Yes</td><td>Yes (v1 target)</td><td>Yes</td></tr>
+<tr><td>Optimism</td><td>10</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>Polygon</td><td>137</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>Arbitrum</td><td>42161</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>BNB Chain</td><td>56</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>Avalanche</td><td>43114</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>Celo</td><td>42220</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>Blast</td><td>81457</td><td>No</td><td>Tools only</td><td>No</td></tr>
+<tr><td>zkSync Era</td><td>324</td><td>No</td><td>Tools only</td><td>No</td></tr>
+</tbody>
+</table>
+</div>
+<p>v1 targets full vault and share pool support on Ethereum, Base, and Unichain – the three chains with V4 deployed. All other supported chains receive tool coverage for data reads, trading, and LP operations via the Uniswap Trading API.</p>
+<hr>
+<h2 id="contract-gas-estimates"><a class="header" href="#contract-gas-estimates">Contract Gas Estimates</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Estimated Gas</th><th>Est. Cost (Base L2)</th><th>Est. Cost (Ethereum)</th></tr>
+</thead>
+<tbody>
+<tr><td>Vault deployment (CREATE2)</td><td>2.5–3M</td><td>$0.05–0.10</td><td>$5–15</td></tr>
+<tr><td>Deposit (ERC-4626)</td><td>80–120K</td><td>$0.002–0.005</td><td>$0.50–1.50</td></tr>
+<tr><td>Withdraw (instant)</td><td>80–120K</td><td>$0.002–0.005</td><td>$0.50–1.50</td></tr>
+<tr><td>Rebalance (single adapter)</td><td>150–250K</td><td>$0.005–0.01</td><td>$1.00–3.00</td></tr>
+<tr><td>Hook swap (VaultHook)</td><td>100–180K</td><td>$0.003–0.007</td><td>$0.80–2.00</td></tr>
+<tr><td>Agent registration (ERC-8004)</td><td>150–200K</td><td>$0.004–0.008</td><td>$1.00–2.50</td></tr>
+<tr><td>Milestone attestation</td><td>50–80K</td><td>$0.001–0.003</td><td>$0.30–0.80</td></tr>
+<tr><td>Proxy announce</td><td>60–100K</td><td>$0.002–0.004</td><td>$0.40–1.00</td></tr>
+<tr><td>Proxy execute</td><td>80–120K</td><td>$0.002–0.005</td><td>$0.50–1.50</td></tr>
+<tr><td>Proxy cancel</td><td>40–60K</td><td>$0.001–0.002</td><td>$0.25–0.60</td></tr>
+</tbody>
+</table>
+</div>
+<p>Gas estimates assume Base L2 gas price of 0.001–0.005 gwei and Ethereum mainnet gas price of 20–60 gwei.</p>
+<hr>
+<h2 id="erc-standards-checklist"><a class="header" href="#erc-standards-checklist">ERC Standards Checklist</a></h2>
+<h3 id="required-v1"><a class="header" href="#required-v1">Required (v1)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Standard</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>ERC-20</td><td>Token interface for vault shares and base assets</td></tr>
+<tr><td>ERC-721</td><td>Identity NFTs for ERC-8004 agent registration</td></tr>
+<tr><td>ERC-4337</td><td>Account abstraction for smart wallet operations</td></tr>
+<tr><td>ERC-4626</td><td>Tokenized vault standard for deposits, withdrawals, share accounting</td></tr>
+<tr><td>ERC-7265</td><td>Circuit breakers for automated risk intervention</td></tr>
+<tr><td>ERC-7540</td><td>Asynchronous redemption for queued withdrawals</td></tr>
+<tr><td>ERC-7579</td><td>Session keys for bounded agent authorization</td></tr>
+<tr><td>ERC-7677</td><td>Paymaster for gasless onboarding</td></tr>
+<tr><td>ERC-7683</td><td>Cross-chain intents (initial support)</td></tr>
+<tr><td>ERC-8004</td><td>Agent identity and reputation registry</td></tr>
+<tr><td>EIP-7702</td><td>EOA delegation for account abstraction migration</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="deferred-post-v1"><a class="header" href="#deferred-post-v1">Deferred (post-v1)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Standard</th><th>Purpose</th><th>Reason for Deferral</th></tr>
+</thead>
+<tbody>
+<tr><td>ERC-6900</td><td>Modular accounts</td><td>Complexity; ERC-7579 sufficient for v1</td></tr>
+<tr><td>ERC-7683</td><td>Full cross-chain settlement</td><td>Single-chain focus in v1</td></tr>
+<tr><td>ERC-7821</td><td>Minimal batch executor</td><td>Evaluate need post-launch</td></tr>
+<tr><td>ERC-6551</td><td>Token-bound accounts</td><td>Alternative identity model; evaluate</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="subsystem-specifications"><a class="header" href="#subsystem-specifications">Subsystem Specifications</a></h2>
+<h3 id="bardo-sanctum"><a class="header" href="#bardo-sanctum">Bardo Sanctum</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Total tools</td><td>~171 across 26 modules</td></tr>
+<tr><td>Composable profiles</td><td>12</td></tr>
+<tr><td>Authentication</td><td>SIWE + OAuth 2.1</td></tr>
+<tr><td>API key tiers</td><td>Three-tier (read, standard, admin)</td></tr>
+<tr><td>Transport</td><td>stdio, SSE, Streamable HTTP</td></tr>
+<tr><td>Rate limiting</td><td>Configurable per key and per identity tier</td></tr>
+<tr><td>Cache TTL</td><td>30s (prices), 5min (pool data), 1h (static data)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="agent-system"><a class="header" href="#agent-system">Agent System</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Total agents</td><td>32 (25 core + 7 vault) across 8 categories</td></tr>
+<tr><td>Delegation hierarchy</td><td>4-level</td></tr>
+<tr><td>Terminal nodes</td><td>4</td></tr>
+<tr><td>DAG constraint</td><td>Acyclic (validated at registration)</td></tr>
+<tr><td>Maximum delegation depth</td><td>3</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="gottsloop-heartbeat-engine"><a class="header" href="#gottsloop-heartbeat-engine">GottsLoop (Heartbeat Engine)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Minimum heartbeat interval</td><td>60,000ms</td></tr>
+<tr><td>Maximum heartbeats/day per strategy</td><td>1,000</td></tr>
+<tr><td>Typical suppression rate</td><td>~95%</td></tr>
+<tr><td>Maximum active playbook heuristics</td><td>30</td></tr>
+<tr><td>Curator consolidation cadence</td><td>Every 50 ticks</td></tr>
+<tr><td>ExpeL consolidation cadence</td><td>Every 4 hours</td></tr>
+<tr><td>Maximum parameter change per iteration</td><td>10%</td></tr>
+<tr><td>Maximum consecutive errors before pause</td><td>5</td></tr>
+<tr><td>Lane Queue priority levels</td><td>6</td></tr>
+<tr><td>Session history window</td><td>200 turns</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="gotts-grimoire-memory-system"><a class="header" href="#gotts-grimoire-memory-system">Gotts Grimoire (Memory System)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Memory types</td><td>4 (working, episodic, semantic, procedural)</td></tr>
+<tr><td>Embedding dimensions</td><td>384 (all-MiniLM-L6-v2, 23MB INT8 quantized)</td></tr>
+<tr><td>Insight categories</td><td>12</td></tr>
+<tr><td>Maximum insights per agent</td><td>10,000</td></tr>
+<tr><td>Maximum episodes per agent</td><td>100,000</td></tr>
+<tr><td>SQLite query latency</td><td>Sub-1ms</td></tr>
+<tr><td>LanceDB vector search latency</td><td>Sub-25ms</td></tr>
+<tr><td>Confidence updates</td><td>Asymmetric (+0.10 optimistic / −0.15 pessimistic)</td></tr>
+<tr><td>Drift detection</td><td>ADWIN with Hoeffding bounds at p &lt; 0.01</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="safety-system"><a class="header" href="#safety-system">Safety System</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Property</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>Architecture</td><td>Three concentric rings (preventive, cryptographic, reactive)</td></tr>
+<tr><td>Defense layers</td><td>15 (7 preventive + cryptographic enforcement + reactive)</td></tr>
+<tr><td>Default per-transaction limit</td><td>$10,000</td></tr>
+<tr><td>Default per-session limit</td><td>$50,000</td></tr>
+<tr><td>Default per-day limit</td><td>$100,000</td></tr>
+<tr><td>Proxy delay tiers</td><td>5 (0s, 10min, 1h, 24h, 48h)</td></tr>
+<tr><td>Circuit breaker levels</td><td>3 (3% / 7% / 13% drawdown)</td></tr>
+<tr><td>Multi-layer defense requirement</td><td>Independent bypass of all 7 preventive layers</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="cross-references"><a class="header" href="#cross-references">Cross-References</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Topic</th><th>Document</th></tr>
+</thead>
+<tbody>
+<tr><td>Vault contracts</td><td><code>../08-vault/01-contracts.md</code> (ERC-4626 Solidity contracts: AgentVaultCore, AgentVaultFactory, FeeModule, NAVAwareHook)</td></tr>
+<tr><td>Safety architecture</td><td><code>../10-safety/00-defense.md</code> (15-layer defense model with three concentric rings: preventive, cryptographic, reactive)</td></tr>
+<tr><td>Sanctum tools</td><td><code>../07-tools/01-architecture.md</code> (tool library architecture: profiles, transports, safety pipeline, caching)</td></tr>
+<tr><td>Agent system</td><td><code>../01-golem/01-cognition.md</code> (T0/T1/T2 cognitive tier routing and LLM-driven decision-making)</td></tr>
+<tr><td>Memory system</td><td><code>../04-memory/01-grimoire.md</code> (Grimoire persistent knowledge base: episodes, insights, heuristics, causal links)</td></tr>
+<tr><td>Compute infrastructure</td><td><code>../11-compute/00-overview.md</code> (Fly.io two-app topology, x402 billing, VM tiers and warm pool)</td></tr>
+<tr><td>Chain configuration</td><td><code>../shared/port-allocation.md</code> (canonical port assignments for local development services)</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/appendices/market-context.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/shared/glossary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/appendices/market-context.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/shared/glossary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

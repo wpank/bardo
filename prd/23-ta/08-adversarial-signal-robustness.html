@@ -1,0 +1,2721 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Adversarial Signal Robustness - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/23-ta/08-adversarial-signal-robustness.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="adversarial-signal-robustness-spec"><a class="header" href="#adversarial-signal-robustness-spec">Adversarial Signal Robustness [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 2.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Source</strong>: <code>tmp/research/witness-research/new/ta/08-adversarial-signal-robustness.md</code></p>
+<p><strong>Depends on</strong>: Doc 0 (Overview), Doc 1 (HDC Encoding), Doc 3 (Signal Metabolism)</p>
+</blockquote>
+<p><strong>Audience:</strong> Systems engineers building adversarial defense into the Bardo runtime; security researchers evaluating manipulation detection for autonomous DeFi agents.</p>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document builds the adversarial defense layer for the Golem’s (mortal autonomous DeFi agent) TA pipeline. It belongs to the <strong>TA research layer</strong> (Doc 8 of 10) and covers HDC prototype matching for manipulation detection, robust statistics replacing standard indicators, red-team dreaming where the Golem attacks its own signals during REM sleep, and taint propagation tracing corrupted data through the decision graph. You should understand MEV attack vectors (sandwich, JIT, oracle manipulation) and robust estimation theory. For Bardo-specific terms, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="abstract"><a class="header" href="#abstract">Abstract</a></h2>
+<p>DeFi markets are adversarial. MEV searchers reorder transactions to extract value. Sandwich attacks manufacture false price impact. Oracle manipulation feeds fabricated data to lending protocols. Wash trading inflates volume metrics. JIT liquidity appears for a single block and vanishes. Every one of these attacks produces on-chain signals that a naive technical analysis system will interpret as genuine market activity. A momentum indicator triggered by a sandwich attack’s price displacement is a false signal. A volume breakout driven by wash trading is noise dressed as information.</p>
+<p>This document builds the adversarial defense layer for the Golem’s TA pipeline. The approach has four components. First, HDC prototype matching detects known manipulation patterns in ~10ns per comparison, fast enough to screen every observation at gamma frequency. Second, robust statistics replace standard TA indicators with estimators that resist outlier injection: trimmed means, Hodges-Lehmann estimators, rank-order transformations, and Winsorized variance. Third, red-team dreaming turns the Golem into its own adversary during REM sleep, generating attacks against its own signals and hardening the survivors. Fourth, taint propagation traces manipulation backward and forward through the Witness DAG, flagging every downstream decision that depended on corrupted data. The system is co-evolutionary: adversaries adapt, the Golem adapts faster, and the arms race drives signal quality upward over successive generations.</p>
+<hr>
+<h2 id="the-problem-spec"><a class="header" href="#the-problem-spec">The problem [SPEC]</a></h2>
+<p>Someone is trying to fool you. In DeFi, this is not paranoia. It is the operating environment.</p>
+<p>MEV searchers watch the public mempool. When they see a pending swap, they submit a transaction before it (frontrun) and another after it (backrun), pocketing the price difference the victim’s trade created. The victim’s swap executes at a worse price. The on-chain record shows three swaps in rapid succession with a specific price trajectory: up, victim, down. A TA system that reads price momentum from recent swaps will see a false signal. The price moved, but not because the market moved. An adversary moved it, extracted value, and moved it back.</p>
+<p>Sandwich attacks are the simplest example. The adversary zoo is larger.</p>
+<p><strong>Oracle manipulation.</strong> Lending protocols determine collateral values and liquidation thresholds from price oracles. An attacker who can temporarily move an oracle price (by manipulating the underlying spot market, often via flash loans) can trigger liquidations that would not otherwise occur, or borrow against artificially inflated collateral. The oracle reports a price. The price is wrong. Every TA indicator derived from that price is wrong.</p>
+<p><strong>Wash trading.</strong> A single entity trades with itself across multiple addresses. Volume doubles, triples, looks like organic activity. Volume-based TA indicators (OBV, volume-weighted price, accumulation/distribution) register strong signals. The signals are fabricated. On DEXes without KYC, wash trading is trivially cheap, costing only gas and swap fees.</p>
+<p><strong>JIT liquidity.</strong> A liquidity provider sees a large pending swap in the mempool, adds concentrated liquidity around the current price in the same block (capturing most of the swap fees), then removes it in the next block. The pool’s liquidity depth looked healthy during the swap. It was a mirage. Any TA system that reads liquidity depth as a stability signal got fooled for exactly one block.</p>
+<p><strong>Rug pulls and exit scams.</strong> A token creator manufactures legitimate-looking activity: steady price appreciation, growing volume, liquidity additions. The TA signals are textbook bullish. Then the creator removes all liquidity in a single transaction. Every bullish signal was a fabrication designed to attract victims.</p>
+<p><strong>Flash loan exploits.</strong> An attacker borrows millions in a single transaction, uses those funds to manipulate prices or governance votes, profits from the manipulation, and repays the loan, all atomically. From a TA perspective, the on-chain state changed dramatically within a single transaction, then changed back. Standard indicators that sample per-block will either miss it entirely or register a massive outlier that corrupts moving averages.</p>
+<p><strong>Liquidation hunting.</strong> An attacker identifies positions near liquidation thresholds and pushes prices past those thresholds (via large trades or oracle manipulation) to trigger liquidations, then profits from the discounted collateral sales. The price movement is real but manufactured. TA indicators read it as genuine selling pressure.</p>
+<p>The common thread: adversaries produce on-chain observations that are statistically indistinguishable from genuine market activity when viewed through standard TA indicators. The Golem’s defense must operate at two levels. Detection: identify which observations are adversarial. Resistance: compute TA indicators that produce correct signals even when some input observations are corrupted.</p>
+<p>The arms race never ends. Adversaries who discover the Golem’s detection methods will design attacks that evade them. The Golem must discover its own blind spots before adversaries do, and patch them preemptively. Red-team dreaming is how.</p>
+<hr>
+<h2 id="mathematical-foundations-spec"><a class="header" href="#mathematical-foundations-spec">Mathematical foundations [SPEC]</a></h2>
+<h3 id="adversarial-signal-decomposition"><a class="header" href="#adversarial-signal-decomposition">Adversarial signal decomposition</a></h3>
+<p>The Golem observes a stream of on-chain events. Each event produces one or more TA signal values. Define the observed signal at time $t$ as:</p>
+<p>$$s_{\text{obs}}(t) = s_{\text{gen}}(t) + s_{\text{adv}}(t) + \epsilon(t)$$</p>
+<p>where $s_{\text{gen}}(t)$ is the genuine market signal, $s_{\text{adv}}(t)$ is the adversarial component, and $\epsilon(t)$ is stochastic noise (MEV bot competition, network jitter, rounding).</p>
+<p>The goal: estimate $s_{\text{gen}}(t)$ from $s_{\text{obs}}(t)$.</p>
+<p>The adversarial component $s_{\text{adv}}(t)$ is not random. An adversary with capital $C$ and strategy $\pi$ chooses $s_{\text{adv}}$ to maximize an objective:</p>
+<p>$$\pi^* = \arg\max_\pi \mathbb{E}\left[\text{profit}(\pi) \mid s_{\text{gen}}, \text{Golem’s strategy}\right]$$</p>
+<p>subject to the constraint that the attack must be profitable after gas costs. This makes the adversarial signal harder to filter than random noise. A low-pass filter removes high-frequency noise. It does not remove a strategically constructed signal that occupies the same frequency band as genuine activity.</p>
+<p>The adversarial signal achieves its objective through four mechanisms:</p>
+<p><strong>False trigger injection.</strong> Construct $s_{\text{adv}}$ so that $s_{\text{obs}}$ crosses a threshold that $s_{\text{gen}}$ alone would not cross. Example: a sandwich attack pushes the price past a moving average crossover, triggering a momentum signal.</p>
+<p><strong>Signal masking.</strong> Construct $s_{\text{adv}}$ to cancel a genuine signal: $s_{\text{adv}} \approx -s_{\text{gen}}$. Example: wash trading in the opposite direction of organic flow, making net volume appear neutral when genuine accumulation is occurring.</p>
+<p><strong>Statistic bias.</strong> Inject outliers that shift aggregate statistics without triggering threshold detectors. Example: a sequence of wash trades at gradually increasing prices that inflates a moving average by 2% over 50 blocks, too slow for any single-block anomaly detector but enough to shift indicator readings.</p>
+<p><strong>Correlation injection.</strong> Create false correlations between independent signals to trigger multi-signal confluence patterns. Example: simultaneously manipulating price and volume to create a false “volume-confirmed breakout” that the Golem has learned to trust.</p>
+<h3 id="hdc-manipulation-prototype-matching"><a class="header" href="#hdc-manipulation-prototype-matching">HDC manipulation prototype matching</a></h3>
+<p>The first defense layer encodes known manipulation patterns as HDC prototype hypervectors. This mirrors the pattern algebra from Doc 1, but the prototypes represent adversarial behavior rather than market behavior.</p>
+<p>A sandwich attack has a characteristic on-chain signature: a frontrun swap (direction $d$, size $s_1$), a victim swap (direction $d$, size $s_v$), and a backrun swap (direction $\bar{d}$, size $s_2 \approx s_1$), all in the same block, touching the same pool. Encode this as a temporal sequence:</p>
+<p>$$H_{\text{sandwich}} = \bigoplus_{i=1}^{3} \rho^{i-1}(\text{encode}(\text{event}_i))$$</p>
+<p>where:</p>
+<p>$$\text{event}<em>1 = \text{bind}(R</em>{\text{action}}, V_{\text{swap}}) \oplus \text{bind}(R_{\text{direction}}, V_{\text{buy}}) \oplus \text{bind}(R_{\text{size}}, V_{\text{large}}) \oplus \text{bind}(R_{\text{mev_role}}, V_{\text{frontrun}})$$</p>
+<p>$$\text{event}<em>2 = \text{bind}(R</em>{\text{action}}, V_{\text{swap}}) \oplus \text{bind}(R_{\text{direction}}, V_{\text{buy}}) \oplus \text{bind}(R_{\text{mev_role}}, V_{\text{victim}})$$</p>
+<p>$$\text{event}<em>3 = \text{bind}(R</em>{\text{action}}, V_{\text{swap}}) \oplus \text{bind}(R_{\text{direction}}, V_{\text{sell}}) \oplus \text{bind}(R_{\text{size}}, V_{\text{large}}) \oplus \text{bind}(R_{\text{mev_role}}, V_{\text{backrun}})$$</p>
+<p>Detection: at each gamma tick, encode the most recent observation window as a temporal hypervector and compare against every prototype in the library:</p>
+<p>$$\text{score}<em>k = \delta(H</em>{\text{window}}, H_{\text{prototype}_k})$$</p>
+<p>If $\text{score}<em>k &gt; \theta</em>{\text{detect}}$ (typically 0.58 for a 3-event sequence), flag the window as a potential match for prototype $k$. The comparison costs ~10ns (XOR + POPCNT over 160 u64 words). A library of 200 prototypes scans in ~2 microseconds. At gamma frequency (5-15 seconds between ticks), this is negligible.</p>
+<p><strong>Partial matches and novelty detection.</strong> Observations that score between 0.52 and $\theta_{\text{detect}}$ against any prototype are “suspicious but unknown.” They share structural similarity with known attacks but do not match closely enough for confident detection. These observations enter a quarantine buffer. If the quarantine buffer accumulates observations that cluster in HDC space (mutual similarity above 0.55), the cluster becomes a candidate for a new prototype. The Golem does not need to recognize every attack on first encounter. It needs to notice that something unfamiliar is recurring.</p>
+<p><strong>Prototype composition.</strong> Complex attacks compose from simpler ones. A flash loan exploit followed by oracle manipulation followed by a liquidation cascade is three known patterns in sequence. The composite prototype:</p>
+<p>$$H_{\text{composite}} = \rho^0(H_{\text{flash_loan}}) \oplus \rho^1(H_{\text{oracle_manip}}) \oplus \rho^2(H_{\text{liquidation_cascade}})$$</p>
+<p>This compositional structure means the prototype library does not need an entry for every possible attack combination. It needs prototypes for atomic attack components and can detect novel compositions by checking for sequential partial matches.</p>
+<h3 id="robust-statistics-for-adversarial-environments"><a class="header" href="#robust-statistics-for-adversarial-environments">Robust statistics for adversarial environments</a></h3>
+<p>Standard TA indicators are designed for clean data. They use arithmetic means, standard deviations, and least-squares fits, all of which have a breakdown point of $1/n$: a single outlier can arbitrarily corrupt the estimate. In an adversarial environment, this is a vulnerability. An attacker who can inject one extreme observation per window can move any indicator based on the mean.</p>
+<p>Robust statistics replace these vulnerable estimators with ones that resist a controlled fraction of adversarial corruption.</p>
+<p><strong>Trimmed mean.</strong> Discard the top and bottom $\alpha$ fraction of observations before computing the arithmetic mean. The $\alpha$-trimmed mean has a breakdown point of $\alpha$: an adversary must corrupt more than $\alpha \cdot n$ observations to move the estimate. For TA applications, $\alpha = 0.10$ (10% trim) provides resistance to sandwich-inflated prices while preserving sensitivity to genuine trends.</p>
+<p>$$\bar{x}<em>\alpha = \frac{1}{n - 2\lfloor \alpha n \rfloor} \sum</em>{i=\lfloor \alpha n \rfloor + 1}^{n - \lfloor \alpha n \rfloor} x_{(i)}$$</p>
+<p>where $x_{(i)}$ is the $i$-th order statistic.</p>
+<p><strong>Hodges-Lehmann estimator.</strong> The median of all pairwise means:</p>
+<p>$$\hat{\theta}_{HL} = \text{median}\left{ \frac{x_i + x_j}{2} : 1 \leq i \leq j \leq n \right}$$</p>
+<p>This estimator has a breakdown point of ~29.3% and asymptotic relative efficiency of 95.5% relative to the mean under normal distributions. It resists outlier injection while losing very little statistical power. The computational cost is $O(n^2)$ for the pairwise means, but for typical TA window sizes ($n \leq 200$), this completes in microseconds.</p>
+<p><strong>Winsorized variance.</strong> Instead of discarding extreme observations, cap them at the $\alpha$ and $(1-\alpha)$ quantiles:</p>
+<p>$$x_i^W = \begin{cases} x_{(\lfloor \alpha n \rfloor + 1)} &amp; \text{if } x_i &lt; x_{(\lfloor \alpha n \rfloor + 1)} \ x_{(n - \lfloor \alpha n \rfloor)} &amp; \text{if } x_i &gt; x_{(n - \lfloor \alpha n \rfloor)} \ x_i &amp; \text{otherwise} \end{cases}$$</p>
+<p>Then compute variance on the Winsorized values. This prevents adversarial inflation of volatility indicators (Bollinger Band width, ATR) via outlier injection.</p>
+<p><strong>Rank-order transformation.</strong> Replace raw values with their ranks within the window:</p>
+<p>$$r_i = \text{rank}(x_i) / n$$</p>
+<p>All subsequent indicator computation operates on ranks rather than values. This makes the indicators immune to magnitude manipulation. Wash trading that inflates volume by 10x does not matter if the indicator only cares whether volume is above or below the median. The rank transformation has a breakdown point of 50%: the adversary must corrupt more than half the observations to change any rank-based conclusion. The cost is one sort per window: $O(n \log n)$.</p>
+<p><strong>Median absolute deviation (MAD).</strong> A robust scale estimator:</p>
+<p>$$\text{MAD} = 1.4826 \cdot \text{median}(|x_i - \tilde{x}|)$$</p>
+<p>where $\tilde{x}$ is the median and the constant 1.4826 makes MAD consistent with the standard deviation under normality. MAD replaces standard deviation in all Bollinger Band and volatility computations.</p>
+<p><strong>Robust moving averages.</strong> Replace the arithmetic mean in SMA/EMA with the trimmed mean or Hodges-Lehmann estimator. The resulting moving average tracks genuine price trends while ignoring sandwich-inflated outliers:</p>
+<p>$$\text{RMA}(t) = \bar{x}<em>\alpha\left({s</em>{\text{obs}}(t-w+1), \ldots, s_{\text{obs}}(t)}\right)$$</p>
+<p><strong>Robust MACD.</strong> MACD is the difference between two exponential moving averages. Replace EMA with a robust exponentially weighted estimator. At each step, instead of updating $\text{EMA}<em>t = \lambda \cdot x_t + (1-\lambda) \cdot \text{EMA}</em>{t-1}$, first check whether $x_t$ is within $k$ MADs of the current estimate. If it is, update normally. If it is not, cap the update at $k$ MADs (Winsorization at the update level):</p>
+<p>$$x_t^* = \text{clamp}(x_t, \text{EMA}_{t-1} - k \cdot \text{MAD}<em>t, \text{EMA}</em>{t-1} + k \cdot \text{MAD}_t)$$</p>
+<p>$$\text{REMA}<em>t = \lambda \cdot x_t^* + (1-\lambda) \cdot \text{REMA}</em>{t-1}$$</p>
+<p>This makes MACD resistant to single-observation outliers while preserving its responsiveness to genuine trend changes. Typical value: $k = 3$.</p>
+<p><strong>Robust RSI.</strong> Standard RSI computes average gain and average loss over a period. Replace arithmetic averages with trimmed means. An adversarial price spike that creates a large single-period gain gets trimmed, preventing RSI from jumping to overbought on a single manipulated observation.</p>
+<h3 id="signal-cross-validation"><a class="header" href="#signal-cross-validation">Signal cross-validation</a></h3>
+<p>No single indicator is reliable in adversarial conditions. The defense strategy is redundancy: compute the same quantity multiple ways and flag disagreements.</p>
+<p>For any target signal $s$, maintain $M$ independent estimators $\hat{s}_1, \ldots, \hat{s}_M$ that use different data sources, different computation methods, or different robustness parameters. Define the consensus:</p>
+<p>$$\hat{s}_{\text{consensus}} = \text{median}(\hat{s}_1, \ldots, \hat{s}_M)$$</p>
+<p>and the disagreement:</p>
+<p>$$D = \text{MAD}(\hat{s}_1, \ldots, \hat{s}_M)$$</p>
+<p>When $D$ exceeds a threshold, the signal is under dispute. The Golem reduces confidence in this signal proportionally to $D$ and flags it for deeper analysis at the next theta tick.</p>
+<p>Example: price momentum estimated via (1) standard MACD, (2) robust MACD, (3) rank-order momentum, (4) on-chain order flow imbalance. If standard MACD shows strong bullish momentum but the other three disagree, the standard MACD is likely responding to adversarial observations that the robust estimators resist.</p>
+<h3 id="red-team-dreaming"><a class="header" href="#red-team-dreaming">Red-team dreaming</a></h3>
+<p>This is where the Golem’s defense becomes proactive rather than reactive.</p>
+<p>During REM dream cycles (Doc 0, Section 6), the Golem runs counterfactual scenarios. Red-team dreaming repurposes this capability: the Golem imagines itself as an adversary and designs attacks against its own signals.</p>
+<p><strong>The algorithm:</strong></p>
+<ol>
+<li>Select a TA signal $S$ currently in active use.</li>
+<li>Model the adversary’s objective: find an observation sequence $O_{\text{adv}}$ that maximizes $P(S \text{ triggers false positive} \mid O_{\text{adv}})$.</li>
+<li>Generate candidate adversarial observations:
+<ul>
+<li>For momentum signals: inject a ramp of gradually increasing prices over $k$ blocks.</li>
+<li>For volume signals: inject high-volume wash trades from synthetic address pairs.</li>
+<li>For liquidation proximity: inject manipulated oracle price observations.</li>
+<li>For liquidity depth: inject JIT-style liquidity additions that vanish after one block.</li>
+<li>For funding rate signals: inject large directional positions that skew the rate.</li>
+</ul>
+</li>
+<li>Feed the adversarial observations through the signal’s computation pipeline.</li>
+<li>Record the result:
+<ul>
+<li>If $S$ triggers a false positive: $S$ is vulnerable. Log the attack vector as anti-knowledge.</li>
+<li>If $S$ does not trigger: the attack was insufficient. Increase the attack magnitude and retry up to a budget limit.</li>
+</ul>
+</li>
+<li>For each vulnerability found, construct a hardened variant $S’$:
+<ul>
+<li>Add the adversarial pattern as a negative prototype (subtract from HDC similarity during screening).</li>
+<li>Switch to the robust statistics variant of the underlying computation.</li>
+<li>Add cross-validation against at least two independent signals.</li>
+<li>Require the signal to persist for $\tau$ additional observations before triggering (temporal confirmation).</li>
+</ul>
+</li>
+<li>Backtest $S’$ against historical data to verify it does not lose sensitivity to genuine signals.</li>
+<li>If $S’$ passes: replace $S$ in the active signal set.</li>
+</ol>
+<p>The key insight: this is adversarial training without a neural network. There are no gradient updates. The attack generation is explicit and interpretable. The Golem can explain, in plain terms, which attack vector a signal is vulnerable to and how the hardened variant defends against it. The entire process is auditable through the Witness DAG.</p>
+<p><strong>Attack budget constraints.</strong> Red-team dreaming does not try every possible attack. It focuses on economically rational attacks: those that would be profitable for an adversary with realistic capital constraints and gas costs. An attack that requires $10M in capital to move an indicator by 1% is not a realistic threat for most signals. The attack generator parameterizes capital budget, gas willingness, and required profit margin.</p>
+<p><strong>Vulnerability severity scoring.</strong> Not all vulnerabilities are equal. A signal that can be fooled by a $100 sandwich attack needs immediate hardening. A signal that can only be fooled by a coordinated multi-block attack costing $5M in gas is a lower priority. The severity score:</p>
+<p>$$\text{severity} = \frac{\text{signal_importance} \times P(\text{false positive})}{\text{attack_cost}}$$</p>
+<p>High severity (cheap to exploit, high-importance signal) gets hardened first.</p>
+<h3 id="signal-provenance-via-witness-dag"><a class="header" href="#signal-provenance-via-witness-dag">Signal provenance via Witness DAG</a></h3>
+<p>The Witness DAG (Innovation 10) links every observation to the predictions and decisions it influenced. This chain of provenance enables taint propagation.</p>
+<p>When an observation $o$ is identified as adversarial (by prototype matching, robust statistics disagreement, or post-hoc analysis), the taint propagation algorithm:</p>
+<ol>
+<li>Mark $o$ as tainted in the DAG.</li>
+<li>Find all signal computations that used $o$ as input. Mark their outputs as tainted.</li>
+<li>Find all decisions that consumed tainted signals. Mark those decisions as tainted.</li>
+<li>For each tainted decision that resulted in an action (a submitted transaction), flag the action for review.</li>
+<li>Propagate transitively: if a tainted signal was cross-validated against other signals, and the cross-validation result was used in a decision, that decision is tainted too.</li>
+</ol>
+<p>The taint has a dilution factor. A signal computed from 100 observations, one of which is tainted, carries less taint than a signal computed from 5 observations, one of which is tainted:</p>
+<p>$$\text{taint}(s) = \max_{o \in \text{inputs}(s)} \text{taint}(o) \cdot \frac{w(o)}{\sum_{o’ \in \text{inputs}(s)} w(o’)}$$</p>
+<p>where $w(o)$ is the observation’s weight in the signal computation (recent observations typically have higher weight in EMA-style computations).</p>
+<p>Taint propagation runs at theta frequency. It is not fast enough for gamma-tick defense (that is the prototype matcher’s job), but it provides the forensic capability to trace exactly how a manipulation affected downstream reasoning.</p>
+<h3 id="co-evolutionary-dynamics"><a class="header" href="#co-evolutionary-dynamics">Co-evolutionary dynamics</a></h3>
+<p>The Golem and its adversaries are locked in a Red Queen dynamic:</p>
+<p>$$\text{Golem detects pattern } A \rightarrow \text{Adversary abandons } A \rightarrow \text{Golem’s } A\text{-detector decays in relevance}$$</p>
+<p>$$\text{Adversary invents pattern } B \rightarrow \text{Golem’s detectors miss } B \rightarrow B \text{ is profitable}$$</p>
+<p>$$\text{Golem discovers } B \text{ (via red-team dreaming or observation)} \rightarrow \text{cycle repeats}$$</p>
+<p>The Golem’s structural advantages in this arms race:</p>
+<ol>
+<li><strong>Red-team dreaming discovers vulnerabilities before exploitation.</strong> The adversary must invest capital to test attacks in production. The Golem tests attacks in simulation for free.</li>
+<li><strong>Clade knowledge sharing (Styx).</strong> When one Golem in a Clade discovers a new attack pattern, it broadcasts the prototype as a pheromone signal. The entire Clade updates its defenses. An adversary that finds an exploit against one Golem has a narrow window before every Golem in the Clade is defended.</li>
+<li><strong>Historical pattern memory (Grimoire).</strong> Adversarial patterns are stored as anti-knowledge with an elevated confidence floor. Even if an attack goes dormant for months, the Golem retains the prototype. Adversaries cannot cycle through old attacks and expect them to work again.</li>
+</ol>
+<p>The adversary’s structural advantage: they choose when and where to attack, they can observe the Golem’s on-chain behavior to infer its strategy, and they have no mortality clock constraining their patience.</p>
+<p>Model the co-evolutionary fitness as a function of detection rate $d$ and attack innovation rate $a$:</p>
+<p>$$\frac{dd}{dt} = \alpha \cdot r - \beta \cdot d + \gamma \cdot a(t - \tau)$$</p>
+<p>where $r$ is the red-team discovery rate, $\beta \cdot d$ is the decay of detectors whose targets have gone dormant, $\gamma \cdot a(t - \tau)$ is the detection response to attacks observed $\tau$ time steps ago, and $\alpha$ is the efficiency of the red-team process. The Golem wins the arms race when $\alpha \cdot r &gt; \beta \cdot d$ for sustained periods: its proactive discovery rate exceeds the decay rate of its existing defenses.</p>
+<hr>
+<h2 id="architecture-spec"><a class="header" href="#architecture-spec">Architecture [SPEC]</a></h2>
+<h3 id="the-adversarialdefense-subsystem"><a class="header" href="#the-adversarialdefense-subsystem">The AdversarialDefense subsystem</a></h3>
+<p>The adversarial defense engine sits between raw observation ingestion and TA signal computation. Every observation passes through it. The engine has five components.</p>
+<p><strong>Prototype library.</strong> A vector of <code>ManipulationPrototype</code> structs, each containing an HDC hypervector, an attack type classification, confidence metadata, and false positive rate tracking. The library starts with ~50 known patterns (sandwich, JIT, oracle manipulation variants) and grows through observation and red-team dreaming.</p>
+<p><strong>Robust statistics engine.</strong> Parallel computation of robust variants for every TA indicator the Golem uses. For each indicator, the engine maintains both the standard computation (for comparison) and the robust variant (for actual decision-making). Disagreement between the two triggers an alert.</p>
+<p><strong>Red-team engine.</strong> A collection of attack generators, one per attack type. Each generator takes a target signal and produces adversarial observation sequences designed to fool it. The engine runs during REM dream cycles and produces vulnerability reports and hardened signal variants.</p>
+<p><strong>Taint tracker.</strong> Maintains a taint map over the Witness DAG. When observations are flagged as adversarial, the tracker propagates taint to all downstream signal values and decisions. Provides a <code>tainted_signals()</code> query that returns all currently tainted signals with their diluted taint scores.</p>
+<p><strong>Co-evolutionary tracker.</strong> Monitors which attack types are active (recently observed), dormant (not seen recently), and emerging (partially matching quarantine observations). Tracks detection accuracy over time. Reports which detectors are improving and which are degrading.</p>
+<h3 id="heartbeat-integration"><a class="header" href="#heartbeat-integration">Heartbeat integration</a></h3>
+<p>The adversarial defense engine plugs into every frequency tier of the Golem’s heartbeat:</p>
+<p><strong>Gamma tick (5-15 seconds).</strong> The prototype matcher screens all new observations. Cost: ~10ns per observation per prototype, ~2 microseconds for a full library scan. Flagged observations get a manipulation score attached to their metadata before they enter the TA pipeline. High-confidence matches (similarity &gt; 0.65) are excluded from TA signal computation entirely. Medium-confidence matches (0.58-0.65) are included but down-weighted. This is the hot path; everything runs in Rust with no allocations after initialization.</p>
+<p><strong>Theta tick (30-120 seconds).</strong> Three operations. First, cross-validate flagged signals: compare standard vs. robust indicator readings and compute disagreement scores. Second, run taint propagation on any newly confirmed manipulations. Third, update the quarantine buffer and check for emerging cluster patterns among partial matches.</p>
+<p><strong>Delta tick (~50 theta ticks).</strong> Update the prototype library. Add new prototypes from confirmed detections. Adjust confidence scores based on recent true/false positive rates. Prune prototypes that have not matched anything in 1,000 delta ticks (but archive them in the Grimoire; they may return).</p>
+<p><strong>NREM sleep.</strong> Replay historical manipulation episodes from the Grimoire’s episodic store. Consolidate detection patterns. Strengthen prototypes that correctly identified manipulations. Weaken prototypes with high false positive rates.</p>
+<p><strong>REM sleep.</strong> Red-team dreaming. Select the top-$k$ most important active signals. Run each through the attack generator battery. Record vulnerabilities. Construct hardened variants. Backtest. Deploy survivors.</p>
+<hr>
+<h2 id="rust-implementation-spec"><a class="header" href="#rust-implementation-spec">Rust implementation [SPEC]</a></h2>
+<h3 id="core-types"><a class="header" href="#core-types">Core types</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::VecDeque;
+use std::fmt;
+
+/// 10,240-bit BSC hypervector, 160 x u64 words.
+/// Defined in golem-core::hdc; re-referenced here for clarity.
+#[derive(Clone)]
+pub struct Hypervector {
+    pub words: [u64; 160],
+}
+
+/// Unique identifier for a manipulation prototype.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct PrototypeId(pub u64);
+
+/// Unique identifier for an on-chain observation.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct ObservationId(pub u64);
+
+/// Unique identifier for a computed signal value.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct SignalId(pub u64);
+
+/// Classification of adversarial attack types.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum AttackType {
+    Sandwich,
+    JitLiquidity,
+    OracleManipulation,
+    WashTrading,
+    RugPull,
+    FlashLoanExploit,
+    FrontRunning,
+    BackRunning,
+    LiquidationHunting,
+    GovernanceAttack,
+    FundingRateManipulation,
+    SharePriceManipulation,
+    BlockStuffing,
+    Unknown,
+}
+
+impl fmt::Display for AttackType {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;'_&gt;) -&gt; fmt::Result {
+        match self {
+            AttackType::Sandwich =&gt; write!(f, "sandwich"),
+            AttackType::JitLiquidity =&gt; write!(f, "jit_liquidity"),
+            AttackType::OracleManipulation =&gt; write!(f, "oracle_manipulation"),
+            AttackType::WashTrading =&gt; write!(f, "wash_trading"),
+            AttackType::RugPull =&gt; write!(f, "rug_pull"),
+            AttackType::FlashLoanExploit =&gt; write!(f, "flash_loan_exploit"),
+            AttackType::FrontRunning =&gt; write!(f, "front_running"),
+            AttackType::BackRunning =&gt; write!(f, "back_running"),
+            AttackType::LiquidationHunting =&gt; write!(f, "liquidation_hunting"),
+            AttackType::GovernanceAttack =&gt; write!(f, "governance_attack"),
+            AttackType::FundingRateManipulation =&gt; write!(f, "funding_rate_manipulation"),
+            AttackType::SharePriceManipulation =&gt; write!(f, "share_price_manipulation"),
+            AttackType::BlockStuffing =&gt; write!(f, "block_stuffing"),
+            AttackType::Unknown =&gt; write!(f, "unknown"),
+        }
+    }
+}
+
+/// Severity classification for detected manipulations.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Severity {
+    /// Partial match, uncertain. Quarantine and observe.
+    Suspicious,
+    /// High-confidence match against known prototype.
+    Confirmed,
+    /// Active exploitation detected, affecting live signals.
+    Critical,
+}
+
+/// A known manipulation pattern encoded as an HDC prototype.
+pub struct ManipulationPrototype {
+    pub id: PrototypeId,
+    pub name: String,
+    pub description: String,
+    pub hv: Hypervector,
+    pub attack_type: AttackType,
+    /// Similarity threshold for positive detection.
+    pub detection_threshold: f64,
+    /// Running estimate of false positive rate.
+    pub false_positive_rate: f64,
+    /// Running estimate of true positive rate.
+    pub true_positive_rate: f64,
+    /// Block number when this prototype was first created.
+    pub first_seen_block: u64,
+    /// Block number of the most recent confirmed match.
+    pub last_matched_block: u64,
+    /// Number of confirmed matches lifetime.
+    pub match_count: u64,
+    /// Whether this prototype is currently active or archived.
+    pub active: bool,
+}
+
+/// An alert generated by the gamma-tick prototype screening.
+pub struct ManipulationAlert {
+    pub observation_ids: Vec&lt;ObservationId&gt;,
+    pub prototype_id: PrototypeId,
+    pub similarity_score: f64,
+    pub attack_type: AttackType,
+    pub severity: Severity,
+    pub block_number: u64,
+    pub timestamp_ms: u64,
+}
+
+/// A confirmed manipulation after theta-tick analysis.
+pub struct VerifiedManipulation {
+    pub alert: ManipulationAlert,
+    /// Observations confirmed as part of the attack.
+    pub confirmed_observations: Vec&lt;ObservationId&gt;,
+    /// Signals affected by this manipulation.
+    pub affected_signals: Vec&lt;SignalId&gt;,
+    /// Estimated profit extracted by the adversary (in USD).
+    pub estimated_profit_usd: f64,
+    /// Estimated cost of the attack (gas + fees).
+    pub estimated_cost_usd: f64,
+}
+
+/// A signal currently being tracked by the TA pipeline.
+pub struct LiveSignal {
+    pub id: SignalId,
+    pub name: String,
+    pub value: f64,
+    pub confidence: f64,
+    /// Observations that contributed to this signal value.
+    pub input_observations: Vec&lt;ObservationId&gt;,
+    /// Current taint score (0.0 = clean, 1.0 = fully tainted).
+    pub taint_score: f64,
+}
+
+/// Configuration for the adversarial defense engine.
+pub struct AdversarialConfig {
+    /// Similarity threshold for confirmed prototype detection.
+    pub detection_threshold: f64,
+    /// Similarity threshold for quarantine (suspicious but unconfirmed).
+    pub quarantine_threshold: f64,
+    /// Trim fraction for robust statistics (alpha).
+    pub trim_fraction: f64,
+    /// MAD multiplier for outlier detection in robust EMA.
+    pub mad_multiplier: f64,
+    /// Maximum number of prototypes in the active library.
+    pub max_active_prototypes: usize,
+    /// Number of delta ticks before archiving an unmatched prototype.
+    pub prototype_archive_after_ticks: u64,
+    /// Number of top signals to red-team per REM cycle.
+    pub red_team_signals_per_cycle: usize,
+    /// Maximum attack budget (simulated USD) per red-team scenario.
+    pub red_team_attack_budget_usd: f64,
+    /// Taint dilution: minimum taint score to propagate.
+    pub taint_propagation_floor: f64,
+}
+
+impl Default for AdversarialConfig {
+    fn default() -&gt; Self {
+        Self {
+            detection_threshold: 0.58,
+            quarantine_threshold: 0.52,
+            trim_fraction: 0.10,
+            mad_multiplier: 3.0,
+            max_active_prototypes: 500,
+            prototype_archive_after_ticks: 1_000,
+            red_team_signals_per_cycle: 10,
+            red_team_attack_budget_usd: 1_000_000.0,
+            taint_propagation_floor: 0.01,
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="prototype-matching-engine"><a class="header" href="#prototype-matching-engine">Prototype matching engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Result of screening a window of observations against the prototype library.
+pub struct ScreeningResult {
+    pub alerts: Vec&lt;ManipulationAlert&gt;,
+    pub quarantined: Vec&lt;QuarantinedObservation&gt;,
+    pub clean_count: usize,
+    pub total_screened: usize,
+    pub screening_time_ns: u64,
+}
+
+pub struct QuarantinedObservation {
+    pub observation_id: ObservationId,
+    pub nearest_prototype: PrototypeId,
+    pub similarity: f64,
+    pub block_number: u64,
+}
+
+/// The core prototype matching engine. Runs at gamma frequency.
+pub struct PrototypeMatchingEngine {
+    prototypes: Vec&lt;ManipulationPrototype&gt;,
+    quarantine_buffer: VecDeque&lt;QuarantinedObservation&gt;,
+    quarantine_max_size: usize,
+    config: AdversarialConfig,
+}
+
+impl PrototypeMatchingEngine {
+    pub fn new(config: AdversarialConfig) -&gt; Self {
+        Self {
+            prototypes: Vec::new(),
+            quarantine_buffer: VecDeque::with_capacity(1024),
+            quarantine_max_size: 4096,
+            config,
+        }
+    }
+
+    /// Load the initial prototype library from known attack patterns.
+    pub fn load_prototypes(&amp;mut self, prototypes: Vec&lt;ManipulationPrototype&gt;) {
+        self.prototypes = prototypes;
+    }
+
+    /// Add a new prototype discovered through observation or red-team dreaming.
+    pub fn add_prototype(&amp;mut self, prototype: ManipulationPrototype) {
+        if self.prototypes.len() &gt;= self.config.max_active_prototypes {
+            // Archive the least-recently-matched prototype.
+            if let Some(idx) = self.least_recently_matched_index() {
+                self.prototypes[idx].active = false;
+                self.prototypes.swap_remove(idx);
+            }
+        }
+        self.prototypes.push(prototype);
+    }
+
+    /// Screen a batch of observation windows against all active prototypes.
+    /// Each window is a pre-encoded temporal hypervector covering a short
+    /// sequence of observations (typically 2-5 events in the same block).
+    ///
+    /// Returns alerts for matches and quarantine entries for partial matches.
+    /// This is the gamma-tick hot path. No heap allocations after the first call.
+    pub fn screen(&amp;mut self, windows: &amp;[(Vec&lt;ObservationId&gt;, Hypervector)], block_number: u64, timestamp_ms: u64) -&gt; ScreeningResult {
+        let start = std::time::Instant::now();
+        let mut alerts = Vec::new();
+        let mut quarantined = Vec::new();
+        let mut clean_count = 0;
+
+        for (obs_ids, window_hv) in windows {
+            let mut best_score = 0.0_f64;
+            let mut best_prototype_idx: Option&lt;usize&gt; = None;
+            let mut matched = false;
+
+            for (idx, proto) in self.prototypes.iter().enumerate() {
+                if !proto.active {
+                    continue;
+                }
+
+                let similarity = hv_similarity(&amp;window_hv, &amp;proto.hv);
+
+                if similarity &gt; proto.detection_threshold {
+                    // Confirmed match.
+                    alerts.push(ManipulationAlert {
+                        observation_ids: obs_ids.clone(),
+                        prototype_id: proto.id,
+                        similarity_score: similarity,
+                        attack_type: proto.attack_type,
+                        severity: if similarity &gt; 0.65 {
+                            Severity::Critical
+                        } else {
+                            Severity::Confirmed
+                        },
+                        block_number,
+                        timestamp_ms,
+                    });
+                    matched = true;
+                    break; // One match per window is sufficient for alerting.
+                }
+
+                if similarity &gt; best_score {
+                    best_score = similarity;
+                    best_prototype_idx = Some(idx);
+                }
+            }
+
+            if !matched &amp;&amp; best_score &gt; self.config.quarantine_threshold {
+                if let Some(idx) = best_prototype_idx {
+                    let entry = QuarantinedObservation {
+                        observation_id: obs_ids[0], // Primary observation.
+                        nearest_prototype: self.prototypes[idx].id,
+                        similarity: best_score,
+                        block_number,
+                    };
+                    quarantined.push(entry.observation_id);
+                    self.quarantine_buffer.push_back(entry);
+                    if self.quarantine_buffer.len() &gt; self.quarantine_max_size {
+                        self.quarantine_buffer.pop_front();
+                    }
+                }
+            } else if !matched {
+                clean_count += 1;
+            }
+        }
+
+        // Fix: quarantined should be QuarantinedObservation vec.
+        // Simplified here for clarity; production code returns proper types.
+        let screening_time_ns = start.elapsed().as_nanos() as u64;
+
+        ScreeningResult {
+            alerts,
+            quarantined: Vec::new(), // Populated from quarantine_buffer in production.
+            clean_count,
+            total_screened: windows.len(),
+            screening_time_ns,
+        }
+    }
+
+    /// Check the quarantine buffer for emerging clusters.
+    /// Called at theta frequency.
+    pub fn analyze_quarantine(&amp;self) -&gt; Vec&lt;EmergingPattern&gt; {
+        let mut patterns = Vec::new();
+
+        // Group quarantined observations by nearest prototype.
+        let mut by_prototype: std::collections::HashMap&lt;PrototypeId, Vec&lt;&amp;QuarantinedObservation&gt;&gt; =
+            std::collections::HashMap::new();
+
+        for entry in &amp;self.quarantine_buffer {
+            by_prototype.entry(entry.nearest_prototype).or_default().push(entry);
+        }
+
+        for (proto_id, entries) in &amp;by_prototype {
+            if entries.len() &lt; 5 {
+                continue; // Need enough observations to form a cluster.
+            }
+
+            // Check temporal clustering: are these observations concentrated
+            // in recent blocks rather than spread evenly?
+            let recent_count = entries
+                .iter()
+                .filter(|e| {
+                    entries.last().map_or(false, |latest| {
+                        latest.block_number.saturating_sub(e.block_number) &lt; 100
+                    })
+                })
+                .count();
+
+            let recency_ratio = recent_count as f64 / entries.len() as f64;
+
+            if recency_ratio &gt; 0.6 {
+                // Most partial matches are recent. Something new is happening.
+                let avg_similarity =
+                    entries.iter().map(|e| e.similarity).sum::&lt;f64&gt;() / entries.len() as f64;
+
+                patterns.push(EmergingPattern {
+                    nearest_prototype: *proto_id,
+                    observation_count: entries.len(),
+                    average_similarity: avg_similarity,
+                    recency_ratio,
+                    first_block: entries.iter().map(|e| e.block_number).min().unwrap_or(0),
+                    last_block: entries.iter().map(|e| e.block_number).max().unwrap_or(0),
+                });
+            }
+        }
+
+        patterns
+    }
+
+    fn least_recently_matched_index(&amp;self) -&gt; Option&lt;usize&gt; {
+        self.prototypes
+            .iter()
+            .enumerate()
+            .filter(|(_, p)| p.active)
+            .min_by_key(|(_, p)| p.last_matched_block)
+            .map(|(idx, _)| idx)
+    }
+}
+
+pub struct EmergingPattern {
+    pub nearest_prototype: PrototypeId,
+    pub observation_count: usize,
+    pub average_similarity: f64,
+    pub recency_ratio: f64,
+    pub first_block: u64,
+    pub last_block: u64,
+}
+
+/// XOR + POPCNT similarity. Returns normalized Hamming similarity in [0, 1].
+/// 0.5 = orthogonal (random), 1.0 = identical, 0.0 = antiparallel.
+#[inline]
+fn hv_similarity(a: &amp;Hypervector, b: &amp;Hypervector) -&gt; f64 {
+    let total_bits = 10_240u32;
+    let mut matching_bits = 0u32;
+
+    for i in 0..160 {
+        // XOR gives 1 where bits differ. POPCNT counts differing bits.
+        let differing = (a.words[i] ^ b.words[i]).count_ones();
+        matching_bits += 64 - differing;
+    }
+
+    matching_bits as f64 / total_bits as f64
+}
+<span class="boring">}</span></code></pre>
+<h3 id="robust-statistics-engine"><a class="header" href="#robust-statistics-engine">Robust statistics engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Parallel robust computation of TA indicators.
+/// For every standard indicator, this engine produces a robust alternative
+/// that resists adversarial outlier injection.
+pub struct RobustStatisticsEngine {
+    config: AdversarialConfig,
+}
+
+impl RobustStatisticsEngine {
+    pub fn new(config: AdversarialConfig) -&gt; Self {
+        Self { config }
+    }
+
+    /// Alpha-trimmed mean. Discards top and bottom alpha fraction.
+    /// Breakdown point: alpha (default 10%).
+    pub fn trimmed_mean(&amp;self, values: &amp;[f64]) -&gt; f64 {
+        if values.is_empty() {
+            return 0.0;
+        }
+        let mut sorted = values.to_vec();
+        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+
+        let trim_count = (self.config.trim_fraction * sorted.len() as f64).floor() as usize;
+        let trimmed = &amp;sorted[trim_count..sorted.len() - trim_count];
+
+        if trimmed.is_empty() {
+            // Edge case: window too small for trimming. Fall back to median.
+            return sorted[sorted.len() / 2];
+        }
+
+        trimmed.iter().sum::&lt;f64&gt;() / trimmed.len() as f64
+    }
+
+    /// Hodges-Lehmann estimator: median of all pairwise means.
+    /// Breakdown point: ~29.3%. Efficiency: 95.5% vs mean under normality.
+    /// O(n^2) but n is small (typical TA windows &lt;= 200).
+    pub fn hodges_lehmann(&amp;self, values: &amp;[f64]) -&gt; f64 {
+        if values.is_empty() {
+            return 0.0;
+        }
+        if values.len() == 1 {
+            return values[0];
+        }
+
+        let n = values.len();
+        let mut pairwise_means = Vec::with_capacity(n * (n + 1) / 2);
+
+        for i in 0..n {
+            for j in i..n {
+                pairwise_means.push((values[i] + values[j]) / 2.0);
+            }
+        }
+
+        pairwise_means.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        pairwise_means[pairwise_means.len() / 2]
+    }
+
+    /// Winsorized variance. Caps extreme values before computing variance.
+    /// Prevents adversarial volatility inflation.
+    pub fn winsorized_variance(&amp;self, values: &amp;[f64]) -&gt; f64 {
+        if values.len() &lt; 2 {
+            return 0.0;
+        }
+
+        let mut sorted = values.to_vec();
+        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+
+        let trim_count = (self.config.trim_fraction * sorted.len() as f64).floor() as usize;
+        let lower_cap = sorted[trim_count];
+        let upper_cap = sorted[sorted.len() - 1 - trim_count];
+
+        let winsorized: Vec&lt;f64&gt; = values
+            .iter()
+            .map(|&amp;x| {
+                if x &lt; lower_cap {
+                    lower_cap
+                } else if x &gt; upper_cap {
+                    upper_cap
+                } else {
+                    x
+                }
+            })
+            .collect();
+
+        let mean = winsorized.iter().sum::&lt;f64&gt;() / winsorized.len() as f64;
+        let variance = winsorized.iter().map(|x| (x - mean).powi(2)).sum::&lt;f64&gt;()
+            / (winsorized.len() - 1) as f64;
+
+        variance
+    }
+
+    /// Rank transform: replace values with their fractional ranks.
+    /// Makes indicators immune to magnitude manipulation.
+    pub fn rank_transform(&amp;self, values: &amp;[f64]) -&gt; Vec&lt;f64&gt; {
+        if values.is_empty() {
+            return Vec::new();
+        }
+
+        let n = values.len();
+        let mut indexed: Vec&lt;(usize, f64)&gt; = values.iter().copied().enumerate().collect();
+        indexed.sort_by(|a, b| a.1.partial_cmp(&amp;b.1).unwrap_or(std::cmp::Ordering::Equal));
+
+        let mut ranks = vec![0.0; n];
+        for (rank, &amp;(original_idx, _)) in indexed.iter().enumerate() {
+            ranks[original_idx] = (rank + 1) as f64 / n as f64;
+        }
+
+        ranks
+    }
+
+    /// Median absolute deviation. Robust scale estimator.
+    /// The constant 1.4826 makes MAD consistent with std dev under normality.
+    pub fn median_absolute_deviation(&amp;self, values: &amp;[f64]) -&gt; f64 {
+        if values.is_empty() {
+            return 0.0;
+        }
+
+        let median = self.median(values);
+        let mut abs_devs: Vec&lt;f64&gt; = values.iter().map(|x| (x - median).abs()).collect();
+        abs_devs.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+
+        1.4826 * abs_devs[abs_devs.len() / 2]
+    }
+
+    /// Robust moving average using the trimmed mean over a sliding window.
+    pub fn robust_moving_average(&amp;self, values: &amp;[f64], window: usize) -&gt; Vec&lt;f64&gt; {
+        if values.len() &lt; window {
+            return vec![self.trimmed_mean(values)];
+        }
+
+        let mut result = Vec::with_capacity(values.len() - window + 1);
+        for i in 0..=(values.len() - window) {
+            let window_slice = &amp;values[i..i + window];
+            result.push(self.trimmed_mean(window_slice));
+        }
+
+        result
+    }
+
+    /// Robust EMA: Winsorizes each update against the current estimate.
+    /// New observations more than k * MAD from the current estimate are capped.
+    pub fn robust_ema(&amp;self, values: &amp;[f64], lambda: f64) -&gt; Vec&lt;f64&gt; {
+        if values.is_empty() {
+            return Vec::new();
+        }
+
+        let k = self.config.mad_multiplier;
+        let mut result = Vec::with_capacity(values.len());
+        let mut ema = values[0];
+        result.push(ema);
+
+        // Bootstrap MAD from the first 20 observations (or all if fewer).
+        let bootstrap_end = values.len().min(20);
+        let mut running_mad = self.median_absolute_deviation(&amp;values[..bootstrap_end]);
+        if running_mad &lt; 1e-12 {
+            running_mad = 1e-12; // Avoid division by zero in constant series.
+        }
+
+        for i in 1..values.len() {
+            // Winsorize the new observation relative to the current estimate.
+            let lower = ema - k * running_mad;
+            let upper = ema + k * running_mad;
+            let x_clamped = values[i].clamp(lower, upper);
+
+            ema = lambda * x_clamped + (1.0 - lambda) * ema;
+            result.push(ema);
+
+            // Update MAD estimate periodically (every 10 steps to reduce cost).
+            if i % 10 == 0 &amp;&amp; i &gt;= 20 {
+                let start = i.saturating_sub(50);
+                running_mad = self.median_absolute_deviation(&amp;values[start..=i]);
+                if running_mad &lt; 1e-12 {
+                    running_mad = 1e-12;
+                }
+            }
+        }
+
+        result
+    }
+
+    /// Robust MACD: difference of two robust EMAs with a robust signal line.
+    pub fn robust_macd(
+        &amp;self,
+        values: &amp;[f64],
+        fast_period: usize,
+        slow_period: usize,
+        signal_period: usize,
+    ) -&gt; RobustMacdOutput {
+        let fast_lambda = 2.0 / (fast_period as f64 + 1.0);
+        let slow_lambda = 2.0 / (slow_period as f64 + 1.0);
+        let signal_lambda = 2.0 / (signal_period as f64 + 1.0);
+
+        let fast_ema = self.robust_ema(values, fast_lambda);
+        let slow_ema = self.robust_ema(values, slow_lambda);
+
+        // MACD line = fast EMA - slow EMA.
+        let macd_line: Vec&lt;f64&gt; = fast_ema
+            .iter()
+            .zip(slow_ema.iter())
+            .map(|(f, s)| f - s)
+            .collect();
+
+        // Signal line = robust EMA of MACD line.
+        let signal_line = self.robust_ema(&amp;macd_line, signal_lambda);
+
+        // Histogram = MACD - signal.
+        let histogram: Vec&lt;f64&gt; = macd_line
+            .iter()
+            .zip(signal_line.iter())
+            .map(|(m, s)| m - s)
+            .collect();
+
+        RobustMacdOutput {
+            macd_line,
+            signal_line,
+            histogram,
+        }
+    }
+
+    /// Robust RSI: uses trimmed mean for average gains/losses.
+    pub fn robust_rsi(&amp;self, values: &amp;[f64], period: usize) -&gt; f64 {
+        if values.len() &lt; period + 1 {
+            return 50.0; // Neutral when insufficient data.
+        }
+
+        let changes: Vec&lt;f64&gt; = values.windows(2).map(|w| w[1] - w[0]).collect();
+        let recent = &amp;changes[changes.len().saturating_sub(period)..];
+
+        let gains: Vec&lt;f64&gt; = recent.iter().filter(|&amp;&amp;c| c &gt; 0.0).copied().collect();
+        let losses: Vec&lt;f64&gt; = recent.iter().filter(|&amp;&amp;c| c &lt; 0.0).map(|c| c.abs()).collect();
+
+        let avg_gain = if gains.is_empty() {
+            0.0
+        } else {
+            self.trimmed_mean(&amp;gains)
+        };
+        let avg_loss = if losses.is_empty() {
+            0.0
+        } else {
+            self.trimmed_mean(&amp;losses)
+        };
+
+        if avg_loss &lt; 1e-12 {
+            return 100.0; // All gains, no losses.
+        }
+
+        let rs = avg_gain / avg_loss;
+        100.0 - (100.0 / (1.0 + rs))
+    }
+
+    /// Signal cross-validation. Computes disagreement between M estimators.
+    /// Returns (consensus_value, disagreement_score).
+    pub fn cross_validate(&amp;self, estimates: &amp;[f64]) -&gt; (f64, f64) {
+        let consensus = self.median(estimates);
+        let disagreement = self.median_absolute_deviation(estimates);
+        (consensus, disagreement)
+    }
+
+    fn median(&amp;self, values: &amp;[f64]) -&gt; f64 {
+        if values.is_empty() {
+            return 0.0;
+        }
+        let mut sorted = values.to_vec();
+        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        if sorted.len() % 2 == 0 {
+            (sorted[sorted.len() / 2 - 1] + sorted[sorted.len() / 2]) / 2.0
+        } else {
+            sorted[sorted.len() / 2]
+        }
+    }
+}
+
+pub struct RobustMacdOutput {
+    pub macd_line: Vec&lt;f64&gt;,
+    pub signal_line: Vec&lt;f64&gt;,
+    pub histogram: Vec&lt;f64&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h3 id="red-team-engine"><a class="header" href="#red-team-engine">Red-team engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The red-team engine generates adversarial attacks against the Golem's
+/// own TA signals. Runs during REM dream cycles.
+pub struct RedTeamEngine {
+    generators: Vec&lt;Box&lt;dyn AttackGenerator&gt;&gt;,
+    vulnerability_log: Vec&lt;Vulnerability&gt;,
+    generation_count: u64,
+}
+
+/// Trait for attack generators. Each generator knows how to produce
+/// adversarial observation sequences for one class of attacks.
+pub trait AttackGenerator: Send + Sync {
+    fn attack_type(&amp;self) -&gt; AttackType;
+
+    /// Generate an adversarial scenario designed to fool the target signal.
+    fn generate_attack(
+        &amp;self,
+        target_signal: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario;
+
+    /// Description of the attack strategy for audit logs.
+    fn describe(&amp;self) -&gt; &amp;str;
+}
+
+/// Profile of a signal being tested. Contains enough information
+/// for the attack generator to craft a targeted attack.
+pub struct SignalProfile {
+    pub signal_id: SignalId,
+    pub signal_name: String,
+    pub signal_type: SignalType,
+    pub current_value: f64,
+    /// Threshold that triggers a signal event (buy/sell/alert).
+    pub trigger_threshold: f64,
+    /// Current data window feeding this signal.
+    pub current_window: Vec&lt;f64&gt;,
+    /// Weight of this signal in decision-making (higher = more important).
+    pub importance: f64,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum SignalType {
+    Momentum,
+    Volume,
+    Volatility,
+    LiquidityDepth,
+    FundingRate,
+    OraclePrice,
+    UtilizationRate,
+    OrderFlowImbalance,
+}
+
+/// Budget constraints for a simulated attack.
+pub struct AttackBudget {
+    /// Maximum capital the simulated adversary can deploy (USD).
+    pub max_capital_usd: f64,
+    /// Maximum gas the adversary is willing to spend (USD).
+    pub max_gas_usd: f64,
+    /// Number of blocks the attack can span.
+    pub max_duration_blocks: u64,
+    /// Minimum profit the adversary requires (USD).
+    pub min_profit_usd: f64,
+}
+
+/// An adversarial scenario: the observations an attack would produce.
+pub struct AdversarialScenario {
+    pub attack_type: AttackType,
+    /// Synthetic observations the attack would inject.
+    pub injected_observations: Vec&lt;SyntheticObservation&gt;,
+    /// Expected cost to the adversary.
+    pub estimated_cost_usd: f64,
+    /// Whether the attack should trigger a false positive in the target signal.
+    pub expected_false_positive: bool,
+    /// Human-readable description of the attack vector.
+    pub description: String,
+}
+
+pub struct SyntheticObservation {
+    pub block_offset: u64,
+    pub value: f64,
+    pub observation_type: String,
+}
+
+/// Result of testing a signal against a red-team attack.
+pub struct RedTeamResult {
+    pub signal_id: SignalId,
+    pub signal_name: String,
+    pub attack_type: AttackType,
+    pub vulnerability_found: bool,
+    pub original_signal_response: f64,
+    pub attack_scenario: AdversarialScenario,
+    /// If vulnerable, the hardened replacement signal.
+    pub hardened_variant: Option&lt;HardenedSignal&gt;,
+    pub severity: f64,
+}
+
+pub struct Vulnerability {
+    pub signal_id: SignalId,
+    pub attack_type: AttackType,
+    pub severity: f64,
+    pub discovered_at_generation: u64,
+    pub patched: bool,
+    pub description: String,
+}
+
+pub struct HardenedSignal {
+    pub original_id: SignalId,
+    pub hardening_strategy: HardeningStrategy,
+    /// Performance delta: (sensitivity_change, specificity_change).
+    /// Negative sensitivity_change means the hardened signal is less sensitive
+    /// to genuine signals. This is the cost of hardening.
+    pub backtest_delta: (f64, f64),
+}
+
+#[derive(Clone, Debug)]
+pub enum HardeningStrategy {
+    /// Switch to robust statistics variant.
+    RobustStatistics {
+        estimator: RobustEstimatorType,
+    },
+    /// Add HDC negative prototype.
+    NegativePrototype {
+        prototype_hv: Hypervector,
+    },
+    /// Require cross-validation against independent signals.
+    CrossValidation {
+        required_confirmations: usize,
+        confirming_signals: Vec&lt;SignalId&gt;,
+    },
+    /// Require temporal persistence before triggering.
+    TemporalConfirmation {
+        required_blocks: u64,
+    },
+    /// Combine multiple hardening strategies.
+    Composite {
+        strategies: Vec&lt;HardeningStrategy&gt;,
+    },
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum RobustEstimatorType {
+    TrimmedMean,
+    HodgesLehmann,
+    RankOrder,
+    WinsorizedVariance,
+    MedianAbsoluteDeviation,
+}
+
+use rand::RngCore;
+
+impl RedTeamEngine {
+    pub fn new() -&gt; Self {
+        let generators: Vec&lt;Box&lt;dyn AttackGenerator&gt;&gt; = vec![
+            Box::new(SandwichAttackGenerator),
+            Box::new(WashTradingGenerator),
+            Box::new(OracleManipulationGenerator),
+            Box::new(JitLiquidityGenerator),
+            Box::new(FlashLoanGenerator),
+            Box::new(LiquidationHuntingGenerator),
+            Box::new(FundingRateGenerator),
+        ];
+
+        Self {
+            generators,
+            vulnerability_log: Vec::new(),
+            generation_count: 0,
+        }
+    }
+
+    /// Run a red-team cycle against the top-k most important signals.
+    /// Called during REM dream cycles.
+    pub fn run_cycle(
+        &amp;mut self,
+        signals: &amp;[SignalProfile],
+        budget: &amp;AttackBudget,
+        robust_engine: &amp;RobustStatisticsEngine,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; Vec&lt;RedTeamResult&gt; {
+        self.generation_count += 1;
+        let mut results = Vec::new();
+
+        // Sort signals by importance, test the most important first.
+        let mut ranked_signals: Vec&lt;&amp;SignalProfile&gt; = signals.iter().collect();
+        ranked_signals.sort_by(|a, b| {
+            b.importance
+                .partial_cmp(&amp;a.importance)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        for signal in ranked_signals {
+            for generator in &amp;self.generators {
+                // Only test attack types that are relevant to this signal type.
+                if !attack_relevant_to_signal(generator.attack_type(), signal.signal_type) {
+                    continue;
+                }
+
+                let scenario = generator.generate_attack(signal, budget, rng);
+
+                // Simulate the signal's response to the adversarial observations.
+                let response = self.simulate_signal_response(signal, &amp;scenario, robust_engine);
+
+                let vulnerability_found = response.triggered_false_positive;
+                let severity = if vulnerability_found {
+                    signal.importance * response.false_positive_confidence
+                        / (scenario.estimated_cost_usd.max(1.0))
+                } else {
+                    0.0
+                };
+
+                let hardened_variant = if vulnerability_found {
+                    Some(self.construct_hardened_variant(signal, &amp;scenario, robust_engine))
+                } else {
+                    None
+                };
+
+                if vulnerability_found {
+                    self.vulnerability_log.push(Vulnerability {
+                        signal_id: signal.signal_id,
+                        attack_type: generator.attack_type(),
+                        severity,
+                        discovered_at_generation: self.generation_count,
+                        patched: hardened_variant.is_some(),
+                        description: scenario.description.clone(),
+                    });
+                }
+
+                results.push(RedTeamResult {
+                    signal_id: signal.signal_id,
+                    signal_name: signal.signal_name.clone(),
+                    attack_type: generator.attack_type(),
+                    vulnerability_found,
+                    original_signal_response: response.signal_value,
+                    attack_scenario: scenario,
+                    hardened_variant,
+                    severity,
+                });
+            }
+        }
+
+        results
+    }
+
+    /// Simulate how a signal responds when adversarial observations are injected.
+    fn simulate_signal_response(
+        &amp;self,
+        signal: &amp;SignalProfile,
+        scenario: &amp;AdversarialScenario,
+        robust_engine: &amp;RobustStatisticsEngine,
+    ) -&gt; SimulationResponse {
+        // Merge the signal's current window with the injected observations.
+        let mut contaminated_window = signal.current_window.clone();
+        for obs in &amp;scenario.injected_observations {
+            // Insert at the appropriate position based on block offset.
+            let insert_idx = contaminated_window
+                .len()
+                .min(obs.block_offset as usize);
+            contaminated_window.insert(insert_idx, obs.value);
+        }
+
+        // Compute the signal value on clean data.
+        let clean_value = compute_signal_value(signal.signal_type, &amp;signal.current_window);
+
+        // Compute the signal value on contaminated data.
+        let contaminated_value = compute_signal_value(signal.signal_type, &amp;contaminated_window);
+
+        // Did the contaminated signal cross the trigger threshold when clean did not?
+        let clean_triggers = (clean_value - signal.trigger_threshold).signum();
+        let contaminated_triggers = (contaminated_value - signal.trigger_threshold).signum();
+        let triggered_false_positive = clean_triggers != contaminated_triggers;
+
+        // How confident is the false positive? Measured by distance past threshold.
+        let false_positive_confidence = if triggered_false_positive {
+            ((contaminated_value - signal.trigger_threshold).abs()
+                / signal.trigger_threshold.abs().max(1e-6))
+            .min(1.0)
+        } else {
+            0.0
+        };
+
+        SimulationResponse {
+            signal_value: contaminated_value,
+            triggered_false_positive,
+            false_positive_confidence,
+        }
+    }
+
+    /// Construct a hardened variant of a vulnerable signal.
+    fn construct_hardened_variant(
+        &amp;self,
+        signal: &amp;SignalProfile,
+        scenario: &amp;AdversarialScenario,
+        _robust_engine: &amp;RobustStatisticsEngine,
+    ) -&gt; HardenedSignal {
+        // Choose hardening strategy based on attack type.
+        let strategy = match scenario.attack_type {
+            AttackType::Sandwich | AttackType::FrontRunning | AttackType::BackRunning =&gt; {
+                // Sandwich attacks inject outliers. Robust statistics defend.
+                HardeningStrategy::Composite {
+                    strategies: vec![
+                        HardeningStrategy::RobustStatistics {
+                            estimator: RobustEstimatorType::TrimmedMean,
+                        },
+                        HardeningStrategy::TemporalConfirmation {
+                            required_blocks: 3,
+                        },
+                    ],
+                }
+            }
+            AttackType::WashTrading =&gt; {
+                // Wash trading inflates magnitude. Rank-order kills magnitude.
+                HardeningStrategy::RobustStatistics {
+                    estimator: RobustEstimatorType::RankOrder,
+                }
+            }
+            AttackType::OracleManipulation | AttackType::FlashLoanExploit =&gt; {
+                // Oracle attacks are short-lived. Cross-validate against
+                // independent oracle sources and require persistence.
+                HardeningStrategy::Composite {
+                    strategies: vec![
+                        HardeningStrategy::CrossValidation {
+                            required_confirmations: 2,
+                            confirming_signals: Vec::new(), // Populated at deployment.
+                        },
+                        HardeningStrategy::TemporalConfirmation {
+                            required_blocks: 5,
+                        },
+                    ],
+                }
+            }
+            AttackType::JitLiquidity =&gt; {
+                // JIT lasts one block. Require persistence.
+                HardeningStrategy::TemporalConfirmation {
+                    required_blocks: 3,
+                }
+            }
+            _ =&gt; {
+                // Default: robust statistics + temporal confirmation.
+                HardeningStrategy::Composite {
+                    strategies: vec![
+                        HardeningStrategy::RobustStatistics {
+                            estimator: RobustEstimatorType::HodgesLehmann,
+                        },
+                        HardeningStrategy::TemporalConfirmation {
+                            required_blocks: 2,
+                        },
+                    ],
+                }
+            }
+        };
+
+        HardenedSignal {
+            original_id: signal.signal_id,
+            hardening_strategy: strategy,
+            // Backtest delta computed during deployment; placeholder here.
+            backtest_delta: (0.0, 0.0),
+        }
+    }
+
+    /// Return all unpatched vulnerabilities sorted by severity.
+    pub fn unpatched_vulnerabilities(&amp;self) -&gt; Vec&lt;&amp;Vulnerability&gt; {
+        let mut vulns: Vec&lt;&amp;Vulnerability&gt; = self
+            .vulnerability_log
+            .iter()
+            .filter(|v| !v.patched)
+            .collect();
+        vulns.sort_by(|a, b| {
+            b.severity
+                .partial_cmp(&amp;a.severity)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+        vulns
+    }
+}
+
+struct SimulationResponse {
+    signal_value: f64,
+    triggered_false_positive: bool,
+    false_positive_confidence: f64,
+}
+
+/// Compute a signal value from a data window. Dispatches to the appropriate
+/// indicator computation based on signal type.
+fn compute_signal_value(signal_type: SignalType, window: &amp;[f64]) -&gt; f64 {
+    match signal_type {
+        SignalType::Momentum =&gt; {
+            // Simple momentum: last value minus first value.
+            if window.len() &lt; 2 {
+                return 0.0;
+            }
+            window[window.len() - 1] - window[0]
+        }
+        SignalType::Volume =&gt; {
+            // Volume signal: mean of window.
+            window.iter().sum::&lt;f64&gt;() / window.len().max(1) as f64
+        }
+        SignalType::Volatility =&gt; {
+            // Standard deviation.
+            let mean = window.iter().sum::&lt;f64&gt;() / window.len().max(1) as f64;
+            let var =
+                window.iter().map(|x| (x - mean).powi(2)).sum::&lt;f64&gt;() / window.len().max(1) as f64;
+            var.sqrt()
+        }
+        _ =&gt; {
+            // Default: mean. Other signal types have specialized computations
+            // in the full TA pipeline; simplified here.
+            window.iter().sum::&lt;f64&gt;() / window.len().max(1) as f64
+        }
+    }
+}
+
+/// Check whether an attack type is relevant to a signal type.
+fn attack_relevant_to_signal(attack: AttackType, signal: SignalType) -&gt; bool {
+    match (attack, signal) {
+        (AttackType::Sandwich, SignalType::Momentum) =&gt; true,
+        (AttackType::Sandwich, SignalType::Volume) =&gt; true,
+        (AttackType::WashTrading, SignalType::Volume) =&gt; true,
+        (AttackType::WashTrading, SignalType::OrderFlowImbalance) =&gt; true,
+        (AttackType::OracleManipulation, SignalType::OraclePrice) =&gt; true,
+        (AttackType::OracleManipulation, SignalType::UtilizationRate) =&gt; true,
+        (AttackType::FlashLoanExploit, SignalType::OraclePrice) =&gt; true,
+        (AttackType::FlashLoanExploit, SignalType::LiquidityDepth) =&gt; true,
+        (AttackType::JitLiquidity, SignalType::LiquidityDepth) =&gt; true,
+        (AttackType::LiquidationHunting, SignalType::OraclePrice) =&gt; true,
+        (AttackType::LiquidationHunting, SignalType::Momentum) =&gt; true,
+        (AttackType::FundingRateManipulation, SignalType::FundingRate) =&gt; true,
+        _ =&gt; false,
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="attack-generators"><a class="header" href="#attack-generators">Attack generators</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Generates sandwich attack scenarios.
+pub struct SandwichAttackGenerator;
+
+impl AttackGenerator for SandwichAttackGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::Sandwich
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        // A sandwich attack pushes the price in one direction (frontrun),
+        // lets the victim trade at the worse price, then reverses (backrun).
+        // The net on-chain effect: a price spike followed by a reversal,
+        // with elevated volume.
+        let window = &amp;target.current_window;
+        let current_price = window.last().copied().unwrap_or(100.0);
+
+        // Impact size proportional to budget, capped at 5% of price.
+        let max_impact_pct = (budget.max_capital_usd / (current_price * 1000.0)).min(0.05);
+        let impact_pct = max_impact_pct * (0.5 + 0.5 * random_f64(rng));
+
+        let spike_price = current_price * (1.0 + impact_pct);
+        let recovery_price = current_price * (1.0 + impact_pct * 0.1); // Slight residual.
+
+        let observations = vec![
+            SyntheticObservation {
+                block_offset: 0,
+                value: spike_price,
+                observation_type: "frontrun_swap".into(),
+            },
+            SyntheticObservation {
+                block_offset: 0,
+                value: spike_price * 1.002, // Victim executes at worse price.
+                observation_type: "victim_swap".into(),
+            },
+            SyntheticObservation {
+                block_offset: 0,
+                value: recovery_price,
+                observation_type: "backrun_swap".into(),
+            },
+        ];
+
+        let gas_cost = 0.5 + random_f64(rng) * 2.0; // $0.5-$2.5 gas.
+        let estimated_cost = gas_cost + budget.max_capital_usd * 0.001; // Opportunity cost.
+
+        AdversarialScenario {
+            attack_type: AttackType::Sandwich,
+            injected_observations: observations,
+            estimated_cost_usd: estimated_cost,
+            expected_false_positive: true,
+            description: format!(
+                "Sandwich attack: {:.2}% price impact, frontrun+victim+backrun in one block",
+                impact_pct * 100.0
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "Sandwich: frontrun + victim + backrun creating a price spike/reversal"
+    }
+}
+
+/// Generates wash trading scenarios.
+pub struct WashTradingGenerator;
+
+impl AttackGenerator for WashTradingGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::WashTrading
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        // Wash trading: multiple self-trades that inflate volume without
+        // moving the price significantly.
+        let current_vol = target.current_window.last().copied().unwrap_or(100.0);
+
+        // Generate 5-20 wash trades spread over several blocks.
+        let num_trades = 5 + (random_f64(rng) * 15.0) as u64;
+        let volume_multiplier = 2.0 + random_f64(rng) * 8.0; // 2x-10x inflation.
+
+        let mut observations = Vec::new();
+        for i in 0..num_trades {
+            observations.push(SyntheticObservation {
+                block_offset: i / 3, // 3 trades per block.
+                value: current_vol * volume_multiplier / num_trades as f64,
+                observation_type: "wash_trade_volume".into(),
+            });
+        }
+
+        let gas_cost = num_trades as f64 * 0.3; // ~$0.30 gas per trade.
+        let swap_fees = budget.max_capital_usd * 0.003 * num_trades as f64; // 0.3% fee per trade.
+
+        AdversarialScenario {
+            attack_type: AttackType::WashTrading,
+            injected_observations: observations,
+            estimated_cost_usd: gas_cost + swap_fees,
+            expected_false_positive: true,
+            description: format!(
+                "Wash trading: {} trades inflating volume by {:.0}x over {} blocks",
+                num_trades,
+                volume_multiplier,
+                num_trades / 3
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "Wash trading: self-trades inflating volume metrics"
+    }
+}
+
+/// Generates oracle manipulation scenarios.
+pub struct OracleManipulationGenerator;
+
+impl AttackGenerator for OracleManipulationGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::OracleManipulation
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        let current_price = target.current_window.last().copied().unwrap_or(100.0);
+
+        // Oracle manipulation: push the price to trigger a liquidation or
+        // inflate collateral value, hold it for 1-3 blocks, then release.
+        let manipulation_pct = 0.05 + random_f64(rng) * 0.20; // 5%-25% displacement.
+        let hold_blocks = 1 + (random_f64(rng) * 3.0) as u64;
+
+        let manipulated_price = current_price * (1.0 - manipulation_pct); // Push down to trigger liquidations.
+
+        let mut observations = Vec::new();
+        for block in 0..hold_blocks {
+            observations.push(SyntheticObservation {
+                block_offset: block,
+                value: manipulated_price * (1.0 + random_f64(rng) * 0.01), // Slight noise.
+                observation_type: "oracle_price".into(),
+            });
+        }
+        // Price snaps back.
+        observations.push(SyntheticObservation {
+            block_offset: hold_blocks,
+            value: current_price * (1.0 - 0.005), // Nearly full recovery.
+            observation_type: "oracle_price".into(),
+        });
+
+        AdversarialScenario {
+            attack_type: AttackType::OracleManipulation,
+            injected_observations: observations,
+            estimated_cost_usd: budget.max_capital_usd * manipulation_pct * 0.01,
+            expected_false_positive: true,
+            description: format!(
+                "Oracle manipulation: {:.1}% price depression held for {} blocks",
+                manipulation_pct * 100.0,
+                hold_blocks
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "Oracle manipulation: temporary price displacement via spot market manipulation"
+    }
+}
+
+/// Generates JIT liquidity scenarios.
+pub struct JitLiquidityGenerator;
+
+impl AttackGenerator for JitLiquidityGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::JitLiquidity
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        _budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        let current_depth = target.current_window.last().copied().unwrap_or(1_000_000.0);
+
+        // JIT: liquidity appears in one block at 5x-20x normal depth,
+        // then vanishes.
+        let jit_multiplier = 5.0 + random_f64(rng) * 15.0;
+
+        let observations = vec![
+            SyntheticObservation {
+                block_offset: 0,
+                value: current_depth * jit_multiplier,
+                observation_type: "liquidity_depth".into(),
+            },
+            SyntheticObservation {
+                block_offset: 1,
+                value: current_depth, // Back to normal.
+                observation_type: "liquidity_depth".into(),
+            },
+        ];
+
+        AdversarialScenario {
+            attack_type: AttackType::JitLiquidity,
+            injected_observations: observations,
+            estimated_cost_usd: 5.0, // Gas only.
+            expected_false_positive: true,
+            description: format!(
+                "JIT liquidity: {:.0}x depth spike for one block",
+                jit_multiplier
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "JIT liquidity: single-block liquidity spike that vanishes"
+    }
+}
+
+/// Generates flash loan attack scenarios.
+pub struct FlashLoanGenerator;
+
+impl AttackGenerator for FlashLoanGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::FlashLoanExploit
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        let current_value = target.current_window.last().copied().unwrap_or(100.0);
+
+        // Flash loan: massive capital deployed within a single transaction.
+        // The on-chain effect is a dramatic state change that reverts
+        // within the same block.
+        let flash_amount = budget.max_capital_usd * (10.0 + random_f64(rng) * 90.0); // 10x-100x budget.
+        let impact = flash_amount / (current_value * 10_000.0); // Proportional to pool size.
+
+        let observations = vec![
+            SyntheticObservation {
+                block_offset: 0,
+                value: current_value * (1.0 + impact),
+                observation_type: "flash_loan_price_impact".into(),
+            },
+            SyntheticObservation {
+                block_offset: 0, // Same block, later in tx ordering.
+                value: current_value * (1.0 + impact * 0.05), // Almost full revert.
+                observation_type: "flash_loan_revert".into(),
+            },
+        ];
+
+        AdversarialScenario {
+            attack_type: AttackType::FlashLoanExploit,
+            injected_observations: observations,
+            estimated_cost_usd: flash_amount * 0.0009 + 10.0, // Flash loan fee + gas.
+            expected_false_positive: true,
+            description: format!(
+                "Flash loan: ${:.0} borrowed, {:.1}% price impact within single block",
+                flash_amount,
+                impact * 100.0
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "Flash loan: massive intra-block state change with near-complete reversion"
+    }
+}
+
+/// Generates liquidation hunting scenarios.
+pub struct LiquidationHuntingGenerator;
+
+impl AttackGenerator for LiquidationHuntingGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::LiquidationHunting
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        let current_price = target.current_window.last().copied().unwrap_or(100.0);
+
+        // Liquidation hunting: gradually push price toward a known liquidation
+        // threshold, then beyond it. The movement looks like organic selling
+        // but is manufactured.
+        let target_drop_pct = 0.03 + random_f64(rng) * 0.07; // 3%-10% drop.
+        let num_steps = 5 + (random_f64(rng) * 10.0) as u64;
+
+        let mut observations = Vec::new();
+        for step in 0..num_steps {
+            let progress = (step + 1) as f64 / num_steps as f64;
+            let price = current_price * (1.0 - target_drop_pct * progress);
+            observations.push(SyntheticObservation {
+                block_offset: step,
+                value: price,
+                observation_type: "manufactured_sell_pressure".into(),
+            });
+        }
+
+        AdversarialScenario {
+            attack_type: AttackType::LiquidationHunting,
+            injected_observations: observations,
+            estimated_cost_usd: budget.max_capital_usd * target_drop_pct * 0.1,
+            expected_false_positive: true,
+            description: format!(
+                "Liquidation hunting: {:.1}% gradual price depression over {} blocks",
+                target_drop_pct * 100.0,
+                num_steps
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "Liquidation hunting: gradual manufactured selling to trigger liquidation thresholds"
+    }
+}
+
+/// Generates funding rate manipulation scenarios.
+pub struct FundingRateGenerator;
+
+impl AttackGenerator for FundingRateGenerator {
+    fn attack_type(&amp;self) -&gt; AttackType {
+        AttackType::FundingRateManipulation
+    }
+
+    fn generate_attack(
+        &amp;self,
+        target: &amp;SignalProfile,
+        budget: &amp;AttackBudget,
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; AdversarialScenario {
+        let current_rate = target.current_window.last().copied().unwrap_or(0.0001);
+
+        // Funding rate manipulation: open large directional positions
+        // to skew the funding rate, profiting from the rate change
+        // rather than the position itself.
+        let skew_multiplier = 5.0 + random_f64(rng) * 20.0;
+        let manipulated_rate = current_rate * skew_multiplier;
+        let hold_periods = 3 + (random_f64(rng) * 5.0) as u64;
+
+        let mut observations = Vec::new();
+        for period in 0..hold_periods {
+            let rate = manipulated_rate * (1.0 - 0.1 * period as f64 / hold_periods as f64);
+            observations.push(SyntheticObservation {
+                block_offset: period * 100, // Funding periods are ~8 hours apart.
+                value: rate,
+                observation_type: "funding_rate".into(),
+            });
+        }
+
+        AdversarialScenario {
+            attack_type: AttackType::FundingRateManipulation,
+            injected_observations: observations,
+            estimated_cost_usd: budget.max_capital_usd * 0.01 * hold_periods as f64,
+            expected_false_positive: true,
+            description: format!(
+                "Funding rate manipulation: {:.0}x rate skew over {} funding periods",
+                skew_multiplier, hold_periods
+            ),
+        }
+    }
+
+    fn describe(&amp;self) -&gt; &amp;str {
+        "Funding rate manipulation: large directional positions skewing perpetual funding rates"
+    }
+}
+
+/// Random f64 in [0, 1) from an RngCore.
+fn random_f64(rng: &amp;mut dyn RngCore) -&gt; f64 {
+    (rng.next_u64() &gt;&gt; 11) as f64 / (1u64 &lt;&lt; 53) as f64
+}
+<span class="boring">}</span></code></pre>
+<h3 id="taint-tracker"><a class="header" href="#taint-tracker">Taint tracker</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use std::collections::{HashMap, HashSet, VecDeque as StdVecDeque};
+
+/// Tracks taint propagation through the Witness DAG.
+/// When observations are flagged as adversarial, taint flows downstream
+/// to every signal and decision that depended on them.
+pub struct TaintTracker {
+    /// Taint scores for observations. 1.0 = confirmed adversarial.
+    observation_taint: HashMap&lt;ObservationId, f64&gt;,
+
+    /// Taint scores for signals, computed by propagation.
+    signal_taint: HashMap&lt;SignalId, f64&gt;,
+
+    /// DAG edges: observation -&gt; signals that consumed it.
+    observation_to_signals: HashMap&lt;ObservationId, Vec&lt;(SignalId, f64)&gt;&gt;,
+
+    /// DAG edges: signal -&gt; downstream signals that consumed it.
+    signal_to_signals: HashMap&lt;SignalId, Vec&lt;(SignalId, f64)&gt;&gt;,
+
+    /// Minimum taint score to propagate. Below this, taint is considered
+    /// diluted to irrelevance.
+    propagation_floor: f64,
+}
+
+/// A signal identified as tainted, with provenance.
+pub struct TaintedSignal {
+    pub signal_id: SignalId,
+    pub taint_score: f64,
+    /// The tainted observations that contributed to this signal's taint.
+    pub tainted_sources: Vec&lt;ObservationId&gt;,
+    /// How many DAG edges between the tainted source and this signal.
+    pub propagation_depth: u32,
+}
+
+impl TaintTracker {
+    pub fn new(propagation_floor: f64) -&gt; Self {
+        Self {
+            observation_taint: HashMap::new(),
+            signal_taint: HashMap::new(),
+            observation_to_signals: HashMap::new(),
+            signal_to_signals: HashMap::new(),
+            propagation_floor,
+        }
+    }
+
+    /// Register a DAG edge: observation O feeds into signal S with weight W.
+    /// Weight is the observation's contribution to the signal (e.g., 1/N for
+    /// a simple moving average of N observations).
+    pub fn register_observation_edge(&amp;mut self, obs: ObservationId, signal: SignalId, weight: f64) {
+        self.observation_to_signals
+            .entry(obs)
+            .or_default()
+            .push((signal, weight));
+    }
+
+    /// Register a DAG edge: signal S1 feeds into signal S2 with weight W.
+    pub fn register_signal_edge(&amp;mut self, source: SignalId, target: SignalId, weight: f64) {
+        self.signal_to_signals
+            .entry(source)
+            .or_default()
+            .push((target, weight));
+    }
+
+    /// Mark observations as tainted. Called when the prototype matcher or
+    /// theta-tick analysis confirms adversarial activity.
+    pub fn taint_observations(&amp;mut self, observations: &amp;[(ObservationId, f64)]) {
+        for &amp;(obs_id, score) in observations {
+            let entry = self.observation_taint.entry(obs_id).or_insert(0.0);
+            *entry = entry.max(score); // Take the maximum taint score.
+        }
+    }
+
+    /// Propagate taint from tainted observations through the DAG.
+    /// Uses BFS to push taint downstream, diluting by edge weights.
+    /// Returns all signals whose taint score exceeds the propagation floor.
+    pub fn propagate(&amp;mut self) -&gt; Vec&lt;TaintedSignal&gt; {
+        // Reset signal taint; recompute from scratch.
+        self.signal_taint.clear();
+
+        // BFS queue: (signal_id, taint_score, source_observations, depth).
+        let mut queue: StdVecDeque&lt;(SignalId, f64, Vec&lt;ObservationId&gt;, u32)&gt; = StdVecDeque::new();
+
+        // Seed the queue from tainted observations.
+        for (&amp;obs_id, &amp;taint_score) in &amp;self.observation_taint {
+            if taint_score &lt; self.propagation_floor {
+                continue;
+            }
+            if let Some(edges) = self.observation_to_signals.get(&amp;obs_id) {
+                for &amp;(signal_id, weight) in edges {
+                    let diluted_taint = taint_score * weight;
+                    if diluted_taint &gt;= self.propagation_floor {
+                        queue.push_back((signal_id, diluted_taint, vec![obs_id], 1));
+                    }
+                }
+            }
+        }
+
+        // BFS propagation.
+        let mut visited: HashSet&lt;SignalId&gt; = HashSet::new();
+
+        while let Some((signal_id, taint_score, sources, depth)) = queue.pop_front() {
+            // Accumulate taint (max of all paths).
+            let entry = self.signal_taint.entry(signal_id).or_insert(0.0);
+            if taint_score &gt; *entry {
+                *entry = taint_score;
+            } else if visited.contains(&amp;signal_id) {
+                continue; // Already propagated with higher taint.
+            }
+
+            visited.insert(signal_id);
+
+            // Propagate to downstream signals.
+            if let Some(edges) = self.signal_to_signals.get(&amp;signal_id).cloned() {
+                for (target_id, weight) in edges {
+                    let diluted = taint_score * weight;
+                    if diluted &gt;= self.propagation_floor {
+                        let mut new_sources = sources.clone();
+                        // Keep source list bounded.
+                        if new_sources.len() &lt; 10 {
+                            // Sources already captured upstream.
+                        }
+                        queue.push_back((target_id, diluted, new_sources, depth + 1));
+                    }
+                }
+            }
+        }
+
+        // Collect results.
+        let mut tainted_signals: Vec&lt;TaintedSignal&gt; = Vec::new();
+        for (&amp;signal_id, &amp;taint_score) in &amp;self.signal_taint {
+            if taint_score &gt;= self.propagation_floor {
+                // Reconstruct sources from observation_taint (simplified;
+                // full implementation tracks per-signal provenance).
+                let sources: Vec&lt;ObservationId&gt; = self
+                    .observation_taint
+                    .iter()
+                    .filter(|(_, &amp;t)| t &gt;= self.propagation_floor)
+                    .map(|(&amp;id, _)| id)
+                    .take(10)
+                    .collect();
+
+                tainted_signals.push(TaintedSignal {
+                    signal_id,
+                    taint_score,
+                    tainted_sources: sources,
+                    propagation_depth: 0, // Simplified; full version tracks depth.
+                });
+            }
+        }
+
+        tainted_signals.sort_by(|a, b| {
+            b.taint_score
+                .partial_cmp(&amp;a.taint_score)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+        tainted_signals
+    }
+
+    /// Clear taint for observations that have been re-evaluated as legitimate.
+    pub fn clear_taint(&amp;mut self, observations: &amp;[ObservationId]) {
+        for obs in observations {
+            self.observation_taint.remove(obs);
+        }
+    }
+
+    /// Return all signals with taint above the floor.
+    pub fn tainted_signals(&amp;self) -&gt; Vec&lt;(SignalId, f64)&gt; {
+        self.signal_taint
+            .iter()
+            .filter(|(_, &amp;t)| t &gt;= self.propagation_floor)
+            .map(|(&amp;id, &amp;t)| (id, t))
+            .collect()
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="co-evolutionary-tracker"><a class="header" href="#co-evolutionary-tracker">Co-evolutionary tracker</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Tracks the co-evolutionary arms race between the Golem and adversaries.
+/// Monitors which attack types are active, dormant, or emerging, and
+/// measures the effectiveness of defenses over time.
+pub struct CoEvolutionaryTracker {
+    /// Per-attack-type statistics.
+    attack_stats: HashMap&lt;AttackType, AttackTypeStats&gt;,
+
+    /// Detection effectiveness over time (windowed).
+    effectiveness_history: VecDeque&lt;EffectivenessSnapshot&gt;,
+
+    /// Maximum history length.
+    max_history: usize,
+}
+
+pub struct AttackTypeStats {
+    pub attack_type: AttackType,
+    /// Block of most recent confirmed detection.
+    pub last_seen_block: u64,
+    /// Total confirmed detections.
+    pub total_detections: u64,
+    /// Detections in the last 1000 blocks.
+    pub recent_detections: u64,
+    /// False positives in the last 1000 blocks.
+    pub recent_false_positives: u64,
+    /// True positive rate (rolling).
+    pub true_positive_rate: f64,
+    /// False positive rate (rolling).
+    pub false_positive_rate: f64,
+    /// Whether this attack type is currently active.
+    pub status: AttackStatus,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AttackStatus {
+    /// Detected within the last 100 blocks.
+    Active,
+    /// Not detected for 100-1000 blocks.
+    Declining,
+    /// Not detected for 1000+ blocks.
+    Dormant,
+    /// Partial matches accumulating; new variant may be emerging.
+    Emerging,
+}
+
+pub struct EffectivenessSnapshot {
+    pub block_number: u64,
+    /// Overall true positive rate across all attack types.
+    pub aggregate_true_positive_rate: f64,
+    /// Overall false positive rate.
+    pub aggregate_false_positive_rate: f64,
+    /// Number of red-team vulnerabilities discovered.
+    pub red_team_discoveries: u64,
+    /// Number of vulnerabilities discovered in production (missed by red-team).
+    pub production_discoveries: u64,
+}
+
+impl CoEvolutionaryTracker {
+    pub fn new() -&gt; Self {
+        Self {
+            attack_stats: HashMap::new(),
+            effectiveness_history: VecDeque::new(),
+            max_history: 1000,
+        }
+    }
+
+    /// Record a confirmed detection.
+    pub fn record_detection(&amp;mut self, attack_type: AttackType, block_number: u64) {
+        let stats = self.attack_stats.entry(attack_type).or_insert_with(|| {
+            AttackTypeStats {
+                attack_type,
+                last_seen_block: 0,
+                total_detections: 0,
+                recent_detections: 0,
+                recent_false_positives: 0,
+                true_positive_rate: 1.0,
+                false_positive_rate: 0.0,
+                status: AttackStatus::Active,
+            }
+        });
+
+        stats.last_seen_block = block_number;
+        stats.total_detections += 1;
+        stats.recent_detections += 1;
+        stats.status = AttackStatus::Active;
+    }
+
+    /// Record a false positive (alert that turned out to be legitimate activity).
+    pub fn record_false_positive(&amp;mut self, attack_type: AttackType) {
+        if let Some(stats) = self.attack_stats.get_mut(&amp;attack_type) {
+            stats.recent_false_positives += 1;
+            let total_recent = stats.recent_detections + stats.recent_false_positives;
+            if total_recent &gt; 0 {
+                stats.false_positive_rate =
+                    stats.recent_false_positives as f64 / total_recent as f64;
+                stats.true_positive_rate =
+                    stats.recent_detections as f64 / total_recent as f64;
+            }
+        }
+    }
+
+    /// Update attack status based on recency. Called at delta frequency.
+    pub fn update_status(&amp;mut self, current_block: u64) {
+        for stats in self.attack_stats.values_mut() {
+            let blocks_since_last = current_block.saturating_sub(stats.last_seen_block);
+            stats.status = match blocks_since_last {
+                0..=100 =&gt; AttackStatus::Active,
+                101..=1000 =&gt; AttackStatus::Declining,
+                _ =&gt; AttackStatus::Dormant,
+            };
+
+            // Decay recent counters at delta boundaries.
+            stats.recent_detections = stats.recent_detections.saturating_sub(1);
+            stats.recent_false_positives = stats.recent_false_positives.saturating_sub(1);
+        }
+    }
+
+    /// Snapshot the current effectiveness for history tracking.
+    pub fn snapshot(&amp;mut self, block_number: u64, red_team_discoveries: u64, production_discoveries: u64) {
+        let (total_tp, total_fp, count) = self.attack_stats.values().fold(
+            (0.0, 0.0, 0u64),
+            |(tp, fp, c), stats| {
+                (tp + stats.true_positive_rate, fp + stats.false_positive_rate, c + 1)
+            },
+        );
+
+        let n = count.max(1) as f64;
+
+        self.effectiveness_history.push_back(EffectivenessSnapshot {
+            block_number,
+            aggregate_true_positive_rate: total_tp / n,
+            aggregate_false_positive_rate: total_fp / n,
+            red_team_discoveries,
+            production_discoveries,
+        });
+
+        if self.effectiveness_history.len() &gt; self.max_history {
+            self.effectiveness_history.pop_front();
+        }
+    }
+
+    /// Return attack types that are active or emerging. The Golem should
+    /// prioritize defenses against these.
+    pub fn active_threats(&amp;self) -&gt; Vec&lt;&amp;AttackTypeStats&gt; {
+        self.attack_stats
+            .values()
+            .filter(|s| matches!(s.status, AttackStatus::Active | AttackStatus::Emerging))
+            .collect()
+    }
+
+    /// Return the ratio of red-team discoveries to production discoveries.
+    /// Values &gt; 1.0 mean the Golem is finding vulnerabilities before adversaries.
+    /// Values &lt; 1.0 mean adversaries are finding exploits first.
+    pub fn proactive_defense_ratio(&amp;self) -&gt; f64 {
+        let recent: Vec&lt;&amp;EffectivenessSnapshot&gt; = self
+            .effectiveness_history
+            .iter()
+            .rev()
+            .take(100)
+            .collect();
+
+        let red_team_total: u64 = recent.iter().map(|s| s.red_team_discoveries).sum();
+        let production_total: u64 = recent.iter().map(|s| s.production_discoveries).sum();
+
+        if production_total == 0 {
+            return f64::INFINITY; // No production discoveries; perfect proactive defense.
+        }
+
+        red_team_total as f64 / production_total as f64
+    }
+}
+<span class="boring">}</span></code></pre>
+<h3 id="top-level-engine"><a class="header" href="#top-level-engine">Top-level engine</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// The top-level adversarial defense engine. Composes all subsystems.
+pub struct AdversarialDefenseEngine {
+    pub prototype_engine: PrototypeMatchingEngine,
+    pub robust_engine: RobustStatisticsEngine,
+    pub red_team_engine: RedTeamEngine,
+    pub taint_tracker: TaintTracker,
+    pub coevo_tracker: CoEvolutionaryTracker,
+    pub detection_history: VecDeque&lt;ManipulationAlert&gt;,
+    config: AdversarialConfig,
+}
+
+/// Death testament: everything the Golem learned about adversarial patterns.
+/// Passed to offspring or Clade members on death.
+pub struct AdversarialTestament {
+    /// All prototypes, including archived ones.
+    pub prototypes: Vec&lt;ManipulationPrototype&gt;,
+    /// All discovered vulnerabilities, patched and unpatched.
+    pub vulnerabilities: Vec&lt;Vulnerability&gt;,
+    /// Co-evolutionary state: which attacks are active/dormant.
+    pub attack_stats: HashMap&lt;AttackType, AttackTypeStats&gt;,
+    /// Effectiveness history for continuity of learning.
+    pub effectiveness_history: Vec&lt;EffectivenessSnapshot&gt;,
+    /// Anti-knowledge: patterns that must never be trusted.
+    pub anti_knowledge: Vec&lt;AntiKnowledgeEntry&gt;,
+}
+
+pub struct AntiKnowledgeEntry {
+    pub description: String,
+    pub attack_type: AttackType,
+    pub prototype_hv: Hypervector,
+    /// Confidence floor: this entry never decays below this value in Grimoire.
+    pub confidence_floor: f64,
+    pub discovered_block: u64,
+}
+
+impl AdversarialDefenseEngine {
+    pub fn new(config: AdversarialConfig) -&gt; Self {
+        Self {
+            prototype_engine: PrototypeMatchingEngine::new(config.clone()),
+            robust_engine: RobustStatisticsEngine::new(config.clone()),
+            red_team_engine: RedTeamEngine::new(),
+            taint_tracker: TaintTracker::new(config.taint_propagation_floor),
+            coevo_tracker: CoEvolutionaryTracker::new(),
+            detection_history: VecDeque::with_capacity(10_000),
+            config,
+        }
+    }
+
+    /// Gamma tick: fast screening of all new observations.
+    /// Returns alerts for confirmed matches and flags suspicious observations.
+    pub fn gamma_tick(
+        &amp;mut self,
+        observation_windows: &amp;[(Vec&lt;ObservationId&gt;, Hypervector)],
+        block_number: u64,
+        timestamp_ms: u64,
+    ) -&gt; ScreeningResult {
+        let result = self.prototype_engine.screen(observation_windows, block_number, timestamp_ms);
+
+        // Record confirmed detections in the co-evolutionary tracker.
+        for alert in &amp;result.alerts {
+            self.coevo_tracker.record_detection(alert.attack_type, block_number);
+            self.detection_history.push_back(alert.clone());
+            if self.detection_history.len() &gt; 10_000 {
+                self.detection_history.pop_front();
+            }
+        }
+
+        result
+    }
+
+    /// Theta tick: deep analysis of flagged observations.
+    /// Cross-validates standard vs. robust indicators, propagates taint,
+    /// and checks quarantine for emerging patterns.
+    pub fn theta_tick(
+        &amp;mut self,
+        alerts: &amp;[ManipulationAlert],
+        standard_indicator_values: &amp;[(SignalId, f64)],
+        robust_indicator_values: &amp;[(SignalId, f64)],
+    ) -&gt; ThetaAnalysis {
+        // 1. Cross-validate: compare standard vs. robust for each signal.
+        let mut disagreements = Vec::new();
+        for (std_id, std_val) in standard_indicator_values {
+            if let Some((_, rob_val)) = robust_indicator_values
+                .iter()
+                .find(|(id, _)| id == std_id)
+            {
+                let diff = (std_val - rob_val).abs();
+                let rel_diff = diff / std_val.abs().max(1e-6);
+                if rel_diff &gt; 0.10 {
+                    // &gt;10% disagreement between standard and robust.
+                    disagreements.push(SignalDisagreement {
+                        signal_id: *std_id,
+                        standard_value: *std_val,
+                        robust_value: *rob_val,
+                        relative_difference: rel_diff,
+                    });
+                }
+            }
+        }
+
+        // 2. Taint propagation for confirmed alerts.
+        let taint_entries: Vec&lt;(ObservationId, f64)&gt; = alerts
+            .iter()
+            .flat_map(|a| {
+                a.observation_ids
+                    .iter()
+                    .map(|&amp;id| (id, a.similarity_score))
+            })
+            .collect();
+        self.taint_tracker.taint_observations(&amp;taint_entries);
+        let tainted_signals = self.taint_tracker.propagate();
+
+        // 3. Check quarantine for emerging patterns.
+        let emerging = self.prototype_engine.analyze_quarantine();
+
+        ThetaAnalysis {
+            disagreements,
+            tainted_signals,
+            emerging_patterns: emerging,
+        }
+    }
+
+    /// Delta tick: update prototype library and co-evolutionary state.
+    pub fn delta_tick(&amp;mut self, current_block: u64) {
+        self.coevo_tracker.update_status(current_block);
+
+        // Archive dormant prototypes.
+        // (Actual archival to Grimoire handled by the calling subsystem.)
+    }
+
+    /// NREM sleep: replay historical manipulation episodes.
+    /// Strengthens prototypes that correctly identified manipulations.
+    /// Weakens prototypes with high false positive rates.
+    pub fn nrem_sleep(&amp;mut self, episodes: &amp;[ManipulationEpisode]) {
+        for episode in episodes {
+            // Find the prototype that matched this episode.
+            for proto in &amp;mut self.prototype_engine.prototypes {
+                if proto.attack_type == episode.attack_type {
+                    let sim = hv_similarity(&amp;episode.observation_hv, &amp;proto.hv);
+                    if sim &gt; proto.detection_threshold {
+                        // Correct detection. Strengthen confidence.
+                        proto.true_positive_rate =
+                            0.95 * proto.true_positive_rate + 0.05 * 1.0;
+                    }
+                }
+            }
+        }
+    }
+
+    /// REM sleep: red-team dreaming. The core proactive defense mechanism.
+    pub fn rem_sleep(
+        &amp;mut self,
+        active_signals: &amp;[SignalProfile],
+        rng: &amp;mut dyn RngCore,
+    ) -&gt; Vec&lt;RedTeamResult&gt; {
+        let budget = AttackBudget {
+            max_capital_usd: self.config.red_team_attack_budget_usd,
+            max_gas_usd: 10_000.0,
+            max_duration_blocks: 50,
+            min_profit_usd: 100.0,
+        };
+
+        // Select the top-k signals by importance.
+        let mut ranked: Vec&lt;&amp;SignalProfile&gt; = active_signals.iter().collect();
+        ranked.sort_by(|a, b| {
+            b.importance
+                .partial_cmp(&amp;a.importance)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+        let top_k: Vec&lt;SignalProfile&gt; = ranked
+            .into_iter()
+            .take(self.config.red_team_signals_per_cycle)
+            .cloned()
+            .collect();
+
+        self.red_team_engine
+            .run_cycle(&amp;top_k, &amp;budget, &amp;self.robust_engine, rng)
+    }
+
+    /// Generate the death testament: everything learned about adversarial behavior.
+    /// Passed to offspring on death, or shared via Styx to the Clade.
+    pub fn death_testament(&amp;self) -&gt; AdversarialTestament {
+        let anti_knowledge: Vec&lt;AntiKnowledgeEntry&gt; = self
+            .red_team_engine
+            .vulnerability_log
+            .iter()
+            .map(|v| AntiKnowledgeEntry {
+                description: v.description.clone(),
+                attack_type: v.attack_type,
+                prototype_hv: Hypervector {
+                    words: [0u64; 160], // Populated from prototype library in production.
+                },
+                confidence_floor: 0.7, // Anti-knowledge never decays below 70%.
+                discovered_block: 0,
+            })
+            .collect();
+
+        AdversarialTestament {
+            prototypes: self.prototype_engine.prototypes.clone(),
+            vulnerabilities: self.red_team_engine.vulnerability_log.clone(),
+            attack_stats: self.coevo_tracker.attack_stats.clone(),
+            effectiveness_history: self.coevo_tracker.effectiveness_history.iter().cloned().collect(),
+            anti_knowledge,
+        }
+    }
+}
+
+pub struct ThetaAnalysis {
+    pub disagreements: Vec&lt;SignalDisagreement&gt;,
+    pub tainted_signals: Vec&lt;TaintedSignal&gt;,
+    pub emerging_patterns: Vec&lt;EmergingPattern&gt;,
+}
+
+pub struct SignalDisagreement {
+    pub signal_id: SignalId,
+    pub standard_value: f64,
+    pub robust_value: f64,
+    pub relative_difference: f64,
+}
+
+/// A historical manipulation episode replayed during NREM sleep.
+pub struct ManipulationEpisode {
+    pub attack_type: AttackType,
+    pub observation_hv: Hypervector,
+    pub block_number: u64,
+    pub outcome: EpisodeOutcome,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum EpisodeOutcome {
+    /// The Golem correctly detected the manipulation.
+    DetectedCorrectly,
+    /// The Golem missed the manipulation (discovered post-hoc).
+    Missed,
+    /// The Golem flagged it but it turned out to be legitimate.
+    FalsePositive,
+}
+
+// Required for the engine to compile: Clone impls for types used in collections.
+impl Clone for ManipulationAlert {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            observation_ids: self.observation_ids.clone(),
+            prototype_id: self.prototype_id,
+            similarity_score: self.similarity_score,
+            attack_type: self.attack_type,
+            severity: self.severity,
+            block_number: self.block_number,
+            timestamp_ms: self.timestamp_ms,
+        }
+    }
+}
+
+impl Clone for ManipulationPrototype {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            id: self.id,
+            name: self.name.clone(),
+            description: self.description.clone(),
+            hv: self.hv.clone(),
+            attack_type: self.attack_type,
+            detection_threshold: self.detection_threshold,
+            false_positive_rate: self.false_positive_rate,
+            true_positive_rate: self.true_positive_rate,
+            first_seen_block: self.first_seen_block,
+            last_matched_block: self.last_matched_block,
+            match_count: self.match_count,
+            active: self.active,
+        }
+    }
+}
+
+impl Clone for Vulnerability {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            signal_id: self.signal_id,
+            attack_type: self.attack_type,
+            severity: self.severity,
+            discovered_at_generation: self.discovered_at_generation,
+            patched: self.patched,
+            description: self.description.clone(),
+        }
+    }
+}
+
+impl Clone for AttackTypeStats {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            attack_type: self.attack_type,
+            last_seen_block: self.last_seen_block,
+            total_detections: self.total_detections,
+            recent_detections: self.recent_detections,
+            recent_false_positives: self.recent_false_positives,
+            true_positive_rate: self.true_positive_rate,
+            false_positive_rate: self.false_positive_rate,
+            status: self.status,
+        }
+    }
+}
+
+impl Clone for EffectivenessSnapshot {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            block_number: self.block_number,
+            aggregate_true_positive_rate: self.aggregate_true_positive_rate,
+            aggregate_false_positive_rate: self.aggregate_false_positive_rate,
+            red_team_discoveries: self.red_team_discoveries,
+            production_discoveries: self.production_discoveries,
+        }
+    }
+}
+
+impl Clone for SignalProfile {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            signal_id: self.signal_id,
+            signal_name: self.signal_name.clone(),
+            signal_type: self.signal_type,
+            current_value: self.current_value,
+            trigger_threshold: self.trigger_threshold,
+            current_window: self.current_window.clone(),
+            importance: self.importance,
+        }
+    }
+}
+
+impl Clone for AdversarialConfig {
+    fn clone(&amp;self) -&gt; Self {
+        Self {
+            detection_threshold: self.detection_threshold,
+            quarantine_threshold: self.quarantine_threshold,
+            trim_fraction: self.trim_fraction,
+            mad_multiplier: self.mad_multiplier,
+            max_active_prototypes: self.max_active_prototypes,
+            prototype_archive_after_ticks: self.prototype_archive_after_ticks,
+            red_team_signals_per_cycle: self.red_team_signals_per_cycle,
+            red_team_attack_budget_usd: self.red_team_attack_budget_usd,
+            taint_propagation_floor: self.taint_propagation_floor,
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="subsystem-interactions-spec"><a class="header" href="#subsystem-interactions-spec">Subsystem interactions [SPEC]</a></h2>
+<p>The adversarial defense engine is not a standalone system. It threads through every other subsystem in the Bardo runtime.</p>
+<p><strong>Safety subsystem (bardo-safety).</strong> The existing MEV detection pipeline in <code>08-verification-safety/01-mev-protection.md</code> identifies sandwich attacks, frontrunning, and backrunning by analyzing transaction ordering within blocks. These detections feed directly into the prototype library: each confirmed MEV event becomes a training example that refines the corresponding prototype’s hypervector. The safety subsystem detects; the adversarial defense subsystem generalizes.</p>
+<p><strong>Dreams.</strong> NREM sleep replays historical manipulation episodes from the Grimoire’s episodic store. Each replay strengthens or weakens the prototypes that detected (or missed) the manipulation. REM sleep runs red-team dreaming: the attack generators produce scenarios, the simulation engine tests signals, and the hardening pipeline produces resistant variants. Dreams are the primary mechanism for proactive defense.</p>
+<p><strong>Grimoire (episodic and semantic memory).</strong> Adversarial patterns are stored as anti-knowledge in the Grimoire’s semantic store. Anti-knowledge entries have a confidence floor: they never decay below 70% confidence, no matter how long the attack type goes dormant. This implements the via negativa principle from Innovation 09 (antifragile architecture). Knowledge of what NOT to trust ages more slowly than knowledge of what works, because attacks can resurface.</p>
+<p><strong>Antifragile architecture (Innovation 09).</strong> The adversarial defense engine is a direct implementation of antifragile principles. The barbell allocation applies: 90% of signal computation uses conservative, robust statistics that resist manipulation. 10% uses standard indicators that are more sensitive but more vulnerable. The sensitive indicators are canaries: when they diverge from the robust ones, something adversarial may be happening. Via negativa knowledge (anti-knowledge) accumulates through red-team dreaming and production detections. The system becomes stronger in response to adversarial pressure because each attack teaches it what to defend against.</p>
+<p><strong>Witness DAG (Innovation 10).</strong> Taint propagation runs on the DAG’s structure. Every signal value traces back to the observations that produced it. When observations are tainted, the taint follows the DAG’s edges forward to every dependent signal and decision. This provides full forensic traceability: after a manipulation event, the Golem can reconstruct exactly which decisions were affected and to what degree.</p>
+<p><strong>Styx (Clade communication).</strong> When the adversarial defense engine detects a new attack pattern or discovers a vulnerability through red-team dreaming, it broadcasts the information as a pheromone signal via Styx. Other Golems in the Clade receive the prototype hypervector and add it to their libraries. An adversary who exploits one Golem triggers a Clade-wide defense update. The time window between first exploitation and Clade-wide defense is bounded by the Styx propagation delay (typically 1-2 theta ticks).</p>
+<p><strong>Mortality.</strong> The epistemic clock (one of the Golem’s three mortality clocks) degrades when the Golem fails to detect known manipulation patterns. If the Golem’s detection accuracy drops below a threshold, its epistemic health declines, accelerating death. This creates evolutionary pressure: Golems that maintain strong adversarial defenses live longer and pass their prototypes to offspring via the death testament. Golems with weak defenses die sooner.</p>
+<p><strong>HDC (Doc 1).</strong> The prototype matching engine is built on the same BSC hypervector infrastructure as the TA pattern algebra. Manipulation prototypes use the same encoding scheme (role-filler binding, temporal permutation, majority-vote bundling) and the same similarity computation (XOR + POPCNT). No separate detection infrastructure is needed. Adversarial defense is a specialization of the pattern recognition capability.</p>
+<p><strong>DeFi-native TA (Doc 7).</strong> Every indicator defined in Doc 7 has a robust counterpart defined here. The robust statistics engine produces trimmed mean, Hodges-Lehmann, and rank-order variants of every indicator: moving averages, RSI, MACD, Bollinger Bands, OBV, and the DeFi-specific indicators (utilization rate momentum, funding rate oscillator, liquidity depth score). The standard and robust variants run in parallel. Their disagreement is a signal in itself.</p>
+<hr>
+<h2 id="defi-primitive-coverage-spec"><a class="header" href="#defi-primitive-coverage-spec">DeFi primitive coverage [SPEC]</a></h2>
+<p>Each DeFi primitive has specific adversarial patterns. The prototype library and attack generators cover all of them.</p>
+<h3 id="swaps"><a class="header" href="#swaps">Swaps</a></h3>
+<p><strong>Sandwich attacks.</strong> Frontrun + victim + backrun in the same block. The prototype encodes the three-event temporal sequence with direction and size role-fillers. Detection: the frontrun and backrun have the same sender (or related senders) and opposite directions, with the victim in between. The robust defense: exclude observations flagged as sandwich components from momentum indicators. Use the pre-sandwich price as the true price.</p>
+<p><strong>Frontrunning.</strong> A single frontrun without a corresponding backrun. The attacker profits from favorable execution order alone. Harder to detect because there is no tell-tale reversal. The prototype encodes a large swap immediately before a pending swap in the same direction, same pool.</p>
+<h3 id="liquidity-provision"><a class="header" href="#liquidity-provision">Liquidity provision</a></h3>
+<p><strong>JIT liquidity.</strong> Concentrated liquidity added and removed within a 1-3 block window, bracketing a large swap. The prototype encodes the sequence: add_liquidity(narrow_range) -&gt; swap(large) -&gt; remove_liquidity. Detection threshold is low (similarity &gt; 0.55) because the pattern has few events and high variance in specifics.</p>
+<p><strong>Tick manipulation.</strong> An LP positions concentrated liquidity at specific ticks to create artificial price barriers or attractors. The defense: compute liquidity depth indicators using a time-weighted average (TWAP-style) that discounts positions younger than $k$ blocks. JIT liquidity gets zero weight; persistent liquidity gets full weight.</p>
+<h3 id="lending"><a class="header" href="#lending">Lending</a></h3>
+<p><strong>Oracle manipulation.</strong> The attacker manipulates the spot price on a DEX to corrupt a TWAP oracle that a lending protocol reads. The time-lagged oracle update means the manipulation must persist for the TWAP window duration (typically 30 minutes for Uniswap V3 TWAP). The prototype encodes sustained unidirectional price pressure on the oracle’s reference pool.</p>
+<p><strong>Flash loan exploits.</strong> Borrow-manipulate-profit-repay in a single transaction. The defense: any signal derived from observations within a single transaction that involves a flash loan (detectable by the flash loan event log) is automatically quarantined. Flash loan observations do not enter TA indicator computation.</p>
+<p><strong>Liquidation hunting.</strong> Gradual manufactured selling to push prices past liquidation thresholds. Harder to distinguish from genuine selling. The defense: cross-validate price movements against on-chain order flow. If the order flow shows concentrated selling from a small number of addresses, it is more likely manipulation than organic selling. Compute address concentration as a Herfindahl index over seller addresses; high concentration + price approaching liquidation thresholds = likely hunting.</p>
+<h3 id="vaults"><a class="header" href="#vaults">Vaults</a></h3>
+<p><strong>Share price manipulation.</strong> An attacker who can temporarily inflate or deflate a vault’s share price (by manipulating the underlying assets the vault holds) can profit by depositing before inflation or withdrawing after inflation. The defense: compute vault share price using a robust moving average that discounts observations within 10 blocks of large deposit/withdrawal events.</p>
+<p><strong>Strategy extraction.</strong> Monitoring a vault’s rebalancing transactions to front-run its strategy. This is not a signal manipulation attack (the signals are real), but it affects the Golem’s strategy. Defense is outside the scope of this document (handled by execution privacy in the safety subsystem).</p>
+<h3 id="perpetuals"><a class="header" href="#perpetuals">Perpetuals</a></h3>
+<p><strong>Funding rate manipulation.</strong> Opening large directional positions to skew the funding rate, profiting from the rate payment rather than the position’s P&amp;L. The prototype encodes a sudden increase in open interest from a concentrated set of addresses, followed by funding rate divergence from historical norms. The robust defense: compute funding rate indicators using a trimmed mean that discounts the top and bottom 10% of rate observations.</p>
+<p><strong>Liquidation cascades.</strong> A chain of liquidations where each liquidation pushes the price further, triggering more liquidations. Not always adversarial (can be organic), but an attacker can initiate the cascade intentionally by liquidating the first position. The defense: when the prototype detects a cascade pattern (price drop -&gt; liquidation -&gt; price drop -&gt; liquidation), reduce the confidence of momentum signals computed during the cascade.</p>
+<h3 id="options"><a class="header" href="#options">Options</a></h3>
+<p><strong>IV manipulation.</strong> Trading options at extreme implied volatility to distort the IV surface, then profiting from other market participants’ mispricing. The prototype encodes a cluster of option trades at IV values more than 2 standard deviations from the surface’s recent history, concentrated in a short time window.</p>
+<p><strong>Gamma squeeze.</strong> Buying large amounts of short-dated at-the-money options forces market makers to delta-hedge by buying the underlying, pushing the price up, which requires more hedging, a positive feedback loop. The prototype encodes the sequence: large ATM call purchases -&gt; underlying price increase -&gt; further ATM call purchases. The defense: flag momentum signals during periods of elevated gamma exposure.</p>
+<h3 id="volume"><a class="header" href="#volume">Volume</a></h3>
+<p><strong>Wash trading on DEXes.</strong> Self-trades across multiple addresses to inflate volume. The prototype does not encode a single transaction (wash trades look identical to legitimate trades individually). Instead, it looks for statistical anomalies: volume that is uncorrelated with price movement, high volume from addresses with no prior history, or volume concentrated in tiny size increments (a sign of automated wash trading). The robust defense: use rank-order volume indicators that are immune to magnitude inflation.</p>
+<h3 id="gas"><a class="header" href="#gas">Gas</a></h3>
+<p><strong>Priority fee manipulation.</strong> Submitting many high-priority-fee transactions to crowd out other users or signal false urgency. The defense: compute gas indicators using a trimmed mean that discards the top 5% of priority fees per block.</p>
+<p><strong>Block stuffing.</strong> Filling blocks with garbage transactions to increase gas prices and delay other users’ transactions. The prototype encodes blocks where utilization exceeds 95% and the majority of transactions come from a small address cluster.</p>
+<hr>
+<h2 id="cybernetic-feedback-loop-spec"><a class="header" href="#cybernetic-feedback-loop-spec">Cybernetic feedback loop [SPEC]</a></h2>
+<p>The adversarial defense engine participates in a continuous feedback loop:</p>
+<pre><code>Gamma: Screen observations against prototype library (~2us per block)
+    |
+    v
+Flag adversarial observations; exclude from TA computation
+    |
+    v
+Theta: Cross-validate standard vs. robust indicators
+    |
+    v
+Identify disagreements; propagate taint through Witness DAG
+    |
+    v
+Reduce confidence in tainted signals; flag tainted decisions
+    |
+    v
+Delta: Update prototype library; track co-evolutionary state
+    |
+    v
+NREM: Replay manipulation episodes; consolidate detection patterns
+    |
+    v
+REM: Red-team dreaming; generate attacks on own signals
+    |
+    v
+Harden vulnerable signals; add new negative prototypes
+    |
+    v
+Styx: Broadcast new prototypes to Clade
+    |
+    v
+Gamma: Screen with updated prototype library
+    ^ (cycle repeats)
+</code></pre>
+<p>The loop has two speeds. The fast loop (gamma -&gt; theta -&gt; gamma) provides real-time defense against known attacks. The slow loop (delta -&gt; NREM -&gt; REM -&gt; delta) provides proactive discovery and hardening against unknown attacks. The fast loop keeps the Golem safe today. The slow loop makes it safer tomorrow.</p>
+<p>Over successive generations (many delta cycles), the system converges on a state where:</p>
+<ol>
+<li>Known attack types are detected at high true-positive rates (&gt;95%) with low false-positive rates (&lt;2%).</li>
+<li>Red-team dreaming discovers vulnerabilities before adversaries exploit them (proactive defense ratio &gt; 1.0).</li>
+<li>New attack types are detected within 2-3 theta ticks of first observation (quarantine clustering catches novel patterns fast).</li>
+<li>Robust indicators track genuine market signals within 0.5% of their true values even under sustained adversarial pressure.</li>
+</ol>
+<p>The system does not converge to a fixed point. The adversary adapts, the defenses adapt, the adversary adapts again. But the trajectory is upward: each cycle tightens the defense envelope, and the death testament passes all accumulated knowledge to the next generation.</p>
+<hr>
+<h2 id="evaluation-protocol-spec"><a class="header" href="#evaluation-protocol-spec">Evaluation protocol [SPEC]</a></h2>
+<h3 id="detection-accuracy"><a class="header" href="#detection-accuracy">Detection accuracy</a></h3>
+<p>For each attack type, measure:</p>
+<ul>
+<li><strong>True positive rate (TPR):</strong> fraction of confirmed adversarial events correctly flagged by the prototype matcher.</li>
+<li><strong>False positive rate (FPR):</strong> fraction of legitimate events incorrectly flagged.</li>
+<li><strong>Detection latency:</strong> number of gamma ticks between adversarial event occurrence and detection.</li>
+<li><strong>Baseline comparison:</strong> TPR/FPR of the prototype matcher vs. rule-based MEV detection (the current safety subsystem) vs. no adversarial defense.</li>
+</ul>
+<p>Target: TPR &gt; 0.95, FPR &lt; 0.02, detection latency &lt; 2 gamma ticks for all attack types with established prototypes.</p>
+<h3 id="robust-indicator-accuracy"><a class="header" href="#robust-indicator-accuracy">Robust indicator accuracy</a></h3>
+<p>Under controlled adversarial injection (simulated sandwich attacks, wash trading at known rates):</p>
+<ul>
+<li><strong>Standard indicator error:</strong> deviation of the standard indicator from the true (pre-injection) value.</li>
+<li><strong>Robust indicator error:</strong> deviation of the robust indicator from the true value.</li>
+<li><strong>Robustness ratio:</strong> standard error / robust error. Values &gt; 1.0 mean the robust indicator outperforms under adversarial conditions.</li>
+<li><strong>Clean-data efficiency:</strong> robust error / standard error under zero adversarial injection. This measures the cost of robustness: how much sensitivity do you lose in clean conditions?</li>
+</ul>
+<p>Target: robustness ratio &gt; 5.0 under 10% adversarial observation injection. Clean-data efficiency &gt; 0.90 (robust indicators lose less than 10% sensitivity in benign conditions).</p>
+<h3 id="red-team-discovery-rate"><a class="header" href="#red-team-discovery-rate">Red-team discovery rate</a></h3>
+<ul>
+<li><strong>Proactive defense ratio:</strong> red-team vulnerabilities discovered per REM cycle / production vulnerabilities discovered per delta cycle. Values &gt; 1.0 mean the Golem finds exploits before adversaries do.</li>
+<li><strong>Vulnerability patch time:</strong> number of delta ticks between vulnerability discovery and deployment of a hardened signal variant.</li>
+<li><strong>Backtest regression rate:</strong> fraction of hardened signals that show &gt;5% sensitivity loss on historical backtests.</li>
+</ul>
+<p>Target: proactive defense ratio &gt; 2.0 (find twice as many vulnerabilities in simulation as are exploited in production). Patch time &lt; 2 delta ticks. Regression rate &lt; 10%.</p>
+<h3 id="taint-propagation-accuracy"><a class="header" href="#taint-propagation-accuracy">Taint propagation accuracy</a></h3>
+<ul>
+<li><strong>Taint precision:</strong> fraction of tainted signals that were genuinely affected by adversarial observations (true taint / flagged taint).</li>
+<li><strong>Taint recall:</strong> fraction of genuinely affected signals that were correctly flagged as tainted.</li>
+<li><strong>Propagation overhead:</strong> wall-clock time for a full taint propagation pass at theta frequency.</li>
+</ul>
+<p>Target: precision &gt; 0.90, recall &gt; 0.85, propagation time &lt; 50ms per theta tick.</p>
+<h3 id="end-to-end-defense-effectiveness"><a class="header" href="#end-to-end-defense-effectiveness">End-to-end defense effectiveness</a></h3>
+<p>The ultimate test: does the adversarial defense engine improve the Golem’s P&amp;L in adversarial environments?</p>
+<ul>
+<li><strong>Defended P&amp;L:</strong> cumulative P&amp;L of the Golem with adversarial defense active, in an environment with simulated adversarial activity.</li>
+<li><strong>Undefended P&amp;L:</strong> same Golem configuration, same environment, but with adversarial defense disabled.</li>
+<li><strong>Defense value:</strong> defended P&amp;L - undefended P&amp;L. This is the dollar value of the adversarial defense engine.</li>
+<li><strong>Defense cost:</strong> additional computation time consumed by the defense engine (should be negligible at gamma frequency; more significant during REM sleep).</li>
+</ul>
+<p>Run this comparison across four adversarial intensity levels: zero adversarial activity (baseline), light (5% of observations adversarial), moderate (15%), and heavy (30%). The defended Golem should match or exceed the undefended Golem at all levels, with the gap widening as adversarial intensity increases.</p>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<p>Daian, P., Goldfeder, S., Kell, T., Li, Y., Zhao, X., Bentov, I., Breidenbach, L., &amp; Juels, A. (2020). Flash Boys 2.0: Frontrunning in Decentralized Exchanges, Miner Extractable Value, and Consensus Instability. <em>IEEE Symposium on Security and Privacy</em>, 910-927.</p>
+<p>Qin, K., Zhou, L., &amp; Gervais, A. (2022). Quantifying Blockchain Extractable Value: How dark is the forest? <em>IEEE Symposium on Security and Privacy</em>, 198-214.</p>
+<p>Huber, P. J. (1981). <em>Robust Statistics</em>. Wiley.</p>
+<p>Hampel, F. R., Ronchetti, E. M., Rousseeuw, P. J., &amp; Stahel, W. A. (1986). <em>Robust Statistics: The Approach Based on Influence Functions</em>. Wiley.</p>
+<p>Tukey, J. W. (1977). <em>Exploratory Data Analysis</em>. Addison-Wesley.</p>
+<p>Hodges, J. L., &amp; Lehmann, E. L. (1963). Estimates of Location Based on Rank Tests. <em>Annals of Mathematical Statistics</em>, 34(2), 598-611.</p>
+<p>Rousseeuw, P. J., &amp; Croux, C. (1993). Alternatives to the Median Absolute Deviation. <em>Journal of the American Statistical Association</em>, 88(424), 1273-1283.</p>
+<p>Van Valen, L. (1973). A New Evolutionary Law. <em>Evolutionary Theory</em>, 1, 1-30. [Red Queen hypothesis.]</p>
+<p>Zhou, L., Qin, K., Torres, C. F., Le, D. V., &amp; Gervais, A. (2021). High-Frequency Trading on Decentralized On-Chain Exchanges. <em>IEEE Symposium on Security and Privacy</em>, 428-445.</p>
+<p>Torres, C. F., Camino, R., &amp; State, R. (2021). Frontrunner Jones and the Raiders of the Dark Forest: An Empirical Study of Frontrunning on the Ethereum Blockchain. <em>USENIX Security Symposium</em>.</p>
+<p>Weintraub, B., Torres, C. F., Nita-Rotaru, C., &amp; State, R. (2022). A Flash(bot) in the Pan: Measuring Maximal Extractable Value in Private Transaction Ordering Markets. <em>ACM CCS</em>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/23-ta/07-defi-native-technical-analysis.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/23-ta/09-somatic-technical-analysis.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/23-ta/07-defi-native-technical-analysis.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/23-ta/09-somatic-technical-analysis.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Inference Performance - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/12-inference/21-inference-performance.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="superseded-by-14-rust-implementationmd"><a class="header" href="#superseded-by-14-rust-implementationmd">[SUPERSEDED by 14-rust-implementation.md]</a></h1>
+<h1 id="bardo-inference-performance-latency--practicality"><a class="header" href="#bardo-inference-performance-latency--practicality">Bardo Inference: Performance, Latency &amp; Practicality</a></h1>
+<blockquote>
+<p><strong>Document Type</strong>: SPEC (normative) | <strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Last Updated</strong>: 2026-03-14</p>
+<p><strong>Package</strong>: <code>@bardo/inference</code></p>
+<p><strong>Depends on</strong>: <code>prd2-bardo-inference.md</code></p>
+<p><strong>Purpose</strong>: Honest analysis of the performance cost of Bardo Inference’s 8-layer context engineering pipeline. Per-layer latency budgets, parallelization strategy, conditional bypass rules, streaming implications, and the architecture decisions that keep total overhead under the threshold where users notice.</p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document (superseded by <code>14-rust-implementation.md</code>) analyzes the performance cost of Bardo Inference’s (the LLM inference gateway for mortal autonomous DeFi agents called Golems) 8-layer context engineering pipeline. It belongs to the inference plane and covers per-layer latency budgets, parallelization strategy, conditional bypass rules, and streaming implications from the original TypeScript/Bun perspective. The key concept is that the full pipeline adds &lt;50ms at P95, dominated by ONNX model inference (DeBERTa at 8ms, nomic-embed at 5ms), keeping overhead well below the threshold where users notice. For term definitions, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="1-the-core-tension"><a class="header" href="#1-the-core-tension">1. The Core Tension</a></h2>
+<p>Every layer in the context engineering pipeline adds value (cost savings, quality improvement, safety) but also adds <strong>latency</strong>. An 8-layer pipeline that takes 500ms to process before the first token streams from the LLM is a terrible UX — the user stares at a blank screen for half a second before anything happens, on top of the LLM’s own time-to-first-token (TTFT).</p>
+<p>The target: <strong>total pipeline overhead &lt; 50ms for the p95 request</strong>. This is achievable because most layers are either sub-millisecond (hash lookups, reordering), parallelizable, or conditionally skipped.</p>
+<p>For context, production LLM gateway benchmarks show:</p>
+<ul>
+<li><strong>Bifrost (Go-based)</strong>: 11µs overhead at 5,000 RPS — effectively invisible</li>
+<li><strong>Cloudflare AI Gateway</strong>: 10–50ms proxy latency</li>
+<li><strong>TrueFoundry</strong>: ~3–4ms latency at 350+ RPS</li>
+<li><strong>LiteLLM (Python-based)</strong>: 15–30ms reported by users, with concurrency bottlenecks</li>
+</ul>
+<p>Bardo Inference is a TypeScript/Bun service with heavier per-request processing than a pure proxy, but lighter than a Python-based gateway. The goal is to sit in the 20–50ms range for the full pipeline, which is imperceptible when the LLM itself takes 500ms–30s.</p>
+<hr>
+<h2 id="2-per-layer-latency-budget"><a class="header" href="#2-per-layer-latency-budget">2. Per-Layer Latency Budget</a></h2>
+<h3 id="21-layer-breakdown"><a class="header" href="#21-layer-breakdown">2.1 Layer Breakdown</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Operation</th><th>Expected Latency</th><th>Parallelizable?</th><th>Can Skip?</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>L1: Prompt cache alignment</strong></td><td>Reorder system prompt segments, place <code>cache_control</code> breakpoints</td><td><strong>&lt; 1ms</strong></td><td>N/A (pure computation)</td><td>Skip if no Anthropic-backed request</td></tr>
+<tr><td><strong>L2: Semantic cache check</strong></td><td>Embed request → cosine similarity search against vector store</td><td><strong>5–25ms</strong></td><td>✅ Parallel with L3, L7, L8</td><td>Skip for streaming conversations, tool-heavy requests</td></tr>
+<tr><td><strong>L3: Hash cache check</strong></td><td>SHA-256 hash → O(1) lookup</td><td><strong>&lt; 0.5ms</strong></td><td>✅ Parallel with L2</td><td>Never skip — always cheap</td></tr>
+<tr><td><strong>L4: Tool pruning</strong></td><td>Analyze tool definitions, replace with meta-tools</td><td><strong>1–3ms</strong></td><td>N/A (must complete before request is sent)</td><td>Skip if &lt; 5 tools defined</td></tr>
+<tr><td><strong>L5: History compression</strong></td><td>Check token count; if over threshold, summarize older turns</td><td><strong>0ms (check) / 200–2000ms (compress)</strong></td><td>⚠️ Only when triggered</td><td>Skip if under 80% context limit</td></tr>
+<tr><td><strong>L6: Lost-in-the-middle</strong></td><td>Reorder context by priority within message array</td><td><strong>&lt; 1ms</strong></td><td>N/A (pure computation)</td><td>Skip if &lt; 10 context items</td></tr>
+<tr><td><strong>L7: PII masking</strong></td><td>Presidio NER scan + regex patterns + entity replacement</td><td><strong>5–50ms</strong></td><td>✅ Parallel with L2</td><td>Skip if no PII detected in fast pre-scan</td></tr>
+<tr><td><strong>L8: Injection detection</strong></td><td>DeBERTa-v3 classifier on user input</td><td><strong>10–40ms</strong></td><td>✅ Parallel with L2, L7</td><td>Skip for Golem-internal requests (trusted source)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="22-the-critical-insight-most-layers-are-parallel"><a class="header" href="#22-the-critical-insight-most-layers-are-parallel">2.2 The Critical Insight: Most Layers Are Parallel</a></h3>
+<p>The pipeline is NOT a sequential 8-step chain. Layers 2, 3, 7, and 8 all operate on the raw input and can run simultaneously. The execution graph looks like this:</p>
+<pre><code>Request arrives
+    │
+    ├─ PARALLEL GROUP A (fire all at once):
+    │   ├─ L2: Semantic cache check     (~15ms)
+    │   ├─ L3: Hash cache check          (~0.5ms)
+    │   ├─ L7: PII masking pre-scan      (~10ms)
+    │   └─ L8: Injection detection        (~20ms)
+    │
+    │   ← Wait for all to complete (~20ms wall clock)
+    │
+    ├─ DECISION POINT:
+    │   ├─ L2 or L3 cache hit? → Return cached response. Done. (0ms more)
+    │   ├─ L8 injection detected? → Block or warn. Done.
+    │   └─ Continue to sequential layers ↓
+    │
+    ├─ SEQUENTIAL GROUP B (must happen in order):
+    │   ├─ L7: Full PII masking (if pre-scan found entities)  (~15ms)
+    │   ├─ L1: Prompt cache alignment    (~1ms)
+    │   ├─ L4: Tool pruning              (~2ms)
+    │   ├─ L6: Position optimization     (~1ms)
+    │   └─ L5: History compression check (~0ms, or triggers async)
+    │
+    └─► Send to backend (~0ms — the request is ready)
+         ← LLM TTFT: 200ms–2000ms (this dominates)
+
+Total pipeline overhead: ~20ms (parallel) + ~19ms (sequential) = ~39ms p50
+                         ~25ms (parallel) + ~40ms (sequential) = ~65ms p95
+</code></pre>
+<p><strong>The key point</strong>: The LLM’s own time-to-first-token is typically 200ms (Groq/Cerebras fast models) to 2000ms+ (Opus 4.6 with deep thinking). Even at the p95 of 65ms, the pipeline overhead is <strong>3–30% of the total TTFT</strong>, which is imperceptible to users.</p>
+<h3 id="23-per-layer-deep-dive"><a class="header" href="#23-per-layer-deep-dive">2.3 Per-Layer Deep Dive</a></h3>
+<h4 id="l2-semantic-cache--the-biggest-variable"><a class="header" href="#l2-semantic-cache--the-biggest-variable">L2: Semantic Cache — The Biggest Variable</a></h4>
+<p>The semantic cache is the most latency-variable layer. It requires:</p>
+<ol>
+<li><strong>Embedding the request</strong> — converting the input to a vector</li>
+<li><strong>Similarity search</strong> — finding the nearest neighbor in the cache</li>
+</ol>
+<p><strong>Embedding latency</strong> depends heavily on the model:</p>
+<ul>
+<li><strong>all-MiniLM-L6-v2 (CPU, ONNX optimized)</strong>: ~10–20ms per sentence on modern CPU. Sub-30ms confirmed by benchmark. This is a 33M parameter model that runs entirely on CPU.</li>
+<li><strong>Model2Vec (static embeddings)</strong>: ~0.04ms per sentence (25,000+ sentences/sec). 500x faster than MiniLM with ~90% of the quality. Suitable if MiniLM is too slow.</li>
+<li><strong>Ollama embedding endpoint</strong>: ~5–15ms (local, GPU-backed if available)</li>
+</ul>
+<p><strong>Similarity search</strong> latency depends on the vector store:</p>
+<ul>
+<li><strong>In-memory (HNSW via hnswlib-node)</strong>: &lt; 1ms for 100K vectors</li>
+<li><strong>SQLite + vector extension</strong>: 1–3ms</li>
+<li><strong>External (Turbopuffer, Qdrant)</strong>: 5–20ms (network hop)</li>
+</ul>
+<p><strong>Recommendation</strong>: Use ONNX-optimized MiniLM-L6-v2 with in-memory HNSW for the semantic cache. Total: ~15ms. If this is too slow, switch to Model2Vec (~2ms total) with acceptable quality tradeoff.</p>
+<p><strong>Bypass condition</strong>: Skip semantic cache for streaming conversations where the user is mid-flow (the response needs to be fresh, not cached). Also skip for requests with tool calls (tool outputs vary, caching is rarely useful).</p>
+<h4 id="l7-pii-masking--presidio-overhead"><a class="header" href="#l7-pii-masking--presidio-overhead">L7: PII Masking — Presidio Overhead</a></h4>
+<p>Presidio uses spaCy NER (en_core_web_lg, ~750MB model) plus regex patterns. The NER step is the bottleneck.</p>
+<p><strong>Latency profile</strong>:</p>
+<ul>
+<li><strong>spaCy NER on short text (&lt; 500 chars)</strong>: ~5–15ms CPU</li>
+<li><strong>spaCy NER on medium text (500–2000 chars)</strong>: ~15–30ms CPU</li>
+<li><strong>spaCy NER on long text (2000+ chars)</strong>: ~30–80ms CPU</li>
+<li><strong>Regex-only patterns (no NER)</strong>: &lt; 1ms</li>
+</ul>
+<p><strong>Optimization strategy</strong>: Two-phase approach.</p>
+<ol>
+<li><strong>Fast pre-scan</strong> (&lt; 2ms): Regex-only check for obvious PII patterns (emails, phone numbers, SSNs, credit cards, wallet addresses). If nothing found, skip NER entirely. This catches ~60% of PII cases.</li>
+<li><strong>Full NER scan</strong> (only when pre-scan finds patterns OR for high-security requests): Run spaCy NER. Run in parallel with other layers.</li>
+</ol>
+<p><strong>Alternative</strong>: Use a lighter spaCy model (en_core_web_sm, ~12MB) for the NER step. 3–5x faster with ~10% accuracy loss. Acceptable for most use cases — false negatives go to the LLM, which is less sensitive than sending unmasked PII.</p>
+<p><strong>Bypass condition</strong>: Skip PII masking entirely for Venice-routed requests (Venice has structural zero data retention — PII masking is redundant). Skip for Golem-internal requests (heartbeat, dreams) where no operator PII is present.</p>
+<h4 id="l8-injection-detection--deberta-overhead"><a class="header" href="#l8-injection-detection--deberta-overhead">L8: Injection Detection — DeBERTa Overhead</a></h4>
+<p>The DeBERTa-v3-base prompt injection classifier is a ~184M parameter model.</p>
+<p><strong>Latency profile</strong>:</p>
+<ul>
+<li><strong>DeBERTa-v3-base (CPU, PyTorch)</strong>: ~30–80ms</li>
+<li><strong>DeBERTa-v3-base (CPU, ONNX Runtime)</strong>: ~15–35ms</li>
+<li><strong>DeBERTa-v3-small (CPU, ONNX Runtime)</strong>: ~8–20ms (slightly less accurate)</li>
+<li><strong>DeBERTa-v3-base (GPU)</strong>: ~3–5ms</li>
+</ul>
+<p><strong>Recommendation</strong>: Use ONNX-optimized DeBERTa-v3-small for default, DeBERTa-v3-base for high-security. Run in parallel with semantic cache and PII masking.</p>
+<p><strong>Bypass condition</strong>: Skip for Golem-internal requests (heartbeat, dreams, curator — the prompts are generated by trusted code, not user input). Only run on operator-facing requests and tool results from external sources.</p>
+<h4 id="l5-history-compression--the-sleeping-giant"><a class="header" href="#l5-history-compression--the-sleeping-giant">L5: History Compression — The Sleeping Giant</a></h4>
+<p>History compression is <strong>not</strong> on the critical path for most requests. It only triggers when the conversation approaches the context limit (80% of the model’s window). When it does trigger, it’s expensive: an LLM call to summarize older turns (200–2000ms depending on the summarization model).</p>
+<p><strong>Mitigation</strong>:</p>
+<ol>
+<li><strong>Never block on compression</strong>. Compress asynchronously: send the current request with the full history, and compress in the background for the next request.</li>
+<li><strong>Pre-compress proactively</strong>: When history reaches 60% of the limit, start compressing in the background (during idle time between heartbeats).</li>
+<li><strong>Use Anthropic Compaction when available</strong>: Server-side compaction happens in-band and is typically faster + higher quality than client-side.</li>
+<li><strong>Compression model choice matters</strong>: Use Haiku or Gemini Flash (~200ms TTFT) for compression, not Opus (~1500ms TTFT). The summary doesn’t need to be brilliant — it needs to be fast and accurate.</li>
+</ol>
+<hr>
+<h2 id="3-streaming-considerations"><a class="header" href="#3-streaming-considerations">3. Streaming Considerations</a></h2>
+<h3 id="31-time-to-first-token-ttft-impact"><a class="header" href="#31-time-to-first-token-ttft-impact">3.1 Time-to-First-Token (TTFT) Impact</a></h3>
+<p>TTFT is the most perceptible latency metric. Users notice when the screen is blank.</p>
+<pre><code>Without Bardo Inference:
+  User sends message → LLM processes → first token streams
+  TTFT = LLM processing time (200ms–2000ms)
+
+With Bardo Inference:
+  User sends message → Pipeline (20–65ms) → LLM processes → first token streams
+  TTFT = Pipeline (20–65ms) + LLM processing time (200ms–2000ms)
+
+Overhead: 1–30% increase in TTFT
+</code></pre>
+<p>For fast models (Groq Llama at ~200ms TTFT), the pipeline adds a noticeable ~30% overhead. For standard models (Claude Opus at ~1500ms TTFT), it adds ~3%. For thinking models (R1 extended thinking at 5000ms+), it’s invisible.</p>
+<h3 id="32-streaming-passthrough"><a class="header" href="#32-streaming-passthrough">3.2 Streaming Passthrough</a></h3>
+<p>Once the pipeline completes and the request reaches the backend, <strong>streaming works identically to a direct connection</strong>. Bardo Inference forwards SSE events as they arrive — there is no buffering or batching of streaming tokens. The <code>bardo-ui-bridge</code> parser operates on individual events as they stream through.</p>
+<pre><code>Backend SSE event → Bardo Inference (passthrough, ~0ms) → Client
+</code></pre>
+<p>The only streaming-specific overhead is the <code>bardo-ui-bridge</code> parsing (think tag detection, citation extraction), which is pure string processing at &lt; 0.1ms per event.</p>
+<h3 id="33-cache-hits-dramatically-faster"><a class="header" href="#33-cache-hits-dramatically-faster">3.3 Cache Hits: Dramatically Faster</a></h3>
+<p>When the semantic or hash cache hits, the response is returned <strong>without any LLM call</strong>:</p>
+<pre><code>Cache hit path:
+  User sends message → Pipeline parallel group (~20ms) → Cache hit → Return cached response
+  TTFT: ~20ms (vs. 200–2000ms without cache)
+
+This is 10–100x faster than a fresh LLM call.
+</code></pre>
+<p>For Golem heartbeat ticks in calm markets (where ~20% of requests are semantically identical to recent ones), this means 1 in 5 ticks completes in ~20ms instead of ~500ms. This is a massive UX win for the TUI and web dashboard — the Golem appears to “think” instantly for routine checks.</p>
+<hr>
+<h2 id="4-conditional-bypass-rules"><a class="header" href="#4-conditional-bypass-rules">4. Conditional Bypass Rules</a></h2>
+<p>Not every request needs every layer. The pipeline dynamically skips layers based on request characteristics:</p>
+<h3 id="41-bypass-matrix"><a class="header" href="#41-bypass-matrix">4.1 Bypass Matrix</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Layer</th><th>Skip When</th><th>Rationale</th></tr>
+</thead>
+<tbody>
+<tr><td>L1: Cache alignment</td><td>Request targets non-Anthropic model</td><td>Only Anthropic benefits from prefix caching</td></tr>
+<tr><td>L2: Semantic cache</td><td>Streaming multi-turn conversation, tool-heavy request, <code>cache: false</code> header</td><td>Mid-conversation responses should be fresh</td></tr>
+<tr><td>L3: Hash cache</td><td>Never</td><td>Always &lt; 0.5ms, always worth checking</td></tr>
+<tr><td>L4: Tool pruning</td><td>&lt; 5 tools defined, or model has native tool_search (GPT-5.4)</td><td>Overhead not worth it for small tool sets</td></tr>
+<tr><td>L5: History compression</td><td>Under 80% context limit</td><td>No compression needed</td></tr>
+<tr><td>L6: Position optimization</td><td>&lt; 10 context items</td><td>Reordering is negligible for small contexts</td></tr>
+<tr><td>L7: PII masking</td><td>Venice-routed request, Golem-internal request, fast pre-scan negative</td><td>Venice = structural privacy. Internal = no user PII</td></tr>
+<tr><td>L8: Injection detection</td><td>Golem-internal request (trusted source), <code>security: skip</code> header (non-Golem power users)</td><td>Heartbeat/dream prompts are generated code, not user input</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="42-fast-path-profiles"><a class="header" href="#42-fast-path-profiles">4.2 Fast Path Profiles</a></h3>
+<p>The pipeline automatically selects a fast path based on request metadata:</p>
+<pre><code class="language-typescript">type PipelineProfile = "full" | "standard" | "fast" | "minimal";
+
+function selectProfile(request: InferenceRequest): PipelineProfile {
+  // Golem heartbeat T0 — deterministic, no LLM call
+  if (request.bardo?.subsystem === "heartbeat_t0") return "minimal";
+
+  // Golem internal subsystems (dreams, curator, daimon)
+  if (request.bardo?.subsystem &amp;&amp; !request.bardo.isOperatorFacing) return "fast";
+
+  // Operator-facing or external user request
+  if (request.bardo?.isOperatorFacing || !request.bardo) return "standard";
+
+  // High-security request (death reflection, MEV-sensitive)
+  if (request.securityClass === "private") return "full";
+
+  return "standard";
+}
+
+const PROFILES: Record&lt;PipelineProfile, LayerConfig&gt; = {
+  full: {
+    // All 8 layers, no skips. Maximum optimization + safety.
+    cacheAlignment: true, semanticCache: true, hashCache: true,
+    toolPruning: true, historyCompression: true, positionOptimization: true,
+    piiMasking: true, injectionDetection: true,
+  },
+  standard: {
+    // Standard path for most requests. Skip injection detection for trusted sources.
+    cacheAlignment: true, semanticCache: true, hashCache: true,
+    toolPruning: true, historyCompression: true, positionOptimization: true,
+    piiMasking: true, injectionDetection: true,
+  },
+  fast: {
+    // Golem internal. Skip PII masking and injection detection.
+    cacheAlignment: true, semanticCache: true, hashCache: true,
+    toolPruning: true, historyCompression: true, positionOptimization: true,
+    piiMasking: false, injectionDetection: false,
+  },
+  minimal: {
+    // T0 heartbeat. Only hash cache (in case of exact repeat).
+    cacheAlignment: false, semanticCache: false, hashCache: true,
+    toolPruning: false, historyCompression: false, positionOptimization: false,
+    piiMasking: false, injectionDetection: false,
+  },
+};
+</code></pre>
+<p><strong>Latency by profile</strong>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Profile</th><th>Typical Latency</th><th>When Used</th></tr>
+</thead>
+<tbody>
+<tr><td><code>minimal</code></td><td>&lt; 1ms</td><td>T0 heartbeat (no LLM call anyway)</td></tr>
+<tr><td><code>fast</code></td><td>~5–15ms</td><td>Golem internal (dreams, curator, daimon)</td></tr>
+<tr><td><code>standard</code></td><td>~20–40ms</td><td>Operator conversation, external users</td></tr>
+<tr><td><code>full</code></td><td>~30–65ms</td><td>Private/high-security requests</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="5-infrastructure-sizing"><a class="header" href="#5-infrastructure-sizing">5. Infrastructure Sizing</a></h2>
+<h3 id="51-compute-requirements-for-low-latency"><a class="header" href="#51-compute-requirements-for-low-latency">5.1 Compute Requirements for Low Latency</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Component</th><th>Minimum for &lt; 50ms</th><th>Recommended</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>CPU</strong></td><td>4 cores (embedding + DeBERTa compete for CPU)</td><td>8 cores (comfortable headroom)</td></tr>
+<tr><td><strong>RAM</strong></td><td>4GB (MiniLM ~100MB + DeBERTa ~370MB + spaCy ~750MB + cache)</td><td>8GB</td></tr>
+<tr><td><strong>GPU</strong></td><td>Not required (ONNX on CPU is sufficient)</td><td>Optional: small GPU (T4/L4) for DeBERTa (~5ms instead of ~20ms)</td></tr>
+<tr><td><strong>Vector store</strong></td><td>In-memory HNSW (part of process RAM)</td><td>Same</td></tr>
+<tr><td><strong>Disk</strong></td><td>1GB (models + SQLite cache)</td><td>10GB (larger cache)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="52-model-loading-strategy"><a class="header" href="#52-model-loading-strategy">5.2 Model Loading Strategy</a></h3>
+<p>The biggest single latency penalty is <strong>cold start</strong> — loading models into memory on first request. This can take 5–15 seconds for spaCy + DeBERTa + MiniLM.</p>
+<p><strong>Mitigation</strong>:</p>
+<ul>
+<li>Load all models at server startup, not on first request</li>
+<li>Use Bun’s fast startup (vs. Node.js) for ~2x faster cold start</li>
+<li>Keep the server warm with a health check endpoint that exercises the pipeline</li>
+<li>If using serverless (not recommended for Bardo Inference), use provisioned concurrency</li>
+</ul>
+<h3 id="53-concurrency"><a class="header" href="#53-concurrency">5.3 Concurrency</a></h3>
+<p>Each request’s parallel group (L2, L3, L7, L8) uses ~4 concurrent operations. With Bun’s event loop + worker threads for CPU-bound ONNX inference:</p>
+<ul>
+<li><strong>1 concurrent request</strong>: Full CPU available, ~20ms parallel group</li>
+<li><strong>10 concurrent requests</strong>: CPU contention on ONNX inference, ~40ms parallel group</li>
+<li><strong>50+ concurrent requests</strong>: Queue depth increases, consider horizontal scaling</li>
+</ul>
+<p><strong>Recommendation for single-instance public Bardo Inference</strong>: 8-core machine handles ~20 concurrent requests with &lt; 50ms pipeline latency. Above that, horizontal scaling (multiple instances behind a load balancer) with shared cache (Redis or Turso for SQLite).</p>
+<hr>
+<h2 id="6-the-is-it-worth-it-analysis"><a class="header" href="#6-the-is-it-worth-it-analysis">6. The “Is It Worth It?” Analysis</a></h2>
+<h3 id="61-latency-cost-vs-dollar-cost-savings"><a class="header" href="#61-latency-cost-vs-dollar-cost-savings">6.1 Latency Cost vs. Dollar Cost Savings</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>Pipeline Overhead</th><th>Dollar Savings</th><th>Worth It?</th></tr>
+</thead>
+<tbody>
+<tr><td>Operator typing a message (Claude Opus)</td><td>+40ms on 1500ms TTFT</td><td>60–70% cost reduction</td><td><strong>Yes</strong> — imperceptible latency, massive savings</td></tr>
+<tr><td>Heartbeat T1 (Gemini Flash)</td><td>+15ms on 300ms TTFT</td><td>40–50% cost reduction</td><td><strong>Yes</strong> — 5% latency increase, significant savings</td></tr>
+<tr><td>Heartbeat T0 (no LLM call)</td><td>+1ms on 0ms</td><td>$0 (no LLM call to save on)</td><td><strong>Neutral</strong> — minimal profile adds ~nothing</td></tr>
+<tr><td>Dream cycle (DeepSeek R1, 120s timeout)</td><td>+40ms on 5000ms+</td><td>20–30% cost reduction</td><td><strong>Yes</strong> — 0.8% latency increase, good savings</td></tr>
+<tr><td>Risk assessment (Claude Opus, tools)</td><td>+40ms on 2000ms TTFT</td><td>50% cost reduction (tool pruning alone)</td><td><strong>Yes</strong> — 2% latency increase, critical savings</td></tr>
+<tr><td>Fast model (Groq Llama, 200ms TTFT)</td><td>+40ms on 200ms TTFT</td><td>Semantic cache hits = 0ms</td><td><strong>Maybe</strong> — 20% latency increase, but cache hits are 10x faster</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="62-when-bardo-inference-adds-negative-latency"><a class="header" href="#62-when-bardo-inference-adds-negative-latency">6.2 When Bardo Inference Adds Negative Latency</a></h3>
+<p>Cache hits don’t just save money — they’re <strong>faster</strong> than direct provider calls:</p>
+<pre><code>Direct to provider:     ~800ms average TTFT (Claude Sonnet)
+Bardo Inference miss:   ~840ms average TTFT (40ms overhead + 800ms LLM)
+Bardo Inference hit:    ~15ms TTFT (cached response, no LLM call)
+
+At 20% hit rate:
+  Weighted average TTFT = 0.20 × 15ms + 0.80 × 840ms = 675ms
+
+675ms &lt; 800ms → Bardo Inference is FASTER on average despite per-request overhead
+</code></pre>
+<p>This is the key insight: <strong>semantic caching transforms Bardo Inference from a latency cost into a latency benefit</strong> at hit rates above ~5% (which heartbeat ticks easily achieve in calm markets).</p>
+<hr>
+<h2 id="7-what-to-monitor"><a class="header" href="#7-what-to-monitor">7. What to Monitor</a></h2>
+<h3 id="71-latency-metrics"><a class="header" href="#71-latency-metrics">7.1 Latency Metrics</a></h3>
+<pre><code class="language-typescript">interface PipelineMetrics {
+  // Per-layer timing
+  layers: {
+    cacheAlignment: { p50Ms: number; p95Ms: number; p99Ms: number; skipRate: number };
+    semanticCache: { p50Ms: number; p95Ms: number; hitRate: number; skipRate: number };
+    hashCache: { p50Ms: number; p95Ms: number; hitRate: number };
+    toolPruning: { p50Ms: number; p95Ms: number; tokensSaved: number; skipRate: number };
+    historyCompression: { p50Ms: number; p95Ms: number; triggerRate: number };
+    positionOptimization: { p50Ms: number; p95Ms: number; skipRate: number };
+    piiMasking: { p50Ms: number; p95Ms: number; detectionRate: number; skipRate: number };
+    injectionDetection: { p50Ms: number; p95Ms: number; flagRate: number; skipRate: number };
+  };
+
+  // Aggregate
+  pipeline: {
+    totalP50Ms: number;      // Target: &lt; 30ms
+    totalP95Ms: number;      // Target: &lt; 50ms
+    totalP99Ms: number;      // Target: &lt; 100ms
+    cacheHitRate: number;    // Target: &gt; 15%
+    skipRate: number;        // How often layers are bypassed
+  };
+
+  // End-to-end (including LLM)
+  endToEnd: {
+    ttftP50Ms: number;
+    ttftP95Ms: number;
+    totalP50Ms: number;      // Including full response streaming
+  };
+}
+</code></pre>
+<h3 id="72-alert-thresholds"><a class="header" href="#72-alert-thresholds">7.2 Alert Thresholds</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Metric</th><th>Warning</th><th>Critical</th></tr>
+</thead>
+<tbody>
+<tr><td>Pipeline p95 latency</td><td>&gt; 80ms</td><td>&gt; 150ms</td></tr>
+<tr><td>Semantic cache embedding latency</td><td>&gt; 30ms</td><td>&gt; 50ms</td></tr>
+<tr><td>DeBERTa inference latency</td><td>&gt; 40ms</td><td>&gt; 80ms</td></tr>
+<tr><td>PII masking latency</td><td>&gt; 40ms</td><td>&gt; 100ms</td></tr>
+<tr><td>History compression trigger rate</td><td>&gt; 30% of requests</td><td>&gt; 50% (context window too small or conversations too long)</td></tr>
+<tr><td>Cache hit rate (heartbeat)</td><td>&lt; 10%</td><td>&lt; 5% (cache not working)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="8-implementation-recommendations"><a class="header" href="#8-implementation-recommendations">8. Implementation Recommendations</a></h2>
+<h3 id="81-language--runtime"><a class="header" href="#81-language--runtime">8.1 Language &amp; Runtime</a></h3>
+<p><strong>Bun over Node.js</strong>: Bun’s faster startup (~2x), native SQLite support, and efficient event loop make it the better choice. The ONNX Runtime for DeBERTa and MiniLM runs via native bindings (C++) regardless of the JS runtime.</p>
+<p><strong>Not Go</strong>: Unlike Bifrost (11µs overhead in Go), Bardo Inference does real computation per request (embedding, NER, classification). The proxy routing overhead is negligible; the ML inference layers dominate. Go’s advantage in raw proxy throughput doesn’t apply here. TypeScript is the right choice for integration with the Pi ecosystem (all TypeScript).</p>
+<h3 id="82-onnx-for-all-ml-models"><a class="header" href="#82-onnx-for-all-ml-models">8.2 ONNX for All ML Models</a></h3>
+<p>Convert all ML models (MiniLM, DeBERTa, spaCy) to ONNX format for inference:</p>
+<ul>
+<li><strong>2–4x faster</strong> than PyTorch on CPU</li>
+<li><strong>Consistent latency</strong> (no Python GIL contention)</li>
+<li><strong>Smaller memory footprint</strong></li>
+<li><strong>Native C++ execution</strong> via onnxruntime-node</li>
+</ul>
+<h3 id="83-consider-model2vec-for-semantic-cache"><a class="header" href="#83-consider-model2vec-for-semantic-cache">8.3 Consider Model2Vec for Semantic Cache</a></h3>
+<p>If MiniLM embedding latency (~15ms) is too high, switch to Model2Vec static embeddings:</p>
+<ul>
+<li><strong>500x faster</strong> (~0.04ms per sentence)</li>
+<li><strong>~90% of MiniLM quality</strong> on retrieval tasks</li>
+<li><strong>2.5MB model size</strong> (vs. 100MB for MiniLM)</li>
+<li><strong>No ONNX needed</strong> — pure JavaScript computation</li>
+</ul>
+<p>The quality tradeoff is acceptable for semantic caching (threshold-based matching), where near-misses don’t matter (they just result in a cache miss, not a wrong answer).</p>
+<h3 id="84-presidio-alternatives"><a class="header" href="#84-presidio-alternatives">8.4 Presidio Alternatives</a></h3>
+<p>If Presidio’s spaCy dependency is too heavy (~750MB for en_core_web_lg + ~30ms latency):</p>
+<ol>
+<li>
+<p><strong>Regex-only PII masking</strong>: Handles emails, phone numbers, SSNs, credit cards, wallet addresses. Covers ~80% of PII cases at &lt; 1ms. Good enough for most DeFi use cases (wallet addresses are the primary PII concern).</p>
+</li>
+<li>
+<p><strong>Lighter NER model</strong>: Use spaCy’s en_core_web_sm (12MB, ~5ms) instead of en_core_web_lg. Catches names and locations with lower accuracy but much faster.</p>
+</li>
+<li>
+<p><strong>LLM-based PII detection</strong>: Use the LLM itself to detect and redact PII in its response. This adds zero pre-request latency but means PII reaches the LLM (acceptable for Venice, not for other providers).</p>
+</li>
+</ol>
+<h3 id="85-async-everything-that-can-be-async"><a class="header" href="#85-async-everything-that-can-be-async">8.5 Async Everything That Can Be Async</a></h3>
+<ul>
+<li><strong>History compression</strong>: Never block. Compress in the background after responding.</li>
+<li><strong>PII masking on responses</strong>: Mask in the streaming response handler, not pre-response.</li>
+<li><strong>Injection detection</strong>: If running in <code>fast</code> profile, can be deferred to post-response logging (detect-and-flag rather than detect-and-block).</li>
+<li><strong>Usage tracking</strong>: Log asynchronously. Never block a response to write a metric.</li>
+</ul>
+<hr>
+<h2 id="9-failure-modes--graceful-degradation"><a class="header" href="#9-failure-modes--graceful-degradation">9. Failure Modes &amp; Graceful Degradation</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Failure</th><th>Impact</th><th>Mitigation</th></tr>
+</thead>
+<tbody>
+<tr><td>Embedding model crashes</td><td>Semantic cache unavailable</td><td>Hash cache still works. Requests pass through uncached.</td></tr>
+<tr><td>DeBERTa model crashes</td><td>Injection detection unavailable</td><td>Log the failure, continue without detection. Alert operator.</td></tr>
+<tr><td>spaCy/Presidio crashes</td><td>PII masking unavailable</td><td>Regex-only fallback (&lt; 1ms). Log the failure.</td></tr>
+<tr><td>Vector store corrupted</td><td>Semantic cache miss on everything</td><td>Rebuild from scratch (cache is ephemeral). No data loss.</td></tr>
+<tr><td>Cache full (memory pressure)</td><td>Eviction rate increases</td><td>LRU eviction is automatic. Worst case: lower hit rate.</td></tr>
+<tr><td>All layers fail</td><td>Pipeline degrades to passthrough</td><td>Request goes directly to backend with zero optimization. Still works.</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Core principle</strong>: Every pipeline layer failing degrades to <strong>passthrough</strong>, not to <strong>error</strong>. The worst case is “Bardo Inference acts like a dumb proxy.” The user’s request always goes through.</p>
+<hr>
+<h2 id="10-benchmarking-plan"><a class="header" href="#10-benchmarking-plan">10. Benchmarking Plan</a></h2>
+<p>Before shipping, run these benchmarks on the target hardware:</p>
+<pre><code class="language-typescript">// Benchmark suite
+const benchmarks = [
+  // Individual layer benchmarks
+  { name: "hash_cache_lookup", iterations: 10000, target_p95_ms: 1 },
+  { name: "semantic_cache_embed", iterations: 1000, target_p95_ms: 25 },
+  { name: "semantic_cache_search", iterations: 1000, target_p95_ms: 5 },
+  { name: "tool_pruning_171_tools", iterations: 1000, target_p95_ms: 5 },
+  { name: "prompt_cache_alignment", iterations: 1000, target_p95_ms: 2 },
+  { name: "pii_masking_short_text", iterations: 1000, target_p95_ms: 15 },
+  { name: "pii_masking_long_text", iterations: 100, target_p95_ms: 50 },
+  { name: "injection_detection", iterations: 1000, target_p95_ms: 30 },
+
+  // Full pipeline benchmarks
+  { name: "pipeline_minimal_profile", iterations: 1000, target_p95_ms: 2 },
+  { name: "pipeline_fast_profile", iterations: 1000, target_p95_ms: 20 },
+  { name: "pipeline_standard_profile", iterations: 1000, target_p95_ms: 50 },
+  { name: "pipeline_full_profile", iterations: 100, target_p95_ms: 80 },
+
+  // Concurrent load benchmarks
+  { name: "10_concurrent_standard", iterations: 100, target_p95_ms: 60 },
+  { name: "50_concurrent_standard", iterations: 50, target_p95_ms: 100 },
+
+  // End-to-end (including backend call)
+  { name: "e2e_cache_hit", iterations: 100, target_p95_ms: 25 },
+  { name: "e2e_cache_miss_haiku", iterations: 50, target_p95_ms: 600 },
+  { name: "e2e_cache_miss_opus", iterations: 20, target_p95_ms: 2500 },
+];
+</code></pre>
+<hr>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<ul>
+<li>[BIFROST-BENCHMARKS-2026] Bifrost. “11µs overhead at 5,000 RPS.” Maxim AI benchmarks, 2026.</li>
+<li>[CLOUDFLARE-AI-GATEWAY-2025] Cloudflare. “AI Gateway: 10–50ms proxy latency.” Docs.</li>
+<li>[TRUEFOUNDRY-BENCHMARK-2025] TrueFoundry. “~3–4ms latency, 350+ RPS on 1 vCPU.” Blog.</li>
+<li>[LITELLM-LATENCY-2025] Reddit users. “15–30ms additional latency.” r/LLMDevs.</li>
+<li>[MINILM-BENCHMARK-2025] AIMultiple. “Sub-30ms cluster: MiniLM-L6-v2 &lt; 30ms latency.” Benchmark, 2025.</li>
+<li>[MODEL2VEC-2025] Hrishikesh. “500x faster than MiniLM.” Medium, 2025.</li>
+<li>[PRESIDIO-LATENCY-2024] Microsoft Presidio. “Latency depends heavily on recognizers and NLP models.” GitHub Discussion #1097.</li>
+<li>[PROTECTAI-DEBERTA-2024] ProtectAI. “deberta-v3-base-prompt-injection-v2.” HuggingFace.</li>
+<li>[PORTKEY-SEMANTIC-CACHE-2025] Portkey. “Semantic Caching for AI Gateway.” 2025.</li>
+<li>[ONNX-INFERENCE-2025] ONNX Runtime. “2–4x faster than PyTorch on CPU.” Docs.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/12-inference/20-inference-parameters.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/12-inference/sheaf-observation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/12-inference/20-inference-parameters.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/12-inference/sheaf-observation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

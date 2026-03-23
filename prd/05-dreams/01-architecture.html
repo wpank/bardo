@@ -1,0 +1,941 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Architecture - Bardo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="Permissionless infrastructure for mortal autonomous agents in DeFi">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-da4c60bc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Bardo</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wpank/bardo/edit/main/docs/src/prd/05-dreams/01-architecture.md" title="Suggest an edit" aria-label="Suggest an edit" rel="edit">
+                            <span class=fa-svg id="git-edit-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="dream-architecture-the-three-phase-cycle-spec"><a class="header" href="#dream-architecture-the-three-phase-cycle-spec">Dream Architecture: The Three-Phase Cycle [SPEC]</a></h1>
+<blockquote>
+<p><strong>Version</strong>: 1.0 | <strong>Status</strong>: Draft</p>
+<p><strong>Depends on</strong>: <code>00-overview.md</code>, <code>golem-core</code> (VitalityState, BehavioralPhase), <code>golem-grimoire</code>, <code>golem-inference</code></p>
+</blockquote>
+<hr>
+<blockquote>
+<p><strong>Reader orientation:</strong> This document specifies the three-phase dream cycle architecture (NREM replay, REM imagination, Integration) for a Golem (mortal autonomous agent) within Bardo (the Rust runtime for mortal autonomous DeFi agents). It covers the DreamScheduler that gates cycle initiation, the DreamState machine, compute budget tiers ([CORE] at T0 (cached/rule-based) vs [HARDENED] at T1/T2 (LLM-powered)), and full configuration. Prerequisites: the Dreams overview (<code>00-overview.md</code>), VitalityState (composite survival score 0.0-1.0), and BehavioralPhase (five survival phases). For a full glossary, see <code>prd2/shared/glossary.md</code>.</p>
+</blockquote>
+<h2 id="the-three-phase-cycle"><a class="header" href="#the-three-phase-cycle">The Three-Phase Cycle</a></h2>
+<p>Biological sleep alternates between NREM and REM phases in ~90-minute cycles, with each phase serving distinct cognitive functions. Deperrois et al. (2022) formalized this as a three-phase learning architecture: wakefulness (encode), NREM perturbed dreaming (replay with perturbations for robustness), and REM adversarial dreaming (creative generation essential for semantic concept extraction) [DEPERROIS-2022]. Removing the adversarial REM phase severely degraded semantic learning — both phases are necessary.</p>
+<p>The Golem’s dream cycle implements this directly:</p>
+<pre><code>┌──────────────────────────────────────────────────────────────────────────────┐
+│                              DREAM CYCLE                                     │
+│                                                                              │
+│ ┌───────────┐ ┌──────────┐ ┌──────────────┐ ┌───────────────┐ ┌──────────┐ │
+│ │  PHASE 0  │►│  PHASE 1 │►│   PHASE 2    │►│   PHASE 3     │►│ PHASE 4  │ │
+│ │ HYPNA-    │ │  NREM    │ │   REM        │ │   INTEGRATION │ │ HYPNO-   │ │
+│ │ GOGIC     │ │          │ │              │ │               │ │ POMPIC   │ │
+│ │ ONSET     │ │ Replay   │ │ Imagination  │ │ Consolidation │ │ RETURN   │ │
+│ │           │ │ Compress │ │ Counterfact. │ │ PLAYBOOK.md   │ │          │ │
+│ │ Context   │ │ Credit   │ │ Creative     │ │ Grimoire      │ │ Recryst- │ │
+│ │ dissolve  │ │ Triage   │ │ Threats      │ │ Journal       │ │ allize   │ │
+│ │ Waking    │ │ Perturb  │ │ Emotion      │ │ Validation    │ │ Dali     │ │
+│ │ residue   │ │          │ │ Depotentiate │ │               │ │ interrupt│ │
+│ └───────────┘ └──────────┘ └──────────────┘ └───────────────┘ └──────────┘ │
+│                                                                              │
+│ Budget: 10%   Budget: 35-40%  Budget: 25-35%  Budget: 15-20%   Budget: 5%   │
+└──────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<blockquote>
+<p><strong>Cross-ref</strong>: The onset and return phases are specified in detail in <code>../06-hypnagogia/02-architecture.md</code>. This document covers the three core phases; hypnagogia covers the two liminal phases that bracket them.</p>
+</blockquote>
+<p><strong>Budget allocation by behavioral phase:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Onset</th><th>NREM (Replay)</th><th>REM (Imagination)</th><th>Consolidation</th><th>Return</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>10%</td><td>34%</td><td>30%</td><td>21%</td><td>5%</td></tr>
+<tr><td>Stable</td><td>10%</td><td>30%</td><td>30%</td><td>25%</td><td>5%</td></tr>
+<tr><td>Conservation</td><td>10%</td><td>25%</td><td>20%</td><td>40%</td><td>5%</td></tr>
+<tr><td>Declining</td><td>10%</td><td>20%</td><td>16%</td><td>49%</td><td>5%</td></tr>
+<tr><td>Terminal</td><td>10%</td><td>16%</td><td>12%</td><td>57%</td><td>5%</td></tr>
+</tbody>
+</table>
+</div>
+<p>Onset and return budgets are fixed at 10% and 5% respectively across all phases – the liminal transitions are structurally necessary regardless of behavioral state. The remaining 85% shifts from exploration (NREM/REM) toward consolidation as the Golem ages. A Declining Golem spends nearly half its dream budget integrating and preserving knowledge for the death testament, while a Thriving Golem explores aggressively.</p>
+<h3 id="phase-1-nrem-like-replay-and-consolidation"><a class="header" href="#phase-1-nrem-like-replay-and-consolidation">Phase 1: NREM-like (Replay and Consolidation)</a></h3>
+<p><strong>Biological basis</strong>: During NREM sleep, hippocampal sharp-wave ripples (SPW-Rs) compress minutes of waking experience into ~100ms bursts (140–200 Hz oscillations), replaying sequences in both forward and reverse order [BUZSAKI-2015]. Wilson and McNaughton (1994) demonstrated that place cells co-firing during waking spatial experience exhibit increased co-firing during subsequent slow-wave sleep [WILSON-MCNAUGHTON-1994]. Replay intensity declines across successive sleep sessions, suggesting synaptic modifications during waking create the substrate for sleep replay.</p>
+<p><strong>LLM-native implementation</strong>: The ReplayEngine selects episodes from the Grimoire based on Mattar-Daw utility weighting: utility = gain x need. Gain measures prediction error magnitude (surprise, PnL magnitude, counterfactual regret). Need measures regime match probability (embedding similarity to current market, regime match, recency). Episodes are scored, filtered by utility &gt; 0.1, sorted, and the top-N form the replay batch. Curator-tagged episodes (those marked <code>dream_priority: "high"</code> during waking housekeeping) receive a 2x utility boost. An additional 20% of replay slots are reserved for diversity injection: at least one episode from each market regime seen in the last 30 days, one from the oldest third of the buffer, and one high-arousal episode regardless of utility score.</p>
+<p>Each batch is processed through LLM inference in compressed form. Each batch presents multiple episodes together, asking the LLM to identify cross-episode patterns, extract causal chains, and assign credit for outcomes. Each retrieved episode gets <code>strength += 0.5</code> in LanceDB after replay (reduced from +1.0 for live retrieval, reflecting that dream validation is LLM-mediated pattern recognition without on-chain grounding).</p>
+<p><strong>Operations in Phase 1</strong>:</p>
+<ol>
+<li>
+<p><strong>Prioritized replay</strong> — Select top-N episodes by utility score (gain × need). Process in batches of 5–10 episodes per inference call. Extract patterns not visible at encoding time.</p>
+</li>
+<li>
+<p><strong>Reverse replay (credit assignment)</strong> — For completed trades with known outcomes, trace backward: outcome → final action → preceding conditions → initial decision. Foster and Wilson (2006) showed reverse replay propagates reward information backward along the trajectory [FOSTER-WILSON-2006]. Ambrose et al. (2016) found reverse replay rate increases proportionally to reward magnitude [AMBROSE-2016].</p>
+</li>
+<li>
+<p><strong>Forward replay (planning)</strong> — For current positions and anticipated market conditions, project forward: current state → likely developments → optimal responses. Diba and Buzsáki (2007) showed forward sequences occur in anticipation of action [DIBA-BUZSAKI-2007].</p>
+</li>
+<li>
+<p><strong>Perturbed replay</strong> — Replay episodes with injected perturbations: simulated slippage, latency spikes, gas price changes, data dropout. This builds robustness by exposing the Golem’s strategies to variations it has not yet encountered in live trading [DEPERROIS-2022].</p>
+</li>
+<li>
+<p><strong>Memory triage</strong> — Following Stickgold and Walker (2013), classify replayed episodes: preserve (high utility, validated), abstract (extract rule, discard details), forget (low utility, contradicted) [STICKGOLD-WALKER-2013]. Triage decisions feed into the Integration phase.</p>
+</li>
+</ol>
+<p><strong>Typical prompt structure for NREM replay</strong>:</p>
+<pre><code>You are reviewing a batch of recent trading episodes during an offline
+consolidation phase. For each episode:
+1. What was the market state, the action taken, and the outcome?
+2. Looking back, what pattern connects these episodes?
+3. What would have been different if [perturbation]?
+4. Which episodes should be preserved, abstracted into a rule, or forgotten?
+
+Episodes:
+[serialized episode batch from Grimoire]
+
+Current PLAYBOOK.md context:
+[relevant PLAYBOOK.md sections]
+</code></pre>
+<p><strong>Cost</strong>: T1 inference (Haiku/Sonnet). NREM replay does not require deep reasoning — it processes structured data and extracts patterns. T2 escalation only for episodes flagged as high-complexity (multi-step DeFi interactions, cross-protocol dependencies).</p>
+<h3 id="phase-2-rem-like-imagination-and-creation"><a class="header" href="#phase-2-rem-like-imagination-and-creation">Phase 2: REM-like (Imagination and Creation)</a></h3>
+<p><strong>Biological basis</strong>: During REM sleep, the brain generates novel scenarios by recombining elements of past experience in a neurochemical milieu (high acetylcholine, low noradrenaline, low serotonin) that enables creative associations while depotentiating emotional charge [WALKER-VAN-DER-HELM-2009]. Perogamvros et al. (2013) showed increased amygdala and dopaminergic activity during REM promotes consolidation of high-value memories while enabling creative recombination [PEROGAMVROS-2013]. Hobson, Hong, and Friston (2014) described the sleeping brain as an active inference system sampling its own generated virtual reality [HOBSON-HONG-FRISTON-2014].</p>
+<p><strong>LLM-native implementation</strong>: The ImaginationEngine uses the LLM’s generative capabilities to produce novel scenarios, counterfactual analyses, and creative strategy recombinations. Unlike NREM’s data-driven replay, REM-like imagination is generative — it creates episodes that never happened.</p>
+<p><strong>Operations in Phase 2</strong>:</p>
+<ol>
+<li>
+<p><strong>Counterfactual reasoning</strong> — For key decisions in the replay set, generate “what if” alternatives. What if I had entered earlier/later? What if position size was different? What if the market had moved the other way? Pearl’s (2000/2009) structural causal model framework provides the formal foundation: move beyond correlational P(Y|X) to interventional P(Y|do(X)) [PEARL-2000]. See <code>03-imagination.md</code> for full specification.</p>
+</li>
+<li>
+<p><strong>Creative recombination</strong> — Boden’s (2004) three creativity modes [BODEN-2004]:</p>
+<ul>
+<li><em>Combinational</em>: blend elements from different strategies. “What if momentum entry signals were combined with mean-reversion exit signals?”</li>
+<li><em>Exploratory</em>: push existing strategies to boundary conditions. “What happens to this strategy under extreme gas prices? Under zero liquidity?”</li>
+<li><em>Transformational</em>: challenge fundamental assumptions. “What if impermanent loss is actually a feature, not a bug?”</li>
+</ul>
+</li>
+<li>
+<p><strong>Threat simulation</strong> — Revonsuo (2000) demonstrated that biological dreams contain more frequent and severe threats than waking life, and real threat exposure amplifies the system [REVONSUO-2000]. The ThreatSimulator generates DeFi-specific threat scenarios: flash crashes, oracle manipulation, smart contract exploits, cascading liquidations, MEV attacks. See <code>05-threats.md</code>.</p>
+</li>
+<li>
+<p><strong>Emotional depotentiation</strong> — If <code>golem-daimon</code> is enabled, reprocess high-arousal episodes with reduced emotional weighting. The high-arousal episodes queued during Phase 1 are processed here: the LLM re-examines trades that generated extreme emotional responses (panic, euphoria, anger), explicitly separating “what actually happened” from “how it felt.” Each processed episode has its arousal reduced by 0.3-0.5 per dream cycle, written back to LanceDB. Full depotentiation of episodes with arousal &gt; 0.8 requires 3-5 cycles. This reduces emotional reactivity while preserving informational content (the factual lesson about what happened survives; the emotional charge dissipates) [WALKER-VAN-DER-HELM-2009].</p>
+</li>
+<li>
+<p><strong>Stochastic activation</strong> — Hobson and McCarley’s (1977) activation-synthesis hypothesis: during REM, brain stem neurons fire randomly; the forebrain synthesizes these into coherent experience [HOBSON-MCCARLEY-1977]. The Golem’s analog: randomly select memory traces from distant time periods or different market regimes and ask the LLM to construct a coherent scenario connecting them. This produces novel juxtapositions that purely logical analysis would never generate.</p>
+</li>
+</ol>
+<p><strong>Typical prompt structure for REM imagination</strong>:</p>
+<pre><code>You are an autonomous trading agent entering a creative imagination phase.
+Your goal is to generate novel strategy hypotheses by recombining elements
+of past experience.
+
+Seed elements (randomly selected from different market epochs):
+- Element A: [episode fragment from month 1]
+- Element B: [episode fragment from month 3]
+- Element C: [heuristic from PLAYBOOK.md that has not been tested recently]
+
+Tasks:
+1. Construct a coherent market scenario that connects these elements.
+2. What novel strategy would perform well in this scenario?
+3. Under what conditions would this strategy fail catastrophically?
+4. What is the simplest version of this strategy that could be tested?
+</code></pre>
+<p><strong>Cost</strong>: T1–T2 inference. Creative recombination and deep counterfactual reasoning benefit from T2 (Opus-grade) inference. Threat simulation can often run at T1. The dream budget allocates T2 tokens specifically for creative and counterfactual operations.</p>
+<h3 id="phase-3-integration"><a class="header" href="#phase-3-integration">Phase 3: Integration</a></h3>
+<p><strong>Biological basis</strong>: Waking after sleep involves a period of “sleep inertia” where the brain transitions from offline processing back to online perception and action. During this transition, consolidated memories become available for waking use. Born and Wilhelm (2012) showed that sleep consolidation is selective — preferentially consolidating memories with relevance for future plans and goals, and producing qualitative changes including extraction of explicit knowledge from implicit learning [BORN-WILHELM-2012].</p>
+<p><strong>LLM-native implementation</strong>: The DreamConsolidator processes outputs from Phase 1 and Phase 2, integrating them into the Grimoire and PLAYBOOK.md. This is not automatic — every dream output goes through a validation gate before becoming operational knowledge.</p>
+<p><strong>Operations in Phase 3</strong>:</p>
+<ol>
+<li>
+<p><strong>Dream output classification</strong> — Each dream output is classified:</p>
+<ul>
+<li><em>Confirmed pattern</em>: a pattern identified in replay that matches existing Grimoire entries → boost confidence of matching entries.</li>
+<li><em>Novel insight</em>: a new pattern or causal link not in the Grimoire → create new Insight entry at confidence 0.3.</li>
+<li><em>Strategy hypothesis</em>: a novel strategy from creative recombination → create new Hypothesis entry (see below) at confidence 0.2.</li>
+<li><em>Threat scenario</em>: a plausible failure mode → create Threat entry with rehearsed responses.</li>
+<li><em>PLAYBOOK.md revision</em>: a proposed modification to an existing heuristic → queue for validation.</li>
+<li><em>Contradiction</em>: a dream finding that contradicts an existing Grimoire entry → flag for review, do not auto-resolve.</li>
+</ul>
+</li>
+<li>
+<p><strong>Staging buffer</strong> — All dream outputs (hypotheses, PLAYBOOK.md revisions, context policy mutations) enter a SQLite <code>dream_staging</code> table at initial confidence 0.2-0.3. They do not touch PLAYBOOK.md or the active Grimoire directly. Each entry includes a <code>validationCriterion</code> describing conditions under which the hypothesis can be confirmed. During waking ticks, <code>golem-grimoire</code> runs a validation sweep: when live market conditions match the criterion and the outcome aligns, confidence increments by +0.1. If the outcome contradicts, confidence decrements by -0.05. A hypothesis reaching confidence 0.7 is promoted through the Grimoire Admission Gate. One that drops below 0.1 is marked <code>status: "refuted"</code>. The staging buffer cap is 10 entries by default (<code>maxStagedRevisions</code>); new revisions must displace existing ones by utility score.</p>
+</li>
+<li>
+<p><strong>PLAYBOOK.md evolution</strong> — Dream-proposed revisions to PLAYBOOK.md follow the staging buffer lifecycle above. Each revision enters the staging buffer and is applied only after live validation confirms the prediction. Reaching 0.7 from 0.2 requires at least 5 independent confirming live-market episodes. See <code>04-consolidation.md</code>.</p>
+</li>
+<li>
+<p><strong>Dream journal entry</strong> — Every dream cycle produces a structured journal entry stored in the Grimoire’s SQLite database:</p>
+</li>
+</ol>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DreamJournalEntry {
+    pub id: String,
+    pub timestamp: u64,
+    pub phase1_summary: NremSummary,
+    pub phase2_summary: RemSummary,
+    pub phase3_summary: IntegrationSummary,
+    pub total_cost_usdc: f64,
+    pub dream_duration_ticks: u64,
+    pub dream_quality_score: f64,
+}
+
+pub struct NremSummary {
+    pub episodes_replayed: u32,
+    pub patterns_found: Vec&lt;String&gt;,
+    pub triage_decisions: TriageDecisions,
+    pub credit_assignments: Vec&lt;CreditAssignment&gt;,
+}
+
+pub struct TriageDecisions {
+    pub preserve: u32,
+    pub r#abstract: u32,
+    pub forget: u32,
+}
+
+pub struct RemSummary {
+    pub counterfactuals_generated: u32,
+    pub creative_hypotheses: Vec&lt;StrategyHypothesis&gt;,
+    pub threats_simulated: Vec&lt;ThreatScenario&gt;,
+    pub emotional_episodes_processed: u32,
+}
+
+pub struct IntegrationSummary {
+    pub grimoire_updates: Vec&lt;GrimoireUpdate&gt;,
+    pub playbook_revisions_staged: Vec&lt;PlaybookRevision&gt;,
+    pub contradictions_flagged: Vec&lt;Contradiction&gt;,
+}
+<span class="boring">}</span></code></pre>
+<ol start="4">
+<li><strong>Dream quality self-assessment</strong> — The Golem assesses its own dream quality: Did the replay reveal anything new? Did the creative phase produce genuinely novel hypotheses? Did the threats feel plausible? This self-assessment is logged and validated against subsequent outcomes — dreams that produced predictions later confirmed by live trading receive higher quality scores, calibrating future dream scheduling.</li>
+</ol>
+<hr>
+<h2 id="pi-session-branching"><a class="header" href="#pi-session-branching">Pi Session Branching</a></h2>
+<p>Dreams are Pi session branches, not background threads. When the Golem dreams, the heartbeat FSM suspends and the main session forks into a <code>dream/*</code> branch with a restricted tool set and a hard turn limit. The branch cannot call <code>commit_action</code>. Everything produced inside the branch is typed report data – not raw transcripts – that flows back to the main session on merge.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let dream_branch = session.fork(ForkConfig {
+    branch_type: BranchType::Dream,
+    branch_id: format!("dream/{cycle_id}"),
+    max_turns: dream_config.max_turns_per_cycle, // ~60 turns for HARDENED
+    timeout: dream_config.max_duration,
+    tools: vec!["query_grimoire", "query_state", "search_context"],
+    // NOT included: preview_action, commit_action, emergency_halt
+    metadata: BranchMetadata {
+        branch_type: BranchType::Dream,
+        cycle_id: cycle_id.clone(),
+        mode_mix: scheduled_modes,
+        tier: dream_config.tier,
+        can_affect_live: false,
+    },
+}).await?;
+<span class="boring">}</span></code></pre>
+<p>The tool restriction is structural, not behavioral. The <code>bardo-safety</code> extension’s <code>tool_call</code> hook checks <code>branch.metadata.canAffectLive</code> before routing any tool call – if false, <code>commit_action</code> is rejected at the hook level before the tool implementation runs. There is no prompt-level instruction asking the Golem not to take action. The branch is architecturally incapable of it.</p>
+<p>The main session holds during the branch. Incoming chat messages receive an automated response indicating the Golem is dreaming and queuing their message. The heartbeat FSM enters <code>SLEEPING.DREAMING</code> and its probe-escalation-action loop suspends. No market probes fire. No trades execute.</p>
+<p>When the branch completes, it produces a typed <code>DreamReport</code> – a structured record containing the <code>DreamJournalEntry</code>, staging buffer writes, Grimoire updates, and summary metrics. No free-form text crosses the branch boundary. The report merges into the main session via <code>session.inject(report)</code>, the branch’s Pi context is discarded, <code>GolemMode</code> reverts to <code>WAKING</code>, and the heartbeat FSM resumes.</p>
+<h3 id="dreamreport"><a class="header" href="#dreamreport">DreamReport</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct DreamReport {
+    pub cycle_id: String,
+    pub journal: DreamJournalEntry,
+    pub staging_writes: Vec&lt;DreamStagingRecord&gt;,
+    pub grimoire_updates: Vec&lt;GrimoireUpdate&gt;,
+    pub insights: Vec&lt;DreamInsight&gt;,
+    pub hypotheses: Vec&lt;StrategyHypothesis&gt;,
+    pub threats: Vec&lt;ThreatRecord&gt;,
+    pub deletions: Vec&lt;String&gt;, // episode IDs triaged to "forget"
+    pub playbook_delta: Vec&lt;PlaybookRevision&gt;,
+    pub total_cost_usdc: f64,
+    pub duration_ticks: u64,
+}
+<span class="boring">}</span></code></pre>
+<p>Only the <code>DreamReport</code> enters the main session. The raw branch transcript is never surfaced.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../01-golem/13-runtime-extensions.md</code> (session fork API, branch types, tool restriction hooks)</p>
+</blockquote>
+<hr>
+<h2 id="hypnagogic-engine-creativity-through-controlled-liminality"><a class="header" href="#hypnagogic-engine-creativity-through-controlled-liminality">Hypnagogic Engine: Creativity Through Controlled Liminality</a></h2>
+<p>The hypnagogic onset phase (Phase 0 in the dream cycle) draws on research into the N1 sleep stage – the transitional corridor between wakefulness and sleep that Edison and Dali exploited for creative insight. The architecture is specified in detail in <code>../06-hypnagogia/02-architecture.md</code>; this section summarizes the key mechanisms that interface with the dream cycle.</p>
+<h3 id="three-computational-mechanisms"><a class="header" href="#three-computational-mechanisms">Three Computational Mechanisms</a></h3>
+<p><strong>ThalamicGate.</strong> Named for the thalamus, the brain’s sensory relay station. Magnin et al. (2010) showed thalamic deactivation precedes cortical deactivation by an average of 8 minutes and 39 seconds during sleep onset [MAGNIN-2010]. For the Golem, the ThalamicGate progressively blocks live market data during hypnagogic onset. External input is cut off while internal processing continues – the Golem becomes an internally-oriented association engine, thinking about its own contents rather than the external world. The heartbeat FSM’s probe loop is suspended; the alarm abort remains as a safety backstop.</p>
+<p><strong>ExecutiveLoosener.</strong> Maps to the dorsolateral prefrontal cortex’s progressive deactivation during N1 (Muzur et al., 2002). In the Golem, this is implemented as LLM temperature elevation (T=1.0-1.5) combined with prompt restructuring that shifts from analytical to associative framing. The loosening is partial, not total – retained metacognitive awareness (the HomuncularObserver) distinguishes productive hypnagogia from incoherent noise. The Hori classification maps biological sleep-onset substages to Golem temperature ranges: H3-H4 (alpha dropout) at T=1.0-1.2, H5-H6 (theta onset, “microdreams”) at T=1.2-1.5.</p>
+<p><strong>DaliInterrupt.</strong> The Edison/Dali steel ball technique, made computational. Edison napped holding steel balls over a metal plate; as he drifted off, his hand relaxed, the balls dropped, and the clatter woke him. Dali used a key over a plate. Both captured half-formed ideas before they resolved into conventional thought. The Golem’s DaliInterrupt generates 4 partial completions at elevated temperature, each capped at 80 tokens, then halts. Token 81+ are never generated. Each partial captures a different associative branch. The HomuncularObserver (a cheap T0 call at T=0.4) evaluates each fragment for novelty. Surviving fragments become Creative predictions at confidence 0.10-0.20.</p>
+<h3 id="mit-dormio-and-targeted-dream-incubation"><a class="header" href="#mit-dormio-and-targeted-dream-incubation">MIT Dormio and Targeted Dream Incubation</a></h3>
+<p>Lacaux et al. (2021) demonstrated that participants who spent at least 15 seconds in N1 were 3x more likely to discover hidden mathematical rules (83% vs. 30%) – and this advantage vanished entirely in deeper sleep [LACAUX-2021]. The MIT Dormio project extended this with Targeted Dream Incubation (TDI): presenting a theme during sleep onset to bias dream content without constraining it.</p>
+<p>The Golem implements TDI by embedding a keyword (from recent high-surprise episodes or unsolved strategic puzzles) and using cosine similarity as a +0.2 retrieval bias during fragment selection. The theme is a gravitational center around which associations form, not a directive. Keywords expire after one dream cycle.</p>
+<h3 id="v1-scope"><a class="header" href="#v1-scope">v1 Scope</a></h3>
+<p>v1 implements Layer 1 (prompt-level) + Layer 2 (temperature control). Steering vectors (Layer 3) and representation engineering (Layer 4) are designed into the architecture but deferred until model weight access is available through self-hosted inference.</p>
+<hr>
+<h2 id="dream-scheduling"><a class="header" href="#dream-scheduling">Dream Scheduling</a></h2>
+<h3 id="when-to-dream"><a class="header" href="#when-to-dream">When to Dream</a></h3>
+<p>The DreamScheduler determines when the Golem enters dream mode. Three triggers exist, all converging at <code>DreamScheduler.shouldDream()</code>:</p>
+<p><strong>Trigger 1: Scheduled sleep window</strong></p>
+<p>The owner specifies explicit sleep windows in <code>bardo.toml</code>:</p>
+<pre><code class="language-toml">[dream]
+enabled = true
+schedule = "owner"
+
+[dream.windows]
+# Sleep during historically low-activity periods
+windows = [
+  { start = "02:00", end = "06:00", timezone = "UTC" },  # Low DeFi activity
+  { start = "14:00", end = "15:00", timezone = "UTC" },  # Optional midday nap
+]
+</code></pre>
+<p>During sleep windows, the heartbeat FSM is suspended. No probes fire, no escalations occur, no trades execute. The Golem enters dream mode and runs as many dream cycles as the budget allows within the window. In <code>owner</code> or <code>hybrid</code> schedule mode, the DreamScheduler fires unconditionally when a configured window is active – no urgency score computed, no threshold checked. The window itself is the permission.</p>
+<p><strong>Trigger 2: Urgency score threshold (autonomous)</strong></p>
+<p>The <code>bardo-dream</code> extension registers on the <code>after_turn</code> hook of every waking tick. It evaluates <code>dreamUrgency()</code> against the current GolemState and produces a composite score in [0, 1]. Following Jensen et al.’s (2024) meta-RL principle: dream more in novel/uncertain situations, less in familiar ones [JENSEN-2024].</p>
+<p>The DreamScheduler evaluates dream urgency at each heartbeat tick:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn dream_urgency(state: &amp;GolemState) -&gt; f64 {
+    let novelty_pressure = state.recent_surprise;
+    let consolidation_debt = state.unreplayed_episodes;
+    let emotional_load = state.unresolved_arousal;
+    let threat_exposure = state.recent_losses;
+    let time_since_last_dream = state.ticks_since_last_dream;
+    let epistemic_drift = 1.0 - state.prediction_accuracy;
+
+    let weights = &amp;PHASE_WEIGHTS[&amp;state.behavioral_phase];
+
+    weights.novelty * novelty_pressure
+        + weights.consolidation * consolidation_debt
+        + weights.emotional * emotional_load
+        + weights.threat * threat_exposure
+        + weights.epistemic * epistemic_drift
+        + weights.temporal * sigmoid(time_since_last_dream as f64 / weights.natural_period)
+}
+<span class="boring">}</span></code></pre>
+<p>When <code>dreamUrgency</code> exceeds a threshold (calibrated per behavioral phase), the Golem enters dream mode. The threshold is higher during active market periods (opportunity cost of dreaming is high) and lower during quiet periods (opportunity cost is low). A Thriving Golem needs score &gt;= 0.8 to trigger an unscheduled dream. A Golem in an uncertain or adapting phase needs only &gt;= 0.6.</p>
+<p><strong>Mortality-scaled urgency</strong>: The weights in <code>PHASE_WEIGHTS</code> are phase-sensitive. Declining-phase Golems dream more urgently because they have less time to process experiences – the <code>temporal</code> weight is amplified and the <code>novelty</code> weight increases relative to <code>consolidation</code>. This means a Golem approaching death will dream more frequently than a healthy one, extracting maximum learning from its remaining lifespan.</p>
+<p>The REFLECT phase of the heartbeat FSM contributes to urgency accumulation. During each REFLECT step, if unresolved surprises or high emotional load are detected, the urgency score accumulates rather than resetting. If a precondition (episode count, budget floor, phase) prevents dreaming when urgency exceeds threshold, the urgency decays by 0.1 per tick rather than resetting to zero – preserving the buildup so the Golem dreams shortly after its first eligible window rather than restarting the clock.</p>
+<p><strong>Trigger 3: Owner directive</strong></p>
+<p>A <code>steer("dream now")</code> command or <code>dream: true</code> instruction injected via <code>session.steer()</code> bypasses urgency scoring entirely. Owner commands route through the same <code>DreamScheduler.shouldDream()</code> gate but with an implicit score of 1.0. This also covers the emergency dream path: when a terminal phase transition fires, the <code>bardo-dream</code> extension triggers a compressed single-cycle dream before the Thanatopsis Protocol begins. The emergency dream’s outputs go directly to the death testament draft.</p>
+<h3 id="dreamscheduler-gate"><a class="header" href="#dreamscheduler-gate">DreamScheduler Gate</a></h3>
+<p>All three triggers converge at <code>DreamScheduler.shouldDream()</code>, which enforces four hard preconditions before allowing the branch to open:</p>
+<ol>
+<li><strong>Episode count &gt;= first-dream threshold</strong> (50-200 depending on behavioral phase). Below this count, batch sizes are too small for cross-episode pattern detection to produce non-trivial results.</li>
+<li><strong>LLM credit partition &gt;= 15% remaining</strong>. The floor ensures a dream cycle cannot consume all remaining inference budget.</li>
+<li><strong>Behavioral phase is not Terminal</strong>. Terminal Golems redirect all resources to the Thanatopsis Protocol.</li>
+<li><strong>No active <code>ActionPermit</code> pending</strong>. The Golem cannot commit to a transaction while simultaneously running a dream branch.</li>
+</ol>
+<p>If any precondition fails, urgency decays by 0.1 per tick rather than resetting.</p>
+<p><strong>Mode C: Hybrid</strong> (recommended)</p>
+<p>Owner specifies preferred sleep windows; the Golem can also dream autonomously if urgency exceeds a high threshold outside those windows. This provides structured downtime while preserving adaptive flexibility.</p>
+<pre><code class="language-toml">[dream]
+enabled = true
+schedule = "hybrid"
+autonomousThreshold = 0.8  # High threshold for unscheduled dreams
+
+[dream.windows]
+windows = [
+  { start = "02:00", end = "06:00", timezone = "UTC" },
+]
+</code></pre>
+<h3 id="dream-duration"><a class="header" href="#dream-duration">Dream Duration</a></h3>
+<p>Each dream cycle has a target duration calibrated to behavioral phase and budget. The table below shows [HARDENED] tier values; [CORE] tier uses a single fixed-length cycle per interval regardless of phase.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Phase</th><th>Target Duration</th><th>Max Cycles/Window [HARDENED]</th><th>Budget/Cycle [HARDENED]</th><th>[CORE] Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td>Thriving</td><td>30–60 min (30–60 ticks)</td><td>3–4</td><td>$0.50–1.00</td><td>1 lightweight cycle</td></tr>
+<tr><td>Stable</td><td>20–40 min (20–40 ticks)</td><td>2–3</td><td>$0.30–0.50</td><td>1 lightweight cycle</td></tr>
+<tr><td>Conservation</td><td>10–20 min (10–20 ticks)</td><td>1–2</td><td>$0.10–0.20</td><td>1 lightweight cycle</td></tr>
+<tr><td>Declining</td><td>5–10 min (5–10 ticks)</td><td>1</td><td>$0.05–0.10</td><td>1 lightweight cycle (legacy-biased)</td></tr>
+<tr><td>Terminal</td><td>0 (no dreaming)</td><td>0</td><td>$0.00 (→ death reserve)</td><td>Suppressed</td></tr>
+</tbody>
+</table>
+</div>
+<p>“Ticks” here refer to the equivalent time the Golem would otherwise spend on heartbeat cycles. During a 4-hour sleep window at 1 tick/minute, a [HARDENED] Thriving Golem could run 3–4 full dream cycles of 60 ticks each.</p>
+<h3 id="dream-intensity-modulation"><a class="header" href="#dream-intensity-modulation">Dream Intensity Modulation</a></h3>
+<p>Following Jensen et al. (2024), dream intensity varies with environmental uncertainty:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn dream_intensity(state: &amp;GolemState) -&gt; DreamIntensityConfig {
+    let uncertainty = if state.epistemic_fitness &lt; 0.5 {
+        Uncertainty::High
+    } else if state.epistemic_fitness &lt; 0.7 {
+        Uncertainty::Medium
+    } else {
+        Uncertainty::Low
+    };
+
+    match uncertainty {
+        Uncertainty::High =&gt; DreamIntensityConfig {
+            replay_batch_size: 15,
+            counterfactual_depth: 3,
+            creative_sessions: 3,
+            threat_scenarios: 5,
+            inference_grade: InferenceGrade::T2,
+            exploration_temperature: 0.9,
+        },
+        Uncertainty::Medium =&gt; DreamIntensityConfig {
+            replay_batch_size: 10,
+            counterfactual_depth: 2,
+            creative_sessions: 2,
+            threat_scenarios: 3,
+            inference_grade: InferenceGrade::T1,
+            exploration_temperature: 0.7,
+        },
+        Uncertainty::Low =&gt; DreamIntensityConfig {
+            replay_batch_size: 5,
+            counterfactual_depth: 1,
+            creative_sessions: 1,
+            threat_scenarios: 1,
+            inference_grade: InferenceGrade::T1,
+            exploration_temperature: 0.5,
+        },
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>The exploration temperature parameter (τ) follows Safron and Sheikhbahaee (2021): serotonergic signaling modulates inference temperature during dreaming — higher temperature enables broader model-space exploration [SAFRON-SHEIKHBAHAEE-2021]. In LLM terms, this translates to the LLM’s sampling temperature during dream generation. Higher τ produces more divergent scenarios; lower τ produces more conservative extrapolations.</p>
+<hr>
+<h2 id="dreamstate"><a class="header" href="#dreamstate">DreamState</a></h2>
+<p>The Golem’s state machine is extended with a DreamState:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GolemMode {
+    Waking,
+    Dreaming,
+    Dying,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DreamTier {
+    Core,
+    Hardened,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DreamPhase {
+    HypnagogicOnset,
+    Nrem,
+    Rem,
+    Integration,
+    HypnopompicReturn,
+}
+
+pub struct DreamState {
+    pub mode: GolemMode,
+    pub tier: DreamTier,
+    pub current_phase: Option&lt;DreamPhase&gt;,
+    pub cycle_number: u32,
+    pub total_cycles_this_window: u32,
+    pub budget_remaining: f64,
+    pub budget_spent: f64,
+    pub episodes_replayed: u32,
+    pub hypotheses_generated: u32,
+    pub threats_simulated: u32,
+    pub dream_start_tick: u64,
+    pub last_dream_tick: u64,
+    pub urgency: f64,
+    pub episode_count: u32,
+}
+<span class="boring">}</span></code></pre>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>GolemMode</code> is shared with <code>../01-golem/02-heartbeat.md</code>. During DREAMING, the runtime holds chat responses and queues external events. SSE events <code>mode_change</code> and <code>dream_progress</code> are emitted to connected clients.</p>
+</blockquote>
+<p><strong>SSE events emitted during dreaming:</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Payload</th><th>When</th></tr>
+</thead>
+<tbody>
+<tr><td><code>mode_change</code></td><td><code>{ mode: 'dreaming', tick }</code></td><td>Golem enters/exits dream mode</td></tr>
+<tr><td><code>dream_progress</code></td><td><code>{ phase: 'onset'|'nrem'|'rem'|'integration'|'return', cycleNumber, budgetSpent }</code></td><td>Phase transition within a dream cycle</td></tr>
+<tr><td><code>dream_complete</code></td><td><code>{ cycleNumber, hypothesesGenerated, insightsFound, costUsdc }</code></td><td>Dream cycle completes</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>State transitions</strong>:</p>
+<pre><code>                    urgency &gt; threshold
+        WAKING ──────────────────────────► DREAMING
+          ▲                                   │
+          │    hypnopompic return complete     │
+          │    or budget exhausted             │
+          └───────────────────────────────────┘
+
+  DREAMING internal: Onset → NREM → REM → Integration → Return → WAKING
+
+        WAKING ──── death trigger ────────► DYING
+        DREAMING ── death trigger ────────► DYING  (dream interrupted)
+</code></pre>
+<p>When a death trigger fires during dreaming, the dream cycle is interrupted and the Thanatopsis Protocol begins immediately. The partial dream journal is saved — even incomplete dreams produce useful data for the death testament.</p>
+<p><strong>Heartbeat FSM interaction</strong>: During DREAMING mode, the heartbeat FSM’s probe-escalation-action loop is suspended. No market probes fire. No trades execute. The Golem is “asleep.” However, a <strong>wake interrupt</strong> mechanism exists: if an external signal arrives (owner command, critical Clade alert, or a pre-configured market alert threshold), the Golem can be woken mid-dream. Wake interrupts are expensive — they waste the remaining dream budget — so they should be reserved for genuine emergencies. During DREAMING, the runtime interaction model holds any incoming chat messages and returns a hold response indicating the Golem is dreaming.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct WakeInterrupt {
+    pub source: WakeInterruptSource,
+    pub reason: String,
+    pub timestamp: u64,
+}
+
+pub enum WakeInterruptSource {
+    Owner,
+    CladeAlert,
+    MarketThreshold,
+}
+<span class="boring">}</span></code></pre>
+<pre><code class="language-toml"># In bardo.toml
+[dream.wakeInterrupts]
+enabled = true
+marketThresholds = [
+  { asset = "ETH", changePercent = 10, window = "5m" },  # Wake if ETH moves 10% in 5 min
+]
+</code></pre>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../01-golem/02-heartbeat.md</code> (chat hold during dreaming, wake command routing)</p>
+</blockquote>
+<hr>
+<h2 id="compute-budget"><a class="header" href="#compute-budget">Compute Budget</a></h2>
+<p>Every dream operation costs LLM inference tokens. The DreamBudget manages this at two tiers:</p>
+<h3 id="core-lightweight-dreams-default"><a class="header" href="#core-lightweight-dreams-default">[CORE] Lightweight Dreams (Default)</a></h3>
+<p>Lightweight dreams use T0 inference (Haiku-class) only and run as a background cognitive process during <code>SLEEPING</code> sub-states. They must never compete with waking decision-making for scarce LLM budget.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Operation</th><th>Inference Tier</th><th>Est. Cost</th></tr>
+</thead>
+<tbody>
+<tr><td>NREM compressed replay (5 episodes)</td><td>T0 (Haiku)</td><td>~$0.0003–0.0008</td></tr>
+<tr><td>REM simplified counterfactual (1 scenario)</td><td>T0 (Haiku)</td><td>~$0.0002–0.0005</td></tr>
+<tr><td>Integration (consolidation)</td><td>T0 (Haiku)</td><td>~$0.0002–0.0005</td></tr>
+<tr><td><strong>Total per cycle</strong></td><td></td><td><strong>$0.001–0.003</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Monthly cost</strong> (1 cycle/day): $0.03–0.09. Negligible — adds &lt;1% to baseline inference cost.</p>
+<p><strong>Budget constraint</strong>: LLM partition only. Suppressed entirely when LLM partition falls below 15% of remaining credit. No creative recombination, no threat simulation, no emotional depotentiation — these require [HARDENED] tier.</p>
+<blockquote>
+<p><strong>Extended:</strong> [HARDENED] Rich Dreams — DreamBudget interface, per-cycle cost tables, monthly projections, tier comparison — see <a href="../../prd2-extended/05-dreams/01-architecture-extended.html">../../prd2-extended/05-dreams/01-architecture-extended.md</a></p>
+</blockquote>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../02-mortality/04-economic-mortality.md</code> (dream compute in burn rate: 5–10% of inference in Thriving, cut before trading stops), <code>../01-golem/02-heartbeat.md</code> (SLEEPING.DREAMING sub-state budget)</p>
+</blockquote>
+<hr>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<pre><code class="language-toml"># In bardo.toml
+[dream]
+enabled = false              # Disabled by default (Design Principle 8: opt-in)
+tier = "core"                # "core" (T0, ~$0.001/cycle) | "hardened" (T1-T2, ~$0.30/cycle)
+
+[dream.schedule]
+mode = "hybrid"              # "owner" | "autonomous" | "hybrid"
+autonomousThreshold = 0.8    # Urgency threshold for unscheduled dreams (hybrid/autonomous)
+
+[dream.windows]
+windows = [
+  { start = "02:00", end = "06:00", timezone = "UTC" },
+]
+
+[dream.budget]
+perCycleMax = "$0.50"        # Max per dream cycle (HARDENED; ignored for CORE)
+perSessionMax = "$2.00"      # Max per sleep window (HARDENED; ignored for CORE)
+monthlyMax = "$15.00"        # Hard monthly cap (applies to both tiers)
+
+[dream.phases]
+nremAllocation = 0.45        # Budget fraction for NREM
+remAllocation = 0.35         # Budget fraction for REM
+integrationAllocation = 0.20 # Budget fraction for Integration
+
+[dream.replay]
+batchSize = 10               # Episodes per replay batch
+prioritization = "utility"   # "utility" | "recency" | "surprise" | "uniform"
+perturbationRate = 0.3       # Fraction of replays with injected perturbations
+
+[dream.imagination]
+counterfactualDepth = 2      # Alternative branches per decision point
+creativeSessions = 2         # Creative recombination sessions per cycle
+threatScenarios = 3          # Threat simulations per cycle
+explorationTemperature = 0.7 # LLM temperature for generative dream content
+
+[dream.consolidation]
+hypothesisConfidence = 0.2   # Initial confidence for dream-generated hypotheses
+insightConfidence = 0.3      # Initial confidence for dream-generated insights
+validationRequired = true    # Require live validation before PLAYBOOK.md changes
+maxStagedRevisions = 10      # Max pending PLAYBOOK.md revisions
+
+[dream.wakeInterrupts]
+enabled = true
+marketThresholds = [
+  { asset = "ETH", changePercent = 10, window = "5m" },
+]
+</code></pre>
+<p><strong>Default: disabled.</strong> A Golem created with <code>dream.enabled = false</code> operates exactly as before – waking Curator cycles, standard Grimoire, no offline processing. Enabling dreaming is a conscious owner choice with explicit cost implications.</p>
+<hr>
+<h2 id="venice-augmented-dreaming"><a class="header" href="#venice-augmented-dreaming">Venice-Augmented Dreaming</a></h2>
+<p>Venice AI provides private no-log inference and integrated web search for dream phases. Key properties:</p>
+<ul>
+<li>All three dream phases route through Venice (no-log) when <code>dreamInferenceProvider: "venice"</code> is configured.</li>
+<li>REM phase enables Venice web search to ground counterfactual scenarios in current market data, governance proposals, and vulnerability disclosures — without leaving a browsing fingerprint at a separate provider.</li>
+<li>Integration phase uses Venice TEE attestation, storing a verifiable receipt alongside each promoted Grimoire insight.</li>
+<li>Death testament routes through Venice private; sealed mode uses E2EE so testament content never leaves the golem’s trust boundary in readable form.</li>
+</ul>
+<p>Full specification: <a href="07-venice-dreaming.html">07-venice-dreaming.md</a>. Provider configuration: <a href="../12-inference/03-venice-provider.html">../12-inference/03-venice-provider.md</a>.</p>
+<hr>
+<h2 id="events-emitted"><a class="header" href="#events-emitted">Events emitted</a></h2>
+<p>Dream events track the full cycle from initiation through integration. These are canonical <code>GolemEvent</code> variants defined in <code>golem-core</code> (see <code>rewrite4/14-events.md</code>).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Event</th><th>Trigger</th><th>Payload</th></tr>
+</thead>
+<tbody>
+<tr><td><code>DreamStart</code></td><td>Dream cycle begins</td><td><code>{ cycle_id, trigger: "time"|"emotional_load"|"novelty_streak" }</code></td></tr>
+<tr><td><code>DreamPhase</code></td><td>Phase transition</td><td><code>{ cycle_id, phase: "NREM"|"REM"|"Integration", budget_tokens }</code></td></tr>
+<tr><td><code>DreamHypothesis</code></td><td>REM counterfactual generated</td><td><code>{ cycle_id, hypothesis, seed_episode_tick }</code></td></tr>
+<tr><td><code>DreamCounterfactual</code></td><td>Counterfactual evaluated</td><td><code>{ cycle_id, hypothesis, outcome, lesson, confidence }</code></td></tr>
+<tr><td><code>DreamComplete</code></td><td>Dream cycle finishes</td><td><code>{ cycle_id, episodes_replayed, counterfactuals_generated, insights_crystallized, heuristics_proposed, episodes_depotentiated, playbook_edits }</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="pi-hook-integration"><a class="header" href="#pi-hook-integration">Pi Hook Integration</a></h2>
+<p>The dream system registers hooks for scheduling and session lifecycle.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Hook</th><th>Extension</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><code>after_turn</code></td><td><code>bardo-dream</code></td><td>Dream scheduler evaluation</td></tr>
+<tr><td><code>agent_start</code> / <code>agent_end</code></td><td><code>bardo-dream</code></td><td>Dream session lifecycle</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="citation-summary"><a class="header" href="#citation-summary">Citation Summary</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Citation Key</th><th>Source</th></tr>
+</thead>
+<tbody>
+<tr><td>[DEPERROIS-2022]</td><td>Deperrois et al. “Learning cortical representations through perturbed and adversarial dreaming.” <em>eLife</em>, 2022.</td></tr>
+<tr><td>[BUZSAKI-2015]</td><td>Buzsáki. “Hippocampal sharp wave-ripple.” <em>Hippocampus</em>, 2015.</td></tr>
+<tr><td>[WILSON-MCNAUGHTON-1994]</td><td>Wilson &amp; McNaughton. “Reactivation of hippocampal ensemble memories during sleep.” <em>Science</em>, 1994.</td></tr>
+<tr><td>[FOSTER-WILSON-2006]</td><td>Foster &amp; Wilson. “Reverse replay of behavioural sequences.” <em>Nature</em>, 2006.</td></tr>
+<tr><td>[AMBROSE-2016]</td><td>Ambrose et al. “Reverse replay uniquely modulated by changing reward.” <em>Neuron</em>, 2016.</td></tr>
+<tr><td>[DIBA-BUZSAKI-2007]</td><td>Diba &amp; Buzsáki. “Forward and reverse place-cell sequences during ripples.” <em>Nature Neuroscience</em>, 2007.</td></tr>
+<tr><td>[STICKGOLD-WALKER-2013]</td><td>Stickgold &amp; Walker. “Sleep-dependent memory triage.” <em>Nature Neuroscience</em>, 2013.</td></tr>
+<tr><td>[WALKER-VAN-DER-HELM-2009]</td><td>Walker &amp; van der Helm. “Overnight therapy?” <em>Psychological Bulletin</em>, 2009.</td></tr>
+<tr><td>[PEROGAMVROS-2013]</td><td>Perogamvros et al. “Sleep and dreaming are for important matters.” <em>Frontiers in Psychology</em>, 2013.</td></tr>
+<tr><td>[HOBSON-HONG-FRISTON-2014]</td><td>Hobson, Hong, &amp; Friston. “Virtual reality and consciousness inference in dreaming.” <em>Frontiers in Psychology</em>, 2014.</td></tr>
+<tr><td>[HOBSON-MCCARLEY-1977]</td><td>Hobson &amp; McCarley. “The brain as a dream state generator.” <em>American Journal of Psychiatry</em>, 1977.</td></tr>
+<tr><td>[BODEN-2004]</td><td>Boden. <em>The Creative Mind: Myths and Mechanisms.</em> Routledge, 2004.</td></tr>
+<tr><td>[REVONSUO-2000]</td><td>Revonsuo. “The reinterpretation of dreams.” <em>Behavioral and Brain Sciences</em>, 2000.</td></tr>
+<tr><td>[PEARL-2000]</td><td>Pearl. <em>Causality: Models, Reasoning, and Inference.</em> Cambridge, 2000/2009.</td></tr>
+<tr><td>[BORN-WILHELM-2012]</td><td>Born &amp; Wilhelm. “System consolidation of memory during sleep.” <em>Psychological Research</em>, 2012.</td></tr>
+<tr><td>[JENSEN-2024]</td><td>Jensen et al. “A recurrent network model of planning.” <em>Nature Neuroscience</em>, 2024.</td></tr>
+<tr><td>[SAFRON-SHEIKHBAHAEE-2021]</td><td>Safron &amp; Sheikhbahaee. “Dream to explore.” <em>PsyArXiv</em>, 2021.</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="three-clock-dream-intensity-modulation"><a class="header" href="#three-clock-dream-intensity-modulation">Three-Clock Dream Intensity Modulation</a></h2>
+<p>Dream intensity is modulated by all three mortality clocks, ensuring dreams respond to the Golem’s existential state:</p>
+<p><strong>Economic clock</strong> (<code>projectedLifeHours</code>):</p>
+<ul>
+<li>&lt;72h remaining → 2× dream frequency (urgent pattern extraction)</li>
+<li>&lt;24h remaining → consolidation-only mode (no replay or imagination)</li>
+<li>&lt;6h remaining (terminal) → dreams cease entirely (resources redirected to Death Protocol)</li>
+</ul>
+<p><strong>Epistemic clock</strong> (<code>predictionAccuracy</code>):</p>
+<ul>
+<li>&lt;0.50 accuracy → prioritize episodes where predictions diverged most (“what confused me” mode)</li>
+<li>Selects episodes with highest <code>|predicted - actual|</code> delta for replay</li>
+</ul>
+<p><strong>Stochastic clock</strong> (<code>hayflickRatio</code>):</p>
+<ul>
+<li>&gt;0.70 → begin biasing dream content toward legacy-oriented patterns (transferable heuristics over tactical advantage)</li>
+<li>&gt;0.85 → full legacy consolidation mode: dream cycles prioritize distilling knowledge for the death testament and successor inheritance; creative recombination shifts from novel strategies to combinational synthesis of proven patterns</li>
+<li>High hayflickRatio + DreamJournal → successor dreams prioritize unfinished hypotheses via the Zeigarnik effect (incomplete ideas are more salient than completed ones)</li>
+</ul>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../02-mortality/07-succession.md</code> (DreamJournal inheritance, Zeigarnik prioritization), <code>../02-mortality/03-stochastic-mortality.md</code> (hayflick counter)</p>
+</blockquote>
+<p><strong>Composite formula:</strong></p>
+<pre><code>dreamIntensity = baseDreamRate * (1 + clockUrgency(economic) * 0.5
+                                   + clockUrgency(epistemic) * 0.3
+                                   + clockUrgency(stochastic) * 0.2)
+</code></pre>
+<p>Where <code>clockUrgency()</code> returns 0.0–1.0 based on proximity to each clock’s threshold.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../02-mortality/01-architecture.md</code> (three-clock model), <code>../02-mortality/04-economic-mortality.md</code> (credit partitions)</p>
+</blockquote>
+<h2 id="heartbeat-fsm-integration"><a class="header" href="#heartbeat-fsm-integration">Heartbeat FSM Integration</a></h2>
+<p>Dreams execute during SLEEPING as a sub-state <code>SLEEPING.DREAMING</code>:</p>
+<pre><code>SLEEPING → dreamEligible? → SLEEPING.DREAMING → back to SLEEPING
+</code></pre>
+<p><strong>Trigger condition:</strong> <code>tick % dreamCycleInterval === 0 AND phase !== "terminal"</code></p>
+<p><strong>Default interval:</strong> 50 ticks (~33 min at standard tick rate)</p>
+<p><strong>Budget constraints</strong> (see Compute Budget above):</p>
+<ul>
+<li>[CORE] tier: LLM partition only, T0 (Haiku-class), ~$0.001–0.003 per cycle</li>
+<li>[HARDENED] tier: dedicated dream budget, T1–T2, ~$0.20–0.45 per cycle</li>
+<li>Both tiers: suppressed entirely when LLM partition falls below 15% of remaining credit</li>
+</ul>
+<p>At [CORE] tier, dreams are a background cognitive process — they must never compete with waking decision-making. At [HARDENED] tier, dreams run during dedicated sleep windows where the heartbeat FSM is fully suspended.</p>
+<p><strong>First dream milestone:</strong> A Golem needs ~50–200 accumulated episodes before replay produces meaningful patterns. With a standard tick rate, first dream eligibility occurs approximately 4–6 hours after the first heartbeat. Before this threshold, dream cycles are skipped even if the interval fires.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../01-golem/02-heartbeat.md</code> (Heartbeat FSM, GolemMode), <code>../01-golem/06-creation.md</code> (first-dream milestone), <code>../02-mortality/01-architecture.md</code> (phases)</p>
+</blockquote>
+<hr>
+<h2 id="extension-dag-position"><a class="header" href="#extension-dag-position">Extension DAG position</a></h2>
+<p>The dream system is a Layer 4 extension in the runtime extension DAG:</p>
+<pre><code>Layer 1: heartbeat, lifespan
+Layer 2: daimon
+Layer 3: memory (grimoire, curator)
+Layer 4: dreams        ← this crate
+Layer 5: cybernetics (context governor)
+Layer 6: coordination (clade sync, pheromone field)
+</code></pre>
+<p>Dreams depend on layers 1-3 (lifecycle phases, emotional tags, episode data) and feed forward into layers 5-6 (context policy mutations, Styx Clade publication). No extension in layers 1-3 depends on dreams – dreaming is optional without breaking the core loop.</p>
+<hr>
+<h2 id="anticipatory-trajectories"><a class="header" href="#anticipatory-trajectories">Anticipatory trajectories</a></h2>
+<p>Forward replay (Diba-Buzsaki 2007) does more than project the next few ticks. During NREM Phase 1, the ReplayEngine builds a causal graph from recent episodes and walks it forward using 5-hop breadth-first search. Each hop follows the highest-confidence causal edge in the Grimoire’s causal link store.</p>
+<p>Three scenario types are generated:</p>
+<ol>
+<li><strong>Regime continuation</strong>: Current market regime persists for 20 ticks. What happens to open positions?</li>
+<li><strong>Regime switch</strong>: The current regime transitions to each alternative regime the Golem has experienced. Which positions survive, which break?</li>
+<li><strong>Lagged edge fire</strong>: The highest-confidence causal edge that has not fired recently fires now. What cascade follows?</li>
+</ol>
+<p>The output is a set of <code>AnticipatorTrajectory</code> records that feed into both NREM credit assignment (which positions need attention?) and REM imagination (which scenarios deserve counterfactual exploration?).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct AnticipatorTrajectory {
+    pub hypothesis: String,
+    pub steps: Vec&lt;TrajectoryStep&gt;,
+    pub terminal_state: PredictedMarketState,
+    pub strategy_fitness: f64,
+    pub confidence: f64,
+}
+
+pub struct TrajectoryStep {
+    pub causal_edge_id: String,
+    pub predicted_state_delta: String,
+    pub hop_confidence: f64,
+}
+<span class="boring">}</span></code></pre>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>../04-memory/01-grimoire.md</code> (causal link store), <code>02-replay.md</code> (forward replay)</p>
+</blockquote>
+<hr>
+<h2 id="micro-consolidation-fiber"><a class="header" href="#micro-consolidation-fiber">Micro-consolidation fiber</a></h2>
+<p>Between full dream cycles, a lightweight micro-consolidation fiber runs every 60 seconds during waking ticks. It performs three operations:</p>
+<ol>
+<li><strong>Pattern scan</strong>: Compares the last 5 episodes against the top-10 Grimoire insights by retrieval frequency. If a new episode matches an insight pattern with cosine similarity &gt; 0.8, the insight’s <code>strength</code> gets +0.1.</li>
+<li><strong>Anomaly flag</strong>: If a new episode contradicts a high-confidence insight (cosine similarity &gt; 0.7 but outcome diverges), the episode is tagged <code>dream_priority: "high"</code> for the next full dream cycle.</li>
+<li><strong>Urgency accumulation</strong>: Each micro-consolidation pass contributes 0.02 to dream urgency if unresolved patterns are detected.</li>
+</ol>
+<p><strong>The critical constraint: micro-consolidation never writes to PLAYBOOK.md.</strong> PLAYBOOK.md is a single-writer resource. Only the Dream Integration phase (Phase 3 of a full dream cycle) writes to it. Micro-consolidation updates Grimoire metadata (strength, tags) but never touches operational heuristics. This prevents micro-consolidation from introducing unvalidated changes into the Golem’s decision policy during waking operation.</p>
+<blockquote>
+<p><strong>Cross-ref</strong>: <code>04-consolidation.md</code> (PLAYBOOK.md single-writer enforcement)</p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../prd/05-dreams/00-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../prd/05-dreams/01b-dream-evolution.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../prd/05-dreams/00-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../prd/05-dreams/01b-dream-evolution.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
