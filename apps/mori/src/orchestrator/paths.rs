@@ -100,7 +100,10 @@ pub fn plan_artifact(
         return new_path;
     }
     // Legacy: plans/context/{legacy_subdir}/{legacy_name}
-    plans_dir.join("context").join(legacy_subdir).join(legacy_name)
+    plans_dir
+        .join("context")
+        .join(legacy_subdir)
+        .join(legacy_name)
 }
 
 /// Resolve a per-plan artifact using the plan number to find the directory.
@@ -121,7 +124,10 @@ pub fn plan_artifact_by_num(
         }
     }
     // Legacy: plans/context/{legacy_subdir}/{legacy_name}
-    plans_dir.join("context").join(legacy_subdir).join(legacy_name)
+    plans_dir
+        .join("context")
+        .join(legacy_subdir)
+        .join(legacy_name)
 }
 
 /// Resolve a global context file.

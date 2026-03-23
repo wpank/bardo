@@ -131,8 +131,8 @@ impl PlaybookConfig {
                     || r.trigger_files
                         .iter()
                         .any(|pattern| files.iter().any(|f| glob_match(pattern, f)));
-                let tag_match = r.trigger_tags.is_empty()
-                    || r.trigger_tags.iter().any(|t| tags.contains(t));
+                let tag_match =
+                    r.trigger_tags.is_empty() || r.trigger_tags.iter().any(|t| tags.contains(t));
                 file_match && tag_match
             })
             .collect()
@@ -190,8 +190,14 @@ mod tests {
 
     #[test]
     fn glob_match_middle_star() {
-        assert!(glob_match("crates/golem-*/src/*", "crates/golem-core/src/lib.rs"));
-        assert!(!glob_match("crates/golem-*/src/*", "crates/other/src/lib.rs"));
+        assert!(glob_match(
+            "crates/golem-*/src/*",
+            "crates/golem-core/src/lib.rs"
+        ));
+        assert!(!glob_match(
+            "crates/golem-*/src/*",
+            "crates/other/src/lib.rs"
+        ));
     }
 
     #[test]

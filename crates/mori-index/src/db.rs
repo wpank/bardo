@@ -273,8 +273,9 @@ impl Db {
     pub fn search_by_name(&self, query: &str, limit: usize) -> Result<Vec<DbSymbol>, IndexError> {
         let pattern = format!("%{query}%");
         let mut stmt = self.conn.prepare(
-            "SELECT id, file_id, name, kind, line, signature, visibility, doc, content_hash, hdc_blob
-             FROM symbols WHERE name LIKE ?1 LIMIT ?2",
+            "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+             FROM symbols s LEFT JOIN files f ON s.file_id = f.id
+             WHERE s.name LIKE ?1 LIMIT ?2",
         )?;
 
         let rows = stmt.query_map(params![pattern, limit as i64], |row| {
@@ -304,8 +305,9 @@ impl Db {
         if let Some(vis) = visibility {
             let vis_str = visibility_to_str(vis);
             let mut stmt = self.conn.prepare(
-                "SELECT id, file_id, name, kind, line, signature, visibility, doc, content_hash, hdc_blob
-                 FROM symbols WHERE kind = ?1 AND visibility = ?2 LIMIT ?3",
+                "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+                 FROM symbols s LEFT JOIN files f ON s.file_id = f.id
+                 WHERE s.kind = ?1 AND s.visibility = ?2 LIMIT ?3",
             )?;
             let rows = stmt.query_map(params![kind_str, vis_str, limit as i64], |row| {
                 Ok(row_to_db_symbol(row)?)
@@ -318,8 +320,9 @@ impl Db {
             Ok(results)
         } else {
             let mut stmt = self.conn.prepare(
-                "SELECT id, file_id, name, kind, line, signature, visibility, doc, content_hash, hdc_blob
-                 FROM symbols WHERE kind = ?1 LIMIT ?2",
+                "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+                 FROM symbols s LEFT JOIN files f ON s.file_id = f.id
+                 WHERE s.kind = ?1 LIMIT ?2",
             )?;
             let rows = stmt.query_map(params![kind_str, limit as i64], |row| {
                 Ok(row_to_db_symbol(row)?)
@@ -340,14 +343,70 @@ impl Db {
     /// Returns `IndexError::Db` on SQL failure.
     pub fn all_hdc_symbols(&self) -> Result<Vec<(i64, Symbol, Vec<u8>)>, IndexError> {
         let mut stmt = self.conn.prepare(
-            "SELECT id, file_id, name, kind, line, signature, visibility, doc, content_hash, hdc_blob
-             FROM symbols WHERE hdc_blob IS NOT NULL",
+            "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+             FROM symbols s LEFT JOIN files f ON s.file_id = f.id
+             WHERE s.hdc_blob IS NOT NULL",
         )?;
 
         let rows = stmt.query_map([], |row| {
             let db_sym = row_to_db_symbol(row)?;
             let blob = db_sym.hdc_blob.unwrap_or_default();
             Ok((db_sym.id, db_sym.symbol, blob))
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Load all symbols with file paths resolved (for snapshot serialization).
+    ///
+    /// Returns `(id, Symbol, hdc_blob)` for ALL symbols (including those without fingerprints).
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn all_hdc_symbols_full(&self) -> Result<Vec<(i64, Symbol, Vec<u8>)>, IndexError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+             FROM symbols s LEFT JOIN files f ON s.file_id = f.id",
+        )?;
+
+        let rows = stmt.query_map([], |row| {
+            let db_sym = row_to_db_symbol(row)?;
+            let blob = db_sym.hdc_blob.unwrap_or_default();
+            Ok((db_sym.id, db_sym.symbol, blob))
+        })?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Load all references (for snapshot serialization).
+    ///
+    /// Returns `(from_symbol_id, to_name, to_symbol_id, ref_kind)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn all_refs(
+        &self,
+    ) -> Result<Vec<(i64, String, Option<i64>, crate::symbol::RefKind)>, IndexError> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT from_symbol, to_name, to_symbol, ref_kind FROM refs")?;
+
+        let rows = stmt.query_map([], |row| {
+            let from_id: i64 = row.get(0)?;
+            let to_name: String = row.get(1)?;
+            let to_id: Option<i64> = row.get(2)?;
+            let ref_kind_str: String = row.get(3)?;
+            Ok((from_id, to_name, to_id, str_to_ref_kind(&ref_kind_str)))
         })?;
 
         let mut results = Vec::new();
@@ -459,9 +518,81 @@ impl Db {
             .query_row("SELECT COUNT(*) FROM symbols", [], |row| row.get(0))?;
         Ok(count as usize)
     }
+
+    /// Get all symbols belonging to a file.
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn symbols_in_file(&self, file_id: i64) -> Result<Vec<DbSymbol>, IndexError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT s.id, s.file_id, s.name, s.kind, s.line, s.signature, s.visibility, s.doc, s.content_hash, s.hdc_blob, f.path
+             FROM symbols s LEFT JOIN files f ON s.file_id = f.id
+             WHERE s.file_id = ?1 ORDER BY s.line",
+        )?;
+
+        let rows = stmt.query_map(params![file_id], |row| Ok(row_to_db_symbol(row)?))?;
+
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Resolve a file path to its database id.
+    ///
+    /// This is an alias for `file_id` with a clearer name.
+    pub fn file_id_by_path(&self, path: &str) -> Result<Option<i64>, IndexError> {
+        self.file_id(path)
+    }
+
+    /// Get all symbols that reference a given symbol (incoming edges).
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn symbol_referrers(&self, symbol_id: i64) -> Result<Vec<(i64, String)>, IndexError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT r.from_symbol, s.name FROM refs r
+             JOIN symbols s ON r.from_symbol = s.id
+             WHERE r.to_symbol = ?1",
+        )?;
+        let rows = stmt.query_map(params![symbol_id], |row| {
+            Ok((row.get::<_, i64>(0)?, row.get::<_, String>(1)?))
+        })?;
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
+
+    /// Get all symbols referenced by a given symbol (outgoing edges).
+    ///
+    /// # Errors
+    ///
+    /// Returns `IndexError::Db` on SQL failure.
+    pub fn symbol_references(&self, symbol_id: i64) -> Result<Vec<(i64, String)>, IndexError> {
+        let mut stmt = self.conn.prepare(
+            "SELECT r.to_symbol, r.to_name FROM refs r
+             WHERE r.from_symbol = ?1 AND r.to_symbol IS NOT NULL",
+        )?;
+        let rows = stmt.query_map(params![symbol_id], |row| {
+            Ok((row.get::<_, i64>(0)?, row.get::<_, String>(1)?))
+        })?;
+        let mut results = Vec::new();
+        for row in rows {
+            results.push(row?);
+        }
+        Ok(results)
+    }
 }
 
 /// Convert a rusqlite row to a `DbSymbol`.
+///
+/// Expects columns: id, file_id, name, kind, line, signature, visibility, doc,
+/// content_hash, hdc_blob, file_path (from LEFT JOIN files).
 fn row_to_db_symbol(row: &rusqlite::Row) -> rusqlite::Result<DbSymbol> {
     let id: i64 = row.get(0)?;
     let _file_id: i64 = row.get(1)?;
@@ -473,8 +604,7 @@ fn row_to_db_symbol(row: &rusqlite::Row) -> rusqlite::Result<DbSymbol> {
     let doc: Option<String> = row.get(7)?;
     let content_hash_blob: Option<Vec<u8>> = row.get(8)?;
     let hdc_blob: Option<Vec<u8>> = row.get(9)?;
-
-    let file_path = String::new(); // We don't join files table here for perf
+    let file_path: Option<String> = row.get(10)?;
 
     let mut content_hash = [0u8; 32];
     if let Some(blob) = content_hash_blob {
@@ -487,7 +617,7 @@ fn row_to_db_symbol(row: &rusqlite::Row) -> rusqlite::Result<DbSymbol> {
         symbol: Symbol {
             name,
             kind: str_to_kind(&kind_str),
-            file: file_path,
+            file: file_path.unwrap_or_default(),
             line,
             signature,
             visibility: str_to_visibility(&visibility_str),
@@ -516,6 +646,11 @@ fn kind_to_str(kind: SymbolKind) -> &'static str {
 
 /// Convert a database string back to `SymbolKind`.
 fn str_to_kind(s: &str) -> SymbolKind {
+    str_to_kind_pub(s)
+}
+
+/// Convert a database string back to `SymbolKind` (public for cross-module use).
+pub fn str_to_kind_pub(s: &str) -> SymbolKind {
     match s {
         "function" => SymbolKind::Function,
         "struct" => SymbolKind::Struct,
@@ -554,11 +689,28 @@ fn ref_kind_to_str(kind: crate::symbol::RefKind) -> &'static str {
 
 /// Convert a database string back to `Visibility`.
 fn str_to_visibility(s: &str) -> Visibility {
+    str_to_visibility_pub(s)
+}
+
+/// Convert a database string back to `Visibility` (public for cross-module use).
+pub fn str_to_visibility_pub(s: &str) -> Visibility {
     match s {
         "public" => Visibility::Public,
         "crate" => Visibility::Crate,
         "restricted" => Visibility::Restricted,
         _ => Visibility::Private,
+    }
+}
+
+/// Convert a database string back to `RefKind`.
+fn str_to_ref_kind(s: &str) -> crate::symbol::RefKind {
+    use crate::symbol::RefKind;
+    match s {
+        "import" => RefKind::Import,
+        "type_ref" => RefKind::TypeRef,
+        "call" => RefKind::Call,
+        "impl_trait" => RefKind::ImplTrait,
+        _ => RefKind::Call,
     }
 }
 

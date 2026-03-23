@@ -4,7 +4,10 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use ringbuf::{HeapRb, traits::{Consumer, Observer, Producer, Split}};
+use ringbuf::{
+    HeapRb,
+    traits::{Consumer, Observer, Producer, Split},
+};
 use thiserror::Error;
 use tracing::warn;
 

@@ -453,7 +453,7 @@ pub fn openai_stream_to_anthropic(stream: ByteStream, model: String) -> ByteStre
 }
 
 /// Build a single Anthropic SSE event (`event: TYPE\ndata: JSON\n\n`).
-fn anth_event(event_type: &str, data: &Value) -> Bytes {
+pub(crate) fn anth_event(event_type: &str, data: &Value) -> Bytes {
     Bytes::from(format!("event: {event_type}\ndata: {data}\n\n"))
 }
 

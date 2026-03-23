@@ -11,7 +11,10 @@
 
 use std::sync::atomic::AtomicBool;
 
-use ringbuf::{HeapRb, traits::{Producer, Split}};
+use ringbuf::{
+    HeapRb,
+    traits::{Producer, Split},
+};
 
 #[test]
 fn test_callback_reads_and_fills_correctly() {
@@ -27,11 +30,7 @@ fn test_callback_reads_and_fills_correctly() {
     let mut output_buffer = vec![0.0_f32; 256];
 
     // Run the callback body
-    golem_sonification::audio_out::audio_callback(
-        &mut consumer,
-        &mut output_buffer,
-        &running,
-    );
+    golem_sonification::audio_out::audio_callback(&mut consumer, &mut output_buffer, &running);
 
     // First 128 samples should contain our test data
     assert!(
@@ -60,11 +59,7 @@ fn test_callback_fills_silence_on_empty_buffer() {
     let running = AtomicBool::new(true);
     let mut output_buffer = vec![1.0_f32; 64]; // Pre-fill with non-zero
 
-    golem_sonification::audio_out::audio_callback(
-        &mut consumer,
-        &mut output_buffer,
-        &running,
-    );
+    golem_sonification::audio_out::audio_callback(&mut consumer, &mut output_buffer, &running);
 
     // All samples should be silence since ring buffer was empty
     for &sample in &output_buffer {

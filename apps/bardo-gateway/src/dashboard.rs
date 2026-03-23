@@ -2,8 +2,8 @@
 
 use axum::{
     extract::{
-        ws::{Message, WebSocket, WebSocketUpgrade},
         State,
+        ws::{Message, WebSocket, WebSocketUpgrade},
     },
     response::IntoResponse,
 };
@@ -11,10 +11,7 @@ use axum::{
 use crate::state::AppState;
 
 /// WebSocket upgrade handler: sends initial stats snapshot, then streams events.
-pub async fn ws_stats(
-    State(state): State<AppState>,
-    ws: WebSocketUpgrade,
-) -> impl IntoResponse {
+pub async fn ws_stats(State(state): State<AppState>, ws: WebSocketUpgrade) -> impl IntoResponse {
     ws.on_upgrade(|socket| handle_stats_socket(socket, state))
 }
 

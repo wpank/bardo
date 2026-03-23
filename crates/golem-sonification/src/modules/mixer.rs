@@ -180,7 +180,10 @@ mod tests {
         mixer.process(&inputs, &mut outputs);
         let out = outputs.get("out").expect("Mixer should produce 'out'");
         for &sample in out {
-            assert!(sample.abs() < f32::EPSILON, "Empty mixer should produce silence");
+            assert!(
+                sample.abs() < f32::EPSILON,
+                "Empty mixer should produce silence"
+            );
         }
     }
 }

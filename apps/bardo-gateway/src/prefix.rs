@@ -129,7 +129,8 @@ fn split_into_cached_blocks(text: &str) -> Vec<Value> {
         // Find the end of the marker: <!-- mori:layer:N -->
         let marker_start = pos;
         let after_prefix = &remaining[pos + LAYER_MARKER.len()..];
-        let marker_end = after_prefix.find("-->")
+        let marker_end = after_prefix
+            .find("-->")
             .map(|p| pos + LAYER_MARKER.len() + p + 3)
             .unwrap_or(remaining.len());
 

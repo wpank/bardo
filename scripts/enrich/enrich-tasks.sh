@@ -38,11 +38,14 @@ Rules:
 - Estimate 600s (10min) per task as default
 - Output ONLY the TOML, no markdown fences'
 
+export BATCH_OUTPUT_FILE="$output"
+export BATCH_VALIDATOR="toml_has_meta"
 result="$(call_claude "$model" "$SYSTEM" "Generate tasks.toml for this plan:
 
 $plan_content
 
 ${brief:+Brief summary:
 $brief}")"
+[[ "$BATCH" == true ]] && exit 0
 echo "$result" > "$output"
 echo "  create: $output"

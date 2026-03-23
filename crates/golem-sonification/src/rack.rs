@@ -5,10 +5,7 @@ use std::collections::HashMap;
 use indexmap::IndexMap;
 use serde_json::json;
 
-use crate::modules::{
-    Module, PatchCable, PortDirection, PortId, SignalBlock,
-    zero_block,
-};
+use crate::modules::{Module, PatchCable, PortDirection, PortId, SignalBlock, zero_block};
 
 /// The central signal-processing graph.
 ///
@@ -56,7 +53,8 @@ impl Rack {
     /// Remove a module and all its cables. Recomputes processing order.
     pub fn remove_module(&mut self, id: &str) {
         self.modules.swap_remove(id);
-        self.cables.retain(|c| c.from.module_id != id && c.to.module_id != id);
+        self.cables
+            .retain(|c| c.from.module_id != id && c.to.module_id != id);
         self.buffers.retain(|k, _| k.module_id != id);
         self.recompute_processing_order();
     }
@@ -95,7 +93,13 @@ impl Rack {
                 .cables
                 .iter()
                 .filter(|c| c.to.module_id == *module_id)
-                .map(|c| (c.from.port_name.clone(), c.to.port_name.clone(), c.attenuation))
+                .map(|c| {
+                    (
+                        c.from.port_name.clone(),
+                        c.to.port_name.clone(),
+                        c.attenuation,
+                    )
+                })
                 .collect();
 
             for (from_port, to_port, attenuation) in &incoming {
@@ -227,7 +231,8 @@ impl Rack {
                 let from_port = c.get("from_port").and_then(|v| v.as_str()).unwrap_or("");
                 let to_module = c.get("to_module").and_then(|v| v.as_str()).unwrap_or("");
                 let to_port = c.get("to_port").and_then(|v| v.as_str()).unwrap_or("");
-                let attenuation = c.get("attenuation").and_then(|v| v.as_f64()).unwrap_or(1.0) as f32;
+                let attenuation =
+                    c.get("attenuation").and_then(|v| v.as_f64()).unwrap_or(1.0) as f32;
 
                 self.cables.push(PatchCable {
                     from: PortId {
@@ -354,7 +359,7 @@ impl Default for Rack {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::modules::{noise::NoiseSource, vca::Vca, mixer::Mixer};
+    use crate::modules::{mixer::Mixer, noise::NoiseSource, vca::Vca};
 
     #[test]
     fn test_rack_topological_sort() {
@@ -365,13 +370,25 @@ mod tests {
 
         // Wire A → B → C
         rack.connect(
-            PortId { module_id: "A".into(), port_name: "out".into() },
-            PortId { module_id: "B".into(), port_name: "in".into() },
+            PortId {
+                module_id: "A".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "B".into(),
+                port_name: "in".into(),
+            },
             1.0,
         );
         rack.connect(
-            PortId { module_id: "B".into(), port_name: "out".into() },
-            PortId { module_id: "C".into(), port_name: "in_1".into() },
+            PortId {
+                module_id: "B".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "C".into(),
+                port_name: "in_1".into(),
+            },
             1.0,
         );
 
@@ -393,13 +410,25 @@ mod tests {
         rack.add_module(Box::new(Mixer::new("mixer_1")));
 
         rack.connect(
-            PortId { module_id: "noise_1".into(), port_name: "out".into() },
-            PortId { module_id: "vca_1".into(), port_name: "in".into() },
+            PortId {
+                module_id: "noise_1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "vca_1".into(),
+                port_name: "in".into(),
+            },
             1.0,
         );
         rack.connect(
-            PortId { module_id: "vca_1".into(), port_name: "out".into() },
-            PortId { module_id: "mixer_1".into(), port_name: "in_1".into() },
+            PortId {
+                module_id: "vca_1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "mixer_1".into(),
+                port_name: "in_1".into(),
+            },
             1.0,
         );
 
@@ -408,7 +437,10 @@ mod tests {
 
         // Noise through VCA (default cv=1.0) through mixer should produce non-silent output
         let max_abs = left.iter().map(|s| s.abs()).fold(0.0_f32, f32::max);
-        assert!(max_abs > 0.0, "Default patch should produce non-silent output");
+        assert!(
+            max_abs > 0.0,
+            "Default patch should produce non-silent output"
+        );
         // Both channels should match (mono duplicate)
         assert_eq!(left, right);
     }
@@ -421,20 +453,35 @@ mod tests {
         rack.add_module(Box::new(Mixer::new("mixer_1")));
 
         rack.connect(
-            PortId { module_id: "noise_1".into(), port_name: "out".into() },
-            PortId { module_id: "vca_1".into(), port_name: "in".into() },
+            PortId {
+                module_id: "noise_1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "vca_1".into(),
+                port_name: "in".into(),
+            },
             1.0,
         );
         rack.connect(
-            PortId { module_id: "vca_1".into(), port_name: "out".into() },
-            PortId { module_id: "mixer_1".into(), port_name: "in_1".into() },
+            PortId {
+                module_id: "vca_1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "mixer_1".into(),
+                port_name: "in_1".into(),
+            },
             1.0,
         );
 
         rack.master_level = 0.0;
         let (left, _right) = rack.process_block();
         let max_abs = left.iter().map(|s| s.abs()).fold(0.0_f32, f32::max);
-        assert!(max_abs < f32::EPSILON, "master_level=0 should produce silence");
+        assert!(
+            max_abs < f32::EPSILON,
+            "master_level=0 should produce silence"
+        );
     }
 
     #[test]
@@ -443,8 +490,14 @@ mod tests {
         rack.add_module(Box::new(NoiseSource::new("n1")));
         rack.add_module(Box::new(Vca::new("v1")));
         rack.connect(
-            PortId { module_id: "n1".into(), port_name: "out".into() },
-            PortId { module_id: "v1".into(), port_name: "in".into() },
+            PortId {
+                module_id: "n1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "v1".into(),
+                port_name: "in".into(),
+            },
             0.8,
         );
         rack.master_level = 0.7;
@@ -470,13 +523,25 @@ mod tests {
         rack.add_module(Box::new(Mixer::new("mixer_1")));
 
         rack.connect(
-            PortId { module_id: "noise_1".into(), port_name: "out".into() },
-            PortId { module_id: "vca_1".into(), port_name: "in".into() },
+            PortId {
+                module_id: "noise_1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "vca_1".into(),
+                port_name: "in".into(),
+            },
             1.0,
         );
         rack.connect(
-            PortId { module_id: "vca_1".into(), port_name: "out".into() },
-            PortId { module_id: "mixer_1".into(), port_name: "in_1".into() },
+            PortId {
+                module_id: "vca_1".into(),
+                port_name: "out".into(),
+            },
+            PortId {
+                module_id: "mixer_1".into(),
+                port_name: "in_1".into(),
+            },
             1.0,
         );
 

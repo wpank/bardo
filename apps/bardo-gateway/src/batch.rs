@@ -68,6 +68,8 @@ pub struct BatchResult {
     pub custom_id: String,
     pub batch_id: String,
     pub result: Value,
+    /// "succeeded", "errored", or "expired" from the Anthropic batch response.
+    pub result_type: String,
     pub completed_at_ms: u64,
 }
 
@@ -165,9 +167,8 @@ impl BatchManager {
     pub fn start_flush_timer(self: &Arc<Self>) {
         let mgr = Arc::clone(self);
         tokio::spawn(async move {
-            let mut interval = tokio::time::interval(std::time::Duration::from_secs(
-                DEFAULT_FLUSH_INTERVAL_SECS,
-            ));
+            let mut interval =
+                tokio::time::interval(std::time::Duration::from_secs(DEFAULT_FLUSH_INTERVAL_SECS));
             loop {
                 interval.tick().await;
                 let queue_len = mgr.queue.lock().await.len();
@@ -335,10 +336,12 @@ async fn poll_active_batches(
                                 .and_then(|v| v.as_str())
                                 .unwrap_or("")
                                 .to_string();
-                            let result = entry
-                                .get("result")
-                                .cloned()
-                                .unwrap_or(Value::Null);
+                            let result = entry.get("result").cloned().unwrap_or(Value::Null);
+                            let result_type = result
+                                .get("type")
+                                .and_then(|v| v.as_str())
+                                .unwrap_or("unknown")
+                                .to_string();
 
                             if !custom_id.is_empty() {
                                 results.insert(
@@ -347,6 +350,7 @@ async fn poll_active_batches(
                                         custom_id,
                                         batch_id: batch_id.clone(),
                                         result,
+                                        result_type,
                                         completed_at_ms: now_ms,
                                     },
                                 );

@@ -1,8 +1,8 @@
 //! Tool definitions and dispatch for the MCP server.
 //!
-//! Wraps `mori-index` operations as five MCP tools: `search_code`,
-//! `get_symbol_context`, `get_file_ast`, `find_similar_patterns`, and
-//! `get_index_stats`.
+//! Wraps `mori-index` and `mori-context` operations as MCP tools: `search_code`,
+//! `get_symbol_context`, `get_file_ast`, `find_similar_patterns`,
+//! `get_index_stats`, and `get_context`.
 
 use mori_index::Index;
 use serde_json::{Value, json};
@@ -71,6 +71,22 @@ pub fn list_tools() -> Vec<ToolDefinition> {
                 "required": []
             }),
         },
+        ToolDefinition {
+            name: "get_context".into(),
+            description: "Search the index and return rich context blocks with source snippets, related symbols, and documentation. Supports keyword, similarity, and hybrid search strategies.".into(),
+            input_schema: json!({
+                "type": "object",
+                "properties": {
+                    "query": { "type": "string", "description": "Search query (symbol name or natural language)" },
+                    "strategy": { "type": "string", "description": "Search strategy: keyword (default), similar, or hybrid" },
+                    "limit": { "type": "number", "description": "Max context blocks to return (default 10)" },
+                    "context_lines": { "type": "number", "description": "Lines of source context around each symbol (default 10)" },
+                    "threshold": { "type": "number", "description": "Similarity threshold for similar/hybrid strategies (default 0.5)" },
+                    "format": { "type": "string", "description": "Output format: json (default) or markdown" }
+                },
+                "required": ["query"]
+            }),
+        },
     ]
 }
 
@@ -82,6 +98,7 @@ pub fn call_tool(index: &mut Index, name: &str, arguments: &Value) -> ToolCallRe
         "get_file_ast" => tool_get_file_ast(index, arguments),
         "find_similar_patterns" => tool_find_similar_patterns(index, arguments),
         "get_index_stats" => tool_get_index_stats(index),
+        "get_context" => tool_get_context(index, arguments),
         _ => tool_error(format!("Unknown tool: {name}")),
     }
 }
@@ -303,6 +320,51 @@ fn tool_get_index_stats(index: &Index) -> ToolCallResult {
             tool_text(serde_json::to_string_pretty(&output).unwrap_or_default())
         }
         Err(e) => tool_error(format!("stats failed: {e}")),
+    }
+}
+
+fn tool_get_context(index: &mut Index, args: &Value) -> ToolCallResult {
+    let query_str = match args.get("query").and_then(Value::as_str) {
+        Some(q) => q,
+        None => return tool_error("Missing required parameter: query".into()),
+    };
+
+    let strategy_str = args
+        .get("strategy")
+        .and_then(Value::as_str)
+        .unwrap_or("keyword");
+    let limit = args.get("limit").and_then(Value::as_u64).unwrap_or(10) as usize;
+    let context_lines = args
+        .get("context_lines")
+        .and_then(Value::as_u64)
+        .unwrap_or(10) as usize;
+    let threshold = args.get("threshold").and_then(Value::as_f64).unwrap_or(0.5) as f32;
+    let format = args.get("format").and_then(Value::as_str).unwrap_or("json");
+
+    let strategy = match strategy_str {
+        "keyword" => mori_context::SearchStrategy::Keyword,
+        "similar" => mori_context::SearchStrategy::Similar { threshold },
+        "hybrid" => mori_context::SearchStrategy::Hybrid { threshold },
+        other => return tool_error(format!("Unknown strategy: {other}")),
+    };
+
+    let ctx_query = mori_context::ContextQuery {
+        query: query_str.to_string(),
+        strategy,
+        limit,
+        context_lines,
+        include_related: true,
+    };
+
+    match mori_context::assemble(index, &ctx_query) {
+        Ok(response) => {
+            let output = match format {
+                "markdown" => response.to_markdown(),
+                _ => response.to_json(),
+            };
+            tool_text(output)
+        }
+        Err(e) => tool_error(format!("context assembly failed: {e}")),
     }
 }
 

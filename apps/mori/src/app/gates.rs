@@ -155,6 +155,14 @@ pub(crate) async fn handle_compile_result(
         *compile_fail_count += 1;
         *last_compile_error = gate.output.clone();
 
+        // Reflexion loop: generate + store reflection before retry
+        crate::orchestrator::reflection::spawn_reflection(
+            &config.repo_root,
+            &plan.base,
+            &gate.output,
+            state.current_iteration,
+        );
+
         if state.current_iteration < config.max_iterations {
             let error_tail: String = gate
                 .output
@@ -249,7 +257,10 @@ pub(crate) async fn handle_compile_result(
 
     // Fire conditional gates (non-blocking, informational) based on plan's crates_touched
     if let Some(plan_info) = orchestrator.current_plan() {
-        let plan_path = crate::orchestrator::paths::plan_doc(&crate::orchestrator::paths::plans_root(&config.repo_root), &plan_info.base);
+        let plan_path = crate::orchestrator::paths::plan_doc(
+            &crate::orchestrator::paths::plans_root(&config.repo_root),
+            &plan_info.base,
+        );
         let plan_text = std::fs::read_to_string(&plan_path).unwrap_or_default();
 
         if crate::orchestrator::gates::plan_touches_crate(&plan_text, "bardo-terminal") {
@@ -459,6 +470,14 @@ pub(crate) async fn handle_test_result(
     ))?;
 
     if !gate.passed {
+        // Reflexion loop: generate + store reflection for test failures
+        crate::orchestrator::reflection::spawn_reflection(
+            &config.repo_root,
+            &plan.base,
+            &gate.output,
+            state.current_iteration,
+        );
+
         state.add_log(
             "gate",
             "Test failures detected (non-blocking)",

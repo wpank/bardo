@@ -65,6 +65,17 @@ per-role files to read — your instructions are the turn message itself. Follow
 5. **Read preflight-snapshot.md for ambient state.** It tells you git history, compile status, and test count. Don't re-run those commands to discover information already there.
 6. **Write for amnesia.** Every context file you produce must be self-contained. The next session has zero memory of yours.
 
+### Codebase Search (MCP tools)
+
+When running under the Claude CLI with `--mcp-config`, you have access to local MCP tools that search a pre-built symbol index. These are free and instant:
+
+- `search_code` — find symbols by name (filter by kind, visibility)
+- `get_symbol_context` — get a symbol's full signature, doc, and related types
+- `get_file_ast` — list all symbols in a file
+- `find_similar_patterns` — find structurally similar code
+
+Use these before implementing or importing any type you haven't seen. Prefer them over `rg` for symbol lookups. Use `rg` for text-pattern grep.
+
 ## Git Branch Awareness
 
 You are running on branch `codex/plan/NN-name`, created by `run-plans.sh` before your session. When you finish, the shell will commit your work, merge into the batch branch, tag it, and delete the plan branch. You never see any of this — just write files and stop.

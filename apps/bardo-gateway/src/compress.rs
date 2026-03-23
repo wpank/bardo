@@ -17,10 +17,41 @@ use crate::error::AppError;
 const CHARS_PER_TOKEN: usize = 4;
 
 /// Default threshold above which compression triggers (estimated tokens).
-const DEFAULT_THRESHOLD: usize = 32_000;
+const DEFAULT_THRESHOLD: usize = 16_000;
 
 /// Number of recent turns to keep verbatim (not compressed).
 const KEEP_RECENT_TURNS: usize = 6;
+
+/// Extract text content from a message, handling both string and array content formats.
+///
+/// Anthropic messages can have content as:
+/// - `"content": "hello"` (string)
+/// - `"content": [{"type":"text","text":"hello"}, ...]` (array of blocks)
+fn extract_message_text(msg: &Value) -> String {
+    match msg.get("content") {
+        Some(Value::String(s)) => s.clone(),
+        Some(Value::Array(arr)) => {
+            let mut parts = Vec::new();
+            for block in arr {
+                match block.get("type").and_then(|t| t.as_str()) {
+                    Some("text") => {
+                        if let Some(t) = block.get("text").and_then(|t| t.as_str()) {
+                            parts.push(t);
+                        }
+                    }
+                    Some("thinking") => {
+                        if let Some(t) = block.get("thinking").and_then(|t| t.as_str()) {
+                            parts.push(t);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            parts.join("\n")
+        }
+        _ => String::new(),
+    }
+}
 
 /// Compress conversation history if it exceeds the token threshold.
 ///
@@ -38,11 +69,7 @@ pub async fn compress_history_if_needed(
     };
 
     // Estimate total token count.
-    let total_chars: usize = messages
-        .iter()
-        .filter_map(|m| m.get("content").and_then(|c| c.as_str()))
-        .map(|s| s.len())
-        .sum();
+    let total_chars: usize = messages.iter().map(|m| extract_message_text(m).len()).sum();
     let estimated_tokens = total_chars / CHARS_PER_TOKEN;
 
     if estimated_tokens < DEFAULT_THRESHOLD {
@@ -50,28 +77,54 @@ pub async fn compress_history_if_needed(
     }
 
     // Split: compress old turns, keep recent turns verbatim.
-    let split_point = messages.len().saturating_sub(KEEP_RECENT_TURNS);
+    let mut split_point = messages.len().saturating_sub(KEEP_RECENT_TURNS);
+
+    // Don't split in the middle of a tool_use/tool_result pair. If the
+    // first recent message is a user message with tool_result blocks, its
+    // matching assistant tool_use is about to be compressed away — pull
+    // the split back so both stay in the recent turns.
+    while split_point > 0 {
+        let msg = &messages[split_point];
+        let is_tool_result_msg = msg.get("role").and_then(|r| r.as_str()) == Some("user")
+            && msg
+                .get("content")
+                .and_then(|c| c.as_array())
+                .map(|arr| {
+                    arr.iter()
+                        .any(|b| b.get("type").and_then(|t| t.as_str()) == Some("tool_result"))
+                })
+                .unwrap_or(false);
+
+        if !is_tool_result_msg {
+            break;
+        }
+        // Pull back to include the preceding assistant tool_use message.
+        split_point = split_point.saturating_sub(1);
+    }
+
     let old_turns = &messages[..split_point];
     let recent_turns = &messages[split_point..];
 
     // Build the old turns into a text block for summarization.
     let mut history_text = String::with_capacity(total_chars / 2);
     for msg in old_turns {
-        let role = msg.get("role").and_then(|r| r.as_str()).unwrap_or("unknown");
-        let content = msg.get("content").and_then(|c| c.as_str()).unwrap_or("");
+        let role = msg
+            .get("role")
+            .and_then(|r| r.as_str())
+            .unwrap_or("unknown");
+        let content = extract_message_text(msg);
         // Truncate very long individual messages to keep the compression request reasonable.
         let truncated = if content.len() > 2000 {
             &content[..2000]
         } else {
-            content
+            &content
         };
         history_text.push_str(&format!("[{role}]: {truncated}\n\n"));
     }
 
     let old_chars: usize = old_turns
         .iter()
-        .filter_map(|m| m.get("content").and_then(|c| c.as_str()))
-        .map(|s| s.len())
+        .map(|m| extract_message_text(m).len())
         .sum();
     let old_tokens = old_chars / CHARS_PER_TOKEN;
 
@@ -80,15 +133,25 @@ pub async fn compress_history_if_needed(
     let summary_tokens = summary.len() / CHARS_PER_TOKEN;
 
     // Build new messages array: summary + recent turns.
-    let mut new_messages = Vec::with_capacity(recent_turns.len() + 1);
+    // Skip the synthetic assistant ack if the first recent turn is also
+    // assistant — Anthropic rejects consecutive same-role messages.
+    let first_recent_is_assistant = recent_turns
+        .first()
+        .and_then(|m| m.get("role"))
+        .and_then(|r| r.as_str())
+        == Some("assistant");
+
+    let mut new_messages = Vec::with_capacity(recent_turns.len() + 2);
     new_messages.push(serde_json::json!({
         "role": "user",
         "content": format!("[Previous conversation summary]\n{summary}")
     }));
-    new_messages.push(serde_json::json!({
-        "role": "assistant",
-        "content": "Understood. I have the context from the previous conversation. Continuing."
-    }));
+    if !first_recent_is_assistant {
+        new_messages.push(serde_json::json!({
+            "role": "assistant",
+            "content": "Understood. I have the context from the previous conversation. Continuing."
+        }));
+    }
     for turn in recent_turns {
         new_messages.push(turn.clone());
     }

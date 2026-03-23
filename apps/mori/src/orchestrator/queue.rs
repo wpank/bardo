@@ -221,12 +221,16 @@ plans = ["07", "07a", "08"]
     #[test]
     fn milestone_plans_by_name() {
         let cfg: QueueConfig = toml::from_str(SAMPLE_QUEUE).expect("should parse");
-        let mvp = cfg.milestone_plans("Minimal MVP").expect("should find milestone");
+        let mvp = cfg
+            .milestone_plans("Minimal MVP")
+            .expect("should find milestone");
         assert_eq!(
             mvp,
             vec!["02", "04", "05", "06", "09", "R01", "Q01", "W01", "R02", "X01"]
         );
-        let demo = cfg.milestone_plans("demo story").expect("case-insensitive match");
+        let demo = cfg
+            .milestone_plans("demo story")
+            .expect("case-insensitive match");
         assert_eq!(demo, vec!["07", "07a", "08"]);
     }
 

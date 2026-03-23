@@ -379,6 +379,24 @@ pub const CONTEXT_LAYOUT_STANZA: &str = r#"## Plans context layout
 - `context/in/` — when the orchestrator injects files into a worktree, mirrored copies of the above may appear here (`brief.md`, `prd2-extract.md`, etc.).
 "#;
 
+pub const MCP_TOOLS_STANZA: &str = r#"## Codebase Search (MCP tools)
+
+You have access to a local codebase search index via MCP tools. These are free (no API cost) and instant. Use them instead of blind `rg` when you need to find or verify symbols.
+
+- **Find a type/function/trait**: `search_code(query: "SymbolName")` — searches indexed symbols by name substring. Filter with `kind` (function, struct, enum, trait, const, module) and `visibility` (public, crate, private).
+- **Understand a symbol's API**: `get_symbol_context(symbol_name: "TypeName")` — returns the full signature, file, line, doc comment, and related types found in the signature.
+- **List symbols in a file**: `get_file_ast(file_path: "crates/foo/src/bar.rs")` — shows all indexed symbols from that file with their signatures and visibility.
+- **Find similar patterns**: `find_similar_patterns(symbol_name: "MyStruct")` — finds structurally similar symbols (useful for following existing patterns).
+
+**When to use these tools:**
+- Before implementing a new type: search for it first — it may already exist
+- Before importing a type: verify its exact path and signature with `get_symbol_context`
+- When unsure about an API: look up the function signature instead of guessing
+- When the plan references a type you haven't seen: search for it
+
+Prefer MCP search over `rg` for symbol lookups. `rg` is better for text-pattern grep; MCP search is better for finding types, functions, and understanding APIs.
+"#;
+
 fn read_agents_md(repo_root: &Path) -> String {
     let root_agents = repo_root.join("AGENTS.md");
     if root_agents.is_file() {
@@ -637,7 +655,8 @@ pub fn implementer_prompt(repo_root: &Path, plan: &PlanInfo) -> Result<String> {
     let prd2_extract = truncate(&context::read_prd2_extract(repo_root, &plan.num)?, 8000);
 
     let noreview_plans_dir = super::paths::plans_root(repo_root);
-    let last_completed_path = super::paths::global_artifact(&noreview_plans_dir, "last-completed.md");
+    let last_completed_path =
+        super::paths::global_artifact(&noreview_plans_dir, "last-completed.md");
     let last_completed = if last_completed_path.exists() {
         truncate(
             &std::fs::read_to_string(&last_completed_path).unwrap_or_default(),
@@ -671,6 +690,7 @@ pub fn implementer_prompt(repo_root: &Path, plan: &PlanInfo) -> Result<String> {
     let verify_chain = optional_verify_chain_section(repo_root, &plan.num);
 
     let plan_num = &plan.num;
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"Implement the plan at `plans/{base}.md`.
 
@@ -680,6 +700,7 @@ pub fn implementer_prompt(repo_root: &Path, plan: &PlanInfo) -> Result<String> {
 {workspace_map}
 </workspace-map>
 {decomp}{preflight}{verify_tasks}{verify_chain}
+{mcp_tools}
 ## Plan
 
 <plan>
@@ -907,7 +928,8 @@ pub fn implementer_prompt_with_brief(
                     ));
                 }
             }
-            let gate_output_path = super::paths::global_artifact(&impl_plans_dir, "last-gate-output.txt");
+            let gate_output_path =
+                super::paths::global_artifact(&impl_plans_dir, "last-gate-output.txt");
             let gate_output = std::fs::read_to_string(&gate_output_path).unwrap_or_default();
             let gate_sec = if !gate_output.is_empty() {
                 format!("```\n{}\n```\n", truncate_tail(&gate_output, 2000))
@@ -1007,6 +1029,7 @@ After fixing each item: re-read the relevant code section and confirm the fix is
         .unwrap_or_default();
     let cross_plan_section = cross_plan_diff_section(repo_root, &crates_touched);
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"Implement the plan at `plans/{base}.md`.
 {agent_messages}{shared_rubric}{cross_plan_section}
@@ -1016,6 +1039,7 @@ After fixing each item: re-read the relevant code section and confirm the fix is
 {workspace_map}
 </workspace-map>
 {decomp}{preflight}{verify_tasks}{verify_chain}
+{mcp_tools}
 ## Plan
 
 <plan>
@@ -1241,7 +1265,8 @@ pub fn implementer_fix_prompt(repo_root: &Path, plan: &PlanInfo, iteration: u32)
             }
         }
         let fix_plans_dir = super::paths::plans_root(repo_root);
-        let gate_output_path = super::paths::global_artifact(&fix_plans_dir, "last-gate-output.txt");
+        let gate_output_path =
+            super::paths::global_artifact(&fix_plans_dir, "last-gate-output.txt");
         let gate_output = std::fs::read_to_string(&gate_output_path).unwrap_or_default();
         let gate_sec = if !gate_output.is_empty() {
             format!("```\n{}\n```\n", truncate_tail(&gate_output, 3000))
@@ -1304,11 +1329,12 @@ After fixing each item: re-read the relevant code section and confirm the fix is
         .unwrap_or_default();
     let cross_plan_section = cross_plan_diff_section(repo_root, &crates_touched);
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"You are the Implementer. This is iteration {iteration} — you are fixing specific issues from the prior compilation or review cycle.
 
 {cross_plan_section}{shared_rubric}
-
+{mcp_tools}
 ## Your Fix Task
 
 {issues_section}
@@ -1841,6 +1867,7 @@ pub fn auditor_prompt(
         String::new()
     };
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"You are the Auditor. Verify the implementation matches the specification.
 
@@ -1856,6 +1883,7 @@ pub fn auditor_prompt(
 {brief}
 </brief>
 {prior_section}
+{mcp_tools}
 ## Workspace Map
 
 <workspace-map>
@@ -2871,6 +2899,7 @@ pub fn quick_reviewer_prompt(
         String::new()
     };
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"You are the Quick Reviewer. Do a focused single-pass review of this implementation.
 
@@ -2882,7 +2911,7 @@ pub fn quick_reviewer_prompt(
 4. **Blocking omissions** — Are any required files entirely missing?
 
 Do NOT comment on: code style, docs, naming conventions, performance, or non-blocking nits.
-
+{mcp_tools}
 ## Plan
 
 <plan>
@@ -3118,6 +3147,7 @@ pub fn task_implementer_prompt(
     let task_skills = skills::skills_for_task(AgentRole::Implementer, task);
     let skill_section = skills::build_skill_section(repo_root, &task_skills, 8000);
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"Implement task {task_id} of plan {plan_base}: {title}
 
@@ -3127,6 +3157,7 @@ pub fn task_implementer_prompt(
 ## Acceptance Criteria
 - {acceptance}
 {enhanced_sections}
+{mcp_tools}
 ## Workspace Map (filtered)
 <workspace-map>
 {workspace_map}
@@ -3323,6 +3354,7 @@ pub fn task_implementer_batch_prompt(
     let plan_base = &plan.base;
     let task_count = tasks.len();
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"Implement the following {task_count} task(s) for plan {plan_base}.
 
@@ -3341,6 +3373,7 @@ Complete ALL of the following tasks in this session — they belong to the same 
 {workspace_map}
 </workspace-map>
 {decomp}{preflight}{verify_tasks_sec}{verify_chain}
+{mcp_tools}
 ## Strategist Brief
 <brief>
 {brief}
@@ -4068,11 +4101,13 @@ pub fn express_implementer_prompt(
         String::new()
     };
 
+    let mcp_tools = MCP_TOOLS_STANZA;
     let prompt = format!(
         r#"You are the sole implementer for plan {plan_num} ({plan_base}). No reviewer will check your work.
 You are responsible for correctness, architecture, testing, and documentation.
 
 {iteration_note}{gate_errors}
+{mcp_tools}
 ## Mission
 
 Implement this plan completely and correctly in a single pass.

@@ -59,8 +59,16 @@ impl ContextInjector<'_> {
             // Per-plan artifacts from the directory
             self.copy_in_file(worktree, "brief.md", &plan_dir.join("brief.md"))?;
             self.copy_in_file(worktree, "tasks.toml", &plan_dir.join("tasks.toml"))?;
-            self.copy_in_file(worktree, "prd2-extract.md", &plan_dir.join("prd-extract.md"))?;
-            self.copy_in_file(worktree, "verify-tasks.toml", &plan_dir.join("verify-tasks.toml"))?;
+            self.copy_in_file(
+                worktree,
+                "prd2-extract.md",
+                &plan_dir.join("prd-extract.md"),
+            )?;
+            self.copy_in_file(
+                worktree,
+                "verify-tasks.toml",
+                &plan_dir.join("verify-tasks.toml"),
+            )?;
         } else {
             // Legacy flat layout
             let plan_file = plans_dir.join(format!("{plan_num}.md"));
@@ -86,7 +94,8 @@ impl ContextInjector<'_> {
             let prd2 = plans_dir.join(format!("context/prd2-extracts/{plan_num}-prd2.md"));
             self.copy_in_file(worktree, "prd2-extract.md", &prd2)?;
 
-            let verify_tasks = plans_dir.join(format!("context/tasks/{plan_num}-verify-tasks.toml"));
+            let verify_tasks =
+                plans_dir.join(format!("context/tasks/{plan_num}-verify-tasks.toml"));
             self.copy_in_file(worktree, "verify-tasks.toml", &verify_tasks)?;
         }
 
@@ -94,7 +103,8 @@ impl ContextInjector<'_> {
         let wmap_path = crate::orchestrator::paths::global_artifact(&plans_dir, "workspace-map.md");
         self.copy_in_file(worktree, "workspace-map.md", &wmap_path)?;
 
-        let pre_path = crate::orchestrator::paths::global_artifact(&plans_dir, "preflight-snapshot.md");
+        let pre_path =
+            crate::orchestrator::paths::global_artifact(&plans_dir, "preflight-snapshot.md");
         self.copy_in_file(worktree, "preflight.md", &pre_path)?;
 
         let ignored = crate::orchestrator::paths::global_artifact(&plans_dir, "ignored-tests.md");
@@ -128,21 +138,16 @@ impl ContextInjector<'_> {
                 Ok(content) => match toml::from_str::<PlaybookConfig>(&content) {
                     Ok(playbook) => {
                         // Collect all file paths from this plan's task list
-                        let plan_files: Vec<String> = crate::orchestrator::tasks::load_checklist(
-                            self.repo_root, plan_num,
-                        )
-                        .ok()
-                        .flatten()
-                        .map(|cl| {
-                            cl.tasks.iter().flat_map(|t| t.files.clone()).collect()
-                        })
-                        .unwrap_or_default();
+                        let plan_files: Vec<String> =
+                            crate::orchestrator::tasks::load_checklist(self.repo_root, plan_num)
+                                .ok()
+                                .flatten()
+                                .map(|cl| cl.tasks.iter().flat_map(|t| t.files.clone()).collect())
+                                .unwrap_or_default();
 
                         let matched = playbook.match_rules(&plan_files, &[]);
                         if !matched.is_empty() {
-                            let mut md = String::from(
-                                "# Playbook Notes (from prior builds)\n\n",
-                            );
+                            let mut md = String::from("# Playbook Notes (from prior builds)\n\n");
                             for rule in &matched {
                                 md.push_str(&format!("- {}\n", rule.context));
                             }
@@ -153,6 +158,16 @@ impl ContextInjector<'_> {
                 },
                 Err(e) => warn!("playbook: failed to read playbook.toml: {e}"),
             }
+        }
+
+        // Inject prior iteration reflections (reflexion loop)
+        match super::iteration_memory::IterationMemory::load(self.repo_root, plan_num) {
+            Ok(mem) => {
+                if let Some(reflections_md) = mem.format_reflections_md() {
+                    self.write_in_file(worktree, "reflections.md", &reflections_md)?;
+                }
+            }
+            Err(e) => warn!("Failed to load iteration memory for {plan_num}: {e}"),
         }
 
         Ok(())

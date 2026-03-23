@@ -39,6 +39,8 @@ Rules:
 - Extract crate names from the plan
 - Output ONLY TOML, no markdown fences'
 
+export BATCH_OUTPUT_FILE="$output"
+export BATCH_VALIDATOR="toml_has_meta"
 result="$(call_claude "$model" "$SYSTEM" "Generate verify-tasks.toml:
 
 Plan:
@@ -46,5 +48,6 @@ $plan_content
 
 ${tasks:+Implementation tasks:
 $tasks}")"
+[[ "$BATCH" == true ]] && exit 0
 echo "$result" > "$output"
 echo "  create: $output"

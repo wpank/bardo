@@ -84,7 +84,8 @@ impl NoiseSource {
         self.b3 = 0.86650 * self.b3 + white * 0.3104856;
         self.b4 = 0.55000 * self.b4 + white * 0.5329522;
         self.b5 = -0.7616 * self.b5 - white * 0.0168980;
-        let pink = self.b0 + self.b1 + self.b2 + self.b3 + self.b4 + self.b5 + self.b6 + white * 0.5362;
+        let pink =
+            self.b0 + self.b1 + self.b2 + self.b3 + self.b4 + self.b5 + self.b6 + white * 0.5362;
         self.b6 = white * 0.115926;
         // Normalize: the sum has roughly +-4.5 range
         (pink * 0.11).clamp(-1.0, 1.0)
@@ -199,7 +200,9 @@ mod tests {
         let mut outputs = HashMap::new();
         noise.process(&inputs, &mut outputs);
 
-        let out = outputs.get("out").expect("NoiseSource should produce 'out'");
+        let out = outputs
+            .get("out")
+            .expect("NoiseSource should produce 'out'");
         // White noise should have non-zero output
         let max_abs = out.iter().map(|s| s.abs()).fold(0.0_f32, f32::max);
         assert!(max_abs > 0.0, "White noise should produce non-zero output");

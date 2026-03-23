@@ -76,19 +76,20 @@ fn default_model_pricing() -> &'static ModelPricing {
 pub fn default_pricing() -> Vec<ModelPricing> {
     vec![
         // ── Anthropic ──
-        // Cached input = 10% of input price. Thinking tokens = output price.
+        // Prices from https://platform.claude.com/docs/en/about-claude/pricing
+        // Cached input = 10% of input price (0.1x). Cache write = 1.25x input.
         ModelPricing {
             model: "claude-opus-4-6".into(),
-            input_per_m: 15.0,
-            output_per_m: 75.0,
-            cached_input_per_m: Some(1.5),   // 10% of 15
+            input_per_m: 5.0,
+            output_per_m: 25.0,
+            cached_input_per_m: Some(0.5), // 10% of 5
             reasoning_per_m: None,
         },
         ModelPricing {
             model: "claude-sonnet-4-20250514".into(),
             input_per_m: 3.0,
             output_per_m: 15.0,
-            cached_input_per_m: Some(0.3),   // 10% of 3
+            cached_input_per_m: Some(0.3),
             reasoning_per_m: None,
         },
         ModelPricing {
@@ -100,16 +101,16 @@ pub fn default_pricing() -> Vec<ModelPricing> {
         },
         ModelPricing {
             model: "claude-haiku-4-5".into(),
-            input_per_m: 0.8,
-            output_per_m: 4.0,
-            cached_input_per_m: Some(0.08),  // 10% of 0.8
+            input_per_m: 1.0,
+            output_per_m: 5.0,
+            cached_input_per_m: Some(0.1), // 10% of 1
             reasoning_per_m: None,
         },
         ModelPricing {
             model: "claude-haiku-4-5-20251001".into(),
-            input_per_m: 0.8,
-            output_per_m: 4.0,
-            cached_input_per_m: Some(0.08),
+            input_per_m: 1.0,
+            output_per_m: 5.0,
+            cached_input_per_m: Some(0.1),
             reasoning_per_m: None,
         },
         // ── OpenAI ──
@@ -118,7 +119,7 @@ pub fn default_pricing() -> Vec<ModelPricing> {
             model: "gpt-4o".into(),
             input_per_m: 2.5,
             output_per_m: 10.0,
-            cached_input_per_m: Some(1.25),  // 50% of 2.5
+            cached_input_per_m: Some(1.25), // 50% of 2.5
             reasoning_per_m: None,
         },
         ModelPricing {
@@ -134,14 +135,14 @@ pub fn default_pricing() -> Vec<ModelPricing> {
             model: "o3".into(),
             input_per_m: 10.0,
             output_per_m: 40.0,
-            cached_input_per_m: Some(5.0),   // 50% of 10
-            reasoning_per_m: Some(40.0),     // same as output
+            cached_input_per_m: Some(5.0), // 50% of 10
+            reasoning_per_m: Some(40.0),   // same as output
         },
         ModelPricing {
             model: "o4-mini".into(),
             input_per_m: 1.1,
             output_per_m: 4.4,
-            cached_input_per_m: Some(0.55),  // 50% of 1.1
+            cached_input_per_m: Some(0.55), // 50% of 1.1
             reasoning_per_m: Some(4.4),
         },
     ]

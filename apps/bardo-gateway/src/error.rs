@@ -13,8 +13,11 @@ pub enum AppError {
     BadRequest(String),
     /// Authentication failed.
     Unauthorized(String),
-    /// Provider returned an error.
+    /// Provider returned a server error (5xx / network failure).
     ProviderError(String),
+    /// Upstream provider returned a client error (4xx). Forwarded with the
+    /// original status so the caller knows the request was rejected.
+    UpstreamClientError { status: u16, body: String },
     /// Internal server error.
     Internal(String),
     /// Inference error (wraps the crate error).
@@ -34,6 +37,10 @@ impl IntoResponse for AppError {
             Self::Unauthorized(msg) => (StatusCode::UNAUTHORIZED, error_json("unauthorized", msg)),
             Self::ProviderError(msg) => {
                 (StatusCode::BAD_GATEWAY, error_json("provider_error", msg))
+            }
+            Self::UpstreamClientError { status, body } => {
+                let sc = StatusCode::from_u16(*status).unwrap_or(StatusCode::BAD_GATEWAY);
+                (sc, error_json("provider_error", body))
             }
             Self::Internal(msg) => (
                 StatusCode::INTERNAL_SERVER_ERROR,

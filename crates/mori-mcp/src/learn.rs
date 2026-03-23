@@ -9,7 +9,10 @@ use std::path::Path;
 pub fn run(root: &Path) -> anyhow::Result<()> {
     let episodes_path = root.join(".mori/memory/episodes.jsonl");
     if !episodes_path.exists() {
-        println!("No episodes found at {}. Run some plans first.", episodes_path.display());
+        println!(
+            "No episodes found at {}. Run some plans first.",
+            episodes_path.display()
+        );
         return Ok(());
     }
 

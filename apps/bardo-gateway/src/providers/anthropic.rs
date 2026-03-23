@@ -20,7 +20,10 @@ pub struct AnthropicProvider {
 
 impl AnthropicProvider {
     pub fn new(http: reqwest::Client, api_keys: Vec<String>) -> Self {
-        assert!(!api_keys.is_empty(), "at least one Anthropic API key required");
+        assert!(
+            !api_keys.is_empty(),
+            "at least one Anthropic API key required"
+        );
         Self { http, api_keys }
     }
 }

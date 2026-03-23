@@ -57,8 +57,14 @@ impl Provider for OpenAiProvider {
         // Extract detailed usage BEFORE format translation discards it.
         let u = parsed.get("usage");
         let usage = UsageDetails {
-            input_tokens: u.and_then(|v| v.get("prompt_tokens")).and_then(|t| t.as_u64()).unwrap_or(0),
-            output_tokens: u.and_then(|v| v.get("completion_tokens")).and_then(|t| t.as_u64()).unwrap_or(0),
+            input_tokens: u
+                .and_then(|v| v.get("prompt_tokens"))
+                .and_then(|t| t.as_u64())
+                .unwrap_or(0),
+            output_tokens: u
+                .and_then(|v| v.get("completion_tokens"))
+                .and_then(|t| t.as_u64())
+                .unwrap_or(0),
             cached_tokens: u
                 .and_then(|v| v.get("prompt_tokens_details"))
                 .and_then(|d| d.get("cached_tokens"))

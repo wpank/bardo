@@ -179,8 +179,12 @@ async fn start_embedded_gateway(config: &mut AppConfig) {
         bind: "127.0.0.1".into(),
         api_key: config.gateway_api_key.clone(),
         anthropic_api_keys: api_keys,
-        openai_api_key: std::env::var("OPENAI_API_KEY").ok().filter(|k| !k.is_empty()),
-        openrouter_api_key: std::env::var("OPENROUTER_API_KEY").ok().filter(|k| !k.is_empty()),
+        openai_api_key: std::env::var("OPENAI_API_KEY")
+            .ok()
+            .filter(|k| !k.is_empty()),
+        openrouter_api_key: std::env::var("OPENROUTER_API_KEY")
+            .ok()
+            .filter(|k| !k.is_empty()),
         ..GatewayConfig::default()
     };
 

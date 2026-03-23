@@ -666,3 +666,108 @@ fn atomic_write_toml(path: &Path, content: &str) -> Result<()> {
     std::fs::rename(&tmp_path, path)?;
     Ok(())
 }
+
+// ── Cost persistence ────────────────────────────────────────────────
+
+/// Per-plan cost record stored as JSON.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PlanCostRecord {
+    /// Plan base name (e.g., "12-grimoire").
+    pub plan: String,
+    /// Lifetime cost in USD (accumulates across runs).
+    pub cost_usd: f64,
+    /// Number of iterations that contributed to this cost.
+    pub iterations: u32,
+    /// Last updated timestamp (ISO 8601).
+    pub last_updated: String,
+}
+
+/// Aggregate cost summary across all plans.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CostSummary {
+    /// Total cost across all plans.
+    pub total_cost_usd: f64,
+    /// Per-plan breakdown.
+    pub plans: Vec<PlanCostRecord>,
+    /// Last updated timestamp.
+    pub last_updated: String,
+}
+
+impl PersistenceManager {
+    /// Path to the cost summary file.
+    fn cost_summary_path(&self) -> PathBuf {
+        let costs_dir = self.log_dir.join("costs");
+        costs_dir.join("summary.json")
+    }
+
+    /// Load the cost summary from disk. Returns empty summary if file doesn't exist.
+    pub fn load_cost_summary(&self) -> CostSummary {
+        let path = self.cost_summary_path();
+        match std::fs::read_to_string(&path) {
+            Ok(content) => serde_json::from_str(&content).unwrap_or_else(|_| CostSummary {
+                total_cost_usd: 0.0,
+                plans: Vec::new(),
+                last_updated: String::new(),
+            }),
+            Err(_) => CostSummary {
+                total_cost_usd: 0.0,
+                plans: Vec::new(),
+                last_updated: String::new(),
+            },
+        }
+    }
+
+    /// Save the current cost_per_plan data, merging with existing lifetime costs.
+    ///
+    /// This accumulates — if plan 12 cost $5 last run and $3 this run,
+    /// the persisted total is $8.
+    pub fn save_costs(&self, cost_per_plan: &HashMap<String, f64>) -> Result<()> {
+        let costs_dir = self.log_dir.join("costs");
+        std::fs::create_dir_all(&costs_dir)?;
+
+        // Load existing summary to merge
+        let mut summary = self.load_cost_summary();
+        let now = chrono::Utc::now().to_rfc3339();
+
+        for (plan, &session_cost) in cost_per_plan {
+            if session_cost <= 0.0 {
+                continue;
+            }
+            if let Some(existing) = summary.plans.iter_mut().find(|p| p.plan == *plan) {
+                existing.cost_usd += session_cost;
+                existing.iterations += 1;
+                existing.last_updated = now.clone();
+            } else {
+                summary.plans.push(PlanCostRecord {
+                    plan: plan.clone(),
+                    cost_usd: session_cost,
+                    iterations: 1,
+                    last_updated: now.clone(),
+                });
+            }
+        }
+
+        summary.total_cost_usd = summary.plans.iter().map(|p| p.cost_usd).sum();
+        summary.last_updated = now;
+        summary.plans.sort_by(|a, b| {
+            b.cost_usd
+                .partial_cmp(&a.cost_usd)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
+        let json = serde_json::to_string_pretty(&summary)?;
+        atomic_write(&self.cost_summary_path(), &json)?;
+
+        Ok(())
+    }
+
+    /// Load persisted per-plan costs into a HashMap for restoring RunState on startup.
+    pub fn load_cost_per_plan(&self) -> HashMap<String, f64> {
+        let summary = self.load_cost_summary();
+        summary
+            .plans
+            .into_iter()
+            .map(|p| (p.plan, p.cost_usd))
+            .collect()
+    }
+}

@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 /// A symbol extracted from source code via tree-sitter.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Symbol {
     /// Fully qualified name (e.g., "golem_core::id::GolemId").
     pub name: String,
@@ -24,7 +24,7 @@ pub struct Symbol {
 }
 
 /// What kind of symbol this is.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SymbolKind {
     /// A function or method.
@@ -50,7 +50,7 @@ pub enum SymbolKind {
 }
 
 /// Symbol visibility.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Visibility {
     /// `pub`
@@ -64,7 +64,7 @@ pub enum Visibility {
 }
 
 /// A reference from one symbol to another (import, call, type usage).
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct SymbolRef {
     /// The file containing the reference.
     pub from_file: String,
@@ -77,7 +77,7 @@ pub struct SymbolRef {
 }
 
 /// What kind of reference this is.
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum RefKind {
     /// `use` import statement.

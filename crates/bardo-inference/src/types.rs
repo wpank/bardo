@@ -135,12 +135,13 @@ impl TokenUsage {
     /// Compute USD cost based on model pricing.
     pub fn cost_usd(&self, input_price_per_m: f64, output_price_per_m: f64) -> f64 {
         let cached_discount = 0.1; // 90% discount on cached reads
-        let regular_input = self.input_tokens.saturating_sub(self.cache_read_input_tokens);
+        let regular_input = self
+            .input_tokens
+            .saturating_sub(self.cache_read_input_tokens);
         let cached_input = self.cache_read_input_tokens;
 
-        let input_cost =
-            (regular_input as f64 * input_price_per_m / 1_000_000.0) +
-            (cached_input as f64 * input_price_per_m * cached_discount / 1_000_000.0);
+        let input_cost = (regular_input as f64 * input_price_per_m / 1_000_000.0)
+            + (cached_input as f64 * input_price_per_m * cached_discount / 1_000_000.0);
         let output_cost = self.output_tokens as f64 * output_price_per_m / 1_000_000.0;
 
         input_cost + output_cost

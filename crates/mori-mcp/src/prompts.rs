@@ -66,7 +66,9 @@ pub fn brief_user(plan_content: &str, decomposition: Option<&str>) -> String {
     let mut msg = format!("Generate an implementation brief for this plan:\n\n{plan}");
     if let Some(decomp) = decomposition {
         let d = truncate_to_budget(decomp, SUPPORT_BUDGET);
-        msg.push_str(&format!("\n\n---\n\nDecomposition (for execution order):\n\n{d}"));
+        msg.push_str(&format!(
+            "\n\n---\n\nDecomposition (for execution order):\n\n{d}"
+        ));
     }
     msg
 }
@@ -276,7 +278,9 @@ Budget: aim for 8000-15000 characters total. Prioritize sections directly refere
 /// Build the user message for PRD extraction.
 pub fn prd_user(plan_content: &str, prd_sections: &[(&str, &str)]) -> String {
     let plan = truncate_to_budget(plan_content, PLAN_BUDGET);
-    let mut msg = format!("Extract relevant PRD context for this plan:\n\n{plan}\n\n---\n\nAvailable PRD sections:\n");
+    let mut msg = format!(
+        "Extract relevant PRD context for this plan:\n\n{plan}\n\n---\n\nAvailable PRD sections:\n"
+    );
     for (path, content) in prd_sections {
         let c = truncate_to_budget(content, SUPPORT_BUDGET);
         msg.push_str(&format!("\n## {path}\n\n{c}\n"));

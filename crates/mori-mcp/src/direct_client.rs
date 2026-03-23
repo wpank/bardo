@@ -54,8 +54,8 @@ pub async fn call_claude(
         bail!("claude CLI exited with {}: {stderr}", output.status);
     }
 
-    let stdout = String::from_utf8(output.stdout)
-        .context("claude CLI produced non-UTF-8 output")?;
+    let stdout =
+        String::from_utf8(output.stdout).context("claude CLI produced non-UTF-8 output")?;
 
     Ok(stdout)
 }

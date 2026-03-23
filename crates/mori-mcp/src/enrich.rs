@@ -73,7 +73,11 @@ impl EnrichStep {
     pub fn needs_llm(self) -> bool {
         match self {
             Self::Briefs | Self::Tasks | Self::Prd => false,
-            Self::Verify | Self::Review | Self::Decompose | Self::Tests | Self::Invariants
+            Self::Verify
+            | Self::Review
+            | Self::Decompose
+            | Self::Tests
+            | Self::Invariants
             | Self::Scribe => true,
         }
     }
@@ -144,7 +148,10 @@ pub async fn run_step(ctx: &EnrichContext, step: EnrichStep, plan_base: &str) ->
         if ctx.dry_run {
             println!("  skip: {} (exists)", output_file.display());
         } else {
-            println!("  skip: {} (exists, use --force to regenerate)", output_file.display());
+            println!(
+                "  skip: {} (exists, use --force to regenerate)",
+                output_file.display()
+            );
         }
         return Ok(());
     }
@@ -271,7 +278,10 @@ fn build_prompt(step: EnrichStep, inputs: &StepInputs) -> (String, String) {
     match step {
         EnrichStep::Briefs => (
             prompts::BRIEF_SYSTEM.to_string(),
-            prompts::brief_user(&inputs.plan_content, inputs.decomposition_content.as_deref()),
+            prompts::brief_user(
+                &inputs.plan_content,
+                inputs.decomposition_content.as_deref(),
+            ),
         ),
         EnrichStep::Tasks => (
             prompts::TASKS_SYSTEM.to_string(),
@@ -461,7 +471,9 @@ fn extract_prd_refs(plan: &str) -> Result<String> {
         for segment in line.split(|c: char| c == '`' || c == '(' || c == ')' || c == ' ') {
             let trimmed = segment.trim();
             if trimmed.starts_with("prd2/") && trimmed.len() > 6 {
-                let clean = trimmed.trim_end_matches(|c: char| !c.is_alphanumeric() && c != '.' && c != '/' && c != '-');
+                let clean = trimmed.trim_end_matches(|c: char| {
+                    !c.is_alphanumeric() && c != '.' && c != '/' && c != '-'
+                });
                 if !refs.contains(&clean.to_string()) {
                     refs.push(clean.to_string());
                 }

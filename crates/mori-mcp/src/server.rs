@@ -175,7 +175,8 @@ impl McpServer {
                 // Ensure graph is built for tools that need it.
                 if !self.graph_built
                     && (params.name == "get_symbol_context"
-                        || params.name == "find_similar_patterns")
+                        || params.name == "find_similar_patterns"
+                        || params.name == "get_context")
                 {
                     if let Err(e) = self.index.rebuild_graph() {
                         error!("graph rebuild failed: {e}");

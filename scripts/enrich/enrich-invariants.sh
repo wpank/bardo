@@ -33,8 +33,11 @@ For each invariant:
 - Reference the specific type/function from the plan
 - Note whether it should be a compile-time check, unit test, or runtime assertion'
 
+export BATCH_OUTPUT_FILE="$output"
+export BATCH_VALIDATOR="non_empty"
 result="$(call_claude "$model" "$SYSTEM" "Extract invariants from this plan:
 
 $plan_content")"
+[[ "$BATCH" == true ]] && exit 0
 echo "$result" > "$output"
 echo "  create: $output"

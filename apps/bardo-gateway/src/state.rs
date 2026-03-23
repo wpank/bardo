@@ -50,7 +50,8 @@ pub struct AppState {
     /// Semantic cache (L2) — catches similar but non-identical requests.
     pub semantic_cache: Arc<crate::semantic_cache::SemanticCache>,
     /// In-flight request coalescing — waiters subscribe to a broadcast for the same hash.
-    pub inflight: Arc<DashMap<[u8; 32], tokio::sync::broadcast::Sender<Result<bytes::Bytes, String>>>>,
+    pub inflight:
+        Arc<DashMap<[u8; 32], tokio::sync::broadcast::Sender<Result<bytes::Bytes, String>>>>,
 }
 
 impl AppState {
@@ -72,6 +73,8 @@ pub struct GatewayStats {
     pub total_requests: AtomicU64,
     pub cache_hits: AtomicU64,
     pub cache_misses: AtomicU64,
+    /// Hash cache (L1) hits specifically — subset of cache_hits.
+    pub hash_cache_hits: AtomicU64,
     pub total_input_tokens: AtomicU64,
     pub total_output_tokens: AtomicU64,
     /// Cost in micro-USD (multiply by 1e-6 to get USD). Avoids floating point atomics.
@@ -82,6 +85,27 @@ pub struct GatewayStats {
     pub model_counts: DashMap<String, u64>,
     /// Monotonic sequence counter for stats events.
     pub event_seq: AtomicU64,
+    // ── Gateway-specific action counters ──
+    /// Requests where tool definitions were pruned (token savings).
+    pub tools_pruned_count: AtomicU64,
+    /// Total tool tokens removed by pruning.
+    pub tool_tokens_saved: AtomicU64,
+    /// Estimated USD saved by tool pruning (micro-USD).
+    pub tool_savings_micro_usd: AtomicU64,
+    /// Requests where JSON was normalized for cache alignment.
+    pub requests_normalized: AtomicU64,
+    /// Requests where UUIDs/timestamps were stripped.
+    pub variables_stripped: AtomicU64,
+    /// Requests where history was compressed.
+    pub history_compressed: AtomicU64,
+    /// Tokens saved by compression.
+    pub compression_tokens_saved: AtomicU64,
+    /// Semantic cache hits.
+    pub semantic_cache_hits: AtomicU64,
+    /// In-flight coalesced requests.
+    pub coalesced_requests: AtomicU64,
+    /// Retries that recovered (would have been 502).
+    pub retries_recovered: AtomicU64,
 }
 
 impl GatewayStats {
@@ -90,12 +114,23 @@ impl GatewayStats {
             total_requests: AtomicU64::new(0),
             cache_hits: AtomicU64::new(0),
             cache_misses: AtomicU64::new(0),
+            hash_cache_hits: AtomicU64::new(0),
             total_input_tokens: AtomicU64::new(0),
             total_output_tokens: AtomicU64::new(0),
             total_cost_micro_usd: AtomicU64::new(0),
             total_naive_cost_micro_usd: AtomicU64::new(0),
             model_counts: DashMap::new(),
             event_seq: AtomicU64::new(0),
+            tools_pruned_count: AtomicU64::new(0),
+            tool_tokens_saved: AtomicU64::new(0),
+            tool_savings_micro_usd: AtomicU64::new(0),
+            requests_normalized: AtomicU64::new(0),
+            variables_stripped: AtomicU64::new(0),
+            history_compressed: AtomicU64::new(0),
+            compression_tokens_saved: AtomicU64::new(0),
+            semantic_cache_hits: AtomicU64::new(0),
+            coalesced_requests: AtomicU64::new(0),
+            retries_recovered: AtomicU64::new(0),
         }
     }
 
@@ -134,6 +169,8 @@ impl GatewayStats {
         let total_cost = self.total_cost_micro_usd.load(Ordering::Relaxed) as f64 / 1_000_000.0;
         let total_naive =
             self.total_naive_cost_micro_usd.load(Ordering::Relaxed) as f64 / 1_000_000.0;
+        let tool_savings = self.tool_savings_micro_usd.load(Ordering::Relaxed) as f64 / 1_000_000.0;
+        let total_savings = (total_naive - total_cost) + tool_savings;
 
         let mut models = Vec::new();
         for entry in self.model_counts.iter() {
@@ -160,14 +197,28 @@ impl GatewayStats {
             total_output_tokens: self.total_output_tokens.load(Ordering::Relaxed),
             total_cost_usd: total_cost,
             total_naive_cost_usd: total_naive,
-            total_savings_usd: total_naive - total_cost,
+            total_savings_usd: total_savings,
             savings_rate: if total_naive > 0.0 {
-                (total_naive - total_cost) / total_naive
+                total_savings / total_naive
             } else {
                 0.0
             },
             cache_entries: 0, // filled by handler
             models,
+            // Gateway-specific actions
+            gateway_actions: GatewayActions {
+                hash_cache_hits: self.hash_cache_hits.load(Ordering::Relaxed),
+                tools_pruned: self.tools_pruned_count.load(Ordering::Relaxed),
+                tool_tokens_saved: self.tool_tokens_saved.load(Ordering::Relaxed),
+                tool_savings_usd: tool_savings,
+                requests_normalized: self.requests_normalized.load(Ordering::Relaxed),
+                variables_stripped: self.variables_stripped.load(Ordering::Relaxed),
+                history_compressed: self.history_compressed.load(Ordering::Relaxed),
+                compression_tokens_saved: self.compression_tokens_saved.load(Ordering::Relaxed),
+                semantic_cache_hits: self.semantic_cache_hits.load(Ordering::Relaxed),
+                coalesced_requests: self.coalesced_requests.load(Ordering::Relaxed),
+                retries_recovered: self.retries_recovered.load(Ordering::Relaxed),
+            },
         }
     }
 }
@@ -186,6 +237,22 @@ pub struct StatsResponse {
     pub savings_rate: f64,
     pub cache_entries: usize,
     pub models: Vec<ModelStat>,
+    pub gateway_actions: GatewayActions,
+}
+
+#[derive(Serialize)]
+pub struct GatewayActions {
+    pub hash_cache_hits: u64,
+    pub tools_pruned: u64,
+    pub tool_tokens_saved: u64,
+    pub tool_savings_usd: f64,
+    pub requests_normalized: u64,
+    pub variables_stripped: u64,
+    pub history_compressed: u64,
+    pub compression_tokens_saved: u64,
+    pub semantic_cache_hits: u64,
+    pub coalesced_requests: u64,
+    pub retries_recovered: u64,
 }
 
 #[derive(Serialize)]

@@ -23,4 +23,14 @@ pub enum IndexError {
     /// The index has not been initialized (no migration run).
     #[error("index not initialized")]
     NotInitialized,
+
+    /// Embedding model error.
+    #[cfg(feature = "embedding")]
+    #[error("embedding error: {0}")]
+    Embedding(String),
+
+    /// Snapshot read/write error.
+    #[cfg(feature = "snapshot")]
+    #[error("snapshot error: {0}")]
+    Snapshot(String),
 }

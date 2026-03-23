@@ -1666,7 +1666,8 @@ pub(crate) fn reset_plan_state(
             .output();
 
         // Remove this plan's events from events.jsonl
-        let events_path = crate::orchestrator::paths::runs_dir(&config.repo_root).join("events.jsonl");
+        let events_path =
+            crate::orchestrator::paths::runs_dir(&config.repo_root).join("events.jsonl");
         if let Ok(content) = std::fs::read_to_string(&events_path) {
             let filtered: Vec<&str> = content
                 .lines()

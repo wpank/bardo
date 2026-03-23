@@ -35,21 +35,435 @@ const ANTHROPIC_ALLOWED_FIELDS: &[&str] = &[
     "thinking",
 ];
 
-/// Strip fields that the Anthropic API doesn't accept.
-/// Claude Code adds internal fields (context_management, etc.) that cause 400 errors.
+/// Strip fields that the Anthropic API doesn't accept and fix message
+/// structure issues (orphaned tool_use/tool_result blocks, consecutive
+/// text blocks, content after tool_use).
+///
+/// This is the last function before the HTTP call — nothing can modify
+/// messages after this runs.
 fn sanitize_anthropic_request(body: &Value) -> Value {
-    if let Value::Object(map) = body {
-        let mut clean = serde_json::Map::new();
+    let mut clean = if let Value::Object(map) = body {
+        let mut c = serde_json::Map::new();
         for (key, value) in map {
             if ANTHROPIC_ALLOWED_FIELDS.contains(&key.as_str()) {
-                clean.insert(key.clone(), value.clone());
+                c.insert(key.clone(), value.clone());
             } else {
                 tracing::debug!(field = %key, "stripping non-API field from request");
             }
         }
-        Value::Object(clean)
+        Value::Object(c)
     } else {
         body.clone()
+    };
+
+    // Merge consecutive text blocks in message content arrays. Cached
+    // responses reconstructed from SSE deltas can have hundreds of tiny
+    // text blocks, which hits Anthropic's content block limit.
+    merge_text_blocks(&mut clean);
+
+    // Truncate assistant messages after the last tool_use block.
+    // The API requires the turn to end at tool_use so the next message
+    // can provide tool_result.
+    truncate_after_tool_use(&mut clean);
+
+    // Fix orphaned tool_use/tool_result blocks in the messages array.
+    sanitize_tool_blocks(&mut clean);
+
+    // If the request has no `tools` field (or it's empty), strip all
+    // tool_use/tool_result blocks from history. The API rejects tool_use
+    // references when no tools are defined.
+    let has_tools = clean
+        .get("tools")
+        .and_then(|t| t.as_array())
+        .map(|a| !a.is_empty())
+        .unwrap_or(false);
+
+    if !has_tools {
+        strip_all_tool_blocks(&mut clean);
+    }
+
+    clean
+}
+
+/// Merge consecutive text content blocks within each message.
+///
+/// Cached responses reconstructed from SSE stream deltas can produce
+/// hundreds of tiny `{type: "text", text: "..."}` blocks.
+fn merge_text_blocks(body: &mut Value) {
+    let messages = match body.get_mut("messages").and_then(|m| m.as_array_mut()) {
+        Some(m) => m,
+        None => return,
+    };
+
+    for msg in messages.iter_mut() {
+        let content = match msg.get_mut("content").and_then(|c| c.as_array_mut()) {
+            Some(c) => c,
+            None => continue,
+        };
+
+        if content.len() <= 1 {
+            continue;
+        }
+
+        let has_consecutive_text = content.windows(2).any(|w| {
+            w[0].get("type").and_then(|t| t.as_str()) == Some("text")
+                && w[1].get("type").and_then(|t| t.as_str()) == Some("text")
+        });
+
+        if !has_consecutive_text {
+            continue;
+        }
+
+        let mut merged: Vec<Value> = Vec::with_capacity(content.len());
+        let mut text_buf = String::new();
+
+        for block in content.iter() {
+            if block.get("type").and_then(|t| t.as_str()) == Some("text") {
+                if let Some(t) = block.get("text").and_then(|t| t.as_str()) {
+                    text_buf.push_str(t);
+                }
+            } else {
+                if !text_buf.is_empty() {
+                    merged.push(serde_json::json!({"type": "text", "text": text_buf}));
+                    text_buf.clear();
+                }
+                merged.push(block.clone());
+            }
+        }
+        if !text_buf.is_empty() {
+            merged.push(serde_json::json!({"type": "text", "text": text_buf}));
+        }
+
+        let old_len = content.len();
+        *content = merged;
+
+        if content.len() < old_len {
+            tracing::info!(
+                old_blocks = old_len,
+                new_blocks = content.len(),
+                "merged consecutive text blocks in message"
+            );
+        }
+    }
+}
+
+/// Truncate assistant message content after the last tool_use block.
+///
+/// The API requires that when an assistant message contains tool_use blocks,
+/// no content follows after them — the next message must be a user message
+/// with tool_result.
+fn truncate_after_tool_use(body: &mut Value) {
+    let messages = match body.get_mut("messages").and_then(|m| m.as_array_mut()) {
+        Some(m) => m,
+        None => return,
+    };
+
+    for msg in messages.iter_mut() {
+        if msg.get("role").and_then(|r| r.as_str()) != Some("assistant") {
+            continue;
+        }
+        let content = match msg.get_mut("content").and_then(|c| c.as_array_mut()) {
+            Some(c) => c,
+            None => continue,
+        };
+
+        let last_tool_use_idx = content
+            .iter()
+            .rposition(|b| b.get("type").and_then(|t| t.as_str()) == Some("tool_use"));
+
+        if let Some(idx) = last_tool_use_idx {
+            if idx + 1 < content.len() {
+                let removed = content.len() - idx - 1;
+                content.truncate(idx + 1);
+                tracing::warn!(
+                    removed_blocks = removed,
+                    "truncated content after tool_use in assistant message"
+                );
+            }
+        }
+    }
+}
+
+/// Remove ALL tool_use and tool_result content blocks from messages.
+///
+/// Used when the request has no `tools` field — the API rejects tool_use
+/// references in conversation history when no tools are defined.
+fn strip_all_tool_blocks(body: &mut Value) {
+    let messages = match body.get_mut("messages").and_then(|m| m.as_array_mut()) {
+        Some(m) => m,
+        None => return,
+    };
+
+    let mut stripped = 0usize;
+    for msg in messages.iter_mut() {
+        if let Some(content) = msg.get_mut("content").and_then(|c| c.as_array_mut()) {
+            let before = content.len();
+            content.retain(|b| {
+                let btype = b.get("type").and_then(|t| t.as_str()).unwrap_or("");
+                btype != "tool_use" && btype != "tool_result"
+            });
+            stripped += before - content.len();
+
+            if content.is_empty() {
+                *content =
+                    vec![serde_json::json!({"type": "text", "text": "[tool interaction removed]"})];
+            }
+        }
+    }
+
+    if stripped > 0 {
+        tracing::warn!(stripped, "stripped all tool blocks (no tools field)");
+    }
+}
+
+/// Fix orphaned tool_use/tool_result blocks in the messages array.
+///
+/// 1. Strip tool_use blocks without an `id` field (malformed)
+/// 2. Strip tool_use blocks with no matching tool_result in the next message
+/// 3. Re-collect IDs, then strip orphaned tool_result blocks
+/// 4. Replace any now-empty content arrays with placeholder text
+/// 5. Final validation pass to catch anything the above missed
+fn sanitize_tool_blocks(body: &mut Value) {
+    use std::collections::HashSet;
+
+    let messages = match body.get_mut("messages").and_then(|m| m.as_array_mut()) {
+        Some(m) => m,
+        None => return,
+    };
+
+    let len = messages.len();
+    if len == 0 {
+        return;
+    }
+
+    let mut modified = false;
+
+    // Forward pass: collect tool_result IDs, then strip invalid tool_use blocks.
+    {
+        let result_ids_per_msg: Vec<HashSet<String>> = messages
+            .iter()
+            .map(|msg| {
+                let mut ids = HashSet::new();
+                if msg.get("role").and_then(|r| r.as_str()) == Some("user") {
+                    if let Some(content) = msg.get("content").and_then(|c| c.as_array()) {
+                        for block in content {
+                            if block.get("type").and_then(|t| t.as_str()) == Some("tool_result") {
+                                if let Some(id) = block.get("tool_use_id").and_then(|i| i.as_str())
+                                {
+                                    ids.insert(id.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+                ids
+            })
+            .collect();
+
+        let empty: HashSet<String> = HashSet::new();
+
+        for i in 0..len {
+            if messages[i].get("role").and_then(|r| r.as_str()) != Some("assistant") {
+                continue;
+            }
+
+            let next_results = if i + 1 < len {
+                &result_ids_per_msg[i + 1]
+            } else {
+                &empty
+            };
+
+            let content = match messages[i]
+                .get_mut("content")
+                .and_then(|c| c.as_array_mut())
+            {
+                Some(c) => c,
+                None => continue,
+            };
+
+            let before = content.len();
+            content.retain(|b| {
+                if b.get("type").and_then(|t| t.as_str()) != Some("tool_use") {
+                    return true;
+                }
+                match b.get("id").and_then(|id| id.as_str()) {
+                    Some(id) if next_results.contains(id) => true,
+                    Some(id) => {
+                        tracing::warn!(msg_idx = i, id, "stripping orphaned tool_use");
+                        false
+                    }
+                    None => {
+                        tracing::warn!(msg_idx = i, "stripping tool_use without id field");
+                        false
+                    }
+                }
+            });
+            if content.len() < before {
+                modified = true;
+            }
+        }
+    }
+
+    // Reverse pass: re-collect tool_use IDs (reflecting forward-pass changes),
+    // then strip orphaned tool_result blocks.
+    {
+        let use_ids_per_msg: Vec<HashSet<String>> = messages
+            .iter()
+            .map(|msg| {
+                let mut ids = HashSet::new();
+                if msg.get("role").and_then(|r| r.as_str()) == Some("assistant") {
+                    if let Some(content) = msg.get("content").and_then(|c| c.as_array()) {
+                        for block in content {
+                            if block.get("type").and_then(|t| t.as_str()) == Some("tool_use") {
+                                if let Some(id) = block.get("id").and_then(|i| i.as_str()) {
+                                    ids.insert(id.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+                ids
+            })
+            .collect();
+
+        let empty: HashSet<String> = HashSet::new();
+
+        for i in 0..len {
+            if messages[i].get("role").and_then(|r| r.as_str()) != Some("user") {
+                continue;
+            }
+
+            let prev_uses = if i > 0 {
+                &use_ids_per_msg[i - 1]
+            } else {
+                &empty
+            };
+
+            let content = match messages[i]
+                .get_mut("content")
+                .and_then(|c| c.as_array_mut())
+            {
+                Some(c) => c,
+                None => continue,
+            };
+
+            let before = content.len();
+            content.retain(|b| {
+                if b.get("type").and_then(|t| t.as_str()) != Some("tool_result") {
+                    return true;
+                }
+                match b.get("tool_use_id").and_then(|id| id.as_str()) {
+                    Some(id) if prev_uses.contains(id) => true,
+                    Some(id) => {
+                        tracing::warn!(msg_idx = i, id, "stripping orphaned tool_result");
+                        false
+                    }
+                    None => {
+                        tracing::warn!(msg_idx = i, "stripping tool_result without tool_use_id");
+                        false
+                    }
+                }
+            });
+            if content.len() < before {
+                modified = true;
+            }
+        }
+    }
+
+    // Fix empty content arrays left by stripping.
+    for i in 0..len {
+        if let Some(content) = messages[i]
+            .get_mut("content")
+            .and_then(|c| c.as_array_mut())
+        {
+            if content.is_empty() {
+                *content =
+                    vec![serde_json::json!({"type": "text", "text": "[tool interaction removed]"})];
+                modified = true;
+            }
+        }
+    }
+
+    // Final safety net: if any tool_use still lacks a matching tool_result,
+    // force-strip it. This catches edge cases the above passes might miss.
+    {
+        let mut remaining = false;
+        for i in 0..len {
+            if messages[i].get("role").and_then(|r| r.as_str()) != Some("assistant") {
+                continue;
+            }
+            let has_tool_use = messages[i]
+                .get("content")
+                .and_then(|c| c.as_array())
+                .map(|arr| {
+                    arr.iter()
+                        .any(|b| b.get("type").and_then(|t| t.as_str()) == Some("tool_use"))
+                })
+                .unwrap_or(false);
+            if !has_tool_use {
+                continue;
+            }
+
+            let next_result_ids: std::collections::HashSet<String> = if i + 1 < len {
+                messages[i + 1]
+                    .get("content")
+                    .and_then(|c| c.as_array())
+                    .map(|arr| {
+                        arr.iter()
+                            .filter_map(|b| {
+                                if b.get("type").and_then(|t| t.as_str()) == Some("tool_result") {
+                                    b.get("tool_use_id")
+                                        .and_then(|i| i.as_str())
+                                        .map(String::from)
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect()
+                    })
+                    .unwrap_or_default()
+            } else {
+                std::collections::HashSet::new()
+            };
+
+            if let Some(content) = messages[i]
+                .get_mut("content")
+                .and_then(|c| c.as_array_mut())
+            {
+                let before = content.len();
+                content.retain(|b| {
+                    if b.get("type").and_then(|t| t.as_str()) != Some("tool_use") {
+                        return true;
+                    }
+                    let id = b.get("id").and_then(|i| i.as_str()).unwrap_or("");
+                    if next_result_ids.contains(id) {
+                        true
+                    } else {
+                        tracing::error!(
+                            msg_idx = i,
+                            tool_use_id = id,
+                            "safety-net: force-stripping orphaned tool_use"
+                        );
+                        false
+                    }
+                });
+                if content.len() < before {
+                    remaining = true;
+                    if content.is_empty() {
+                        *content = vec![
+                            serde_json::json!({"type": "text", "text": "[tool interaction removed]"}),
+                        ];
+                    }
+                }
+            }
+        }
+        if remaining {
+            modified = true;
+        }
+    }
+
+    if modified {
+        tracing::warn!("sanitized tool blocks in API request");
     }
 }
 
@@ -87,13 +501,18 @@ async fn anthropic_request_with_retry(
         let status = resp.status();
         if status.is_success() {
             if attempt > 0 {
-                tracing::info!(attempt = attempt + 1, key_index = key_idx, "anthropic request succeeded on retry");
+                tracing::info!(
+                    attempt = attempt + 1,
+                    key_index = key_idx,
+                    "anthropic request succeeded on retry"
+                );
             }
             return Ok(resp);
         }
 
         // Non-retryable error or final attempt — return the error immediately.
         if !is_retryable_status(status.as_u16()) || attempt == MAX_RETRIES {
+            let status_code = status.as_u16();
             let err_body = resp.text().await.unwrap_or_default();
             tracing::warn!(
                 status = %status,
@@ -102,6 +521,14 @@ async fn anthropic_request_with_retry(
                 body = %&err_body[..err_body.len().min(300)],
                 "anthropic request failed (not retrying)"
             );
+            // Forward upstream 4xx as-is so callers know the request was
+            // rejected, not that the gateway is broken (which 502 implies).
+            if (400..500).contains(&status_code) {
+                return Err(AppError::UpstreamClientError {
+                    status: status_code,
+                    body: err_body,
+                });
+            }
             return Err(AppError::ProviderError(format!("{status}: {err_body}")));
         }
 
@@ -204,8 +631,14 @@ pub async fn openai_complete(
 
     if !resp.status().is_success() {
         let status = resp.status();
-        let body = resp.text().await.unwrap_or_default();
-        return Err(AppError::ProviderError(format!("{status}: {body}")));
+        let err_body = resp.text().await.unwrap_or_default();
+        if status.as_u16() < 500 {
+            return Err(AppError::UpstreamClientError {
+                status: status.as_u16(),
+                body: err_body,
+            });
+        }
+        return Err(AppError::ProviderError(format!("{status}: {err_body}")));
     }
 
     let body_bytes = resp
@@ -238,8 +671,14 @@ pub async fn openai_stream(
 
     if !resp.status().is_success() {
         let status = resp.status();
-        let body = resp.text().await.unwrap_or_default();
-        return Err(AppError::ProviderError(format!("{status}: {body}")));
+        let err_body = resp.text().await.unwrap_or_default();
+        if status.as_u16() < 500 {
+            return Err(AppError::UpstreamClientError {
+                status: status.as_u16(),
+                body: err_body,
+            });
+        }
+        return Err(AppError::ProviderError(format!("{status}: {err_body}")));
     }
 
     Ok(Box::pin(resp.bytes_stream()))

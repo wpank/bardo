@@ -371,7 +371,10 @@ pub(crate) async fn execute_actions(
                 // Conditionally run terminal render and golem lifecycle gates
                 // based on which crates the plan touches.
                 let plan_num = plan.split('-').next().unwrap_or(plan);
-                let plan_path = crate::orchestrator::paths::plan_doc(&crate::orchestrator::paths::plans_root(&config.repo_root), plan);
+                let plan_path = crate::orchestrator::paths::plan_doc(
+                    &crate::orchestrator::paths::plans_root(&config.repo_root),
+                    plan,
+                );
                 let plan_content = std::fs::read_to_string(&plan_path).unwrap_or_default();
 
                 if crate::orchestrator::gates::plan_touches_crate(&plan_content, "bardo-terminal") {
@@ -3418,6 +3421,18 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
         state.plan_task_cache.len(),
     );
 
+    // Restore persisted lifetime costs from previous runs.
+    let persisted_costs = persistence.load_cost_per_plan();
+    if !persisted_costs.is_empty() {
+        state.cost_per_plan = persisted_costs;
+        state.cumulative_cost_usd = state.cost_per_plan.values().sum();
+        info!(
+            "Restored lifetime costs: ${:.2} across {} plans",
+            state.cumulative_cost_usd,
+            state.cost_per_plan.len(),
+        );
+    }
+
     // Build wave structure for TUI display (mirrors the sequential run() path)
     if let Ok(dag) =
         crate::orchestrator::PlanDag::from_plans_and_tasks(&orchestrator.plans, &task_files)
@@ -5378,6 +5393,10 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                     });
                                 }
                                 state.plan_doc_revisions.remove(&plan);
+                                // Reflexion loop: generate reflection from gate error
+                                crate::orchestrator::reflection::spawn_reflection(
+                                    &config.repo_root, &plan, &e.to_string(), executor.plan_iteration(&plan),
+                                );
                                 actions.extend(executor.handle_plan_gates_failed(&plan));
                                 execute_actions(
                                     actions, &mut executor, &mut pool, &worktree_mgr, &mut state,
@@ -5422,6 +5441,10 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                 });
                             }
                             state.plan_doc_revisions.remove(&plan);
+                            // Reflexion loop: generate + store reflection before retry
+                            crate::orchestrator::reflection::spawn_reflection(
+                                &config.repo_root, &plan, &gate.output, executor.plan_iteration(&plan),
+                            );
                             actions.extend(executor.handle_plan_gates_failed_with_errors(&plan, gate.output.clone()));
                             execute_actions(
                                 actions, &mut executor, &mut pool, &worktree_mgr, &mut state,
@@ -5525,6 +5548,11 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
                                 "plan_merged", &plan, None, None, None,
                             );
                             let _ = persistence.append_task_event(&event);
+
+                            // Persist cost data after each plan merge.
+                            if let Err(e) = persistence.save_costs(&state.cost_per_plan) {
+                                tracing::warn!("Failed to save cost data after merge: {e}");
+                            }
 
                             execute_actions(
                                 merged_actions, &mut executor, &mut pool, &worktree_mgr, &mut state,
@@ -8212,6 +8240,10 @@ pub(crate) async fn run_parallel(config: AppConfig) -> Result<()> {
     // Cleanup
     pool.kill_all().await;
     worktree_mgr.cleanup_all()?;
+    // Persist lifetime cost data before exit.
+    if let Err(e) = persistence.save_costs(&state.cost_per_plan) {
+        tracing::warn!("Failed to save cost data: {e}");
+    }
     persistence.cleanup_pid();
     let _ = tui::restore();
 

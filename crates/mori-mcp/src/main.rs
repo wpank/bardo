@@ -59,6 +59,15 @@ enum Command {
         #[command(subcommand)]
         action: EnrichAction,
     },
+    /// Show cost and usage statistics.
+    Stats {
+        /// Project root directory.
+        #[arg(long, default_value = ".")]
+        root: String,
+        /// Show per-plan breakdown.
+        #[arg(long)]
+        by_plan: bool,
+    },
 }
 
 /// Subcommands for `enrich`.
@@ -198,6 +207,62 @@ async fn main() -> anyhow::Result<()> {
                 enrich::run_step(&ctx, s, &args.plan).await?;
             } else {
                 enrich::run_all(&ctx, &args.plan).await?;
+            }
+        }
+
+        Command::Stats { root, by_plan } => {
+            let path = PathBuf::from(&root);
+            let costs_path = path.join(".mori/runs/costs/summary.json");
+            if !costs_path.exists() {
+                println!("No cost data found. Run some plans first.");
+                return Ok(());
+            }
+            let content = std::fs::read_to_string(&costs_path)?;
+            let summary: serde_json::Value = serde_json::from_str(&content)?;
+
+            let total = summary
+                .get("total_cost_usd")
+                .and_then(|v| v.as_f64())
+                .unwrap_or(0.0);
+            let updated = summary
+                .get("last_updated")
+                .and_then(|v| v.as_str())
+                .unwrap_or("unknown");
+
+            println!("Mori Cost Summary");
+            println!("─────────────────");
+            println!("Total cost:    ${total:.2}");
+            println!("Last updated:  {updated}");
+
+            if by_plan {
+                if let Some(plans) = summary.get("plans").and_then(|v| v.as_array()) {
+                    println!("\nPer-plan breakdown:");
+                    println!("{:<40} {:>10} {:>6}", "PLAN", "COST", "ITERS");
+                    println!("{}", "─".repeat(58));
+                    for p in plans {
+                        let name = p.get("plan").and_then(|v| v.as_str()).unwrap_or("?");
+                        let cost = p.get("cost_usd").and_then(|v| v.as_f64()).unwrap_or(0.0);
+                        let iters = p.get("iterations").and_then(|v| v.as_u64()).unwrap_or(0);
+                        println!("{name:<40} ${cost:>9.2} {iters:>6}");
+                    }
+                }
+            } else {
+                let plan_count = summary
+                    .get("plans")
+                    .and_then(|v| v.as_array())
+                    .map(|a| a.len())
+                    .unwrap_or(0);
+                println!("Plans:         {plan_count}");
+                println!("\nRun with --by-plan for per-plan breakdown.");
+            }
+
+            // Also show episode stats if available
+            let episodes_path = path.join(".mori/memory/episodes.jsonl");
+            if episodes_path.exists() {
+                if let Ok(content) = std::fs::read_to_string(&episodes_path) {
+                    let count = content.lines().count();
+                    println!("\nEpisodes logged: {count}");
+                }
             }
         }
 

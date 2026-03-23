@@ -46,6 +46,52 @@ impl IterationMemory {
     pub fn record_iteration(&mut self, entry: IterationEntry) {
         self.iterations.push(entry);
     }
+
+    /// Format all reflections as markdown for injection into agent context.
+    pub fn format_reflections_md(&self) -> Option<String> {
+        let diagnosed: Vec<&IterationEntry> = self
+            .iterations
+            .iter()
+            .filter(|e| e.diagnosis.is_some())
+            .collect();
+
+        if diagnosed.is_empty() {
+            return None;
+        }
+
+        let mut md = String::from("# Prior Iteration Reflections\n\n");
+        md.push_str(
+            "These are analyses of previous failed attempts at this plan. \
+             Learn from these failures and avoid repeating the same mistakes.\n\n",
+        );
+
+        for entry in &diagnosed {
+            md.push_str(&format!("## Iteration {} Reflection\n\n", entry.iteration));
+            if let Some(ref diag) = entry.diagnosis {
+                md.push_str(diag);
+                md.push_str("\n\n");
+            }
+            if !entry.files_changed.is_empty() {
+                md.push_str(&format!(
+                    "Files changed in that attempt: {}\n\n",
+                    entry.files_changed.join(", ")
+                ));
+            }
+            md.push_str("---\n\n");
+        }
+
+        Some(md)
+    }
+
+    /// Check if an error pattern already has a reflection (for dedup).
+    pub fn has_error_pattern(&self, first_error_line: &str) -> bool {
+        self.iterations.iter().any(|entry| {
+            entry
+                .gate_results
+                .values()
+                .any(|v| v.contains(first_error_line))
+        })
+    }
 }
 
 #[cfg(test)]
@@ -95,5 +141,68 @@ mod tests {
         );
 
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn format_reflections_md_skips_empty() {
+        let mem = IterationMemory {
+            plan: "01".to_string(),
+            iterations: vec![IterationEntry {
+                iteration: 1,
+                gate_results: HashMap::new(),
+                diagnosis: None,
+                files_changed: vec![],
+            }],
+        };
+        assert!(mem.format_reflections_md().is_none());
+    }
+
+    #[test]
+    fn format_reflections_md_includes_diagnosis() {
+        let mem = IterationMemory {
+            plan: "01".to_string(),
+            iterations: vec![
+                IterationEntry {
+                    iteration: 1,
+                    gate_results: HashMap::new(),
+                    diagnosis: Some("Missing import".to_string()),
+                    files_changed: vec!["src/lib.rs".to_string()],
+                },
+                IterationEntry {
+                    iteration: 2,
+                    gate_results: HashMap::new(),
+                    diagnosis: None,
+                    files_changed: vec![],
+                },
+            ],
+        };
+        let md = mem.format_reflections_md().unwrap();
+        assert!(md.contains("# Prior Iteration Reflections"));
+        assert!(md.contains("## Iteration 1 Reflection"));
+        assert!(md.contains("Missing import"));
+        assert!(md.contains("src/lib.rs"));
+        assert!(!md.contains("Iteration 2"));
+    }
+
+    #[test]
+    fn has_error_pattern_matches() {
+        let mem = IterationMemory {
+            plan: "01".to_string(),
+            iterations: vec![IterationEntry {
+                iteration: 1,
+                gate_results: {
+                    let mut m = HashMap::new();
+                    m.insert(
+                        "error".to_string(),
+                        "error[E0433]: failed to resolve".to_string(),
+                    );
+                    m
+                },
+                diagnosis: Some("fix it".to_string()),
+                files_changed: vec![],
+            }],
+        };
+        assert!(mem.has_error_pattern("error[E0433]: failed to resolve"));
+        assert!(!mem.has_error_pattern("error[E0599]: no method"));
     }
 }

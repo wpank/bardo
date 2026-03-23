@@ -21,14 +21,14 @@ pub mod rack;
 pub mod tui;
 
 pub use modules::{
-    Module, PatchCable, PortDeclaration, PortDirection, PortId, SignalBlock, SignalType,
-    BLOCK_SIZE, SAMPLE_RATE,
+    BLOCK_SIZE, Module, PatchCable, PortDeclaration, PortDirection, PortId, SAMPLE_RATE,
+    SignalBlock, SignalType,
 };
 pub use params::{AtomicParameterBridge, ParamDeclaration};
 pub use rack::Rack;
 
-use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
@@ -66,7 +66,10 @@ impl SonificationExtension {
     /// Boot the audio engine: wire default patch, start threads 2-4.
     fn boot(&self) -> anyhow::Result<()> {
         {
-            let mut started = self.threads_started.lock().map_err(|e| anyhow::anyhow!("{e}"))?;
+            let mut started = self
+                .threads_started
+                .lock()
+                .map_err(|e| anyhow::anyhow!("{e}"))?;
             if *started {
                 return Ok(());
             }
@@ -81,13 +84,25 @@ impl SonificationExtension {
             rack.add_module(Box::new(Mixer::new("mixer_1")));
 
             rack.connect(
-                PortId { module_id: "noise_1".into(), port_name: "out".into() },
-                PortId { module_id: "vca_1".into(), port_name: "in".into() },
+                PortId {
+                    module_id: "noise_1".into(),
+                    port_name: "out".into(),
+                },
+                PortId {
+                    module_id: "vca_1".into(),
+                    port_name: "in".into(),
+                },
                 1.0,
             );
             rack.connect(
-                PortId { module_id: "vca_1".into(), port_name: "out".into() },
-                PortId { module_id: "mixer_1".into(), port_name: "in_1".into() },
+                PortId {
+                    module_id: "vca_1".into(),
+                    port_name: "out".into(),
+                },
+                PortId {
+                    module_id: "mixer_1".into(),
+                    port_name: "in_1".into(),
+                },
                 1.0,
             );
         }
@@ -141,7 +156,10 @@ impl SonificationExtension {
                         // Feed master_level as VCA cv input
                         let cv_block = [master; BLOCK_SIZE];
                         rack.buffers.insert(
-                            PortId { module_id: "vca_1".into(), port_name: "cv".into() },
+                            PortId {
+                                module_id: "vca_1".into(),
+                                port_name: "cv".into(),
+                            },
                             cv_block,
                         );
                         rack.process_block()
@@ -176,11 +194,7 @@ impl Extension for SonificationExtension {
         6
     }
 
-    async fn on_session(
-        &self,
-        reason: SessionReason,
-        _ctx: &mut SessionCtx,
-    ) -> anyhow::Result<()> {
+    async fn on_session(&self, reason: SessionReason, _ctx: &mut SessionCtx) -> anyhow::Result<()> {
         if matches!(reason, SessionReason::Start) {
             self.boot()?;
         }

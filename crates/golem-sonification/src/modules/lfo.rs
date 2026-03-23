@@ -4,7 +4,9 @@ use std::collections::HashMap;
 
 use serde_json::json;
 
-use super::{BLOCK_SIZE, Module, PortDeclaration, PortDirection, SAMPLE_RATE, SignalBlock, SignalType};
+use super::{
+    BLOCK_SIZE, Module, PortDeclaration, PortDirection, SAMPLE_RATE, SignalBlock, SignalType,
+};
 use crate::params::ParamDeclaration;
 
 /// LFO waveform shapes.
@@ -87,9 +89,7 @@ impl Lfo {
 
     fn sample_shape(&self, phase: f32) -> f32 {
         match LfoShape::from_u8(self.shape) {
-            LfoShape::Sine => {
-                (phase * std::f32::consts::TAU).sin() * 0.5 + 0.5
-            }
+            LfoShape::Sine => (phase * std::f32::consts::TAU).sin() * 0.5 + 0.5,
             LfoShape::Triangle => {
                 if phase < 0.5 {
                     phase * 2.0
@@ -99,7 +99,11 @@ impl Lfo {
             }
             LfoShape::Saw => phase,
             LfoShape::Square => {
-                if phase < 0.5 { 1.0 } else { 0.0 }
+                if phase < 0.5 {
+                    1.0
+                } else {
+                    0.0
+                }
             }
             LfoShape::RandomSH => self.sh_value,
         }

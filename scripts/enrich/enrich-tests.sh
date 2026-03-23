@@ -29,11 +29,14 @@ Rules:
 - Tests must catch real breakage (renamed fields, changed enums)
 - Mark each test with the crate it belongs in'
 
+export BATCH_OUTPUT_FILE="$output"
+export BATCH_VALIDATOR="non_empty"
 result="$(call_claude "$model" "$SYSTEM" "Generate test suggestions:
 
 $plan_content
 
 ${tasks:+Tasks:
 $tasks}")"
+[[ "$BATCH" == true ]] && exit 0
 echo "$result" > "$output"
 echo "  create: $output"

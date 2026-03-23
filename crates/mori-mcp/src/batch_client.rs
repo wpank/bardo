@@ -155,9 +155,7 @@ impl BatchClient {
             interval.tick().await;
 
             if tokio::time::Instant::now() > deadline {
-                bail!(
-                    "batch result for {item_id} timed out after {timeout}s"
-                );
+                bail!("batch result for {item_id} timed out after {timeout}s");
             }
 
             if let Some(result) = self.poll_result(item_id).await? {

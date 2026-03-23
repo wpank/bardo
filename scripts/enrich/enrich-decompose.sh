@@ -39,11 +39,14 @@ Rules:
 - Name every file explicitly
 - Use actual type names from the plan, not placeholders'
 
+export BATCH_OUTPUT_FILE="$output"
+export BATCH_VALIDATOR="non_empty"
 result="$(call_claude "$model" "$SYSTEM" "Decompose this plan into implementation steps:
 
 $plan_content
 
 ${tasks:+Tasks:
 $tasks}")"
+[[ "$BATCH" == true ]] && exit 0
 echo "$result" > "$output"
 echo "  create: $output"

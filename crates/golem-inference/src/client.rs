@@ -22,7 +22,10 @@ pub trait InferenceClient: Send + Sync {
         &self,
         request: &InferenceRequest,
         meta: &InferenceMeta,
-    ) -> Result<Pin<Box<dyn Stream<Item = Result<InferenceChunk, InferenceError>> + Send>>, InferenceError>;
+    ) -> Result<
+        Pin<Box<dyn Stream<Item = Result<InferenceChunk, InferenceError>> + Send>>,
+        InferenceError,
+    >;
 }
 
 /// HTTP client that talks to a bardo-gateway instance.
@@ -47,8 +50,8 @@ impl GatewayClient {
     /// - `BARDO_GATEWAY_URL` (default: `http://127.0.0.1:4000`)
     /// - `BARDO_GATEWAY_API_KEY`
     pub fn from_env() -> Result<Self, InferenceError> {
-        let url = std::env::var("BARDO_GATEWAY_URL")
-            .unwrap_or_else(|_| "http://127.0.0.1:4000".into());
+        let url =
+            std::env::var("BARDO_GATEWAY_URL").unwrap_or_else(|_| "http://127.0.0.1:4000".into());
         let key = std::env::var("BARDO_GATEWAY_API_KEY")
             .map_err(|_| InferenceError::Validation("BARDO_GATEWAY_API_KEY not set".into()))?;
         Ok(Self::new(url, key))
@@ -93,7 +96,10 @@ impl InferenceClient for GatewayClient {
         &self,
         request: &InferenceRequest,
         meta: &InferenceMeta,
-    ) -> Result<Pin<Box<dyn Stream<Item = Result<InferenceChunk, InferenceError>> + Send>>, InferenceError> {
+    ) -> Result<
+        Pin<Box<dyn Stream<Item = Result<InferenceChunk, InferenceError>> + Send>>,
+        InferenceError,
+    > {
         let mut stream_req = request.clone();
         stream_req.stream = true;
 

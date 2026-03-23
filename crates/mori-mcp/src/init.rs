@@ -18,7 +18,11 @@ pub fn run(root: &Path) -> anyhow::Result<()> {
     created_anything |= ensure_dir(&mori, ".mori/")?;
 
     // .mori/config.toml
-    created_anything |= ensure_file(&mori.join("config.toml"), ".mori/config.toml", DEFAULT_CONFIG)?;
+    created_anything |= ensure_file(
+        &mori.join("config.toml"),
+        ".mori/config.toml",
+        DEFAULT_CONFIG,
+    )?;
 
     // .mori/plans/
     created_anything |= ensure_dir(&mori.join("plans"), ".mori/plans/")?;

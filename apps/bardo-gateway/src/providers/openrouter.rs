@@ -66,7 +66,13 @@ impl OpenRouterProvider {
             .map_err(|e| AppError::ProviderError(format!("openrouter read failed: {e}")))?;
 
         if !status.is_success() {
-            let text = String::from_utf8_lossy(&raw_bytes);
+            let text = String::from_utf8_lossy(&raw_bytes).into_owned();
+            if status.as_u16() < 500 {
+                return Err(AppError::UpstreamClientError {
+                    status: status.as_u16(),
+                    body: text,
+                });
+            }
             return Err(AppError::ProviderError(format!(
                 "openrouter returned {status}: {text}"
             )));
@@ -86,12 +92,21 @@ impl OpenRouterProvider {
             .json(&body)
             .send()
             .await
-            .map_err(|e| AppError::ProviderError(format!("openrouter stream request failed: {e}")))?;
+            .map_err(|e| {
+                AppError::ProviderError(format!("openrouter stream request failed: {e}"))
+            })?;
 
         let status = resp.status();
         if !status.is_success() {
+            let err_body = resp.text().await.unwrap_or_default();
+            if status.as_u16() < 500 {
+                return Err(AppError::UpstreamClientError {
+                    status: status.as_u16(),
+                    body: err_body,
+                });
+            }
             return Err(AppError::ProviderError(format!(
-                "openrouter stream returned {status}"
+                "openrouter stream returned {status}: {err_body}"
             )));
         }
 
@@ -154,8 +169,14 @@ impl Provider for OpenRouterProvider {
         // Extract usage before format translation discards detailed fields.
         let u = parsed.get("usage");
         let usage = UsageDetails {
-            input_tokens: u.and_then(|v| v.get("prompt_tokens")).and_then(|t| t.as_u64()).unwrap_or(0),
-            output_tokens: u.and_then(|v| v.get("completion_tokens")).and_then(|t| t.as_u64()).unwrap_or(0),
+            input_tokens: u
+                .and_then(|v| v.get("prompt_tokens"))
+                .and_then(|t| t.as_u64())
+                .unwrap_or(0),
+            output_tokens: u
+                .and_then(|v| v.get("completion_tokens"))
+                .and_then(|t| t.as_u64())
+                .unwrap_or(0),
             cached_tokens: u
                 .and_then(|v| v.get("prompt_tokens_details"))
                 .and_then(|d| d.get("cached_tokens"))

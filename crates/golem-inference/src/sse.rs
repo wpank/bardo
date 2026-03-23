@@ -51,12 +51,14 @@ pub fn parse_sse_stream(
 
             Ok(chunks)
         })
-        .filter_map(|result: Result<Vec<Result<InferenceChunk, InferenceError>>, InferenceError>| {
-            futures::future::ready(match result {
-                Ok(chunks) if chunks.is_empty() => None,
-                Ok(chunks) => Some(futures::stream::iter(chunks)),
-                Err(e) => Some(futures::stream::iter(vec![Err(e)])),
-            })
-        })
+        .filter_map(
+            |result: Result<Vec<Result<InferenceChunk, InferenceError>>, InferenceError>| {
+                futures::future::ready(match result {
+                    Ok(chunks) if chunks.is_empty() => None,
+                    Ok(chunks) => Some(futures::stream::iter(chunks)),
+                    Err(e) => Some(futures::stream::iter(vec![Err(e)])),
+                })
+            },
+        )
         .flatten()
 }

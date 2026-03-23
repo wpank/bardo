@@ -21,8 +21,11 @@ Given a plan document, produce a concise brief with these sections:
 
 Keep under 3000 words. Focus on what an implementer needs to start coding."
 
+export BATCH_OUTPUT_FILE="$output"
+export BATCH_VALIDATOR="non_empty"
 result="$(call_claude "$model" "$SYSTEM" "Generate a brief for this plan:
 
 $plan_content")"
+[[ "$BATCH" == true ]] && exit 0
 echo "$result" > "$output"
 echo "  create: $output"

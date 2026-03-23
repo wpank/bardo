@@ -113,6 +113,23 @@ impl ToolTracker {
         self.usage.retain(|k, _| keep(k));
         self.request_counts.retain(|k, _| keep(k));
     }
+
+    /// Get all sessions with their tool usage and request counts (for persistence).
+    pub fn all_sessions(&self) -> Vec<(String, HashSet<String>, usize)> {
+        self.usage
+            .iter()
+            .map(|entry| {
+                let sid = entry.key().clone();
+                let tools = entry.value().clone();
+                let count = self
+                    .request_counts
+                    .get(&sid)
+                    .map(|c| *c.value())
+                    .unwrap_or(0);
+                (sid, tools, count)
+            })
+            .collect()
+    }
 }
 
 #[cfg(test)]

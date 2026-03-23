@@ -57,7 +57,9 @@ impl From<&InferenceError> for ErrorPayload {
             InferenceError::Provider(msg) => ("provider_error", msg.clone()),
             InferenceError::Timeout => ("timeout", "inference request timed out".into()),
             InferenceError::Unauthorized => ("unauthorized", "invalid or missing API key".into()),
-            InferenceError::T0Suppressed => ("t0_suppressed", "T0 tier suppresses inference".into()),
+            InferenceError::T0Suppressed => {
+                ("t0_suppressed", "T0 tier suppresses inference".into())
+            }
             InferenceError::Internal(msg) => ("internal_error", msg.clone()),
         };
         Self {

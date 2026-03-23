@@ -48,21 +48,30 @@ fn compute_cost(usage: &UsageDetails, pricing: &ModelPricing, is_batch: bool) ->
     // OpenAI: cached_tokens is a subset of input_tokens (use saturating_sub).
     let fresh_input = usage.input_tokens.saturating_sub(usage.cached_tokens);
     cost += fresh_input as f64 * ip / 1e6;
-    cost += usage.cached_tokens as f64 * cached_ip / 1e6;                     // OpenAI cached (50% off)
-    cost += usage.cache_creation_input_tokens as f64 * ip * 1.25 / 1e6;       // Anthropic write (25% surcharge)
-    cost += usage.cache_read_input_tokens as f64 * cached_ip / 1e6;            // Anthropic read (90% off)
+    cost += usage.cached_tokens as f64 * cached_ip / 1e6; // OpenAI cached (50% off)
+    cost += usage.cache_creation_input_tokens as f64 * ip * 1.25 / 1e6; // Anthropic write (25% surcharge)
+    cost += usage.cache_read_input_tokens as f64 * cached_ip / 1e6; // Anthropic read (90% off)
     let regular_output = usage.output_tokens.saturating_sub(usage.reasoning_tokens);
     cost += regular_output as f64 * op / 1e6;
-    cost += usage.reasoning_tokens as f64 * reasoning_p / 1e6;                 // o-series reasoning
-    cost += usage.thinking_tokens as f64 * op / 1e6;                           // Anthropic thinking
+    cost += usage.reasoning_tokens as f64 * reasoning_p / 1e6; // o-series reasoning
+    cost += usage.thinking_tokens as f64 * op / 1e6; // Anthropic thinking
 
-    if is_batch { cost *= 0.5; }
+    if is_batch {
+        cost *= 0.5;
+    }
 
-    // Naive cost: everything at full input/output price, no discounts.
-    let total_input = usage.input_tokens + usage.cache_read_input_tokens
-        + usage.cache_creation_input_tokens;
+    // Naive cost: what Anthropic would charge WITHOUT the gateway's cache_control
+    // injection. No cache reads, no cache writes — just regular input pricing.
+    // Cache creation and cache read tokens would have been regular input tokens.
+    let total_input =
+        usage.input_tokens + usage.cache_read_input_tokens + usage.cache_creation_input_tokens;
     let total_output = usage.output_tokens + usage.thinking_tokens;
     let naive = (total_input as f64 * ip / 1e6) + (total_output as f64 * op / 1e6);
+
+    // Naive is always >= actual. On a cache write request, the 25% surcharge
+    // makes actual > naive — but that's an investment, not a loss. Clamp naive
+    // to at least actual so savings is never negative per-request.
+    let naive = naive.max(cost);
 
     (cost, naive)
 }
@@ -114,7 +123,399 @@ fn emit_stats_event(
     });
 }
 
-/// Acquire a concurrency permit if the limiter is configured.
+// ── Stream accumulation and SSE synthesis for cache support ──────────────
+
+/// Accumulates SSE events during streaming to reconstruct the full response body.
+struct StreamAccumulator {
+    id: String,
+    model: String,
+    /// Content blocks accumulated from content_block_start + content_block_delta.
+    content_blocks: Vec<Value>,
+    /// Index of the current block being accumulated.
+    current_block_idx: Option<usize>,
+    /// Stop reason from message_delta.
+    stop_reason: Option<String>,
+    /// Usage counters.
+    input_tokens: u64,
+    output_tokens: u64,
+    cache_read_input_tokens: u64,
+    cache_creation_input_tokens: u64,
+    thinking_tokens: u64,
+    /// Whether message_stop has been received.
+    complete: bool,
+    /// Cost computed from the stream stats.
+    cost: f64,
+    naive_cost: f64,
+}
+
+impl StreamAccumulator {
+    fn new() -> Self {
+        Self {
+            id: String::new(),
+            model: String::new(),
+            content_blocks: Vec::new(),
+            current_block_idx: None,
+            stop_reason: None,
+            input_tokens: 0,
+            output_tokens: 0,
+            cache_read_input_tokens: 0,
+            cache_creation_input_tokens: 0,
+            thinking_tokens: 0,
+            complete: false,
+            cost: 0.0,
+            naive_cost: 0.0,
+        }
+    }
+
+    /// Process an SSE event and accumulate data for response reconstruction.
+    fn process_event(&mut self, event: &Value) {
+        let event_type = event.get("type").and_then(|t| t.as_str()).unwrap_or("");
+        match event_type {
+            "message_start" => {
+                if let Some(msg) = event.get("message") {
+                    self.id = msg
+                        .get("id")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("msg_cached")
+                        .to_string();
+                    self.model = msg
+                        .get("model")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("unknown")
+                        .to_string();
+                    if let Some(u) = msg.get("usage") {
+                        self.input_tokens =
+                            u.get("input_tokens").and_then(|t| t.as_u64()).unwrap_or(0);
+                        self.cache_read_input_tokens = u
+                            .get("cache_read_input_tokens")
+                            .and_then(|t| t.as_u64())
+                            .unwrap_or(0);
+                        self.cache_creation_input_tokens = u
+                            .get("cache_creation_input_tokens")
+                            .and_then(|t| t.as_u64())
+                            .unwrap_or(0);
+                        self.thinking_tokens = u
+                            .get("thinking_tokens")
+                            .and_then(|t| t.as_u64())
+                            .unwrap_or(0);
+                    }
+                }
+            }
+            "content_block_start" => {
+                let idx = event.get("index").and_then(|i| i.as_u64()).unwrap_or(0) as usize;
+                if let Some(block) = event.get("content_block") {
+                    let block_type = block.get("type").and_then(|t| t.as_str()).unwrap_or("text");
+                    let skeleton = match block_type {
+                        "text" => serde_json::json!({"type": "text", "text": ""}),
+                        "thinking" => {
+                            serde_json::json!({"type": "thinking", "thinking": ""})
+                        }
+                        "tool_use" => {
+                            serde_json::json!({
+                                "type": "tool_use",
+                                "id": block.get("id").cloned().unwrap_or(Value::String("".into())),
+                                "name": block.get("name").cloned().unwrap_or(Value::String("".into())),
+                                "input": {}
+                            })
+                        }
+                        _ => serde_json::json!({"type": block_type}),
+                    };
+                    // Ensure vec is large enough
+                    while self.content_blocks.len() <= idx {
+                        self.content_blocks.push(Value::Null);
+                    }
+                    self.content_blocks[idx] = skeleton;
+                    self.current_block_idx = Some(idx);
+                }
+            }
+            "content_block_delta" => {
+                let idx = event.get("index").and_then(|i| i.as_u64()).unwrap_or(0) as usize;
+                if let Some(delta) = event.get("delta") {
+                    let delta_type = delta.get("type").and_then(|t| t.as_str()).unwrap_or("");
+                    if idx < self.content_blocks.len() {
+                        match delta_type {
+                            "text_delta" => {
+                                if let Some(text) = delta.get("text").and_then(|t| t.as_str()) {
+                                    if let Some(existing) = self.content_blocks[idx]
+                                        .get("text")
+                                        .and_then(|t| t.as_str())
+                                    {
+                                        let mut combined = existing.to_string();
+                                        combined.push_str(text);
+                                        self.content_blocks[idx]["text"] = Value::String(combined);
+                                    }
+                                }
+                            }
+                            "thinking_delta" => {
+                                if let Some(text) = delta.get("thinking").and_then(|t| t.as_str()) {
+                                    if let Some(existing) = self.content_blocks[idx]
+                                        .get("thinking")
+                                        .and_then(|t| t.as_str())
+                                    {
+                                        let mut combined = existing.to_string();
+                                        combined.push_str(text);
+                                        self.content_blocks[idx]["thinking"] =
+                                            Value::String(combined);
+                                    }
+                                }
+                            }
+                            "input_json_delta" => {
+                                if let Some(json_str) =
+                                    delta.get("partial_json").and_then(|t| t.as_str())
+                                {
+                                    // Accumulate the JSON string; parse at block_stop.
+                                    let key = "__partial_json";
+                                    let existing = self.content_blocks[idx]
+                                        .get(key)
+                                        .and_then(|t| t.as_str())
+                                        .unwrap_or("");
+                                    let mut combined = existing.to_string();
+                                    combined.push_str(json_str);
+                                    self.content_blocks[idx][key] = Value::String(combined);
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                }
+            }
+            "content_block_stop" => {
+                let idx = event.get("index").and_then(|i| i.as_u64()).unwrap_or(0) as usize;
+                // Finalize tool_use input from accumulated partial JSON.
+                if idx < self.content_blocks.len() {
+                    if let Some(partial) = self.content_blocks[idx]
+                        .get("__partial_json")
+                        .and_then(|t| t.as_str())
+                        .map(String::from)
+                    {
+                        if let Ok(parsed) = serde_json::from_str::<Value>(&partial) {
+                            self.content_blocks[idx]["input"] = parsed;
+                        }
+                        // Remove temp key
+                        if let Some(obj) = self.content_blocks[idx].as_object_mut() {
+                            obj.remove("__partial_json");
+                        }
+                    }
+                }
+                self.current_block_idx = None;
+            }
+            "message_delta" => {
+                if let Some(delta) = event.get("delta") {
+                    self.stop_reason = delta
+                        .get("stop_reason")
+                        .and_then(|s| s.as_str())
+                        .map(String::from);
+                }
+                if let Some(usage) = event.get("usage") {
+                    self.output_tokens = usage
+                        .get("output_tokens")
+                        .and_then(|t| t.as_u64())
+                        .unwrap_or(0);
+                }
+            }
+            "message_stop" => {
+                self.complete = true;
+            }
+            _ => {}
+        }
+    }
+
+    /// Reconstruct the full Anthropic Messages API response JSON.
+    fn to_response_bytes(&self) -> Bytes {
+        let body = serde_json::json!({
+            "id": self.id,
+            "type": "message",
+            "role": "assistant",
+            "model": self.model,
+            "content": self.content_blocks,
+            "stop_reason": self.stop_reason.as_deref().unwrap_or("end_turn"),
+            "stop_sequence": null,
+            "usage": {
+                "input_tokens": self.input_tokens,
+                "output_tokens": self.output_tokens,
+                "cache_read_input_tokens": self.cache_read_input_tokens,
+                "cache_creation_input_tokens": self.cache_creation_input_tokens,
+            }
+        });
+        Bytes::from(serde_json::to_vec(&body).unwrap_or_default())
+    }
+}
+
+/// Synthesize Anthropic SSE events from a cached JSON response body.
+fn synthesize_sse_from_cached(cached_body: &Bytes) -> Bytes {
+    let body: Value = match serde_json::from_slice(cached_body) {
+        Ok(v) => v,
+        Err(_) => return cached_body.clone(),
+    };
+
+    let mut sse = String::new();
+
+    // Build message shell (empty content, usage without output_tokens)
+    let mut msg_shell = body.clone();
+    msg_shell["content"] = Value::Array(vec![]);
+    msg_shell["stop_reason"] = Value::Null;
+    msg_shell["stop_sequence"] = Value::Null;
+    // Input-only usage for message_start
+    let input_usage = serde_json::json!({
+        "input_tokens": body.get("usage").and_then(|u| u.get("input_tokens")).cloned().unwrap_or(Value::Number(0.into())),
+        "output_tokens": 0,
+        "cache_read_input_tokens": body.get("usage").and_then(|u| u.get("cache_read_input_tokens")).cloned().unwrap_or(Value::Number(0.into())),
+        "cache_creation_input_tokens": body.get("usage").and_then(|u| u.get("cache_creation_input_tokens")).cloned().unwrap_or(Value::Number(0.into())),
+    });
+    msg_shell["usage"] = input_usage;
+
+    let start_event = serde_json::json!({"type": "message_start", "message": msg_shell});
+    sse.push_str(&format!("event: message_start\ndata: {start_event}\n\n"));
+
+    // Emit content blocks
+    if let Some(content) = body.get("content").and_then(|c| c.as_array()) {
+        for (i, block) in content.iter().enumerate() {
+            let block_type = block.get("type").and_then(|t| t.as_str()).unwrap_or("text");
+
+            // content_block_start (skeleton)
+            let skeleton = match block_type {
+                "text" => serde_json::json!({"type": "text", "text": ""}),
+                "thinking" => serde_json::json!({"type": "thinking", "thinking": ""}),
+                "tool_use" => serde_json::json!({
+                    "type": "tool_use",
+                    "id": block.get("id").cloned().unwrap_or(Value::String("".into())),
+                    "name": block.get("name").cloned().unwrap_or(Value::String("".into())),
+                    "input": {}
+                }),
+                _ => block.clone(),
+            };
+            let cbs = serde_json::json!({"type": "content_block_start", "index": i, "content_block": skeleton});
+            sse.push_str(&format!("event: content_block_start\ndata: {cbs}\n\n"));
+
+            // content_block_delta (full content as single delta)
+            match block_type {
+                "text" => {
+                    if let Some(text) = block.get("text").and_then(|t| t.as_str()) {
+                        if !text.is_empty() {
+                            let cbd = serde_json::json!({
+                                "type": "content_block_delta",
+                                "index": i,
+                                "delta": {"type": "text_delta", "text": text}
+                            });
+                            sse.push_str(&format!("event: content_block_delta\ndata: {cbd}\n\n"));
+                        }
+                    }
+                }
+                "thinking" => {
+                    if let Some(text) = block.get("thinking").and_then(|t| t.as_str()) {
+                        if !text.is_empty() {
+                            let cbd = serde_json::json!({
+                                "type": "content_block_delta",
+                                "index": i,
+                                "delta": {"type": "thinking_delta", "thinking": text}
+                            });
+                            sse.push_str(&format!("event: content_block_delta\ndata: {cbd}\n\n"));
+                        }
+                    }
+                }
+                "tool_use" => {
+                    if let Some(input) = block.get("input") {
+                        let json_str = serde_json::to_string(input).unwrap_or_default();
+                        if json_str != "{}" {
+                            let cbd = serde_json::json!({
+                                "type": "content_block_delta",
+                                "index": i,
+                                "delta": {"type": "input_json_delta", "partial_json": json_str}
+                            });
+                            sse.push_str(&format!("event: content_block_delta\ndata: {cbd}\n\n"));
+                        }
+                    }
+                }
+                _ => {}
+            }
+
+            // content_block_stop
+            let stop = serde_json::json!({"type": "content_block_stop", "index": i});
+            sse.push_str(&format!("event: content_block_stop\ndata: {stop}\n\n"));
+        }
+    }
+
+    // message_delta
+    let output_tokens = body
+        .get("usage")
+        .and_then(|u| u.get("output_tokens"))
+        .cloned()
+        .unwrap_or(Value::Number(0.into()));
+    let stop_reason = body
+        .get("stop_reason")
+        .cloned()
+        .unwrap_or(Value::String("end_turn".into()));
+    let md = serde_json::json!({
+        "type": "message_delta",
+        "delta": {"stop_reason": stop_reason, "stop_sequence": null},
+        "usage": {"output_tokens": output_tokens}
+    });
+    sse.push_str(&format!("event: message_delta\ndata: {md}\n\n"));
+
+    // message_stop
+    sse.push_str("event: message_stop\ndata: {\"type\":\"message_stop\"}\n\n");
+
+    Bytes::from(sse)
+}
+
+/// Synthesize OpenAI SSE events from a cached OpenAI JSON response body.
+fn synthesize_openai_sse_from_cached(cached_body: &Bytes, model: &str) -> Bytes {
+    let body: Value = match serde_json::from_slice(cached_body) {
+        Ok(v) => v,
+        Err(_) => return cached_body.clone(),
+    };
+
+    let id = body
+        .get("id")
+        .and_then(|v| v.as_str())
+        .unwrap_or("chatcmpl-cached");
+
+    let mut sse = String::new();
+
+    // Extract text content from the first choice
+    let content = body
+        .get("choices")
+        .and_then(|c| c.as_array())
+        .and_then(|arr| arr.first())
+        .and_then(|c| c.get("message"))
+        .and_then(|m| m.get("content"))
+        .and_then(|c| c.as_str())
+        .unwrap_or("");
+
+    // Role chunk
+    let role_chunk = serde_json::json!({
+        "id": id,
+        "object": "chat.completion.chunk",
+        "model": model,
+        "choices": [{"index": 0, "delta": {"role": "assistant", "content": ""}, "finish_reason": null}]
+    });
+    sse.push_str(&format!("data: {role_chunk}\n\n"));
+
+    // Content chunk (full text as single delta)
+    if !content.is_empty() {
+        let content_chunk = serde_json::json!({
+            "id": id,
+            "object": "chat.completion.chunk",
+            "model": model,
+            "choices": [{"index": 0, "delta": {"content": content}, "finish_reason": null}]
+        });
+        sse.push_str(&format!("data: {content_chunk}\n\n"));
+    }
+
+    // Finish chunk with usage
+    let usage = body.get("usage").cloned().unwrap_or(serde_json::json!({}));
+    let finish_chunk = serde_json::json!({
+        "id": id,
+        "object": "chat.completion.chunk",
+        "model": model,
+        "choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}],
+        "usage": usage
+    });
+    sse.push_str(&format!("data: {finish_chunk}\n\n"));
+    sse.push_str("data: [DONE]\n\n");
+
+    Bytes::from(sse)
+}
 /// Returns a guard that releases the permit on drop.
 async fn acquire_concurrency(
     state: &AppState,
@@ -164,11 +565,7 @@ pub async fn costs(State(state): State<AppState>) -> impl IntoResponse {
 ///
 /// Returns all models from all configured providers in OpenAI catalog format.
 pub async fn models(State(state): State<AppState>) -> impl IntoResponse {
-    let data: Vec<Value> = state
-        .providers
-        .iter()
-        .flat_map(|p| p.catalog())
-        .collect();
+    let data: Vec<Value> = state.providers.iter().flat_map(|p| p.catalog()).collect();
     Json(serde_json::json!({"object": "list", "data": data}))
 }
 
@@ -178,6 +575,33 @@ fn session_id_from_headers(headers: &HeaderMap) -> Option<String> {
         .get("x-mori-session-id")
         .and_then(|v| v.to_str().ok())
         .map(String::from)
+}
+
+/// Derive a session ID from the request body when no explicit header is set.
+///
+/// Hashes the system prompt to produce a stable identifier — requests with the
+/// same system prompt likely come from the same agent/session. This enables
+/// tool pruning and per-session cost tracking for clients (like Claude CLI)
+/// that don't send the `x-mori-session-id` header.
+fn derive_session_id(body: &Value) -> Option<String> {
+    let system = body.get("system")?;
+    let text = match system {
+        Value::String(s) => s.as_str().to_string(),
+        Value::Array(arr) => arr
+            .iter()
+            .filter_map(|b| b.get("text").and_then(|t| t.as_str()))
+            .collect::<Vec<&str>>()
+            .join(""),
+        _ => return None,
+    };
+    if text.is_empty() {
+        return None;
+    }
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+    let mut h = DefaultHasher::new();
+    text.hash(&mut h);
+    Some(format!("auto-{:016x}", h.finish()))
 }
 
 /// Record session cost data after a request completes.
@@ -217,7 +641,7 @@ fn record_tool_usage(state: &AppState, session_id: &str, response: &Value) {
 ///
 /// Returns the (possibly modified) raw JSON and the session ID if present.
 fn preprocess_request(state: &AppState, raw: &mut Value, headers: &HeaderMap) -> Option<String> {
-    let session_id = session_id_from_headers(headers);
+    let session_id = session_id_from_headers(headers).or_else(|| derive_session_id(raw));
 
     // Tier-based model override
     if let Some(tier_info) = TierInfo::from_headers(headers) {
@@ -244,11 +668,28 @@ fn preprocess_request(state: &AppState, raw: &mut Value, headers: &HeaderMap) ->
             {
                 let original_count = tools.len();
                 let pruned_count = pruned.len();
+                let tokens_saved = (original_count - pruned_count) * 150; // ~150 tokens per tool def
+                let model_name = raw.get("model").and_then(|m| m.as_str()).unwrap_or("");
+                let input_price = state.pricing.lookup(model_name).input_per_m;
+                let savings_usd = tokens_saved as f64 * input_price / 1e6;
                 raw["tools"] = Value::Array(pruned);
+                state
+                    .stats
+                    .tools_pruned_count
+                    .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                state
+                    .stats
+                    .tool_tokens_saved
+                    .fetch_add(tokens_saved as u64, std::sync::atomic::Ordering::Relaxed);
+                state.stats.tool_savings_micro_usd.fetch_add(
+                    (savings_usd * 1_000_000.0) as u64,
+                    std::sync::atomic::Ordering::Relaxed,
+                );
                 tracing::info!(
                     session = %sid,
                     original = original_count,
                     pruned = pruned_count,
+                    tokens_saved,
                     "pruned unused tool definitions"
                 );
             }
@@ -304,8 +745,18 @@ async fn handle_with_provider(
         &state.http,
         // Use Anthropic keys for the compression call (always haiku).
         &[state.anthropic_api_key.clone()],
-    ).await {
+    )
+    .await
+    {
         if saved > 0 {
+            state
+                .stats
+                .history_compressed
+                .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            state
+                .stats
+                .compression_tokens_saved
+                .fetch_add(saved, std::sync::atomic::Ordering::Relaxed);
             tracing::info!(saved_tokens = saved, "conversation history compressed");
         }
     }
@@ -315,38 +766,68 @@ async fn handle_with_provider(
 
     let provider_name = provider.name().to_string();
 
-    // Semantic cache check (non-streaming only).
-    if !is_streaming {
-        let fp = crate::semantic_cache::SemanticCache::fingerprint(&raw);
-        if let Some(hit) = state.semantic_cache.get(fp) {
+    // Semantic cache check (streaming and non-streaming).
+    // Skip for tool_result follow-ups — these are context-dependent and the
+    // cache text can't distinguish different tool outputs (they all hash the same).
+    if !crate::semantic_cache::SemanticCache::last_message_has_tool_results(&raw) {
+        let cache_text = crate::semantic_cache::SemanticCache::extract_cache_text(&raw);
+        if let Some(hit) = state.semantic_cache.lookup(&cache_text) {
             let elapsed = start.elapsed();
-            state.stats.record_request(&hit.model, 0, 0, 0.0, hit.cost_usd, true);
+            state
+                .stats
+                .record_request(&hit.model, 0, 0, 0.0, hit.cost_usd, true);
+            state
+                .stats
+                .semantic_cache_hits
+                .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
             let empty_usage = UsageDetails::default();
             emit_stats_event(
-                &state.stats_tx, &state.stats, &hit.model, "semantic-cache",
-                &empty_usage, 0.0, hit.cost_usd, hit.cost_usd,
-                true, false,
+                &state.stats_tx,
+                &state.stats,
+                &hit.model,
+                "semantic-cache",
+                &empty_usage,
+                0.0,
+                hit.cost_usd,
+                hit.cost_usd,
+                true,
+                false,
                 elapsed.as_millis() as u64,
-                false, session_id,
+                is_streaming,
+                session_id,
             );
 
             tracing::info!(
                 cache = "semantic-hit",
                 saved_usd = hit.cost_usd,
                 elapsed_ms = elapsed.as_millis(),
+                streaming = is_streaming,
                 "returning semantically cached response"
             );
 
-            return Ok(build_response_with_cost_headers(
-                hit.response,
-                "application/json",
-                hit.cost_usd,
-                0.0,
-                true,
-                &hit.model,
-                elapsed,
-            ));
+            if is_streaming {
+                let sse_body = synthesize_sse_from_cached(&hit.response);
+                return Ok(Response::builder()
+                    .status(StatusCode::OK)
+                    .header("content-type", "text/event-stream")
+                    .header("cache-control", "no-cache")
+                    .header("x-mori-format", "anthropic")
+                    .header("x-mori-stream", "true")
+                    .header("x-mori-cache-status", "semantic-hit")
+                    .body(Body::from(sse_body))
+                    .unwrap_or_default());
+            } else {
+                return Ok(build_response_with_cost_headers(
+                    hit.response,
+                    "application/json",
+                    hit.cost_usd,
+                    0.0,
+                    true,
+                    &hit.model,
+                    elapsed,
+                ));
+            }
         }
     }
 
@@ -370,6 +851,16 @@ async fn handle_with_provider(
             .to_string();
         let pname = provider_name.clone();
 
+        // Shared accumulator for reconstructing the full response for caching.
+        let accumulator = Arc::new(std::sync::Mutex::new(StreamAccumulator::new()));
+        let accum_clone = accumulator.clone();
+        let cache_for_write = state.cache.clone();
+        let sem_cache_for_write = state.semantic_cache.clone();
+        let raw_for_cache = raw.clone();
+        let skip_sem_cache =
+            crate::semantic_cache::SemanticCache::last_message_has_tool_results(&raw);
+        let normalized_for_cache = body.to_vec();
+
         // Mutable state buffered across SSE events within the stream.
         // Anthropic sends input/cache tokens in message_start, output in message_delta.
         let mut input_buf: u64 = 0;
@@ -383,6 +874,55 @@ async fn handle_with_provider(
                 for line in text.lines() {
                     if let Some(data) = line.strip_prefix("data: ") {
                         if let Ok(event) = serde_json::from_str::<Value>(data) {
+                            // Feed event to accumulator for response reconstruction.
+                            if let Ok(mut acc) = accum_clone.lock() {
+                                acc.process_event(&event);
+
+                                // On stream completion with end_turn, write to caches.
+                                if acc.complete
+                                    && acc.stop_reason.as_deref() == Some("end_turn")
+                                    && acc.cost > 0.0
+                                {
+                                    let response_bytes = acc.to_response_bytes();
+                                    let model = acc.model.clone();
+                                    let cost = acc.cost;
+                                    let cache = cache_for_write.clone();
+                                    let sem_cache = sem_cache_for_write.clone();
+                                    let raw_c = raw_for_cache.clone();
+                                    let norm = normalized_for_cache.clone();
+                                    // Reset complete to avoid double-writing.
+                                    acc.complete = false;
+
+                                    tokio::spawn(async move {
+                                        let hash = ResponseCache::request_hash(&norm);
+                                        cache
+                                            .put(
+                                                hash,
+                                                CachedResponse {
+                                                    body: response_bytes.clone(),
+                                                    content_type: "application/json".into(),
+                                                    cost_usd: cost,
+                                                    model: model.clone(),
+                                                    cached_at: chrono::Utc::now(),
+                                                },
+                                            )
+                                            .await;
+                                        if !skip_sem_cache {
+                                            let cache_text =
+                                                crate::semantic_cache::SemanticCache::extract_cache_text(
+                                                    &raw_c,
+                                                );
+                                            sem_cache.store(
+                                                &cache_text,
+                                                response_bytes,
+                                                cost,
+                                                model,
+                                            );
+                                        }
+                                    });
+                                }
+                            }
+
                             // message_start: buffer input/cache/thinking tokens.
                             if let Some(msg_usage) =
                                 event.get("message").and_then(|m| m.get("usage"))
@@ -418,6 +958,12 @@ async fn handle_with_provider(
                                     let p = pricing.lookup(&model_name);
                                     let (cost, naive) = compute_cost(&u, p, false);
                                     let savings = naive - cost;
+
+                                    // Store cost in accumulator for cache write.
+                                    if let Ok(mut acc) = accum_clone.lock() {
+                                        acc.cost = cost;
+                                        acc.naive_cost = naive;
+                                    }
 
                                     stats.record_request(&model_name, u.input_tokens, output, cost, naive, false);
 
@@ -484,25 +1030,50 @@ async fn handle_with_provider(
             let mut rx = sender.subscribe();
             drop(sender); // Release DashMap lock before awaiting.
             tracing::info!("coalescing with in-flight request");
+            state
+                .stats
+                .coalesced_requests
+                .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             match rx.recv().await {
                 Ok(Ok(response_bytes)) => {
                     let elapsed = start.elapsed();
                     // Parse the coalesced response for cost tracking.
                     if let Ok(parsed) = serde_json::from_slice::<Value>(&response_bytes) {
-                        let model = parsed.get("model").and_then(|m| m.as_str()).unwrap_or("unknown");
+                        let model = parsed
+                            .get("model")
+                            .and_then(|m| m.as_str())
+                            .unwrap_or("unknown");
                         let pricing = state.pricing.lookup(model);
                         let u = UsageDetails::default(); // Coalesced — didn't pay for this one.
                         let naive_cost = pricing.input_per_m * 0.001; // rough estimate for coalesced
-                        state.stats.record_request(model, 0, 0, 0.0, naive_cost, true);
+                        state
+                            .stats
+                            .record_request(model, 0, 0, 0.0, naive_cost, true);
 
                         emit_stats_event(
-                            &state.stats_tx, &state.stats, model, "coalesced",
-                            &u, 0.0, naive_cost, naive_cost,
-                            true, false, elapsed.as_millis() as u64, false, session_id,
+                            &state.stats_tx,
+                            &state.stats,
+                            model,
+                            "coalesced",
+                            &u,
+                            0.0,
+                            naive_cost,
+                            naive_cost,
+                            true,
+                            false,
+                            elapsed.as_millis() as u64,
+                            false,
+                            session_id,
                         );
                     }
                     return Ok(build_response_with_cost_headers(
-                        response_bytes, "application/json", 0.0, 0.0, true, "coalesced", elapsed,
+                        response_bytes,
+                        "application/json",
+                        0.0,
+                        0.0,
+                        true,
+                        "coalesced",
+                        elapsed,
                     ));
                 }
                 _ => {
@@ -540,40 +1111,59 @@ async fn handle_with_provider(
 
         let elapsed = start.elapsed();
 
-        let hash = ResponseCache::request_hash(body);
-        state
-            .cache
-            .put(
-                hash,
-                CachedResponse {
-                    body: provider_resp.raw.clone(),
-                    content_type: "application/json".into(),
-                    cost_usd: cost,
-                    model: model.to_string(),
-                    cached_at: chrono::Utc::now(),
-                },
-            )
-            .await;
+        // Only cache end_turn responses (tool_use responses have unique IDs that can't be replayed).
+        let stop_reason = provider_resp
+            .body
+            .get("stop_reason")
+            .and_then(|s| s.as_str());
+        if stop_reason == Some("end_turn") {
+            let hash = ResponseCache::request_hash(body);
+            state
+                .cache
+                .put(
+                    hash,
+                    CachedResponse {
+                        body: provider_resp.raw.clone(),
+                        content_type: "application/json".into(),
+                        cost_usd: cost,
+                        model: model.to_string(),
+                        cached_at: chrono::Utc::now(),
+                    },
+                )
+                .await;
 
-        // Also store in the semantic cache for fuzzy matching.
-        let fp = crate::semantic_cache::SemanticCache::fingerprint(&raw);
-        state.semantic_cache.put(
-            fp,
-            provider_resp.raw.clone(),
-            cost,
-            model.to_string(),
-        );
+            // Also store in the semantic cache for fuzzy matching.
+            // Skip if the request contained tool_result — those produce
+            // degenerate cache keys (empty user text) and cause false matches.
+            if !crate::semantic_cache::SemanticCache::last_message_has_tool_results(&raw) {
+                let cache_text = crate::semantic_cache::SemanticCache::extract_cache_text(&raw);
+                state.semantic_cache.store(
+                    &cache_text,
+                    provider_resp.raw.clone(),
+                    cost,
+                    model.to_string(),
+                );
+            }
+        }
 
         state
             .stats
             .record_request(model, u.input_tokens, u.output_tokens, cost, naive, false);
 
         emit_stats_event(
-            &state.stats_tx, &state.stats, model, &provider_resp.provider,
-            u, cost, naive, savings,
-            false, false,
+            &state.stats_tx,
+            &state.stats,
+            model,
+            &provider_resp.provider,
+            u,
+            cost,
+            naive,
+            savings,
+            false,
+            false,
             elapsed.as_millis() as u64,
-            false, session_id,
+            false,
+            session_id,
         );
 
         if let Some(sid) = session_id {
@@ -601,7 +1191,11 @@ async fn handle_with_provider(
             "request complete"
         );
 
-        let prefix_cache_status = if u.cache_read_input_tokens > 0 || u.cached_tokens > 0 { "warm" } else { "cold" };
+        let prefix_cache_status = if u.cache_read_input_tokens > 0 || u.cached_tokens > 0 {
+            "warm"
+        } else {
+            "cold"
+        };
         let mut resp = build_response_with_cost_headers(
             provider_resp.raw,
             "application/json",
@@ -615,10 +1209,8 @@ async fn handle_with_provider(
             "x-mori-prefix-cache-status",
             prefix_cache_status.parse().unwrap(),
         );
-        resp.headers_mut().insert(
-            "x-mori-provider",
-            provider_resp.provider.parse().unwrap(),
-        );
+        resp.headers_mut()
+            .insert("x-mori-provider", provider_resp.provider.parse().unwrap());
         Ok(resp)
     }
 }
@@ -666,55 +1258,84 @@ pub async fn messages(
     let session_id = preprocess_request(&state, &mut raw, &headers);
 
     // Strip per-request variable content (UUIDs, timestamps) from system prompt
-    // so requests differing only in metadata still hit the same cache slot.
     prefix::strip_variable_content(&mut raw);
-    // Stable tool ordering — semantically equivalent tool lists hash identically.
     prefix::sort_tools_by_name(&mut raw);
+    state
+        .stats
+        .variables_stripped
+        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    state
+        .stats
+        .requests_normalized
+        .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
     // Normalize JSON key ordering in place for better cache hits (avoids full clone)
     prefix::normalize_json_ordering_in_place(&mut raw);
     let normalized_bytes = serde_json::to_vec(&raw).unwrap_or_default();
 
-    let is_streaming = raw
-        .get("stream")
-        .and_then(|v| v.as_bool())
-        .unwrap_or(false);
+    let is_streaming = raw.get("stream").and_then(|v| v.as_bool()).unwrap_or(false);
 
-    // Check hash cache (only for non-streaming requests)
-    if !is_streaming {
-        let hash = ResponseCache::request_hash(&normalized_bytes);
-        if let Some(cached) = state.cache.get(&hash).await {
-            let elapsed = start.elapsed();
-            state.stats.record_request(&cached.model, 0, 0, 0.0, cached.cost_usd, true);
+    // Check hash cache (streaming and non-streaming)
+    let hash = ResponseCache::request_hash(&normalized_bytes);
+    if let Some(cached) = state.cache.get(&hash).await {
+        let elapsed = start.elapsed();
+        state
+            .stats
+            .record_request(&cached.model, 0, 0, 0.0, cached.cost_usd, true);
+        state
+            .stats
+            .hash_cache_hits
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
-            emit_stats_event(
-                &state.stats_tx, &state.stats, &cached.model, "cache",
-                &UsageDetails::default(),
-                0.0, cached.cost_usd, cached.cost_usd,
-                true, false,
-                elapsed.as_millis() as u64,
-                false, session_id.as_deref(),
+        emit_stats_event(
+            &state.stats_tx,
+            &state.stats,
+            &cached.model,
+            "cache",
+            &UsageDetails::default(),
+            0.0,
+            cached.cost_usd,
+            cached.cost_usd,
+            true,
+            false,
+            elapsed.as_millis() as u64,
+            is_streaming,
+            session_id.as_deref(),
+        );
+
+        if let Some(ref sid) = session_id {
+            record_session_cost(
+                &state,
+                sid,
+                &cached.model,
+                "cache",
+                0,
+                0,
+                0.0,
+                cached.cost_usd,
             );
+        }
 
-            if let Some(ref sid) = session_id {
-                record_session_cost(
-                    &state,
-                    sid,
-                    &cached.model,
-                    "cache",
-                    0,
-                    0,
-                    0.0,
-                    cached.cost_usd,
-                );
-            }
+        tracing::info!(
+            cache = "hash-hit",
+            saved_usd = cached.cost_usd,
+            elapsed_ms = elapsed.as_millis(),
+            streaming = is_streaming,
+            "returning cached response"
+        );
 
-            tracing::info!(
-                cache = "hash-hit",
-                saved_usd = cached.cost_usd,
-                elapsed_ms = elapsed.as_millis(),
-                "returning cached response"
-            );
+        if is_streaming {
+            let sse_body = synthesize_sse_from_cached(&cached.body);
+            return Ok(Response::builder()
+                .status(StatusCode::OK)
+                .header("content-type", "text/event-stream")
+                .header("cache-control", "no-cache")
+                .header("x-mori-format", "anthropic")
+                .header("x-mori-stream", "true")
+                .header("x-mori-cache-status", "hash-hit")
+                .body(Body::from(sse_body))
+                .unwrap_or_default());
+        } else {
             return Ok(build_response_with_cost_headers(
                 cached.body,
                 &cached.content_type,
@@ -727,14 +1348,11 @@ pub async fn messages(
         }
     }
 
-    let model = raw
-        .get("model")
-        .and_then(|m| m.as_str())
-        .unwrap_or("");
+    let model = raw.get("model").and_then(|m| m.as_str()).unwrap_or("");
 
-    let provider = state
-        .resolve_provider(model)
-        .ok_or_else(|| AppError::BadRequest(format!("no provider configured for model '{model}'")))?;
+    let provider = state.resolve_provider(model).ok_or_else(|| {
+        AppError::BadRequest(format!("no provider configured for model '{model}'"))
+    })?;
 
     handle_with_provider(
         &state,
@@ -791,18 +1409,12 @@ pub async fn chat_completions(
     let session_id = preprocess_request(&state, &mut raw, &headers);
     prefix::normalize_json_ordering_in_place(&mut raw);
 
-    let model = raw
-        .get("model")
-        .and_then(|m| m.as_str())
-        .unwrap_or("");
-    let is_streaming = raw
-        .get("stream")
-        .and_then(|v| v.as_bool())
-        .unwrap_or(false);
+    let model = raw.get("model").and_then(|m| m.as_str()).unwrap_or("");
+    let is_streaming = raw.get("stream").and_then(|v| v.as_bool()).unwrap_or(false);
 
-    let provider = state
-        .resolve_provider(model)
-        .ok_or_else(|| AppError::BadRequest(format!("no provider configured for model '{model}'")))?;
+    let provider = state.resolve_provider(model).ok_or_else(|| {
+        AppError::BadRequest(format!("no provider configured for model '{model}'"))
+    })?;
 
     // Translate OpenAI format → Anthropic format (internal canonical format).
     let openai_req: format::OpenAiRequest = serde_json::from_value(raw.clone())
@@ -812,6 +1424,80 @@ pub async fn chat_completions(
         serde_json::to_value(&anthropic_req).map_err(|e| AppError::Internal(e.to_string()))?;
     let anthropic_bytes =
         serde_json::to_vec(&anthropic_body).map_err(|e| AppError::Internal(e.to_string()))?;
+
+    // Check hash cache (streaming and non-streaming)
+    let hash = ResponseCache::request_hash(&anthropic_bytes);
+    if let Some(cached) = state.cache.get(&hash).await {
+        let elapsed = start.elapsed();
+        state
+            .stats
+            .record_request(&cached.model, 0, 0, 0.0, cached.cost_usd, true);
+        state
+            .stats
+            .hash_cache_hits
+            .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+
+        emit_stats_event(
+            &state.stats_tx,
+            &state.stats,
+            &cached.model,
+            "cache",
+            &UsageDetails::default(),
+            0.0,
+            cached.cost_usd,
+            cached.cost_usd,
+            true,
+            false,
+            elapsed.as_millis() as u64,
+            is_streaming,
+            session_id.as_deref(),
+        );
+
+        if let Some(ref sid) = session_id {
+            record_session_cost(
+                &state,
+                sid,
+                &cached.model,
+                "cache",
+                0,
+                0,
+                0.0,
+                cached.cost_usd,
+            );
+        }
+
+        tracing::info!(
+            cache = "hash-hit",
+            saved_usd = cached.cost_usd,
+            elapsed_ms = elapsed.as_millis(),
+            streaming = is_streaming,
+            endpoint = "chat_completions",
+            "returning cached response"
+        );
+
+        if is_streaming {
+            let sse_body = synthesize_openai_sse_from_cached(&cached.body, model);
+            return Ok(Response::builder()
+                .status(StatusCode::OK)
+                .header("content-type", "text/event-stream")
+                .header("cache-control", "no-cache")
+                .header("x-mori-format", "openai")
+                .header("x-mori-stream", "true")
+                .header("x-mori-cache-status", "hash-hit")
+                .body(Body::from(sse_body))
+                .unwrap_or_default());
+        } else {
+            return Ok(build_response_with_cost_headers(
+                cached.body,
+                "application/json",
+                cached.cost_usd,
+                0.0,
+                true,
+                &cached.model,
+                elapsed,
+            ));
+        }
+    }
 
     if is_streaming {
         let mut provider_raw = anthropic_body.clone();
@@ -832,6 +1518,17 @@ pub async fn chat_completions(
         let model_str = model.to_string();
         let pname = provider.name().to_string();
 
+        // Shared accumulator for cache writes from streaming.
+        let accumulator = Arc::new(std::sync::Mutex::new(StreamAccumulator::new()));
+        let accum_clone = accumulator.clone();
+        let cache_for_write = state.cache.clone();
+        let sem_cache_for_write = state.semantic_cache.clone();
+        let anthropic_body_for_cache = anthropic_body.clone();
+        let anthropic_bytes_for_cache = anthropic_bytes.clone();
+        let model_for_cache = model.to_string();
+        let skip_sem_cache_oai =
+            crate::semantic_cache::SemanticCache::last_message_has_tool_results(&anthropic_body);
+
         let mut input_buf: u64 = 0;
         let mut cache_read_buf: u64 = 0;
         let mut cache_create_buf: u64 = 0;
@@ -843,6 +1540,66 @@ pub async fn chat_completions(
                 for line in text.lines() {
                     if let Some(data) = line.strip_prefix("data: ") {
                         if let Ok(event) = serde_json::from_str::<Value>(data) {
+                            // Feed event to accumulator for response reconstruction.
+                            if let Ok(mut acc) = accum_clone.lock() {
+                                acc.process_event(&event);
+
+                                if acc.complete
+                                    && acc.stop_reason.as_deref() == Some("end_turn")
+                                    && acc.cost > 0.0
+                                {
+                                    let anth_response = acc.to_response_bytes();
+                                    let model = acc.model.clone();
+                                    let cost = acc.cost;
+                                    let cache = cache_for_write.clone();
+                                    let sem_cache = sem_cache_for_write.clone();
+                                    let anth_body = anthropic_body_for_cache.clone();
+                                    let anth_bytes = anthropic_bytes_for_cache.clone();
+                                    let m_str = model_for_cache.clone();
+                                    acc.complete = false;
+
+                                    tokio::spawn(async move {
+                                        // Translate to OpenAI format for cache storage
+                                        // (matches what the non-streaming path stores).
+                                        let anth_val: Value =
+                                            serde_json::from_slice(&anth_response)
+                                                .unwrap_or_default();
+                                        let openai_json =
+                                            format::anthropic_body_to_openai_response(&anth_val);
+                                        let openai_bytes = Bytes::from(
+                                            serde_json::to_vec(&openai_json).unwrap_or_default(),
+                                        );
+
+                                        let hash = ResponseCache::request_hash(&anth_bytes);
+                                        cache
+                                            .put(
+                                                hash,
+                                                CachedResponse {
+                                                    body: openai_bytes,
+                                                    content_type: "application/json".into(),
+                                                    cost_usd: cost,
+                                                    model: m_str,
+                                                    cached_at: chrono::Utc::now(),
+                                                },
+                                            )
+                                            .await;
+
+                                        if !skip_sem_cache_oai {
+                                            let cache_text =
+                                                crate::semantic_cache::SemanticCache::extract_cache_text(
+                                                    &anth_body,
+                                                );
+                                            sem_cache.store(
+                                                &cache_text,
+                                                anth_response,
+                                                cost,
+                                                model,
+                                            );
+                                        }
+                                    });
+                                }
+                            }
+
                             if let Some(msg_usage) = event.get("message").and_then(|m| m.get("usage")) {
                                 input_buf = msg_usage.get("input_tokens").and_then(|t| t.as_u64()).unwrap_or(0);
                                 cache_read_buf = msg_usage.get("cache_read_input_tokens").and_then(|t| t.as_u64()).unwrap_or(0);
@@ -868,6 +1625,12 @@ pub async fn chat_completions(
                                     let p = pricing.lookup(&model_str);
                                     let (cost, naive) = compute_cost(&u, p, false);
                                     let savings = naive - cost;
+
+                                    // Store cost in accumulator for cache write.
+                                    if let Ok(mut acc) = accum_clone.lock() {
+                                        acc.cost = cost;
+                                        acc.naive_cost = naive;
+                                    }
 
                                     stats.record_request(&model_str, u.input_tokens, output, cost, naive, false);
 
@@ -913,45 +1676,6 @@ pub async fn chat_completions(
             .body(Body::from_stream(translated))
             .unwrap_or_default())
     } else {
-        // Check cache (key based on translated Anthropic body, same as messages endpoint)
-        let hash = ResponseCache::request_hash(&anthropic_bytes);
-        if let Some(cached) = state.cache.get(&hash).await {
-            let elapsed = start.elapsed();
-            state.stats.record_request(&cached.model, 0, 0, 0.0, cached.cost_usd, true);
-
-            emit_stats_event(
-                &state.stats_tx, &state.stats, &cached.model, "cache",
-                &UsageDetails::default(),
-                0.0, cached.cost_usd, cached.cost_usd,
-                true, false,
-                elapsed.as_millis() as u64,
-                false, session_id.as_deref(),
-            );
-
-            if let Some(ref sid) = session_id {
-                record_session_cost(
-                    &state,
-                    sid,
-                    &cached.model,
-                    "cache",
-                    0,
-                    0,
-                    0.0,
-                    cached.cost_usd,
-                );
-            }
-
-            return Ok(build_response_with_cost_headers(
-                cached.body,
-                "application/json",
-                cached.cost_usd,
-                0.0,
-                true,
-                &cached.model,
-                elapsed,
-            ));
-        }
-
         let mut provider_raw = anthropic_body.clone();
         prefix::inject_anthropic_cache_control(&mut provider_raw);
 
@@ -970,16 +1694,29 @@ pub async fn chat_completions(
         let (cost, naive) = compute_cost(u, p, false);
         let savings = naive - cost;
 
-        state
-            .stats
-            .record_request(resp_model, u.input_tokens, u.output_tokens, cost, naive, false);
+        state.stats.record_request(
+            resp_model,
+            u.input_tokens,
+            u.output_tokens,
+            cost,
+            naive,
+            false,
+        );
 
         emit_stats_event(
-            &state.stats_tx, &state.stats, resp_model, &provider_resp.provider,
-            u, cost, naive, savings,
-            false, false,
+            &state.stats_tx,
+            &state.stats,
+            resp_model,
+            &provider_resp.provider,
+            u,
+            cost,
+            naive,
+            savings,
+            false,
+            false,
             start.elapsed().as_millis() as u64,
-            false, session_id.as_deref(),
+            false,
+            session_id.as_deref(),
         );
 
         if let Some(ref sid) = session_id {
@@ -1000,19 +1737,26 @@ pub async fn chat_completions(
         let openai_json = format::anthropic_body_to_openai_response(&provider_resp.body);
         let openai_bytes = Bytes::from(serde_json::to_vec(&openai_json).unwrap_or_default());
 
-        state
-            .cache
-            .put(
-                hash,
-                CachedResponse {
-                    body: openai_bytes.clone(),
-                    content_type: "application/json".into(),
-                    cost_usd: cost,
-                    model: resp_model.to_string(),
-                    cached_at: chrono::Utc::now(),
-                },
-            )
-            .await;
+        // Only cache end_turn responses.
+        let stop_reason = provider_resp
+            .body
+            .get("stop_reason")
+            .and_then(|s| s.as_str());
+        if stop_reason == Some("end_turn") {
+            state
+                .cache
+                .put(
+                    hash,
+                    CachedResponse {
+                        body: openai_bytes.clone(),
+                        content_type: "application/json".into(),
+                        cost_usd: cost,
+                        model: resp_model.to_string(),
+                        cached_at: chrono::Utc::now(),
+                    },
+                )
+                .await;
+        }
 
         let elapsed = start.elapsed();
         tracing::info!(

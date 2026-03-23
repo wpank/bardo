@@ -24,6 +24,8 @@ pub struct UpdateStats {
     pub files_removed: usize,
     /// Total symbols inserted in this update.
     pub symbols_added: usize,
+    /// Fingerprint cache hits (symbols whose signature didn't change).
+    pub fingerprint_cache_hits: usize,
     /// Time spent parsing, in milliseconds.
     pub parse_time_ms: u64,
     /// Time spent on database operations, in milliseconds.
@@ -62,6 +64,12 @@ pub fn incremental_update(
 
     let mut total_parse_ms = 0u64;
     let mut total_db_ms = 0u64;
+
+    // Fingerprint cache: content_hash → HDC blob bytes.
+    // When a file changes but some of its symbols don't (same signature),
+    // we reuse the previously computed fingerprint instead of recomputing.
+    let mut fp_cache: std::collections::HashMap<[u8; 32], Vec<u8>> =
+        std::collections::HashMap::new();
 
     // Process each file
     for rel_path in &rs_files {
@@ -114,6 +122,29 @@ pub fn incremental_update(
             |row| row.get(0),
         )?;
 
+        // Cache existing fingerprints before deleting old symbols.
+        // Key: content_hash of the symbol signature → HDC fingerprint bytes.
+        // If a symbol's signature didn't change, we skip the expensive HDC encode.
+        {
+            let mut cache_stmt = tx.prepare(
+                "SELECT content_hash, hdc_blob FROM symbols WHERE file_id = ?1 AND hdc_blob IS NOT NULL",
+            )?;
+            let cache_rows = cache_stmt.query_map(rusqlite::params![file_id], |row| {
+                let ch: Option<Vec<u8>> = row.get(0)?;
+                let hdc: Vec<u8> = row.get(1)?;
+                Ok((ch, hdc))
+            })?;
+            for row in cache_rows {
+                if let Ok((Some(ch), hdc)) = row {
+                    if ch.len() == 32 {
+                        let mut key = [0u8; 32];
+                        key.copy_from_slice(&ch);
+                        fp_cache.insert(key, hdc);
+                    }
+                }
+            }
+        }
+
         // Clear old symbols (cascades to refs)
         tx.execute(
             "DELETE FROM symbols WHERE file_id = ?1",
@@ -145,10 +176,15 @@ pub fn incremental_update(
 
         stats.symbols_added += symbol_ids.len();
 
-        // Fingerprint and store HDC vectors
+        // Fingerprint and store HDC vectors (with cache)
         for (sym, &sym_id) in parse_result.symbols.iter().zip(symbol_ids.iter()) {
-            let fp = fingerprint::fingerprint(sym);
-            let bytes = fp.to_bytes();
+            let bytes = if let Some(cached) = fp_cache.get(&sym.content_hash) {
+                stats.fingerprint_cache_hits += 1;
+                cached.clone()
+            } else {
+                let fp = fingerprint::fingerprint(sym);
+                fp.to_bytes().to_vec()
+            };
             tx.execute(
                 "UPDATE symbols SET hdc_blob = ?1 WHERE id = ?2",
                 rusqlite::params![&bytes[..], sym_id],
