@@ -78,9 +78,29 @@ Downward transitions use raw thresholds. Upward transitions require `composite �
 
 **`demurrage`** — Ebbinghaus decay on Grimoire entries. Entries transition `Active → Archived → Burned` as confidence drops. Domain multipliers and type weights modulate per-entry decay rates.
 
-**`fractal`** — Micro/meso/macro surprise propagation. Bayesian surprise at the micro level feeds meso-level phage death (diversity collapse) and macro-level existential triggers.
+**`fractal`** — Three-level structure mirroring biological organization (mitoptosis, apoptosis, phenoptosis). Micro-death: Phage sub-agents test single hypotheses, live ~50 ticks (~33 minutes), report back, and die. Meso-death: Curator prunes stale Grimoire entries daily via knowledge demurrage. Macro-death: the Golem itself dies over weeks to months via the three mortality clocks. Feedback loop: micro informs meso (Phage results update Grimoire confidence), meso informs macro (pruning rate feeds epistemic fitness), macro constrains micro (a Golem in Conservation spawns fewer Phages, reducing self-testing and accelerating its own epistemic decay).
 
 **`mortal_memory`** — Grimoire integration under mortality pressure. Epistemic age discounting and autopsy reporting for entries affected by mortality-driven decay.
+
+## Information-Theoretic Diagnostics
+
+A diagnostic layer that runs alongside the three clocks. It computes the mutual information I(G; M) between a Golem's state G and the market environment M using the KSG (Kraskov-Stogbauer-Grassberger) estimator, operating on sliding windows of (action, market_response) pairs.
+
+```
+I(G; M) = H(G) + H(M) - H(G, M)
+```
+
+A Golem with I(G; M) = 0 knows nothing — its state is statistically independent of the market's.
+
+Each clock decomposes naturally into an MI component. Economic mortality maps to channel capacity: capital constrains the action space, and as capital shrinks, the channel capacity between Golem and market approaches zero. Epistemic mortality maps to rate-distortion: the Golem's actual information rate must exceed the minimum required to maintain acceptable prediction accuracy. Stochastic mortality maps to entropy production: the cumulative randomness injected into the Golem's trajectory.
+
+This framing exposes three mortality modes invisible to the individual clocks:
+
+- **Informational decoupling**: the Golem appears healthy by all three clocks but is statistically independent of market outcomes — it acts but nothing it does matters.
+- **Overfitting**: high historical MI, near-zero current MI. The Golem has memorized past regimes that no longer apply.
+- **Clade redundancy**: the Golem contributes no unique information that its siblings don't already provide. From the Clade's perspective, it is dead even if its individual clocks are healthy.
+
+Bits become the common currency the multiplicative vitality system otherwise lacks.
 
 ## Usage
 

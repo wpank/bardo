@@ -152,29 +152,48 @@ Not better models. Not longer context windows. Not more agents. The right 12KB o
 
 ---
 
-## Core Libraries
+## Reusable Building Blocks
 
-These are the building blocks used by the tools above and available for your own code.
+These crates work independently of the Bardo ecosystem. Fork them, depend on them via git, or copy the code. MIT/Apache-2.0 dual-licensed.
+
+| Crate | Deps | What it does |
+|---|---|---|
+| [`bardo-primitives`](crates/bardo-primitives) | none | 10,240-bit HDC vectors, inference tier routing. Zero workspace deps. |
+| [`bardo-inference`](crates/bardo-inference) | none | Inference protocol wire types for Anthropic/OpenAI-compatible APIs. Zero workspace deps. |
+| [`mori-index`](crates/mori-index) | bardo-primitives | Incremental Rust code intelligence index. tree-sitter, PageRank, HDC fingerprints, hybrid search. |
+| [`mori-context`](crates/mori-context) | mori-index | Context assembly from code search results to structured markdown for LLM prompts. |
+| [`mori-mcp`](crates/mori-mcp) | mori-index, mori-context | MCP server exposing code search and context tools. Drop-in for Claude Desktop or any MCP client. |
+| [`mirage-rs`](apps/mirage-rs) | none (optional golem-core) | In-process EVM fork with JSON-RPC server, CoW scenario branching, targeted block follower. |
+| [`bardo-gateway`](apps/bardo-gateway) | bardo-primitives, bardo-inference | LLM inference proxy with three-layer caching, multi-provider routing, cost tracking, MPP payments. |
+
+```toml
+# Use any crate via git dependency
+[dependencies]
+bardo-primitives = { git = "https://github.com/uniswap/bardo", path = "crates/bardo-primitives" }
+mori-index = { git = "https://github.com/uniswap/bardo", path = "crates/mori-index" }
+mirage-rs = { git = "https://github.com/uniswap/bardo", path = "apps/mirage-rs", default-features = false, features = ["library"] }
+bardo-gateway = { git = "https://github.com/uniswap/bardo", path = "apps/bardo-gateway" }
+```
+
+### Golem Framework Internals
+
+These crates are interesting if you're building autonomous agents, but they're coupled to the golem type system. Fork them if the concepts fit your architecture.
 
 | Crate | What it does |
 |---|---|
-| [`golem-core`](crates/golem-core) | Foundation types: GolemId, CognitiveTier, PAD affect vectors, event fabric, taint labels, HDC primitives, tick arena allocator |
-| [`golem-chain`](crates/golem-chain) | Alloy RPC provider, ERC-8004 agent identity registry, Warden timelock, local revm simulation |
-| [`golem-grimoire`](crates/golem-grimoire) | Three-tier memory: LanceDB episode store, SQLite semantic patterns, procedural playbook. Admission gating, decay, memetic fitness tracking |
-| [`golem-inference`](crates/golem-inference) | Three-tier model routing (T0 heuristic / T1 light / T2 full), cost-aware cascade escalation, gateway HTTP client |
-| [`golem-mortality`](crates/golem-mortality) | Triple-clock mortality for agents: economic (USDC burn), epistemic (prediction accuracy EMA), stochastic. Thanatopsis succession protocol |
-| [`golem-sonification`](crates/golem-sonification) | Modular synthesis engine driven by CorticalState. Four-thread architecture: runtime → parameter bridge → rack processor → audio output |
-| [`golem-safety`](crates/golem-safety) | Capability-based auth, PolicyCage sandboxing, taint tracking, Merkle audit log *(planned)* |
-| [`golem-triage`](crates/golem-triage) | Bayesian event scoring: Gamma-Poisson rate anomalies, BOCPD changepoint detection, MidasR graph anomalies, HDC encoding *(planned)* |
-| [`bardo-primitives`](crates/bardo-primitives) | Zero-dependency compute primitives: HdcVector (10,240-bit), InferenceTier, TierRouter |
-| [`bardo-inference`](crates/bardo-inference) | Shared inference wire types: InferenceRequest/Response, streaming chunks, roles, error vocabulary |
+| [`golem-core`](crates/golem-core) | Foundation types: GolemId, PAD affect vectors, event fabric, extension trait, taint labels, tick arena |
+| [`golem-chain`](crates/golem-chain) | Alloy RPC provider, ERC-8004 agent identity registry, Warden timelock, revm simulation |
+| [`golem-grimoire`](crates/golem-grimoire) | Three-tier agent memory with admission scoring, decay, memetic fitness tracking |
+| [`golem-mortality`](crates/golem-mortality) | Gompertz-Makeham mortality clocks (economic, epistemic, stochastic) and Thanatopsis succession |
+| [`golem-inference`](crates/golem-inference) | Three-tier model routing with cost-aware cascade escalation |
+| [`golem-sonification`](crates/golem-sonification) | Modular synthesis engine driven by agent cortical state |
 
 ---
 
 ## Getting Started
 
 ```bash
-git clone <repo> && cd bardo
+git clone https://github.com/uniswap/bardo && cd bardo
 git config core.hooksPath .githooks
 cp .env.example .env        # set ANTHROPIC_API_KEY at minimum
 just setup                  # install dev tools

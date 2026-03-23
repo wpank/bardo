@@ -146,7 +146,11 @@ impl PsychographicDisplay {
 
     pub fn overflow_cells(&self) -> u32 {
         let d = self.density();
-        if d > 0.8 { ((d - 0.8) * 5.0) as u32 } else { 0 }
+        if d > 0.8 {
+            ((d - 0.8) * 5.0).round() as u32
+        } else {
+            0
+        }
     }
 
     pub fn render(&self, _buf: &mut Buffer, _area: Rect) {
@@ -409,8 +413,8 @@ mod tests {
         chrome.render_hazard_stripes(&mut buf, area, 1);
 
         // Check that even and odd x positions have different diagonal chars in top row
-        let cell0 = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
-        let cell1 = buf.cell(ratatui::layout::Position::new(1, 0)).unwrap();
+        let cell0 = buf.get(0, 0);
+        let cell1 = buf.get(1, 0);
         let c0 = cell0.symbol().chars().next().unwrap();
         let c1 = cell1.symbol().chars().next().unwrap();
         assert_ne!(c0, c1, "Adjacent cells should alternate diagonal chars");
@@ -446,8 +450,8 @@ mod tests {
         render_scanlines(area, &mut buf, false, 0.5);
 
         // Even rows should be darkened (different from BG_VOID)
-        let even_cell = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
-        let odd_cell = buf.cell(ratatui::layout::Position::new(0, 1)).unwrap();
+        let even_cell = buf.get(0, 0);
+        let odd_cell = buf.get(0, 1);
         assert_ne!(
             even_cell.bg, odd_cell.bg,
             "Even rows should be darkened, odd rows unchanged"
@@ -533,14 +537,14 @@ mod tests {
         chrome.dim_non_essential_panels(&mut buf, area);
 
         // BONE cells should NOT have DIM modifier
-        let bone_cell = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
+        let bone_cell = buf.get(0, 0);
         assert!(
             !bone_cell.modifier.contains(Modifier::DIM),
             "BONE fg cells should not be dimmed"
         );
 
         // TEXT_PRIMARY cells should have DIM modifier
-        let text_cell = buf.cell(ratatui::layout::Position::new(5, 0)).unwrap();
+        let text_cell = buf.get(5, 0);
         assert!(
             text_cell.modifier.contains(Modifier::DIM),
             "TEXT_PRIMARY fg cells should be dimmed"

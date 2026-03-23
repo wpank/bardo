@@ -3,7 +3,7 @@
 use axum::{extract::Request, middleware::Next, response::Response};
 
 use crate::error::AppError;
-use crate::mpp::types::AuthMode;
+use crate::mpp::AuthMode;
 use crate::state::AppState;
 
 /// Middleware that validates the X-Api-Key header.

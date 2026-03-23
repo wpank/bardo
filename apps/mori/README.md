@@ -1,16 +1,18 @@
 # Mori
 
-A context engineering orchestration service. Takes product requirements, decomposes them into dependency-ordered plans, enriches each plan with targeted context, and dispatches a fleet of specialized AI agents in parallel across isolated git worktrees to implement, test, review, and merge the results.
+Takes a specification, decomposes it into dependency-ordered plans, engineers targeted context for each one, and dispatches a fleet of AI agents in parallel across isolated git worktrees to implement, test, review, and merge the results.
 
 53,000 lines of Rust. 26 agent roles. DAG-scheduled parallel execution. A Ratatui TUI that shows you everything.
 
-## Why this exists
+## The problem it solves
 
 The bottleneck in AI-assisted development is not model quality. It is context.
 
 Current tools put you in a chat window and hope the model figures out what to do. The model sees whatever fits in its context window, which is usually not enough. You re-explain the same things, watch the agent make decisions that conflict with work done two conversations ago, and manually stitch together outputs that don't fit.
 
-Mori's answer: build a document hierarchy where each layer compresses and targets context for the layer below it.
+An agent implementing your authentication layer needs to understand the three OAuth providers you support, their token exchange flows, and the session types from two crates upstream. That context lives across your PRD, six spec documents, and a handful of source files. You can't dump all of it into a prompt. You have to engineer what goes in, when, and how much.
+
+Mori's answer: a document hierarchy where each layer compresses and targets context for the layer below it.
 
 ```
 PRD (what you want)
@@ -25,7 +27,7 @@ Each layer reduces the next agent's context burden. An implementer doesn't need 
 ## Quick start
 
 ```bash
-# From repo root -- this is the primary entry point
+# Primary entry point
 ./mori.sh 01-05
 
 # With flags
@@ -45,9 +47,9 @@ Each layer reduces the next agent's context burden. An implementer doesn't need 
 
 ## How a build works
 
-### 1. Plan discovery
+### 1. Write plans
 
-Mori reads numbered markdown files from `plans/`. Each plan has YAML frontmatter declaring dependencies and the files it touches:
+Plans are numbered markdown files in `plans/`. Each one has YAML frontmatter declaring its dependencies and the files it touches:
 
 ```yaml
 ---
@@ -58,7 +60,7 @@ parallel_safe: true
 ---
 ```
 
-Plan specs on the CLI (`"01"`, `"01-09"`, `"08a-08d"`) select which plans to run. If you omit them, mori reads `.mori/queue.toml`.
+The plan body contains what to build: prerequisite tables, import blocks, directory trees, step-by-step implementation instructions, and acceptance criteria. Plan specs on the CLI (`"01"`, `"01-09"`, `"08a-08d"`) select which plans to run. If you omit them, mori reads `.mori/queue.toml`.
 
 ### 2. DAG construction and wave scheduling
 
@@ -72,7 +74,7 @@ Wave 3: [plan-04, plan-05, plan-06]  # depend only on 03
 
 Within each wave, plans run concurrently. Waves execute sequentially.
 
-But plan-level parallelism leaves performance on the table. Two plans in the same wave might touch completely different files. Mori's unified task DAG goes further: it looks at all tasks across all plans in a wave, builds a file-conflict graph (which tasks touch overlapping files), and partitions them into independent groups using union-find. Tasks in different groups run simultaneously even if they belong to different plans.
+But plan-level parallelism leaves performance on the table. Two plans in the same wave might touch completely different files. Mori's unified task DAG goes further: it looks at all tasks across all plans in a wave, builds a file-conflict graph, and partitions them into independent groups using union-find. Tasks in different groups run simultaneously even if they belong to different plans.
 
 ```
 Wave 2 plans: [plan-03, plan-04]
@@ -92,7 +94,7 @@ Wave 2 plans: [plan-03, plan-04]
 
 Before any agent runs, the enrichment pipeline generates context artifacts for each plan:
 
-**Briefs** -- strategist-authored summaries of what the plan needs, fitted to the agent's token budget. The budget is computed dynamically based on the model's context window: 60% reserved for input, 40% for output, then allocated across plan text, workspace map, PRD extracts, file context, and review history.
+**Briefs** -- strategist-authored summaries of what the plan needs, fitted to the agent's token budget. The budget is computed dynamically: 60% reserved for input, 40% for output, then allocated across plan text, workspace map, PRD extracts, file context, and review history.
 
 **Task TOMLs** -- atomic units of work with file assignments, acceptance criteria, and parallel grouping:
 
@@ -103,9 +105,13 @@ title = "OAuthProvider trait definition"
 status = "pending"
 files = ["src/auth/provider.rs", "src/auth/mod.rs"]
 acceptance = ["Trait compiles", "Has authorize_url, exchange_code, fetch_profile methods"]
+depends_on = ["02:T3"]
+parallel_group = "A"
 ```
 
-**Workspace maps** -- auto-generated crate-level file trees so agents know what exists. Filtered per-agent to show only the crates they need.
+Cross-plan dependencies (`"02:T3"`) let the scheduler extract parallelism across plan boundaries rather than treating each plan as an atomic blob. The `exclusive_files` flag (default true) means no other task can write to these files while this task runs.
+
+**Workspace maps** -- auto-generated crate-level file trees so agents know what exists, filtered per-agent to show only the crates they need.
 
 **PRD extracts** -- the specific paragraphs from the PRD relevant to this plan, not the whole document.
 
@@ -113,9 +119,9 @@ All context artifacts live as files on disk under `plans/context/`. They are dif
 
 ### 4. Agent dispatch
 
-Each agent gets its own git worktree -- a physical copy of the repo on its own branch. No shared mutable state between agents.
+Each agent gets its own git worktree -- a physical copy of the repo on its own branch. No shared mutable state between agents. All worktrees share a single `sccache` instance with normalized base directories, so the second agent to compile a shared dependency gets a near-instant cache hit instead of recompiling from scratch.
 
-Mori spawns the agent (Claude Code, Codex, or Cursor -- backend inferred from the model slug) with an assembled prompt containing the plan, brief, task TOML, workspace map, and relevant file context. The agent works through its tasks, writing code and running intermediate compile checks.
+Mori spawns the agent with an assembled prompt containing the plan, brief, task TOML, workspace map, and relevant file context. The agent works through its tasks, writing code and running intermediate compile checks.
 
 ### 5. Gate pipeline
 
@@ -140,70 +146,34 @@ Each produces a structured verdict (approve / request-changes / block).
 
 A plan can iterate up to `max_iterations` times (default 8). Each re-review checks only changed files.
 
-### 6. Merge
+### 6. Iteration memory
+
+When an agent fails, the failure feeds forward. Each iteration builds cumulative DO NOT RETRY lists from gate errors and review blockers. If iteration 1 failed with a type mismatch and iteration 2 failed with a missing trait bound, iteration 3 sees both entries. The agent can't repeat either mistake without addressing the underlying cause.
+
+This came from watching an agent hit the same type mismatch four iterations in a row, each time "fixing" it with a slightly different wrong approach. The DO NOT RETRY list forces the agent to try something genuinely new.
+
+On the success side, plans that pass on the first try get recorded as golden-path examples. Future decompositions pull up to 2 golden-path examples of the same category, so a new data-structural plan gets shown how a previous one succeeded.
+
+### 7. Merge
 
 The branch merges into the batch branch. If there are conflicts, the MergeResolver agent handles them. Post-merge, the conductor checks batch integrity before advancing to the next wave.
 
-## Agent roles
+## The conductor
 
-Mori defines 26 specialized agent roles. Each carries a default model assignment, but actual model selection happens at the task level based on routing tags (complexity, category, quality, speed).
+The conductor is a monitoring layer that watches running agents and intervenes when things go wrong.
 
-**Core (always present):**
+**Watchers:**
+- Silence timeout (5 min): agent hasn't produced output. Probably stuck. Conductor sends a nudge or restarts.
+- Iteration loop detector: agent is making the same fix repeatedly. Conductor injects diagnostic context or switches strategy.
+- Error pattern matcher: recognizes common failure patterns (lifetime issues, import cycles, missing types) and injects targeted hints before the agent wastes tokens rediscovering them.
 
-| Role | What it does |
-|------|-------------|
-| Implementer | Writes code, runs compile checks, marks tasks complete |
-| Conductor | Monitors running agents, intervenes on failures (silence timeouts, iteration loops, error patterns) |
+**Interventions:**
+- Inject context: send additional information to a running agent.
+- Restart with different model: if the current model is struggling, swap to a more capable one.
+- Skip and advance: if a plan is stuck after max iterations, skip it and continue.
+- Force merge: override a review block when the conductor determines the block is incorrect.
 
-**Review pipeline (configurable, on by default):**
-
-| Role | What it does |
-|------|-------------|
-| Architect | API design, interface consistency, cross-plan coherence |
-| Auditor | Safety, error handling, edge cases, test coverage |
-| Scribe | Documentation, README updates, inline comments |
-| Critic | Reviews the scribe's output for accuracy |
-| QuickReviewer | Single-pass review combining arch+audit concerns (used for simpler plans) |
-
-**Planning and strategy:**
-
-| Role | What it does |
-|------|-------------|
-| Strategist | Pre-plans upcoming waves, identifies risks, writes briefs |
-| PrePlanner | Speculatively prepares context for future waves while current wave executes |
-| PlanLifecycleManager | Tracks plan state across iterations |
-
-**Automated responders (triggered by events):**
-
-| Role | What it does |
-|------|-------------|
-| AutoFixer | Triggered by gate failures, applies targeted fixes |
-| MergeResolver | Triggered by merge conflicts |
-| ErrorDiagnoser | Triggered by cryptic test failures, produces root-cause analysis |
-| Refactorer | Post-merge cleanup passes |
-
-**Validation and testing:**
-
-| Role | What it does |
-|------|-------------|
-| TerminalValidator | Validates TUI rendering and interaction |
-| GolemLifecycleTester | Tests golem lifecycle state transitions |
-| IntegrationTester | Cross-crate integration testing |
-| CrossSystemTester | End-to-end pipeline validation |
-| FullLoopValidator | Validates mirage + terminal + runtime in full-loop test phase |
-| DependencyValidator | Checks cross-plan type dependencies |
-| RegressionDetector | Detects regressions introduced by new plans |
-| PerformanceSentinel | Monitors for performance degradation |
-| CoverageTracker | Tracks and enforces test coverage |
-| SpecDriftDetector | Detects divergence between PRD and implementation |
-
-**Knowledge and analysis:**
-
-| Role | What it does |
-|------|-------------|
-| Researcher | Deep research tasks (codebase exploration, API investigation) |
-| PatternExtractor | Extracts reusable patterns from successful builds |
-| SnapshotComparator | Compares before/after snapshots for regression detection |
+Implementers get the highest spawn priority. The conductor gives itself the lowest, because it should never starve an implementer of a slot.
 
 ## Agent backends
 
@@ -216,6 +186,17 @@ Mori is provider-agnostic. Backend is inferred from the model slug:
 | Everything else (`gpt-*`, `o3`, `o4-mini`, etc.) | Codex CLI |
 
 You can mix backends in one run. An opus-class implementer via Claude, a haiku-class scribe via Cursor, a gpt-class config fixer via Codex -- all in the same wave.
+
+## Write for amnesia
+
+Every agent session starts cold. No conversation memory, no shared state, no hidden context. The files on disk are the only truth.
+
+This is a feature:
+
+- **Debuggable.** If an agent produces bad output, read its input artifacts. Everything it saw is in `plans/context/`.
+- **Reproducible.** Same inputs -> same artifacts -> same agent behavior.
+- **Scalable.** Add more agents without worrying about shared state corruption. Each one reads files and writes files.
+- **Resumable.** Crash in the middle of plan 7? Restart from plan 7. All prior work is committed. All context artifacts are on disk.
 
 ## CLI reference
 
@@ -304,178 +285,13 @@ Presets tune the quality/speed/cost tradeoff:
 | `cost` | QuickReviewer only | Always | 6 | 2 | Budget-conscious |
 | `speed` | None | Skip | 20 | 6 | Scaffolding, prototyping |
 
-## Write for amnesia
+## The TUI
 
-Every agent session starts cold. No conversation memory, no shared state, no hidden context. The files on disk are the only truth.
+Mori's TUI is a Ratatui application with 10 views, 26 widgets, and 12 modal dialogs. It uses the ROSEDUST palette (rose on violet-black, CRT scanlines, phosphor effects).
 
-This is a feature:
+The dashboard shows wave progress, active agents with their current task and token consumption, gate results, review verdicts, budget tracking (per-agent, per-plan, per-milestone), and system metrics. Token sparklines render in braille characters. Phase timelines show how long each stage took. The agent pool displays live output streams from all running agents.
 
-- **Debuggable.** If an agent produces bad output, read its input artifacts. Everything it saw is in `plans/context/`.
-- **Reproducible.** Same inputs -> same artifacts -> same agent behavior.
-- **Scalable.** Add more agents without worrying about shared state corruption. Each one reads files and writes files.
-- **Resumable.** Crash in the middle of plan 7? Restart from plan 7. All prior work is committed. All context artifacts are on disk.
-
-## Directory layout
-
-### On disk
-
-```
-plans/                              # Plan markdown files
-  01-workspace-scaffold.md
-  02-core-types.md
-  ...
-plans/context/
-  briefs/                           # Strategist briefs per plan
-  reviews/                          # Review verdicts
-  tasks/                            # Task checklists (TOML)
-  docs/                             # Scribe documentation
-  workspace-map.md                  # Auto-generated crate file tree
-.mori/
-  config.toml                       # Mori configuration
-  queue.toml                        # Plan queue and milestones
-  costs.db                          # SQLite cost tracking
-  index.db                          # Codebase index
-  memory/                           # Episode, pattern, playbook tiers
-  plans/                            # Plan execution state
-  runs/                             # Per-run logs and crash reports
-tmp/plan-runs/
-  bardo-ctl.log                     # JSON-structured runtime log
-```
-
-### Source modules
-
-```
-src/
-  main.rs                           # CLI parsing, crash handler, runtime bootstrap
-  orchestrator/
-    dag.rs                          # PlanDag -- plan-level dependency graph, wave computation
-    unified_dag.rs                  # UnifiedTaskDag -- task-level graph across all plans
-    executor.rs                     # Plan execution engine
-    pipeline.rs                     # Pipeline orchestration state machine
-    gates.rs                        # Post-implementation gates (compile, test)
-    review.rs                       # Review verdict handling
-    plan.rs                         # Plan discovery and frontmatter parsing
-    tasks.rs                        # Task checklist loading (TOML)
-    queue.rs                        # .mori/queue.toml parsing
-    prompts.rs                      # Agent prompt construction with dynamic budgeting
-    context.rs                      # Context injection (workspace maps, filtered maps)
-    coordination.rs                 # Inter-agent coordination
-    preflight.rs                    # Pre-run checks
-    phase.rs                        # Execution phase state machine
-    paths.rs                        # Canonical paths (.mori/, plans/, tmp/)
-    batch.rs                        # Batch execution
-    registry.rs                     # Plan/task registry
-    iteration_memory.rs             # Per-plan iteration state
-    event_log.rs                    # Structured event log
-    artifacts.rs                    # Immutable artifact store
-    autofix.rs                      # Automated fix dispatch
-    complexity.rs                   # Task complexity analysis
-    inject.rs                       # Context injection
-    memory.rs                       # Episode/pattern/playbook memory
-    reflection.rs                   # Post-build reflection
-    schema.rs                       # Review and completion report schemas
-    skills.rs                       # Skill injection
-  agent/
-    mod.rs                          # Agent spawning, lifecycle management
-    connection.rs                   # Agent communication (stdin/stdout/WebSocket)
-    events.rs                       # Agent event stream parsing
-    protocol.rs                     # Agent wire protocol
-    roles.rs                        # 26 agent roles, model specs, backend inference
-  conductor/
-    actions.rs                      # LLM-powered conductor interventions
-    llm.rs                          # LLM client (routes through bardo-gateway)
-    watchers.rs                     # Background task watchers (silence, iteration, error)
-  git/
-    graph.rs                        # Git graph utilities
-    ops.rs                          # Git operations (commit, merge, branch)
-    worktree.rs                     # Git worktree allocation and cleanup
-  app/
-    mod.rs                          # AppConfig, main event loop (app::run)
-    gates.rs                        # Gate execution (compile, test, lint)
-    events.rs                       # TUI event dispatch
-    parallel.rs                     # Parallel execution coordinator
-    sequential.rs                   # Sequential execution fallback
-    tui_actions.rs                  # TUI action handlers (inject, resume, etc.)
-    util.rs                         # Shared utilities
-  state/
-    persistence.rs                  # Crash reports, state snapshots, recovery
-  monitor/
-    mod.rs                          # Background monitor framework
-    steering.rs                     # Conductor steering logic
-    patterns.rs                     # Error pattern detection
-    config.rs                       # Monitor configuration
-  tui/
-    mod.rs                          # Terminal setup/restore, frame rendering
-    layout.rs                       # Screen layout computation
-    input.rs                        # Key event handling
-    color.rs                        # ROSEDUST palette
-    theme.rs                        # Theme configuration
-    atmosphere.rs                   # Atmospheric effects (noise, scanlines)
-    postfx.rs                       # Post-processing effects
-    postfx_pipeline.rs              # Effect composition pipeline
-    vfx.rs                          # Visual effects (bloom, glow)
-    math.rs                         # Animation math (lerp, easing)
-    bars.rs                         # Progress bar rendering
-    tabs.rs                         # Tab navigation
-    effects_config.rs               # Effect configuration
-    views/                          # Screen views
-      dashboard.rs                  # Main dashboard (wave progress, agent pool, budget)
-      pipeline.rs                   # Pipeline phase visualization
-      plans.rs                      # Plan list with status badges
-      tasks.rs                      # Task checklist view
-      agents.rs                     # Active agent pool
-      review.rs                     # Review verdict display
-      logs.rs                       # Scrollable log viewer
-      git_view.rs                   # Git branch tree
-      monitors.rs                   # System metrics
-      config.rs                     # Runtime configuration
-    widgets/                        # 26 reusable TUI widgets
-      header_bar.rs                 # Top bar (batch, wave, phase, budget)
-      status_bar.rs                 # Bottom status line
-      plan_list.rs                  # Plan list with phase indicators
-      plan_tree.rs                  # Tree view of plan dependencies
-      task_progress.rs              # Task completion progress
-      agent_pool.rs                 # Agent pool display
-      agent_grid.rs                 # Grid layout for active agents
-      agent_output.rs               # Live agent output stream
-      parallel_pool.rs              # Parallel execution pool
-      wave_bar.rs                   # Wave progress bar
-      wave_progress.rs              # Wave completion tracker
-      phase_bar.rs                  # Phase pipeline visualization
-      phase_timeline.rs             # Phase timing timeline
-      token_bar.rs                  # Token usage bar
-      token_sparkline.rs            # Token usage sparkline (braille)
-      braille.rs                    # Braille character rendering
-      branch_tree.rs                # Git branch tree widget
-      context_gauge.rs              # Context budget gauge
-      diff_panel.rs                 # Diff display
-      error_digest.rs               # Structured error display
-      command_output.rs             # Command output panel
-      status_badge.rs               # Status badge (pass/fail/pending)
-      scrollbar.rs                  # Scrollbar
-      tab_bar.rs                    # Tab bar
-      sys_metrics.rs                # CPU/memory/disk gauges
-    modals/                         # Modal dialogs
-      help.rs                       # Key binding help
-      inject.rs                     # Message injection to running agent
-      plan_detail.rs                # Full plan detail view
-      task_detail.rs                # Full task detail view
-      task_picker.rs                # Task selection
-      wave_overview.rs              # Wave detail view
-      batch_review.rs               # Batch pause review
-      approval.rs                   # Review approval/rejection
-      agent_pool_modal.rs           # Agent pool management
-      confirm.rs                    # Confirmation dialog
-      notification.rs               # Notification toast
-      quit.rs                       # Quit confirmation
-  sys_metrics.rs                    # System resource monitoring (sysinfo)
-```
-
-## TUI
-
-Mori's TUI is a Ratatui application with 10 views, 26 widgets, and 12 modal dialogs. It uses the ROSEDUST palette from Bardo's design system (rose on violet-black, CRT scanlines, phosphor effects).
-
-### Key bindings
+Why a TUI? Because steering an agent swarm is an interactive problem. You need to see what's happening across all plans, spot the stuck ones, and intervene before they burn tokens going in circles. Running headless was tried first -- check back after 20 minutes and discover an agent had been stuck in a compile-fix loop for 15 of them.
 
 | Key | Action |
 |-----|--------|
@@ -489,33 +305,20 @@ Mori's TUI is a Ratatui application with 10 views, 26 widgets, and 12 modal dial
 | `Up/Down` | Select plan/task |
 | `Enter` | View detail |
 
-### What you see
+## Embedded gateway
 
-The dashboard shows wave progress, active agents with their current task and token consumption, gate results, review verdicts, budget tracking (per-agent, per-plan, per-milestone), and system metrics. Token sparklines render in braille characters. Phase timelines show how long each stage took. The agent pool displays live output streams from all running agents.
+Mori can embed the bardo-gateway inference proxy (enabled by default). The gateway sits between agents and model providers:
 
-## The conductor
+- Multi-provider routing (Anthropic, OpenAI, OpenRouter)
+- Three-layer caching (hash, semantic, prompt prefix)
+- Rate limit management and failover across API keys
+- Cost tracking per agent, per plan, per milestone
 
-The conductor is a monitoring layer that watches running agents and intervenes when things go wrong.
-
-**Watchers:**
-- Silence timeout (5 min): agent hasn't produced output. Probably stuck. Conductor sends a nudge or restarts.
-- Iteration loop detector: agent is making the same fix repeatedly. Conductor injects diagnostic context or switches strategy.
-- Error pattern matcher: recognizes common failure patterns (lifetime issues, import cycles, missing types) and injects targeted hints before the agent wastes tokens rediscovering them.
-
-**Interventions:**
-- Inject context: send additional information to a running agent.
-- Restart with different model: if the current model is struggling, swap to a more capable one.
-- Skip and advance: if a plan is stuck after max iterations, skip it and continue.
-- Force merge: override a review block when the conductor determines the block is incorrect.
+When running embedded, the gateway starts on `--gateway-port` (default 4000) and agents route through it automatically. For shared setups, run the gateway standalone with `mori-gateway.sh` and point multiple mori instances at it.
 
 ## Crash recovery
 
-Mori writes crash reports to `.mori/runs/` on both panics and non-panic errors. Reports include:
-- Error message and backtrace
-- App state at time of crash (which plans were running, which agents were active, what phase each was in)
-- Recent log lines from `bardo-ctl.log`
-- Error signature (for deduplication)
-- Environment information
+Mori writes crash reports to `.mori/runs/` on both panics and non-panic errors. Reports include the error with backtrace, app state at time of crash (which plans were running, which agents were active, what phase each was in), and recent log lines.
 
 The supervisor script (`mori-supervisor.sh`) watches the process and restarts on crash. Since all state is on disk (committed code, context artifacts, plan progress), the restart picks up where it left off.
 
@@ -527,64 +330,3 @@ The supervisor script (`mori-supervisor.sh`) watches the process and restarts on
 | `mori-supervisor.sh` | Watch supervisor -- restarts mori on crash |
 | `bardo-enrich.sh` | Enrich plan artifacts (briefs, task breakdowns) before a run |
 | `mori-gateway.sh` | Start bardo-gateway standalone |
-
-## Embedded gateway
-
-Mori can embed the bardo-gateway inference proxy (enabled by default if compiled with the `gateway` feature). The gateway sits between agents and model providers, providing:
-
-- Multi-provider routing (Anthropic, OpenAI, OpenRouter)
-- Three-layer caching (hash, semantic, prompt prefix)
-- Prompt prefix alignment for cache hit rates
-- Rate limit management and failover across API keys
-- Cost tracking per agent, per plan, per milestone
-
-When running embedded, the gateway starts on `--gateway-port` (default 4000) and agents route through it automatically. For shared setups, run the gateway standalone with `mori-gateway.sh` and point multiple mori instances at it.
-
-## Dependencies
-
-```toml
-ratatui = "=0.29.0"       # TUI (pinned for rustc 1.85 compat)
-crossterm = "0.28"        # Terminal event stream
-tokio = "1.50"            # Async runtime
-clap                      # CLI parsing
-serde / serde_json / serde_yaml / toml  # Config and plan parsing
-tracing / tracing-subscriber / tracing-appender  # Structured file logging
-reqwest = "0.12"          # HTTP (gateway and LLM calls)
-chrono                    # Timestamps
-sha2                      # Plan content hashing
-sysinfo                   # System metrics
-dirs                      # Home directory resolution
-fastrand                  # Lightweight random (worktree name generation)
-bardo-gateway             # Optional (gateway feature, default enabled)
-```
-
-## Vision docs
-
-The `tmp/death/` directory contains 29 vision documents covering the full roadmap:
-
-| Doc | Topic |
-|-----|-------|
-| 00 | Overview and core thesis |
-| 01 | Project structure |
-| 02 | Document pipeline |
-| 03 | Provider backends |
-| 04 | Orchestration and DAG scheduling |
-| 05 | Interfaces (TUI, CLI, MCP) |
-| 06 | Server mode and remote operation |
-| 07 | Deployment (Fly.io) |
-| 09 | Inference gateway |
-| 10 | Task routing and model selection |
-| 11 | Queue management |
-| 13 | Agent-native crypto (ERC-8004, x402, SIWE) |
-| 15 | Cost tracking |
-| 16 | Autonomous verification |
-| 17 | Context engine (tree-sitter, PageRank, HDC) |
-| 18 | Context as a service (MCP) |
-| 19 | Rust performance targets |
-| 21 | Agent optimization |
-| 22 | Cybernetic learning (episodes, patterns, playbook) |
-| 23 | Platform integrations |
-| 25 | Dependency architecture |
-| 26 | Live ingest (real-time operator directives) |
-| 28 | Batch API strategy |
-| 29 | Fly.io deployment |

@@ -48,7 +48,9 @@ pub enum Capability8004 {
 }
 ```
 
-`AgentIdentity` carries address, registered capabilities, named `ServiceEndpoint` URLs, an IPFS metadata CID, and the last-updated block number.
+`AgentIdentity` carries address, registered capabilities, named `ServiceEndpoint` URLs (MCP server URLs, API endpoints), an IPFS metadata CID for discovery, and the last-updated block number. The `ServiceEndpoint` map lets other agents locate an agent's tools without off-chain coordination.
+
+ERC-8004 is the anchor standard in Bardo's coordination stack. It ties together ERC-8001 (N-party consent), ERC-8033 (oracle councils), and ERC-8183 (job escrow). The 6 built-in `Capability8004` variants cover common DeFi roles; `Custom(String)` extends the set for domain-specific capabilities without a contract upgrade.
 
 ## Warden
 

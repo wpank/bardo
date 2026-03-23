@@ -1,153 +1,353 @@
 # mirage-rs
 
-In-process Ethereum fork with lazy upstream reads, copy-on-write scenario branching, and a targeted block follower. mirage-rs runs a JSON-RPC server that speaks the standard Ethereum API backed by a speculative dirty state layer over a live RPC node. No full node sync required.
+**Standalone** | MIT/Apache-2.0 | zero required internal deps
 
-Built for DeFi simulation: run what-if scenarios against real on-chain state, replay upstream transactions through a local fork, and track protocol contracts as their storage evolves block-by-block.
+## Use this standalone
+
+```toml
+[dependencies]
+# As a library (no binary entrypoint, no golem-core dependency)
+mirage-rs = { git = "https://github.com/uniswap/bardo", path = "apps/mirage-rs", default-features = false, features = ["library"] }
+```
+
+With `default-features = false`, mirage-rs has zero internal workspace dependencies. The optional `golem` feature adds a `GolemConfig` integration convenience, but it's off by default for standalone use.
+
+---
+
+A local Ethereum node for development and testing, like [Anvil](https://getfoundry.sh/reference/anvil/) — but connected to live chains. mirage-rs forks mainnet state lazily over RPC, keeps watched contracts in sync block-by-block, and gives you the full `eth_*` / `evm_*` / `anvil_*` manipulation API you already know. No full node sync. Instant startup.
+
+Where Anvil forks at a pinned block and stays there, mirage-rs optionally follows the chain forward, selectively replaying transactions that touch your contracts so the local view stays current as the market moves.
+
+```bash
+# Drop-in replacement for Anvil — fork mainnet on port 8545
+mirage-rs --rpc-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+
+# With live following over WebSocket
+mirage-rs \
+  --rpc-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY \
+  --ws-url wss://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+
+# Isolated mode (no upstream, all accounts start with 1 ETH)
+mirage-rs
+```
+
+Point any Ethers/Viem/Alloy client at `http://127.0.0.1:8545` and it works the same as Anvil. Your Hardhat tests, Foundry scripts, and custom tooling need zero changes.
+
+## Why not just use Anvil?
+
+Anvil forks at a block and freezes. That's fine for unit tests, but it can't answer questions like: *what happens to my Uniswap position after my transaction, as the next 10 blocks of real market activity play out?*
+
+mirage-rs can, because it:
+
+- **Follows the chain.** A targeted follower subscribes to `newHeads` via WebSocket, filters each block for transactions that touch watched contracts, and replays only those locally. For a typical portfolio of 3-10 DeFi positions, that's ~5-15 transactions per block instead of ~150.
+- **Classifies contracts automatically.** When a transaction writes 3+ storage slots on a new address, the diff classifier promotes it to the watch list. Simple token transfers (1-2 slots) get slot-level overrides without full tracking. This propagation is recursive — composability chains across protocols are captured automatically.
+- **Branches with copy-on-write.** Scenarios fork from a shared baseline using CoW overlays (~12.8 KB per branch vs ~3.2 MB for a full clone), so you can run parallel what-if simulations cheaply.
+
+For pure unit testing against static state, Anvil is great. For anything that touches live DeFi positions, mirage-rs fills the gap.
 
 ## How it works
 
-mirage-rs sits between your application and a real Ethereum RPC endpoint. On first access, account balances, nonces, storage slots, and bytecode are fetched from the upstream node and cached locally. Writes go into a dirty overlay that never touches the upstream. This gives you a mutable view of mainnet state without syncing anything.
+mirage-rs sits between your application and a real Ethereum RPC endpoint. It maintains a three-layer state model:
 
-The fork maintains a three-layer read path:
+```
+ Reads flow top-down; first hit wins.
 
-1. **Dirty store** -- local writes from `eth_sendTransaction`, `mirage_setBalance`, scenario execution, etc.
-2. **Read cache** -- LRU cache with configurable TTL (default 12s, roughly one block) sitting in front of upstream calls.
-3. **Upstream RPC** -- lazy fetches with token-bucket rate limiting and automatic retries with exponential backoff.
-
-When an upstream WebSocket URL is configured, a **targeted follower** subscribes to `newHeads` and selectively replays transactions that touch watched contracts. This keeps the local fork's view of tracked protocols in sync with the chain without replaying every transaction in every block.
-
-## Running
-
-```bash
-# Fork mainnet, bind on default port 8545
-cargo run -p mirage-rs -- --rpc-url https://eth-mainnet.example.com
-
-# With WebSocket for targeted block following
-cargo run -p mirage-rs -- \
-  --rpc-url https://eth-mainnet.example.com \
-  --ws-url wss://eth-mainnet.example.com \
-  --port 8545 \
-  --chain-id 1
-
-# Isolated mode (no upstream -- pure in-memory state, all accounts start with 1 ETH)
-cargo run -p mirage-rs
-
-# Power profile with tight upstream rate limits
-cargo run -p mirage-rs -- \
-  --rpc-url https://eth-mainnet.example.com \
-  --profile power \
-  --upstream-rps 50 \
-  --upstream-burst 100
+ ┌─────────────────────────────────┐
+ │  1. DirtyStore (local writes)   │  ← eth_sendTransaction, setBalance, scenarios
+ ├─────────────────────────────────┤
+ │  2. ReadCache (LRU + TTL)       │  ← <1µs hot reads, 12s default TTL
+ ├─────────────────────────────────┤
+ │  3. UpstreamRpc (lazy fetch)    │  ← token-bucket rate limiter, retries w/ backoff
+ └────────────────┬────────────────┘
+                  │
+          Live Ethereum node
 ```
 
-On startup, mirage writes `/tmp/mirage-{port}.pid` and `/tmp/mirage-{port}-status.json` (`{"status":"ready","port":N}`). Both are cleaned up on shutdown.
+On first access, account balances, nonces, storage slots, and bytecode are fetched from upstream and cached. Writes go into the dirty overlay and never touch upstream. You get a mutable view of mainnet state without syncing anything.
 
-## CLI flags
+When a WebSocket URL is configured, the **targeted follower** subscribes to new blocks and replays only the transactions that matter to your watched contracts. Everything else is ignored.
+
+## Installation
+
+From source (requires Rust 1.80+):
+
+```bash
+cargo install --path apps/mirage-rs
+```
+
+Or run directly from the workspace:
+
+```bash
+cargo run -p mirage-rs -- --rpc-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+```
+
+## Usage
+
+### Forking mainnet
+
+```bash
+# Fork at latest block
+mirage-rs --rpc-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+
+# Specify chain ID and port
+mirage-rs --rpc-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY --chain-id 1 --port 8545
+
+# With live block following
+mirage-rs \
+  --rpc-url https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY \
+  --ws-url wss://eth-mainnet.g.alchemy.com/v2/YOUR_KEY
+```
+
+### Forking other chains
+
+```bash
+# Arbitrum
+mirage-rs --rpc-url https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY --chain-id 42161
+
+# Base
+mirage-rs --rpc-url https://base-mainnet.g.alchemy.com/v2/YOUR_KEY --chain-id 8453
+
+# Polygon
+mirage-rs --rpc-url https://polygon-mainnet.g.alchemy.com/v2/YOUR_KEY --chain-id 137
+```
+
+### Using with Foundry
+
+mirage-rs is a drop-in backend for `forge script` and `forge test`:
+
+```bash
+# Run a Forge script against the live fork
+forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
+
+# Run tests
+forge test --fork-url http://127.0.0.1:8545
+```
+
+### Using with Hardhat
+
+```js
+// hardhat.config.js
+module.exports = {
+  networks: {
+    mirage: {
+      url: "http://127.0.0.1:8545",
+    },
+  },
+};
+```
+
+```bash
+npx hardhat test --network mirage
+```
+
+### Using with Viem
+
+```ts
+import { createPublicClient, createWalletClient, http } from "viem";
+import { mainnet } from "viem/chains";
+
+const transport = http("http://127.0.0.1:8545");
+
+const publicClient = createPublicClient({ chain: mainnet, transport });
+const walletClient = createWalletClient({ chain: mainnet, transport });
+
+// Works exactly like Anvil
+const blockNumber = await publicClient.getBlockNumber();
+```
+
+### Using with Ethers.js
+
+```js
+const { ethers } = require("ethers");
+const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const blockNumber = await provider.getBlockNumber();
+```
+
+## CLI Reference
+
+```
+mirage-rs [OPTIONS]
+```
+
+### Server options
 
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--host` | `127.0.0.1` | Bind address |
 | `--port` | `8545` | Bind port |
-| `--rpc-url` | none | Upstream HTTP JSON-RPC URL |
-| `--ws-url` | none | Upstream WebSocket URL (enables targeted following) |
-| `--upstream-rps` | `100` | Upstream request budget per second |
-| `--upstream-burst` | `200` | Upstream burst capacity |
 | `--chain-id` | `1` | Effective chain ID |
+| `--watchdog-timeout` | (none) | Shut down after N seconds of inactivity |
+
+### Fork options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--rpc-url` | (none) | Upstream HTTP JSON-RPC URL. Omit for isolated mode |
+| `--ws-url` | (none) | Upstream WebSocket URL. Enables targeted block following |
+| `--upstream-rps` | `100` | Upstream requests per second budget |
+| `--upstream-burst` | `200` | Upstream burst capacity |
 | `--cache-size` | `10000` | Read cache entry capacity |
-| `--cache-ttl-secs` | `12` | Read cache TTL in seconds |
+| `--cache-ttl-secs` | `12` | Read cache TTL in seconds (~1 block) |
+
+### Validation options
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--strict-nonce` | `false` | Reject transactions with incorrect nonces |
+| `--strict-balance` | `false` | Reject transactions that overdraw sender balance |
+| `--verify-signatures` | `false` | Require valid ECDSA signatures on raw transactions |
+
+By default, validation is relaxed (same as Anvil's default behavior) so you can send transactions from any address without signing.
+
+### Resource profiles
+
+| Flag | Default | Description |
+|------|---------|-------------|
 | `--profile` | `standard` | Resource profile: `micro`, `standard`, `power` |
-| `--watchdog-timeout` | none | Inactivity shutdown timeout in seconds |
-| `--strict-nonce` | `false` | Reject transactions with wrong nonces |
-| `--strict-balance` | `false` | Reject transactions that overdraw balance |
-| `--verify-signatures` | `false` | Enable ECDSA signature verification on raw transactions |
 
-If `--rpc-url` is provided, the binary probes the upstream before binding. A failed probe exits with code 1. An insufficient-memory error from the resource model exits with code 2.
-
-## Resource profiles
+Profiles control memory ceilings and capacity limits:
 
 | Profile | Memory ceiling | Watched contracts | Cache entries | Bytecode cache |
 |---------|---------------|-------------------|---------------|----------------|
-| Micro | 256 MB | 32 | 5,000 | 1,000 |
-| Standard | 512 MB | 64 | 10,000 | 2,000 |
-| Power | 2 GB | 256 | 50,000 | 10,000 |
+| `micro` | 256 MB | 32 | 5,000 | 1,000 |
+| `standard` | 512 MB | 64 | 10,000 | 2,000 |
+| `power` | 2 GB | 256 | 50,000 | 10,000 |
 
-The process checks available system memory at startup and exits with code 2 if the selected profile can't fit (with a 128 MB headroom margin).
+The process checks available system memory at startup and exits with code 2 if the selected profile doesn't fit (128 MB headroom margin required). At runtime, memory pressure is monitored and the fork responds in tiers:
 
-At runtime, memory pressure is monitored continuously. The fork responds to pressure in tiers:
-
-| Pressure | Threshold | Action |
-|----------|-----------|--------|
+| Pressure level | Threshold | Response |
+|----------------|-----------|----------|
 | Warning | 50% of ceiling | Evict LRU cache entries |
 | Throttle | 70% | Demote auto-classified contracts to slot-only reads |
-| Emergency | 90% | Demote runtime mode to proxy (disable replay) |
+| Emergency | 90% | Demote to proxy mode (disable replay) |
 
-## JSON-RPC API
+## Supported RPC Methods
 
 ### Standard Ethereum methods
 
-mirage-rs implements the common subset needed by DeFi tooling:
+The same `eth_*` namespace you use with Anvil and any other node:
 
-- `web3_clientVersion`, `net_version`
-- `eth_chainId`, `eth_blockNumber`, `eth_gasPrice`, `eth_maxPriorityFeePerGas`, `eth_feeHistory`
-- `eth_getBalance`, `eth_getTransactionCount`, `eth_getStorageAt`, `eth_getCode`
-- `eth_call`, `eth_estimateGas`
-- `eth_sendTransaction`, `eth_sendRawTransaction`
-- `eth_getTransactionReceipt`, `eth_getTransactionByHash`
-- `eth_getBlockByNumber`, `eth_getBlockByHash`
-- `eth_getLogs`
+| Method | Description |
+|--------|-------------|
+| `eth_chainId` | Returns the chain ID |
+| `eth_blockNumber` | Returns the current block number |
+| `eth_gasPrice` | Returns the current gas price |
+| `eth_maxPriorityFeePerGas` | Returns the current priority fee |
+| `eth_feeHistory` | Returns fee history for a range of blocks |
+| `eth_getBalance` | Returns the balance of an address |
+| `eth_getTransactionCount` | Returns the nonce of an address |
+| `eth_getStorageAt` | Returns the value of a storage slot |
+| `eth_getCode` | Returns the bytecode at an address |
+| `eth_call` | Executes a call without creating a transaction |
+| `eth_estimateGas` | Estimates gas for a transaction |
+| `eth_sendTransaction` | Sends a transaction (auto-signed, like Anvil) |
+| `eth_sendRawTransaction` | Sends a signed raw transaction |
+| `eth_getTransactionReceipt` | Returns the receipt of a transaction |
+| `eth_getTransactionByHash` | Returns transaction details by hash |
+| `eth_getBlockByNumber` | Returns a block by number |
+| `eth_getBlockByHash` | Returns a block by hash |
+| `eth_getLogs` | Returns logs matching a filter |
+| `web3_clientVersion` | Returns the client version string |
+| `net_version` | Returns the network ID |
 
-### EVM control methods
+### EVM manipulation methods
 
-Compatible with Hardhat and Anvil:
+Anvil/Hardhat-compatible state manipulation. If your test suite uses these with Anvil, it works the same here:
 
-- `evm_snapshot` -- capture current state, returns a snapshot ID
-- `evm_revert` -- roll back to a snapshot
-- `evm_increaseTime` -- advance the block timestamp by N seconds
-- `evm_setNextBlockTimestamp` -- set a specific next-block timestamp
+| Method | Description |
+|--------|-------------|
+| `evm_snapshot` | Capture current state, returns a snapshot ID |
+| `evm_revert` | Roll back to a snapshot |
+| `evm_increaseTime` | Advance the block timestamp by N seconds |
+| `evm_setNextBlockTimestamp` | Set a specific next-block timestamp |
 
 ### State override methods
 
-Available under `mirage_*`, `hardhat_*`, and `anvil_*` prefixes:
+Available under the `anvil_*`, `hardhat_*`, and `mirage_*` namespaces (all three work):
 
-- `setBalance(address, value)` -- override an account's ETH balance
-- `setStorageAt(address, slot, value)` -- write a single storage slot
-- `setCode(address, bytecode)` -- deploy bytecode at an address
-- `setNonce(address, nonce)` -- override an account's nonce
+| Method | Description |
+|--------|-------------|
+| `setBalance(address, value)` | Override an account's ETH balance |
+| `setStorageAt(address, slot, value)` | Write a single storage slot |
+| `setCode(address, bytecode)` | Deploy bytecode at an address |
+| `setNonce(address, nonce)` | Override an account's nonce |
+
+```bash
+# Set balance using cast (works with any namespace prefix)
+cast rpc anvil_setBalance 0xf39F...2266 0xDE0B6B3A7640000 --rpc-url http://127.0.0.1:8545
+```
 
 ### Mirage-specific methods
 
-- `mirage_mintERC20(token, to, amount)` -- mint ERC-20 tokens by detecting and writing the balance storage slot
-- `mirage_prefetchAccount(address)` -- warm the cache for an account
-- `mirage_prefetchSlots(address, slots[])` -- warm specific storage slots
-- `mirage_watchContract(address)` -- add a contract to the targeted follower's watch list
-- `mirage_unwatchContract(address)` -- remove a contract from the watch list
-- `mirage_getWatchList()` -- return all watched contracts with metadata (source, block added, slot count, replay count)
-- `mirage_getDirtySlots(address)` -- return locally modified storage slots for an address
-- `mirage_status()` -- readiness status, chain ID, block number, watch list size
-- `mirage_getResourceUsage()` -- memory, cache stats, pressure score, upstream call/error counters, mode
-- `mirage_setResourceLimits(...)` -- dynamically adjust resource caps at runtime
-- `mirage_getPosition(request)` -- read a DeFi position snapshot (raw balances, protocol-specific readers)
-- `mirage_subscribeEvents(filter)` -- open a WebSocket event stream with address/topic filters
-- `mirage_shutdown()` -- graceful process shutdown
-- `mirage_cleanup()` -- clean up transient resources
+These extend the Anvil API with live-chain capabilities:
+
+| Method | Description |
+|--------|-------------|
+| `mirage_mintERC20(token, to, amount)` | Mint ERC-20 tokens by detecting and writing the balance storage slot |
+| `mirage_watchContract(address)` | Add a contract to the targeted follower's watch list |
+| `mirage_unwatchContract(address)` | Remove a contract from the watch list |
+| `mirage_getWatchList()` | Return all watched contracts with metadata |
+| `mirage_prefetchAccount(address)` | Warm the cache for an account |
+| `mirage_prefetchSlots(address, slots[])` | Warm specific storage slots |
+| `mirage_getDirtySlots(address)` | Return locally modified storage slots for an address |
+| `mirage_status()` | Readiness status, chain ID, block number, watch list size |
+| `mirage_getResourceUsage()` | Memory, cache stats, pressure score, upstream counters |
+| `mirage_setResourceLimits(...)` | Dynamically adjust resource caps at runtime |
+| `mirage_getPosition(request)` | Read a DeFi position snapshot |
+| `mirage_subscribeEvents(filter)` | Open a WebSocket event stream with address/topic filters |
+| `mirage_shutdown()` | Graceful process shutdown |
 
 ### Scenario methods
 
-- `mirage_beginScenarioSet(baseline)` -- create a scenario set from a baseline state
-- `mirage_defineScenario(setId, scenario)` -- add a scenario with transactions and assertions
-- `mirage_runScenarioSet(setId, mode)` -- execute in `sequential` or `parallel` mode
-- `mirage_getScenarioResults(jobId)` -- poll for results
-- `mirage_compareScenarios(setId)` -- diff outcomes across scenarios in a set
+Run branching what-if simulations against live state:
 
-## Scenario system
+| Method | Description |
+|--------|-------------|
+| `mirage_beginScenarioSet(baseline)` | Create a scenario set from a baseline state |
+| `mirage_defineScenario(setId, scenario)` | Add a scenario with transactions and assertions |
+| `mirage_runScenarioSet(setId, mode)` | Execute in `sequential` or `parallel` mode |
+| `mirage_getScenarioResults(jobId)` | Poll for results |
+| `mirage_compareScenarios(setId)` | Diff outcomes across scenarios in a set |
 
-Scenarios let you define branching what-if simulations. Each scenario is a named sequence of transactions that execute against a shared baseline snapshot. In parallel mode, each branch gets an isolated copy-on-write overlay so execution is non-destructive and branches can't observe each other's mutations.
+## Targeted Following
+
+This is the core feature that separates mirage-rs from static forks.
+
+When you provide a `--ws-url`, mirage-rs subscribes to `newHeads` and for each new block:
+
+1. Fetches the full block from upstream
+2. Filters for transactions touching any watched address
+3. Replays only those transactions through the local fork's EVM
+4. Runs the diff classifier on the resulting state changes
+5. Auto-promotes new contracts that cross the slot threshold (3+ storage writes)
+
+For a typical DeFi portfolio (3-10 positions), this means replaying ~5-15 transactions per block instead of the full ~150. Blocks process in <100ms at steady state.
+
+### Watch list management
+
+Contracts enter the watch list three ways:
+
+1. **Manual** — call `mirage_watchContract(address)` or define `track.addresses` in a scenario fixture
+2. **Auto-classification** — the diff classifier sees 3+ storage slots written on a new address and promotes it
+3. **Contagion** — a replayed transaction writes to a new contract that exceeds the slot threshold, recursively extending the watch list
+
+```bash
+# Manually watch the Uniswap V3 Router
+cast rpc mirage_watchContract 0xE592427A0AEce92De3Edee1F18E0157C05861564 \
+  --rpc-url http://127.0.0.1:8545
+
+# Check the watch list
+cast rpc mirage_getWatchList --rpc-url http://127.0.0.1:8545
+```
+
+## Scenarios
+
+Scenarios let you define branching what-if simulations. Each scenario is a named sequence of transactions that execute against a shared baseline snapshot. In parallel mode, each branch gets an isolated copy-on-write overlay, so branches can't observe each other's mutations.
 
 ### TOML fixtures
 
-Scenario fixtures live in `tests/scenarios/` and can be loaded directly by the scenario runner:
-
 ```toml
+# tests/scenarios/eth_crash.toml
 [scenario]
 name = "eth_crash"
 description = "Directional WETH->USDC selloff with repeated router pressure"
@@ -163,12 +363,12 @@ data = "0x414bf389..."
 watch_list_contains = ["0x10000000000000000000000000000000000000a0"]
 
 [assertions.token_balance_gte]
-token = "0x..."
-address = "0x..."
+token = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+address = "0x1000000000000000000000000000000000000001"
 amount = "0x1"
 
 [track]
-addresses = ["0x...", "0x..."]
+addresses = ["0xE592427A0AEce92De3Edee1F18E0157C05861564"]
 ```
 
 ### Included scenarios
@@ -176,63 +376,64 @@ addresses = ["0x...", "0x..."]
 | File | Description |
 |------|-------------|
 | `uniswap_v3_entry.toml` | Position-manager mint + liquidity increase on a watched pool |
-| `eth_crash.toml` | Directional WETH->USDC selloff with 20+ router transactions |
+| `eth_crash.toml` | Directional WETH→USDC selloff with 20+ router transactions |
 | `aave_liquidation.toml` | Oracle shock, account deterioration, and liquidation flow |
 | `new_pool.toml` | Deploy token, initialize pool, seed liquidity, route first swap |
 | `volume_spike.toml` | High-frequency volume burst across multiple pairs |
 
-### Programmatic scenario usage
+### Programmatic usage
 
 ```rust
-use mirage_rs::{MirageClient, Scenario, RunMode, ScenarioAssertions, TransactionRequest};
+use mirage_rs::{MirageClient, Scenario, RunMode, ScenarioAssertions};
 
 let set_id = client.mirage_begin_scenario_set("latest").await?;
 
 client.mirage_define_scenario(&set_id, &Scenario {
-    id: "left-branch".into(),
-    name: "left transfer".into(),
-    transactions: vec![tx_a],
-    track_addresses: vec![sender, receiver_a],
-    max_gas: Some(30_000),
-    timeout: Duration::from_secs(1),
+    id: "bull-case".into(),
+    name: "large buy".into(),
+    transactions: vec![buy_tx],
+    track_addresses: vec![pool, router],
+    max_gas: Some(500_000),
+    timeout: Duration::from_secs(5),
     assertions: ScenarioAssertions::default(),
 }).await?;
 
 client.mirage_define_scenario(&set_id, &Scenario {
-    id: "right-branch".into(),
-    name: "right transfer".into(),
-    transactions: vec![tx_b],
-    track_addresses: vec![sender, receiver_b],
-    max_gas: Some(30_000),
-    timeout: Duration::from_secs(1),
+    id: "bear-case".into(),
+    name: "large sell".into(),
+    transactions: vec![sell_tx],
+    track_addresses: vec![pool, router],
+    max_gas: Some(500_000),
+    timeout: Duration::from_secs(5),
     assertions: ScenarioAssertions::default(),
 }).await?;
 
+// Run both branches in parallel with isolated CoW overlays
 let job_id = client.mirage_run_scenario_set(&set_id, RunMode::Parallel).await?;
-let job = client.mirage_get_scenario_results(&job_id).await?;
+let results = client.mirage_get_scenario_results(&job_id).await?;
 ```
 
-## Library usage
+## Library Usage
 
-mirage-rs ships as both a binary and a library. For library-only builds:
+mirage-rs ships as both a binary and a library crate.
 
 ```toml
 [dependencies]
 mirage-rs = { path = "apps/mirage-rs", default-features = false, features = ["library"] }
 ```
 
-### Integration test harness
-
-Spawn an isolated mirage instance for integration tests:
+### Spawning a test instance
 
 ```rust
-use mirage_rs::{MirageClient, MirageConfig, spawn_mirage_test_instance};
+use mirage_rs::{MirageClient, spawn_mirage_test_instance, TransactionRequest};
+use std::time::Duration;
+use alloy_primitives::U256;
 
 let mut instance = spawn_mirage_test_instance(None, Some(18_545)).await?;
 let client = MirageClient::new(instance.config()).await?;
 client.wait_ready(Duration::from_secs(10)).await?;
 
-// Send a transaction
+// Use it like Anvil
 let tx_hash = client.eth_send_transaction(TransactionRequest {
     from: Some(sender),
     to: Some(receiver),
@@ -241,17 +442,16 @@ let tx_hash = client.eth_send_transaction(TransactionRequest {
     ..Default::default()
 }).await?;
 
-// Snapshot and revert
 let snap = client.evm_snapshot().await?;
-// ... do speculative work ...
+// ... speculative work ...
 client.evm_revert(snap).await?;
 
 instance.shutdown().await?;
 ```
 
-### Client from GolemConfig
+### GolemConfig integration
 
-If you're running inside the bardo/golem ecosystem, derive the client config from `GolemConfig`:
+Inside the bardo ecosystem, derive the client config from `GolemConfig`:
 
 ```rust
 let config = MirageConfig::from_golem_config(&golem_config);
@@ -263,7 +463,7 @@ let client = MirageClient::new(config).await?;
 ```
                         +-----------------+
                         |  Your app /     |
-                        |  agent / tests  |
+                        |  Foundry / test |
                         +--------+--------+
                                  |
                             JSON-RPC
@@ -289,61 +489,61 @@ let client = MirageClient::new(config).await?;
                                            +-------v--------+
                                            | Ethereum node  |
                                            | (HTTP + WS)    |
-                                           +----------------+
+                                           +-------+--------+
+                                                   |
+                                          +--------v--------+
+                                          | Targeted        |
+                                          | Follower        |
+                                          | (newHeads sub,  |
+                                          |  selective      |
+                                          |  replay)        |
+                                          +-----------------+
 ```
 
 ### Core types
 
 **State layer:**
 
-- `MirageFork` -- thread-safe handle (`Arc<RwLock<MirageState>>`) shared across the RPC server, follower, and scenario runner. Entry point for all fork operations.
-- `ForkState` -- mutable fork state: `HybridDB`, block number, chain ID, timestamp, watch list, snapshot stack, dirty tracking. Configurable strict nonce/balance checks and signature verification.
-- `HybridDB` -- three-layer database: `DirtyStore` (local writes), `ReadCache` (LRU with TTL), `UpstreamRpc` (lazy fetches). Optionally pins reads to a fixed block for historical mode.
-- `DirtyAccount` / `DirtyStore` -- track accounts and storage slots modified since the last snapshot or baseline.
+- `MirageFork` — thread-safe handle (`Arc<RwLock<MirageState>>`) shared across the RPC server, follower, and scenario runner.
+- `ForkState` — mutable fork state: `HybridDB`, block number, chain ID, timestamp, watch list, snapshot stack, dirty tracking.
+- `HybridDB` — three-layer database: `DirtyStore` (local writes) → `ReadCache` (LRU with TTL) → `UpstreamRpc` (lazy fetches).
+- `DirtyAccount` / `DirtyStore` — tracks accounts and storage slots modified since the last snapshot or baseline.
 
 **Copy-on-write:**
 
-- `CowState` -- shared baseline + per-branch overlay. Branches read from the overlay first, then fall through to the shared baseline `Arc<HashMap>`. Writes go only to the overlay.
-- `MultiVersionStore` -- per-slot multi-version storage for the simplified Block-STM test harness. Records `VersionEntry` (tx_index, incarnation, value) and materializes the latest values.
-- `BytecodeCache` -- separate LRU keyed by code hash. Bytecode is immutable so it doesn't need copy-on-write.
+- `CowState` — shared baseline + per-branch overlay. Branches read from the overlay first, then fall through to the shared baseline. Writes go only to the overlay.
+- `MultiVersionStore` — per-slot multi-version storage for the Block-STM test harness.
+- `BytecodeCache` — LRU keyed by code hash. Bytecode is immutable, so no CoW needed.
 
 **Upstream:**
 
-- `UpstreamRpc` -- wraps `reqwest::blocking::Client` (built before the Tokio runtime starts to avoid the nested-runtime panic). Token-bucket rate limiter, automatic retries with exponential backoff, mock mode for offline/test use.
-- `ReadCache` -- LRU cache with per-entry TTL for accounts, storage slots, and block hashes. Tracks hit/miss counts. Supports targeted eviction under memory pressure.
-- `BlockTag` -- `Latest` or `Number(u64)`.
+- `UpstreamRpc` — wraps `reqwest::blocking::Client` with a token-bucket rate limiter, retries with exponential backoff, and a mock mode for offline testing.
+- `ReadCache` — LRU cache with per-entry TTL. Tracks hit/miss counts and supports targeted eviction under memory pressure.
 
 **Replay and speculative execution:**
 
-- `TargetedFollower` -- subscribes to `newHeads` via WebSocket and replays confirmed transactions that touch watched contracts. Configurable block-budget timeout and address/selector filters.
-- `SpeculativeExecutor` -- runs transactions against a CoW branch without mutating base state. Returns `SpeculativeResult` with execution result, full `StateDiff`, read set (for invalidation tracking), and timestamp.
-- `TxReplay` -- fetches a historical transaction by hash from upstream and re-executes it against the local fork.
-- `StateDiff` / `AccountDiff` / `LogEntry` -- structured diff with per-account balance/nonce/code/storage changes and emitted logs.
-
-**Classification:**
-
-- `DiffClassifier` -- inspects state diffs and classifies contracts as `Protocol` (complex storage, should be watched and replayed), `SlotOnly` (simple override), or `ReadOnly` (no writes). Configurable slot threshold, token-interface heuristics, contagion propagation, and watch list cap.
-- `WatchEntry` / `WatchSource` -- metadata for watched contracts: how they were added, at which block, initial slot count, replay passes applied.
+- `TargetedFollower` — subscribes to `newHeads` via WebSocket, replays only transactions touching watched contracts.
+- `SpeculativeExecutor` — runs transactions against a CoW branch without mutating base state. Returns execution result + full `StateDiff` + read set for invalidation tracking.
+- `TxReplay` — fetches a historical transaction by hash from upstream and re-executes it locally.
+- `DiffClassifier` — inspects state diffs and classifies contracts as `Protocol` (complex, should be watched), `SlotOnly` (simple override), or `ReadOnly`.
 
 **Scenarios:**
 
-- `ScenarioRunner` -- orchestrates scenario sets. Supports `Sequential` (revert between runs) and `Parallel` (independent CoW branches) execution modes.
-- `Scenario` -- named transaction sequence with `track_addresses`, optional `max_gas`, `timeout`, and `ScenarioAssertions` (watch list membership, token balance lower bounds).
-- `ScenarioSet` / `ScenarioJob` / `ScenarioResult` / `ScenarioStatus` / `ScenarioSetStatus` -- lifecycle and result types.
+- `ScenarioRunner` — orchestrates scenario sets with `Sequential` (revert between runs) or `Parallel` (independent CoW branches) execution modes.
+- `Scenario` — named transaction sequence with tracked addresses, gas budget, timeout, and assertions.
 
 **Integration:**
 
-- `MirageClient` / `MirageConfig` -- async HTTP client wrapping all RPC methods with retry and timeout. Can be derived from `GolemConfig` for ecosystem integration.
-- `MirageTestInstance` -- holds a spawned mirage child process, provides its config, and handles clean shutdown.
-- `EventFilter` / `EventSource` / `MirageEvent` -- WebSocket event subscription with address/topic filters. Events carry provenance (`LocalTx` or `FollowerReplay`).
-- `PositionRequest` / `PositionSnapshot` -- DeFi position query with protocol-type routing and raw balance snapshots.
+- `MirageClient` / `MirageConfig` — async HTTP client wrapping all RPC methods with retry and timeout.
+- `MirageTestInstance` — spawned child process with config access and clean shutdown.
+- `EventFilter` / `MirageEvent` — WebSocket event subscription with address/topic filters, carrying provenance (`LocalTx` or `FollowerReplay`).
 
-## Error handling
+## Error Handling
 
 All library errors are `MirageError`. Each variant maps to a JSON-RPC error code:
 
-| Variant | Code | Description |
-|---------|------|-------------|
+| Variant | Code | When |
+|---------|------|------|
 | `InvalidParams` | -32602 | Malformed RPC parameters |
 | `Unsupported` | -32603 | Operation not supported in current mode |
 | `InvalidFrom` | -32010 | Invalid sender address |
@@ -368,10 +568,37 @@ cargo test -p mirage-rs
 cargo test -p mirage-rs --test integration
 ```
 
-## Cargo features
+## Cargo Features
 
 | Feature | Default | Description |
 |---------|---------|-------------|
-| `binary` | yes | Include the CLI entrypoint |
+| `binary` | yes | Includes the CLI entrypoint |
 | `library` | no | Library-only builds (no binary dependencies) |
 | `sim-gas` | no | Gas simulation instrumentation |
+
+## Startup artifacts
+
+On startup, mirage writes two files:
+
+- `/tmp/mirage-{port}.pid` — process ID
+- `/tmp/mirage-{port}-status.json` — `{"status":"ready","port":N}`
+
+Both are cleaned up on shutdown. Use the status file for CI health checks or orchestrator readiness probes.
+
+## Anvil compatibility at a glance
+
+| Capability | Anvil | mirage-rs |
+|------------|-------|-----------|
+| Fork from RPC | Yes (pinned block) | Yes (latest, follows forward) |
+| `eth_*` methods | Full | Common DeFi subset |
+| `evm_snapshot` / `evm_revert` | Yes | Yes |
+| `anvil_setBalance` / `setStorageAt` / etc. | Yes | Yes (also `hardhat_*` and `mirage_*` prefixes) |
+| `evm_increaseTime` / `evm_setNextBlockTimestamp` | Yes | Yes |
+| Auto-mine | Yes | Yes |
+| Impersonate accounts | Yes | Yes (relaxed signing by default) |
+| Live block following | No | Yes (targeted follower via WebSocket) |
+| Contract auto-classification | No | Yes (diff classifier + contagion) |
+| Copy-on-write scenario branching | No | Yes |
+| ERC-20 balance slot detection + mint | No | Yes (`mirage_mintERC20`) |
+| Memory pressure management | No | Yes (tiered eviction/demotion) |
+| Resource profiles | No | Yes (`micro` / `standard` / `power`) |

@@ -208,10 +208,10 @@ mod tests {
         let mut buf = Buffer::empty(area);
         canvas.render_to_buffer(&mut buf, area);
 
-        let cell0 = buf.cell(ratatui::layout::Position::new(0, 0)).unwrap();
+        let cell0 = buf.get(0, 0);
         assert_eq!(cell0.symbol(), "\u{2801}"); // dot at (0,0) = bit 0
 
-        let cell1 = buf.cell(ratatui::layout::Position::new(1, 0)).unwrap();
+        let cell1 = buf.get(1, 0);
         assert_eq!(cell1.symbol(), "\u{2800}"); // empty
     }
 }

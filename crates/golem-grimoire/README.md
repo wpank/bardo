@@ -92,9 +92,25 @@ let scored: ScoredEntry = score_entry(&entry, &query_embedding, &query_pad, curr
 // .importance_component, .congruence_component
 ```
 
+## Knowledge Demurrage
+
+Inspired by Gesell's Freigeld (1916) — knowledge, like money, must decay to circulate. Domain-specific half-lives apply Ebbinghaus decay:
+
+```
+retention = exp(-t / half_life)
+```
+
+Gas and MEV knowledge decays in hours. Protocol behavior decays in months. Entries that are retrieved strengthen (the testing effect, Roediger & Karpicke 2006). Entries that are not retrieved decay toward the archive threshold, then the burn threshold. Active forgetting is regularization (Richards & Frankland 2017), not failure.
+
+## Three-Tier Memory
+
+Episodes (raw observations in LanceDB) promote to Patterns when 5+ similar episodes share common outcomes. Patterns that correctly predict across 5+ validations promote to Playbook rules written to `PLAYBOOK.md`. Rules that stop being accurate lose confidence and demote back to patterns. This is the Grimoire's self-improvement loop — knowledge earns its place or falls back.
+
 ## Memetic Tracking
 
-`MemeticFields` tracks cultural-evolution fitness for each entry:
+`MemeticFields` tracks Dawkinsian replicator dynamics for each entry. Entries evolve with fitness W = fidelity × fecundity × longevity — a direct application of the replicator equation. The Price equation (1970) decomposes knowledge evolution into selection (bad entries die via demurrage) and transmission (good entries replicate across the Clade via Styx).
+
+Fields:
 
 - `fidelity`: how faithfully the entry has been transmitted (0.0–1.0)
 - `fecundity`: how often it is retrieved and acted on (copies/tick)
